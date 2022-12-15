@@ -66,7 +66,7 @@ ul.task-list li input[type="checkbox"] {
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed">
+<body class="nav-sidebar floating nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -94,7 +94,7 @@ ul.task-list li input[type="checkbox"] {
  <span class="menu-text">CV</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../docs/projects/index.html">
+    <a class="nav-link active" href="../../docs/projects/index.html" aria-current="page">
  <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
@@ -127,10 +127,44 @@ ul.task-list li input[type="checkbox"] {
           </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Back Fitting Algorithm</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
 </header>
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../docs/projects/index.html" class="sidebar-item-text sidebar-link">Projects</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../docs/projects/high_dimension.html" class="sidebar-item-text sidebar-link">Dimension Reduction</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../docs/projects/back_fitting.html" class="sidebar-item-text sidebar-link active">Sigmoid Curve Fitting</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../docs/projects/project3.html" class="sidebar-item-text sidebar-link">Project 3</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -146,7 +180,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Back Fitting Algorithm</h1>
+<h1 class="title d-none d-lg-block">Back Fitting Algorithm</h1>
 </div>
 
 
@@ -168,7 +202,68 @@ ul.task-list li input[type="checkbox"] {
 <div>
 <p>
 </p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-1">flowchart LR
-
+    subgraph helper.R
+        direction LR
+        apply_manual4
+        apply_manual3
+        gam__single
+        apply_3Ct2
+        .filtered
+        apply_manual2
+        apply_manual
+        apply_joint3
+        subgraph main_run
+            direction LR
+            subgraph optFG 
+                direction LR
+                f(parVec)
+                .helper
+            end
+            constrOptim
+            gen_uici1
+            gen_uici
+            get_init
+            get_init2
+            apply_3Ct
+            inverse_L5
+            coefs2Ct
+            ct2pn
+            coefs2pn
+            call_pn
+            loglike
+        end
+        subgraph after_fit
+            direction LR
+            disaggregate
+            fct
+            sigmoid
+            loglike_
+            nloglike
+            loglike_joint2
+            loglike_joint3
+            LR_sigmoid
+            init_sigmoid4
+            summary_sigmoid4
+        end
+    end
+    subgraph visualize.R
+        direction LR
+        draw_raw
+        
+        subgraph draw_single
+            direction LR
+            fct
+            subgraph optFG 
+                
+            end
+            
+        end
+        subgraph draw_3Ct
+            direction LR
+            disaggregate
+           
+        end
+    end
 helper.R --&gt; visualize.R
 </pre>
 <div id="mermaid-tooltip-1" class="mermaidTooltip">

@@ -3,10 +3,18 @@ title: "Back Fitting Algorithm"
 format: hugo
 ---
 
+
+
+<script  src="../../site_libs/quarto-diagram/mermaid.min.js"></script>
+<script  src="../../site_libs/quarto-diagram/mermaid-init.js"></script>
+<link  href="../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet" />
+
 ## Architecture
 
-```{mermaid}
-flowchart LR
+<div>
+
+<p>
+<pre class="mermaid" data-tooltip-selector="#mermaid-tooltip-1">flowchart LR
     subgraph helper.R
         direction LR
         apply_manual4
@@ -69,5 +77,13 @@ flowchart LR
            
         end
     end
-helper.R --> visualize.R
-```
+helper.R --&gt; visualize.R
+</pre>
+
+<div id="mermaid-tooltip-1" class="mermaidTooltip">
+
+</div>
+
+</p>
+
+</div>

@@ -1,22 +1,106 @@
 ---
 title: "Comparative Study of Dimension Reduction Methods"
 subtitle: "Statistics and Machine Learning"
-description: "Due to sercurity issues, it is difficult to show the data used in this project. So, I will generate fake data to reproduce and demonstrate an approximate analysis pipeline."
+description: "Due to security concerns, it is difficult to display the data used in this project. Therefore, we will generate fake data to reproduce and demonstrate a rough analysis pipeline."
 author: Kwangmin Kim
 date: 2022-12-10
 image: images/high_dimensions.jpg
 image-alt: "a high dimensional data"
 ---
 
-## Package Loading and Option Settings
-```{r}
-library(glmnet)
+## Introduction
+
+### Rationale
+
+### Goal
+
+## Data Preparation
+
+### Package Loading and Option Settings
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
+
 library(tidyverse)
+library(tidymodels)
+library(glmnet)
+library(MASS)
+#library(mixOmics)
 set.seed(20221213) 
+
 ```
 
-
 ```{r}
+raw_data=read_csv("data/excel.practice.csv")
+names(raw_data)
+raw_data=raw_data%>%rename(id=1)
+raw_data[,-c(1:15)]%>%ncol
+
+mean_sd_data<-rbind("mean"=sapply(raw_data[,-c(1:15)],function(x)mean(x)),
+      "sd"=sapply(raw_data[,-c(1:15)],function(x)sd(x)))
+
+mean_sd_data%>%as.data.frame()
+
+sample_size <- 500
+variable_size <- 10000 # the number of predictors
+significant_variables <- variable_size*sample((50:200)/1000,1) # the number of predictors associated with a response variable
+
+metabolites <- matrix(rnorm(sample_size*variable_size), 
+            nrow=sample_size, ncol=variable_size)%>%as.data.frame()
+names(metabolites)<-paste("meta",1:10000)
+
+age_distribution=rchisq(500,df=10)
+sex_distribution=sample(c(0,1),500,replace=TRUE,prob = c(0.45,0.55))
+country_distribution=sample(c(0:3),500,replace=TRUE,prob = c(0.3,0.2,0.2,0.3))
+treatment_distribution=sample(c(0:2),500,replace=TRUE,prob = c(0.7,0.1,0.2))
+genotype_distribution=sample(c(0:5),500,replace=TRUE,
+                             prob = c(0.05,0.15,0.05,0.40,0.25,0.1))
+
+
+pheno_type<-
+    data.frame(
+        age=sapply(age_distribution,
+                   function(x)(x-min(age_distribution))/(max(age_distribution)-
+                    min(age_distribution))*(105-65)+65)%>%round(0),
+        sex=sex_distribution,
+        country=country_distribution,
+        treatment=treatment_distribution,
+        genotype=genotype_distribution)%>%
+    mutate(age=ifelse(genotype==0,age+3,
+                      ifelse(genotype==1,age+2,
+                             ifelse(genotype==4,age-1,
+                                    ifelse(genotype==5,age-2,age)))),
+           age=age+rnorm(sample_size,mean=0,sd=2),
+           age=round(age,0))%>%
+    mutate(age=ifelse(sex==0,age-3,age))
+
+phenotype_variable="age"
+standarization_function=function(phenotype_variable){
+    temp=pheno_type[,phenotype_variable]
+    return(sapply(temp,function(x)(x-mean(temp))/sd(temp)))
+}
+    
+?mvnorm
+
+y <- apply(x[,1:significant_variables], 1, function(x)sum(x)) + 
+    rnorm(sample_size) + 
+    standarization_function("age")+
+    standarization_function("sex")
+
+
+pheno_type%>%group_by(genotype)%>%summarise(mean=mean(age),sd=sd(age))
+pheno_type%>%names()
+
+var(mvrnorm(n = 1000, rep(0, 2), Sigma))
+mvrnorm(n = 1000, rep(0, 2), Sigma)
+```
+
+## Data Description
+
+## Architecture of Analysis Pipeline 
+
+## Methods
+
+```{r, echo=FALSE,message=FALSE,warning=FALSE}
 n <- 1000    # sample size
 p <- 10000     # the number of predictors
 significant_p <- p*0.25  # the number of predictors associated with a response variable
@@ -57,3 +141,9 @@ for (i in 0:10) {
 
 results
 ```
+
+## Results
+
+## Conclusion
+
+## Bibliography

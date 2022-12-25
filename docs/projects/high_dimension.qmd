@@ -31,44 +31,85 @@ set.seed(20221213)
 
 ```{r}
 
-# set the size of a sample and dimension
+# set the size of samples and predictors
+
 sample_size <- 500
-variable_size <- 10000 # the number of predictors
-significant_variables <- variable_size*sample((50:200)/1000,1) # the number of predictors truly associated with a response variable
+predictor_size <- 10000 # the number of predictors
+significant_predictors <- predictor_size*sample((50:200)/1000,1) # the number of predictors truly associated with a response variable
 
-positively_correlated_variables<-floor(significant_variables*0.4) # the number of variables positively correlated 
-negatively_correlated_variables<-significant_variable # the number of variables negatively correlated
+## set the predictors associated with an outcome
+positively_associated_predictors<-floor(significant_predictors*0.4) # the number of predictors positively associated with an outcome
+negatively_associated_predictors<-significant_predictors-positively_associated_predictors # the number of predictors negatively associated with an outcome
 
+## set correlated predictors within each group
+# (0.01+0.19)/2*10 # sum of an arithematic sequence
+proportion_list<-sample(seq(1,19,by=2)/100,10,replace=FALSE) # randomly sampling proportions of 10 correlated predictor groups to become their sum equal to 1
+
+group_list=c()
+for (i in length(proportion_list)){
+    
+    group_list<-c(group_list,c(paste0("group",i)=proportion_list[i]))
+}
+
+
+correlated_group_proportion<-c(0.1,0.1,0.1,0.1,0.1,0.,0.03,0.07,0.05,0.3) # set the proportion of correlated metabolite groups
+metabolite_groups<-c("group1"=sample(variable_size*0.05),
+                     "group2"=,
+                     "group3"=,
+                     "group4"=,
+                     "group5"=,
+                     "group6"=,
+                     "group7"=,
+                     "group8"=,
+                     "group9"=,
+                     "group10"=,
+                     
+                    
 # prepare metabolite data with multivariate normal distribution
+
+
+
 metabolites <- matrix(rnorm(sample_size*variable_size), 
             nrow=sample_size, ncol=variable_size)%>%
     as.data.frame()
 names(metabolites)<-paste("meta",1:10000)
 
-sample()
-
-Sigma <- matrix(
-    c(sample((1:100)/10,positive_significant_variables,replace=TRUE),
-      sample(-(1:100)/10,negative_significant_variables,replace=TRUE),),
+sigma <- matrix(
+    c(sample((1:100)/10,positively_correlated_variables,replace=TRUE),
+      sample((1:100)/10,negatively_correlated_variables,replace=TRUE),
+      sample((1:100)/100,(variable_size-significant_variables),replace=TRUE)),
     sample_size,variable_size)
-Sigma
-var(mvrnorm(n = 1000, rep(0, 2), Sigma))
-var(mvrnorm(n = 1000, rep(0, 2), Sigma, empirical = TRUE))
+#mvrnorm(n=sample_size,mu=rep(0,variable_size),Sigma=sigma)
 
-var(mvrnorm(n = 1000, rep(0, 2), Sigma))
+x <- create.data(
+nvars = c(10, 3),
+cors = c(0, 0.8),
+associations = c(0, 2),
+firstonly = c(TRUE, TRUE),
+nsamples = 50,
+response = "binary",
+logisticintercept = 0.5
+)
+x$summary
+x
+pen.data <- x$data[, -match("outcome", colnames(x$data))]
+response <- x$data[, match("outcome", colnames(x$data))]
+## lasso regression. Note that epsilon=1e-2 is passed onto optL1, and
+## reduces the precision of the tuning compared to the default 1e-10.
+output <-
+opt1D(
+nsim = 1,
+nprocessors = 1,
+penalized = pen.data,
+response = response,
+epsilon = 1e-2
+)
+cc <-
+output[which.max(output[, "cvl"]), -1:-3] ##non-zero b.* are true positives
 
-mvrnorm(n = 1000, rep(0, 2), Sigma)
+```
 
-
-Sigma <- matrix(c(10,3,3,2),sample_size,variable_size)
-Sigma
-var(mvrnorm(n = 1000, rep(0, 2), Sigma))
-var(mvrnorm(n = 1000, rep(0, 2), Sigma, empirical = TRUE))
-
-var(mvrnorm(n = 1000, rep(0, 2), Sigma))
-
-mvrnorm(n = 1000, rep(0, 2), Sigma)
-
+```{r}
 # prepare phenotype data
 
 age_distribution=rchisq(500,df=10)
@@ -114,12 +155,11 @@ pheno_type%>%group_by(genotype)%>%summarise(mean=mean(age),sd=sd(age))
 pheno_type%>%names()
 
 
-
 ```
 
 ## Data Description
 
-## Architecture of Analysis Pipeline 
+## Architecture of Analysis Pipeline
 
 ## Methods
 

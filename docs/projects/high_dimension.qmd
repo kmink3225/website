@@ -31,81 +31,70 @@ set.seed(20221213)
 
 ```{r}
 
-# set the size of samples and predictors
-
+# the number of samples
 sample_size <- 500
-predictor_size <- 10000 # the number of predictors
-significant_predictors <- predictor_size*sample((50:200)/1000,1) # the number of predictors truly associated with a response variable
+# the number of predictors
+predictor_size <- 500
+group_size <- 5
+# the number of predictors truly associated with a response variable
+significant_predictors <- floor(predictor_size*sample((50:200)/1000,1)) 
 
 ## set the predictors associated with an outcome
-positively_associated_predictors<-floor(significant_predictors*0.4) # the number of predictors positively associated with an outcome
-negatively_associated_predictors<-significant_predictors-positively_associated_predictors # the number of predictors negatively associated with an outcome
+### the number of predictors positively associated with an outcome
+### the number of predictors negatively associated with an outcome
+positively_associated_predictors<-floor(significant_predictors*0.4) 
+negatively_associated_predictors<-significant_predictors-positively_associated_predictors 
 
 ## set correlated predictors within each group
-# (0.01+0.19)/2*10 # sum of an arithematic sequence
-proportion_list<-sample(seq(1,19,by=2)/100,10,replace=FALSE) # randomly sampling proportions of 10 correlated predictor groups to become their sum equal to 1
+### randomly sampling proportions of 10 correlated predictor groups 
+### to become their sum equal to 1
+proportion_list<-sample(seq(1,1+2*(100-group_size)/group_size,
+                            by=2*(100-group_size)/(group_size*(group_size-1)))/100,
+                        group_size,replace=FALSE)%>%round(3) 
+names(proportion_list)<-paste0("group",1:length(proportion_list))
+### initialize a matrix with a size as sample_size by predictor_size
+predictor_matrix <- matrix(0, ncol = predictor_size, nrow = sample_size)
+### initialize a data frame and assign meta info used to generate simulated data
+meta_data<-
+    data.frame(group_name=c(names(proportion_list)),
+               proportion=proportion_list)%>%
+    mutate(group_n=(predictor_size*proportion_list)%>%round(0), # the within-group number of predictors
+           first_index=c(1,cumsum(group_n[-length(proportion_list)])+1), # the 1st index of predictors in each group
+           last_index=cumsum(group_n), # the last index of predictors in each group
+           group_correlation=sample((0:700)/1000,length(proportion_list),replace=TRUE), # correlation among the within-group predictors
+           group_effect=sample((-500:500)/1000,length(proportion_list),replace=TRUE)); # effect of each group on an outcome variable
 
-group_list=c()
-for (i in length(proportion_list)){
+
+data<-matrix(rnorm(sample_size*predictor_size,mean=0,sd=0.01), 
+             nrow = sample_size, ncol = predictor_size)
+covariance_matrix<-matrix(rnorm(predictor_size*predictor_size,0.15,0.05),
+                          nrow=predictor_size, ncol=predictor_size)
+beta_coefficients <- rnorm(predictor_size,0,0.1)%>%vector()
+
+
+for (i in 1:nrow(meta_data)) {
     
-    group_list<-c(group_list,c(paste0("group",i)=proportion_list[i]))
+    group_range <- meta_data[i, "first_index"]:meta_data[i, "last_index"]
+    for (j in group_range){
+        for(k in group_range){
+        covariance_matrix[j, k] <- meta_data[i, "group_correlation"]
+        }
+    }
+    #covariance_matrix[group_range, group_range]+meta_data[i, "group_correlation"]    
+    diag(covariance_matrix) <- 1
+    data[, group_range] <- 
+        mvrnorm(n = sample_size, 
+                mu = rep(0,meta_data[i,"group_n"]),
+                Sigma = covariance_matrix[group_range, group_range])
+    
+    beta_coefficients[meta_data[i, "first_index"]:meta_data[i, "last_index"]] <-
+        beta_coefficients[meta_data[i, "first_index"]:meta_data[i, "last_index"]]+
+        meta_data[i,"group_effect"]
+    variable_names<-paste0(meta_data[i,"group_name"],"_",1:meta_data[i,"group_n"])
+    names(beta_coefficients[meta_data[i, "first_index"]:meta_data[i, "last_index"]]) <- variable_names 
+        
 }
 
-
-correlated_group_proportion<-c(0.1,0.1,0.1,0.1,0.1,0.,0.03,0.07,0.05,0.3) # set the proportion of correlated metabolite groups
-metabolite_groups<-c("group1"=sample(variable_size*0.05),
-                     "group2"=,
-                     "group3"=,
-                     "group4"=,
-                     "group5"=,
-                     "group6"=,
-                     "group7"=,
-                     "group8"=,
-                     "group9"=,
-                     "group10"=,
-                     
-                    
-# prepare metabolite data with multivariate normal distribution
-
-
-
-metabolites <- matrix(rnorm(sample_size*variable_size), 
-            nrow=sample_size, ncol=variable_size)%>%
-    as.data.frame()
-names(metabolites)<-paste("meta",1:10000)
-
-sigma <- matrix(
-    c(sample((1:100)/10,positively_correlated_variables,replace=TRUE),
-      sample((1:100)/10,negatively_correlated_variables,replace=TRUE),
-      sample((1:100)/100,(variable_size-significant_variables),replace=TRUE)),
-    sample_size,variable_size)
-#mvrnorm(n=sample_size,mu=rep(0,variable_size),Sigma=sigma)
-
-x <- create.data(
-nvars = c(10, 3),
-cors = c(0, 0.8),
-associations = c(0, 2),
-firstonly = c(TRUE, TRUE),
-nsamples = 50,
-response = "binary",
-logisticintercept = 0.5
-)
-x$summary
-x
-pen.data <- x$data[, -match("outcome", colnames(x$data))]
-response <- x$data[, match("outcome", colnames(x$data))]
-## lasso regression. Note that epsilon=1e-2 is passed onto optL1, and
-## reduces the precision of the tuning compared to the default 1e-10.
-output <-
-opt1D(
-nsim = 1,
-nprocessors = 1,
-penalized = pen.data,
-response = response,
-epsilon = 1e-2
-)
-cc <-
-output[which.max(output[, "cvl"]), -1:-3] ##non-zero b.* are true positives
 
 ```
 

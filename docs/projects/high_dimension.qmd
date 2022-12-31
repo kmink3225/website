@@ -1,24 +1,35 @@
 ---
 title: "Comparative Study of Dimension Reduction Methods"
 subtitle: "Statistics and Machine Learning"
-description: "Due to security concerns, it is difficult to display the data used in this project. Therefore, we will generate fake data to reproduce and demonstrate a rough analysis pipeline."
+description: "Due to security concerns, it is difficult to display the data used in this project. Therefore, I will generate fake data to reproduce and demonstrate a rough analysis pipeline."
 author: Kwangmin Kim
-date: 2022-12-10
+date: 2022-12-20
 image: images/high_dimensions.jpg
 image-alt: "a high dimensional data"
+format:
+  html:
+    code-fold: true
+    code-summary: "Show the code"
+execute:
+  warning: false
 ---
 
 ## Introduction
 
-### Rationale
+### Background
+
+Alzheimer Disease (AD) is a most common form of dementia that affects millions of Americans. AD affects memory, thinking and behavior, but its progression is slow, spanning nearly two decades before the symptoms appear. Thus, it is imperative to understand the physiology at the pre-clinical stage. It is estimated that genetic factors contribute nearly 50% to AD. To better understand how genes contribute to the risk of AD by altering cellular milieu, we have examined the metabolome of high risk individuals, the APOE4 carriers. The metabolome represents the products that were generated from the genome and proteome. These biochemical products represent influences of both genetic and environmental factors. In this article, I prepared simulated data to reproduce and demonstrate a rough analysis pipeline due to security concerns.
 
 ### Goal
+
+The aim of this simulation study is to identify a set of metabolites that will enable to differentiate bio-markers that are associated with AD vs. non-AD.
 
 ## Data Preparation
 
 ### Package Loading and Option Settings
 
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
+```{r, message=FALSE,warning=FALSE}
+#| code-fold: true
 
 library(tidyverse)
 library(tidymodels)
@@ -26,87 +37,19 @@ library(glmnet)
 library(MASS)
 #library(mixOmics)
 set.seed(20221213) 
-knitr::opts_chunk$set(eval = FALSE,echo=FALSE)
+knitr::opts_chunk$set(message=FALSE,warning=FALSE)
 ```
 
-```{r}
+### Data Simulation
+
+```{r, echo=FALSE, eval=FALSE}
+#| code-fold: true
 
 # the number of samples
-sample_size <- 500
+sample_size <- 1000
 # the number of predictors
-predictor_size <- 500
-group_size <- 5
-# the number of predictors truly associated with a response variable
-significant_predictors <- floor(predictor_size*sample((50:200)/1000,1)) 
-
-## set the predictors associated with an outcome
-### the number of predictors positively associated with an outcome
-### the number of predictors negatively associated with an outcome
-positively_associated_predictors<-floor(significant_predictors*0.4) 
-negatively_associated_predictors<-significant_predictors-positively_associated_predictors 
-
-## set correlated predictors within each group
-### randomly sampling proportions of 10 correlated predictor groups 
-### to become their sum equal to 1
-proportion_list<-sample(seq(1,1+2*(100-group_size)/group_size,
-                            by=2*(100-group_size)/(group_size*(group_size-1)))/100,
-                        group_size,replace=FALSE)%>%round(3) 
-names(proportion_list)<-paste0("group",1:length(proportion_list))
-### initialize a matrix with a size as sample_size by predictor_size
-predictor_matrix <- matrix(0, ncol = predictor_size, nrow = sample_size)
-### initialize a data frame and assign meta info used to generate simulated data
-meta_data<-
-    data.frame(group_name=c(names(proportion_list)),
-               proportion=proportion_list)%>%
-    mutate(group_n=(predictor_size*proportion_list)%>%round(0), # the within-group number of predictors
-           first_index=c(1,cumsum(group_n[-length(proportion_list)])+1), # the 1st index of predictors in each group
-           last_index=cumsum(group_n), # the last index of predictors in each group
-           group_correlation=sample((0:700)/1000,length(proportion_list),replace=TRUE), # correlation among the within-group predictors
-           group_effect=sample((-500:500)/1000,length(proportion_list),replace=TRUE)); # effect of each group on an outcome variable
-
-
-data<-matrix(rnorm(sample_size*predictor_size,mean=0,sd=0.01), 
-             nrow = sample_size, ncol = predictor_size)
-covariance_matrix<-matrix(rnorm(predictor_size*predictor_size,0.15,0.05),
-                          nrow=predictor_size, ncol=predictor_size)
-beta_coefficients <- rnorm(predictor_size,0,0.1)%>%vector()
-
-
-for (i in 1:nrow(meta_data)) {
-    
-    group_range <- meta_data[i, "first_index"]:meta_data[i, "last_index"]
-    for (j in group_range){
-        for(k in group_range){
-        covariance_matrix[j, k] <- meta_data[i, "group_correlation"]
-        }
-    }
-    #covariance_matrix[group_range, group_range]+meta_data[i, "group_correlation"]    
-    diag(covariance_matrix) <- 1
-    data[, group_range] <- 
-        mvrnorm(n = sample_size, 
-                mu = rep(0,meta_data[i,"group_n"]),
-                Sigma = covariance_matrix[group_range, group_range])
-    
-    beta_coefficients[meta_data[i, "first_index"]:meta_data[i, "last_index"]] <-
-        beta_coefficients[meta_data[i, "first_index"]:meta_data[i, "last_index"]]+
-        meta_data[i,"group_effect"]
-    variable_names<-paste0(meta_data[i,"group_name"],"_",1:meta_data[i,"group_n"])
-    names(beta_coefficients[meta_data[i, "first_index"]:meta_data[i, "last_index"]]) <- variable_names 
-        
-}
-
-
-```
-
-```{r}
-# prepare phenotype data
-
-
-# the number of samples
-sample_size <- 500
-# the number of predictors
-predictor_size <- 500
-group_size <- 5
+predictor_size <- 10000
+group_size <- 10
 # the number of predictors truly associated with a response variable
 significant_predictors <- floor(predictor_size*sample((50:200)/1000,1)) 
 
@@ -133,15 +76,15 @@ meta_data<-
            first_index=c(1,cumsum(group_n[-length(proportion_list)])+1), # the 1st index of predictors in each group
            last_index=cumsum(group_n), # the last index of predictors in each group
            group_correlation=sample((0:700)/1000,length(proportion_list),replace=TRUE), # correlation among the within-group predictors
-           group_effect=sample((-500:500)/1000,length(proportion_list),replace=TRUE)); # effect of each group on an outcome variable
+           group_effect=sample((-2:2)/10,length(proportion_list),replace=TRUE)); # effect of each group on an outcome variable
 
 
 data<-matrix(rnorm(sample_size*predictor_size,mean=0,sd=0.01), 
              nrow = sample_size, ncol = predictor_size)
 covariance_matrix<-matrix(rnorm(predictor_size*predictor_size,0.15,0.05),
                           nrow=predictor_size, ncol=predictor_size)
-beta_coefficients <- rnorm(predictor_size,0,0.1)
-
+beta_coefficients <- rnorm(predictor_size,0,0.05)
+hist(beta_coefficients)
 
 for (i in 1:nrow(meta_data)) {
     
@@ -169,20 +112,19 @@ for (i in 1:nrow(meta_data)) {
 score=as.matrix(data)%*%beta_coefficients # score of each sample
 # logistic function to get a probability, intercept = 0, 
 # to decrease prevalence, set p-0.2, negative probabilities into 0
-probabilities <- (1/(1+exp(-(0+score)))-0.3)%>%ifelse(.<0,0,.)  
+probabilities <- ((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05))%>%
+    ifelse(.>1,1,.)%>%abs()
 response <- rbinom(sample_size, 1, probabilities) 
 
-
-
-hist(age_distribution)
-age_distribution=rchisq(500,df=9)
-sex_distribution=sample(c(0,1),500,replace=TRUE,prob = c(0.45,0.55))
-country_distribution=sample(c(0:3),500,replace=TRUE,prob = c(0.3,0.2,0.2,0.3))
-treatment_distribution=sample(c(0:2),500,replace=TRUE,prob = c(0.7,0.2,0.1))
-genotype_distribution=sample(c(0:5),500,replace=TRUE,
+age_distribution=rchisq(sample_size,df=9)
+sex_distribution=sample(c(0,1),sample_size,replace=TRUE,prob = c(0.45,0.55))
+country_distribution=sample(c(0:3),sample_size,replace=TRUE,prob = c(0.3,0.2,0.2,0.3))
+treatment_distribution=sample(c(0:2),sample_size,replace=TRUE,prob = c(0.7,0.2,0.1))
+genotype_distribution=sample(c(0:5),sample_size,replace=TRUE,
                              prob = c(0.05,0.15,0.05,0.40,0.25,0.1))
-pheno_data<-
+phenotype_data<-
     data.frame(
+        id=1:sample_size,
         outcome=response,
         probabilities=probabilities,
         age=ifelse(probabilities<0.15,age_distribution-4,
@@ -202,24 +144,46 @@ pheno_data<-
                                   ifelse(probabilities>0.7,3,
                                          ifelse(probabilities>0.8,4,
                                                 ifelse(probabilities>0.9,5,genotype))))),
-           age=ifelse(genotype==0,age-5,
-                      ifelse(genotype==1,age-2,
-                             ifelse(genotype==4,age+3,
-                                    ifelse(genotype==5,age+6,age))))) 
-
-y <- apply(x[,1:significant_variables], 1, function(x)sum(x)) + 
-    rnorm(sample_size) + 
-    standarization_function("age")+
-    standarization_function("sex")
+           age=ifelse(outcome==0&genotype==0,age+10,
+                      ifelse(outcome==0&genotype==1,age+5,
+                             ifelse(genotype==4,age-3,
+                                    ifelse(genotype==5,age-2,age)))),
+           genotype=ifelse(outcome==1&genotype==3&age>83&age<92,4,genotype),
+           genotype=ifelse(outcome==1&genotype==4&age>87,5,genotype))
 
 
-pheno_type%>%group_by(genotype)%>%summarise(mean=mean(age),sd=sd(age))
-pheno_type%>%names()
+all_data=inner_join(phenotype_data,data%>%mutate(id=1:n()),by="id")
 
+#write.csv(all_data,"./data/llfs_simulated_data.csv")
 
 ```
 
+### Load Data
+
+```{r}
+#| code-fold: true
+all_data=read_csv("./data/llfs_simulated_data.csv",
+                  progress = show_progress(),
+                  show_col_types = FALSE)%>%
+    dplyr::select(-1,-probabilities)
+all_data=all_data%>%
+    mutate(outcome=factor(outcome,levels=c(0,1)),
+           sex=factor(sex,levels=c(0,1)),
+           country=factor(country,levels=c(0,1)),
+           treatment=factor(treatment,levels=c(0,1)),
+           genotype=factor(genotype,levels=c(3,0,1,2,4,5))
+           )
+
+dim(all_data)
+```
+
 ## Data Description
+
+This data include
+
+    `r today()`
+
+`r`dim(all_data)\[1\] samples and `r`dim(all_data)\[2\] variables.
 
 ## Architecture of Analysis Pipeline
 

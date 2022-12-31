@@ -33,15 +33,15 @@ meta_data<-
            first_index=c(1,cumsum(group_n[-length(proportion_list)])+1), # the 1st index of predictors in each group
            last_index=cumsum(group_n), # the last index of predictors in each group
            group_correlation=sample((0:700)/1000,length(proportion_list),replace=TRUE), # correlation among the within-group predictors
-           group_effect=sample((-300:600)/1000,length(proportion_list),replace=TRUE)); # effect of each group on an outcome variable
+           group_effect=sample((-5:5)/20,length(proportion_list),replace=TRUE)); # effect of each group on an outcome variable
 
 
 data<-matrix(rnorm(sample_size*predictor_size,mean=0,sd=0.01), 
              nrow = sample_size, ncol = predictor_size)
 covariance_matrix<-matrix(rnorm(predictor_size*predictor_size,0.15,0.05),
                           nrow=predictor_size, ncol=predictor_size)
-beta_coefficients <- rnorm(predictor_size,0,0.1)
-
+beta_coefficients <- rnorm(predictor_size,0,0.05)
+hist(beta_coefficients)
 
 for (i in 1:nrow(meta_data)) {
     
@@ -69,10 +69,12 @@ for (i in 1:nrow(meta_data)) {
 score=as.matrix(data)%*%beta_coefficients # score of each sample
 # logistic function to get a probability, intercept = 0, 
 # to decrease prevalence, set p-0.2, negative probabilities into 0
-probabilities <- ((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.1,sd=0.1))%>%
+probabilities <- ((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05))%>%
     ifelse(.>1,1,.)%>%abs()
 response <- rbinom(sample_size, 1, probabilities) 
 table(response)
+hist(probabilities)
+hist((1/(1+exp(-(0+score)))))
 
 
 hist(age_distribution)

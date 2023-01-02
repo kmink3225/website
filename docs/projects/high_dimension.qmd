@@ -84,7 +84,6 @@ data<-matrix(rnorm(sample_size*predictor_size,mean=0,sd=0.01),
 covariance_matrix<-matrix(rnorm(predictor_size*predictor_size,0.15,0.05),
                           nrow=predictor_size, ncol=predictor_size)
 beta_coefficients <- rnorm(predictor_size,0,0.05)
-hist(beta_coefficients)
 
 for (i in 1:nrow(meta_data)) {
     
@@ -154,36 +153,42 @@ phenotype_data<-
 
 all_data=inner_join(phenotype_data,data%>%mutate(id=1:n()),by="id")
 
-#write.csv(all_data,"./data/llfs_simulated_data.csv")
-
+#save(all_data, file="llfs_simulated_data.rda")
+#write_rds(all_data,"llfs_simulated_data.rds")
 ```
 
 ### Load Data
 
 ```{r}
 #| code-fold: true
-all_data=read_csv("./data/llfs_simulated_data.csv",
-                  progress = show_progress(),
-                  show_col_types = FALSE)%>%
-    dplyr::select(-1,-probabilities)
-all_data=all_data%>%
-    mutate(outcome=factor(outcome,levels=c(0,1)),
-           sex=factor(sex,levels=c(0,1)),
-           country=factor(country,levels=c(0,1)),
-           treatment=factor(treatment,levels=c(0,1)),
-           genotype=factor(genotype,levels=c(3,0,1,2,4,5))
-           )
 
-dim(all_data)
+
+#all_data=read_csv("C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rda",
+#                  progress = show_progress(),
+#                  show_col_types = FALSE)%>%
+
+ all_data=read_rds("C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds")%>%
+     dplyr::select(-1,-probabilities)
+ all_data=all_data%>%
+     mutate(outcome=factor(outcome,levels=c(0,1)),
+            sex=factor(sex,levels=c(0,1)),
+            country=factor(country,levels=c(0,1)),
+            treatment=factor(treatment,levels=c(0,1)),
+            genotype=factor(genotype,levels=c(3,0,1,2,4,5))
+            )
+ 
+ dim(all_data)
+
 ```
 
 ## Data Description
 
 This data include
 
-    `r today()`
+    `r summary(mtcars)`
+this inline code works but it seems to rmd files look more organized and tidier.
 
-`r`dim(all_data)\[1\] samples and `r`dim(all_data)\[2\] variables.
+
 
 ## Architecture of Analysis Pipeline
 

@@ -361,6 +361,62 @@
     "href": "docs/blog/posts/2023-01-02_statistics/index.html#basic-statistics",
     "title": "Statistics Blog Guide Map",
     "section": "Basic Statistics",
-    "text": "Basic Statistics\n\n2022-12-28, p-values"
+    "text": "Basic Statistics\n\n1111-11-11, Hypothesis Testing\n2022-12-28, p-values\n1111-11-11, Permutation Test\n1111-11-11, Power\n1111-11-11, Multiple Comparison\n1111-11-11, Sample Size Calculation\n1111-11-11, A/B Testing"
+  },
+  {
+    "objectID": "docs/projects/high_dimension/high_dimension.html",
+    "href": "docs/projects/high_dimension/high_dimension.html",
+    "title": "Comparative Study of Dimension Reduction Methods",
+    "section": "",
+    "text": "Alzheimer Disease (AD) is a most common form of dementia that affects millions of Americans. AD affects memory, thinking and behavior, but its progression is slow, spanning nearly two decades before the symptoms appear. Thus, it is imperative to understand the physiology at the pre-clinical stage. It is estimated that genetic factors contribute nearly 50% to AD. To better understand how genes contribute to the risk of AD by altering cellular milieu, we have examined the metabolome of high risk individuals, the APOE4 carriers. The metabolome represents the products that were generated from the genome and proteome. These biochemical products represent influences of both genetic and environmental factors. In this article, I prepared simulated data to reproduce and demonstrate a rough analysis pipeline due to security concerns.\n\n\n\nThe aim of this simulation study is to identify a set of metabolites that will enable to differentiate bio-markers that are associated with AD vs. non-AD."
+  },
+  {
+    "objectID": "docs/projects/high_dimension/high_dimension.html#data-preparation",
+    "href": "docs/projects/high_dimension/high_dimension.html#data-preparation",
+    "title": "Comparative Study of Dimension Reduction Methods",
+    "section": "Data Preparation",
+    "text": "Data Preparation\n\nPackage Loading and Option Settings\n\n\nShow the code\nlibrary(tidyverse)\nlibrary(tidymodels)\nlibrary(glmnet)\nlibrary(MASS)\n#library(mixOmics)\nset.seed(20221213) \nknitr::opts_chunk$set(message=FALSE,warning=FALSE)\n\n\n\n\nData Simulation\n\n\n\n\n\nLoad Data\n\n\nShow the code\n#all_data=read_csv(\"C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rda\",\n#                  progress = show_progress(),\n#                  show_col_types = FALSE)%>%\n\n all_data=read_rds(\"C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds\")%>%\n     dplyr::select(-1,-probabilities)\n all_data=all_data%>%\n     mutate(outcome=factor(outcome,levels=c(0,1)),\n            sex=factor(sex,levels=c(0,1)),\n            country=factor(country,levels=c(0,1)),\n            treatment=factor(treatment,levels=c(0,1)),\n            genotype=factor(genotype,levels=c(3,0,1,2,4,5))\n            )\n \n dim(all_data)\n\n\n[1]  1000 10006"
+  },
+  {
+    "objectID": "docs/projects/high_dimension/high_dimension.html#data-description",
+    "href": "docs/projects/high_dimension/high_dimension.html#data-description",
+    "title": "Comparative Study of Dimension Reduction Methods",
+    "section": "Data Description",
+    "text": "Data Description\nThis data include\nMin.   :10.40  , 1st Qu.:15.43  , Median :19.20  , Mean   :20.09  , 3rd Qu.:22.80  , Max.   :33.90  , Min.   :4.000  , 1st Qu.:4.000  , Median :6.000  , Mean   :6.188  , 3rd Qu.:8.000  , Max.   :8.000  , Min.   : 71.1  , 1st Qu.:120.8  , Median :196.3  , Mean   :230.7  , 3rd Qu.:326.0  , Max.   :472.0  , Min.   : 52.0  , 1st Qu.: 96.5  , Median :123.0  , Mean   :146.7  , 3rd Qu.:180.0  , Max.   :335.0  , Min.   :2.760  , 1st Qu.:3.080  , Median :3.695  , Mean   :3.597  , 3rd Qu.:3.920  , Max.   :4.930  , Min.   :1.513  , 1st Qu.:2.581  , Median :3.325  , Mean   :3.217  , 3rd Qu.:3.610  , Max.   :5.424  , Min.   :14.50  , 1st Qu.:16.89  , Median :17.71  , Mean   :17.85  , 3rd Qu.:18.90  , Max.   :22.90  , Min.   :0.0000  , 1st Qu.:0.0000  , Median :0.0000  , Mean   :0.4375  , 3rd Qu.:1.0000  , Max.   :1.0000  , Min.   :0.0000  , 1st Qu.:0.0000  , Median :0.0000  , Mean   :0.4062  , 3rd Qu.:1.0000  , Max.   :1.0000  , Min.   :3.000  , 1st Qu.:3.000  , Median :4.000  , Mean   :3.688  , 3rd Qu.:4.000  , Max.   :5.000  , Min.   :1.000  , 1st Qu.:2.000  , Median :2.000  , Mean   :2.812  , 3rd Qu.:4.000  , Max.   :8.000  \nthis inline code works but it seems to rmd files look more organized and tidier."
+  },
+  {
+    "objectID": "docs/projects/high_dimension/high_dimension.html#architecture-of-analysis-pipeline",
+    "href": "docs/projects/high_dimension/high_dimension.html#architecture-of-analysis-pipeline",
+    "title": "Comparative Study of Dimension Reduction Methods",
+    "section": "Architecture of Analysis Pipeline",
+    "text": "Architecture of Analysis Pipeline"
+  },
+  {
+    "objectID": "docs/projects/high_dimension/high_dimension.html#methods",
+    "href": "docs/projects/high_dimension/high_dimension.html#methods",
+    "title": "Comparative Study of Dimension Reduction Methods",
+    "section": "Methods",
+    "text": "Methods\n\n\n   alpha      mse fit.name\n1    0.0 2529.146   alpha0\n2    0.1 2529.146 alpha0.1\n3    0.2 2529.146 alpha0.2\n4    0.3 2529.146 alpha0.3\n5    0.4 2529.146 alpha0.4\n6    0.5 2529.146 alpha0.5\n7    0.6 2529.146 alpha0.6\n8    0.7 2529.146 alpha0.7\n9    0.8 2529.146 alpha0.8\n10   0.9 2529.146 alpha0.9\n11   1.0 2529.146   alpha1"
+  },
+  {
+    "objectID": "docs/projects/high_dimension/high_dimension.html#results",
+    "href": "docs/projects/high_dimension/high_dimension.html#results",
+    "title": "Comparative Study of Dimension Reduction Methods",
+    "section": "Results",
+    "text": "Results"
+  },
+  {
+    "objectID": "docs/projects/high_dimension/high_dimension.html#conclusion",
+    "href": "docs/projects/high_dimension/high_dimension.html#conclusion",
+    "title": "Comparative Study of Dimension Reduction Methods",
+    "section": "Conclusion",
+    "text": "Conclusion"
+  },
+  {
+    "objectID": "docs/projects/high_dimension/high_dimension.html#bibliography",
+    "href": "docs/projects/high_dimension/high_dimension.html#bibliography",
+    "title": "Comparative Study of Dimension Reduction Methods",
+    "section": "Bibliography",
+    "text": "Bibliography"
   }
 ]

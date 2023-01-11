@@ -1,12 +1,110 @@
 ---
 title: "Description"
 subtitle: "Project Description"
-description: "Due to security concerns, it is difficult to display the data used in this project. Therefore, I will generate fake data to reproduce and demonstrate a rough analysis pipeline."
+description: "Due to security concerns, it is difficult to display the data used in this project. Therefore, I will generate fake data to reproduce and demonstrate a rough analysis pipeline. \n 보안 문제로 인해 이 프로젝트에서 사용된 데이터를 표시하기 어렵습니다. 따라서 대략적인 분석 파이프라인을 재현하고 시연하기 위해 가짜 데이터를 생성할 것입니다."
 author: Kwangmin Kim
 date: 2023-01-03
 ---
-
 # Introduction
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+## Background
+
+알츠하이머병(AD)은 수백만 명의 미국인에게 영향을 미치는 가장 흔한 형태의 치매이다. 알츠하이머병은 기억력, 사고력 및 행동에 영향을 주지만 증상이 나타나기까지 거의 20년에 걸쳐 진행이 된다. 따라서 전 임상 단계에서 생리학을 이해하는 것이 필수적이다. 유전적 요인이 AD에 거의 50% 기여하는 것으로 추정된다. 유전자가 세포 환경을 변경하여 알츠하이머병 위험에 어떻게 기여하는지 더 잘 이해하기 위해 우리는 고위험 유전자인 APOE4를 보유한 사람들의 대사체를 조사했다. 대사체는 게놈과 프로테옴에서 생성된 산물을 나타낸다. 이러한 생화학 부산물은 유전적 요인과 환경적 요인 모두의 영향을 받는다. 이 글에서는 보안 문제로 인해 대략적인 분석 파이프라인을 재현하고 시연하기 위한 시뮬레이션 데이터를 준비한다.
+
+## Objective
+
+LLFS(Long Life Family Study) 프로젝트의 목적은 전사체 및 단백질체 단계를 통해 게놈에서 대사체 단계에 이르는 다단계에서 통계 및 기계 학습을 사용하여 분석 파이프라인을 구축하고 알츠하이머병에 대한 중요한 바이오마커를 식별하기 위함이다.
+
+## Goal
+
+이 시뮬레이션 연구에서는 다변량 정규분포 하에서 데이터를 생성하여 대사 단계에서 가짜 데이터를 생성하는 데에만 집중할 것이다. (현재 내 실력으로는 이산 변수에 대하여 통계적으로 시뮬레이션하는데 더 연구가 필요함.) 이 시뮬레이션 연구의 목표는 알츠하이머병과 비알츠하이머병과 관련된 바이오마커를 구별할 수 있는 일련의 예측인자(또는 대사물질 또는 생화학물질)를 식별하는 것이다.
+
+## Feature
+
+보안 문제로 인해 이 프로젝트에 사용된 실제 데이터와 전체 분석 파이프라인을 표시하기 어렵다. 따라서 시뮬레이션을 통해 대략적인 분석 파이프라인을 재현하고 시연하기 위해 가짜 데이터를 생성한다.
+
+## Development Environment
+
+* Operating System
+    * Window
+    * Ubuntu 20.04
+* Software
+    * Quarto for dynamic documentation
+    * VS code
+    * R studio 2022.07.2+576
+    * R base 4.2.2
+    * Python 3.11
+
+## How to Read the Contents
+
+읽기의 편의를 위해 이 프로젝트를 5개 섹션으로 나누었습니다.
+
+* Description (Current)
+* Data Preparation
+* EDA (Exploratory Data Analysis)
+* Method1: statistical approach
+* Method2: ML Approach
+* Conclusion
+
+# Analysis Pipeline Architecture
+
+## Simulation
+
+```{mermaid}
+%%| fig-width: 7
+flowchart TB
+    subgraph assign_frequency
+        direction LR
+        Assign_probabilities     
+    end
+    subgraph generate_multivariate_normal_distribution
+        direction TB
+        determine_sample_size ---
+        determine_number_of_columns---
+        create_covariate_correlation_matrix---
+        apply_some_noise_to_the_covariance_matrix
+    end
+    subgraph create_weight_matrix
+        direction LR
+        apply_some_noise_to_the_covariance_matrix
+    end
+    subgraph calculate_score_matrix
+        direction TB
+        matrix_multiplication_covariance_matrix_weight_matrix---
+        used_logistic_function
+    end
+    subgraph create_response_variable
+        direction LR
+        result_of_logistic_function
+    end
+    subgraph creation_some_discrete_variables
+        direction LR       
+    end
+    subgraph join
+        direction LR
+        all_the_matrix_and_vector_created       
+    end
+    assign_frequency-->generate_multivariate_normal_distribution-->create_weight_matrix-->
+    calculate_score_matrix-->create_response_variable-->creation_some_discrete_variables-->
+    join
+```
+
+
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
 
 ## Background
 
@@ -48,8 +146,47 @@ For the convenience of reading, I divided this proejcts into 5 sections:
 # Analysis Pipeline Architecture
 
 ## Simulation
-```{mermaid}
-flowchart LR
-    
 
+
+```{mermaid}
+%%| fig-width: 7
+flowchart TB
+    subgraph assign_frequency
+        direction LR
+        Assign_probabilities     
+    end
+    subgraph multivariate_normal_distribution
+        direction LR
+        determine_sample_size ---
+        determine_number_of_columns---
+        create_covariate_correlation_matrix---
+        apply_some_noise_to_the_covariance_matrix
+    end
+    subgraph create_weight_matrix
+        direction LR
+        apply_some_noise_to_the_covariance_matrix
+    end
+    subgraph calculate_score_matrix
+        direction LR
+        matrix_multiplication_covariance_matrix_weight_matrix---
+        used_logistic_function
+    end
+    subgraph create_response_variable
+        direction LR
+        result_of_logistic_function
+    end
+    subgraph creation_some_discrete_variables
+        direction LR       
+    end
+    subgraph join
+        direction LR
+        all_the_matrix_and_vector_created       
+    end
+    assign_frequency-->multivariate_normal_distribution-->create_weight_matrix-->
+    calculate_score_matrix-->create_response_variable-->creation_some_discrete_variables-->
+    join
 ```
+
+
+
+</div>

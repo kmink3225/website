@@ -203,6 +203,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <ul>
   <li><a href="#description" id="toc-description" class="nav-link active" data-scroll-target="#description"><span class="toc-section-number">1</span>  Description</a></li>
   <li><a href="#how-f-test-f-검정-이용" id="toc-how-f-test-f-검정-이용" class="nav-link" data-scroll-target="#how-f-test-f-검정-이용"><span class="toc-section-number">2</span>  How: F test (F 검정) 이용</a></li>
+  <li><a href="#왜-분산을-보는가" id="toc-왜-분산을-보는가" class="nav-link" data-scroll-target="#왜-분산을-보는가"><span class="toc-section-number">3</span>  왜 분산을 보는가?</a></li>
   </ul>
 </nav>
     </div>
@@ -293,26 +294,45 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>두 번째 자유도: 집단 내(within-group)의 자유도</li>
 </ul>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">rf</span>(<span class="dv">1000</span>,<span class="at">df1=</span><span class="dv">5</span>,<span class="at">df=</span><span class="dv">50</span>),<span class="at">breaks=</span><span class="dv">30</span>, <span class="at">main=</span><span class="st">"Example of F Distribution"</span>, <span class="at">xlab=</span> <span class="st">"F-values"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 나중에 제대로 그려야함 귀찮...</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(<span class="fu">rf</span>(<span class="dv">1000</span>,<span class="at">df1=</span><span class="dv">5</span>,<span class="at">df=</span><span class="dv">50</span>),<span class="at">breaks=</span><span class="dv">30</span>, <span class="at">main=</span><span class="st">"Example of F Distribution"</span>, <span class="at">xlab=</span> <span class="st">"F-values"</span>, <span class="at">ylab=</span><span class="st">"Desnity"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="index_files/figure-html/unnamed-chunk-1-1.png" class="img-fluid" width="672"></p>
 </div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#pf(9.59,df1=1,df2=8, lower.tail = FALSE)#특정 F값에 대응되는 확률값 산출,df1=집단간분산의 자유도, df2= 집단내 분산의 자유도도, 9.59 이상일 확률을 계산해야함</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#qf(0.05, df=1,df2=8, lower.tail = FALSE) # 특정 확률에 대응되는 F값을 산출, 5.317&lt;9.59 </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></li>
 <li>집단 간 분산 (between-groups variability)
 <ul>
 <li><span class="math inline">\(\frac{집단 간 제곱합}{자유도}=\frac{\sum_g[(\overline{X}_g-\overline{X})^2n_g]}{g-1}\)</span></li>
-<li><span class="math inline">\(g=g\)</span> group의 sample size, <span class="math inline">\(\overline{X}_g=\)</span> <span class="math inline">\(g\)</span> 의 sample mean, <span class="math inline">\(\overline{X}=\)</span> global sample mean, <span class="math inline">\(n_g=\)</span> <span class="math inline">\(g\)</span> group의 sample size</li>
+<li><span class="math inline">\(g=g\)</span> group의 sample size,</li>
+<li><span class="math inline">\(\overline{X}_g=\)</span> <span class="math inline">\(g\)</span> 의 sample mean,<br>
+</li>
+<li><span class="math inline">\(\overline{X}=\)</span> global sample mean,</li>
+<li><span class="math inline">\(n_g=\)</span> <span class="math inline">\(g\)</span> group의 sample size</li>
 </ul></li>
 <li>집단 내 분산 (within-groups variability)
 <ul>
 <li><span class="math inline">\(\frac{집단 내 제곱합}{자유도}=\frac{\sum_g\sum_i[(\overline{X}_{ig}-\overline{X_g})^2n_g]}{\sum_g(n_g-1)}=\frac{\sum_g[(s^2_g(n_g-1)]}{\sum_g(n_g-1)}=\frac{\sum_g[(s^2_g(n_g-1)]}{n-g}\)</span></li>
-<li><span class="math inline">\(g=\)</span> group의 sample size, <span class="math inline">\(s_g=g\)</span> group의 표준 편차, <span class="math inline">\(n_g=g\)</span> group의 sample size, <span class="math inline">\(X_{ig}=g\)</span> 집단의 <span class="math inline">\(i\)</span> th 관측값, <span class="math inline">\(\overline{X}_g\)</span>: g group의 sample mean, <span class="math inline">\(n=\)</span> global sample size</li>
+<li><span class="math inline">\(g=\)</span> group의 sample size,</li>
+<li><span class="math inline">\(s_g=g\)</span> group의 표준 편차,</li>
+<li><span class="math inline">\(n_g=g\)</span> group의 sample size,</li>
+<li><span class="math inline">\(X_{ig}=g\)</span> 집단의 <span class="math inline">\(i\)</span> th 관측값,<br>
+</li>
+<li><span class="math inline">\(\overline{X}_g=g\)</span> group의 sample mean,<br>
+</li>
+<li><span class="math inline">\(n=\)</span> global sample size</li>
 </ul></li>
-<li><span class="math inline">\(F=\frac{집단 간 분산}{집단 내 분산}\)</span>, 항상 양수
+<li><span class="math inline">\(F=\frac{집단 간 분산}{집단 내 분산}\)</span>
 <ul>
-<li>분산 분석에서는 모집단의 등분산성 (Homoscedasticity)을 가정하기 때문에 각 집단의 분산을 표본 크기를 고려한 가중 평균으로 하나의 집단 내 분산을 두번째 식으로 표현할 수 있다.</li>
+<li>항상 양수</li>
+<li>분산 분석에서는 모집단의 등분산성 (Homoscedasticity)을 가정하기 때문에 각 집단의 분산을 표본 크기를 고려한 가중 평균으로 하나의 집단 내 분산을 표현할 수 있다.</li>
 </ul></li>
 </ul>
+</section>
+<section id="왜-분산을-보는가" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="왜-분산을-보는가"><span class="header-section-number">3</span> 왜 분산을 보는가?</h2>
+<p>집단 간 분산과 집단 내 분산의 비교, 집단 간 분산이 클수록 그리고 집단 분산이 작을 수록 집단 평균이 다를 가능성이 증가한다. (시각화) dye 성능의 분산 분석이 이루어져야함</p>
 
 
 </section>

@@ -6,9 +6,17 @@ description: |
 categories:
   - Statistics
 author: Kwangmin Kim
-number-sections: True
 date: 01/07/2023
-draft: true
+draft: false
+format: 
+  html:
+    toc: true
+    number-sections: True
+    code-fold: true
+execute: 
+  warning: false
+  message: false
+
 ---
  
  (**draft**)
@@ -19,7 +27,538 @@ draft: true
  * 1111-11-11, [repeated measures ANOVA](../2023-01-07-anova/index.qmd)
  * 1111-11-11, [MANOVA](../2023-01-07-anova/index.qmd)
  * 1111-11-11, [MANCOVA](../2023-01-07-anova/index.qmd)
- 
+
+ <ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+## Terms
+
+ * pairwise comparison: A hypothesis test (e.g., of means) between two groups among multiple groups.
+ * obmnibus set: A single hypothesis test of the overall variance among multiple group means.
+ * decomposition of variance : Separation of components contributing to an individual value (e.g., from the overall average, from a treatment mean, and from a residual error).
+ * F-test
+ * F statistic: A standardized statistic that measures the extent to which differences among group means exceed what might be expected in a chance model.
+ * sum of squares: deviations from some average value
+
+### Description
+
+ANOVA는 **3개 이상의 모집단** 사이의 **평균**의 동일성을 검정하는 통계 분석 방법이다.
+
+* 일원 분산 분석 (One-way ANOVA)
+    * 그룹을 구분하는 변수가 1개
+    * Between-Groups one-way ANOVA(집단간 일원분산분석): 관측치를 grouping하는 
+    범주형 변수가 **1개**이며 각 관측치는 범주형 변수에 의해 구분되는 그룹들 가운데 
+    반드시 하나에만 할당되어야한다. 즉, 어떠한 경우에도 하나의 관측치 또는 샘플이 
+    여러 groups에 동시에 들어가면 안된다. 이 때 이렇게 그룹을 나누는 범주형 변수를 
+    집단간 요인이라고 한다.
+    * Within-groups one-way ANOVA (집단 내 일원분산분석) or repeated measures ANOVA: 
+    시간과 같은 하나의 범주형 변수로 샘플들을 측정한다. 시간의 경과에 따라 
+    측정된 샘플들을 범주형 변수의 여러 기간에 걸쳐 모두 할당시킨다. 
+    즉, 하나의 샘플이 여러 그룹에 다른 측정치로 관찰될 수 있다. 
+    예를들어, sample A가 4주, 8주, 12주, 16주 그룹에 모두 측정 된다. 
+    이때 기간변수는 집단 내 요인이라고 부른다. 
+* 이원 분산 분석 (Two-way ANOVA)
+    * 집단을 구분하는 변수가 2개이며 각 집단 간 요인과 집단 내 요인을 나타낸다. 
+    * 이원 분석 부터는 main effect와 interaction effect가 존재한다.
+    * 범주형 변수 A와 범주형 변수 B의 Main effect 계산
+    * 범주형 변수 A와 범주형 변수 B의 상호 작용 효과 or 교호 작용 효과 (Interaction effect) 계산
+    * group을 구분하는 독립변수가 2개 일때 모집단 간 평균의 동일성 검정  
+    * 2개의 주효과(main effect) 검정: 각 독립 변수에 의해 만들어지는 집단 간 평균의 차이에 대한 검정  
+        * 먼저, 두 독립변수가 종속변수에 개별적으로 영향을 미치는지 검정  
+    * 1개의 상호작용효과(interaction effect) 검정: 두 독립 변수의 조합에 의해 만들어지는 집단 간 평균의 차이에 대한 검정  
+        * 두 독립변수의 조합이 종속변수와 유의한 영향관계를 갖는지 검정  
+        * 만약에 유의하다면 2개의 독립변수가 합쳐져서 나온 파생효과이기 때문에 1개만 골라서 분석해서 해석 할 수 없음  
+
+### How to conduct ANOVA?
+
+* 분산 분석은 F검정(F test)을 통해 수행한다.
+* F 검정은 **집단 간 분산** (between-groups variability)과 
+**집단 내 분산** (within-groups variability)의 **ratio**로 
+계산된 F값 (F value or F statistic)을 토대로 가설검정을 수행한다. 
+이때 F value or F statistic을 통계 검정을 위한 검정통계량 (test statistic) 라고 부른다.
+* F 검정 결과가 통계적으로 유의하면 집단 간 평균의 차이가 존재한다. 
+(즉, 독립 변수가 종속변수에 영향을 미침)
+* F 분포 2개의 자유도에 의해 분포의 모양이 결정되며 대체로 오른쪽으로 긴 꼬리를 갖는다
+  * 첫 번째 자유도: 집단 간(between-group)의 자유도
+  * 두 번째 자유도: 집단 내(within-group)의 자유도
+
+```{r}
+#| warning: false
+library(tidyverse)
+library(ggpubr)
+library(gplots)
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+options(digits = 5)
+set.seed(20230109)
+```  
+
+```{r}
+  # 나중에 제대로 그려야함 귀찮...
+  hist(rf(1000,df1=5,df=50),breaks=30, main="Histogram, Example of F Distribution", xlab= "F-values", ylab="Frequency")
+  #pf(9.59,df1=1,df2=8, lower.tail = FALSE)#특정 F값에 대응되는 확률값 산출,df1=집단간분산의 자유도, df2= 집단내 분산의 자유도도, 9.59 이상일 확률을 계산해야함
+  #qf(0.05, df=1,df2=8, lower.tail = FALSE) # 특정 확률에 대응되는 F값을 산출, 5.317<9.59 
+```
+
+종속 변수의 변동성은 다음과 같이 설명되기 때문에 아래의 식을 만족한다.
+
+$$SS_{total}=SS_A+SS_B+SS_{AB}+SS_{error}$$
+
+$SS_{total}$은 쉽게 구할 수 있고 $SS_A$, $SS_B$, $SS_{error}$를 계산하여 빼준다.
+
+[Two Way Anova SS 계산 공식 링크](http://atomic.phys.uni-sofia.bg/local/nist-e-handbook/e-handbook/prc/section4/prc437.htm)
+
+$SS_{AB}$ 즉,
+
+$$ SS_{AB}=SS_{total}-SS_A-SS_B-SS_{error} $$
+
+### Meaning
+
+ANOVA는 집단 간 분산과 집단 내 분산의 비교하는 방식으로, 좀 더 구체적으로는 집단 간 분산과
+집단 내 분산의 비를 계산하여, 집단 간 분산이 클수록 그리고 집단 분산이 작을 수록 
+집단 평균이 다를 가능성이 증가한다는 알고리즘에 기초한다.
+
+## Application to Example
+
+### Data Description
+
+#### Raw Data
+
+```{r}
+path="C:/Users/kmkim/Desktop/my_project/website/docs/blog/data/anova_data.csv"
+raw_data=read.csv(path)
+raw_data
+```
+
+공유해주신 example data는 `r names(raw_data)`의 변수들을 포함하고 있습니다. 
+특히 sample은 여기서 같은 값을 갖고있기 때문에 의미가 없는 변수입니다.
+공유해주신 정보에 따르면 아마도 Run은 오전과 오후를 나누는 변수인 것으로 생각 됩니다. 
+이 data만 보면 아마도 같은 샘플에 대해서 시약 제품이 시간에 따라 
+얼마나 안정적인 performance (Ct값)를 보여주는지 검사하는 실험으로 추측됩니다.
+좀 더 분석하기 용이한 형태로 data structure를 바꾸겠습니다.
+
+#### Processed Data
+
+```{r data_load}
+data=raw_data%>%
+    mutate(id=1:n())%>%
+    rename(noon=Run)%>%
+    group_by(Day,noon)%>%
+    mutate(Run=1:n(),
+           Day=factor(Day,levels=c(1:20)),
+           noon=ifelse(noon==1,"AM","PM"),
+           noon=factor(noon,levels = c("AM","PM")))%>%
+    select(id,Day,noon,Run,Ct)%>%
+    ungroup
+data
+```
+
+재가공된 data는 `r dim(data)[1]`개의 샘플과 `r dim(data)[2]`개의 변수를 갖고있습니다.
+변수 목록은 다음과 같습니다.
+
+* sample: 검체이름, 같은 검체 혹은 의미없음  
+* `r names(data)[1]`: 열번호, 총 20일간 하루 2회 구동(AM, PM) 구동, 오전 오후 각 각 3번씩 구동 총 120 $(=20 \times 3 \times 2)$ 샘플   
+* `r names(data)[2]`: Day1~20   
+* `r names(data)[3]`: `r pull(unique(data[3]))[1]`= before noon, `r pull(unique(data[3]))[2]`= after noon
+* `r names(data)[4]`: 1회 구동당 3번 반복씩`r pull(unique(data[4]))`  
+* `r names(data)[5]`: Ct values
+
+ANOVA의 Assumption
+
+* response variable should follow normal distribution.  
+* homoscedasticity, equality of variance: 각 집단의 분포는 모두 동일한 분산을 가짐  
+ANOVA의 가정들을 반드시 충족하지 않아도 되지만 충족하면 Power 가 올라감  
+
+### EDA (Explorator Data Analysis)
+
+이 data는 아래 처럼 `r sum(is.na(data))`의 결측치를 갖고 있습니다.
+```{r}
+data%>%filter(is.na(Ct))%>%knitr::kable()
+```
+
+Ct에 대한 Global Statistics는 다음과 같습니다. 
+```{r}
+global_data=data%>%na.omit()%>%
+    summarise(count=n(),
+              global_Ct_mean=mean(Ct,na.rm=T),
+              global_Ct_sd=sd(Ct,na.rm=T),
+              global_Ct_CV=paste(round(global_Ct_sd/global_Ct_mean*100,3),"%"))
+global_data%>%knitr::kable()
+
+```
+
+Day groups의 Statistics은 다음과 같습니다.
+```{r}
+# Day groups
+day_data=data%>%na.omit()%>%
+    group_by(Day)%>%
+    summarise(count=n(),
+              Day_group_Ct_mean=mean(Ct,na.rm=T),
+              Day_group_Ct_sd=sd(Ct,na.rm=T),
+              Day_group_Ct_CV=paste(round(Day_group_Ct_sd/Day_group_Ct_mean*100,3),"%"))
+day_data%>%knitr::kable()
+```
+
+AM/PM groups의 Statistics은 다음과 같습니다.
+```{r}
+# noon groups
+noon_data=data%>%na.omit()%>%
+    group_by(noon)%>%
+    summarise(count=n(),
+              noon_group_Ct_mean=mean(Ct,na.rm=T),
+              noon_group_Ct_sd=sd(Ct,na.rm=T),
+              noon_group_Ct_CV=paste(round(noon_group_Ct_sd/noon_group_Ct_mean*100,3),"%"))
+noon_data%>%knitr::kable()
+```
+
+Days와 AM/PM 조합 groups의 Statistics은 다음과 같습니다.
+
+```{r}
+# Days & noon groups
+day_noon_data=data%>%na.omit()%>%
+    group_by(Day,noon)%>%
+    summarise(count=n(),
+              combi_group_Ct_mean=mean(Ct,na.rm=T),
+            combi_group_Ct_sd=sd(Ct,na.rm=T),
+        combi_group_Ct_CV=paste(round(combi_group_Ct_sd/combi_group_Ct_mean*100,3),"%"))%>%
+    ungroup
+
+day_noon_data%>%
+    knitr::kable()
+```
+
+이제 ANOVA를 수행하기 위한 basic statistics는 모두 구했습니다. 
+ANOVA를 수행하기 위해 집단 간 분산과 집단 내 분산을 계산하도록 하겠습니다.
+
+### 집단 간 분산 
+
+앞에서 설명 드린바로 유추해보면 예시 data의 집단 간 분산의 범주형 변수는 
+Day로 설정하는 것이 합리적인 것으로 보입니다.
+
+* $g=g$ Day의 sample size = 20, 자유도 = 20-1 = 19 입니다. 
+* $n_g=g$ group의 sample size, $\overline{X}_g=g$ 의 sample mean은 다음과 같습니다.
+* $\overline{X}$ = global sample mean = `r global_data$global_Ct_mean`
+* 집단 간 분산: $\frac{집단 간 제곱합}{자유도}=\frac{\sum_g[(\overline{X}_g-\overline{X})^2n_g]}{g-1}$ 
+
+#### SS_Day (집단간 분산 Day)
+
+Day sq = $[(\overline{X}_g-\overline{X})^2n_g]$
+집단(Day)간 분산 계산, 집단(Day)간 분산 = $\frac{\sum_g[(\overline{X}_g-\overline{X})^2n_g]}{g-1}$
+
+```{r}
+temp1=day_data%>%
+    ungroup%>%
+    mutate(day_sq=(Day_group_Ct_mean-global_data$global_Ct_mean)^2*count)%>%
+    mutate(sum_day_ssq=sum(day_sq),
+              df=(dim(day_data)[1]-1),
+              day_mean_ssq=sum_day_ssq/df,
+              day_sd=sqrt(day_mean_ssq))
+temp1%>%knitr::kable()
+
+
+```
+Analysis-In program의 ANOVA결과값과 일치하는 것을 볼 수 있습니다.
+$SS_{day}= $ `r unique(temp1$sum_day_ssq)` with $df=19$.
+
+#### SS_noon (집단간 분산 noon)
+
+noon sq = $[(\overline{X}_g-\overline{X})^2n_g]$
+집단(noon)간 분산 계산, 집단(noon)간 분산 = $\frac{\sum_g[(\overline{X}_g-\overline{X})^2n_g]}{g-1}$
+
+```{r}
+temp2=noon_data%>%
+    mutate(noon_sq=(noon_group_Ct_mean-global_data$global_Ct_mean)^2*count)%>%
+    mutate(sum_noon_ssq=sum(noon_sq),
+              df=(dim(noon_data)[1]-1),
+              noon_mean_ssq=sum_noon_ssq/df,
+              noon_sd=sqrt(noon_mean_ssq))
+temp2%>%
+    knitr::kable()
+
+```
+Analysis-In program의 결과에서 찾아 볼 수 없죠? 이 결과는 숨어 있습니다. 
+상호 작용에 대한 분산값을 구하고 나면 정체를 알 수 있습니다. 
+
+$SS_{noon}$ =  `r unique(temp2$sum_noon_ssq)` with $df=1$.
+
+
+#### SS_error (집단내 분산)
+
+* 집단 내 분산 (within-groups variability)
+
+```{r}
+##group_by noon
+temp3=data%>%
+    na.omit%>%
+    inner_join(.,day_noon_data,by=c("Day","noon"))%>%
+    select(-id,-combi_group_Ct_sd ,-combi_group_Ct_CV)%>%
+    mutate(residual_sq=(Ct-combi_group_Ct_mean)^2,
+           df=nrow(data)-nrow(day_data)*nrow(noon_data)-1,
+           residual_ssq=sum(residual_sq),
+           mean_residual_ssq=residual_ssq/df)
+
+temp3
+```
+
+$SS_{error}$ =  `r unique(temp3$residual_ssq)` 
+
+Analysis-In program의 결과와 일치하는 것을 확인할 수 있습니다.
+
+
+#### SS_total
+
+```{r}
+temp4=data%>%
+    na.omit%>%
+    mutate(total_ssq=sum((Ct-global_data$global_Ct_mean)^2))
+temp4
+```
+
+$SS_{total}$ = `r unique(temp4$total_ssq)`
+
+Analysis-In program의 ANOVA 결과 table에 있는 SS들의 합과 일치하는 것을 확인할 수 있습니다.
+
+#### 상호 작용 분산
+
+```{r}
+temp5=unique(temp4$total_ssq)-unique(temp3$residual_ssq)-unique(temp2$sum_noon_ssq)-unique(temp1$sum_day_ssq)
+
+```
+
+$SS_{interaction}=SS_{DayNoon}= SS_{total}-SS_{Day}-SS_{noon}-SS_{error}$ = `r unique(temp4$total_ssq)`-`r unique(temp3$residual_ssq)`-`r unique(temp2$sum_noon_ssq)`-`r unique(temp1$sum_day_ssq)` = `r temp5`
+
+Analysis-In program의 ANOVA 결과 table과 일치하는 것을 확인할 수 있습니다.
+
+위의 결과들을 종합하면 아래와 같이 요약됩니다.
+
+```{r}
+aov(Ct~Day*noon,data=data)%>%summary()
+```
+
+* Repeatability SD = $\sqrt{V_{error}}=\sqrt{MS_{error}}$ = `r sqrt(unique(temp3$residual_ssq)/unique(temp3$df))`
+* Repeatability CV = $\frac{repeatability \space SD}{global \space mean \space Ct}$ = `r sqrt(unique(temp3$residual_ssq)/unique(temp3$df)) /global_data$global_Ct_mean`
+
+(생략, 다른 통계량들은 ANOVA_A repeat2.xlsx 참조)
+
+위의 결과를 간단히 해석해 보면
+
+* 집단간 범주 변수인 Day는 p-value =0.29>0.05 이므로 5% 유의 수준에서, 유의하지 않습니다.
+    * 즉, 5% 유의 수준에서, 일별로 평균 Ct값이 같다는 가설을 기각하는데 실패했습니다.
+    * 다시 말하면, 5% 유의 수준에서, 일별로 평균 Ct값이 다르지 않습니다.
+* 집단간 범주 변수인 noon은 p-value =0.30>0.05 이므로 5% 유의 수준에서, 유의하지 않습니다.
+    * 즉, 5% 유의 수준에서, 오전/오후별 평균 Ct값이 같다는 가설을 기각하는데 실패했습니다.
+    * 다시 말하면, 5% 유의 수준에서, 오전/오후별 평균 Ct값이 다르지 않습니다.
+* Day와 noon두 변수의 상호작용 변수는 p-value =0.16>0.05 이므로 5% 유의 수준에서, 유의하지 않습니다.
+    * 즉, 5% 유의 수준에서, Day별 Noon(오전/오후)별 평균 Ct값이 같다는 가설을 기각하는데 실패했습니다.
+    * 다시 말하면, 5% 유의 수준에서, Day별 Noon(오전/오후)별 평균 Ct값이 다르지 않습니다.    
+
+최종 결론, 제품의 Ct값이 Day별 오전/오후별 안정적인 performance를 보인다고 조심스럽게 결론을 내릴 수 있습니다.
+
+이제 까지는 질문에 대한 답이 되는 ANOVA의 원리 및 통계량의 재현 및 해석법에 대하여 알아봤습니다.
+하지만 직관적으로 어떤 의미가 있을 까요? 
+원래는 시각화를 통해 데이터의 패턴을 짐작하고 통계 검정 결과를 예상하는데 우리는 반대로 가고 있네요 ㅎㅎ
+시각화를 통해 ANOVA 결과가 얼마나 합리적인지 알아보겠습니다.
+
+### Visualization
+
+#### One-way: Day
+
+```{r}
+plotmeans(Ct~Day,data=data,
+          barcol="orange",
+          barwidth = 2,
+          col="blue",lwd=2,
+          xlab="Day",
+          ylab="Ct",
+          main="Ct in Daily Average with 95% Confidence Interval")
+ggplot(data, aes(x=Day, y=Ct)) + 
+  geom_boxplot(outlier.colour="red", 
+               outlier.shape=8,
+                outlier.size=4)
+```
+
+자세히 보면 일별로 시간의 경과에 따라 전체적으로 평균 Ct값이 약간 하향하는 것으로 보입니다.
+하지만 좀 더 세부적으로 관찰하면 
+1일~8일 평균 Ct의 경향이 constant한 패턴을 보입니다.
+9일~13일 평균 Ct가 진동 하향하는 패턴을 보입니다.
+14일~20일 평균 Ct가 상향하는 패턴을 보입니다. 
+
+```{r}
+model1<-aov(data=data,Ct~Day)
+model.tables(model1,type="mean") # 전체 평균과 집단 평균을 볼수 있음
+model.tables(model1,type="effects") # 각 집단 평균과 전체 평균의 차이를 볼 수 있음
+```
+
+위에 첫 번째표에서 Global Sample Ct Mean = 37.322 과 각 집단의 평균 Ct를 확인할 수 있습니다.
+위에 두 번째표에서 Global Sample Ct Mean = 37.322 과 각 집단의 평균 Ct의 차이를 확인할 수 있습니다.  
+
+* Day 9에서 차이가 가장 큰 것으로 보아 9일째 실험에서 performance가 가장 낮은 것이 관측됐습니다.
+* 반대로, 12일에 performance 가장 좋은 것으로 관측됐습니다. 
+
+9일과 12일에 Ct값에 영향을 미쳤던 요인이 있었는지 복기 하는것도 도움이 되겠군요.
+
+```{r}
+# Anova: Day
+
+summary(model1)
+```
+
+One-way ANOVA의 결과값입니다. Day별 평균 Ct의 차이는 거의 없는 것으로 보입니다.
+따라서 Day 별 평균 Ct의 경향이 일관되지 않고 One-way ANOVA에서 역시 통계적으로 유의하지 않아 
+Day 변수는 평균 Ct에 영향을 미치지 않는 것 같습니다.
+
+#### One-way: AM/PM
+
+```{r}
+plotmeans(Ct~noon,data=data,
+          barcol="orange",
+          barwidth = 3,
+          col="blue",lwd=2,
+          xlab="AM/PM",
+          ylab="Ct",
+          main="Ct in Before/After Noon Average with 95% Confidence Interval")
+
+ggplot(data, aes(x=noon, y=Ct)) + 
+  geom_boxplot(outlier.colour="red", 
+               outlier.shape=8,
+                outlier.size=4)
+```
+
+오후에 시간의 경과에 따라 전체적으로 평균 Ct값이 약간 하향하는 것으로 보입니다.
+
+```{r}
+model2<-aov(data=data,Ct~noon)
+# 개별 집단 차이를 볼수 있음
+model.tables(model2,type="mean") # 전체 평균과 집단 평균을 볼수 있음
+model.tables(model2,type="effects") # 각 집단 평균과 전체 평균의 차이를 볼 수 있음
+
+```
+
+위 첫 번째 표에서 AM/PM 간의 평균 Ct차이는 0.15 (농도가 약 0.5배) 차이가 
+나는 것을 확인할 수 있습니다. 생물학적으로 의미가 있는 수치일까요?
+위 두 번째 표에서 Global Sample Mean 37.322와 오전/오후 별 약 0.07씩(농도가 약 0.25배) 차이가 납니다.
+
+```{r}
+# Anova: Day
+summary(model2)
+```
+
+오전 오후별 One way ANOVA를 실행한 결과가 오전/오부 평균 Ct값의 차이가 다르지 않다는 것을 시사하고 있습니다.
+아무래도 위의 차이는 우연에 의해 발생한 현상인 것 같습니다.
+
+```{r}
+# Day: 집단간의 차이를 설명
+# Residuals: 집단내의 차이를 설명
+# Mean Sq: 제곱합을 자유도로 나눈 분산, 0.816 집단간 분산
+
+
+# 각 집단간의 유의미한 차이가 있는지 검사하기 위해 Tukey HSD test 진행 (사후검정)
+
+tukey<-TukeyHSD(model1)
+# 각 집단간의 차이는 통계적으로 유의미하지 않다
+plot(tukey,col="blue", las=1)
+# 가로선은 95% 신뢰구간을 표현하고 0을 포함하지 않으면 통계적으로 유의하다고 할 수 있다.
+
+```
+
+일별로 평균 Ct값이 차이를 모든 경우의 수에서 차이가 나는지 확인한 결과 
+신뢰구간 모두가 0을 포함하고 있으므로 Day 변수는 유의하다고 볼 수 없습니다.
+
+```{r}
+# Day: 집단간의 차이를 설명
+# Residuals: 집단내의 차이를 설명
+# Mean Sq: 제곱합을 자유도로 나눈 분산, 0.816 집단간 분산
+
+
+# 각 집단간의 유의미한 차이가 있는지 검사하기 위해 Tukey HSD test 진행 (사후검정)
+
+tukey<-TukeyHSD(model2)
+# 각 집단간의 차이는 통계적으로 유의미하지 않다
+plot(tukey,col="blue", las=1)
+# 가로선은 95% 신뢰구간을 표현하고 0을 포함하지 않으면 통계적으로 유의하다고 할 수 있다.
+
+```
+
+오전/오후별로 평균 Ct값이 차이를 모든 경우의 수에서 차이가 나는지 확인한 결과 
+신뢰구간 모두가 0을 포함하고 있으므로 오전/오후 변수는 유의하다고 볼 수 없습니다.
+
+여기 까지 각 변수별 평균 Ct로의 영향도를 통계적으로 시각적으로 관찰했습니다.
+하지만 Day별  오전/오후별 영향도가 있는지 확인하겠습니다. (이미 위에서 통계적으로 없다고 검정됐습니다.)
+
+### Two way Anova
+
+```{r eval=FALSE, include=FALSE}
+# data를 여러번 적을 필요가없음
+with(data,tapply(Ct, list(Day,noon),function(x)mean(x,na.rm=TRUE)))
+with(data,tapply(Ct, list(Day,noon),function(x)sd(x,na.rm=TRUE)))
+```
+
+```{r message=FALSE, warning=FALSE}
+model3<-aov(Ct~Day*noon,data=data)
+model3<-aov(Ct~Day+noon+Day:noon,data=data)
+
+
+model.tables(model3,type="means")
+model.tables(model3,type="effect")
+```
+
+one way ANOVA와 같이 해석
+
+```{r message=FALSE, warning=FALSE}
+boxplot(Ct~Day*noon,data=data,col=c("darkred","darkblue"),
+        las=1,xlab="Interaction of Day and Noon",main = "Effects of Day and Noon on Ct Values")
+interaction.plot(x.factor=data$Day,trace.factor = data$noon,response=data$Ct,trace.label="noon",las=1,type="b",pch=c(1,19),
+                 xlab="Day", ylab="Ct",col=c("darkred","darkblue"),
+                 main="Interaction Plot for Ct")
+#interaction(data$Day,data$noon,sep=" ")
+plotmeans(Ct~interaction(Day,noon,sep=" "),
+          data=data,col=c("darkred","darkblue"),
+          xlab="Combination of Day and Noon",ylab="Ct", main="Means plot for Ct")
+plotmeans(Ct~interaction(Day,noon,sep=" "),
+          data=data,col=c("darkred","darkblue"),
+          connect=list(seq(1,39,by=2),seq(2,40,by=2))
+          ,xlab="Combination of Day and Noon",ylab="Ct", main="Means plot for AM, PM")
+summary(model3)
+```
+
+위 그림을 보듯이 두 변수의 영향도가 없음, ANOVA 역시 유의하지 않음 
+
+```{r message=FALSE, warning=FALSE}
+## 조건부 도표: coplot 2개의 집단 변수 중 1개의 집단 변수가 나머지 집단 변수와 종속변수에 관한 관계를 산점저로 표현
+coplot(Ct~noon|Day,data=data,col="darkred",pch=19,panel=panel.smooth,lwd=2,col.smooth="darkblue",xlab="AM/PM", ylab="Ct")
+## 오전 오후와 Ct값의 관계를 볼수 있다.
+
+##주효과와 상호 작용 효과를 각각의 별도의 패널에서 볼수 있음
+library(HH)
+interaction2wt(Ct~noon*Day,data=data)
+#(2,1),(1,2) -> main effect expression
+#(1,1),(2,2) -> interaction effect expression
+
+## 대립 가설이 참일때만 사후 검정 추가 실시 할 수 있음
+
+TukeyHSD(model3)
+
+TukeyHSD(model3,which=c("Day"),conf.level=0.99)
+```
+
+유의한 패턴 없음
+Tukey 검정 결과 (보통 유의할때 함) 테이블 도 유의한 수치가 없음
+
+
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+
+
  ## Terms
 
  * pairwise comparison: A hypothesis test (e.g., of means) between two groups among multiple groups.
@@ -29,58 +568,5 @@ draft: true
  * F statistic: A standardized statistic that measures the extent to which differences among group means exceed what might be expected in a chance model.
  * sum of squares: deviations from some average value
 
-## Description
 
-ANOVA는 **3개 이상의 모집단** 사이의 **평균**의 동일성을 검정하는 통계 분석 방법이다.
-
-* One-way ANOVA(일원 분산 분석)
-    * 그룹을 구분하는 변수가 1개
-    * Between-Groups one-way ANOVA(집단간 일원분산분석): 관측치를 grouping하는 
-    범주형 변수가 **1개**이며 각 관측치는 범주형 변수에 의해 구분되는 그룹들 가운데 
-    반드시 하나에만 할당되어야한다. 즉, 어떠한 경우에도 하나의 관측치 또는 샘플이 
-    여러 groups에 동시에 들어가면 안된다. 이 때 이렇게 그룹을 나누는 범주형 변수를 
-    집단간 요인이라고 한다.
-    * Within-groups one-way ANOVA (집단 내 일원분산분석) or repeated measures ANOVA: 시간과 같은 하나의 범주형 변수로 샘플들을 측정한다. 시간의 경과에 따라 측정된 샘플들을 범주형 변수의 여러 기간에 걸쳐 모두 할당시킨다. 즉, 하나의 샘플이 여러 그룹에 다른 측정치로 관찰될 수 있다. 예를들어, sample A가 4주, 8주, 12주, 16주 그룹에 모두 측정 된다. 이때 기간변수는 집단 내 요인이라고 부른다. 
-* 이원 분산 분석 (Two-way ANOVA) : 집단을 구분하는 변수가 2개이며 각 집단 간 요인과 집단 내 요인을 나타낸다. 이원 분석 부터는 main effect와 interaction effect가 존재한다.
-* 공분산분석 (Analysis of Covariance, ANCOVA): 공변량(covariate)을 통제하여 독립변수의 순수한 영향을 검정한다.
-* 반복측정 분산 분석 (repeated measures ANOVA): Within-groups one-way ANOVA 참조
-* 다변량 분산분석 (Multivariate Analysis of Variance, MANOVA): 실험의 타당성과 정확도를 높이기 위해 2개 이상의 종속변수 또는 outcomes을 포함시킨 연구에서 발생한 데이터를 분석할 때 사용한다. 
-* 다변량 공분산 분석 (Multivariate Analysis of covariance, MANCOVA): 2개 이상의 종속변수와 covariates를 포함한다.
-
-
-## How: F test (F 검정) 이용
-
-* 분산 분석은 F검정(F test)을 통해 수행한다.
-* F 검정은 **집단 간 분산** (between-groups variability)과 **집단 내 분산** (within-groups variability)의 **ratio**로 계산된 F값 (F value or F statistic)을 토대로 가설검정을 수행한다. 이때 F value or F statistic을 통계 검정을 위한 검정통계량 (test statistic) 라고 부른다.
-* F 검정 결과가 통계적으로 유의하면 집단 간 평균의 차이가 존재한다. (즉, 독립 변수가 종속변수에 영향을 미침)
-* F 분포 2개의 자유도에 의해 분포의 모양이 결정되며 대체로 오른쪽으로 긴 꼬리를 갖는다
-  * 첫 번째 자유도: 집단 간(between-group)의 자유도
-  * 두 번째 자유도: 집단 내(within-group)의 자유도
-  ```{r}
-  # 나중에 제대로 그려야함 귀찮...
-  hist(rf(1000,df1=5,df=50),breaks=30, main="Example of F Distribution", xlab= "F-values", ylab="Desnity")
-  #pf(9.59,df1=1,df2=8, lower.tail = FALSE)#특정 F값에 대응되는 확률값 산출,df1=집단간분산의 자유도, df2= 집단내 분산의 자유도도, 9.59 이상일 확률을 계산해야함
-  #qf(0.05, df=1,df2=8, lower.tail = FALSE) # 특정 확률에 대응되는 F값을 산출, 5.317<9.59 
-  ```
-* 집단 간 분산 (between-groups variability)
-  * $\frac{집단 간 제곱합}{자유도}=\frac{\sum_g[(\overline{X}_g-\overline{X})^2n_g]}{g-1}$ 
-  * $g=g$ group의 sample size, 
-  * $\overline{X}_g=$ $g$ 의 sample mean,  
-  * $\overline{X}=$ global sample mean, 
-  * $n_g=$ $g$ group의 sample size
-* 집단 내 분산 (within-groups variability)
-  * $\frac{집단 내 제곱합}{자유도}=\frac{\sum_g\sum_i[(\overline{X}_{ig}-\overline{X_g})^2n_g]}{\sum_g(n_g-1)}=\frac{\sum_g[(s^2_g(n_g-1)]}{\sum_g(n_g-1)}=\frac{\sum_g[(s^2_g(n_g-1)]}{n-g}$ 
-  * $g=$ group의 sample size, 
-  * $s_g=g$ group의 표준 편차, 
-  * $n_g=g$ group의 sample size, 
-  * $X_{ig}=g$ 집단의 $i$ th 관측값,  
-  * $\overline{X}_g=g$ group의 sample mean,  
-  * $n=$ global sample size
-* $F=\frac{집단 간 분산}{집단 내 분산}$
-  * 항상 양수 
-  * 분산 분석에서는 모집단의 등분산성 (Homoscedasticity)을 가정하기 때문에 각 집단의 분산을 표본 크기를 고려한 가중 평균으로 하나의 집단 내 분산을 표현할 수 있다.
-
-
-## 왜 분산을 보는가?
-
-집단 간 분산과 집단 내 분산의 비교, 집단 간 분산이 클수록 그리고 집단 분산이 작을 수록 집단 평균이 다를 가능성이 증가한다. (시각화) dye 성능의 분산 분석이 이루어져야함
+</div>

@@ -8,6 +8,8 @@ image: images/high_dimensions.jpg
 image-alt: "a high dimensional data"
 format:
   html:
+    toc: true
+    number-sections: true
     code-fold: true
     code-summary: "Show the code"
 execute:
@@ -50,38 +52,32 @@ execute:
 
 
 
-
-
-## Introduction
-
-### Background
-
-Alzheimer Disease (AD) is a most common form of dementia that affects millions of Americans. AD affects memory, thinking and behavior, but its progression is slow, spanning nearly two decades before the symptoms appear. Thus, it is imperative to understand the physiology at the pre-clinical stage. It is estimated that genetic factors contribute nearly 50% to AD. To better understand how genes contribute to the risk of AD by altering cellular milieu, we have examined the metabolome of high risk individuals, the APOE4 carriers. The metabolome represents the products that were generated from the genome and proteome. These biochemical products represent influences of both genetic and environmental factors. In this article, I prepared simulated data to reproduce and demonstrate a rough analysis pipeline due to security concerns.
-
-### Goal
-
-The aim of this simulation study is to identify a set of metabolites that will enable to differentiate bio-markers that are associated with AD vs. non-AD.
-
 ## Data Preparation
 
 ### Package Loading and Option Settings
 
-```{r, message=FALSE,warning=FALSE}
+```{r}
+#| message: false
 #| code-fold: true
+#| warning: false
 
 library(tidyverse)
 library(tidymodels)
 library(glmnet)
 library(MASS)
-#library(mixOmics)
+library(mixOmics)
 set.seed(20221213) 
 knitr::opts_chunk$set(message=FALSE,warning=FALSE)
 ```
 
 ### Data Simulation
 
-```{r, echo=FALSE, eval=FALSE}
+```{r}
+#| eval: false
+#| message: false
 #| code-fold: true
+#| warning: false
+
 
 # the number of samples
 sample_size <- 1000
@@ -158,7 +154,7 @@ sex_distribution=sample(c(0,1),sample_size,replace=TRUE,prob = c(0.45,0.55))
 country_distribution=sample(c(0:3),sample_size,replace=TRUE,prob = c(0.3,0.2,0.2,0.3))
 treatment_distribution=sample(c(0:2),sample_size,replace=TRUE,prob = c(0.7,0.2,0.1))
 genotype_distribution=sample(c(0:5),sample_size,replace=TRUE,
-                             prob = c(0.05,0.15,0.05,0.40,0.25,0.1))
+                             prob = c(0.08,0.15,0.086,0.3,0.25,0.134)) #just random numbers
 phenotype_data<-
     data.frame(
         id=1:sample_size,
@@ -191,94 +187,56 @@ phenotype_data<-
 
 all_data=inner_join(phenotype_data,data%>%mutate(id=1:n()),by="id")
 
-#save(all_data, file="llfs_simulated_data.rda")
-#write_rds(all_data,"llfs_simulated_data.rds")
+#write_rds(all_data,"./docs/projects/data/llfs_simulated_data.rds")
 ```
 
 ### Load Data
 
 ```{r}
 #| code-fold: true
-
-
-#all_data=read_csv("C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rda",
-#                  progress = show_progress(),
-#                  show_col_types = FALSE)%>%
-
- all_data=read_rds("C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds")%>%
-     dplyr::select(-1,-probabilities)
- all_data=all_data%>%
-     mutate(outcome=factor(outcome,levels=c(0,1)),
-            sex=factor(sex,levels=c(0,1)),
-            country=factor(country,levels=c(0,1)),
-            treatment=factor(treatment,levels=c(0,1)),
-            genotype=factor(genotype,levels=c(3,0,1,2,4,5))
-            )
+#| message: false
+#| warning: false
  
- dim(all_data)
-
+ simulated_data=read_rds("C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds")%>%
+     dplyr::select(-1,-probabilities)
+ all_data=simulated_data%>%
+ mutate(
+      outcome=ifelse(outcome==0,"negative","positive"),
+      outcome=factor(outcome,levels=c("negative","positive")),
+      sex=ifelse(sex==0,"man","woman"),
+      sex=factor(sex,levels=c("man","woman")),
+      country=ifelse(country==0,"center_a",ifelse(country==1,"center_b",ifelse(country==2,"center_c","center_d"))),
+      country=factor(country,levels=c("center_a","center_b","center_c","center_d")),
+      treatment=ifelse(treatment==0,"trmnt1",ifelse(treatment==1,"trmnt2","trmnt3")),
+      treatment=factor(treatment,levels=c("trmnt1","trmnt2","trmnt3")),
+      genotype=ifelse(genotype==0,"e2/e2",
+      ifelse(genotype==1,"e2/e3",
+      ifelse(genotype==2,"e2/e4",
+      ifelse(genotype==3,"e3/e3",
+      ifelse(genotype==4,"e3/e4","e4/e4"))))),
+      genotype=factor(genotype,levels=c("e2/e2","e2/e3","e2/e4","e3/e3","e3/e4","e4/e4"))
+      )
+ names(all_data)[7:ncol(all_data)]<-paste0("meta",1:10000)
 ```
 
 ## Data Description
 
-This data include `r dim(mtcars)[1]` rows and 
+This data include `r dim(all_data)[1]` samples and `r dim(all_data)[2]` variables:
 
-    `r dim(mtcars)[1]`
-this inline code works but it seems to rmd files look more organized and tidier.
-
-
-
-## Architecture of Analysis Pipeline
-
-## Methods
-
-```{r, echo=FALSE,message=FALSE,warning=FALSE}
-n <- 1000    # sample size
-p <- 10000     # the number of predictors
-significant_p <- p*0.25  # the number of predictors associated with a response variable
-
-x <- matrix(rnorm(n*p), nrow=n, ncol=p)
-y <- apply(x[,1:significant_p], 1, sum) + rnorm(n)
-
-# Split data into train (2/3) and test (1/3) sets
-train_rows <- sample(1:n, .66*n)
-x.train <- x[train_rows, ]
-x.test <- x[-train_rows, ]
-
-y.train <- y[train_rows]
-y.test <- y[-train_rows]
-
-list.of.fits <- list()
-for (i in 0:10) {
-  fit.name <- paste0("alpha", i/10)
-  
-  list.of.fits[[fit.name]] <-
-    cv.glmnet(x.train, y.train, type.measure="mse", alpha=i/10, 
-      family="gaussian")
-}
-
-results <- data.frame()
-for (i in 0:10) {
-  fit.name <- paste0("alpha", i/10)
-  
-  predicted <- 
-    predict(list.of.fits[[fit.name]], 
-      s=list.of.fits[[fit.name]]$lambda.1se, newx=x.test)
-  
-  mse <- mean((y.test - predicted)^2)
-  
-  temp <- data.frame(alpha=i/10, mse=mse, fit.name=fit.name)
-  results <- rbind(results, temp)
-}
-
-results
-```
-
-## Results
-
-## Conclusion
-
-## Bibliography
-
+* `r names(all_data)[1]`: a disease status (`r unique(all_data[,"outcome"])`), `r unique(all_data[,"outcome"])[1]` is an affected status, `r unique(all_data[,"outcome"])[2]` is an unaffected status, and the reference group is `r unique(all_data[,"outcome"])[2]`.
+* `r names(all_data)[2]`: an age 
+* `r names(all_data)[3]`: a sex status (`r unique(all_data[,"sex"])`) and the reference group is `r unique(all_data[,"sex"])[2]`.
+* `r names(all_data)[4]`: a country where data were collected (`r unique(all_data[,"country"])`) and the reference group is `r unique(all_data[,"country"])[3]`.
+* `r names(all_data)[5]`: a treatment for the disease (`r unique(all_data[,"treatment"])`) and the reference group is `r unique(all_data[,"treatment"])[2]`.
+* `r names(all_data)[6]`: a genotype of APOE.
+  * the apolipoprotein $\epsilon$ (APOE) is a protein produced in the metabolic pathway of fats in mammals, a genotype of which seems to be related to Alzheimer's disease (AD). APOE is polymorphic and has three major alleles, $\epsilon 2$ (e2), $\epsilon 3$(e3), and $\epsilon 4$ (e4). The statistics of the polymorphism are 8.4% for e2, 77.9% for e3, and 13.7% for e4 in worldwide allel frequency, respectively. It is known that the e2, e3, and e4 allels are associated with the protective factor, the neutral one, and the risk one with regard to AD. However, this finding has not been replicated in a large population. Therefore, it is known that we do not know their true associations with AD in the true population. [(from Wiki)](https://en.wikipedia.org/wiki/Apolipoprotein_E) 
+  * There are 6 combinations of the genotypes: 
+    * e2/e2
+    * e2/e3
+    * e2/e4
+    * e3/e3 (reference group)
+    * e3/e4
+    * e4/e4
+* `r names(all_data)[7]` ~ `r names(all_data)[ncol(all_data)]`: a list of metabolites that were blood-sampled from the APOE carriers.
 
 </div>

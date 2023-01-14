@@ -5,3 +5,240 @@ description: "Both EDA and Data Mining are used"
 author: Kwangmin Kim
 date: 2023-01-03
 ---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+
+
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+
+```{r}
+#| echo: false
+#| message: false
+#| code-fold: true
+#| warning: false
+
+library(tidyverse)
+library(tidymodels)
+library(glmnet)
+library(MASS)
+library(mixOmics)
+set.seed(20230103) 
+knitr::opts_chunk$set(message=FALSE,warning=FALSE)
+```
+
+```{r}
+#| echo: false
+#| code-fold: true
+#| message: false
+#| warning: false
+ 
+ simulated_data<-read_rds("C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds")%>%
+     dplyr::select(-1,-probabilities)
+ all_data<-simulated_data%>%
+ mutate(
+      outcome=ifelse(outcome==0,"negative","positive"),
+      outcome=factor(outcome,levels=c("negative","positive")),
+      sex=ifelse(sex==0,"man","woman"),
+      sex=factor(sex,levels=c("man","woman")),
+      country=ifelse(country==0,"center_a",ifelse(country==1,"center_b",ifelse(country==2,"center_c","center_d"))),
+      country=factor(country,levels=c("center_a","center_b","center_c","center_d")),
+      treatment=ifelse(treatment==0,"trmnt1",ifelse(treatment==1,"trmnt2","trmnt3")),
+      treatment=factor(treatment,levels=c("trmnt1","trmnt2","trmnt3")),
+      genotype=ifelse(genotype==0,"e2/e2",
+      ifelse(genotype==1,"e2/e3",
+      ifelse(genotype==2,"e2/e4",
+      ifelse(genotype==3,"e3/e3",
+      ifelse(genotype==4,"e3/e4","e4/e4"))))),
+      genotype=factor(genotype,levels=c("e2/e2","e2/e3","e2/e4","e3/e3","e3/e4","e4/e4"))
+      )
+ names(all_data)[7:ncol(all_data)]<-paste0("meta",1:10000)
+```
+
+## Univariable Analysis
+
+## Bivariable Analysis
+
+### AD vs Age
+```{r}
+#| code-fold: true
+#| message: false
+#| warning: false
+group_variable="sex"
+getNumericSummary=function(data=all_data,group_variable,summary_variable){
+    # table
+    temp<-data %>% 
+    group_by(get(group_variable)) %>% 
+    mutate(count=n())%>%
+    summarise_at(vars(summary_variable,count),
+                 list(mean=mean,
+                 sd=sd,
+                 min=min,
+                 Q1=~quantile(., probs = 0.25),
+                 median=median, 
+                 Q3=~quantile(., probs = 0.75),
+                 max=max))%>%
+                 as.data.frame()%>%
+                 rename(
+                 n=count_mean)%>%
+                 dplyr::select(-contains('count'))%>%
+                 as.data.frame()
+    names(temp)<-c(group_variable,
+    sapply(names(temp)[-1],function(x)str_replace(x,paste0(summary_variable,"_"),"")))
+    temp<-temp%>%
+    mutate(
+        mean=mean%>%round(2),
+        sd=sd%>%round(2),
+        min=min%>%round(2),
+        Q1=Q1%>%round(2),,
+        Q4=Q3%>%round(2),
+        max=max%>%round(2),
+        IQR_min=Q1-(Q3-Q1)*1.5%>%round(2),
+    IQR_max=Q3+(Q3-Q1)*1.5%>%round(2),
+    proportion=paste0(round(n/nrow(all_data)*100,2),"%"))%>%
+    dplyr::select(group_variable,n,proportion,mean,sd,min,IQR_min,Q1,median,Q3,IQR_max,max)
+
+    # plot
+    plot<-
+    data%>%
+    dplyr::select(group_variable,summary_variable)%>%
+    inner_join(.,temp,by=group_variable)%>%
+    ggplot()+
+    geom_histogram(aes(x=age,fill=get(group_variable)),binwidth=1,alpha=0.5, position="identity")+
+    geom_vline(aes(xintercept=mean,color=get(group_variable)), linetype="dashed", size=1.5) +
+    scale_color_manual(values=c("darkblue","darkred"))+
+    scale_fill_manual(values=c("darkblue","darkred"))+
+    geom_text(aes(label=round(mean,1),y=0,x=mean),
+                vjust=-1,col='yellow',size=5)+
+    ggtitle(paste0("Histogram, ", summary_variable, " Grouped by ", group_variable))+
+        labs(x=summary_variable, y = "Frequency")
+
+    result<-list(temp,plot)
+    return(result)
+}
+ad_age_summary=getNumericSummary(data=all_data,group_variable="outcome",summary_variable="age")[[1]]
+```
+
+Age is known as a strong risk factor of AD or dementia. Human nerve system gets damaged as people are aged and the nerve fibrosis symptoms progress gradually (some reference, to be added after figuring out how to add bibliography in quarto). For this reason, we need to look into how the sample data are distributed in terms of age. 
+
+```{r}
+#| code-fold: true
+#| message: false
+#| warning: false
+ad_age_summary%>%knitr::kable()
+```
+
+The table above shows the summary statistics of age grouped by the affected status, AD and non AD. The difference of age between the two groups are about `r round(ad_age_summary%>%filter(outcome=="positive")%>%dplyr::select(mean)-
+ad_age_summary%>%filter(outcome=="negative")%>%dplyr::select(mean),2)`, but their standard deviations are `r round(ad_age_summary[,"sd"],2)[1]` and `r round(ad_age_summary[,"sd"],2)[2]`. Thus, it is hard to say their age in average differ in the affected status because the age variations of the two groups are overlapped. This research has two conflicting chacteristics at the population level. First, the participants are the elderly whose age in average is `r mean(all_data$age)%>%round(2)`, which indicates they are likely to develop dementia, an aging disease. Second, the data were collected from the longevity village where people live long and healthy lives and it is expected that where will be some protective factors against dementia. These two conflicting traits may have contributed to this unlear difference.
+
+The glaring difference of age is also shown below. As you can see, the people with a negative status a bit younger than those with a positive one.
+
+```{r}
+#| code-fold: true
+#| message: false
+#| warning: false
+getNumericSummary(data=all_data,group_variable="outcome",summary_variable="age")[[2]]
+```
+
+## Sex vs Age
+
+```{r}
+#| code-fold: true
+#| message: false
+#| warning: false
+sex_age_summary=getNumericSummary(data=all_data,group_variable="sex",summary_variable="age")[[1]]
+sex_age_summary%>%knitr::kable()
+```
+
+```{r}
+#| code-fold: true
+#| message: false
+#| warning: false
+getNumericSummary(data=all_data,group_variable="sex",summary_variable="age")[[2]]
+
+```
+
+
+## Country vs Age
+
+```{r}
+#| code-fold: true
+#| message: false
+#| warning: false
+country_age_summary=getNumericSummary(data=all_data,group_variable="country",summary_variable="age")[[1]]
+country_age_summary%>%knitr::kable()
+```
+
+```{r}
+#| code-fold: true
+#| message: false
+#| warning: false
+getNumericSummary(data=all_data,group_variable="country",summary_variable="age")[[2]]
+
+```
+
+## Treatment vs Age
+
+```{r}
+#| code-fold: true
+#| message: false
+#| warning: false
+treatment_age_summary=getNumericSummary(data=all_data,group_variable="treatment",summary_variable="age")[[1]]
+treatment_age_summary%>%knitr::kable()
+```
+
+```{r}
+#| code-fold: true
+#| message: false
+#| warning: false
+getNumericSummary(data=all_data,group_variable="treatment",summary_variable="age")[[2]]
+
+```
+
+## Genotype vs Age
+
+```{r}
+#| code-fold: true
+#| message: false
+#| warning: false
+genotype_age_summary=getNumericSummary(data=all_data,group_variable="genotype",summary_variable="age")[[1]]
+genotype_age_summary%>%knitr::kable()
+```
+
+```{r}
+#| code-fold: true
+#| message: false
+#| warning: false
+getNumericSummary(data=all_data,group_variable="genotype",summary_variable="age")[[2]]
+
+```
+
+
+
+
+```{r}
+#| echo: false
+#| eval: false
+
+for (i in 1:p) {
+ form = paste("lm(", paste0(var[i], collapse="+"), "~ . , data=as.data.frame(data) ) ")
+ fit = eval(parse(text=form)); fit
+ lm_result[i] = list(summary(fit))
+}
+
+```
+
+</div>

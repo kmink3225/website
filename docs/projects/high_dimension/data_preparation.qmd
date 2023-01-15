@@ -28,30 +28,36 @@ execute:
 #     code-summary: "Show the code"
 # execute:
 #   warning: false
-# ---  
 ---
 
-
 <ul class="nav nav-pills" id="language-tab" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
-  </li>
+
+<li class="nav-item" role="presentation">
+
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">
+
+Korean
+
+</button>
+
+</li>
+
+<li class="nav-item" role="presentation">
+
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">
+
+English
+
+</button>
+
+</li>
 
 <div class="tab-content" id="language-tabcontent">
 
-<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+:::
 
-
-
-</div>
-
-<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
-
-
-
+::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
 ## Data Preparation
 
 ### Package Loading and Option Settings
@@ -196,8 +202,9 @@ all_data=inner_join(phenotype_data,data%>%mutate(id=1:n()),by="id")
 #| code-fold: true
 #| message: false
 #| warning: false
- 
- simulated_data=read_rds("C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds")%>%
+# datapath<-"C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds"
+datapath<-"C:/Users/kkm/Desktop/projects/R/website/docs/projects/data/llfs_simulated_data.rds"
+ simulated_data=read_rds("datapath")%>%
      dplyr::select(-1,-probabilities)
  all_data=simulated_data%>%
  mutate(
@@ -223,20 +230,19 @@ all_data=inner_join(phenotype_data,data%>%mutate(id=1:n()),by="id")
 
 This data include `r dim(all_data)[1]` samples and `r dim(all_data)[2]` variables:
 
-* `r names(all_data)[1]`: a disease status (`r unique(all_data[,"outcome"])`), `r unique(all_data[,"outcome"])[1]` is an affected status, `r unique(all_data[,"outcome"])[2]` is an unaffected status, and the reference group is `r unique(all_data[,"outcome"])[2]`.
-* `r names(all_data)[2]`: an age 
-* `r names(all_data)[3]`: a sex status (`r unique(all_data[,"sex"])`) and the reference group is `r unique(all_data[,"sex"])[2]`.
-* `r names(all_data)[4]`: a country where data were collected (`r unique(all_data[,"country"])`) and the reference group is `r unique(all_data[,"country"])[3]`.
-* `r names(all_data)[5]`: a treatment for the disease (`r unique(all_data[,"treatment"])`) and the reference group is `r unique(all_data[,"treatment"])[2]`.
-* `r names(all_data)[6]`: a genotype of APOE.
-  * the apolipoprotein $\epsilon$ (APOE) is a protein produced in the metabolic pathway of fats in mammals, a genotype of which seems to be related to Alzheimer's disease (AD). APOE is polymorphic and has three major alleles, $\epsilon 2$ (e2), $\epsilon 3$(e3), and $\epsilon 4$ (e4). The statistics of the polymorphism are 8.4% for e2, 77.9% for e3, and 13.7% for e4 in worldwide allel frequency, respectively. It is known that the e2, e3, and e4 allels are associated with the protective factor, the neutral one, and the risk one with regard to AD. However, this finding has not been replicated in a large population. Therefore, it is known that we do not know their true associations with AD in the true population. [(from Wiki)](https://en.wikipedia.org/wiki/Apolipoprotein_E) 
-  * There are 6 combinations of the genotypes: 
-    * e2/e2
-    * e2/e3
-    * e2/e4
-    * e3/e3 (reference group)
-    * e3/e4
-    * e4/e4
-* `r names(all_data)[7]` ~ `r names(all_data)[ncol(all_data)]`: a list of metabolites that were blood-sampled from the APOE carriers.
-
-</div>
+-   `r names(all_data)[1]`: a disease status (`r unique(all_data[,"outcome"])`), `r unique(all_data[,"outcome"])[1]` is an affected status, `r unique(all_data[,"outcome"])[2]` is an unaffected status, and the reference group is `r unique(all_data[,"outcome"])[2]`.
+-   `r names(all_data)[2]`: an age
+-   `r names(all_data)[3]`: a sex status (`r unique(all_data[,"sex"])`) and the reference group is `r unique(all_data[,"sex"])[2]`.
+-   `r names(all_data)[4]`: a country where data were collected (`r unique(all_data[,"country"])`) and the reference group is `r unique(all_data[,"country"])[3]`.
+-   `r names(all_data)[5]`: a treatment for the disease (`r unique(all_data[,"treatment"])`) and the reference group is `r unique(all_data[,"treatment"])[2]`.
+-   `r names(all_data)[6]`: a genotype of APOE.
+    -   the apolipoprotein $\epsilon$ (APOE) is a protein produced in the metabolic pathway of fats in mammals, a genotype of which seems to be related to Alzheimer's disease (AD). APOE is polymorphic and has three major alleles, $\epsilon 2$ (e2), $\epsilon 3$(e3), and $\epsilon 4$ (e4). The statistics of the polymorphism are 8.4% for e2, 77.9% for e3, and 13.7% for e4 in worldwide allel frequency, respectively. It is known that the e2, e3, and e4 allels are associated with the protective factor, the neutral one, and the risk one with regard to AD. However, this finding has not been replicated in a large population. Therefore, it is known that we do not know their true associations with AD in the true population. [(from Wiki)](https://en.wikipedia.org/wiki/Apolipoprotein_E)
+    -   There are 6 combinations of the genotypes:
+        -   e2/e2
+        -   e2/e3
+        -   e2/e4
+        -   e3/e3 (reference group)
+        -   e3/e4
+        -   e4/e4
+-   `r names(all_data)[7]` \~ `r names(all_data)[ncol(all_data)]`: a list of metabolites that were blood-sampled from the APOE carriers.
+:::

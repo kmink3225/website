@@ -7,24 +7,33 @@ date: 2023-01-03
 ---
 
 <ul class="nav nav-pills" id="language-tab" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
-  </li>
+
+<li class="nav-item" role="presentation">
+
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">
+
+Korean
+
+</button>
+
+</li>
+
+<li class="nav-item" role="presentation">
+
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">
+
+English
+
+</button>
+
+</li>
 
 <div class="tab-content" id="language-tabcontent">
 
-<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+:::
 
-
-
-</div>
-
-<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
-
-
+::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
 ```{r}
 #| echo: false
 #| message: false
@@ -45,8 +54,9 @@ knitr::opts_chunk$set(message=FALSE,warning=FALSE)
 #| code-fold: true
 #| message: false
 #| warning: false
- 
- simulated_data<-read_rds("C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds")%>%
+# datapath<-"C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds"
+datapath<-"C:/Users/kkm/Desktop/projects/R/website/docs/projects/data/llfs_simulated_data.rds"
+ simulated_data<-read_rds(datapath)%>%
      dplyr::select(-1,-probabilities)
  all_data<-simulated_data%>%
  mutate(
@@ -73,11 +83,14 @@ knitr::opts_chunk$set(message=FALSE,warning=FALSE)
 ## Bivariable Analysis
 
 ### AD vs Age
+
 ```{r}
 #| code-fold: true
 #| message: false
 #| warning: false
 group_variable="sex"
+summary_variable="age"
+
 getNumericSummary=function(data=all_data,group_variable,summary_variable){
     # table
     temp<-data %>% 
@@ -96,26 +109,30 @@ getNumericSummary=function(data=all_data,group_variable,summary_variable){
                  n=count_mean)%>%
                  dplyr::select(-contains('count'))%>%
                  as.data.frame()
-    names(temp)<-c(group_variable,
+    names(temp)<-c("group",
     sapply(names(temp)[-1],function(x)str_replace(x,paste0(summary_variable,"_"),"")))
     temp<-temp%>%
     mutate(
+        variable=group_variable,
+        summary=summary_variable,
         mean=mean%>%round(2),
         sd=sd%>%round(2),
         min=min%>%round(2),
-        Q1=Q1%>%round(2),,
+        Q1=Q1%>%round(2),
         Q4=Q3%>%round(2),
         max=max%>%round(2),
         IQR_min=Q1-(Q3-Q1)*1.5%>%round(2),
     IQR_max=Q3+(Q3-Q1)*1.5%>%round(2),
     proportion=paste0(round(n/nrow(all_data)*100,2),"%"))%>%
-    dplyr::select(group_variable,n,proportion,mean,sd,min,IQR_min,Q1,median,Q3,IQR_max,max)
+    dplyr::select(variable,group,summary,n,proportion,mean,sd,min,IQR_min,Q1,median,Q3,IQR_max,max)
 
     # plot
+    temp2=temp
+    names(temp2)[2]=group_variable
     plot<-
     data%>%
     dplyr::select(group_variable,summary_variable)%>%
-    inner_join(.,temp,by=group_variable)%>%
+    inner_join(.,temp2,by=group_variable)%>%
     ggplot()+
     geom_histogram(aes(x=age,fill=get(group_variable)),binwidth=1,alpha=0.5, position="identity")+
     geom_vline(aes(xintercept=mean,color=get(group_variable)), linetype="dashed", size=1.5) +
@@ -129,105 +146,32 @@ getNumericSummary=function(data=all_data,group_variable,summary_variable){
     result<-list(temp,plot)
     return(result)
 }
+
 ad_age_summary=getNumericSummary(data=all_data,group_variable="outcome",summary_variable="age")[[1]]
+sex_age_summary=getNumericSummary(data=all_data,group_variable="sex",summary_variable="age")[[1]]
+country_age_summary=getNumericSummary(data=all_data,group_variable="country",summary_variable="age")[[1]]
+treatment_age_summary=getNumericSummary(data=all_data,group_variable="treatment",summary_variable="age")[[1]]
+genotype_age_summary=getNumericSummary(data=all_data,group_variable="genotype",summary_variable="age")[[1]]
+age_summary=rbind(
+    ad_age_summary,
+    sex_age_summary,
+    country_age_summary,
+    treatment_age_summary,
+    genotype_age_summary)
 ```
 
-Age is known as a strong risk factor of AD or dementia. Human nerve system gets damaged as people are aged and the nerve fibrosis symptoms progress gradually (some reference, to be added after figuring out how to add bibliography in quarto). For this reason, we need to look into how the sample data are distributed in terms of age. 
+Age is known as a strong risk factor of AD or dementia. Human nerve system gets damaged as people are aged and the nerve fibrosis symptoms progress gradually (some reference, to be added after figuring out how to add bibliography in quarto). For this reason, we need to look into how the sample data are distributed in terms of age.
 
 ```{r}
 #| code-fold: true
 #| message: false
 #| warning: false
-ad_age_summary%>%knitr::kable()
+age_summary%>%knitr::kable()
 ```
 
-The table above shows the summary statistics of age grouped by the affected status, AD and non AD. The difference of age between the two groups are about `r round(ad_age_summary%>%filter(outcome=="positive")%>%dplyr::select(mean)-
-ad_age_summary%>%filter(outcome=="negative")%>%dplyr::select(mean),2)`, but their standard deviations are `r round(ad_age_summary[,"sd"],2)[1]` and `r round(ad_age_summary[,"sd"],2)[2]`. Thus, it is hard to say their age in average differ in the affected status because the age variations of the two groups are overlapped. This research has two conflicting chacteristics at the population level. First, the participants are the elderly whose age in average is `r mean(all_data$age)%>%round(2)`, which indicates they are likely to develop dementia, an aging disease. Second, the data were collected from the longevity village where people live long and healthy lives and it is expected that where will be some protective factors against dementia. These two conflicting traits may have contributed to this unlear difference.
+The table above shows the summary statistics of age grouped by the affected status, AD and non AD. The difference of age between the two groups are about `r round(age_summary%>%filter(group=="positive")%>%dplyr::select(mean)- age_summary%>%filter(group=="negative")%>%dplyr::select(mean),2)`, but their standard deviations are `r round(age_summary%>%filter(group=="positive")%>%dplyr::select(sd),2)` and `r round(age_summary%>%filter(group=="negative")%>%dplyr::select(sd),2)`. Thus, it is hard to say their age in average differ in the affected status because the age variations of the two groups are overlapped. This research has two conflicting characteristics at the population level. First, the participants are the elderly whose age in average is `r mean(all_data$age)%>%round(2)`, which indicates they are likely to develop dementia, an aging disease. Second, the data were collected from the longevity village where people live long and healthy lives and it is expected that where will be some protective factors against dementia. These two conflicting traits may have contributed to this unclear difference.
 
 The glaring difference of age is also shown below. As you can see, the people with a negative status a bit younger than those with a positive one.
-
-```{r}
-#| code-fold: true
-#| message: false
-#| warning: false
-getNumericSummary(data=all_data,group_variable="outcome",summary_variable="age")[[2]]
-```
-
-## Sex vs Age
-
-```{r}
-#| code-fold: true
-#| message: false
-#| warning: false
-sex_age_summary=getNumericSummary(data=all_data,group_variable="sex",summary_variable="age")[[1]]
-sex_age_summary%>%knitr::kable()
-```
-
-```{r}
-#| code-fold: true
-#| message: false
-#| warning: false
-getNumericSummary(data=all_data,group_variable="sex",summary_variable="age")[[2]]
-
-```
-
-
-## Country vs Age
-
-```{r}
-#| code-fold: true
-#| message: false
-#| warning: false
-country_age_summary=getNumericSummary(data=all_data,group_variable="country",summary_variable="age")[[1]]
-country_age_summary%>%knitr::kable()
-```
-
-```{r}
-#| code-fold: true
-#| message: false
-#| warning: false
-getNumericSummary(data=all_data,group_variable="country",summary_variable="age")[[2]]
-
-```
-
-## Treatment vs Age
-
-```{r}
-#| code-fold: true
-#| message: false
-#| warning: false
-treatment_age_summary=getNumericSummary(data=all_data,group_variable="treatment",summary_variable="age")[[1]]
-treatment_age_summary%>%knitr::kable()
-```
-
-```{r}
-#| code-fold: true
-#| message: false
-#| warning: false
-getNumericSummary(data=all_data,group_variable="treatment",summary_variable="age")[[2]]
-
-```
-
-## Genotype vs Age
-
-```{r}
-#| code-fold: true
-#| message: false
-#| warning: false
-genotype_age_summary=getNumericSummary(data=all_data,group_variable="genotype",summary_variable="age")[[1]]
-genotype_age_summary%>%knitr::kable()
-```
-
-```{r}
-#| code-fold: true
-#| message: false
-#| warning: false
-getNumericSummary(data=all_data,group_variable="genotype",summary_variable="age")[[2]]
-
-```
-
-
-
 
 ```{r}
 #| echo: false
@@ -240,5 +184,4 @@ for (i in 1:p) {
 }
 
 ```
-
-</div>
+:::

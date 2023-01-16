@@ -202,9 +202,10 @@ all_data=inner_join(phenotype_data,data%>%mutate(id=1:n()),by="id")
 #| code-fold: true
 #| message: false
 #| warning: false
-# datapath<-"C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds"
-datapath<-"C:/Users/kkm/Desktop/projects/R/website/docs/projects/data/llfs_simulated_data.rds"
- simulated_data=read_rds("datapath")%>%
+
+datapath<-"C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds"
+#datapath<-"C:/Users/kkm/Desktop/projects/R/website/docs/projects/data/llfs_simulated_data.rds"
+ simulated_data=read_rds(datapath)%>%
      dplyr::select(-1,-probabilities)
  all_data=simulated_data%>%
  mutate(
@@ -224,6 +225,24 @@ datapath<-"C:/Users/kkm/Desktop/projects/R/website/docs/projects/data/llfs_simul
       genotype=factor(genotype,levels=c("e2/e2","e2/e3","e2/e4","e3/e3","e3/e4","e4/e4"))
       )
  names(all_data)[7:ncol(all_data)]<-paste0("meta",1:10000)
+```
+
+### Add Missing Values
+
+```{r}
+#| echo: false
+#| eval: false
+
+
+# assume there are some missing values in data
+missing_percent <- sample(5:15/100,1,replace = TRUE)
+na_row <- sample(1:nrow(all_data), nrow(all_data)*ncol(all_data)*missing_percent, replace = TRUE)
+na_col <- sample(1:ncol(all_data), nrow(all_data)*ncol(all_data)*missing_percent, replace = TRUE)
+na_matrix <- as.matrix(all_data[,7:ncol(all_data)])
+
+# fill these NA values in X
+na_matrix[cbind(na_row, na_col)] <- NA
+sum(is.na(X.na)) # number of cells with NA
 ```
 
 ## Data Description

@@ -293,12 +293,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <ul class="nav nav-pills" id="language-tab" role="tablist">
 <li class="nav-item" role="presentation">
 <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">
-Korean
+<p>Korean</p>
 </button>
 </li>
 <li class="nav-item" role="presentation">
 <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">
-English
+<p>English</p>
 </button>
 </li>
 <div class="tab-content" id="language-tabcontent">
@@ -446,27 +446,35 @@ English
 <div class="cell">
 <details>
 <summary>Show the code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a> simulated_data<span class="ot">=</span><span class="fu">read_rds</span>(<span class="st">"C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds"</span>)<span class="sc">%&gt;%</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>     dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span>probabilities)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a> all_data<span class="ot">=</span>simulated_data<span class="sc">%&gt;%</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a> <span class="fu">mutate</span>(</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">outcome=</span><span class="fu">ifelse</span>(outcome<span class="sc">==</span><span class="dv">0</span>,<span class="st">"negative"</span>,<span class="st">"positive"</span>),</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">outcome=</span><span class="fu">factor</span>(outcome,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"negative"</span>,<span class="st">"positive"</span>)),</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">sex=</span><span class="fu">ifelse</span>(sex<span class="sc">==</span><span class="dv">0</span>,<span class="st">"man"</span>,<span class="st">"woman"</span>),</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">sex=</span><span class="fu">factor</span>(sex,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"man"</span>,<span class="st">"woman"</span>)),</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">country=</span><span class="fu">ifelse</span>(country<span class="sc">==</span><span class="dv">0</span>,<span class="st">"center_a"</span>,<span class="fu">ifelse</span>(country<span class="sc">==</span><span class="dv">1</span>,<span class="st">"center_b"</span>,<span class="fu">ifelse</span>(country<span class="sc">==</span><span class="dv">2</span>,<span class="st">"center_c"</span>,<span class="st">"center_d"</span>))),</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">country=</span><span class="fu">factor</span>(country,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"center_a"</span>,<span class="st">"center_b"</span>,<span class="st">"center_c"</span>,<span class="st">"center_d"</span>)),</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">treatment=</span><span class="fu">ifelse</span>(treatment<span class="sc">==</span><span class="dv">0</span>,<span class="st">"trmnt1"</span>,<span class="fu">ifelse</span>(treatment<span class="sc">==</span><span class="dv">1</span>,<span class="st">"trmnt2"</span>,<span class="st">"trmnt3"</span>)),</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">treatment=</span><span class="fu">factor</span>(treatment,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"trmnt1"</span>,<span class="st">"trmnt2"</span>,<span class="st">"trmnt3"</span>)),</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">genotype=</span><span class="fu">ifelse</span>(genotype<span class="sc">==</span><span class="dv">0</span>,<span class="st">"e2/e2"</span>,</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ifelse</span>(genotype<span class="sc">==</span><span class="dv">1</span>,<span class="st">"e2/e3"</span>,</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ifelse</span>(genotype<span class="sc">==</span><span class="dv">2</span>,<span class="st">"e2/e4"</span>,</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ifelse</span>(genotype<span class="sc">==</span><span class="dv">3</span>,<span class="st">"e3/e3"</span>,</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ifelse</span>(genotype<span class="sc">==</span><span class="dv">4</span>,<span class="st">"e3/e4"</span>,<span class="st">"e4/e4"</span>))))),</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">genotype=</span><span class="fu">factor</span>(genotype,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"e2/e2"</span>,<span class="st">"e2/e3"</span>,<span class="st">"e2/e4"</span>,<span class="st">"e3/e3"</span>,<span class="st">"e3/e4"</span>,<span class="st">"e4/e4"</span>))</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a> <span class="fu">names</span>(all_data)[<span class="dv">7</span><span class="sc">:</span><span class="fu">ncol</span>(all_data)]<span class="ot">&lt;-</span><span class="fu">paste0</span>(<span class="st">"meta"</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">10000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>datapath<span class="ot">&lt;-</span><span class="st">"C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds"</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#datapath&lt;-"C:/Users/kkm/Desktop/projects/R/website/docs/projects/data/llfs_simulated_data.rds"</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a> simulated_data<span class="ot">=</span><span class="fu">read_rds</span>(datapath)<span class="sc">%&gt;%</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>     dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span>probabilities)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a> all_data<span class="ot">=</span>simulated_data<span class="sc">%&gt;%</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a> <span class="fu">mutate</span>(</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">outcome=</span><span class="fu">ifelse</span>(outcome<span class="sc">==</span><span class="dv">0</span>,<span class="st">"negative"</span>,<span class="st">"positive"</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">outcome=</span><span class="fu">factor</span>(outcome,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"negative"</span>,<span class="st">"positive"</span>)),</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">sex=</span><span class="fu">ifelse</span>(sex<span class="sc">==</span><span class="dv">0</span>,<span class="st">"man"</span>,<span class="st">"woman"</span>),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">sex=</span><span class="fu">factor</span>(sex,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"man"</span>,<span class="st">"woman"</span>)),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">country=</span><span class="fu">ifelse</span>(country<span class="sc">==</span><span class="dv">0</span>,<span class="st">"center_a"</span>,<span class="fu">ifelse</span>(country<span class="sc">==</span><span class="dv">1</span>,<span class="st">"center_b"</span>,<span class="fu">ifelse</span>(country<span class="sc">==</span><span class="dv">2</span>,<span class="st">"center_c"</span>,<span class="st">"center_d"</span>))),</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">country=</span><span class="fu">factor</span>(country,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"center_a"</span>,<span class="st">"center_b"</span>,<span class="st">"center_c"</span>,<span class="st">"center_d"</span>)),</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">treatment=</span><span class="fu">ifelse</span>(treatment<span class="sc">==</span><span class="dv">0</span>,<span class="st">"trmnt1"</span>,<span class="fu">ifelse</span>(treatment<span class="sc">==</span><span class="dv">1</span>,<span class="st">"trmnt2"</span>,<span class="st">"trmnt3"</span>)),</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">treatment=</span><span class="fu">factor</span>(treatment,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"trmnt1"</span>,<span class="st">"trmnt2"</span>,<span class="st">"trmnt3"</span>)),</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">genotype=</span><span class="fu">ifelse</span>(genotype<span class="sc">==</span><span class="dv">0</span>,<span class="st">"e2/e2"</span>,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ifelse</span>(genotype<span class="sc">==</span><span class="dv">1</span>,<span class="st">"e2/e3"</span>,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ifelse</span>(genotype<span class="sc">==</span><span class="dv">2</span>,<span class="st">"e2/e4"</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ifelse</span>(genotype<span class="sc">==</span><span class="dv">3</span>,<span class="st">"e3/e3"</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ifelse</span>(genotype<span class="sc">==</span><span class="dv">4</span>,<span class="st">"e3/e4"</span>,<span class="st">"e4/e4"</span>))))),</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">genotype=</span><span class="fu">factor</span>(genotype,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"e2/e2"</span>,<span class="st">"e2/e3"</span>,<span class="st">"e2/e4"</span>,<span class="st">"e3/e3"</span>,<span class="st">"e3/e4"</span>,<span class="st">"e4/e4"</span>))</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a> <span class="fu">names</span>(all_data)[<span class="dv">7</span><span class="sc">:</span><span class="fu">ncol</span>(all_data)]<span class="ot">&lt;-</span><span class="fu">paste0</span>(<span class="st">"meta"</span>,<span class="dv">1</span><span class="sc">:</span><span class="dv">10000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+</div>
+</section>
+<section id="add-missing-values" class="level3" data-number="1.4">
+<h3 data-number="1.4" class="anchored" data-anchor-id="add-missing-values"><span class="header-section-number">1.4</span> Add Missing Values</h3>
+<div class="cell">
+
 </div>
 </section>
 </section>

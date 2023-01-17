@@ -31,6 +31,7 @@ English
 <div class="tab-content" id="language-tabcontent">
 
 ::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+please, read the English section first. 
 :::
 
 ::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
@@ -81,7 +82,15 @@ datapath<-"C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_sim
 
 ## Univariable Analysis
 
-missing_value, mean, sd, normality check with p value
+mean, sd, normality check with p value
+
+```{r}
+
+test<-apply(all_data[,unlist(lapply(all_data, is.numeric))],2,function(x)shapiro.test(x))
+test
+
+321
+```
 
 ## Bivariable Analysis
 
@@ -96,18 +105,18 @@ summary_variable="age"
 
 color_function<-function(summary_data){
 return(
-if(nrow(summary_data)==2){
-    c("darkblue","darkred")
-}else if(nrow(summary_data)==3){
-    c("darkblue","darkred","yellow4")
-}else if(nrow(summary_data)==4){
-    c("darkblue","darkred","yellow4","blueviolet")
-}else if(nrow(summary_data)==5){
-    c("darkblue","darkred","yellow4","blueviolet","darkorange")
-}else{
-    c("darkblue","darkred","yellow4","blueviolet","darkorange","darkgreen")
-}
-)
+    if(nrow(summary_data)==2){
+        c("darkblue","darkred")
+    }else if(nrow(summary_data)==3){
+        c("darkblue","darkred","yellow4")
+    }else if(nrow(summary_data)==4){
+        c("darkblue","darkred","yellow4","blueviolet")
+    }else if(nrow(summary_data)==5){
+        c("darkblue","darkred","yellow4","blueviolet","darkorange")
+    }else{
+        c("darkblue","darkred","yellow4","blueviolet","darkorange","darkgreen")
+    }
+    )
 }
 
 getNumericSummary=function(data=all_data,group_variable,summary_variable,set_color=color_function){
@@ -214,7 +223,6 @@ plot<- ggarrange(
     ncol=2, nrow=3,legend="bottom")
 plot
 
-names(all_data)[1:10]
 ```
 
 

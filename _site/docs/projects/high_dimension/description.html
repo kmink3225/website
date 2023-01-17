@@ -8,7 +8,7 @@
 
 <meta name="author" content="Kwangmin Kim">
 <meta name="dcterms.date" content="2023-01-03">
-<meta name="description" content="Due to security concerns, it is difficult to display the data used in this project. Therefore, I will generate fake data to reproduce and demonstrate a rough analysis pipeline. 보안 문제로 인해 이 프로젝트에서 사용된 데이터를 표시하기 어렵습니다. 따라서 대략적인 분석 파이프라인을 재현하고 시연하기 위해 가짜 데이터를 생성할 것입니다.">
+<meta name="description" content="Due to security concerns, it is difficult to display the data used in this project. Therefore, I will generate fake data to reproduce and demonstrate a rough analysis pipeline. 보안 문제로 인해 이 프로젝트에서 사용된 데이터를 공유하기 어렵습니다. 따라서 대략적인 분석 파이프라인을 재현하고 시연하기 위해 가상의 데이터를 생성할 것입니다.">
 
 <title>Kwangmin Kim - Description</title>
 <style>
@@ -185,7 +185,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/high_dimension/report.html" class="sidebar-item-text sidebar-link">Reporting</a>
+  <a href="../../../docs/projects/high_dimension/report.html" class="sidebar-item-text sidebar-link">Conclusion</a>
   </div>
 </li>
       </ul>
@@ -200,6 +200,14 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#analysis-pipeline-architecture" id="toc-analysis-pipeline-architecture" class="nav-link" data-scroll-target="#analysis-pipeline-architecture">Analysis Pipeline Architecture</a>
+  <ul class="collapse">
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a>
+  <ul class="collapse">
+  <li><a href="#as-is" id="toc-as-is" class="nav-link" data-scroll-target="#as-is">As-Is</a></li>
+  <li><a href="#to-be" id="toc-to-be" class="nav-link" data-scroll-target="#to-be">To-Be</a></li>
+  </ul></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -214,7 +222,7 @@ ul.task-list li input[type="checkbox"] {
 
 <div>
   <div class="description">
-    Due to security concerns, it is difficult to display the data used in this project. Therefore, I will generate fake data to reproduce and demonstrate a rough analysis pipeline. 보안 문제로 인해 이 프로젝트에서 사용된 데이터를 표시하기 어렵습니다. 따라서 대략적인 분석 파이프라인을 재현하고 시연하기 위해 가짜 데이터를 생성할 것입니다.
+    Due to security concerns, it is difficult to display the data used in this project. Therefore, I will generate fake data to reproduce and demonstrate a rough analysis pipeline. 보안 문제로 인해 이 프로젝트에서 사용된 데이터를 공유하기 어렵습니다. 따라서 대략적인 분석 파이프라인을 재현하고 시연하기 위해 가상의 데이터를 생성할 것입니다.
   </div>
 </div>
 
@@ -303,59 +311,6 @@ English
 <li>Conclusion</li>
 </ul>
 </section>
-<section id="analysis-pipeline-architecture" class="level1">
-<h1>Analysis Pipeline Architecture</h1>
-<section id="simulation" class="level2">
-<h2 class="anchored" data-anchor-id="simulation">Simulation</h2>
-<div class="cell" data-fig-width="5">
-<div class="cell-output-display">
-<div>
-<p>
-</p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-1">flowchart TB
-    subgraph assign_frequency
-        direction LR
-        Assign_probabilities     
-    end
-    subgraph generate_multivariate_normal_distribution
-        direction TB
-        determine_sample_size ---
-        determine_number_of_columns---
-        create_covariate_correlation_matrix---
-        apply_some_noise_to_the_covariance_matrix
-    end
-    subgraph create_weight_matrix
-        direction LR
-        apply_some_noise_to_the_covariance_matrix
-    end
-    subgraph calculate_score_matrix
-        direction TB
-        matrix_multiplication_covariance_matrix_weight_matrix---
-        used_logistic_function
-    end
-    subgraph create_response_variable
-        direction LR
-        result_of_logistic_function
-    end
-    subgraph creation_some_discrete_variables
-        direction LR       
-    end
-    subgraph join
-        direction LR
-        all_the_matrix_and_vector_created       
-    end
-    assign_frequency--&gt;generate_multivariate_normal_distribution--&gt;create_weight_matrix--&gt;
-    calculate_score_matrix--&gt;create_response_variable--&gt;creation_some_discrete_variables--&gt;
-    join
-</pre>
-<div id="mermaid-tooltip-1" class="mermaidTooltip">
-
-</div>
-<p></p>
-</div>
-</div>
-</div>
-</section>
-</section>
 </div>
 <div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
 <section id="background-1" class="level2">
@@ -404,49 +359,149 @@ English
 <li>Conclusion</li>
 </ul>
 </section>
-<section id="analysis-pipeline-architecture-1" class="level1">
+</div>
+</div></ul></section>
+<section id="analysis-pipeline-architecture" class="level1">
 <h1>Analysis Pipeline Architecture</h1>
-<section id="simulation-1" class="level2">
-<h2 class="anchored" data-anchor-id="simulation-1">Simulation</h2>
-<div class="cell" data-fig-width="5">
+<section id="overview" class="level2">
+<h2 class="anchored" data-anchor-id="overview">Overview</h2>
+<section id="as-is" class="level3">
+<h3 class="anchored" data-anchor-id="as-is">As-Is</h3>
+<div class="cell" data-fig-width="7.5">
+<div class="cell-output-display">
+<div>
+<p>
+</p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-1">flowchart TB
+    subgraph Skip_These_Steps_in_This_Article
+        direction LR
+        subgraph data_collection
+            direction TB
+            multi-centered_medical_centers---
+            set_inclusion\exclusion_criteria---
+            patient_visit---
+            blood_sampling---
+            store_samples_in_labs
+        end
+        subgraph mass_spectrometry
+            direction LR
+            conduct_mass_spectrometry---
+            digitalization---
+            store_in_database_system    
+        end
+        subgraph data_transfer
+            direction TB
+            subgraph data
+                direction LR
+                metabolome_data---
+                clinical_data---
+                demographic_data---
+                dietary_habit_data
+            end
+            data---csv_or_excel_format
+        end
+        subgraph data_quality_control
+            direction TB
+            identify_anomaly_data---
+            identify_missing_values
+            subgraph missing_value_analysis
+                direction LR
+                MCAR---
+                MAR---
+                MNAR
+            end
+            either_imputation_or_omission---
+            communication_with_labs---
+            set_data_inclusion/exclusion_criteria
+        end
+        identify_missing_values---missing_value_analysis---either_imputation_or_omission
+        subgraph data_preprocessing
+            direction LR
+            data_transformation
+        end
+    end
+    subgraph data_analytics
+        direction LR
+        exploratory_data_analysis---
+        statistical_analysis---
+        machine_learning
+    end
+    subgraph report_to_faculty_members
+        direction TB
+        share_with_medical_doctors---
+        share_with_epidemiologists---
+        share_with_neurologists---
+        share_with_biologists---
+        share_with_biostatisticians---
+        share_with_bioinformatician
+    end
+    subgraph write_manuscript
+        direction LR
+    end
+    
+data_collection--&gt;mass_spectrometry--&gt;data_transfer--&gt;data_quality_control--&gt;data_preprocessing--&gt;data_analytics--&gt;report_to_faculty_members--&gt;write_manuscript
+</pre>
+<div id="mermaid-tooltip-1" class="mermaidTooltip">
+
+</div>
+<p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="to-be" class="level3">
+<h3 class="anchored" data-anchor-id="to-be">To-Be</h3>
+<div class="cell" data-fig-width="7.5">
 <div class="cell-output-display">
 <div>
 <p>
 </p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-2">flowchart TB
-    subgraph assign_frequency
+    subgraph Simulation
+        direction TB
+        subgraph assign_frequency
         direction LR
         Assign_probabilities     
+        end
+        subgraph generate_multivariate_normal_distribution
+            direction TB
+            determine_sample_size ---
+            determine_number_of_columns---
+            create_covariate_correlation_matrix---
+            apply_noise_to_the_covariance_matrix
+        end
+        subgraph create_weight_matrix
+            direction LR
+            apply_some_noise_to_the_covariance_matrix
+        end
+        subgraph calculate_score_matrix
+            direction LR
+            matrix_multiplication_covariance_matrix_weight_matrix---
+            used_logistic_function
+        end
+        subgraph create_response_variable
+            direction LR
+            result_of_logistic_function
+        end
+        subgraph creation_some_discrete_variables
+            direction LR       
+        end
+        subgraph join
+            direction LR
+            all_the_matrix_and_vector_created       
+        end
+        assign_frequency--&gt;generate_multivariate_normal_distribution--&gt;create_weight_matrix--&gt;
+        calculate_score_matrix--&gt;create_response_variable--&gt;creation_some_discrete_variables--&gt;
+        join
     end
-    subgraph multivariate_normal_distribution
+    subgraph data_analytics
         direction LR
-        determine_sample_size ---
-        determine_number_of_columns---
-        create_covariate_correlation_matrix---
-        apply_some_noise_to_the_covariance_matrix
+        exploratory_data_analysis---
+        statistical_analysis---
+        machine_learning
     end
-    subgraph create_weight_matrix
+    subgraph conclusion
         direction LR
-        apply_some_noise_to_the_covariance_matrix
     end
-    subgraph calculate_score_matrix
-        direction LR
-        matrix_multiplication_covariance_matrix_weight_matrix---
-        used_logistic_function
-    end
-    subgraph create_response_variable
-        direction LR
-        result_of_logistic_function
-    end
-    subgraph creation_some_discrete_variables
-        direction LR       
-    end
-    subgraph join
-        direction LR
-        all_the_matrix_and_vector_created       
-    end
-    assign_frequency--&gt;multivariate_normal_distribution--&gt;create_weight_matrix--&gt;
-    calculate_score_matrix--&gt;create_response_variable--&gt;creation_some_discrete_variables--&gt;
-    join
+    Simulation--&gt;data_analytics--&gt;conclusion
 </pre>
 <div id="mermaid-tooltip-2" class="mermaidTooltip">
 
@@ -455,12 +510,11 @@ English
 </div>
 </div>
 </div>
-</section>
-</section>
-</div>
 
 
-</div></ul></section>
+</section>
+</section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

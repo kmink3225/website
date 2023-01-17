@@ -1,7 +1,7 @@
 ---
 title: "Description"
 subtitle: "Project Description"
-description: "Due to security concerns, it is difficult to display the data used in this project. Therefore, I will generate fake data to reproduce and demonstrate a rough analysis pipeline. \n 보안 문제로 인해 이 프로젝트에서 사용된 데이터를 표시하기 어렵습니다. 따라서 대략적인 분석 파이프라인을 재현하고 시연하기 위해 가짜 데이터를 생성할 것입니다."
+description: "Due to security concerns, it is difficult to display the data used in this project. Therefore, I will generate fake data to reproduce and demonstrate a rough analysis pipeline. \n 보안 문제로 인해 이 프로젝트에서 사용된 데이터를 공유하기 어렵습니다. 따라서 대략적인 분석 파이프라인을 재현하고 시연하기 위해 가상의 데이터를 생성할 것입니다."
 author: Kwangmin Kim
 date: 2023-01-03
 ---
@@ -59,48 +59,6 @@ LLFS(Long Life Family Study) 프로젝트의 목적은 전사체 및 단백질�
 * Method2: ML Approach
 * Conclusion
 
-# Analysis Pipeline Architecture
-
-## Simulation
-
-```{mermaid}
-%%| fig-width: 5
-flowchart TB
-    subgraph assign_frequency
-        direction LR
-        Assign_probabilities     
-    end
-    subgraph generate_multivariate_normal_distribution
-        direction TB
-        determine_sample_size ---
-        determine_number_of_columns---
-        create_covariate_correlation_matrix---
-        apply_some_noise_to_the_covariance_matrix
-    end
-    subgraph create_weight_matrix
-        direction LR
-        apply_some_noise_to_the_covariance_matrix
-    end
-    subgraph calculate_score_matrix
-        direction TB
-        matrix_multiplication_covariance_matrix_weight_matrix---
-        used_logistic_function
-    end
-    subgraph create_response_variable
-        direction LR
-        result_of_logistic_function
-    end
-    subgraph creation_some_discrete_variables
-        direction LR       
-    end
-    subgraph join
-        direction LR
-        all_the_matrix_and_vector_created       
-    end
-    assign_frequency-->generate_multivariate_normal_distribution-->create_weight_matrix-->
-    calculate_score_matrix-->create_response_variable-->creation_some_discrete_variables-->
-    join
-```
 
 
 </div>
@@ -146,50 +104,138 @@ For the convenience of reading, I divided this proejcts into 5 sections:
 * Method2: ML Approach
 * Conclusion
 
-# Analysis Pipeline Architecture
-
-## Simulation
-
-
-```{mermaid}
-%%| fig-width: 5
-flowchart TB
-    subgraph assign_frequency
-        direction LR
-        Assign_probabilities     
-    end
-    subgraph multivariate_normal_distribution
-        direction LR
-        determine_sample_size ---
-        determine_number_of_columns---
-        create_covariate_correlation_matrix---
-        apply_some_noise_to_the_covariance_matrix
-    end
-    subgraph create_weight_matrix
-        direction LR
-        apply_some_noise_to_the_covariance_matrix
-    end
-    subgraph calculate_score_matrix
-        direction LR
-        matrix_multiplication_covariance_matrix_weight_matrix---
-        used_logistic_function
-    end
-    subgraph create_response_variable
-        direction LR
-        result_of_logistic_function
-    end
-    subgraph creation_some_discrete_variables
-        direction LR       
-    end
-    subgraph join
-        direction LR
-        all_the_matrix_and_vector_created       
-    end
-    assign_frequency-->multivariate_normal_distribution-->create_weight_matrix-->
-    calculate_score_matrix-->create_response_variable-->creation_some_discrete_variables-->
-    join
-```
-
 
 
 </div>
+
+
+# Analysis Pipeline Architecture
+
+## Overview 
+
+### As-Is
+```{mermaid}
+%%| fig-width: 7.5
+flowchart TB
+    subgraph Skip_These_Steps_in_This_Article
+        direction LR
+        subgraph data_collection
+            direction TB
+            multi-centered_medical_centers---
+            set_inclusion\exclusion_criteria---
+            patient_visit---
+            blood_sampling---
+            store_samples_in_labs
+        end
+        subgraph mass_spectrometry
+            direction LR
+            conduct_mass_spectrometry---
+            digitalization---
+            store_in_database_system    
+        end
+        subgraph data_transfer
+            direction TB
+            subgraph data
+                direction LR
+                metabolome_data---
+                clinical_data---
+                demographic_data---
+                dietary_habit_data
+            end
+            data---csv_or_excel_format
+        end
+        subgraph data_quality_control
+            direction TB
+            identify_anomaly_data---
+            identify_missing_values
+            subgraph missing_value_analysis
+                direction LR
+                MCAR---
+                MAR---
+                MNAR
+            end
+            either_imputation_or_omission---
+            communication_with_labs---
+            set_data_inclusion/exclusion_criteria
+        end
+        identify_missing_values---missing_value_analysis---either_imputation_or_omission
+        subgraph data_preprocessing
+            direction LR
+            data_transformation
+        end
+    end
+    subgraph data_analytics
+        direction LR
+        exploratory_data_analysis---
+        statistical_analysis---
+        machine_learning
+    end
+    subgraph report_to_faculty_members
+        direction TB
+        share_with_medical_doctors---
+        share_with_epidemiologists---
+        share_with_neurologists---
+        share_with_biologists---
+        share_with_biostatisticians---
+        share_with_bioinformatician
+    end
+    subgraph write_manuscript
+        direction LR
+    end
+    
+data_collection-->mass_spectrometry-->data_transfer-->data_quality_control-->data_preprocessing-->data_analytics-->report_to_faculty_members-->write_manuscript
+```
+
+### To-Be 
+
+```{mermaid}
+%%| fig-width: 7.5
+flowchart TB
+    subgraph Simulation
+        direction TB
+        subgraph assign_frequency
+        direction LR
+        Assign_probabilities     
+        end
+        subgraph generate_multivariate_normal_distribution
+            direction TB
+            determine_sample_size ---
+            determine_number_of_columns---
+            create_covariate_correlation_matrix---
+            apply_noise_to_the_covariance_matrix
+        end
+        subgraph create_weight_matrix
+            direction LR
+            apply_some_noise_to_the_covariance_matrix
+        end
+        subgraph calculate_score_matrix
+            direction LR
+            matrix_multiplication_covariance_matrix_weight_matrix---
+            used_logistic_function
+        end
+        subgraph create_response_variable
+            direction LR
+            result_of_logistic_function
+        end
+        subgraph creation_some_discrete_variables
+            direction LR       
+        end
+        subgraph join
+            direction LR
+            all_the_matrix_and_vector_created       
+        end
+        assign_frequency-->generate_multivariate_normal_distribution-->create_weight_matrix-->
+        calculate_score_matrix-->create_response_variable-->creation_some_discrete_variables-->
+        join
+    end
+    subgraph data_analytics
+        direction LR
+        exploratory_data_analysis---
+        statistical_analysis---
+        machine_learning
+    end
+    subgraph conclusion
+        direction LR
+    end
+    Simulation-->data_analytics-->conclusion
+```

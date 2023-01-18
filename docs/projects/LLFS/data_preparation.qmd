@@ -30,6 +30,63 @@ execute:
 #   warning: false
 ---
 
+
+
+### To-Be 
+
+```{mermaid}
+%%| fig-width: 7.5
+flowchart TB
+    subgraph Simulation
+        direction TB
+        subgraph assign_frequency
+        direction LR
+        Assign_probabilities     
+        end
+        subgraph generate_multivariate_normal_distribution
+            direction TB
+            determine_sample_size ---
+            determine_number_of_columns---
+            create_covariate_correlation_matrix---
+            apply_noise_to_the_covariance_matrix
+        end
+        subgraph create_weight_matrix
+            direction LR
+            apply_some_noise_to_the_covariance_matrix
+        end
+        subgraph calculate_score_matrix
+            direction LR
+            matrix_multiplication_covariance_matrix_weight_matrix---
+            used_logistic_function
+        end
+        subgraph create_response_variable
+            direction LR
+            result_of_logistic_function
+        end
+        subgraph creation_some_discrete_variables
+            direction LR       
+        end
+        subgraph join
+            direction LR
+            all_the_matrix_and_vector_created       
+        end
+        assign_frequency-->generate_multivariate_normal_distribution-->create_weight_matrix-->
+        calculate_score_matrix-->create_response_variable-->creation_some_discrete_variables-->
+        join
+    end
+    subgraph data_analytics
+        direction LR
+        exploratory_data_analysis---
+        statistical_analysis---
+        machine_learning
+    end
+    subgraph conclusion
+        direction LR
+    end
+    Simulation-->data_analytics-->conclusion
+```
+
+
 <ul class="nav nav-pills" id="language-tab" role="tablist">
 
 <li class="nav-item" role="presentation">

@@ -160,7 +160,7 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/high_dimension/description.html" class="sidebar-item-text sidebar-link active">Description</a>
+  <a href="../../../docs/projects/LLFS/project_description.html" class="sidebar-item-text sidebar-link active">Description</a>
   </div>
 </li>
           <li class="sidebar-item sidebar-item-section">
@@ -173,27 +173,32 @@ ul.task-list li input[type="checkbox"] {
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/high_dimension/data_preparation.html" class="sidebar-item-text sidebar-link">Data Preparation</a>
+  <a href="../../../docs/projects/LLFS/self_description.html" class="sidebar-item-text sidebar-link">Description</a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/high_dimension/eda.html" class="sidebar-item-text sidebar-link">EDA</a>
+  <a href="../../../docs/projects/LLFS/data_preparation.html" class="sidebar-item-text sidebar-link">Data Preparation</a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/high_dimension/statistical_approach.html" class="sidebar-item-text sidebar-link">Statistical Approach</a>
+  <a href="../../../docs/projects/LLFS/eda.html" class="sidebar-item-text sidebar-link">EDA</a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/high_dimension/ml_approach.html" class="sidebar-item-text sidebar-link">ML Approach</a>
+  <a href="../../../docs/projects/LLFS/statistical_approach.html" class="sidebar-item-text sidebar-link">Statistical Approach</a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/high_dimension/report.html" class="sidebar-item-text sidebar-link">Conclusion</a>
+  <a href="../../../docs/projects/LLFS/ml_approach.html" class="sidebar-item-text sidebar-link">ML Approach</a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../../docs/projects/LLFS/report.html" class="sidebar-item-text sidebar-link">Conclusion</a>
   </div>
 </li>
       </ul>
@@ -212,11 +217,18 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
   <li><a href="#analysis-pipeline-architecture" id="toc-analysis-pipeline-architecture" class="nav-link" data-scroll-target="#analysis-pipeline-architecture">Analysis Pipeline Architecture</a>
   <ul class="collapse">
-  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a>
+  <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a></li>
+  <li><a href="#data-collection" id="toc-data-collection" class="nav-link" data-scroll-target="#data-collection">Data Collection</a></li>
+  <li><a href="#data-qc-quality-control" id="toc-data-qc-quality-control" class="nav-link" data-scroll-target="#data-qc-quality-control">Data QC (Quality Control)</a></li>
+  <li><a href="#analytics" id="toc-analytics" class="nav-link" data-scroll-target="#analytics">Analytics</a>
   <ul class="collapse">
-  <li><a href="#as-is" id="toc-as-is" class="nav-link" data-scroll-target="#as-is">As-Is</a></li>
-  <li><a href="#to-be" id="toc-to-be" class="nav-link" data-scroll-target="#to-be">To-Be</a></li>
+  <li><a href="#eda-exploratory-data-analysis" id="toc-eda-exploratory-data-analysis" class="nav-link" data-scroll-target="#eda-exploratory-data-analysis">EDA (Exploratory Data Analysis)</a></li>
+  <li><a href="#data-mining" id="toc-data-mining" class="nav-link" data-scroll-target="#data-mining">Data Mining</a></li>
+  <li><a href="#statistical-analysis" id="toc-statistical-analysis" class="nav-link" data-scroll-target="#statistical-analysis">Statistical Analysis</a></li>
+  <li><a href="#machine-learning" id="toc-machine-learning" class="nav-link" data-scroll-target="#machine-learning">Machine Learning</a></li>
   </ul></li>
+  <li><a href="#reporting" id="toc-reporting" class="nav-link" data-scroll-target="#reporting">Reporting</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -381,80 +393,35 @@ English
 <h1>Analysis Pipeline Architecture</h1>
 <section id="overview" class="level2">
 <h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<section id="as-is" class="level3">
-<h3 class="anchored" data-anchor-id="as-is">As-Is</h3>
 <div class="cell" data-fig-width="7.5">
 <div class="cell-output-display">
 <div>
 <p>
-</p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-1">flowchart TB
-    subgraph Skip_These_Steps_in_This_Article
-        direction LR
-        subgraph data_collection
-            direction TB
-            multi-centered_medical_centers---
-            set_inclusion\exclusion_criteria---
-            patient_visit---
-            blood_sampling---
-            store_samples_in_labs
-        end
-        subgraph mass_spectrometry
-            direction LR
-            conduct_mass_spectrometry---
-            digitalization---
-            store_in_database_system    
-        end
-        subgraph data_transfer
-            direction TB
-            subgraph data
-                direction LR
-                metabolome_data---
-                clinical_data---
-                demographic_data---
-                dietary_habit_data
-            end
-            data---csv_or_excel_format
-        end
-        subgraph data_quality_control
-            direction TB
-            identify_anomaly_data---
-            identify_missing_values
-            subgraph missing_value_analysis
-                direction LR
-                MCAR---
-                MAR---
-                MNAR
-            end
-            either_imputation_or_omission---
-            communication_with_labs---
-            set_data_inclusion/exclusion_criteria
-        end
-        identify_missing_values---missing_value_analysis---either_imputation_or_omission
-        subgraph data_preprocessing
-            direction LR
-            data_transformation
-        end
-    end
-    subgraph data_analytics
-        direction LR
-        exploratory_data_analysis---
-        statistical_analysis---
-        machine_learning
-    end
-    subgraph report_to_faculty_members
+</p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-1">flowchart LR
+    subgraph Data_Collection
         direction TB
-        share_with_medical_doctors---
-        share_with_epidemiologists---
-        share_with_neurologists---
-        share_with_biologists---
-        share_with_biostatisticians---
-        share_with_bioinformatician
+        Multi_Centerd_Blood_Sampling---
+        Mass_Spectrometry---
+        Data_Transfer
     end
-    subgraph write_manuscript
-        direction LR
+    subgraph Quality_Control
+        direction TB
+        Identify_Anomaly_Data---
+        Identify_Missing_Values
     end
-    
-data_collection--&gt;mass_spectrometry--&gt;data_transfer--&gt;data_quality_control--&gt;data_preprocessing--&gt;data_analytics--&gt;report_to_faculty_members--&gt;write_manuscript
+    subgraph Analytics
+        direction TB 
+        EDA---
+        Data_Mining---
+        Statistical_Analysis---
+        Machine_Learning
+    end
+    subgraph Reporting_and_Conclusion
+        direction TB 
+        Share_with_Faculty
+    end
+
+Data_Collection--&gt;Quality_Control--&gt;Analytics--&gt;Reporting_and_Conclusion
 </pre>
 <div id="mermaid-tooltip-1" class="mermaidTooltip">
 
@@ -464,60 +431,39 @@ data_collection--&gt;mass_spectrometry--&gt;data_transfer--&gt;data_quality_cont
 </div>
 </div>
 </section>
-<section id="to-be" class="level3">
-<h3 class="anchored" data-anchor-id="to-be">To-Be</h3>
+<section id="data-collection" class="level2">
+<h2 class="anchored" data-anchor-id="data-collection">Data Collection</h2>
 <div class="cell" data-fig-width="7.5">
 <div class="cell-output-display">
 <div>
 <p>
 </p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-2">flowchart TB
-    subgraph Simulation
+    subgraph Data_Collection
         direction TB
-        subgraph assign_frequency
-        direction LR
-        Assign_probabilities     
-        end
-        subgraph generate_multivariate_normal_distribution
-            direction TB
-            determine_sample_size ---
-            determine_number_of_columns---
-            create_covariate_correlation_matrix---
-            apply_noise_to_the_covariance_matrix
-        end
-        subgraph create_weight_matrix
-            direction LR
-            apply_some_noise_to_the_covariance_matrix
-        end
-        subgraph calculate_score_matrix
-            direction LR
-            matrix_multiplication_covariance_matrix_weight_matrix---
-            used_logistic_function
-        end
-        subgraph create_response_variable
-            direction LR
-            result_of_logistic_function
-        end
-        subgraph creation_some_discrete_variables
-            direction LR       
-        end
-        subgraph join
-            direction LR
-            all_the_matrix_and_vector_created       
-        end
-        assign_frequency--&gt;generate_multivariate_normal_distribution--&gt;create_weight_matrix--&gt;
-        calculate_score_matrix--&gt;create_response_variable--&gt;creation_some_discrete_variables--&gt;
-        join
+        multi-centered_medical_centers---
+        set_inclusion\exclusion_criteria---
+        patient_visit---
+        blood_sampling---
+        store_samples_in_labs
     end
-    subgraph data_analytics
+    subgraph Mass_Spectrometry
         direction LR
-        exploratory_data_analysis---
-        statistical_analysis---
-        machine_learning
+        conduct_mass_spectrometry---
+        digitalization---
+        store_in_database_system    
     end
-    subgraph conclusion
-        direction LR
+    subgraph Data_Transfer
+        direction TB
+        subgraph Data
+            direction LR
+            metabolome_data---
+            clinical_data---
+            demographic_data---
+            dietary_habit_data
+        end
+        Data---csv_or_excel_format
     end
-    Simulation--&gt;data_analytics--&gt;conclusion
+Data_Collection--&gt;Mass_Spectrometry--&gt;Data_Transfer
 </pre>
 <div id="mermaid-tooltip-2" class="mermaidTooltip">
 
@@ -526,9 +472,114 @@ data_collection--&gt;mass_spectrometry--&gt;data_transfer--&gt;data_quality_cont
 </div>
 </div>
 </div>
-
-
 </section>
+<section id="data-qc-quality-control" class="level2">
+<h2 class="anchored" data-anchor-id="data-qc-quality-control">Data QC (Quality Control)</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<p>
+</p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-3">flowchart LR
+    subgraph Data_Quality_Control
+        direction TB
+        identify_anomaly_data---
+        identify_missing_values
+        subgraph Missing_Value_Analysis
+            direction TB
+            MCAR---
+            MAR---
+            MNAR
+        end
+        either_imputation_or_omission---
+        communication_with_labs---
+        set_data_inclusion/exclusion_criteria
+    end
+    identify_missing_values---Missing_Value_Analysis---either_imputation_or_omission
+    subgraph Data_Preprocessing
+        direction TB
+        data_transformation---
+        log_transformation---
+        min_max_normalization---
+        standardization
+    end
+
+Data_Quality_Control--&gt;Data_Preprocessing
+
+</pre>
+<div id="mermaid-tooltip-3" class="mermaidTooltip">
+
+</div>
+<p></p>
+</div>
+</div>
+</div>
+<p>ormalization is useful when there are no outliers as it cannot cope up with them. Usually, we would scale age and not incomes because only a few people have high incomes but the age is close to uniform. vs Standardization can be helpful in cases where the data follows a Gaussian distribution. However, this does not have to be necessarily true. Geometrically speaking, it translates the data to the mean vector of original data to the origin and squishes or expands the points if std is 1 respectively. We can see that we are just changing mean and standard deviation to a standard normal distribution which is still normal thus the shape of the distribution is not affected.</p>
+<p>Standardization does not get affected by outliers because there is no predefined range of transformed features.</p>
+</section>
+<section id="analytics" class="level2">
+<h2 class="anchored" data-anchor-id="analytics">Analytics</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<p>
+</p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-4">flowchart TB
+    subgraph Data_Analytics
+        direction TB
+        Exploratory_Data_Analysis---
+        Data_Minig---
+        Statistical_Analysis---
+        Machine_Learning
+    end
+</pre>
+<div id="mermaid-tooltip-4" class="mermaidTooltip">
+
+</div>
+<p></p>
+</div>
+</div>
+</div>
+<section id="eda-exploratory-data-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="eda-exploratory-data-analysis">EDA (Exploratory Data Analysis)</h3>
+</section>
+<section id="data-mining" class="level3">
+<h3 class="anchored" data-anchor-id="data-mining">Data Mining</h3>
+</section>
+<section id="statistical-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="statistical-analysis">Statistical Analysis</h3>
+</section>
+<section id="machine-learning" class="level3">
+<h3 class="anchored" data-anchor-id="machine-learning">Machine Learning</h3>
+</section>
+</section>
+<section id="reporting" class="level2">
+<h2 class="anchored" data-anchor-id="reporting">Reporting</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<p>
+</p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-5">flowchart TB
+    subgraph report_to_faculty_members
+        direction TB
+        share_with_medical_doctors---
+        share_with_epidemiologists---
+        share_with_neurologists---
+        share_with_biologists---
+        share_with_biostatisticians---
+        share_with_bioinformatician
+    end
+</pre>
+<div id="mermaid-tooltip-5" class="mermaidTooltip">
+
+</div>
+<p></p>
+</div>
+</div>
+</div>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+
+
 </section>
 </section>
 

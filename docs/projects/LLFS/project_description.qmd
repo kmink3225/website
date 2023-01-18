@@ -106,72 +106,134 @@ For the convenience of reading, I divided this proejcts into 5 sections:
 * Method2: ML Approach
 * Conclusion
 
-
-
 </div>
 
 
 # Analysis Pipeline Architecture
 
-## Overview 
+## Overview
 
-### As-Is
+```{mermaid}
+%%| fig-width: 7.5
+flowchart LR
+    subgraph Data_Collection
+        direction TB
+        Multi_Centerd_Blood_Sampling---
+        Mass_Spectrometry---
+        Data_Transfer
+    end
+    subgraph Quality_Control
+        direction TB
+        Identify_Anomaly_Data---
+        Identify_Missing_Values
+    end
+    subgraph Analytics
+        direction TB 
+        EDA---
+        Data_Mining---
+        Statistical_Analysis---
+        Machine_Learning
+    end
+    subgraph Reporting_and_Conclusion
+        direction TB 
+        Share_with_Faculty
+    end
+
+Data_Collection-->Quality_Control-->Analytics-->Reporting_and_Conclusion
+```
+
+## Data Collection
+
 ```{mermaid}
 %%| fig-width: 7.5
 flowchart TB
-    subgraph Skip_These_Steps_in_This_Article
-        direction LR
-        subgraph data_collection
-            direction TB
-            multi-centered_medical_centers---
-            set_inclusion\exclusion_criteria---
-            patient_visit---
-            blood_sampling---
-            store_samples_in_labs
-        end
-        subgraph mass_spectrometry
-            direction LR
-            conduct_mass_spectrometry---
-            digitalization---
-            store_in_database_system    
-        end
-        subgraph data_transfer
-            direction TB
-            subgraph data
-                direction LR
-                metabolome_data---
-                clinical_data---
-                demographic_data---
-                dietary_habit_data
-            end
-            data---csv_or_excel_format
-        end
-        subgraph data_quality_control
-            direction TB
-            identify_anomaly_data---
-            identify_missing_values
-            subgraph missing_value_analysis
-                direction LR
-                MCAR---
-                MAR---
-                MNAR
-            end
-            either_imputation_or_omission---
-            communication_with_labs---
-            set_data_inclusion/exclusion_criteria
-        end
-        identify_missing_values---missing_value_analysis---either_imputation_or_omission
-        subgraph data_preprocessing
-            direction LR
-            data_transformation
-        end
+    subgraph Data_Collection
+        direction TB
+        multi-centered_medical_centers---
+        set_inclusion\exclusion_criteria---
+        patient_visit---
+        blood_sampling---
+        store_samples_in_labs
     end
-    subgraph data_analytics
+    subgraph Mass_Spectrometry
         direction LR
-        exploratory_data_analysis---
-        statistical_analysis---
-        machine_learning
+        conduct_mass_spectrometry---
+        digitalization---
+        store_in_database_system    
     end
+    subgraph Data_Transfer
+        direction TB
+        subgraph Data
+            direction LR
+            metabolome_data---
+            clinical_data---
+            demographic_data---
+            dietary_habit_data
+        end
+        Data---csv_or_excel_format
+    end
+Data_Collection-->Mass_Spectrometry-->Data_Transfer
+```
+
+## Data QC (Quality Control)
+```{mermaid}
+flowchart LR
+    subgraph Data_Quality_Control
+        direction TB
+        identify_anomaly_data---
+        identify_missing_values
+        subgraph Missing_Value_Analysis
+            direction LR
+            MCAR---
+            MAR---
+            MNAR
+        end
+        either_imputation_or_omission---
+        communication_with_labs---
+        set_data_inclusion/exclusion_criteria
+    end
+    identify_missing_values---Missing_Value_Analysis---either_imputation_or_omission
+    subgraph Data_Preprocessing
+        direction TB
+        data_transformation---
+        log_transformation---
+        min_max_normalization---
+        standardization
+    end
+
+Data_Quality_Control-->Data_Preprocessing
+
+```
+ormalization is useful when there are no outliers as it cannot cope up with them. Usually, we would scale age and not incomes because only a few people have high incomes but the age is close to uniform. vs
+Standardization can be helpful in cases where the data follows a Gaussian distribution. However, this does not have to be necessarily true. Geometrically speaking, it translates the data to the mean vector of original data to the origin and squishes or expands the points if std is 1 respectively. We can see that we are just changing mean and standard deviation to a standard normal distribution which is still normal thus the shape of the distribution is not affected.
+
+Standardization does not get affected by outliers because there is no predefined range of transformed features.
+
+## Analytics
+```{mermaid}
+flowchart TB
+    subgraph Data_Analytics
+        direction TB
+        Exploratory_Data_Analysis---
+        Data_Minig---
+        Statistical_Analysis---
+        Machine_Learning
+    end
+```
+
+
+### EDA (Exploratory Data Analysis)
+
+### Data Mining
+
+### Statistical Analysis
+
+### Machine Learning
+
+## Reporting
+
+```{mermaid}
+flowchart TB
     subgraph report_to_faculty_members
         direction TB
         share_with_medical_doctors---
@@ -181,63 +243,7 @@ flowchart TB
         share_with_biostatisticians---
         share_with_bioinformatician
     end
-    subgraph write_manuscript
-        direction LR
-    end
-    
-data_collection-->mass_spectrometry-->data_transfer-->data_quality_control-->data_preprocessing-->data_analytics-->report_to_faculty_members-->write_manuscript
 ```
 
-### To-Be 
+## Conclusion
 
-```{mermaid}
-%%| fig-width: 7.5
-flowchart TB
-    subgraph Simulation
-        direction TB
-        subgraph assign_frequency
-        direction LR
-        Assign_probabilities     
-        end
-        subgraph generate_multivariate_normal_distribution
-            direction TB
-            determine_sample_size ---
-            determine_number_of_columns---
-            create_covariate_correlation_matrix---
-            apply_noise_to_the_covariance_matrix
-        end
-        subgraph create_weight_matrix
-            direction LR
-            apply_some_noise_to_the_covariance_matrix
-        end
-        subgraph calculate_score_matrix
-            direction LR
-            matrix_multiplication_covariance_matrix_weight_matrix---
-            used_logistic_function
-        end
-        subgraph create_response_variable
-            direction LR
-            result_of_logistic_function
-        end
-        subgraph creation_some_discrete_variables
-            direction LR       
-        end
-        subgraph join
-            direction LR
-            all_the_matrix_and_vector_created       
-        end
-        assign_frequency-->generate_multivariate_normal_distribution-->create_weight_matrix-->
-        calculate_score_matrix-->create_response_variable-->creation_some_discrete_variables-->
-        join
-    end
-    subgraph data_analytics
-        direction LR
-        exploratory_data_analysis---
-        statistical_analysis---
-        machine_learning
-    end
-    subgraph conclusion
-        direction LR
-    end
-    Simulation-->data_analytics-->conclusion
-```

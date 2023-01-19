@@ -12,6 +12,195 @@
 <generator>quarto-1.2.313</generator>
 <lastBuildDate>Wed, 18 Jan 2023 15:00:00 GMT</lastBuildDate>
 <item>
+  <title>Data Structure (7) Deque</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-01-19_deque/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<ul class="nav nav-pills" id="language-tab">
+<li class="nav-item">
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
+Korean
+</button>
+</li>
+<li class="nav-item">
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
+English
+</button>
+</li>
+<div class="tab-content" id="language-tabcontent">
+
+<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
+<section id="덱deque" class="level2">
+<h2 class="anchored" data-anchor-id="덱deque">덱(Deque)</h2>
+<p>• 덱은 스택(stack)과 큐(queue)의 기능을 모두 가지고 있다.</p>
+<p>• 포인터 변수가 더 많이 필요하기 때문에, 메모리는 상대적으로 더 많이 필요하다.</p>
+<p>• Python에서는 큐(queue)의 기능이 필요할 때 간단히 덱(deque)을 사용한다.</p>
+<p>• 데이터의 삭제와 삽입 모두에서 O 1 의 시간 복잡도가 소요된다. • 덱에 여러 개의 데이터를 삽입하고 삭제하는 예시를 확인해 보자.</p>
+<p>[전체 연산]</p>
+<p>• 좌측 삽입 4 – 좌측 삽입 3 – 좌측 삽입 2 – 좌측 삽입 1</p>
+<p>• 우측 삽입 5 – 우측 삽입 6 – 우측 삽입 7 – 우측 삽입 8</p>
+<p>• 우측 삭제 – 좌측 삭제 – 우측 삭제 – 좌측 삭제</p>
+</section>
+<section id="덱deque의-시간-복잡도" class="level2">
+<h2 class="anchored" data-anchor-id="덱deque의-시간-복잡도">덱(Deque)의 시간 복잡도</h2>
+<p>• 데이터의 삭제와 삽입 모두에서 O 1 의 시간 복잡도가 소요된다.</p>
+<div id="tbl-letters" class="anchored">
+<table class="table">
+<caption>Table&nbsp;1: a list of the deque functions in Python</caption>
+<colgroup>
+<col style="width: 7%">
+<col style="width: 16%">
+<col style="width: 15%">
+<col style="width: 59%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Number</th>
+<th>Methods</th>
+<th>Time Complexity</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>append left</td>
+<td><img src="https://latex.codecogs.com/png.latex?O(1)"></td>
+<td>덱의 가장 왼쪽에 새 데이터를 삽입</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>pop left</td>
+<td><img src="https://latex.codecogs.com/png.latex?O(1)"></td>
+<td>덱의 가장 왼쪽에서 데이터를 추출</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>append right</td>
+<td><img src="https://latex.codecogs.com/png.latex?O(1)"></td>
+<td>덱의 가장 오른쪽에 새 데이터를 삽입</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>pop right</td>
+<td><img src="https://latex.codecogs.com/png.latex?O(1)"></td>
+<td>덱의 가장 오른쪽에서 데이터를 추출</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>See Table&nbsp;1.</p>
+</section>
+<section id="파이썬의-덱deque-라이브러리" class="level2">
+<h2 class="anchored" data-anchor-id="파이썬의-덱deque-라이브러리">파이썬의 덱(Deque) 라이브러리</h2>
+<p>• Python에서는 덱(deque) 라이브러리를 사용할 수 있다.</p>
+<p>• 아래의 모든 메서드는 최악의 경우 시간 복잡도 O 1 을 보장한다.</p>
+<p>• 우측 삽입: append()</p>
+<p>• 좌측 삽입: appendleft()</p>
+<p>• 우측 추출: pop()</p>
+<p>• 좌측 추출: popleft()</p>
+</section>
+<section id="연결-리스트로-덱-구현하기" class="level2">
+<h2 class="anchored" data-anchor-id="연결-리스트로-덱-구현하기">연결 리스트로 덱 구현하기</h2>
+<p>• 덱(deque)을 연결 리스트로 구현하면, 삽입과 삭제에 있어서 O 1 을 보장할 수 있다.</p>
+<p>• 연결 리스트로 구현할 때는 앞(front)과 뒤(rear) 두 개의 포인터를 가진다.</p>
+<p>• 앞(front): 가장 좌측에 있는 데이터를 가리키는 포인터</p>
+<p>• 뒤(rear): 가장 우측에 있는 데이터를 가리키는 포인터 • 삽입과 삭제의 구현 방법은 스택 및 큐와 유사하다.</p>
+<p>• 앞(front)과 뒤(rear)에 대하여 대칭적으로 구현할 수 있다.</p>
+<section id="좌측-삽입-연산" class="level3">
+<h3 class="anchored" data-anchor-id="좌측-삽입-연산">좌측 삽입 연산</h3>
+<p>• 좌측 삽입할 때는 앞(front) 위치에 데이터를 넣는다.</p>
+<p>• 값으로 8을 갖는 새로운 데이터가 삽입되었을 때 예시)</p>
+</section>
+<section id="좌측-삭제-연산" class="level3">
+<h3 class="anchored" data-anchor-id="좌측-삭제-연산">좌측 삭제 연산</h3>
+<p>• 삭제할 때는 앞(front) 위치에서 데이터를 꺼낸다.</p>
+<p>• 하나의 데이터를 삭제할 때의 예시)</p>
+<p>• 기본적인 Python의 리스트 자료형은 큐(queue)의 기능을 제공하지 않는다.</p>
+<p>• 가능하다면 Python에서 제공하는 덱(deque) 라이브러리를 사용한다.</p>
+<p>• 큐(queue)의 기능이 필요할 때는 덱 라이브러리를 사용하는 것을 추천한다.</p>
+<p>• 삽입과 삭제에 대하여 모두 시간 복잡도 O 1 이 요구된다.</p>
+</section>
+</section>
+</div>
+<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
+
+</div>
+
+
+
+</div></ul> ]]></description>
+  <category>Engineering</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-01-19_deque/index.html</guid>
+  <pubDate>Wed, 18 Jan 2023 15:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Data Structure (6) Queue</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-01-19_queue/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<ul class="nav nav-pills" id="language-tab">
+<li class="nav-item">
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
+Korean
+</button>
+</li>
+<li class="nav-item">
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
+English
+</button>
+</li>
+<div class="tab-content" id="language-tabcontent">
+
+<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
+<section id="queue" class="level2">
+<h2 class="anchored" data-anchor-id="queue">Queue</h2>
+<ul>
+<li>큐(queue)는 먼저 삽입된 데이터가 먼저 추출되는 자료구조(data structure)다.</li>
+</ul>
+<p>• 예시) 게임 대기 큐는 먼저 대기한 사람이 먼저 게임에 매칭된다. • 큐에 여러 개의 데이터를 삽입하고 삭제하는 예시를 확인해 보자.</p>
+<p>• 전체 연산: 삽입 3 – 삽입 5 – 삭제 – 삽입 7 – 삭제 – 삽입 8 – 삭제 – 삽입 2 – 삽입 9</p>
+</section>
+<section id="연결-리스트로-큐-구현" class="level2">
+<h2 class="anchored" data-anchor-id="연결-리스트로-큐-구현">연결 리스트로 큐 구현</h2>
+<p>• 큐를 연결 리스트로 구현하면, 삽입과 삭제에 있어서 O 1 을 보장할 수 있다.</p>
+<p>• 연결 리스트로 구현할 때는 머리(head)와 꼬리(tail) 두 개의 포인터를 가진다.</p>
+<p>• 머리(head): 남아있는 원소 중 가장 먼저 들어 온 데이터를 가리키는 포인터</p>
+<p>• 꼬리(tail): 남아있는 원소 중 가장 마지막에 들어 온 데이터를 가리키는 포인터</p>
+<section id="삽입-연산" class="level3">
+<h3 class="anchored" data-anchor-id="삽입-연산">삽입 연산</h3>
+<p>• 삽입할 때는 꼬리(tail) 위치에 데이터를 넣는다. * 값으로 8을 갖는 새로운 데이터가 삽입되었을 때 예시)</p>
+</section>
+<section id="삭제-연산" class="level3">
+<h3 class="anchored" data-anchor-id="삭제-연산">삭제 연산</h3>
+<p>• 삭제할 때는 머리(head) 위치에서 데이터를 꺼낸다.</p>
+<p>• 하나의 데이터를 삭제할 때의 예시)</p>
+</section>
+<section id="큐-동작-속도-연결-리스트-vs.-리스트-자료형" class="level3">
+<h3 class="anchored" data-anchor-id="큐-동작-속도-연결-리스트-vs.-리스트-자료형">큐 동작 속도: 연결 리스트 vs.&nbsp;리스트 자료형</h3>
+<p>• 다수의 데이터를 삽입 및 삭제할 때에 대하여, 수행 시간을 측정할 수 있다.</p>
+<p>• 단순히 Python의 리스트 자료형을 이용할 때보다 수행 시간 관점에서 효율적이다.</p>
+</section>
+</section>
+</div>
+<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
+
+</div>
+
+
+
+</div></ul> ]]></description>
+  <category>Engineering</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-01-19_queue/index.html</guid>
+  <pubDate>Wed, 18 Jan 2023 15:00:00 GMT</pubDate>
+</item>
+<item>
   <title>Data Structure (5) Stack</title>
   <dc:creator>Kwangmin Kim</dc:creator>
   <link>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-01-19_stack/index.html</link>
@@ -57,7 +246,9 @@ English
 <ul>
 <li>스택은 여러 가지 연산을 제공한다.</li>
 </ul>
+<div id="tbl-letters" class="anchored">
 <table class="table">
+<caption>Table&nbsp;1: a list of the stack functions in Python</caption>
 <colgroup>
 <col style="width: 7%">
 <col style="width: 16%">
@@ -99,6 +290,8 @@ English
 </tr>
 </tbody>
 </table>
+</div>
+<p>See Table&nbsp;1.</p>
 </section>
 <section id="python에서-스택을-구현하는-방법-1-리스트-자료형" class="level2">
 <h2 class="anchored" data-anchor-id="python에서-스택을-구현하는-방법-1-리스트-자료형">Python에서 스택을 구현하는 방법 1 리스트 자료형</h2>
@@ -142,6 +335,353 @@ English
 </div></ul> ]]></description>
   <category>Engineering</category>
   <guid>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-01-19_stack/index.html</guid>
+  <pubDate>Wed, 18 Jan 2023 15:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Data Structure (7) Binary Search Tree</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-01-20_binary_search_tree/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<ul class="nav nav-pills" id="language-tab">
+<li class="nav-item">
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
+Korean
+</button>
+</li>
+<li class="nav-item">
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
+English
+</button>
+</li>
+<div class="tab-content" id="language-tabcontent">
+
+<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
+<section id="트리tree" class="level2">
+<h2 class="anchored" data-anchor-id="트리tree">트리(Tree)</h2>
+<p>• 트리는 가계도와 같이 계층적인 구조를 표현할 때 사용할 수 있는 자료구조다.</p>
+<p>• 나무(tree)의 형태를 뒤집은 것과 같이 생겼다.</p>
+</section>
+<section id="트리-용어-정리" class="level2">
+<h2 class="anchored" data-anchor-id="트리-용어-정리">트리 용어 정리</h2>
+<p>• 루트 노드(root node): 부모가 없는 최상위 노드</p>
+<p>• 단말 노드(leaf node): 자식이 없는 노드 • 트리(tree)에서는 부모와 자식 관계가 성립한다.</p>
+<p>• 형제 관계: 17을 값으로 가지는 노드와 48을 가지는 노드 사이의 관계 • 깊이(depth): 루트 노드에서의 길이(length)</p>
+<p>• 이때, 길이란 출발 노드에서 목적지 노드까지 거쳐야 하는 간선의 수를 의미한다.</p>
+<p>• 트리의 높이(height)은 루트 노드에서 가장 깊은 노드까지의 길이를 의미한다.</p>
+</section>
+<section id="이진-트리binary-tree" class="level2">
+<h2 class="anchored" data-anchor-id="이진-트리binary-tree">이진 트리(Binary Tree)</h2>
+<p>• 이진 트리는 최대 2개의 자식을 가질 수 있는 트리를 말한다.</p>
+</section>
+<section id="이진-탐색-트리binary-search-tree" class="level2">
+<h2 class="anchored" data-anchor-id="이진-탐색-트리binary-search-tree">이진 탐색 트리(Binary Search Tree)</h2>
+<ul>
+<li>다수의 데이터를 관리(조회, 저장, 삭제)하기 위한 가장 기본적인 자료구조 중 하나다. • 이진 탐색 트리의 성질: 왼쪽 자식 노드 &lt; 부모 노드 &lt; 오른쪽 자식 노드</li>
+</ul>
+<section id="이진-탐색-트리binary-search-tree-1" class="level3">
+<h3 class="anchored" data-anchor-id="이진-탐색-트리binary-search-tree-1">이진 탐색 트리(Binary Search Tree)</h3>
+<p>• 특정한 노드의 키(key) 값보다 그 왼쪽 자식 노드의 키(key) 값이 더 작다.</p>
+<p>• 특정한 노드의 키(key) 값보다 그 오른쪽 자식 노드의 키(key) 값이 더 크다.</p>
+<p>• 특정한 노드의 왼쪽 서브 트리, 오른쪽 서브 트리 모두 이진 탐색 트리다.</p>
+</section>
+<section id="삽입-연산" class="level3">
+<h3 class="anchored" data-anchor-id="삽입-연산">삽입 연산</h3>
+<p>• 루트 노드에서 출발하여 아래쪽으로 내려오면서, 삽입할 위치를 찾는다.</p>
+<p>• 1 삽입할 노드의 키(key)가 작으면 왼쪽으로, 2 삽입할 노드의 키(key)가 크면 오른쪽으로 삽입</p>
+<p>• 삽입할 노드 목록 예시: [7, 4, 5, 9, 6, 3, 2, 8]</p>
+</section>
+<section id="조회-연산" class="level3">
+<h3 class="anchored" data-anchor-id="조회-연산">조회 연산</h3>
+<p>• 루트 노드에서 출발하여 아래쪽으로 내려오면서, 찾고자 하는 원소를 조회한다.</p>
+<p>• 1 삽입할 노드의 키(key)가 작으면 왼쪽으로, 2 삽입할 노드의 키(key)가 크면 오른쪽으로 조회</p>
+<p>• 조회할 노드 목록 예시: 5번 노드</p>
+</section>
+<section id="삭제-연산" class="level3">
+<h3 class="anchored" data-anchor-id="삭제-연산">삭제 연산</h3>
+<p>• 루트 노드에서 출발하여 아래쪽으로 내려오면서, 삭제할 원소에 접근한다.</p>
+<p>• 삭제할 노드 목록 예시: 7번 노드</p>
+<p>Case #1 왼쪽 자식이 없는 경우 → 오른쪽 자식으로 대체</p>
+<p>Case #2 오른쪽 자식이 없는 경우 → 왼쪽 자식으로 대체 Case #3 왼쪽, 오른쪽이 모두 있는 경우 → 오른쪽 서브 트리에서 가장 작은 노드로 대체</p>
+<p>• 삭제할 노드 목록 예시: 4번 노드</p>
+</section>
+</section>
+<section id="트리의-순회" class="level2">
+<h2 class="anchored" data-anchor-id="트리의-순회">트리의 순회</h2>
+<p>• 트리에 포함되어 있는 정보를 모두 출력하고자 할 때, 어떤 방식을 사용할 수 있을까?</p>
+<p>• 바로 순회(traversal)를 사용할 수 있다.</p>
+<p>• 트리의 모든 노드를 특정한 순서(조건)에 따라서 방문하는 방법을 순회(traversal)라고 한다.</p>
+<p>1 전위 순회(pre-order traverse): 루트 방문 → 왼쪽 자식 방문 → 오른쪽 자식 방문</p>
+<p>2 중위 순회(in-order traverse): 왼쪽 자식 방문 → 루트 방문 → 오른쪽 자식 방문</p>
+<p>3 후위 순회(post-order traverse): 왼쪽 자식 방문 → 오른쪽 자식 방문 → 루트 방문</p>
+<section id="트리의-순회-한-눈에-보기" class="level3">
+<h3 class="anchored" data-anchor-id="트리의-순회-한-눈에-보기">트리의 순회 한 눈에 보기</h3>
+<p>• 전위 순회(pre-order traverse): A → B → D → E → C → F → G</p>
+<p>• 중위 순회(in-order traverse): D → B → E → A → F → C → G</p>
+<p>• 후위 순회(post-order traverse): D → E → B → F → G → C → A</p>
+</section>
+<section id="전위-순회pre-order-traverse" class="level3">
+<h3 class="anchored" data-anchor-id="전위-순회pre-order-traverse">전위 순회(pre-order traverse)</h3>
+<p>• 방문 방법: 현재 노드 → 왼쪽 자식 노드 → 오른쪽 자식 노드</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="kw" style="color: #003B4F;">def</span> _preorder(<span class="va" style="color: #111111;">self</span>, node):</span>
+<span id="cb1-2">  <span class="cf" style="color: #003B4F;">if</span> node:</span>
+<span id="cb1-3">    <span class="bu" style="color: null;">print</span>(node.key, end<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">' '</span>)</span>
+<span id="cb1-4">    <span class="va" style="color: #111111;">self</span>._preorder(node.left)</span>
+<span id="cb1-5">    <span class="va" style="color: #111111;">self</span>._preorder(node.right)</span></code></pre></div>
+</div>
+</section>
+<section id="중위-순회inorder-traversal" class="level3">
+<h3 class="anchored" data-anchor-id="중위-순회inorder-traversal">중위 순회(Inorder Traversal)</h3>
+<ul>
+<li>방문 방법: 왼쪽 자식 노드 → 현재 노드 → 오른쪽 자식 노드</li>
+</ul>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;">def</span> _inorder(<span class="va" style="color: #111111;">self</span>, node):</span>
+<span id="cb2-2">  <span class="cf" style="color: #003B4F;">if</span> node:</span>
+<span id="cb2-3">    <span class="va" style="color: #111111;">self</span>._inorder(node.left)</span>
+<span id="cb2-4">    <span class="bu" style="color: null;">print</span>(node.key, end<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">' '</span>)</span>
+<span id="cb2-5">    <span class="va" style="color: #111111;">self</span>._inorder(node.right)</span></code></pre></div>
+</div>
+</section>
+<section id="후위-순회postorder-traversal" class="level3">
+<h3 class="anchored" data-anchor-id="후위-순회postorder-traversal">후위 순회(Postorder Traversal)</h3>
+<p>• 방문 방법: 왼쪽 자식 노드 → 오른쪽 자식 노드 → 현재 노드</p>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;">def</span> _postorder(<span class="va" style="color: #111111;">self</span>, node):</span>
+<span id="cb3-2">  <span class="cf" style="color: #003B4F;">if</span> node:</span>
+<span id="cb3-3">    <span class="va" style="color: #111111;">self</span>._postorder(node.left)</span>
+<span id="cb3-4">    <span class="va" style="color: #111111;">self</span>._postorder(node.right)</span>
+<span id="cb3-5">    <span class="bu" style="color: null;">print</span>(node.key, end<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">' '</span>)</span></code></pre></div>
+</div>
+</section>
+<section id="레벨-순회level-order-traversal" class="level3">
+<h3 class="anchored" data-anchor-id="레벨-순회level-order-traversal">레벨 순회(Level Order Traversal)</h3>
+<p>• 낮은 레벨(루트)부터 높은 레벨까지 순차적으로 방문한다.</p>
+<p>• 단순히 루트 노드에서부터 너비 우선 탐색(BST)를 진행하면 된다. • 레벨 순회 순회(level-order traverse): A → B → C → D → E → F → G</p>
+</section>
+</section>
+<section id="이진-탐색-트리의-구현" class="level2">
+<h2 class="anchored" data-anchor-id="이진-탐색-트리의-구현">이진 탐색 트리의 구현</h2>
+<p>• 다른 메서드에서 사용되는 메서드는 이름 앞에 언더바(_) 기호를 붙인다.</p>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;">def</span> search(<span class="va" style="color: #111111;">self</span>, node, key):</span>
+<span id="cb4-2">  <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">self</span>._search(<span class="va" style="color: #111111;">self</span>.root, key)</span>
+<span id="cb4-3"></span>
+<span id="cb4-4"><span class="kw" style="color: #003B4F;">def</span> _search(<span class="va" style="color: #111111;">self</span>, node, key):</span>
+<span id="cb4-5">  <span class="cf" style="color: #003B4F;">if</span> node <span class="kw" style="color: #003B4F;">is</span> <span class="va" style="color: #111111;">None</span> <span class="kw" style="color: #003B4F;">or</span> node.key <span class="op" style="color: #5E5E5E;">==</span> key:</span>
+<span id="cb4-6">    <span class="cf" style="color: #003B4F;">return</span> node</span>
+<span id="cb4-7"></span>
+<span id="cb4-8">  <span class="co" style="color: #5E5E5E;"># 현재 노드의 key보다 작은 경우</span></span>
+<span id="cb4-9">  <span class="cf" style="color: #003B4F;">if</span> node.key <span class="op" style="color: #5E5E5E;">&gt;</span> key:</span>
+<span id="cb4-10">    <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">self</span>._search(node.left, key)</span>
+<span id="cb4-11"></span>
+<span id="cb4-12">  <span class="co" style="color: #5E5E5E;"># 현재 노드의 key보다 큰 경우</span></span>
+<span id="cb4-13">  <span class="cf" style="color: #003B4F;">elif</span> node.key <span class="op" style="color: #5E5E5E;">&lt;</span> key:</span>
+<span id="cb4-14">    <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">self</span>._search(node.right, key)</span></code></pre></div>
+</div>
+<section id="편향-이진-트리skewed-binary-tree" class="level3">
+<h3 class="anchored" data-anchor-id="편향-이진-트리skewed-binary-tree">편향 이진 트리(Skewed Binary Tree)</h3>
+<p>• 편향 이진 트리는 다음의 두 가지 속성을 가진다.</p>
+<ol type="1">
+<li><p>같은 높이의 이진 트리 중 최소 개수의 노드 개수를 가진다.</p></li>
+<li><p>왼쪽 혹은 오른쪽으로 한 방향에 대한 서브 트리를 가진다.</p></li>
+</ol>
+</section>
+<section id="이진-탐색-트리의-시간-복잡도" class="level3">
+<h3 class="anchored" data-anchor-id="이진-탐색-트리의-시간-복잡도">이진 탐색 트리의 시간 복잡도</h3>
+<p>• 노드의 개수가 N개일 때, 시간 복잡도는 다음과 같다.</p>
+<p>• 트리의 높이(height)을 H라고 할 때, 엄밀한 시간 복잡도는 O H 다.</p>
+<p>• 이상적인 경우 H = log2 N로 볼 수 있다.</p>
+<p>• 하지만 최악의 경우(편향된 경우) H = N로 볼 수 있다.</p>
+<div id="tbl-letters" class="anchored">
+<table class="table">
+<caption>Table&nbsp;1: a list of the binary search tree in Python</caption>
+<colgroup>
+<col style="width: 11%">
+<col style="width: 33%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Number</th>
+<th>Methods</th>
+<th>조회</th>
+<th>삽입</th>
+<th>삭제</th>
+<th>수정</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>균형 잡힌 이진 탐색 트리</td>
+<td><img src="https://latex.codecogs.com/png.latex?O(nlogn)"></td>
+<td><img src="https://latex.codecogs.com/png.latex?O(nlogn)"></td>
+<td><img src="https://latex.codecogs.com/png.latex?O(nlogn)"></td>
+<td><img src="https://latex.codecogs.com/png.latex?O(nlogn)"></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>편향 이진 탐색 트리</td>
+<td><img src="https://latex.codecogs.com/png.latex?O(N)"></td>
+<td><img src="https://latex.codecogs.com/png.latex?O(N)"></td>
+<td><img src="https://latex.codecogs.com/png.latex?O(N)"></td>
+<td><img src="https://latex.codecogs.com/png.latex?O(N)"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>See Table&nbsp;1.</p>
+</section>
+<section id="참고-균형-잡힌-트리-avl-트리" class="level3">
+<h3 class="anchored" data-anchor-id="참고-균형-잡힌-트리-avl-트리">[참고] 균형 잡힌 트리: AVL 트리</h3>
+<p>• 이진 탐색 트리는 편향 트리가 될 수 있으므로, 최악의 경우 <img src="https://latex.codecogs.com/png.latex?O(N)"> 을 요구한다.</p>
+<p>• 반면에 AVL 트리는 균형이 갖춰진 이진 트리다.</p>
+<p>• 간단한 구현 과정으로 완전 이진 트리에 가까운 형태를 유지하도록 한다.</p>
+</section>
+</section>
+</div>
+<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
+
+</div>
+
+
+
+</div></ul> ]]></description>
+  <category>Engineering</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-01-20_binary_search_tree/index.html</guid>
+  <pubDate>Wed, 18 Jan 2023 15:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Data Structure (10) Graph</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-01-20_graph/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<ul class="nav nav-pills" id="language-tab">
+<li class="nav-item">
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
+Korean
+</button>
+</li>
+<li class="nav-item">
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
+English
+</button>
+</li>
+<div class="tab-content" id="language-tabcontent">
+
+<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
+<section id="그래프graph" class="level2">
+<h2 class="anchored" data-anchor-id="그래프graph">그래프(Graph)</h2>
+<p>• 그래프(graph)란 사물을 정점(vertex)과 간선(edge)으로 나타내기 위한 도구다.</p>
+<p>• 그래프는 두 가지 방식으로 구현할 수 있다.</p>
+<ol type="1">
+<li><p>인접 행렬(adjacency matrix): 2차원 배열을 사용하는 방식</p></li>
+<li><p>인접 리스트(adjacency list): 연결 리스트를 이용하는 방식</p></li>
+</ol>
+</section>
+<section id="인접-행렬adjacency-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="인접-행렬adjacency-matrix">인접 행렬(Adjacency Matrix)</h2>
+<p>• 인접 행렬(adjacency matrix)에서는 그래프를 2차원 배열로 표현한다.</p>
+<section id="인접-행렬---무방향-무가중치-그래프" class="level3">
+<h3 class="anchored" data-anchor-id="인접-행렬---무방향-무가중치-그래프">인접 행렬 - 무방향 무가중치 그래프</h3>
+<p>• 모든 간선이 방향성을 가지지 않는 그래프를 무방향 그래프라고 한다.</p>
+<p>• 모든 간선에 가중치가 없는 그래프를 무가중치 그래프라고 한다.</p>
+<p>• 무방향 무가중치 그래프가 주어졌을 때 연결되어 있는 상황을 인접 행렬로 출력할 수 있다.</p>
+</section>
+<section id="인접-행렬---방향-가중치-그래프" class="level3">
+<h3 class="anchored" data-anchor-id="인접-행렬---방향-가중치-그래프">인접 행렬 - 방향 가중치 그래프</h3>
+<p>• 모든 간선이 방향을 가지는 그래프를 방향 그래프라고 한다.</p>
+<p>• 모든 간선에 가중치가 있는 그래프를 가중치 그래프라고 한다.</p>
+<p>• 방향 가중치 그래프가 주어졌을 때 연결되어 있는 상황을 인접 행렬로 출력할 수 있다.</p>
+</section>
+</section>
+<section id="인접-리스트adjacency-list" class="level2">
+<h2 class="anchored" data-anchor-id="인접-리스트adjacency-list">인접 리스트(Adjacency List)</h2>
+<p>• 인접 리스트(adjacency list)에서는 그래프를 리스트로 표현한다.</p>
+<section id="인접-리스트---무방향-무가중치-그래프" class="level3">
+<h3 class="anchored" data-anchor-id="인접-리스트---무방향-무가중치-그래프">인접 리스트 - 무방향 무가중치 그래프</h3>
+<p>• 모든 간선이 방향성을 가지지 않는 그래프를 무방향 그래프라고 한다.</p>
+<p>• 모든 간선에 가중치가 없는 그래프를 무가중치 그래프라고 한다.</p>
+<p>• 무방향 무가중치 그래프가 주어졌을 때 연결되어 있는 상황을 인접 리스트로 출력할 수 있다.</p>
+</section>
+<section id="인접-리스트---방향-가중치-그래프" class="level3">
+<h3 class="anchored" data-anchor-id="인접-리스트---방향-가중치-그래프">인접 리스트 - 방향 가중치 그래프</h3>
+<p>• 모든 간선이 방향을 가지는 그래프를 방향 그래프라고 한다.</p>
+<p>• 모든 간선에 가중치가 있는 그래프를 가중치 그래프라고 한다.</p>
+<p>• 방향 가중치 그래프가 주어졌을 때 연결되어 있는 상황을 인접 리스트로 출력할 수 있다.</p>
+</section>
+</section>
+<section id="그래프의-시간-복잡도" class="level2">
+<h2 class="anchored" data-anchor-id="그래프의-시간-복잡도">그래프의 시간 복잡도</h2>
+<ol type="1">
+<li>인접 행렬: 모든 정점들의 연결 여부를 저장해 O V</li>
+</ol>
+<p>2 의 공간을 요구한다.</p>
+<p>• 공간 효율성이 떨어지지만, 두 노드의 연결 여부를 O 1 에 확인할 수 있다.</p>
+<ol start="2" type="1">
+<li>인접 리스트: 연결된 간선의 정보만을 저장하여 O V + E 의 공간을 요구한다.</li>
+</ol>
+<p>• 공간 효율성이 우수하지만, 두 노드의 연결 여부를 확인하기 위해 O V 의 시간이 필요하다.</p>
+<div id="tbl-letters" class="anchored">
+<table class="table">
+<caption>Table&nbsp;1: a list of the stack functions in Python</caption>
+<colgroup>
+<col style="width: 11%">
+<col style="width: 26%">
+<col style="width: 22%">
+<col style="width: 39%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Number</th>
+<th>Category</th>
+<th>필요한 메모리</th>
+<th>연결 여부 확인</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>인접 행렬</td>
+<td><img src="https://latex.codecogs.com/png.latex?O(V%5E2)"></td>
+<td><img src="https://latex.codecogs.com/png.latex?O(1)"></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>인접 리스트</td>
+<td><img src="https://latex.codecogs.com/png.latex?O(V+E)"></td>
+<td><img src="https://latex.codecogs.com/png.latex?O(V)"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>See Table&nbsp;1.</p>
+</section>
+<section id="인접-행렬-vs.-인접-리스트" class="level2">
+<h2 class="anchored" data-anchor-id="인접-행렬-vs.-인접-리스트">인접 행렬 vs.&nbsp;인접 리스트</h2>
+<p>• 최단 경로 알고리즘을 구현할 때, 어떤 자료구조가 유용할까?</p>
+<p>• 각각 근처의 노드와 연결되어 있는 경우가 많으므로, 간선 개수가 적어 인접 리스트가 유리하다.</p>
+</section>
+</div>
+<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
+
+</div>
+
+
+
+</div></ul> ]]></description>
+  <category>Engineering</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-01-20_graph/index.html</guid>
   <pubDate>Wed, 18 Jan 2023 15:00:00 GMT</pubDate>
 </item>
 <item>
@@ -725,7 +1265,9 @@ English
 <div class="tab-content" id="language-tabcontent">
 
 <div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
+<div id="tbl-letters" class="anchored">
 <table class="table">
+<caption>Table&nbsp;1: a list of the list functions in Python</caption>
 <colgroup>
 <col style="width: 6%">
 <col style="width: 13%">
@@ -892,6 +1434,8 @@ English
 </tr>
 </tbody>
 </table>
+</div>
+<p>See Table&nbsp;1.</p>
 <ul>
 <li>1~6: 파이썬의 list는 동적 배열의 특징이 있다. 시간 복잡도는 모두 <img src="https://latex.codecogs.com/png.latex?O(1)"> 이다.
 <ul>
@@ -1040,25 +1584,69 @@ True
 
 
 
-<section id="engineering-python" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Engineering (Python)</h1>
-<section id="data-structure" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="data-structure"><span class="header-section-number">1.1</span> Data Structure</h2>
+<section id="it-terminology" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="it-terminology"><span class="header-section-number">1</span> IT Terminology</h2>
+<ul>
+<li>0000-00-00, PoC (Proof of Concept)</li>
+</ul>
+</section>
+<section id="data-structure" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="data-structure"><span class="header-section-number">2</span> Data Structure</h2>
 <ul>
 <li>2023-01-17, <a href="../2023-01-17_data_structure_overview/">Overview</a></li>
 <li>2023-01-18, <a href="../2023-01-18_array/">Array</a></li>
 <li>2023-01-18, <a href="../2023-01-18_linked_list/">Linked List</a></li>
 <li>2023-01-18, <a href="../2023-01-18_python_list/">Python List</a></li>
-<li>2023-01-19, <a href="../2023-01-17_python_list/">Stack</a></li>
-<li>2023-01-19, <a href="../2023-01-17_python_list/">Queue</a></li>
-<li>2023-01-19, <a href="../2023-01-17_python_list/">Deque</a></li>
-<li>2023-01-20, <a href="../2023-01-17_python_list/">Binary Search Tree</a></li>
-<li>2023-01-20, <a href="../2023-01-17_python_list/">Priority Queue</a></li>
-<li>2023-01-20, <a href="../2023-01-17_python_list/">Graph</a></li>
+<li>2023-01-19, <a href="../2023-01-19_stack/">Stack</a></li>
+<li>2023-01-19, <a href="../2023-01-19_queue/">Queue</a></li>
+<li>2023-01-19, <a href="../2023-01-19_deque/">Deque</a></li>
+<li>2023-01-20, <a href="../2023-01-20_binary_search_tree/">Binary Search Tree</a></li>
+<li>2023-01-20, <a href="../2023-01-20_priority_queue/">Priority Queue</a></li>
+<li>2023-01-20, <a href="../2023-01-20_graph/">Graph</a></li>
 </ul>
-
-
 </section>
+<section id="conda" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="conda"><span class="header-section-number">3</span> Conda</h2>
+</section>
+<section id="docker" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="docker"><span class="header-section-number">4</span> Docker</h2>
+<ul>
+<li>2023-01-30, <a href="../2023-01-30_docker_install/">Docker Install</a></li>
+<li>2023-01-31, <a href="../2023-01-31_docker_compose/">Docker Compose</a></li>
+<li>2023-02-01, <a href="../2023-01-31_docker_container/">Docker Container</a></li>
+</ul>
+</section>
+<section id="dynamic-documentation" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="dynamic-documentation"><span class="header-section-number">5</span> Dynamic Documentation</h2>
+<ul>
+<li>2023-01-19, <a href="https://quarto.org/docs/get-started/">Quarto</a></li>
+<li>2023-01-19, <a href="https://github.com/yihui/xaringan">xaringan[R]</a></li>
+<li>2023-01-19, <a href="https://bookdown.org/yihui/bookdown/get-started.html">Bookdown[R]</a></li>
+<li>2023-01-19, <a href="https://decile-team-distil.readthedocs.io/en/latest/index.html">DISTL</a></li>
+</ul>
+</section>
+<section id="aws-cloud" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="aws-cloud"><span class="header-section-number">6</span> AWS Cloud</h2>
+</section>
+<section id="azure-cloud" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="azure-cloud"><span class="header-section-number">7</span> Azure Cloud</h2>
+</section>
+<section id="data-modeling" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="data-modeling"><span class="header-section-number">8</span> Data Modeling</h2>
+</section>
+<section id="apache-airflow" class="level2" data-number="9">
+<h2 data-number="9" class="anchored" data-anchor-id="apache-airflow"><span class="header-section-number">9</span> Apache Airflow</h2>
+</section>
+<section id="apache-spark" class="level2" data-number="10">
+<h2 data-number="10" class="anchored" data-anchor-id="apache-spark"><span class="header-section-number">10</span> Apache Spark</h2>
+</section>
+<section id="front-end" class="level2" data-number="11">
+<h2 data-number="11" class="anchored" data-anchor-id="front-end"><span class="header-section-number">11</span> Front End</h2>
+</section>
+<section id="back-end" class="level2" data-number="12">
+<h2 data-number="12" class="anchored" data-anchor-id="back-end"><span class="header-section-number">12</span> Back End</h2>
+
+
 </section>
 
  ]]></description>
@@ -3930,7 +4518,7 @@ $Day
   <pubDate>Fri, 06 Jan 2023 15:00:00 GMT</pubDate>
 </item>
 <item>
-  <title>Statistics Blog Guide Map</title>
+  <title>Blog Guide Map, Statistics</title>
   <dc:creator>Kwangmin Kim</dc:creator>
   <link>kmink3225.netlify.app/docs/blog/posts/statistics/guide_map/index.html</link>
   <description><![CDATA[ 

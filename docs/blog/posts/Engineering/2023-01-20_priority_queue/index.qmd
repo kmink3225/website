@@ -1,5 +1,5 @@
 ---
-title: Data Structure (5) Stack
+title: Data Structure (9) Priority Queue
 subtitle: Python List
 description: |
   Data Structure for Data Science
@@ -175,9 +175,8 @@ heapq.heappush(heap, 5)
 heapq.heappush(heap, 8)
 
 while heap:
-
-element = heapq.heappop(heap)
-print(element, end=" ")
+  element = heapq.heappop(heap)
+  print(element, end=" ")
 
 ```
 
@@ -214,9 +213,8 @@ heap = [9, 1, 5, 4, 3, 8, 7]
 heapq.heapify(heap)
 
 while heap:
-
-element = heapq.heappop(heap)
-print(element, end=" ")
+  element = heapq.heappop(heap)
+  print(element, end=" ")
 ```
 
 #### 최대 힙(Max Heap)
@@ -233,13 +231,11 @@ arr = [9, 1, 5, 4, 3, 8, 7]
 heap = []
 
 for x in arr:
-
-heapq.heappush(heap, -x)
+  heapq.heappush(heap, -x)
 
 while heap:
-
-x = -heapq.heappop(heap)
-print(x, end=" ")
+  x = -heapq.heappop(heap)
+  print(x, end=" ")
 ```
 
 #### 활용 예시 1 힙 정렬(Heap Sort)
@@ -250,19 +246,16 @@ print(x, end=" ")
 import heapq
 
 def heap_sort(arr):
+  heap = []
+  for x in arr:
+    heapq.heappush(heap, x)
 
-heap = []
-for x in arr:
+  result = []
+  while heap:
+    x = heapq.heappop(heap)
+    result.append(x)
 
-heapq.heappush(heap, x)
-
-result = []
-while heap:
-
-x = heapq.heappop(heap)
-result.append(x)
-
-return result
+  return result
 
 print(heap_sort([9, 1, 5, 4, 3, 8, 7]))
 ```
@@ -277,18 +270,13 @@ print(heap_sort([9, 1, 5, 4, 3, 8, 7]))
 import heapq
 
 def n_smallest(n, arr):
-
-heap = []
-for x in arr:
-
-heapq.heappush(heap, x)
-
-result = None
-for _ in range(n):
-
-result = heapq.heappop(heap)
-
-return result
+  heap = []
+  for x in arr:
+    heapq.heappush(heap, x)
+    result = None
+  for _ in range(n):
+    result = heapq.heappop(heap)
+  return result
 
 arr = [9, 1, 5, 4, 3, 8, 7]
 print(n_smallest(3, arr))

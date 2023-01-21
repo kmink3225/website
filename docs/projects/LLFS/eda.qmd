@@ -67,26 +67,20 @@ knitr::opts_chunk$set(message=FALSE,warning=FALSE)
 #| warning: false
 datapath<-"C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds"
 #datapath<-"C:/Users/kkm/Desktop/projects/website/docs/projects/data/llfs_simulated_data.rds"
- simulated_data<-read_rds(datapath)%>%
-     dplyr::select(-1,-probabilities)
- all_data<-simulated_data%>%
- mutate(
+simulated_data=read_rds(datapath)%>%dplyr::select(-1,-probabilities)
+all_data=simulated_data
+
+all_data=all_data%>%
+mutate(
       outcome=ifelse(outcome==0,"negative","positive"),
       outcome=factor(outcome,levels=c("negative","positive")),
       sex=ifelse(sex==0,"man","woman"),
       sex=factor(sex,levels=c("man","woman")),
-      country=ifelse(country==0,"center_a",ifelse(country==1,"center_b",ifelse(country==2,"center_c","center_d"))),
-      country=factor(country,levels=c("center_a","center_b","center_c","center_d")),
-      treatment=ifelse(treatment==0,"trmnt1",ifelse(treatment==1,"trmnt2","trmnt3")),
-      treatment=factor(treatment,levels=c("trmnt1","trmnt2","trmnt3")),
-      genotype=ifelse(genotype==0,"e2/e2",
-      ifelse(genotype==1,"e2/e3",
-      ifelse(genotype==2,"e2/e4",
-      ifelse(genotype==3,"e3/e3",
-      ifelse(genotype==4,"e3/e4","e4/e4"))))),
-      genotype=factor(genotype,levels=c("e2/e2","e2/e3","e2/e4","e3/e3","e3/e4","e4/e4"))
+      treatment=factor(treatment,levels=c("control","trtmnt1","trtmnt2","trtmnt3")),
+      genotype=factor(genotype,levels=c("e3e3","e2e2","e2e3","e2e4","e3e4","e4e4"))
       )
- names(all_data)[7:ncol(all_data)]<-paste0("meta",1:10000)
+ names(all_data)[6:ncol(all_data)]<-paste0("meta",1:predictor_size)
+ 
 ```
 
 ## Univariable Analysis
@@ -110,8 +104,6 @@ test<-apply(all_data[,unlist(lapply(all_data, is.numeric))],2,function(x)shapiro
 #| code-fold: true
 #| message: false
 #| warning: false
-group_variable="country"
-summary_variable="age"
 
 color_function<-function(summary_data){
 return(
@@ -129,10 +121,15 @@ return(
     )
 }
 
-getNumericSummary=function(data=all_data,group_variable,summary_variable,set_color=color_function){
+group_variable="outcome"
+group_variable2="sex"
+summary_variable="age"
+str(group_variable)
+getNumericSummary=function(data=all_data,group_variable,summary_variable,set_color=color_function,...){
     # table
     temp<-data %>% 
-    group_by(get(group_variable)) %>% 
+    #group_by_at(vars(...)) %>% 
+    group_by_at(vars(group_variable)) %>% 
     mutate(count=n())%>%
     summarise_at(vars(summary_variable,count),
                  list(mean=mean,
@@ -195,13 +192,11 @@ getNumericSummary=function(data=all_data,group_variable,summary_variable,set_col
 
 ad_age_summary=getNumericSummary(data=all_data,group_variable="outcome",summary_variable="age")[[1]]
 sex_age_summary=getNumericSummary(data=all_data,group_variable="sex",summary_variable="age")[[1]]
-country_age_summary=getNumericSummary(data=all_data,group_variable="country",summary_variable="age")[[1]]
 treatment_age_summary=getNumericSummary(data=all_data,group_variable="treatment",summary_variable="age")[[1]]
 genotype_age_summary=getNumericSummary(data=all_data,group_variable="genotype",summary_variable="age")[[1]]
 age_summary=rbind(
     ad_age_summary,
     sex_age_summary,
-    country_age_summary,
     treatment_age_summary,
     genotype_age_summary)
 ```
@@ -227,12 +222,25 @@ The glaring difference of age is also shown below. As you can see, the people wi
 plot<- ggarrange(
     getNumericSummary(data=all_data,group_variable="outcome",summary_variable="age")[[2]],
     getNumericSummary(data=all_data,group_variable="sex",summary_variable="age")[[2]],
-    getNumericSummary(data=all_data,group_variable="country",summary_variable="age")[[2]],
     getNumericSummary(data=all_data,group_variable="treatment",summary_variable="age")[[2]],
     getNumericSummary(data=all_data,group_variable="genotype",summary_variable="age")[[2]],
-    ncol=2, nrow=3,legend="bottom")
-plot
+    ncol=2, nrow=2,legend="bottom")
 
+d=lapply(all_data[,sapply(all_data,function(x)is.numeric(x))],function(x)t.test(x~outcome,data=all_data))
+
+str(d[[1]])
+lapply(d,function(x)
+c('variable'=names(d),
+x$estimate[1],
+x$estimate[2],
+'p'=x$p.value,
+'lower'=x$conf.int[1],
+'upper'=x$conf.int[2]))
+sd=lapply(d,function(x)c('p'=x$p.value))%>%do.call("rbind",.)%>%as.data.frame%>%mutate(variable=rownames(.))
+names(sd)[1]='p'
+
+sdf=sd%>%mutate(test=ifelse(p<0.05/5000,1,0))
+table(sdf$test)
 ```
 
 

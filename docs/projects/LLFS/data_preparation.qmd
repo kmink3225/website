@@ -313,8 +313,10 @@ phenotype_data<-
         age=age_distribution,
         sex=sex_distribution,
         genotype=genotype_distribution[,'genotype'],
-        treatment=treatment_distribution[,'treatment'])
-
+        treatment=treatment_distribution[,'treatment'])%>%
+        mutate(
+            age=ifelse(outcome=="positive")
+            )
 
 all_data=inner_join(phenotype_data,data%>%mutate(id=1:n()),by="id")
 
@@ -339,15 +341,12 @@ mutate(
       outcome=factor(outcome,levels=c("negative","positive")),
       sex=ifelse(sex==0,"man","woman"),
       sex=factor(sex,levels=c("man","woman")),
-      treatment=factor(treatment,levels=c("control","trmnt1","trmnt2","trmnt3")),
-      genotype=ifelse(genotype==0,"e2/e2",
-      ifelse(genotype==1,"e2/e3",
-      ifelse(genotype==2,"e2/e4",
-      ifelse(genotype==3,"e3/e3",
-      ifelse(genotype==4,"e3/e4","e4/e4"))))),
-      genotype=factor(genotype,levels=c("e3/e3","e2/e2","e2/e3","e2/e4","e3/e4","e4/e4"))
+      treatment=factor(treatment,levels=c("control","trtmnt1","trtmnt2","trtmnt3")),
+      genotype=factor(genotype,levels=c("e3e3","e2e2","e2e3","e2e4","e3e4","e4e4"))
       )
  names(all_data)[6:ncol(all_data)]<-paste0("meta",1:predictor_size)
+ 
+
  
 ```
 

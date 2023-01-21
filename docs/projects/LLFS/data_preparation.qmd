@@ -114,15 +114,36 @@ please, read the English section first.
 #| message: false
 #| code-fold: true
 #| warning: false
-
+rm(list=ls())
 library(tidyverse)
 library(tidymodels)
 library(glmnet)
 library(MASS)
 library(mixOmics)
-set.seed(20221213) 
+set.seed(20230121) # the date writing this
 knitr::opts_chunk$set(message=FALSE,warning=FALSE)
+
+## Function List
+
+scale_function=function(vector=x,min=a,max=b,method="customized"){
+    if(method=="min-max"){
+        result=(vector-min(vector))(max(vector)-min(vector))
+    }else if(method=="customized"){
+        result=(max-min)*(vector-min(vector))/(max(vector)-min(vector))+min
+    }else{
+        result=(vector-mean(vector))/sd(vector)
+    }
+  return(result)
+}
+
+genotype_data_generator=function(temp_data,fun=scale_function,start_quantile,end_quantile){
+    temp=temp_data%>%
+    pull%>%
+    fun(vector=.,min=0,max=1,method="customized")
+    return(ifelse(temp>temp%>%quantile(.,probs=start_quantile)&temp<temp%>%quantile(.,probs=end_quantile),1,0))
+}
 ```
+
 
 ### Data Simulation
 
@@ -132,14 +153,14 @@ knitr::opts_chunk$set(message=FALSE,warning=FALSE)
 #| code-fold: true
 #| warning: false
 
-
 # the number of samples
 sample_size <- 1000
 # the number of predictors
-predictor_size <- 10000
-group_size <- 10
+predictor_size <- 5000
+# the number of groups
+group_size <- sample(6:10,1) # at least more than 6, the number of the genotypes
 # the number of predictors truly associated with a response variable
-significant_predictors <- floor(predictor_size*sample((50:200)/1000,1)) 
+significant_predictors <- floor(predictor_size*sample((50:100)/1000,1)) 
 
 ## set the predictors associated with an outcome
 ### the number of predictors positively associated with an outcome
@@ -147,32 +168,44 @@ significant_predictors <- floor(predictor_size*sample((50:200)/1000,1))
 positively_associated_predictors<-floor(significant_predictors*0.4) 
 negatively_associated_predictors<-significant_predictors-positively_associated_predictors 
 
-## set correlated predictors within each group
-### randomly sampling proportions of 10 correlated predictor groups 
-### to become their sum equal to 1
-proportion_list<-sample(seq(1,1+2*(100-group_size)/group_size,
+## set the proportion of the groups in which the predictors are correlated with one another
+### randomly sampling proportions to become their sum equal to 1
+group_proportion_list<-sample(seq(1,1+2*(100-group_size)/group_size,
                             by=2*(100-group_size)/(group_size*(group_size-1)))/100,
                         group_size,replace=FALSE)%>%round(3) 
-names(proportion_list)<-paste0("group",1:length(proportion_list))
+names(group_proportion_list)<-paste0("group",1:length(group_proportion_list))
 ### initialize a matrix with a size as sample_size by predictor_size
 predictor_matrix <- matrix(0, ncol = predictor_size, nrow = sample_size)
 ### initialize a data frame and assign meta information used to generate simulated data
-meta_data<-
-    data.frame(group_name=c(names(proportion_list)),
-               proportion=proportion_list)%>%
-    mutate(group_n=(predictor_size*proportion_list)%>%round(0), # the within-group number of predictors
-           first_index=c(1,cumsum(group_n[-length(proportion_list)])+1), # the 1st index of predictors in each group
-           last_index=cumsum(group_n), # the last index of predictors in each group
-           group_correlation=sample((0:700)/1000,length(proportion_list),replace=TRUE), # correlation among the within-group predictors
-           group_effect=sample((-2:2)/10,length(proportion_list),replace=TRUE)); # effect of each group on an outcome variable
+group_meta_data<-
+    data.frame(
+        group_name=c(names(group_proportion_list)),
+        proportion=group_proportion_list)%>%
+        mutate(
+            group_n=(predictor_size*group_proportion_list)%>%round(0), # the number of predictors within each group 
+            first_index=c(1,cumsum(group_n[-length(group_proportion_list)])+1), # the 1st index of predictors in each group
+            last_index=cumsum(group_n), # the last index of predictors in each group
+            group_correlation=sample((0:700)/1000,length(group_proportion_list),replace=TRUE), # within-group correlations among the within-group predictors
+            group_effect=sample((-40:30)/100,length(group_proportion_list),replace=TRUE)) # effect of each group on an outcome variable
+### set a group effect as 0.7 into a group with the smallest group number 
+group_meta_data[which.min(group_meta_data[,"group_n"]),"group_effect"]<-0.7
+
+### set a group effect as -0.5 into a group with the second smallest group number 
+group_meta_data[group_meta_data[,"group_n"]==(sort(group_meta_data[,"group_n"])[2]),"group_effect"]<-(-0.5)
 
 
+
+# initialize a data matrix to assign simulated values
+## add some noise to data
 data<-matrix(rnorm(sample_size*predictor_size,mean=0,sd=0.01), 
              nrow = sample_size, ncol = predictor_size)
-covariance_matrix<-matrix(rnorm(predictor_size*predictor_size,0.15,0.05),
+
+# initialize a covariance matrix to assign simulated values
+covariance_matrix<-matrix(rnorm(predictor_size*predictor_size,mean=0,sd=0.05),
                           nrow=predictor_size, ncol=predictor_size)
 beta_coefficients <- rnorm(predictor_size,0,0.05)
 
+# generate simulation data using multivariate normal distribution
 for (i in 1:nrow(meta_data)) {
     
     group_range <- meta_data[i, "first_index"]:meta_data[i, "last_index"]
@@ -197,18 +230,92 @@ for (i in 1:nrow(meta_data)) {
         
 }
 score=as.matrix(data)%*%beta_coefficients # score of each sample
+
 # logistic function to get a probability, intercept = 0, 
-# to decrease prevalence, set p-0.2, negative probabilities into 0
+## set probabilities-0.2 to apply noise and negative probabilities into 0
 probabilities <- ((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05))%>%
-    ifelse(.>1,1,.)%>%abs()
+    ifelse(.>1,1,
+    ifelse(.<0,0,.))
 response <- rbinom(sample_size, 1, probabilities) 
 
-age_distribution=rchisq(sample_size,df=9)
-sex_distribution=sample(c(0,1),sample_size,replace=TRUE,prob = c(0.45,0.55))
-country_distribution=sample(c(0:3),sample_size,replace=TRUE,prob = c(0.3,0.2,0.2,0.3))
+
+answer_list<-list(
+    'sample size'=sample_size,
+    'predictor size'=predictor_size,
+    'group size'=group_size,
+    'significant predictors'=significant_predictors,
+    'positively associated predictors'=positively_associated_predictors,
+    'negatively associated predictors'=negatively_associated_predictors,
+    'group proportion list'=group_proportion_list,
+    'group meta data'=group_meta_data,
+    'data noise intensity'=c('distribution'='rnorm','mean'=0,'sd'=0.01),
+    'covariance noise intensity'=c('distribution'='rnorm','mean'=0,'sd'=0.05),
+    'effect noise intensity on response'=c('distribution'='rnorm','mean'=0,'sd'=0.05),
+    'link function' = 'logistic function',
+    'link function noise intensity' = c('distribution'='rnorm','mean'=0.2,'sd'=0.05),
+    'age_distirbution'='used data of a variable with the highest effect on outcome',
+    'sex_distribution'='rbinom(n=sample size,p=0.5)',
+    'genotype_distirbution'=list(
+        'e2/e2'='8%, used data of a variable within the group with the lowest effect on the outcome',
+        'e2/e3'='15%, used data of a variable within the group with the second lowest effect on the outcome',
+        'e2/e4'='8.6%, used data of a variable within the group with the most neural effect on the outcome',
+        'e3/e3'='30%, used data of a variable within the group with the most neutral effect on the outcome',
+        'e3/e4'='25%,,used data of a variable within the group with the second highest effect on the outcome',
+        'e4/e4'='13.4%, used data of a variable within the group with the highest effect on the outcome'),
+    'treatment_distirbution'=list(
+        'treatment1'='used data of a variable within the group with the most neural effect on the outcome',
+        'treatment2'='used data of a variable within the group with the second lowest effect on the outcome',
+        'treatment3'='used data of a variable within the group with the most lowest effect on the outcome'
+    ));answer_list
+
+# used data of a variable with the highest effect on outcome
+age_distribution=data%>%
+dplyr::select(grep(group_meta_data[,"group_name"][group_meta_data[,"group_effect"]==0.7],names(data))[1])%>%
+pull()%>%
+scale_function(vector=.,min=65,max=105,method="customized")%>%round(0)
+
+#rbinom(n=sample size,p=0.5)
+sex_distribution=rbinom(sample_size,1,0.5)
+
+# genotype_distribution
+
+e2e2=data%>%
+dplyr::select(grep(group_meta_data[which.min(group_meta_data[,"group_effect"]),"group_name"],names(data))[1])%>%
+genotype_data_generator(.,scale_function,0,0.08)
+
+e2e3=data%>%
+dplyr::select(grep(group_meta_data[group_meta_data[,"group_effect"]==
+(sort(group_meta_data[,"group_effect"])[2]),"group_name"],names(data))[1])%>%
+mutate(
+    e2e2=as.numeric(e2e2==1))
+
+quantile(pull(e2e3),probs=seq(0,1,by=1/1000))
+
+genotype_data_generator(.,scale_function,0,0.15)
+
+e2e4=data%>%
+dplyr::select(grep(group_meta_data[which.min(abs(group_meta_data[,"group_effect"])),"group_name"],names(data))[1])%>%
+genotype_data_generator(.,scale_function,0.7-0.086/2,0.7+0.086/2)
+
+e3e3=data%>%
+dplyr::select(grep(group_meta_data[which.min(abs(group_meta_data[,"group_effect"])),"group_name"],names(data))[2])%>%
+genotype_data_generator(.,scale_function,0.5-0.3/2,0.5+0.3/2)
+
+e3e4=data%>%
+dplyr::select(grep(group_meta_data[group_meta_data[,"group_effect"]==
+(sort(group_meta_data[,"group_effect"])[length(group_meta_data[,"group_effect"])-1]),"group_name"],names(data))[1])%>%
+genotype_data_generator(.,scale_function,1-0.25,1)
+
+e4e4=data%>%
+dplyr::select(grep(group_meta_data[which.max(group_meta_data[,"group_effect"]),"group_name"],names(data))[1])%>%
+genotype_data_generator(.,scale_function,1-0.134,1)
+
+genotype_distribution=cbind(e2e2,e2e3,e2e4,e3e3,e3e4,e4e4)%>%
+as.data.frame()%>%
+mutate(genotype=ifelse())
+
 treatment_distribution=sample(c(0:2),sample_size,replace=TRUE,prob = c(0.7,0.2,0.1))
-genotype_distribution=sample(c(0:5),sample_size,replace=TRUE,
-                             prob = c(0.08,0.15,0.086,0.3,0.25,0.134)) #just random numbers
+
 phenotype_data<-
     data.frame(
         id=1:sample_size,

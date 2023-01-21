@@ -18,7 +18,7 @@ execute:
 
 
 
-### To-Be 
+### Simulation Diagram
 
 ```{mermaid}
 %%| fig-width: 7.5
@@ -106,10 +106,10 @@ please, read the English section first.
 :::
 
 ::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
-## Data Preparation
+
+## Simulation
 
 ### Package Loading and Option Settings
-
 ```{r}
 #| message: false
 #| code-fold: true
@@ -122,6 +122,13 @@ library(MASS)
 library(mixOmics)
 set.seed(20230121) # the date writing this
 knitr::opts_chunk$set(message=FALSE,warning=FALSE)
+```
+
+### Global Functions & Variables
+```{r}
+#| message: false
+#| code-fold: true
+#| warning: false
 
 ## Function List
 
@@ -142,16 +149,6 @@ genotype_data_generator=function(temp_data,fun=scale_function,start_quantile,end
     fun(vector=.,min=0,max=1,method="customized")
     return(ifelse(temp>temp%>%quantile(.,probs=start_quantile)&temp<temp%>%quantile(.,probs=end_quantile),1,0))
 }
-```
-
-
-### Data Simulation
-
-```{r}
-#| eval: false
-#| message: false
-#| code-fold: true
-#| warning: false
 
 # the number of samples
 sample_size <- 1000
@@ -205,40 +202,6 @@ covariance_matrix<-matrix(rnorm(predictor_size*predictor_size,mean=0,sd=0.05),
                           nrow=predictor_size, ncol=predictor_size)
 beta_coefficients <- rnorm(predictor_size,0,0.05)
 
-# generate simulation data using multivariate normal distribution
-for (i in 1:nrow(meta_data)) {
-    
-    group_range <- meta_data[i, "first_index"]:meta_data[i, "last_index"]
-    for (j in group_range){
-        for(k in group_range){
-        covariance_matrix[j, k] <- meta_data[i, "group_correlation"]
-        }
-    }
-    #covariance_matrix[group_range, group_range]+meta_data[i, "group_correlation"]    
-    diag(covariance_matrix) <- 1
-    data[, group_range] <- 
-        mvrnorm(n = sample_size, 
-                mu = rep(0,meta_data[i,"group_n"]),
-                Sigma = covariance_matrix[group_range, group_range])
-    data=as.data.frame(data)
-    beta_coefficients[meta_data[i, "first_index"]:meta_data[i, "last_index"]] <-
-        beta_coefficients[meta_data[i, "first_index"]:meta_data[i, "last_index"]]+
-        meta_data[i,"group_effect"]
-    predictor_names<-paste0(meta_data[i,"group_name"],"_",1:meta_data[i,"group_n"])
-    names(beta_coefficients)[meta_data[i, "first_index"]:meta_data[i, "last_index"]] <- predictor_names
-    names(data)[meta_data[i, "first_index"]:meta_data[i, "last_index"]]<-predictor_names
-        
-}
-score=as.matrix(data)%*%beta_coefficients # score of each sample
-
-# logistic function to get a probability, intercept = 0, 
-## set probabilities-0.2 to apply noise and negative probabilities into 0
-probabilities <- ((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05))%>%
-    ifelse(.>1,1,
-    ifelse(.<0,0,.))
-response <- rbinom(sample_size, 1, probabilities) 
-
-
 answer_list<-list(
     'sample size'=sample_size,
     'predictor size'=predictor_size,
@@ -256,17 +219,62 @@ answer_list<-list(
     'age_distirbution'='used data of a variable with the highest effect on outcome',
     'sex_distribution'='rbinom(n=sample size,p=0.5)',
     'genotype_distirbution'=list(
-        'e2/e2'='8%, used data of a variable within the group with the lowest effect on the outcome',
-        'e2/e3'='15%, used data of a variable within the group with the second lowest effect on the outcome',
-        'e2/e4'='8.6%, used data of a variable within the group with the most neural effect on the outcome',
-        'e3/e3'='30%, used data of a variable within the group with the most neutral effect on the outcome',
-        'e3/e4'='25%,,used data of a variable within the group with the second highest effect on the outcome',
-        'e4/e4'='13.4%, used data of a variable within the group with the highest effect on the outcome'),
+        'e2/e2'='8%, the bottom 8 % of the percentiles of the outcome probabilities with noises',
+        'e2/e3'='15%, the bottom 23 % of the percentiles of the outcome probabilities with noises',
+        'e2/e4'='8.6%, the bottom 31.6 % of the percentiles of the outcome probabilities with noises',
+        'e3/e3'='30%, the bottom 61.6 % of the percentiles of the outcome probabilities with noises',
+        'e3/e4'='25%, the bottom 86.6 % of the percentiles of the outcome probabilities with noises',
+        'e4/e4'='13.4%, above the bottom 86.6 % of the percentiles of the outcome probabilities with noises'),
     'treatment_distirbution'=list(
-        'treatment1'='used data of a variable within the group with the most neural effect on the outcome',
-        'treatment2'='used data of a variable within the group with the second lowest effect on the outcome',
-        'treatment3'='used data of a variable within the group with the most lowest effect on the outcome'
-    ));answer_list
+        'control' = '70%, the bottom 70 % of the percentiles of the outcome probabilities with noises',
+        'treatment1'='15%, the bottom 85 % of the percentiles of the outcome probabilities with noises',
+        'treatment2'='10%, bottom 95 % of the percentiles of the outcome probabilities with noises',
+        'treatment3'='5%, above the bottom 8 % of the percentiles of the outcome probabilities with noises'
+    ))
+```
+
+### Simulation Algorithm
+
+```{r}
+#| eval: false
+#| message: false
+#| code-fold: true
+#| warning: false
+
+# generate simulation data using multivariate normal distribution
+for (i in 1:nrow(group_meta_data)) {
+    
+    group_range <- group_meta_data[i, "first_index"]:group_meta_data[i, "last_index"]
+    for (j in group_range){
+        for(k in group_range){
+        covariance_matrix[j, k] <- group_meta_data[i, "group_correlation"]
+        }
+    }
+    #covariance_matrix[group_range, group_range]+group_meta_data[i, "group_correlation"]    
+    diag(covariance_matrix) <- 1
+    data[, group_range] <- 
+        mvrnorm(n = sample_size, 
+                mu = rep(0,group_meta_data[i,"group_n"]),
+                Sigma = covariance_matrix[group_range, group_range])
+    data=as.data.frame(data)
+    beta_coefficients[group_meta_data[i, "first_index"]:group_meta_data[i, "last_index"]] <-
+        beta_coefficients[group_meta_data[i, "first_index"]:group_meta_data[i, "last_index"]]+
+        group_meta_data[i,"group_effect"]
+    predictor_names<-paste0(group_meta_data[i,"group_name"],"_",1:group_meta_data[i,"group_n"])
+    names(beta_coefficients)[group_meta_data[i, "first_index"]:group_meta_data[i, "last_index"]] <- predictor_names
+    names(data)[group_meta_data[i, "first_index"]:group_meta_data[i, "last_index"]]<-predictor_names
+        
+}
+score=as.matrix(data)%*%beta_coefficients # score of each sample
+
+# logistic function to get a probability, intercept = 0, 
+## set probabilities-0.2 to apply noise and negative probabilities into 0
+probabilities <- ((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05))%>%
+ifelse(.>1,1,.)%>%ifelse(.<0,0,.)
+
+response <- rbinom(sample_size, 1, probabilities) 
+
+
 
 # used data of a variable with the highest effect on outcome
 age_distribution=data%>%
@@ -277,73 +285,35 @@ scale_function(vector=.,min=65,max=105,method="customized")%>%round(0)
 #rbinom(n=sample size,p=0.5)
 sex_distribution=rbinom(sample_size,1,0.5)
 
-# genotype_distribution
+genotype_quantile_data<-quantile((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05),
+probs=cumsum(c(0.08,0.15,0.086,0.30,0.25)))
+treatment_quantile_data<-quantile((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05),
+probs=cumsum(c(0.7,0.15,0.1)))
 
-e2e2=data%>%
-dplyr::select(grep(group_meta_data[which.min(group_meta_data[,"group_effect"]),"group_name"],names(data))[1])%>%
-genotype_data_generator(.,scale_function,0,0.08)
-
-e2e3=data%>%
-dplyr::select(grep(group_meta_data[group_meta_data[,"group_effect"]==
-(sort(group_meta_data[,"group_effect"])[2]),"group_name"],names(data))[1])%>%
-mutate(
-    e2e2=as.numeric(e2e2==1))
-
-quantile(pull(e2e3),probs=seq(0,1,by=1/1000))
-
-genotype_data_generator(.,scale_function,0,0.15)
-
-e2e4=data%>%
-dplyr::select(grep(group_meta_data[which.min(abs(group_meta_data[,"group_effect"])),"group_name"],names(data))[1])%>%
-genotype_data_generator(.,scale_function,0.7-0.086/2,0.7+0.086/2)
-
-e3e3=data%>%
-dplyr::select(grep(group_meta_data[which.min(abs(group_meta_data[,"group_effect"])),"group_name"],names(data))[2])%>%
-genotype_data_generator(.,scale_function,0.5-0.3/2,0.5+0.3/2)
-
-e3e4=data%>%
-dplyr::select(grep(group_meta_data[group_meta_data[,"group_effect"]==
-(sort(group_meta_data[,"group_effect"])[length(group_meta_data[,"group_effect"])-1]),"group_name"],names(data))[1])%>%
-genotype_data_generator(.,scale_function,1-0.25,1)
-
-e4e4=data%>%
-dplyr::select(grep(group_meta_data[which.max(group_meta_data[,"group_effect"]),"group_name"],names(data))[1])%>%
-genotype_data_generator(.,scale_function,1-0.134,1)
-
-genotype_distribution=cbind(e2e2,e2e3,e2e4,e3e3,e3e4,e4e4)%>%
-as.data.frame()%>%
-mutate(genotype=ifelse())
-
-treatment_distribution=sample(c(0:2),sample_size,replace=TRUE,prob = c(0.7,0.2,0.1))
+genotype_distribution<-data.frame(
+    probability=((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05)))%>%
+    mutate(
+        genotype=ifelse(probability<genotype_quantile_data[1],'e2e2',
+        ifelse(probability<genotype_quantile_data[2],'e2e3',
+        ifelse(probability<genotype_quantile_data[3],'e2e4',
+        ifelse(probability<genotype_quantile_data[4],'e3e3',
+        ifelse(probability<genotype_quantile_data[5],'e3e4','e4e4'))))))
+treatment_distribution<-data.frame(
+    probability=((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05)))%>%
+    mutate(
+        treatment=ifelse(probability<treatment_quantile_data[1],'control',
+        ifelse(probability<treatment_quantile_data[2],'trtmnt1',
+        ifelse(probability<treatment_quantile_data[3],'trtmnt2','trtmnt3'))))
 
 phenotype_data<-
     data.frame(
         id=1:sample_size,
         outcome=response,
         probabilities=probabilities,
-        age=ifelse(probabilities<0.15,age_distribution-4,
-                   ifelse(probabilities<0.3,age_distribution-2,
-                          ifelse(probabilities>0.5,age_distribution+3,
-                                 ifelse(probabilities>0.7,age_distribution+6,age_distribution)))))%>%
-    mutate(age=sapply(age,
-                   function(x)(x-min(age))/(max(age)-min(age))*(105-65)+65)%>%round(0),
-           sex=sex_distribution,
-           country=country_distribution,
-           treatment=treatment_distribution,
-           treatment=ifelse(probabilities>0.7,1,
-                            ifelse(probabilities>0.8,2,treatment)),
-           genotype=genotype_distribution,
-           genotype=ifelse(probabilities<0.1,0,
-                           ifelse(probabilities<0.15,1,
-                                  ifelse(probabilities>0.7,3,
-                                         ifelse(probabilities>0.8,4,
-                                                ifelse(probabilities>0.9,5,genotype))))),
-           age=ifelse(outcome==0&genotype==0,age+10,
-                      ifelse(outcome==0&genotype==1,age+5,
-                             ifelse(genotype==4,age-3,
-                                    ifelse(genotype==5,age-2,age)))),
-           genotype=ifelse(outcome==1&genotype==3&age>83&age<92,4,genotype),
-           genotype=ifelse(outcome==1&genotype==4&age>87,5,genotype))
+        age=age_distribution,
+        sex=sex_distribution,
+        genotype=genotype_distribution[,'genotype'],
+        treatment=treatment_distribution[,'treatment'])
 
 
 all_data=inner_join(phenotype_data,data%>%mutate(id=1:n()),by="id")
@@ -360,26 +330,25 @@ all_data=inner_join(phenotype_data,data%>%mutate(id=1:n()),by="id")
 
 datapath<-"C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds"
 #datapath<-"C:/Users/kkm/Desktop/projects/website/docs/projects/data/llfs_simulated_data.rds"
- simulated_data=read_rds(datapath)%>%
-     dplyr::select(-1,-probabilities)
- all_data=simulated_data%>%
- mutate(
+simulated_data=read_rds(datapath)%>%dplyr::select(-1,-probabilities)
+all_data=simulated_data
+
+all_data=all_data%>%
+mutate(
       outcome=ifelse(outcome==0,"negative","positive"),
       outcome=factor(outcome,levels=c("negative","positive")),
       sex=ifelse(sex==0,"man","woman"),
       sex=factor(sex,levels=c("man","woman")),
-      country=ifelse(country==0,"center_a",ifelse(country==1,"center_b",ifelse(country==2,"center_c","center_d"))),
-      country=factor(country,levels=c("center_a","center_b","center_c","center_d")),
-      treatment=ifelse(treatment==0,"trmnt1",ifelse(treatment==1,"trmnt2","trmnt3")),
-      treatment=factor(treatment,levels=c("trmnt1","trmnt2","trmnt3")),
+      treatment=factor(treatment,levels=c("control","trmnt1","trmnt2","trmnt3")),
       genotype=ifelse(genotype==0,"e2/e2",
       ifelse(genotype==1,"e2/e3",
       ifelse(genotype==2,"e2/e4",
       ifelse(genotype==3,"e3/e3",
       ifelse(genotype==4,"e3/e4","e4/e4"))))),
-      genotype=factor(genotype,levels=c("e2/e2","e2/e3","e2/e4","e3/e3","e3/e4","e4/e4"))
+      genotype=factor(genotype,levels=c("e3/e3","e2/e2","e2/e3","e2/e4","e3/e4","e4/e4"))
       )
- names(all_data)[7:ncol(all_data)]<-paste0("meta",1:10000)
+ names(all_data)[6:ncol(all_data)]<-paste0("meta",1:predictor_size)
+ 
 ```
 
 
@@ -398,18 +367,20 @@ na_matrix <- as.matrix(all_data[,7:ncol(all_data)])
 # fill these NA values in X
 na_matrix[cbind(na_row, na_col)] <- NA
 sum(is.na(X.na)) # number of cells with NA
+
+names(all_data)[1:10]
+unique(all_data[,"treatment"])
 ```
 
 ## Data Description
 
 This data include `r dim(all_data)[1]` samples and `r dim(all_data)[2]` variables:
 
--   `r names(all_data)[1]`: a disease status (`r unique(all_data[,"outcome"])`), `r unique(all_data[,"outcome"])[1]` is an affected status, `r unique(all_data[,"outcome"])[2]` is an unaffected status, and the reference group is `r unique(all_data[,"outcome"])[2]`.
+-   `r names(all_data)[1]`: a disease status (`r unique(all_data[,"outcome"])`), `r unique(all_data[,"outcome"])[1]` is an affected status, `r unique(all_data[,"outcome"])[2]` is an unaffected status, and the reference group is `r unique(all_data[,"outcome"])[1]`.
 -   `r names(all_data)[2]`: an age
--   `r names(all_data)[3]`: a sex status (`r unique(all_data[,"sex"])`) and the reference group is `r unique(all_data[,"sex"])[2]`.
--   `r names(all_data)[4]`: a country where data were collected (`r unique(all_data[,"country"])`) and the reference group is `r unique(all_data[,"country"])[3]`.
+-   `r names(all_data)[3]`: a sex status (`r unique(all_data[,"sex"])`) and the reference group is `r unique(all_data[,"sex"])[1]`.
 -   `r names(all_data)[5]`: a treatment for the disease (`r unique(all_data[,"treatment"])`) and the reference group is `r unique(all_data[,"treatment"])[2]`.
--   `r names(all_data)[6]`: a genotype of APOE.
+-   `r names(all_data)[4]`: a genotype of APOE.
     -   the apolipoprotein $\epsilon$ (APOE) is a protein produced in the metabolic pathway of fats in mammals, a genotype of which seems to be related to Alzheimer's disease (AD). APOE is polymorphic and has three major alleles, $\epsilon 2$ (e2), $\epsilon 3$(e3), and $\epsilon 4$ (e4). The statistics of the polymorphism are 8.4% for e2, 77.9% for e3, and 13.7% for e4 in worldwide allel frequency, respectively. It is known that the e2, e3, and e4 allels are associated with the protective factor, the neutral one, and the risk one with regard to AD. However, this finding has not been replicated in a large population. Therefore, it is known that we do not know their true associations with AD in the true population. [(from Wiki)](https://en.wikipedia.org/wiki/Apolipoprotein_E)
     -   There are 6 combinations of the genotypes:
         -   e2/e2
@@ -418,5 +389,5 @@ This data include `r dim(all_data)[1]` samples and `r dim(all_data)[2]` variable
         -   e3/e3 (reference group)
         -   e3/e4
         -   e4/e4
--   `r names(all_data)[7]` \~ `r names(all_data)[ncol(all_data)]`: a list of metabolites that were blood-sampled from the APOE carriers.
+-   `r names(all_data)[6]` \~ `r names(all_data)[ncol(all_data)]`: a list of metabolites that were blood-sampled from the APOE carriers.
 :::

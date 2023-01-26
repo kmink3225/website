@@ -61,10 +61,110 @@ knitr::opts_chunk$set(message=FALSE,warning=FALSE)
 ```
 
 ```{r}
-#| echo: false
-#| code-fold: true
 #| message: false
 #| warning: false
+
+scale_function=function(vector=x,min=a,max=b,method="customized"){
+    if(method=="min-max"){
+        result=(vector-min(vector))(max(vector)-min(vector))
+    }else if(method=="customized"){
+        result=(max-min)*(vector-min(vector))/(max(vector)-min(vector))+min
+    }else{
+        result=(vector-mean(vector))/sd(vector)
+    }
+  return(result)
+}
+
+genotype_data_generator=function(temp_data,fun=scale_function,start_quantile,end_quantile){
+    temp=temp_data%>%
+    pull%>%
+    fun(vector=.,min=0,max=1,method="customized")
+    return(ifelse(temp>temp%>%quantile(.,probs=start_quantile)&temp<temp%>%quantile(.,probs=end_quantile),1,0))
+}
+
+# the number of samples
+sample_size <- 1000
+# the number of predictors
+predictor_size <- 5000
+# the number of groups
+group_size <- sample(6:10,1) # at least more than 6, the number of the genotypes
+# the number of predictors truly associated with a response variable
+significant_predictors <- floor(predictor_size*sample((50:100)/1000,1)) 
+
+## set the predictors associated with an outcome
+### the number of predictors positively associated with an outcome
+### the number of predictors negatively associated with an outcome
+positively_associated_predictors<-floor(significant_predictors*0.4) 
+negatively_associated_predictors<-significant_predictors-positively_associated_predictors 
+
+## set the proportion of the groups in which the predictors are correlated with one another
+### randomly sampling proportions to become their sum equal to 1
+group_proportion_list<-sample(seq(1,1+2*(100-group_size)/group_size,
+                            by=2*(100-group_size)/(group_size*(group_size-1)))/100,
+                        group_size,replace=FALSE)%>%round(3) 
+names(group_proportion_list)<-paste0("group",1:length(group_proportion_list))
+### initialize a matrix with a size as sample_size by predictor_size
+predictor_matrix <- matrix(0, ncol = predictor_size, nrow = sample_size)
+### initialize a data frame and assign meta information used to generate simulated data
+group_meta_data<-
+    data.frame(
+        group_name=c(names(group_proportion_list)),
+        proportion=group_proportion_list)%>%
+        mutate(
+            group_n=(predictor_size*group_proportion_list)%>%round(0), # the number of predictors within each group 
+            first_index=c(1,cumsum(group_n[-length(group_proportion_list)])+1), # the 1st index of predictors in each group
+            last_index=cumsum(group_n), # the last index of predictors in each group
+            group_correlation=sample((0:700)/1000,length(group_proportion_list),replace=TRUE), # within-group correlations among the within-group predictors
+            group_effect=sample((-40:30)/100,length(group_proportion_list),replace=TRUE)) # effect of each group on an outcome variable
+### set a group effect as 0.7 into a group with the smallest group number 
+group_meta_data[which.min(group_meta_data[,"group_n"]),"group_effect"]<-0.7
+
+### set a group effect as -0.5 into a group with the second smallest group number 
+group_meta_data[group_meta_data[,"group_n"]==(sort(group_meta_data[,"group_n"])[2]),"group_effect"]<-(-0.5)
+
+
+
+# initialize a data matrix to assign simulated values
+## add some noise to data
+data<-matrix(rnorm(sample_size*predictor_size,mean=0,sd=0.01), 
+             nrow = sample_size, ncol = predictor_size)
+
+# initialize a covariance matrix to assign simulated values
+covariance_matrix<-matrix(rnorm(predictor_size*predictor_size,mean=0,sd=0.05),
+                          nrow=predictor_size, ncol=predictor_size)
+beta_coefficients <- rnorm(predictor_size,0,0.05)
+
+answer_list<-list(
+    'sample size'=sample_size,
+    'predictor size'=predictor_size,
+    'group size'=group_size,
+    'significant predictors'=significant_predictors,
+    'positively associated predictors'=positively_associated_predictors,
+    'negatively associated predictors'=negatively_associated_predictors,
+    'group proportion list'=group_proportion_list,
+    'group meta data'=group_meta_data,
+    'data noise intensity'=c('distribution'='rnorm','mean'=0,'sd'=0.01),
+    'covariance noise intensity'=c('distribution'='rnorm','mean'=0,'sd'=0.05),
+    'effect noise intensity on response'=c('distribution'='rnorm','mean'=0,'sd'=0.05),
+    'link function' = 'logistic function',
+    'link function noise intensity' = c('distribution'='rnorm','mean'=0.2,'sd'=0.05),
+    'age_distirbution'='used data of a variable with the highest effect on outcome',
+    'sex_distribution'='rbinom(n=sample size,p=0.5)',
+    'genotype_distirbution'=list(
+        'e2/e2'='8%, the bottom 8 % of the percentiles of the outcome probabilities with noises',
+        'e2/e3'='15%, the bottom 23 % of the percentiles of the outcome probabilities with noises',
+        'e2/e4'='8.6%, the bottom 31.6 % of the percentiles of the outcome probabilities with noises',
+        'e3/e3'='30%, the bottom 61.6 % of the percentiles of the outcome probabilities with noises',
+        'e3/e4'='25%, the bottom 86.6 % of the percentiles of the outcome probabilities with noises',
+        'e4/e4'='13.4%, above the bottom 86.6 % of the percentiles of the outcome probabilities with noises'),
+    'treatment_distirbution'=list(
+        'control' = '70%, the bottom 70 % of the percentiles of the outcome probabilities with noises',
+        'treatment1'='15%, the bottom 85 % of the percentiles of the outcome probabilities with noises',
+        'treatment2'='10%, bottom 95 % of the percentiles of the outcome probabilities with noises',
+        'treatment3'='5%, above the bottom 8 % of the percentiles of the outcome probabilities with noises'
+    ))
+
+
 datapath<-"C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds"
 #datapath<-"C:/Users/kkm/Desktop/projects/website/docs/projects/data/llfs_simulated_data.rds"
 simulated_data=read_rds(datapath)%>%dplyr::select(-1,-probabilities)
@@ -88,6 +188,7 @@ mutate(
 mean, sd, normality check with p value
 
 ```{r}
+#| eval: false
 #| echo: false
 #| code-fold: true
 #| message: false
@@ -204,6 +305,7 @@ age_summary=rbind(
 Age is known as a strong risk factor of AD or dementia. Human nerve system gets damaged as people are aged and the nerve fibrosis symptoms progress gradually (some reference, to be added after figuring out how to add bibliography in quarto). For this reason, we need to look into how the sample data are distributed in terms of age.
 
 ```{r}
+#| eval: false
 #| code-fold: true
 #| message: false
 #| warning: false
@@ -214,11 +316,13 @@ The table above shows the summary statistics of age grouped by the affected stat
 
 The glaring difference of age is also shown below. As you can see, the people with a negative status a bit younger than those with a positive one.
 ```{r}
+#| eval: false
 #| code-fold: true
 #| message: false
 #| warning: false
 #| fig-width: 10
 #| fig-height: 15
+
 plot<- ggarrange(
     getNumericSummary(data=all_data,group_variable="outcome",summary_variable="age")[[2]],
     getNumericSummary(data=all_data,group_variable="sex",summary_variable="age")[[2]],
@@ -295,8 +399,9 @@ for (i in 1:p) {
 ### PCA (Principal Component Analysis)
 
 ```{r}
-#| echo: false
 #| eval: false
+#| echo: false
+
 
 
 X<-all_data[,-c(1:6)]

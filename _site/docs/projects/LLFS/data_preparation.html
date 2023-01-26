@@ -601,12 +601,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>        <span class="at">age=</span>age_distribution,</span>
 <span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>        <span class="at">sex=</span>sex_distribution,</span>
 <span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>        <span class="at">genotype=</span>genotype_distribution[,<span class="st">'genotype'</span>],</span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>        <span class="at">treatment=</span>treatment_distribution[,<span class="st">'treatment'</span>])</span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>all_data<span class="ot">=</span><span class="fu">inner_join</span>(phenotype_data,data<span class="sc">%&gt;%</span><span class="fu">mutate</span>(<span class="at">id=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>()),<span class="at">by=</span><span class="st">"id"</span>)</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>        <span class="at">treatment=</span>treatment_distribution[,<span class="st">'treatment'</span>])<span class="sc">%&gt;%</span></span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>            <span class="at">age=</span><span class="fu">ifelse</span>(outcome<span class="sc">==</span><span class="st">"positive"</span>)</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>            )</span>
 <span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a><span class="co">#write_rds(all_data,"./docs/projects/data/llfs_simulated_data.rds")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>all_data<span class="ot">=</span><span class="fu">inner_join</span>(phenotype_data,data<span class="sc">%&gt;%</span><span class="fu">mutate</span>(<span class="at">id=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>()),<span class="at">by=</span><span class="st">"id"</span>)</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a><span class="co">#write_rds(all_data,"./docs/projects/data/llfs_simulated_data.rds")</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -626,15 +628,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">outcome=</span><span class="fu">factor</span>(outcome,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"negative"</span>,<span class="st">"positive"</span>)),</span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">sex=</span><span class="fu">ifelse</span>(sex<span class="sc">==</span><span class="dv">0</span>,<span class="st">"man"</span>,<span class="st">"woman"</span>),</span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">sex=</span><span class="fu">factor</span>(sex,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"man"</span>,<span class="st">"woman"</span>)),</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">treatment=</span><span class="fu">factor</span>(treatment,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"control"</span>,<span class="st">"trmnt1"</span>,<span class="st">"trmnt2"</span>,<span class="st">"trmnt3"</span>)),</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">genotype=</span><span class="fu">ifelse</span>(genotype<span class="sc">==</span><span class="dv">0</span>,<span class="st">"e2/e2"</span>,</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ifelse</span>(genotype<span class="sc">==</span><span class="dv">1</span>,<span class="st">"e2/e3"</span>,</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ifelse</span>(genotype<span class="sc">==</span><span class="dv">2</span>,<span class="st">"e2/e4"</span>,</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ifelse</span>(genotype<span class="sc">==</span><span class="dv">3</span>,<span class="st">"e3/e3"</span>,</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ifelse</span>(genotype<span class="sc">==</span><span class="dv">4</span>,<span class="st">"e3/e4"</span>,<span class="st">"e4/e4"</span>))))),</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">genotype=</span><span class="fu">factor</span>(genotype,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"e3/e3"</span>,<span class="st">"e2/e2"</span>,<span class="st">"e2/e3"</span>,<span class="st">"e2/e4"</span>,<span class="st">"e3/e4"</span>,<span class="st">"e4/e4"</span>))</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a> <span class="fu">names</span>(all_data)[<span class="dv">6</span><span class="sc">:</span><span class="fu">ncol</span>(all_data)]<span class="ot">&lt;-</span><span class="fu">paste0</span>(<span class="st">"meta"</span>,<span class="dv">1</span><span class="sc">:</span>predictor_size)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">treatment=</span><span class="fu">factor</span>(treatment,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"control"</span>,<span class="st">"trtmnt1"</span>,<span class="st">"trtmnt2"</span>,<span class="st">"trtmnt3"</span>)),</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">genotype=</span><span class="fu">factor</span>(genotype,<span class="at">levels=</span><span class="fu">c</span>(<span class="st">"e3e3"</span>,<span class="st">"e2e2"</span>,<span class="st">"e2e3"</span>,<span class="st">"e2e4"</span>,<span class="st">"e3e4"</span>,<span class="st">"e4e4"</span>))</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a> <span class="fu">names</span>(all_data)[<span class="dv">6</span><span class="sc">:</span><span class="fu">ncol</span>(all_data)]<span class="ot">&lt;-</span><span class="fu">paste0</span>(<span class="st">"meta"</span>,<span class="dv">1</span><span class="sc">:</span>predictor_size)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
@@ -649,7 +646,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>outcome: a disease status (negative, positive), negative is an affected status, positive is an unaffected status, and the reference group is negative.</li>
 <li>age: an age</li>
 <li>sex: a sex status (man, woman) and the reference group is man.</li>
-<li>treatment: a treatment for the disease (control, NA) and the reference group is NA.</li>
+<li>treatment: a treatment for the disease (control, trtmnt3, trtmnt1, trtmnt2) and the reference group is trtmnt3.</li>
 <li>genotype: a genotype of APOE.
 <ul>
 <li>the apolipoprotein <span class="math inline">\(\epsilon\)</span> (APOE) is a protein produced in the metabolic pathway of fats in mammals, a genotype of which seems to be related to Alzheimer’s disease (AD). APOE is polymorphic and has three major alleles, <span class="math inline">\(\epsilon 2\)</span> (e2), <span class="math inline">\(\epsilon 3\)</span>(e3), and <span class="math inline">\(\epsilon 4\)</span> (e4). The statistics of the polymorphism are 8.4% for e2, 77.9% for e3, and 13.7% for e4 in worldwide allel frequency, respectively. It is known that the e2, e3, and e4 allels are associated with the protective factor, the neutral one, and the risk one with regard to AD. However, this finding has not been replicated in a large population. Therefore, it is known that we do not know their true associations with AD in the true population. <a href="https://en.wikipedia.org/wiki/Apolipoprotein_E">(from Wiki)</a></li>

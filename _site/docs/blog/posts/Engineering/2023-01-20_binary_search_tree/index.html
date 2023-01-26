@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kwangmin Kim">
-<meta name="dcterms.date" content="2023-01-19">
+<meta name="dcterms.date" content="2023-01-26">
 <meta name="description" content="Data Structure for Data Science">
 
 <title>Kwangmin Kim - Data Structure (8) Binary Search Tree</title>
@@ -230,7 +230,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 19, 2023</p>
+      <p class="date">January 26, 2023</p>
     </div>
   </div>
   
@@ -256,66 +256,100 @@ English
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
 <section id="트리tree" class="level2">
 <h2 class="anchored" data-anchor-id="트리tree">트리(Tree)</h2>
-<p>• 트리는 가계도와 같이 계층적인 구조를 표현할 때 사용할 수 있는 자료구조다.</p>
-<p>• 나무(tree)의 형태를 뒤집은 것과 같이 생겼다.</p>
+<ul>
+<li>트리는 가계도와 같이 <strong>계층적인 구조</strong>를 표현할 때 사용할 수 있는 자료구조다.</li>
+<li>나무(tree)의 형태를 뒤집은 것과 같이 생겼다.</li>
+<li>다수의 데이터를 관리하기에 적합한 트리 자료 구조의 가장 기본적인 형태</li>
+</ul>
 </section>
 <section id="트리-용어-정리" class="level2">
 <h2 class="anchored" data-anchor-id="트리-용어-정리">트리 용어 정리</h2>
-<p>• 루트 노드(root node): 부모가 없는 최상위 노드</p>
-<p>• 단말 노드(leaf node): 자식이 없는 노드 • 트리(tree)에서는 부모와 자식 관계가 성립한다.</p>
-<p>• 형제 관계: 17을 값으로 가지는 노드와 48을 가지는 노드 사이의 관계 • 깊이(depth): 루트 노드에서의 길이(length)</p>
-<p>• 이때, 길이란 출발 노드에서 목적지 노드까지 거쳐야 하는 간선의 수를 의미한다.</p>
-<p>• 트리의 높이(height)은 루트 노드에서 가장 깊은 노드까지의 길이를 의미한다.</p>
+<ul>
+<li>루트 노드(root node): 부모가 없는 최상위 노드</li>
+<li>단말 노드(leaf node): 자식이 없는 노드</li>
+<li>트리(tree)에서는 부모와 자식 관계가 성립한다 (직계).</li>
+<li>형제 관계 (방계): 부모 node로 부터 왼쪽 자식과 오른쪽 자식과의 관계</li>
+<li>깊이(depth): 루트 노드에서의 길이(length), 루트 노드로부터 손자까지의 depth=2
+<ul>
+<li>이때, 길이란 출발 노드에서 목적지 노드까지 거쳐야 하는 간선의 수를 의미한다.</li>
+</ul></li>
+<li>트리의 높이(height)은 루트 노드에서 가장 깊은 노드까지의 길이를 의미한다.</li>
+</ul>
 </section>
 <section id="이진-트리binary-tree" class="level2">
 <h2 class="anchored" data-anchor-id="이진-트리binary-tree">이진 트리(Binary Tree)</h2>
-<p>• 이진 트리는 최대 2개의 자식을 가질 수 있는 트리를 말한다.</p>
+<ul>
+<li>이진 트리는 최대 2개의 자식을 가질 수 있는 트리를 말한다.</li>
+</ul>
 </section>
 <section id="이진-탐색-트리binary-search-tree" class="level2">
 <h2 class="anchored" data-anchor-id="이진-탐색-트리binary-search-tree">이진 탐색 트리(Binary Search Tree)</h2>
 <ul>
-<li>다수의 데이터를 관리(조회, 저장, 삭제)하기 위한 가장 기본적인 자료구조 중 하나다. • 이진 탐색 트리의 성질: 왼쪽 자식 노드 &lt; 부모 노드 &lt; 오른쪽 자식 노드</li>
+<li>다수의 데이터를 관리(조회, 저장, 삭제)하기 위한 가장 기본적인 자료구조 중 하나다.</li>
+<li>이진 탐색 트리의 성질: 순서가 있음
+<ul>
+<li>왼쪽 자식 노드 &lt; 부모 노드 &lt; 오른쪽 자식 노드</li>
+<li>루트 노드 기준 모든 왼쪽 노드들은 루트 노드보다 작음</li>
+<li>루트 노드 기준 모든 오른쪽 노드들은 루트 노드보다 큼</li>
+<li>2진 탐색을 가능하게 하는 구조</li>
+</ul></li>
 </ul>
-<section id="이진-탐색-트리binary-search-tree-1" class="level3">
-<h3 class="anchored" data-anchor-id="이진-탐색-트리binary-search-tree-1">이진 탐색 트리(Binary Search Tree)</h3>
-<p>• 특정한 노드의 키(key) 값보다 그 왼쪽 자식 노드의 키(key) 값이 더 작다.</p>
-<p>• 특정한 노드의 키(key) 값보다 그 오른쪽 자식 노드의 키(key) 값이 더 크다.</p>
-<p>• 특정한 노드의 왼쪽 서브 트리, 오른쪽 서브 트리 모두 이진 탐색 트리다.</p>
+<section id="이진-탐색-트리binary-search-tree의-성질" class="level3">
+<h3 class="anchored" data-anchor-id="이진-탐색-트리binary-search-tree의-성질">이진 탐색 트리(Binary Search Tree)의 성질</h3>
+<ul>
+<li>특정한 노드의 <strong>키(key) 값</strong>보다 그 왼쪽 자식 노드의 <strong>키(key) 값</strong>이 더 작다.</li>
+<li>특정한 노드의 키(key) 값보다 그 오른쪽 자식 노드의 키(key) 값이 더 크다.</li>
+<li>특정한 노드의 왼쪽 서브 트리, 오른쪽 서브 트리 모두 이진 탐색 트리다.</li>
+</ul>
 </section>
 <section id="삽입-연산" class="level3">
 <h3 class="anchored" data-anchor-id="삽입-연산">삽입 연산</h3>
-<p>• 루트 노드에서 출발하여 아래쪽으로 내려오면서, 삽입할 위치를 찾는다.</p>
-<p>• 1 삽입할 노드의 키(key)가 작으면 왼쪽으로, 2 삽입할 노드의 키(key)가 크면 오른쪽으로 삽입</p>
-<p>• 삽입할 노드 목록 예시: [7, 4, 5, 9, 6, 3, 2, 8]</p>
+<ul>
+<li>루트 노드에서 출발하여 아래쪽으로 내려오면서, 삽입할 위치를 찾는다.</li>
+<li>1 삽입할 노드의 키(key)가 작으면 왼쪽으로, 2 삽입할 노드의 키(key)가 크면 오른쪽으로 삽입</li>
+<li>삽입할 노드 목록 예시: [7, 4, 5, 9, 6, 3, 2, 8]으로 트리 생성해보기</li>
+</ul>
 </section>
 <section id="조회-연산" class="level3">
 <h3 class="anchored" data-anchor-id="조회-연산">조회 연산</h3>
-<p>• 루트 노드에서 출발하여 아래쪽으로 내려오면서, 찾고자 하는 원소를 조회한다.</p>
-<p>• 1 삽입할 노드의 키(key)가 작으면 왼쪽으로, 2 삽입할 노드의 키(key)가 크면 오른쪽으로 조회</p>
-<p>• 조회할 노드 목록 예시: 5번 노드</p>
+<ul>
+<li>루트 노드에서 출발하여 아래쪽으로 내려오면서, 찾고자 하는 원소를 조회한다. 삽입 연산과 같은 로직을 따름</li>
+<li>1 삽입할 노드의 키(key)가 작으면 왼쪽으로, 2 삽입할 노드의 키(key)가 크면 오른쪽으로 조회</li>
+<li>조회할 노드 목록 예시: 5번 노드</li>
+</ul>
 </section>
 <section id="삭제-연산" class="level3">
 <h3 class="anchored" data-anchor-id="삭제-연산">삭제 연산</h3>
-<p>• 루트 노드에서 출발하여 아래쪽으로 내려오면서, 삭제할 원소에 접근한다.</p>
-<p>• 삭제할 노드 목록 예시: 7번 노드</p>
-<p>Case #1 왼쪽 자식이 없는 경우 → 오른쪽 자식으로 대체</p>
-<p>Case #2 오른쪽 자식이 없는 경우 → 왼쪽 자식으로 대체 Case #3 왼쪽, 오른쪽이 모두 있는 경우 → 오른쪽 서브 트리에서 가장 작은 노드로 대체</p>
-<p>• 삭제할 노드 목록 예시: 4번 노드</p>
+<ul>
+<li>루트 노드에서 출발하여 아래쪽으로 내려오면서, 삭제할 원소에 접근한다.</li>
+<li>삭제할 노드 목록 예시: 7번 노드</li>
+</ul>
+<p>Case #1 왼쪽 자식이 없는 경우 → 오른쪽 자식으로 대체 Case #2 오른쪽 자식이 없는 경우 → 왼쪽 자식으로 대체 Case #3 왼쪽, 오른쪽이 모두 있는 경우 → 오른쪽 서브</p>
+<ul>
+<li>트리에서 가장 작은 노드로 대체</li>
+<li>삭제할 노드 목록 예시: 4번 노드</li>
+</ul>
 </section>
 </section>
 <section id="트리의-순회" class="level2">
 <h2 class="anchored" data-anchor-id="트리의-순회">트리의 순회</h2>
-<p>• 트리에 포함되어 있는 정보를 모두 출력하고자 할 때, 어떤 방식을 사용할 수 있을까?</p>
-<p>• 바로 순회(traversal)를 사용할 수 있다.</p>
-<p>• 트리의 모든 노드를 특정한 순서(조건)에 따라서 방문하는 방법을 순회(traversal)라고 한다.</p>
-<p>1 전위 순회(pre-order traverse): 루트 방문 → 왼쪽 자식 방문 → 오른쪽 자식 방문</p>
-<p>2 중위 순회(in-order traverse): 왼쪽 자식 방문 → 루트 방문 → 오른쪽 자식 방문</p>
-<p>3 후위 순회(post-order traverse): 왼쪽 자식 방문 → 오른쪽 자식 방문 → 루트 방문</p>
+<ul>
+<li>트리에 포함되어 있는 정보를 모두 출력하고자 할 때, 어떤 방식을 사용할 수 있을까?</li>
+<li>바로 순회(traversal)를 사용할 수 있다.</li>
+<li>트리의 모든 노드를 특정한 순서(조건)에 따라서 방문하는 방법을 순회(traversal)라고 한다.</li>
+</ul>
+<ol type="1">
+<li>전위 순회(pre-order traverse): 루트 방문 → 왼쪽 자식 방문 → 오른쪽 자식 방문</li>
+<li>중위 순회(in-order traverse): 왼쪽 자식 방문 → 루트 방문 → 오른쪽 자식 방문</li>
+<li>후위 순회(post-order traverse): 왼쪽 자식 방문 → 오른쪽 자식 방문 → 루트 방문</li>
+</ol>
 <section id="트리의-순회-한-눈에-보기" class="level3">
 <h3 class="anchored" data-anchor-id="트리의-순회-한-눈에-보기">트리의 순회 한 눈에 보기</h3>
-<p>• 전위 순회(pre-order traverse): A → B → D → E → C → F → G</p>
-<p>• 중위 순회(in-order traverse): D → B → E → A → F → C → G</p>
-<p>• 후위 순회(post-order traverse): D → E → B → F → G → C → A</p>
+<ul>
+<li>전위 순회(pre-order traverse): A → B → D → E → C → F → G</li>
+<li>중위 순회(in-order traverse): D → B → E → A → F → C → G</li>
+<li>후위 순회(post-order traverse): D → E → B → F → G → C → A</li>
+</ul>
 </section>
 <section id="전위-순회pre-order-traverse" class="level3">
 <h3 class="anchored" data-anchor-id="전위-순회pre-order-traverse">전위 순회(pre-order traverse)</h3>
@@ -349,7 +383,9 @@ English
 </section>
 <section id="후위-순회postorder-traversal" class="level3">
 <h3 class="anchored" data-anchor-id="후위-순회postorder-traversal">후위 순회(Postorder Traversal)</h3>
-<p>• 방문 방법: 왼쪽 자식 노드 → 오른쪽 자식 노드 → 현재 노드</p>
+<ul>
+<li>방문 방법: 왼쪽 자식 노드 → 오른쪽 자식 노드 → 현재 노드</li>
+</ul>
 <div class="cell" data-execution_count="3">
 <details>
 <summary>Code</summary>
@@ -363,18 +399,23 @@ English
 </section>
 <section id="레벨-순회level-order-traversal" class="level3">
 <h3 class="anchored" data-anchor-id="레벨-순회level-order-traversal">레벨 순회(Level Order Traversal)</h3>
-<p>• 낮은 레벨(루트)부터 높은 레벨까지 순차적으로 방문한다.</p>
-<p>• 단순히 루트 노드에서부터 너비 우선 탐색(BST)를 진행하면 된다. • 레벨 순회 순회(level-order traverse): A → B → C → D → E → F → G</p>
+<ul>
+<li>낮은 레벨(루트)부터 높은 레벨까지 순차적으로 방문한다.</li>
+<li>단순히 루트 노드에서부터 너비 우선 탐색(BST)를 진행하면 된다.</li>
+<li>레벨 순회 순회(level-order traverse): A → B → C → D → E → F → G</li>
+</ul>
 </section>
 </section>
 <section id="이진-탐색-트리의-구현" class="level2">
 <h2 class="anchored" data-anchor-id="이진-탐색-트리의-구현">이진 탐색 트리의 구현</h2>
-<p>• 다른 메서드에서 사용되는 메서드는 이름 앞에 언더바(_) 기호를 붙인다.</p>
+<ul>
+<li>다른 메서드 안에서 사용되는 메서드는 이름 앞에 언더바(_) 기호를 붙인다.</li>
+</ul>
 <div class="cell" data-execution_count="4">
 <details>
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> search(<span class="va">self</span>, node, key):</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="va">self</span>._search(<span class="va">self</span>.root, key)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="va">self</span>._search(<span class="va">self</span>.root, key) <span class="co"># search: recursively 조회</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> _search(<span class="va">self</span>, node, key):</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> node <span class="kw">is</span> <span class="va">None</span> <span class="kw">or</span> node.key <span class="op">==</span> key:</span>
@@ -391,18 +432,22 @@ English
 </div>
 <section id="편향-이진-트리skewed-binary-tree" class="level3">
 <h3 class="anchored" data-anchor-id="편향-이진-트리skewed-binary-tree">편향 이진 트리(Skewed Binary Tree)</h3>
-<p>• 편향 이진 트리는 다음의 두 가지 속성을 가진다.</p>
+<ul>
+<li>편향 이진 트리는 다음의 두 가지 속성을 가진다.</li>
+</ul>
 <ol type="1">
-<li><p>같은 높이의 이진 트리 중 최소 개수의 노드 개수를 가진다.</p></li>
-<li><p>왼쪽 혹은 오른쪽으로 한 방향에 대한 서브 트리를 가진다.</p></li>
+<li>같은 높이의 이진 트리 중 최소 개수의 노드 개수를 가진다.</li>
+<li>왼쪽 혹은 오른쪽으로 한 방향에 대한 서브 트리를 가진다.</li>
 </ol>
 </section>
 <section id="이진-탐색-트리의-시간-복잡도" class="level3">
 <h3 class="anchored" data-anchor-id="이진-탐색-트리의-시간-복잡도">이진 탐색 트리의 시간 복잡도</h3>
-<p>• 노드의 개수가 N개일 때, 시간 복잡도는 다음과 같다.</p>
-<p>• 트리의 높이(height)을 H라고 할 때, 엄밀한 시간 복잡도는 O H 다.</p>
-<p>• 이상적인 경우 H = log2 N로 볼 수 있다.</p>
-<p>• 하지만 최악의 경우(편향된 경우) H = N로 볼 수 있다.</p>
+<ul>
+<li>노드의 개수가 N개일 때, 시간 복잡도는 다음과 같다.</li>
+<li>트리의 높이(height)을 H라고 할 때, 엄밀한 시간 복잡도는 O H 다.</li>
+<li>이상적인 경우 H = log2 N로 볼 수 있다.</li>
+<li>하지만 최악의 경우(편향된 경우) H = N로 볼 수 있다.</li>
+</ul>
 <div id="tbl-letters" class="anchored">
 <table class="table">
 <caption>Table&nbsp;1: a list of the binary search tree in Python</caption>
@@ -428,10 +473,10 @@ English
 <tr class="odd">
 <td>1</td>
 <td>균형 잡힌 이진 탐색 트리</td>
-<td><span class="math inline">\(O(nlogn)\)</span></td>
-<td><span class="math inline">\(O(nlogn)\)</span></td>
-<td><span class="math inline">\(O(nlogn)\)</span></td>
-<td><span class="math inline">\(O(nlogn)\)</span></td>
+<td><span class="math inline">\(O(logN)\)</span></td>
+<td><span class="math inline">\(O(logN)\)</span></td>
+<td><span class="math inline">\(O(logN)\)</span></td>
+<td><span class="math inline">\(O(logN)\)</span></td>
 </tr>
 <tr class="even">
 <td>2</td>
@@ -448,9 +493,245 @@ English
 </section>
 <section id="참고-균형-잡힌-트리-avl-트리" class="level3">
 <h3 class="anchored" data-anchor-id="참고-균형-잡힌-트리-avl-트리">[참고] 균형 잡힌 트리: AVL 트리</h3>
-<p>• 이진 탐색 트리는 편향 트리가 될 수 있으므로, 최악의 경우 <span class="math inline">\(O(N)\)</span> 을 요구한다.</p>
-<p>• 반면에 AVL 트리는 균형이 갖춰진 이진 트리다.</p>
-<p>• 간단한 구현 과정으로 완전 이진 트리에 가까운 형태를 유지하도록 한다.</p>
+<ul>
+<li>이진 탐색 트리는 편향 트리가 될 수 있으므로, 최악의 경우 <span class="math inline">\(O(N)\)</span> 을 요구한다.</li>
+<li>반면에 AVL 트리는 균형이 갖춰진 이진 트리다.</li>
+<li>간단한 구현 과정으로 완전 이진 트리에 가까운 형태를 유지하도록 한다.</li>
+</ul>
+<div class="cell" data-execution_count="5">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> deque</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Node:</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, key):</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.key <span class="op">=</span> key</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.left <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.right <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BinarySearchTree:</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>):</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.root <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> search(<span class="va">self</span>, node, key):</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>._search(<span class="va">self</span>.root, key)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _search(<span class="va">self</span>, node, key):</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> node <span class="kw">is</span> <span class="va">None</span> <span class="kw">or</span> node.key <span class="op">==</span> key:</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> node</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 현재 노드의 key보다 작은 경우</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> node.key <span class="op">&gt;</span> key:</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">self</span>._search(node.left, key)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 현재 노드의 key보다 큰 경우</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> node.key <span class="op">&lt;</span> key:</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">self</span>._search(node.right, key)</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> insert(<span class="va">self</span>, key):</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.root <span class="op">=</span> <span class="va">self</span>._insert(<span class="va">self</span>.root, key)</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _insert(<span class="va">self</span>, node, key):</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> node <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> Node(key)</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 현재 노드의 key보다 작은 경우</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> node.key <span class="op">&gt;</span> key:</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>            node.left <span class="op">=</span> <span class="va">self</span>._insert(node.left, key)</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 현재 노드의 key보다 큰 경우</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> node.key <span class="op">&lt;</span> key:</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>            node.right <span class="op">=</span> <span class="va">self</span>._insert(node.right, key)</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> node</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> delete(<span class="va">self</span>, key):</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.root <span class="op">=</span> <span class="va">self</span>._delete(<span class="va">self</span>.root, key)</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _delete(<span class="va">self</span>, node, key):</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> node <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 현재 노드의 key보다 작은 경우</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> node.key <span class="op">&gt;</span> key:</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>            node.left <span class="op">=</span> <span class="va">self</span>._delete(node.left, key)</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 현재 노드의 key보다 큰 경우</span></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> node.key <span class="op">&lt;</span> key:</span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>            node.right <span class="op">=</span> <span class="va">self</span>._delete(node.right, key)</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 삭제할 노드를 찾은 경우</span></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>            <span class="co"># 왼쪽 자식이 없는 경우</span></span>
+<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> node.left <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> node.right</span>
+<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>            <span class="co"># 오른쪽 자식이 없는 경우</span></span>
+<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>            <span class="cf">elif</span> node.right <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> node.left</span>
+<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>            <span class="co"># 왼쪽과 오른쪽 자식 모두 있는 경우</span></span>
+<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>            node.key <span class="op">=</span> <span class="va">self</span>._get_min(node.right)</span>
+<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>            node.right <span class="op">=</span> <span class="va">self</span>._delete(node.right, node.key)</span>
+<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> node</span>
+<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _get_min(<span class="va">self</span>, node):</span>
+<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>        key <span class="op">=</span> node.key</span>
+<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> node.left:</span>
+<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>            key <span class="op">=</span> node.left.key</span>
+<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>            node <span class="op">=</span> node.left</span>
+<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> key</span>
+<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> preorder(<span class="va">self</span>):</span>
+<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._preorder(<span class="va">self</span>.root)</span>
+<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _preorder(<span class="va">self</span>, node):</span>
+<span id="cb5-83"><a href="#cb5-83" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> node:</span>
+<span id="cb5-84"><a href="#cb5-84" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(node.key, end<span class="op">=</span><span class="st">' '</span>)</span>
+<span id="cb5-85"><a href="#cb5-85" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._preorder(node.left)</span>
+<span id="cb5-86"><a href="#cb5-86" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._preorder(node.right)</span>
+<span id="cb5-87"><a href="#cb5-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-88"><a href="#cb5-88" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> inorder(<span class="va">self</span>):</span>
+<span id="cb5-89"><a href="#cb5-89" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._inorder(<span class="va">self</span>.root)</span>
+<span id="cb5-90"><a href="#cb5-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-91"><a href="#cb5-91" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _inorder(<span class="va">self</span>, node):</span>
+<span id="cb5-92"><a href="#cb5-92" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> node:</span>
+<span id="cb5-93"><a href="#cb5-93" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._inorder(node.left)</span>
+<span id="cb5-94"><a href="#cb5-94" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(node.key, end<span class="op">=</span><span class="st">' '</span>)</span>
+<span id="cb5-95"><a href="#cb5-95" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._inorder(node.right)</span>
+<span id="cb5-96"><a href="#cb5-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-97"><a href="#cb5-97" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> postorder(<span class="va">self</span>):</span>
+<span id="cb5-98"><a href="#cb5-98" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>._postorder(<span class="va">self</span>.root)</span>
+<span id="cb5-99"><a href="#cb5-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-100"><a href="#cb5-100" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _postorder(<span class="va">self</span>, node):</span>
+<span id="cb5-101"><a href="#cb5-101" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> node:</span>
+<span id="cb5-102"><a href="#cb5-102" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._postorder(node.left)</span>
+<span id="cb5-103"><a href="#cb5-103" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>._postorder(node.right)</span>
+<span id="cb5-104"><a href="#cb5-104" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(node.key, end<span class="op">=</span><span class="st">' '</span>)</span>
+<span id="cb5-105"><a href="#cb5-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-106"><a href="#cb5-106" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> levelorder(<span class="va">self</span>):</span>
+<span id="cb5-107"><a href="#cb5-107" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>._levelorder(<span class="va">self</span>.root)</span>
+<span id="cb5-108"><a href="#cb5-108" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-109"><a href="#cb5-109" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _levelorder(<span class="va">self</span>, node):</span>
+<span id="cb5-110"><a href="#cb5-110" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> node <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb5-111"><a href="#cb5-111" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span></span>
+<span id="cb5-112"><a href="#cb5-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-113"><a href="#cb5-113" aria-hidden="true" tabindex="-1"></a>        result <span class="op">=</span> []</span>
+<span id="cb5-114"><a href="#cb5-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-115"><a href="#cb5-115" aria-hidden="true" tabindex="-1"></a>        queue <span class="op">=</span> deque()</span>
+<span id="cb5-116"><a href="#cb5-116" aria-hidden="true" tabindex="-1"></a>        queue.append((<span class="dv">0</span>, node))  <span class="co"># (level, node)</span></span>
+<span id="cb5-117"><a href="#cb5-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-118"><a href="#cb5-118" aria-hidden="true" tabindex="-1"></a>        <span class="cf">while</span> queue:</span>
+<span id="cb5-119"><a href="#cb5-119" aria-hidden="true" tabindex="-1"></a>            level, node <span class="op">=</span> queue.popleft()</span>
+<span id="cb5-120"><a href="#cb5-120" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> node:</span>
+<span id="cb5-121"><a href="#cb5-121" aria-hidden="true" tabindex="-1"></a>                result.append((level, node.key))</span>
+<span id="cb5-122"><a href="#cb5-122" aria-hidden="true" tabindex="-1"></a>                queue.append((level <span class="op">+</span> <span class="dv">1</span>, node.left))</span>
+<span id="cb5-123"><a href="#cb5-123" aria-hidden="true" tabindex="-1"></a>                queue.append((level <span class="op">+</span> <span class="dv">1</span>, node.right))</span>
+<span id="cb5-124"><a href="#cb5-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-125"><a href="#cb5-125" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> level, key <span class="kw">in</span> result:</span>
+<span id="cb5-126"><a href="#cb5-126" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="ss">f"level: </span><span class="sc">{</span>level<span class="sc">}</span><span class="ss">, key: </span><span class="sc">{</span>key<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-127"><a href="#cb5-127" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-128"><a href="#cb5-128" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> to_list(<span class="va">self</span>):</span>
+<span id="cb5-129"><a href="#cb5-129" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>._to_list(<span class="va">self</span>.root)</span>
+<span id="cb5-130"><a href="#cb5-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-131"><a href="#cb5-131" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> _to_list(<span class="va">self</span>, node):</span>
+<span id="cb5-132"><a href="#cb5-132" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> node <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb5-133"><a href="#cb5-133" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> []</span>
+<span id="cb5-134"><a href="#cb5-134" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">self</span>._to_list(node.left) <span class="op">+</span> [node.key] <span class="op">+</span> <span class="va">self</span>._to_list(</span>
+<span id="cb5-135"><a href="#cb5-135" aria-hidden="true" tabindex="-1"></a>            node.right)</span>
+<span id="cb5-136"><a href="#cb5-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-137"><a href="#cb5-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-138"><a href="#cb5-138" aria-hidden="true" tabindex="-1"></a>arr <span class="op">=</span> [<span class="dv">7</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">9</span>, <span class="dv">6</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">8</span>]</span>
+<span id="cb5-139"><a href="#cb5-139" aria-hidden="true" tabindex="-1"></a>bst <span class="op">=</span> BinarySearchTree()</span>
+<span id="cb5-140"><a href="#cb5-140" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x <span class="kw">in</span> arr:</span>
+<span id="cb5-141"><a href="#cb5-141" aria-hidden="true" tabindex="-1"></a>    bst.insert(x)</span>
+<span id="cb5-142"><a href="#cb5-142" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'전위 순회:'</span>, end<span class="op">=</span><span class="st">' '</span>)</span>
+<span id="cb5-143"><a href="#cb5-143" aria-hidden="true" tabindex="-1"></a>bst.preorder()</span>
+<span id="cb5-144"><a href="#cb5-144" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">중위 순회:'</span>, end<span class="op">=</span><span class="st">' '</span>)</span>
+<span id="cb5-145"><a href="#cb5-145" aria-hidden="true" tabindex="-1"></a>bst.inorder()</span>
+<span id="cb5-146"><a href="#cb5-146" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">후위 순회:'</span>, end<span class="op">=</span><span class="st">' '</span>)</span>
+<span id="cb5-147"><a href="#cb5-147" aria-hidden="true" tabindex="-1"></a>bst.postorder()</span>
+<span id="cb5-148"><a href="#cb5-148" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">[레벨 순회]'</span>)</span>
+<span id="cb5-149"><a href="#cb5-149" aria-hidden="true" tabindex="-1"></a>bst.levelorder()</span>
+<span id="cb5-150"><a href="#cb5-150" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-151"><a href="#cb5-151" aria-hidden="true" tabindex="-1"></a>bst.delete(<span class="dv">7</span>)</span>
+<span id="cb5-152"><a href="#cb5-152" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">전위 순회:'</span>, end<span class="op">=</span><span class="st">' '</span>)</span>
+<span id="cb5-153"><a href="#cb5-153" aria-hidden="true" tabindex="-1"></a>bst.preorder()</span>
+<span id="cb5-154"><a href="#cb5-154" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">중위 순회:'</span>, end<span class="op">=</span><span class="st">' '</span>)</span>
+<span id="cb5-155"><a href="#cb5-155" aria-hidden="true" tabindex="-1"></a>bst.inorder()</span>
+<span id="cb5-156"><a href="#cb5-156" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">후위 순회:'</span>, end<span class="op">=</span><span class="st">' '</span>)</span>
+<span id="cb5-157"><a href="#cb5-157" aria-hidden="true" tabindex="-1"></a>bst.postorder()</span>
+<span id="cb5-158"><a href="#cb5-158" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">[레벨 순회]'</span>)</span>
+<span id="cb5-159"><a href="#cb5-159" aria-hidden="true" tabindex="-1"></a>bst.levelorder()</span>
+<span id="cb5-160"><a href="#cb5-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-161"><a href="#cb5-161" aria-hidden="true" tabindex="-1"></a>bst.delete(<span class="dv">4</span>)</span>
+<span id="cb5-162"><a href="#cb5-162" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">전위 순회:'</span>, end<span class="op">=</span><span class="st">' '</span>)</span>
+<span id="cb5-163"><a href="#cb5-163" aria-hidden="true" tabindex="-1"></a>bst.preorder()</span>
+<span id="cb5-164"><a href="#cb5-164" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">중위 순회:'</span>, end<span class="op">=</span><span class="st">' '</span>)</span>
+<span id="cb5-165"><a href="#cb5-165" aria-hidden="true" tabindex="-1"></a>bst.inorder()</span>
+<span id="cb5-166"><a href="#cb5-166" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">후위 순회:'</span>, end<span class="op">=</span><span class="st">' '</span>)</span>
+<span id="cb5-167"><a href="#cb5-167" aria-hidden="true" tabindex="-1"></a>bst.postorder()</span>
+<span id="cb5-168"><a href="#cb5-168" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">[레벨 순회]'</span>)</span>
+<span id="cb5-169"><a href="#cb5-169" aria-hidden="true" tabindex="-1"></a>bst.levelorder()</span>
+<span id="cb5-170"><a href="#cb5-170" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-171"><a href="#cb5-171" aria-hidden="true" tabindex="-1"></a>bst.delete(<span class="dv">3</span>)</span>
+<span id="cb5-172"><a href="#cb5-172" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">전위 순회:'</span>, end<span class="op">=</span><span class="st">' '</span>)</span>
+<span id="cb5-173"><a href="#cb5-173" aria-hidden="true" tabindex="-1"></a>bst.preorder()</span>
+<span id="cb5-174"><a href="#cb5-174" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">중위 순회:'</span>, end<span class="op">=</span><span class="st">' '</span>)</span>
+<span id="cb5-175"><a href="#cb5-175" aria-hidden="true" tabindex="-1"></a>bst.inorder()</span>
+<span id="cb5-176"><a href="#cb5-176" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">후위 순회:'</span>, end<span class="op">=</span><span class="st">' '</span>)</span>
+<span id="cb5-177"><a href="#cb5-177" aria-hidden="true" tabindex="-1"></a>bst.postorder()</span>
+<span id="cb5-178"><a href="#cb5-178" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">[레벨 순회]'</span>)</span>
+<span id="cb5-179"><a href="#cb5-179" aria-hidden="true" tabindex="-1"></a>bst.levelorder()</span>
+<span id="cb5-180"><a href="#cb5-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-181"><a href="#cb5-181" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(bst.to_list())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>전위 순회: 7 4 3 2 5 6 9 8 
+중위 순회: 2 3 4 5 6 7 8 9 
+후위 순회: 2 3 6 5 4 8 9 7 
+[레벨 순회]
+level: 0, key: 7
+level: 1, key: 4
+level: 1, key: 9
+level: 2, key: 3
+level: 2, key: 5
+level: 2, key: 8
+level: 3, key: 2
+level: 3, key: 6
+
+전위 순회: 8 4 3 2 5 6 9 
+중위 순회: 2 3 4 5 6 8 9 
+후위 순회: 2 3 6 5 4 9 8 
+[레벨 순회]
+level: 0, key: 8
+level: 1, key: 4
+level: 1, key: 9
+level: 2, key: 3
+level: 2, key: 5
+level: 3, key: 2
+level: 3, key: 6
+
+전위 순회: 8 5 3 2 6 9 
+중위 순회: 2 3 5 6 8 9 
+후위 순회: 2 3 6 5 9 8 
+[레벨 순회]
+level: 0, key: 8
+level: 1, key: 5
+level: 1, key: 9
+level: 2, key: 3
+level: 2, key: 6
+level: 3, key: 2
+
+전위 순회: 8 5 2 6 9 
+중위 순회: 2 5 6 8 9 
+후위 순회: 2 6 5 9 8 
+[레벨 순회]
+level: 0, key: 8
+level: 1, key: 5
+level: 1, key: 9
+level: 2, key: 2
+level: 2, key: 6
+[2, 5, 6, 8, 9]</code></pre>
+</div>
+</div>
 </section>
 </section>
 </div>

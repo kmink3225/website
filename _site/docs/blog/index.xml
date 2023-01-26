@@ -10,336 +10,7 @@
 <atom:link href="kmink3225.netlify.app/docs/blog/index.xml" rel="self" type="application/rss+xml"/>
 <description>A great sample blog</description>
 <generator>quarto-1.2.313</generator>
-<lastBuildDate>Wed, 25 Jan 2023 15:00:00 GMT</lastBuildDate>
-<item>
-  <title>Data Structure (7) Deque</title>
-  <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-01-19_deque/index.html</link>
-  <description><![CDATA[ 
-
-
-
-<ul class="nav nav-pills" id="language-tab">
-<li class="nav-item">
-<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
-Korean
-</button>
-</li>
-<li class="nav-item">
-<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
-English
-</button>
-</li>
-<div class="tab-content" id="language-tabcontent">
-
-<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
-<section id="덱deque" class="level2">
-<h2 class="anchored" data-anchor-id="덱deque">덱(Deque)</h2>
-<ul>
-<li>덱은 스택(stack)과 큐(queue)의 기능을 모두 가지고 있다.</li>
-<li>그래서, 스택과 큐대신 덱을 사용해도 괜찮음</li>
-<li>다만, 포인터 변수가 더 많이 필요하기 때문에, 메모리는 상대적으로 더 많이 필요하다.</li>
-<li>Python에서는 큐(queue)의 기능이 필요할 때 간단히 덱(deque)을 사용한다.</li>
-<li>데이터의 삭제와 삽입 모두에서 <img src="https://latex.codecogs.com/png.latex?O(1)"> 의 시간 복잡도가 소요된다.</li>
-<li>덱에 여러 개의 데이터를 삽입하고 삭제하는 예시를 확인해 보자.</li>
-</ul>
-<p>[12개의 전체 연산]</p>
-<ul>
-<li>좌측으로부터 삽입 연산이 가능</li>
-<li>우측으로부터 삽입 연산이 가능</li>
-<li>삭제 연산시 우측/좌측 선택적 삭제가 가능</li>
-</ul>
-</section>
-<section id="덱deque의-시간-복잡도" class="level2">
-<h2 class="anchored" data-anchor-id="덱deque의-시간-복잡도">덱(Deque)의 시간 복잡도</h2>
-<p>• 데이터의 삭제와 삽입 모두에서 <img src="https://latex.codecogs.com/png.latex?O(1)"> 의 시간 복잡도가 소요된다.</p>
-<div id="tbl-letters" class="anchored">
-<table class="table">
-<caption>Table&nbsp;1: a list of the deque functions in Python</caption>
-<colgroup>
-<col style="width: 7%">
-<col style="width: 16%">
-<col style="width: 15%">
-<col style="width: 59%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Number</th>
-<th>Methods</th>
-<th>Time Complexity</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td>append left</td>
-<td><img src="https://latex.codecogs.com/png.latex?O(1)"></td>
-<td>덱의 가장 왼쪽에 새 데이터를 삽입</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>pop left</td>
-<td><img src="https://latex.codecogs.com/png.latex?O(1)"></td>
-<td>덱의 가장 왼쪽에서 데이터를 추출</td>
-</tr>
-<tr class="odd">
-<td>3</td>
-<td>append right</td>
-<td><img src="https://latex.codecogs.com/png.latex?O(1)"></td>
-<td>덱의 가장 오른쪽에 새 데이터를 삽입</td>
-</tr>
-<tr class="even">
-<td>4</td>
-<td>pop right</td>
-<td><img src="https://latex.codecogs.com/png.latex?O(1)"></td>
-<td>덱의 가장 오른쪽에서 데이터를 추출</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p>See Table&nbsp;1.</p>
-</section>
-<section id="파이썬의-덱deque-라이브러리" class="level2">
-<h2 class="anchored" data-anchor-id="파이썬의-덱deque-라이브러리">파이썬의 덱(Deque) 라이브러리</h2>
-<ul>
-<li>Python에서는 덱(deque) 라이브러리를 사용할 수 있다.</li>
-<li>아래의 모든 메서드는 최악의 경우 시간 복잡도 O 1 을 보장한다.</li>
-<li>우측 삽입: append()</li>
-<li>좌측 삽입: appendleft()</li>
-<li>우측 추출: pop()</li>
-<li>좌측 추출: popleft()</li>
-</ul>
-<div class="cell" data-execution_count="1">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;">from</span> collections <span class="im" style="color: #00769E;">import</span> deque</span>
-<span id="cb1-2"></span>
-<span id="cb1-3"></span>
-<span id="cb1-4">d <span class="op" style="color: #5E5E5E;">=</span> deque()</span>
-<span id="cb1-5">arr <span class="op" style="color: #5E5E5E;">=</span> [<span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">6</span>, <span class="dv" style="color: #AD0000;">7</span>, <span class="dv" style="color: #AD0000;">8</span>] </span>
-<span id="cb1-6"><span class="cf" style="color: #003B4F;">for</span> x <span class="kw" style="color: #003B4F;">in</span> arr:</span>
-<span id="cb1-7">    d.append(x) <span class="co" style="color: #5E5E5E;"># 오른쪽 삽입</span></span>
-<span id="cb1-8">arr <span class="op" style="color: #5E5E5E;">=</span> [<span class="dv" style="color: #AD0000;">4</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">1</span>]</span>
-<span id="cb1-9"><span class="cf" style="color: #003B4F;">for</span> x <span class="kw" style="color: #003B4F;">in</span> arr:</span>
-<span id="cb1-10">    d.appendleft(x) <span class="co" style="color: #5E5E5E;"># 좌측 삽입</span></span>
-<span id="cb1-11"><span class="bu" style="color: null;">print</span>(d)</span>
-<span id="cb1-12"></span>
-<span id="cb1-13"><span class="cf" style="color: #003B4F;">while</span> d:</span>
-<span id="cb1-14">    <span class="bu" style="color: null;">print</span>(d.popleft()) <span class="co" style="color: #5E5E5E;"># 좌측 삭제</span></span>
-<span id="cb1-15"></span>
-<span id="cb1-16">arr <span class="op" style="color: #5E5E5E;">=</span> [<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">4</span>, <span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">6</span>, <span class="dv" style="color: #AD0000;">7</span>, <span class="dv" style="color: #AD0000;">8</span>]</span>
-<span id="cb1-17"><span class="cf" style="color: #003B4F;">for</span> x <span class="kw" style="color: #003B4F;">in</span> arr:</span>
-<span id="cb1-18">    d.appendleft(x)</span>
-<span id="cb1-19"><span class="bu" style="color: null;">print</span>(d)</span>
-<span id="cb1-20"></span>
-<span id="cb1-21"><span class="cf" style="color: #003B4F;">while</span> <span class="va" style="color: #111111;">True</span>:</span>
-<span id="cb1-22">    <span class="bu" style="color: null;">print</span>(d.pop())</span>
-<span id="cb1-23">    <span class="cf" style="color: #003B4F;">if</span> <span class="kw" style="color: #003B4F;">not</span> d:</span>
-<span id="cb1-24">        <span class="cf" style="color: #003B4F;">break</span></span>
-<span id="cb1-25">    <span class="bu" style="color: null;">print</span>(d.popleft())</span>
-<span id="cb1-26">    <span class="cf" style="color: #003B4F;">if</span> <span class="kw" style="color: #003B4F;">not</span> d:</span>
-<span id="cb1-27">        <span class="cf" style="color: #003B4F;">break</span></span></code></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>deque([1, 2, 3, 4, 5, 6, 7, 8])
-1
-2
-3
-4
-5
-6
-7
-8
-deque([8, 7, 6, 5, 4, 3, 2, 1])
-1
-8
-2
-7
-3
-6
-4
-5</code></pre>
-</div>
-</div>
-<section id="python에서-deque을-사용하는-경우" class="level3">
-<h3 class="anchored" data-anchor-id="python에서-deque을-사용하는-경우">Python에서 Deque을 사용하는 경우</h3>
-<ul>
-<li>기본적인 Python의 리스트 자료형은 큐(queue)의 기능을 제공하지 않는다.</li>
-<li>가능하다면 Python에서 제공하는 덱(deque) 라이브러리를 사용한다.</li>
-<li>큐(queue)의 기능이 필요할 때는 덱 라이브러리를 사용하는 것을 추천한다.</li>
-<li>삽입과 삭제에 대하여 모두 시간 복잡도 <img src="https://latex.codecogs.com/png.latex?O(1)"> 이 요구된다.</li>
-</ul>
-</section>
-</section>
-<section id="연결-리스트로-덱-구현하기" class="level2">
-<h2 class="anchored" data-anchor-id="연결-리스트로-덱-구현하기">연결 리스트로 덱 구현하기</h2>
-<ul>
-<li>덱(deque)을 연결 리스트로 구현하면, 삽입과 삭제에 있어서 O 1 을 보장할 수 있다.</li>
-<li>연결 리스트로 구현할 때는 앞(front)과 뒤(rear) 두 개의 포인터를 가진다.</li>
-<li>앞(front): 가장 좌측에 있는 데이터를 가리키는 포인터</li>
-<li>뒤(rear): 가장 우측에 있는 데이터를 가리키는 포인터</li>
-<li>삽입과 삭제의 구현 방법은 스택 및 큐와 유사하다.</li>
-<li>앞(front)과 뒤(rear)에 대하여 대칭적으로 로직이 구현될 수 있다.</li>
-</ul>
-<section id="좌측-삽입-연산" class="level3">
-<h3 class="anchored" data-anchor-id="좌측-삽입-연산">좌측 삽입 연산</h3>
-<ul>
-<li>좌측 삽입할 때는 앞(front) 위치에 데이터를 넣는다.</li>
-<li>새로운 데이터가 삽입되었을 때 front data와 연결이 먼저 된 후 front data의 이전 노드가 새로운 데이터가 되도록 설정</li>
-</ul>
-</section>
-<section id="좌측-삭제-연산" class="level3">
-<h3 class="anchored" data-anchor-id="좌측-삭제-연산">좌측 삭제 연산</h3>
-<ul>
-<li>삭제할 때는 앞(front) 위치에서 데이터를 꺼낸다. 즉, 그냥 front를 그 다음 데이터로 설정하면 됨</li>
-</ul>
-<div class="cell" data-execution_count="2">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;">class</span> Node:</span>
-<span id="cb3-2">    <span class="kw" style="color: #003B4F;">def</span> <span class="fu" style="color: #4758AB;">__init__</span>(<span class="va" style="color: #111111;">self</span>, data):</span>
-<span id="cb3-3">        <span class="va" style="color: #111111;">self</span>.data <span class="op" style="color: #5E5E5E;">=</span> data</span>
-<span id="cb3-4">        <span class="va" style="color: #111111;">self</span>.prev <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
-<span id="cb3-5">        <span class="va" style="color: #111111;">self</span>.<span class="bu" style="color: null;">next</span> <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
-<span id="cb3-6"></span>
-<span id="cb3-7"></span>
-<span id="cb3-8"><span class="kw" style="color: #003B4F;">class</span> Deque:</span>
-<span id="cb3-9">    <span class="kw" style="color: #003B4F;">def</span> <span class="fu" style="color: #4758AB;">__init__</span>(<span class="va" style="color: #111111;">self</span>):</span>
-<span id="cb3-10">        <span class="va" style="color: #111111;">self</span>.front <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
-<span id="cb3-11">        <span class="va" style="color: #111111;">self</span>.rear <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
-<span id="cb3-12">        <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">0</span></span>
-<span id="cb3-13"></span>
-<span id="cb3-14">    <span class="kw" style="color: #003B4F;">def</span> appendleft(<span class="va" style="color: #111111;">self</span>, data):</span>
-<span id="cb3-15">        node <span class="op" style="color: #5E5E5E;">=</span> Node(data)</span>
-<span id="cb3-16">        <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.front <span class="op" style="color: #5E5E5E;">==</span> <span class="va" style="color: #111111;">None</span>:</span>
-<span id="cb3-17">            <span class="va" style="color: #111111;">self</span>.front <span class="op" style="color: #5E5E5E;">=</span> node</span>
-<span id="cb3-18">            <span class="va" style="color: #111111;">self</span>.rear <span class="op" style="color: #5E5E5E;">=</span> node</span>
-<span id="cb3-19">        <span class="cf" style="color: #003B4F;">else</span>:</span>
-<span id="cb3-20">            node.<span class="bu" style="color: null;">next</span> <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.front</span>
-<span id="cb3-21">            <span class="va" style="color: #111111;">self</span>.front.prev <span class="op" style="color: #5E5E5E;">=</span> node</span>
-<span id="cb3-22">            <span class="va" style="color: #111111;">self</span>.front <span class="op" style="color: #5E5E5E;">=</span> node</span>
-<span id="cb3-23">        <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">+=</span> <span class="dv" style="color: #AD0000;">1</span></span>
-<span id="cb3-24"></span>
-<span id="cb3-25">    <span class="kw" style="color: #003B4F;">def</span> append(<span class="va" style="color: #111111;">self</span>, data):</span>
-<span id="cb3-26">        node <span class="op" style="color: #5E5E5E;">=</span> Node(data)</span>
-<span id="cb3-27">        <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.rear <span class="op" style="color: #5E5E5E;">==</span> <span class="va" style="color: #111111;">None</span>:</span>
-<span id="cb3-28">            <span class="va" style="color: #111111;">self</span>.front <span class="op" style="color: #5E5E5E;">=</span> node</span>
-<span id="cb3-29">            <span class="va" style="color: #111111;">self</span>.rear <span class="op" style="color: #5E5E5E;">=</span> node</span>
-<span id="cb3-30">        <span class="cf" style="color: #003B4F;">else</span>:</span>
-<span id="cb3-31">            node.prev <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.rear</span>
-<span id="cb3-32">            <span class="va" style="color: #111111;">self</span>.rear.<span class="bu" style="color: null;">next</span> <span class="op" style="color: #5E5E5E;">=</span> node</span>
-<span id="cb3-33">            <span class="va" style="color: #111111;">self</span>.rear <span class="op" style="color: #5E5E5E;">=</span> node</span>
-<span id="cb3-34">        <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">+=</span> <span class="dv" style="color: #AD0000;">1</span></span>
-<span id="cb3-35"></span>
-<span id="cb3-36">    <span class="kw" style="color: #003B4F;">def</span> popleft(<span class="va" style="color: #111111;">self</span>):</span>
-<span id="cb3-37">        <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">==</span> <span class="dv" style="color: #AD0000;">0</span>:</span>
-<span id="cb3-38">            <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">None</span></span>
-<span id="cb3-39">        <span class="co" style="color: #5E5E5E;"># 앞에서 노드 꺼내기</span></span>
-<span id="cb3-40">        data <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.front.data</span>
-<span id="cb3-41">        <span class="va" style="color: #111111;">self</span>.front <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.front.<span class="bu" style="color: null;">next</span></span>
-<span id="cb3-42">        <span class="co" style="color: #5E5E5E;"># 삭제로 인해 노드가 하나도 없는 경우</span></span>
-<span id="cb3-43">        <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.front <span class="op" style="color: #5E5E5E;">==</span> <span class="va" style="color: #111111;">None</span>:</span>
-<span id="cb3-44">            <span class="va" style="color: #111111;">self</span>.rear <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
-<span id="cb3-45">        <span class="cf" style="color: #003B4F;">else</span>:</span>
-<span id="cb3-46">            <span class="va" style="color: #111111;">self</span>.front.prev <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
-<span id="cb3-47">        <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">-=</span> <span class="dv" style="color: #AD0000;">1</span></span>
-<span id="cb3-48">        <span class="cf" style="color: #003B4F;">return</span> data</span>
-<span id="cb3-49"></span>
-<span id="cb3-50">    <span class="kw" style="color: #003B4F;">def</span> pop(<span class="va" style="color: #111111;">self</span>):</span>
-<span id="cb3-51">        <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">==</span> <span class="dv" style="color: #AD0000;">0</span>:</span>
-<span id="cb3-52">            <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">None</span></span>
-<span id="cb3-53">        <span class="co" style="color: #5E5E5E;"># 뒤에서 노드 꺼내기</span></span>
-<span id="cb3-54">        data <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.rear.data</span>
-<span id="cb3-55">        <span class="va" style="color: #111111;">self</span>.rear <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.rear.prev</span>
-<span id="cb3-56">        <span class="co" style="color: #5E5E5E;"># 삭제로 인해 노드가 하나도 없는 경우</span></span>
-<span id="cb3-57">        <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.rear <span class="op" style="color: #5E5E5E;">==</span> <span class="va" style="color: #111111;">None</span>:</span>
-<span id="cb3-58">            <span class="va" style="color: #111111;">self</span>.front <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
-<span id="cb3-59">        <span class="cf" style="color: #003B4F;">else</span>:</span>
-<span id="cb3-60">            <span class="va" style="color: #111111;">self</span>.rear.<span class="bu" style="color: null;">next</span> <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
-<span id="cb3-61">        <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">-=</span> <span class="dv" style="color: #AD0000;">1</span></span>
-<span id="cb3-62">        <span class="cf" style="color: #003B4F;">return</span> data</span>
-<span id="cb3-63"></span>
-<span id="cb3-64">    <span class="kw" style="color: #003B4F;">def</span> front(<span class="va" style="color: #111111;">self</span>):</span>
-<span id="cb3-65">        <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">==</span> <span class="dv" style="color: #AD0000;">0</span>:</span>
-<span id="cb3-66">            <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">None</span></span>
-<span id="cb3-67">        <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">self</span>.front.data</span>
-<span id="cb3-68"></span>
-<span id="cb3-69">    <span class="kw" style="color: #003B4F;">def</span> rear(<span class="va" style="color: #111111;">self</span>):</span>
-<span id="cb3-70">        <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">==</span> <span class="dv" style="color: #AD0000;">0</span>:</span>
-<span id="cb3-71">            <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">None</span></span>
-<span id="cb3-72">        <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">self</span>.rear.data</span>
-<span id="cb3-73"></span>
-<span id="cb3-74">    <span class="co" style="color: #5E5E5E;"># 앞에서부터 원소 출력</span></span>
-<span id="cb3-75">    <span class="kw" style="color: #003B4F;">def</span> show(<span class="va" style="color: #111111;">self</span>):</span>
-<span id="cb3-76">        cur <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.front</span>
-<span id="cb3-77">        <span class="cf" style="color: #003B4F;">while</span> cur:</span>
-<span id="cb3-78">            <span class="bu" style="color: null;">print</span>(cur.data, end<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">" "</span>)</span>
-<span id="cb3-79">            cur <span class="op" style="color: #5E5E5E;">=</span> cur.<span class="bu" style="color: null;">next</span></span>
-<span id="cb3-80"></span>
-<span id="cb3-81"></span>
-<span id="cb3-82">d <span class="op" style="color: #5E5E5E;">=</span> Deque()</span>
-<span id="cb3-83">arr <span class="op" style="color: #5E5E5E;">=</span> [<span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">6</span>, <span class="dv" style="color: #AD0000;">7</span>, <span class="dv" style="color: #AD0000;">8</span>]</span>
-<span id="cb3-84"><span class="cf" style="color: #003B4F;">for</span> x <span class="kw" style="color: #003B4F;">in</span> arr:</span>
-<span id="cb3-85">    d.append(x)</span>
-<span id="cb3-86">arr <span class="op" style="color: #5E5E5E;">=</span> [<span class="dv" style="color: #AD0000;">4</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">1</span>]</span>
-<span id="cb3-87"><span class="cf" style="color: #003B4F;">for</span> x <span class="kw" style="color: #003B4F;">in</span> arr:</span>
-<span id="cb3-88">    d.appendleft(x)</span>
-<span id="cb3-89">d.show()</span>
-<span id="cb3-90"></span>
-<span id="cb3-91"><span class="bu" style="color: null;">print</span>()</span>
-<span id="cb3-92"><span class="cf" style="color: #003B4F;">while</span> d.size <span class="op" style="color: #5E5E5E;">!=</span> <span class="dv" style="color: #AD0000;">0</span>:</span>
-<span id="cb3-93">    <span class="bu" style="color: null;">print</span>(d.popleft())</span>
-<span id="cb3-94"></span>
-<span id="cb3-95">arr <span class="op" style="color: #5E5E5E;">=</span> [<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">4</span>, <span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">6</span>, <span class="dv" style="color: #AD0000;">7</span>, <span class="dv" style="color: #AD0000;">8</span>]</span>
-<span id="cb3-96"><span class="cf" style="color: #003B4F;">for</span> x <span class="kw" style="color: #003B4F;">in</span> arr:</span>
-<span id="cb3-97">    d.appendleft(x)</span>
-<span id="cb3-98">d.show()</span>
-<span id="cb3-99"></span>
-<span id="cb3-100"><span class="bu" style="color: null;">print</span>()</span>
-<span id="cb3-101"><span class="cf" style="color: #003B4F;">while</span> <span class="va" style="color: #111111;">True</span>:</span>
-<span id="cb3-102">    <span class="bu" style="color: null;">print</span>(d.pop())</span>
-<span id="cb3-103">    <span class="cf" style="color: #003B4F;">if</span> d.size <span class="op" style="color: #5E5E5E;">==</span> <span class="dv" style="color: #AD0000;">0</span>:</span>
-<span id="cb3-104">        <span class="cf" style="color: #003B4F;">break</span></span>
-<span id="cb3-105">    <span class="bu" style="color: null;">print</span>(d.popleft())</span>
-<span id="cb3-106">    <span class="cf" style="color: #003B4F;">if</span> d.size <span class="op" style="color: #5E5E5E;">==</span> <span class="dv" style="color: #AD0000;">0</span>:</span>
-<span id="cb3-107">        <span class="cf" style="color: #003B4F;">break</span></span></code></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>1 2 3 4 5 6 7 8 
-1
-2
-3
-4
-5
-6
-7
-8
-8 7 6 5 4 3 2 1 
-1
-8
-2
-7
-3
-6
-4
-5</code></pre>
-</div>
-</div>
-</section>
-</section>
-</div>
-<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
-
-</div>
-
-
-
-</div></ul> ]]></description>
-  <category>Engineering</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-01-19_deque/index.html</guid>
-  <pubDate>Wed, 25 Jan 2023 15:00:00 GMT</pubDate>
-</item>
+<lastBuildDate>Thu, 26 Jan 2023 15:00:00 GMT</lastBuildDate>
 <item>
   <title>Data Structure (8) Binary Search Tree</title>
   <dc:creator>Kwangmin Kim</dc:creator>
@@ -454,10 +125,12 @@ English
 <h3 class="anchored" data-anchor-id="삭제-연산">삭제 연산</h3>
 <ul>
 <li>루트 노드에서 출발하여 아래쪽으로 내려오면서, 삭제할 원소에 접근한다.</li>
-<li>삭제할 노드 목록 예시: 7번 노드</li>
-</ul>
-<p>Case #1 왼쪽 자식이 없는 경우 → 오른쪽 자식으로 대체 Case #2 오른쪽 자식이 없는 경우 → 왼쪽 자식으로 대체 Case #3 왼쪽, 오른쪽이 모두 있는 경우 → 오른쪽 서브</p>
+<li>삭제할 노드 목록 예시: 7번 노드
 <ul>
+<li>Case #1 왼쪽 자식이 없는 경우 → 오른쪽 자식으로 대체</li>
+<li>Case #2 오른쪽 자식이 없는 경우 → 왼쪽 자식으로 대체</li>
+<li>Case #3 왼쪽, 오른쪽이 모두 있는 경우 → 오른쪽 서브</li>
+</ul></li>
 <li>트리에서 가장 작은 노드로 대체</li>
 <li>삭제할 노드 목록 예시: 4번 노드</li>
 </ul>
@@ -891,8 +564,337 @@ level: 2, key: 6
 </div></ul> ]]></description>
   <category>Engineering</category>
   <guid>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-01-20_binary_search_tree/index.html</guid>
-  <pubDate>Wed, 25 Jan 2023 15:00:00 GMT</pubDate>
+  <pubDate>Thu, 26 Jan 2023 15:00:00 GMT</pubDate>
   <media:content url="kmink3225.netlify.app/docs/blog/posts/Engineering/2023-01-20_binary_search_tree/Binary_tree.png" medium="image" type="image/png" height="100" width="144"/>
+</item>
+<item>
+  <title>Data Structure (7) Deque</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-01-19_deque/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<ul class="nav nav-pills" id="language-tab">
+<li class="nav-item">
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
+Korean
+</button>
+</li>
+<li class="nav-item">
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
+English
+</button>
+</li>
+<div class="tab-content" id="language-tabcontent">
+
+<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
+<section id="덱deque" class="level2">
+<h2 class="anchored" data-anchor-id="덱deque">덱(Deque)</h2>
+<ul>
+<li>덱은 스택(stack)과 큐(queue)의 기능을 모두 가지고 있다.</li>
+<li>그래서, 스택과 큐대신 덱을 사용해도 괜찮음</li>
+<li>다만, 포인터 변수가 더 많이 필요하기 때문에, 메모리는 상대적으로 더 많이 필요하다.</li>
+<li>Python에서는 큐(queue)의 기능이 필요할 때 간단히 덱(deque)을 사용한다.</li>
+<li>데이터의 삭제와 삽입 모두에서 <img src="https://latex.codecogs.com/png.latex?O(1)"> 의 시간 복잡도가 소요된다.</li>
+<li>덱에 여러 개의 데이터를 삽입하고 삭제하는 예시를 확인해 보자.</li>
+</ul>
+<p>[12개의 전체 연산]</p>
+<ul>
+<li>좌측으로부터 삽입 연산이 가능</li>
+<li>우측으로부터 삽입 연산이 가능</li>
+<li>삭제 연산시 우측/좌측 선택적 삭제가 가능</li>
+</ul>
+</section>
+<section id="덱deque의-시간-복잡도" class="level2">
+<h2 class="anchored" data-anchor-id="덱deque의-시간-복잡도">덱(Deque)의 시간 복잡도</h2>
+<p>• 데이터의 삭제와 삽입 모두에서 <img src="https://latex.codecogs.com/png.latex?O(1)"> 의 시간 복잡도가 소요된다.</p>
+<div id="tbl-letters" class="anchored">
+<table class="table">
+<caption>Table&nbsp;1: a list of the deque functions in Python</caption>
+<colgroup>
+<col style="width: 7%">
+<col style="width: 16%">
+<col style="width: 15%">
+<col style="width: 59%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Number</th>
+<th>Methods</th>
+<th>Time Complexity</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>append left</td>
+<td><img src="https://latex.codecogs.com/png.latex?O(1)"></td>
+<td>덱의 가장 왼쪽에 새 데이터를 삽입</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>pop left</td>
+<td><img src="https://latex.codecogs.com/png.latex?O(1)"></td>
+<td>덱의 가장 왼쪽에서 데이터를 추출</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>append right</td>
+<td><img src="https://latex.codecogs.com/png.latex?O(1)"></td>
+<td>덱의 가장 오른쪽에 새 데이터를 삽입</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>pop right</td>
+<td><img src="https://latex.codecogs.com/png.latex?O(1)"></td>
+<td>덱의 가장 오른쪽에서 데이터를 추출</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>See Table&nbsp;1.</p>
+</section>
+<section id="파이썬의-덱deque-라이브러리" class="level2">
+<h2 class="anchored" data-anchor-id="파이썬의-덱deque-라이브러리">파이썬의 덱(Deque) 라이브러리</h2>
+<ul>
+<li>Python에서는 덱(deque) 라이브러리를 사용할 수 있다.</li>
+<li>아래의 모든 메서드는 최악의 경우 시간 복잡도 O 1 을 보장한다.</li>
+<li>우측 삽입: append()</li>
+<li>좌측 삽입: appendleft()</li>
+<li>우측 추출: pop()</li>
+<li>좌측 추출: popleft()</li>
+</ul>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;">from</span> collections <span class="im" style="color: #00769E;">import</span> deque</span>
+<span id="cb1-2"></span>
+<span id="cb1-3"></span>
+<span id="cb1-4">d <span class="op" style="color: #5E5E5E;">=</span> deque()</span>
+<span id="cb1-5">arr <span class="op" style="color: #5E5E5E;">=</span> [<span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">6</span>, <span class="dv" style="color: #AD0000;">7</span>, <span class="dv" style="color: #AD0000;">8</span>] </span>
+<span id="cb1-6"><span class="cf" style="color: #003B4F;">for</span> x <span class="kw" style="color: #003B4F;">in</span> arr:</span>
+<span id="cb1-7">    d.append(x) <span class="co" style="color: #5E5E5E;"># 오른쪽 삽입</span></span>
+<span id="cb1-8">arr <span class="op" style="color: #5E5E5E;">=</span> [<span class="dv" style="color: #AD0000;">4</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">1</span>]</span>
+<span id="cb1-9"><span class="cf" style="color: #003B4F;">for</span> x <span class="kw" style="color: #003B4F;">in</span> arr:</span>
+<span id="cb1-10">    d.appendleft(x) <span class="co" style="color: #5E5E5E;"># 좌측 삽입</span></span>
+<span id="cb1-11"><span class="bu" style="color: null;">print</span>(d)</span>
+<span id="cb1-12"></span>
+<span id="cb1-13"><span class="cf" style="color: #003B4F;">while</span> d:</span>
+<span id="cb1-14">    <span class="bu" style="color: null;">print</span>(d.popleft()) <span class="co" style="color: #5E5E5E;"># 좌측 삭제</span></span>
+<span id="cb1-15"></span>
+<span id="cb1-16">arr <span class="op" style="color: #5E5E5E;">=</span> [<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">4</span>, <span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">6</span>, <span class="dv" style="color: #AD0000;">7</span>, <span class="dv" style="color: #AD0000;">8</span>]</span>
+<span id="cb1-17"><span class="cf" style="color: #003B4F;">for</span> x <span class="kw" style="color: #003B4F;">in</span> arr:</span>
+<span id="cb1-18">    d.appendleft(x)</span>
+<span id="cb1-19"><span class="bu" style="color: null;">print</span>(d)</span>
+<span id="cb1-20"></span>
+<span id="cb1-21"><span class="cf" style="color: #003B4F;">while</span> <span class="va" style="color: #111111;">True</span>:</span>
+<span id="cb1-22">    <span class="bu" style="color: null;">print</span>(d.pop())</span>
+<span id="cb1-23">    <span class="cf" style="color: #003B4F;">if</span> <span class="kw" style="color: #003B4F;">not</span> d:</span>
+<span id="cb1-24">        <span class="cf" style="color: #003B4F;">break</span></span>
+<span id="cb1-25">    <span class="bu" style="color: null;">print</span>(d.popleft())</span>
+<span id="cb1-26">    <span class="cf" style="color: #003B4F;">if</span> <span class="kw" style="color: #003B4F;">not</span> d:</span>
+<span id="cb1-27">        <span class="cf" style="color: #003B4F;">break</span></span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>deque([1, 2, 3, 4, 5, 6, 7, 8])
+1
+2
+3
+4
+5
+6
+7
+8
+deque([8, 7, 6, 5, 4, 3, 2, 1])
+1
+8
+2
+7
+3
+6
+4
+5</code></pre>
+</div>
+</div>
+<section id="python에서-deque을-사용하는-경우" class="level3">
+<h3 class="anchored" data-anchor-id="python에서-deque을-사용하는-경우">Python에서 Deque을 사용하는 경우</h3>
+<ul>
+<li>기본적인 Python의 리스트 자료형은 큐(queue)의 기능을 제공하지 않는다.</li>
+<li>가능하다면 Python에서 제공하는 덱(deque) 라이브러리를 사용한다.</li>
+<li>큐(queue)의 기능이 필요할 때는 덱 라이브러리를 사용하는 것을 추천한다.</li>
+<li>삽입과 삭제에 대하여 모두 시간 복잡도 <img src="https://latex.codecogs.com/png.latex?O(1)"> 이 요구된다.</li>
+</ul>
+</section>
+</section>
+<section id="연결-리스트로-덱-구현하기" class="level2">
+<h2 class="anchored" data-anchor-id="연결-리스트로-덱-구현하기">연결 리스트로 덱 구현하기</h2>
+<ul>
+<li>덱(deque)을 연결 리스트로 구현하면, 삽입과 삭제에 있어서 O 1 을 보장할 수 있다.</li>
+<li>연결 리스트로 구현할 때는 앞(front)과 뒤(rear) 두 개의 포인터를 가진다.</li>
+<li>앞(front): 가장 좌측에 있는 데이터를 가리키는 포인터</li>
+<li>뒤(rear): 가장 우측에 있는 데이터를 가리키는 포인터</li>
+<li>삽입과 삭제의 구현 방법은 스택 및 큐와 유사하다.</li>
+<li>앞(front)과 뒤(rear)에 대하여 대칭적으로 로직이 구현될 수 있다.</li>
+</ul>
+<section id="좌측-삽입-연산" class="level3">
+<h3 class="anchored" data-anchor-id="좌측-삽입-연산">좌측 삽입 연산</h3>
+<ul>
+<li>좌측 삽입할 때는 앞(front) 위치에 데이터를 넣는다.</li>
+<li>새로운 데이터가 삽입되었을 때 front data와 연결이 먼저 된 후 front data의 이전 노드가 새로운 데이터가 되도록 설정</li>
+</ul>
+</section>
+<section id="좌측-삭제-연산" class="level3">
+<h3 class="anchored" data-anchor-id="좌측-삭제-연산">좌측 삭제 연산</h3>
+<ul>
+<li>삭제할 때는 앞(front) 위치에서 데이터를 꺼낸다. 즉, 그냥 front를 그 다음 데이터로 설정하면 됨</li>
+</ul>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;">class</span> Node:</span>
+<span id="cb3-2">    <span class="kw" style="color: #003B4F;">def</span> <span class="fu" style="color: #4758AB;">__init__</span>(<span class="va" style="color: #111111;">self</span>, data):</span>
+<span id="cb3-3">        <span class="va" style="color: #111111;">self</span>.data <span class="op" style="color: #5E5E5E;">=</span> data</span>
+<span id="cb3-4">        <span class="va" style="color: #111111;">self</span>.prev <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
+<span id="cb3-5">        <span class="va" style="color: #111111;">self</span>.<span class="bu" style="color: null;">next</span> <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
+<span id="cb3-6"></span>
+<span id="cb3-7"></span>
+<span id="cb3-8"><span class="kw" style="color: #003B4F;">class</span> Deque:</span>
+<span id="cb3-9">    <span class="kw" style="color: #003B4F;">def</span> <span class="fu" style="color: #4758AB;">__init__</span>(<span class="va" style="color: #111111;">self</span>):</span>
+<span id="cb3-10">        <span class="va" style="color: #111111;">self</span>.front <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
+<span id="cb3-11">        <span class="va" style="color: #111111;">self</span>.rear <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
+<span id="cb3-12">        <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">0</span></span>
+<span id="cb3-13"></span>
+<span id="cb3-14">    <span class="kw" style="color: #003B4F;">def</span> appendleft(<span class="va" style="color: #111111;">self</span>, data):</span>
+<span id="cb3-15">        node <span class="op" style="color: #5E5E5E;">=</span> Node(data)</span>
+<span id="cb3-16">        <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.front <span class="op" style="color: #5E5E5E;">==</span> <span class="va" style="color: #111111;">None</span>:</span>
+<span id="cb3-17">            <span class="va" style="color: #111111;">self</span>.front <span class="op" style="color: #5E5E5E;">=</span> node</span>
+<span id="cb3-18">            <span class="va" style="color: #111111;">self</span>.rear <span class="op" style="color: #5E5E5E;">=</span> node</span>
+<span id="cb3-19">        <span class="cf" style="color: #003B4F;">else</span>:</span>
+<span id="cb3-20">            node.<span class="bu" style="color: null;">next</span> <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.front</span>
+<span id="cb3-21">            <span class="va" style="color: #111111;">self</span>.front.prev <span class="op" style="color: #5E5E5E;">=</span> node</span>
+<span id="cb3-22">            <span class="va" style="color: #111111;">self</span>.front <span class="op" style="color: #5E5E5E;">=</span> node</span>
+<span id="cb3-23">        <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">+=</span> <span class="dv" style="color: #AD0000;">1</span></span>
+<span id="cb3-24"></span>
+<span id="cb3-25">    <span class="kw" style="color: #003B4F;">def</span> append(<span class="va" style="color: #111111;">self</span>, data):</span>
+<span id="cb3-26">        node <span class="op" style="color: #5E5E5E;">=</span> Node(data)</span>
+<span id="cb3-27">        <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.rear <span class="op" style="color: #5E5E5E;">==</span> <span class="va" style="color: #111111;">None</span>:</span>
+<span id="cb3-28">            <span class="va" style="color: #111111;">self</span>.front <span class="op" style="color: #5E5E5E;">=</span> node</span>
+<span id="cb3-29">            <span class="va" style="color: #111111;">self</span>.rear <span class="op" style="color: #5E5E5E;">=</span> node</span>
+<span id="cb3-30">        <span class="cf" style="color: #003B4F;">else</span>:</span>
+<span id="cb3-31">            node.prev <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.rear</span>
+<span id="cb3-32">            <span class="va" style="color: #111111;">self</span>.rear.<span class="bu" style="color: null;">next</span> <span class="op" style="color: #5E5E5E;">=</span> node</span>
+<span id="cb3-33">            <span class="va" style="color: #111111;">self</span>.rear <span class="op" style="color: #5E5E5E;">=</span> node</span>
+<span id="cb3-34">        <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">+=</span> <span class="dv" style="color: #AD0000;">1</span></span>
+<span id="cb3-35"></span>
+<span id="cb3-36">    <span class="kw" style="color: #003B4F;">def</span> popleft(<span class="va" style="color: #111111;">self</span>):</span>
+<span id="cb3-37">        <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">==</span> <span class="dv" style="color: #AD0000;">0</span>:</span>
+<span id="cb3-38">            <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">None</span></span>
+<span id="cb3-39">        <span class="co" style="color: #5E5E5E;"># 앞에서 노드 꺼내기</span></span>
+<span id="cb3-40">        data <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.front.data</span>
+<span id="cb3-41">        <span class="va" style="color: #111111;">self</span>.front <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.front.<span class="bu" style="color: null;">next</span></span>
+<span id="cb3-42">        <span class="co" style="color: #5E5E5E;"># 삭제로 인해 노드가 하나도 없는 경우</span></span>
+<span id="cb3-43">        <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.front <span class="op" style="color: #5E5E5E;">==</span> <span class="va" style="color: #111111;">None</span>:</span>
+<span id="cb3-44">            <span class="va" style="color: #111111;">self</span>.rear <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
+<span id="cb3-45">        <span class="cf" style="color: #003B4F;">else</span>:</span>
+<span id="cb3-46">            <span class="va" style="color: #111111;">self</span>.front.prev <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
+<span id="cb3-47">        <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">-=</span> <span class="dv" style="color: #AD0000;">1</span></span>
+<span id="cb3-48">        <span class="cf" style="color: #003B4F;">return</span> data</span>
+<span id="cb3-49"></span>
+<span id="cb3-50">    <span class="kw" style="color: #003B4F;">def</span> pop(<span class="va" style="color: #111111;">self</span>):</span>
+<span id="cb3-51">        <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">==</span> <span class="dv" style="color: #AD0000;">0</span>:</span>
+<span id="cb3-52">            <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">None</span></span>
+<span id="cb3-53">        <span class="co" style="color: #5E5E5E;"># 뒤에서 노드 꺼내기</span></span>
+<span id="cb3-54">        data <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.rear.data</span>
+<span id="cb3-55">        <span class="va" style="color: #111111;">self</span>.rear <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.rear.prev</span>
+<span id="cb3-56">        <span class="co" style="color: #5E5E5E;"># 삭제로 인해 노드가 하나도 없는 경우</span></span>
+<span id="cb3-57">        <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.rear <span class="op" style="color: #5E5E5E;">==</span> <span class="va" style="color: #111111;">None</span>:</span>
+<span id="cb3-58">            <span class="va" style="color: #111111;">self</span>.front <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
+<span id="cb3-59">        <span class="cf" style="color: #003B4F;">else</span>:</span>
+<span id="cb3-60">            <span class="va" style="color: #111111;">self</span>.rear.<span class="bu" style="color: null;">next</span> <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">None</span></span>
+<span id="cb3-61">        <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">-=</span> <span class="dv" style="color: #AD0000;">1</span></span>
+<span id="cb3-62">        <span class="cf" style="color: #003B4F;">return</span> data</span>
+<span id="cb3-63"></span>
+<span id="cb3-64">    <span class="kw" style="color: #003B4F;">def</span> front(<span class="va" style="color: #111111;">self</span>):</span>
+<span id="cb3-65">        <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">==</span> <span class="dv" style="color: #AD0000;">0</span>:</span>
+<span id="cb3-66">            <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">None</span></span>
+<span id="cb3-67">        <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">self</span>.front.data</span>
+<span id="cb3-68"></span>
+<span id="cb3-69">    <span class="kw" style="color: #003B4F;">def</span> rear(<span class="va" style="color: #111111;">self</span>):</span>
+<span id="cb3-70">        <span class="cf" style="color: #003B4F;">if</span> <span class="va" style="color: #111111;">self</span>.size <span class="op" style="color: #5E5E5E;">==</span> <span class="dv" style="color: #AD0000;">0</span>:</span>
+<span id="cb3-71">            <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">None</span></span>
+<span id="cb3-72">        <span class="cf" style="color: #003B4F;">return</span> <span class="va" style="color: #111111;">self</span>.rear.data</span>
+<span id="cb3-73"></span>
+<span id="cb3-74">    <span class="co" style="color: #5E5E5E;"># 앞에서부터 원소 출력</span></span>
+<span id="cb3-75">    <span class="kw" style="color: #003B4F;">def</span> show(<span class="va" style="color: #111111;">self</span>):</span>
+<span id="cb3-76">        cur <span class="op" style="color: #5E5E5E;">=</span> <span class="va" style="color: #111111;">self</span>.front</span>
+<span id="cb3-77">        <span class="cf" style="color: #003B4F;">while</span> cur:</span>
+<span id="cb3-78">            <span class="bu" style="color: null;">print</span>(cur.data, end<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">" "</span>)</span>
+<span id="cb3-79">            cur <span class="op" style="color: #5E5E5E;">=</span> cur.<span class="bu" style="color: null;">next</span></span>
+<span id="cb3-80"></span>
+<span id="cb3-81"></span>
+<span id="cb3-82">d <span class="op" style="color: #5E5E5E;">=</span> Deque()</span>
+<span id="cb3-83">arr <span class="op" style="color: #5E5E5E;">=</span> [<span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">6</span>, <span class="dv" style="color: #AD0000;">7</span>, <span class="dv" style="color: #AD0000;">8</span>]</span>
+<span id="cb3-84"><span class="cf" style="color: #003B4F;">for</span> x <span class="kw" style="color: #003B4F;">in</span> arr:</span>
+<span id="cb3-85">    d.append(x)</span>
+<span id="cb3-86">arr <span class="op" style="color: #5E5E5E;">=</span> [<span class="dv" style="color: #AD0000;">4</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">1</span>]</span>
+<span id="cb3-87"><span class="cf" style="color: #003B4F;">for</span> x <span class="kw" style="color: #003B4F;">in</span> arr:</span>
+<span id="cb3-88">    d.appendleft(x)</span>
+<span id="cb3-89">d.show()</span>
+<span id="cb3-90"></span>
+<span id="cb3-91"><span class="bu" style="color: null;">print</span>()</span>
+<span id="cb3-92"><span class="cf" style="color: #003B4F;">while</span> d.size <span class="op" style="color: #5E5E5E;">!=</span> <span class="dv" style="color: #AD0000;">0</span>:</span>
+<span id="cb3-93">    <span class="bu" style="color: null;">print</span>(d.popleft())</span>
+<span id="cb3-94"></span>
+<span id="cb3-95">arr <span class="op" style="color: #5E5E5E;">=</span> [<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">4</span>, <span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">6</span>, <span class="dv" style="color: #AD0000;">7</span>, <span class="dv" style="color: #AD0000;">8</span>]</span>
+<span id="cb3-96"><span class="cf" style="color: #003B4F;">for</span> x <span class="kw" style="color: #003B4F;">in</span> arr:</span>
+<span id="cb3-97">    d.appendleft(x)</span>
+<span id="cb3-98">d.show()</span>
+<span id="cb3-99"></span>
+<span id="cb3-100"><span class="bu" style="color: null;">print</span>()</span>
+<span id="cb3-101"><span class="cf" style="color: #003B4F;">while</span> <span class="va" style="color: #111111;">True</span>:</span>
+<span id="cb3-102">    <span class="bu" style="color: null;">print</span>(d.pop())</span>
+<span id="cb3-103">    <span class="cf" style="color: #003B4F;">if</span> d.size <span class="op" style="color: #5E5E5E;">==</span> <span class="dv" style="color: #AD0000;">0</span>:</span>
+<span id="cb3-104">        <span class="cf" style="color: #003B4F;">break</span></span>
+<span id="cb3-105">    <span class="bu" style="color: null;">print</span>(d.popleft())</span>
+<span id="cb3-106">    <span class="cf" style="color: #003B4F;">if</span> d.size <span class="op" style="color: #5E5E5E;">==</span> <span class="dv" style="color: #AD0000;">0</span>:</span>
+<span id="cb3-107">        <span class="cf" style="color: #003B4F;">break</span></span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>1 2 3 4 5 6 7 8 
+1
+2
+3
+4
+5
+6
+7
+8
+8 7 6 5 4 3 2 1 
+1
+8
+2
+7
+3
+6
+4
+5</code></pre>
+</div>
+</div>
+</section>
+</section>
+</div>
+<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
+
+</div>
+
+
+
+</div></ul> ]]></description>
+  <category>Engineering</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-01-19_deque/index.html</guid>
+  <pubDate>Wed, 25 Jan 2023 15:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Blog Guide Map, Engineering</title>

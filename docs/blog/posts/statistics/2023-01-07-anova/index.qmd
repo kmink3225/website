@@ -21,12 +21,12 @@ execute:
 
 (**draft**)
 
-\## CF
+## Statistical Methods Similar to ANOVA
 
--   1111-11-11, [ANCOVA](../2023-01-07-anova/index.qmd)
--   1111-11-11, [repeated measures ANOVA](../2023-01-07-anova/index.qmd)
--   1111-11-11, [MANOVA](../2023-01-07-anova/index.qmd)
--   1111-11-11, [MANCOVA](../2023-01-07-anova/index.qmd)
+-   2023-01-27, [repeated measures ANOVA](../2023-01-27_rmANOVA/index.qmd)
+-   2023-01-27, [ANCOVA](../2023-01-27_ANCOVA/index.qmd)
+-   2023-01-28, [MANOVA](../2023-01-28_MANNOVA/index.qmd)
+-   2023-01-28, [MANCOVA](../2023-01-28_MANCOVA/index.qmd)
 
 <ul class="nav nav-pills" id="language-tab" role="tablist">
 
@@ -86,10 +86,10 @@ ANOVA는 **3개 이상의 모집단** 사이의 **평균**의 동일성을 검�
     -   두 번째 자유도: 집단 내(within-group)의 자유도
 
 ```{r}
-
 library(tidyverse)
 library(ggpubr)
 library(gplots)
+library(rmarkdown)
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
 options(digits = 5)
 set.seed(20230109)
@@ -124,14 +124,19 @@ ANOVA는 집단 간 분산과 집단 내 분산의 비교하는 방식으로, �
 
 #### Raw Data
 
+(...민감 정보 제거 및 데이터 변환 후 컨설팅 내용 일부 발췌...)
+
 ```{r}
+#| echo: false
+
 path="C:/Users/kmkim/Desktop/my_project/website/docs/blog/data/anova_data.csv"
 #path="C:/Users/kkm/Desktop/projects/website/docs/blog/data/anova_data.csv"
-raw_data=read.csv(path)
-raw_data
+raw_data=read.csv(path)%>%
+    mutate(response=((100-1)*(Ct-min(Ct,na.rm=TRUE))/(max(Ct,na.rm=TRUE)-min(Ct,na.rm=T))+1))%>%
+    dplyr::select(-sample,-Ct)
 ```
 
-공유해주신 example data는 `r names(raw_data)`의 변수들을 포함하고 있습니다. 특히 sample은 여기서 같은 값을 갖고있기 때문에 의미가 없는 변수입니다. 공유해주신 정보에 따르면 아마도 Run은 오전과 오후를 나누는 변수인 것으로 생각 됩니다. 이 data만 보면 아마도 같은 샘플에 대해서 시약 제품이 시간에 따라 얼마나 안정적인 performance (Ct값)를 보여주는지 검사하는 실험으로 추측됩니다. 좀 더 분석하기 용이한 형태로 data structure를 바꾸겠습니다.
+example data는 `r names(raw_data)`의 변수들을 포함하고 있습니다. 공유해주신 정보에 따르면 아마도 Run은 오전과 오후를 나누는 변수인 것으로 생각 됩니다. 이 data만 보면 아마도 같은 샘플에 대해서 시약 제품이 시간에 따라 얼마나 안정적인 performance를 보여주는지 검사하는 실험으로 추측됩니다. 좀 더 분석하기 용이한 형태로 data structure를 바꾸겠습니다.
 
 #### Processed Data
 
@@ -144,19 +149,18 @@ data=raw_data%>%
            Day=factor(Day,levels=c(1:20)),
            noon=ifelse(noon==1,"AM","PM"),
            noon=factor(noon,levels = c("AM","PM")))%>%
-    select(id,Day,noon,Run,Ct)%>%
+    dplyr::select(id,Day,noon,Run,response)%>%
     ungroup
-data
+paged_table(data)
 ```
 
 재가공된 data는 `r dim(data)[1]`개의 샘플과 `r dim(data)[2]`개의 변수를 갖고있습니다. 변수 목록은 다음과 같습니다.
 
--   sample: 검체이름, 같은 검체 혹은 의미없음\
 -   `r names(data)[1]`: 열번호, 총 20일간 하루 2회 구동(AM, PM) 구동, 오전 오후 각 각 3번씩 구동 총 120 $(=20 \times 3 \times 2)$ 샘플\
 -   `r names(data)[2]`: Day1\~20\
 -   `r names(data)[3]`: `r pull(unique(data[3]))[1]`= before noon, `r pull(unique(data[3]))[2]`= after noon
 -   `r names(data)[4]`: 1회 구동당 3번 반복씩`r pull(unique(data[4]))`\
--   `r names(data)[5]`: Ct values
+-   `r names(data)[5]`: response variable, 낮을 수록 좋음
 
 ANOVA의 Assumption
 
@@ -169,7 +173,7 @@ ANOVA의 Assumption
 이 data는 아래 처럼 `r sum(is.na(data))`의 결측치를 갖고 있습니다.
 
 ```{r}
-data%>%filter(is.na(Ct))%>%knitr::kable()
+data%>%filter(is.na(response))%>%knitr::kable()
 ```
 
 Ct에 대한 Global Statistics는 다음과 같습니다.
@@ -177,9 +181,9 @@ Ct에 대한 Global Statistics는 다음과 같습니다.
 ```{r}
 global_data=data%>%na.omit()%>%
     summarise(count=n(),
-              global_Ct_mean=mean(Ct,na.rm=T),
-              global_Ct_sd=sd(Ct,na.rm=T),
-              global_Ct_CV=paste(round(global_Ct_sd/global_Ct_mean*100,3),"%"))
+              global_response_mean=mean(response,na.rm=T),
+              global_response_sd=sd(response,na.rm=T),
+              global_response_CV=paste(round(global_response_sd/global_response_mean*100,3),"%"))
 global_data%>%knitr::kable()
 
 ```
@@ -191,10 +195,11 @@ Day groups의 Statistics은 다음과 같습니다.
 day_data=data%>%na.omit()%>%
     group_by(Day)%>%
     summarise(count=n(),
-              Day_group_Ct_mean=mean(Ct,na.rm=T),
-              Day_group_Ct_sd=sd(Ct,na.rm=T),
-              Day_group_Ct_CV=paste(round(Day_group_Ct_sd/Day_group_Ct_mean*100,3),"%"))
-day_data%>%knitr::kable()
+              Day_group_response_mean=mean(response,na.rm=T),
+              Day_group_response_sd=sd(response,na.rm=T),
+              Day_group_response_CV=paste(round(Day_group_response_sd/Day_group_response_mean*100,3),"%"))
+#day_data%>%knitr::kable()
+day_data%>%paged_table
 ```
 
 AM/PM groups의 Statistics은 다음과 같습니다.
@@ -204,10 +209,10 @@ AM/PM groups의 Statistics은 다음과 같습니다.
 noon_data=data%>%na.omit()%>%
     group_by(noon)%>%
     summarise(count=n(),
-              noon_group_Ct_mean=mean(Ct,na.rm=T),
-              noon_group_Ct_sd=sd(Ct,na.rm=T),
-              noon_group_Ct_CV=paste(round(noon_group_Ct_sd/noon_group_Ct_mean*100,3),"%"))
-noon_data%>%knitr::kable()
+              noon_group_response_mean=mean(response,na.rm=T),
+              noon_group_response_sd=sd(response,na.rm=T),
+              noon_group_response_CV=paste(round(noon_group_response_sd/noon_group_response_mean*100,3),"%"))
+noon_data%>%paged_table
 ```
 
 Days와 AM/PM 조합 groups의 Statistics은 다음과 같습니다.
@@ -217,13 +222,12 @@ Days와 AM/PM 조합 groups의 Statistics은 다음과 같습니다.
 day_noon_data=data%>%na.omit()%>%
     group_by(Day,noon)%>%
     summarise(count=n(),
-              combi_group_Ct_mean=mean(Ct,na.rm=T),
-            combi_group_Ct_sd=sd(Ct,na.rm=T),
-        combi_group_Ct_CV=paste(round(combi_group_Ct_sd/combi_group_Ct_mean*100,3),"%"))%>%
+              combi_group_response_mean=mean(response,na.rm=T),
+            combi_group_response_sd=sd(response,na.rm=T),
+        combi_group_response_CV=paste(round(combi_group_response_sd/combi_group_response_mean*100,3),"%"))%>%
     ungroup
 
-day_noon_data%>%
-    knitr::kable()
+day_noon_data%>%paged_table
 ```
 
 이제 ANOVA를 수행하기 위한 basic statistics는 모두 구했습니다. ANOVA를 수행하기 위해 집단 간 분산과 집단 내 분산을 계산하도록 하겠습니다.
@@ -234,7 +238,7 @@ day_noon_data%>%
 
 -   $g=g$ Day의 sample size = 20, 자유도 = 20-1 = 19 입니다.
 -   $n_g=g$ group의 sample size, $\overline{X}_g=g$ 의 sample mean은 다음과 같습니다.
--   $\overline{X}$ = global sample mean = `r global_data$global_Ct_mean`
+-   $\overline{X}$ = global sample mean = `r global_data$global_response_mean`
 -   집단 간 분산: $\frac{집단 간 제곱합}{자유도}=\frac{\sum_g[(\overline{X}_g-\overline{X})^2n_g]}{g-1}$
 
 #### SS_Day (집단간 분산 Day)
@@ -244,12 +248,12 @@ Day sq = $[(\overline{X}_g-\overline{X})^2n_g]$ 집단(Day)간 분산 계산, �
 ```{r}
 temp1=day_data%>%
     ungroup%>%
-    mutate(day_sq=(Day_group_Ct_mean-global_data$global_Ct_mean)^2*count)%>%
+    mutate(day_sq=(Day_group_response_mean-global_data$global_response_mean)^2*count)%>%
     mutate(sum_day_ssq=sum(day_sq),
               df=(dim(day_data)[1]-1),
               day_mean_ssq=sum_day_ssq/df,
               day_sd=sqrt(day_mean_ssq))
-temp1%>%knitr::kable()
+temp1%>%paged_table
 
 
 ```
@@ -262,13 +266,12 @@ noon sq = $[(\overline{X}_g-\overline{X})^2n_g]$ 집단(noon)간 분산 계산, 
 
 ```{r}
 temp2=noon_data%>%
-    mutate(noon_sq=(noon_group_Ct_mean-global_data$global_Ct_mean)^2*count)%>%
+    mutate(noon_sq=(noon_group_response_mean-global_data$global_response_mean)^2*count)%>%
     mutate(sum_noon_ssq=sum(noon_sq),
               df=(dim(noon_data)[1]-1),
               noon_mean_ssq=sum_noon_ssq/df,
               noon_sd=sqrt(noon_mean_ssq))
-temp2%>%
-    knitr::kable()
+temp2%>%paged_table
 
 ```
 
@@ -282,16 +285,18 @@ $SS_{noon}$ = `r unique(temp2$sum_noon_ssq)` with $df=1$.
 
 ```{r}
 ##group_by noon
+
 temp3=data%>%
     na.omit%>%
     inner_join(.,day_noon_data,by=c("Day","noon"))%>%
-    select(-id,-combi_group_Ct_sd ,-combi_group_Ct_CV)%>%
-    mutate(residual_sq=(Ct-combi_group_Ct_mean)^2,
+    dplyr::select(-id,-combi_group_response_sd ,-combi_group_response_CV)%>%
+    mutate(residual_sq=(response-combi_group_response_mean)^2,
            df=nrow(data)-nrow(day_data)*nrow(noon_data)-1,
            residual_ssq=sum(residual_sq),
            mean_residual_ssq=residual_ssq/df)
 
-temp3
+temp3%>%paged_table
+
 ```
 
 $SS_{error}$ = `r unique(temp3$residual_ssq)`
@@ -303,8 +308,8 @@ Analysis-In program의 결과와 일치하는 것을 확인할 수 있습니다.
 ```{r}
 temp4=data%>%
     na.omit%>%
-    mutate(total_ssq=sum((Ct-global_data$global_Ct_mean)^2))
-temp4
+    mutate(total_ssq=sum((response-global_data$global_response_mean)^2))
+temp4%>%paged_table
 ```
 
 $SS_{total}$ = `r unique(temp4$total_ssq)`
@@ -318,34 +323,33 @@ temp5=unique(temp4$total_ssq)-unique(temp3$residual_ssq)-unique(temp2$sum_noon_s
 
 ```
 
-$SS_{interaction}=SS_{DayNoon}= SS_{total}-SS_{Day}-SS_{noon}-SS_{error}$ = `r unique(temp4$total_ssq)`-`r unique(temp3$residual_ssq)`-`r unique(temp2$sum_noon_ssq)`-`r unique(temp1$sum_day_ssq)` = `r temp5`
+$SS_{interaction}=SS_{DayNoon}= SS_{total}-SS_{Day}-SS_{noon}-SS_{error}$   
+= `r unique(temp4$total_ssq)`-`r unique(temp3$residual_ssq)`-`r unique(temp2$sum_noon_ssq)`-`r unique(temp1$sum_day_ssq)` = `r temp5`
 
 Analysis-In program의 ANOVA 결과 table과 일치하는 것을 확인할 수 있습니다.
 
 위의 결과들을 종합하면 아래와 같이 요약됩니다.
 
 ```{r}
-aov(Ct~Day*noon,data=data)%>%summary()
+aov(response~Day*noon,data=data)%>%summary()
 ```
 
 -   Repeatability SD = $\sqrt{V_{error}}=\sqrt{MS_{error}}$ = `r sqrt(unique(temp3$residual_ssq)/unique(temp3$df))`
--   Repeatability CV = $\frac{repeatability \space SD}{global \space mean \space Ct}$ = `r sqrt(unique(temp3$residual_ssq)/unique(temp3$df)) /global_data$global_Ct_mean`
-
-(생략, 다른 통계량들은 ANOVA_A repeat2.xlsx 참조)
+-   Repeatability CV = $\frac{repeatability \space SD}{global \space mean \space response}$ = `r sqrt(unique(temp3$residual_ssq)/unique(temp3$df)) /global_data$global_response_mean`
 
 위의 결과를 간단히 해석해 보면
 
 -   집단간 범주 변수인 Day는 p-value =0.29\>0.05 이므로 5% 유의 수준에서, 유의하지 않습니다.
-    -   즉, 5% 유의 수준에서, 일별로 평균 Ct값이 같다는 가설을 기각하는데 실패했습니다.
-    -   다시 말하면, 5% 유의 수준에서, 일별로 평균 Ct값이 다르지 않습니다.
+    -   즉, 5% 유의 수준에서, 일별로 평균 response값이 같다는 가설을 기각하는데 실패했습니다.
+    -   다시 말하면, 5% 유의 수준에서, 일별로 평균 response값이 다르지 않습니다.
 -   집단간 범주 변수인 noon은 p-value =0.30\>0.05 이므로 5% 유의 수준에서, 유의하지 않습니다.
-    -   즉, 5% 유의 수준에서, 오전/오후별 평균 Ct값이 같다는 가설을 기각하는데 실패했습니다.
-    -   다시 말하면, 5% 유의 수준에서, 오전/오후별 평균 Ct값이 다르지 않습니다.
+    -   즉, 5% 유의 수준에서, 오전/오후별 평균 response값이 같다는 가설을 기각하는데 실패했습니다.
+    -   다시 말하면, 5% 유의 수준에서, 오전/오후별 평균 response값이 다르지 않습니다.
 -   Day와 noon두 변수의 상호작용 변수는 p-value =0.16\>0.05 이므로 5% 유의 수준에서, 유의하지 않습니다.
-    -   즉, 5% 유의 수준에서, Day별 Noon(오전/오후)별 평균 Ct값이 같다는 가설을 기각하는데 실패했습니다.
-    -   다시 말하면, 5% 유의 수준에서, Day별 Noon(오전/오후)별 평균 Ct값이 다르지 않습니다.
+    -   즉, 5% 유의 수준에서, Day별 Noon(오전/오후)별 평균 response값이 같다는 가설을 기각하는데 실패했습니다.
+    -   다시 말하면, 5% 유의 수준에서, Day별 Noon(오전/오후)별 평균 response값이 다르지 않습니다.
 
-최종 결론, 제품의 Ct값이 Day별 오전/오후별 안정적인 performance를 보인다고 조심스럽게 결론을 내릴 수 있습니다.
+최종 결론, 제품의 response값이 Day별 오전/오후별 안정적인 performance를 보인다고 조심스럽게 결론을 내릴 수 있습니다.
 
 이제 까지는 질문에 대한 답이 되는 ANOVA의 원리 및 통계량의 재현 및 해석법에 대하여 알아봤습니다. 하지만 직관적으로 어떤 의미가 있을 까요? 원래는 시각화를 통해 데이터의 패턴을 짐작하고 통계 검정 결과를 예상하는데 우리는 반대로 가고 있네요 ㅎㅎ 시각화를 통해 ANOVA 결과가 얼마나 직관적인지 알아보겠습니다.
 
@@ -354,33 +358,33 @@ aov(Ct~Day*noon,data=data)%>%summary()
 #### One-way: Day
 
 ```{r}
-plotmeans(Ct~Day,data=data,
+plotmeans(response~Day,data=data,
           barcol="orange",
           barwidth = 2,
           col="blue",lwd=2,
           xlab="Day",
-          ylab="Ct",
-          main="Ct in Daily Average with 95% Confidence Interval")
-ggplot(data, aes(x=Day, y=Ct)) + 
+          ylab="response",
+          main="response in Daily Average with 95% Confidence Interval")
+ggplot(data, aes(x=Day, y=response)) + 
   geom_boxplot(outlier.colour="red", 
                outlier.shape=8,
                 outlier.size=4)
 ```
 
-자세히 보면 일별로 시간의 경과에 따라 전체적으로 평균 Ct값이 약간 하향하는 것으로 보입니다. 하지만 좀 더 세부적으로 관찰하면 1일\~8일 평균 Ct의 경향이 constant한 패턴을 보입니다. 9일\~13일 평균 Ct가 진동 하향하는 패턴을 보입니다. 14일\~20일 평균 Ct가 상향하는 패턴을 보입니다.
+자세히 보면 일별로 시간의 경과에 따라 전체적으로 평균 response값이 약간 하향하는 것으로 보입니다. 하지만 좀 더 세부적으로 관찰하면 1일\~8일 평균 response의 경향이 constant한 패턴을 보입니다. 9일\~13일 평균 response가 진동 하향하는 패턴을 보입니다. 14일\~20일 평균 response가 상향하는 패턴을 보입니다.
 
 ```{r}
-model1<-aov(data=data,Ct~Day)
+model1<-aov(data=data,response~Day)
 model.tables(model1,type="mean") # 전체 평균과 집단 평균을 볼수 있음
 model.tables(model1,type="effects") # 각 집단 평균과 전체 평균의 차이를 볼 수 있음
 ```
 
-위에 첫 번째표에서 Global Sample Ct Mean = 37.322 과 각 집단의 평균 Ct를 확인할 수 있습니다. 위에 두 번째표에서 Global Sample Ct Mean = 37.322 과 각 집단의 평균 Ct의 차이를 확인할 수 있습니다.
+위에 첫 번째표에서 Global Sample response Mean = 38.727 과 **각 집단의 평균** response를 확인할 수 있습니다. 위에 두 번째표에서 Global Sample response Mean = 37.322 과 **각 집단의 평균 response의 차이**를 확인할 수 있습니다.
 
 -   Day 9에서 차이가 가장 큰 것으로 보아 9일째 실험에서 performance가 가장 낮은 것이 관측됐습니다.
 -   반대로, 12일에 performance 가장 좋은 것으로 관측됐습니다.
 
-9일과 12일에 Ct값에 영향을 미쳤던 요인이 있었는지 복기 하는것도 도움이 되겠군요.
+9일과 12일에 response값에 영향을 미쳤던 요인이 있었는지 복기 하는것도 도움이 되겠군요.
 
 ```{r}
 # Anova: Day
@@ -388,91 +392,79 @@ model.tables(model1,type="effects") # 각 집단 평균과 전체 평균의 차�
 summary(model1)
 ```
 
-One-way ANOVA의 결과값입니다. Day별 평균 Ct의 차이는 거의 없는 것으로 보입니다. 따라서 Day 별 평균 Ct의 경향이 일관되지 않고 One-way ANOVA에서 역시 통계적으로 유의하지 않아 Day 변수는 평균 Ct에 영향을 미치지 않는 것 같습니다.
+One-way ANOVA의 결과값입니다. Day별 평균 response의 차이는 거의 없는 것으로 보입니다. 따라서 Day 별 평균 response의 경향이 일관되지 않고 One-way ANOVA에서 역시 통계적으로 유의하지 않아 Day 변수는 평균 response에 영향을 미치지 않는 것 같습니다.
 
 #### One-way: AM/PM
 
 ```{r}
-plotmeans(Ct~noon,data=data,
+plotmeans(response~noon,data=data,
           barcol="orange",
           barwidth = 3,
           col="blue",lwd=2,
           xlab="AM/PM",
-          ylab="Ct",
-          main="Ct in Before/After Noon Average with 95% Confidence Interval")
+          ylab="response",
+          main="response in Before/After Noon Average with 95% Confidence Interval")
 
-ggplot(data, aes(x=noon, y=Ct)) + 
+ggplot(data, aes(x=noon, y=response)) + 
   geom_boxplot(outlier.colour="red", 
                outlier.shape=8,
                 outlier.size=4)
 ```
 
-오후에 시간의 경과에 따라 전체적으로 평균 Ct값이 약간 하향하는 것으로 보입니다.
+오후에 시간의 경과에 따라 전체적으로 평균 response값이 약간 하향하는 것으로 보입니다.
 
 ```{r}
-model2<-aov(data=data,Ct~noon)
+model2<-aov(data=data,response~noon)
 # 개별 집단 차이를 볼수 있음
 model.tables(model2,type="mean") # 전체 평균과 집단 평균을 볼수 있음
 model.tables(model2,type="effects") # 각 집단 평균과 전체 평균의 차이를 볼 수 있음
 
 ```
 
-위 첫 번째 표에서 AM/PM 간의 평균 Ct차이는 0.15 (농도가 약 0.5배) 차이가 나는 것을 확인할 수 있습니다. 생물학적으로 의미가 있는 수치일까요? 위 두 번째 표에서 Global Sample Mean 37.322와 오전/오후 별 약 0.07씩(농도가 약 0.25배) 차이가 납니다.
+위 첫 번째 표에서 AM/PM 간의 평균 response차이는 0.15 (농도가 약 0.5배) 차이가 나는 것을 확인할 수 있습니다. 생물학적으로 의미가 있는 수치일까요? 위 두 번째 표에서 Global Sample Mean 37.322와 오전/오후 별 약 0.07씩(농도가 약 0.25배) 차이가 납니다.
 
 ```{r}
 # Anova: Day
 summary(model2)
 ```
 
-오전 오후별 One way ANOVA를 실행한 결과가 오전/오부 평균 Ct값의 차이가 다르지 않다는 것을 시사하고 있습니다. 아무래도 위의 차이는 우연에 의해 발생한 현상인 것 같습니다.
+오전 오후별 One way ANOVA를 실행한 결과가 오전/오부 평균 response값의 차이가 다르지 않다는 것을 시사하고 있습니다. 아무래도 위의 차이는 우연에 의해 발생한 현상인 것 같습니다.
 
 ```{r}
-# Day: 집단간의 차이를 설명
-# Residuals: 집단내의 차이를 설명
-# Mean Sq: 제곱합을 자유도로 나눈 분산, 0.816 집단간 분산
-
-
-# 각 집단간의 유의미한 차이가 있는지 검사하기 위해 Tukey HSD test 진행 (사후검정)
+#| fig-height: 10
 
 tukey<-TukeyHSD(model1)
-# 각 집단간의 차이는 통계적으로 유의미하지 않다
 plot(tukey,col="blue", las=1)
 # 가로선은 95% 신뢰구간을 표현하고 0을 포함하지 않으면 통계적으로 유의하다고 할 수 있다.
 
 ```
 
-일별로 평균 Ct값이 차이를 모든 경우의 수에서 차이가 나는지 확인한 결과 신뢰구간 모두가 0을 포함하고 있으므로 Day 변수는 유의하다고 볼 수 없습니다.
+일별로 평균 response값이 차이를 모든 경우의 수에서 차이가 나는지 확인한 결과 신뢰구간 모두가 0을 포함하고 있으므로 Day 변수는 유의하다고 볼 수 없습니다.
 
 ```{r}
-# Day: 집단간의 차이를 설명
-# Residuals: 집단내의 차이를 설명
-# Mean Sq: 제곱합을 자유도로 나눈 분산, 0.816 집단간 분산
 
-
-# 각 집단간의 유의미한 차이가 있는지 검사하기 위해 Tukey HSD test 진행 (사후검정)
 
 tukey<-TukeyHSD(model2)
-# 각 집단간의 차이는 통계적으로 유의미하지 않다
 plot(tukey,col="blue", las=1)
-# 가로선은 95% 신뢰구간을 표현하고 0을 포함하지 않으면 통계적으로 유의하다고 할 수 있다.
+
 
 ```
 
-오전/오후별로 평균 Ct값이 차이를 모든 경우의 수에서 차이가 나는지 확인한 결과 신뢰구간 모두가 0을 포함하고 있으므로 오전/오후 변수는 유의하다고 볼 수 없습니다.
+오전/오후별로 평균 response값이 차이를 모든 경우의 수에서 차이가 나는지 확인한 결과 신뢰구간 모두가 0을 포함하고 있으므로 오전/오후 변수는 유의하다고 볼 수 없습니다.
 
-여기 까지 각 변수별 평균 Ct로의 영향도를 통계적으로 시각적으로 관찰했습니다. 하지만 Day별 오전/오후별 영향도가 있는지 확인하겠습니다. (이미 위에서 통계적으로 없다고 검정됐습니다.)
+여기 까지 각 변수별 평균 response로의 영향도를 통계적으로 시각적으로 관찰했습니다. 하지만 Day별 오전/오후별 영향도가 있는지 확인하겠습니다. (이미 위에서 통계적으로 없다고 검정됐습니다.)
 
 ### Two way Anova
 
-```{r eval=FALSE, include=FALSE}
+```{r}
 # data를 여러번 적을 필요가없음
-with(data,tapply(Ct, list(Day,noon),function(x)mean(x,na.rm=TRUE)))
-with(data,tapply(Ct, list(Day,noon),function(x)sd(x,na.rm=TRUE)))
+with(data,tapply(response, list(Day,noon),function(x)mean(x,na.rm=TRUE)))
+with(data,tapply(response, list(Day,noon),function(x)sd(x,na.rm=TRUE)))
 ```
 
-```{r message=FALSE, warning=FALSE}
-model3<-aov(Ct~Day*noon,data=data)
-model3<-aov(Ct~Day+noon+Day:noon,data=data)
+```{r}
+model3<-aov(response~Day*noon,data=data)
+model3<-aov(response~Day+noon+Day:noon,data=data)
 
 
 model.tables(model3,type="means")
@@ -481,33 +473,35 @@ model.tables(model3,type="effect")
 
 one way ANOVA와 같이 해석
 
-```{r message=FALSE, warning=FALSE}
-boxplot(Ct~Day*noon,data=data,col=c("darkred","darkblue"),
-        las=1,xlab="Interaction of Day and Noon",main = "Effects of Day and Noon on Ct Values")
-interaction.plot(x.factor=data$Day,trace.factor = data$noon,response=data$Ct,trace.label="noon",las=1,type="b",pch=c(1,19),
-                 xlab="Day", ylab="Ct",col=c("darkred","darkblue"),
-                 main="Interaction Plot for Ct")
+```{r}
+boxplot(response~Day*noon,data=data,col=c("darkred","darkblue"),
+        las=1,xlab="Interaction of Day and Noon",main = "Effects of Day and Noon on response Values")
+interaction.plot(x.factor=data$Day,trace.factor = data$noon,response=data$response,trace.label="noon",las=1,type="b",pch=c(1,19),
+                 xlab="Day", ylab="response",col=c("darkred","darkblue"),
+                 main="Interaction Plot for response")
 #interaction(data$Day,data$noon,sep=" ")
-plotmeans(Ct~interaction(Day,noon,sep=" "),
+plotmeans(response~interaction(Day,noon,sep=" "),
           data=data,col=c("darkred","darkblue"),
-          xlab="Combination of Day and Noon",ylab="Ct", main="Means plot for Ct")
-plotmeans(Ct~interaction(Day,noon,sep=" "),
+          xlab="Combination of Day and Noon",ylab="response", main="Means plot for response")
+plotmeans(response~interaction(Day,noon,sep=" "),
           data=data,col=c("darkred","darkblue"),
           connect=list(seq(1,39,by=2),seq(2,40,by=2))
-          ,xlab="Combination of Day and Noon",ylab="Ct", main="Means plot for AM, PM")
+          ,xlab="Combination of Day and Noon",ylab="response", main="Means plot for AM, PM")
 summary(model3)
 ```
 
 위 그림을 보듯이 두 변수의 영향도가 없음, ANOVA 역시 유의하지 않음
 
-```{r message=FALSE, warning=FALSE}
+```{r}
+#| fig-height: 10
+
 ## 조건부 도표: coplot 2개의 집단 변수 중 1개의 집단 변수가 나머지 집단 변수와 종속변수에 관한 관계를 산점저로 표현
-coplot(Ct~noon|Day,data=data,col="darkred",pch=19,panel=panel.smooth,lwd=2,col.smooth="darkblue",xlab="AM/PM", ylab="Ct")
+coplot(response~noon|Day,data=data,col="darkred",pch=19,panel=panel.smooth,lwd=2,col.smooth="darkblue",xlab="AM/PM", ylab="response")
 ## 오전 오후와 Ct값의 관계를 볼수 있다.
 
 ##주효과와 상호 작용 효과를 각각의 별도의 패널에서 볼수 있음
 library(HH)
-interaction2wt(Ct~noon*Day,data=data)
+interaction2wt(response~noon*Day,data=data)
 #(2,1),(1,2) -> main effect expression
 #(1,1),(2,2) -> interaction effect expression
 
@@ -551,3 +545,13 @@ where the $\mu_i$ are unkown parameters and the $\epsilon_{ij}$ are error random
 1. The $\epsilon_{ij}$ are independent and normally distributed (normal errors).
 1. $\sigma^2_{i}=\sigma^2$ for all $i$ (homoscedasticity)
 :::
+
+## Blog Guide Map Link
+
+* [Statistics Blog](../guide_map/index.qmd)
+* [Engineering Blog](../../Engineering/guide_map/index.qmd)
+* [Deep Learning Blog](../../DL/guide_map/index.qmd)
+* [Machine Learning Blog](../../ML/guide_map/index.qmd)
+* [Mathematics Blog](../../Mathmatics/guide_map/index.qmd)
+* [Patent Blog](../../Patent/guide_map/index.qmd)
+* [Validation Blog](../../Validation/guide_map/index.qmd)

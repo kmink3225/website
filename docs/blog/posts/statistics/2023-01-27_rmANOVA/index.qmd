@@ -1,0 +1,155 @@
+---
+title: Repeated Meausres ANOVA
+subtitle: ANOVA, one-way ANOVA, Two-way ANOVA, ANCOVA, repeated measures ANOVA, MANOVA, MANCOVA
+description: | 
+  .  
+categories:
+  - Statistics
+author: Kwangmin Kim
+date: 01/27/2023
+draft: false
+format: 
+  html:
+    toc: true
+    number-sections: True
+    code-fold: true
+    page-layout: full
+execute: 
+  warning: false
+  message: false
+---
+(Draft, 바쁘니까 일단 대충이라도 적어놓음 ㅠ)
+
+
+## Description
+
+Repeated Meausres ANOVA (반복 측정 분산 분석)
+
+* 동일한 대상에 대해 여러 번 반복측정하여 반복측정(3번 이상) 집단 간에 차이가 존재하는지 검정
+  * 대응 표본 검정은 동일한 대상에 2번 반복 측정함 2개의 대응표본에 대한 검정
+* 이 때, 반복 측정 기간은 집단 내 요인이라 부르고 이를 반복측정 일원분산분석-집단내요인이라고 부름
+* 반복측정 기간외에 대상을 구분하는 집단 변수가 포함되면 반복측정 이원분산분석- 집단내요인 & 집단간 요인
+
+## Example
+
+```{r}
+str(CO2)
+names(CO2)
+```
+
+R console에 `?CO2`를 입력하면 다음과 같은 설명이 나온다.
+
+*The CO2 data frame has 84 rows and 5 columns of data from an experiment on the cold tolerance of the grass species Echinochloa crus-galli.The $CO_2$ uptake of six plants from Quebec and six plants from Mississippi was measured at several levels of ambient $CO_2$ concentration. Half the plants of each type were chilled overnight before the experiment was conducted.*
+
+
+즉, 식물이 **저온의 환경에서 견디는 정도를 실험한 데이터**로 퀘벡 지역의 6개의 나무와 미시시피 지역의 6개 나무의 이산화 탄소 흡수율을 7개의 서로 다른 이산화 탄소 농도 하에서 반복적으로 측정했다. 
+
+### Goals 
+
+분석의 편의를 위해 저온 처리된 나무에 한정하여 분석
+
+1. 두 지역간의 CO2흡수율의 차이를 검정
+2. 7개의 서로 다른 이산화탄소 농도에 따라서 이산화 탄소의 흡수율 차이를 검정
+3. 나무의 출신 지역과 이산화 탄소 흡수율 간의 관계가 이산화탄소 농도에 따라 달라지는 지도 검정
+
+### Data Description
+
+* `r names(CO2)[1]`: plant id
+* `r names(CO2)[2]`: 나무의 출신 지역, 2개의 범주, 집단간 요인
+* `r names(CO2)[3]`: 퀘벡 지역 나무와 미시시피 지역 나무dp 각 각 절반씩 실험 전에 저온 처리 했음, 저온 처리 여부가 treatment 변수에 저장됨
+* `r names(CO2)[4]`: co2농도, 7개의 범주, 집단 내 요인
+* `r names(CO2)[5]`: 종속 변수, 이산화 탄소 흡수율
+
+### Load Libraries and Data
+
+```{r}
+library(tidyverse)
+library(faraway)
+library(markdown)
+library(effects)
+library(HH)
+library(psych)
+```
+
+### EDA
+```{r}
+data=CO2%>%
+filter(Treatment=='chilled')%>%
+mutate(conc=factor(conc),
+type=factor(conc))
+```
+### Descriptive Statistics
+
+```{r}
+data%>%
+group_by(Type)%>%
+summarise(count=n(),
+mean_uptake=mean(uptake),
+sd_uptake=sd(uptake)
+)%>%knitr::kable()
+```
+
+두 지역의 분산과 평균 흡수율이 차이가 남
+
+```{r}
+data%>%
+group_by(conc)%>%
+summarise(count=n(),
+mean_uptake=mean(uptake),
+sd_uptake=sd(uptake)
+)%>%knitr::kable()
+```
+
+농도에 따라서 평균 흡수율과 분산이 약간 차이가 나는 것 같음. 다만, 고농도가 될수록 변화량이 줄어드는 것으로 보임
+
+```{r}
+data%>%
+group_by(Type,conc)%>%
+summarise(count=n(),
+mean_uptake=mean(uptake),
+sd_uptake=sd(uptake)
+)%>%knitr::kable()
+
+```
+
+농도가 증가함에 따라 지역간 평균 흡수율의 차이가 커지는 것을 관찰할 수 있음
+
+
+```{r}
+boxplot(uptake~Type*conc,data=data,col=c("darkblue","darkred"),
+        las=2,cex.axis=0.7,xlab="",ylab="Carbon Dioxide Uptake Rate",
+        main="Effects of Plant Ype and CO2 on Carbon Dioxide Uptake")
+legend("topleft",inset=0.025, legend=c("Quebec","Mississippi"),
+       fill=c("darkblue","darkred"))
+```
+
+### One-Wway ANOVA
+
+반복 측정 일원분산분석: y~W+Error(subject) where W= a within grouping variable, subject= a sample identifier
+
+```{r}
+aov(uptake~Type+Error(Plant),data=data)%>%summary()
+aov(uptake~conc+Error(Plant),data=data)%>%summary()
+```
+
+지역간 농도간 평균 흡수율이 차이가 5% 유의수준에서 유의하다.
+
+### Two-Wway ANOVA
+
+반복측정 이원분산 분석: y~B*W+Error(subject/W) where W= within grouping variable, B =Between Group Variable, and subject= a sample identifier
+
+```{r}
+aov(uptake~Type*conc+Error(Plant/conc),data=data)%>%summary()
+```
+
+지역간 농도간 집단간에서 흡수율 차이가 유의한것으로 나타나고 둘의 상호작용 또한 5% 유의수준에서 유의하다.
+
+## Blog Guide Map Link
+
+* [Statistics Blog](../guide_map/index.qmd)
+* [Engineering Blog](../../Engineering/guide_map/index.qmd)
+* [Deep Learning Blog](../../DL/guide_map/index.qmd)
+* [Machine Learning Blog](../../ML/guide_map/index.qmd)
+* [Mathematics Blog](../../Mathmatics/guide_map/index.qmd)
+* [Patent Blog](../../Patent/guide_map/index.qmd)
+* [Validation Blog](../../Validation/guide_map/index.qmd)

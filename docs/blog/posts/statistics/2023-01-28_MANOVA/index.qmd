@@ -1,0 +1,178 @@
+---
+title: MANOVA
+subtitle: ANOVA, one-way ANOVA, Two-way ANOVA, ANCOVA, repeated measures ANOVA, MANOVA, MANCOVA
+description: | 
+  The analysis of variance (ANOVA) is one of the most widely used statistical techniques. When we conduct a comparison testing of multiple groups such as A, B, and C on each with numeric data, the statistical test for a significant difference among the groups is called analysis of variance, or ANOVA.  
+categories:
+  - Statistics
+author: Kwangmin Kim
+date: 01/07/2023
+draft: false
+format: 
+  html:
+    toc: true
+    number-sections: True
+    code-fold: true
+    page-layout: full
+execute: 
+  warning: false
+  message: false
+---
+
+
+## Description
+
+ 다변량 분산분석(Multivariate Analysis of Variance, MANOVA)
+
+- 2개 이상의 종속변수가 있을 경우 집단별  차이를 동시에 검정
+- 연구의 타당성 증가
+
+## Example
+
+### Load Libraries and Data
+```{r}
+library(tidyverse)
+library(faraway)
+library(markdown)
+library(heplots)
+library(HH)
+library(psych)
+```
+
+### Data Description
+```{r}
+str(Skulls)
+
+```
+
+R console에 `?Skulls`를 입력하면 다음과 같은 설명이 나온다.
+
+**Measurements made on Egyptian skulls from five epochs.**
+
+* The epochs correspond to the following periods of Egyptian history:
+  * the early predynstic period (circa 4000 BC);
+  * the late predynatic period (circa 3300 BC);
+  * the 12th and 13t dynasties (circa 1850 BC);
+  * the Ptolemiac peiod (circa 200 BC);
+  * the Roman period(circa 150 AD).
+
+**The question is hether the measurements change over time. Non-constant measurements of the skulls over time would indicate interbreeding with immigrant populations. Note that using polynomial contrasts for epoch essentially treats the time points as equally spaced**
+
+즉, skulls 고대 이집트 왕조 부터 로마시대까지 이집트 지역에서 발군된 두개골의 크기를 측정한 데이터 이집트 역사를 5개의 시대로 구분하고 각 시대별로 30개씩의 두개골을 4개의 지표로 측정
+
+이 data는 `r ncol(sexab)`개의 변수와 `r nrow(sexab)`개의 samples을 포함한다.
+
+* `r names(sexab)[1]` : Childhood physical abuse on standard scale, covariate
+* `r names(sexab)[2]` : post-traumatic stress disorder on standard scale, response variable
+* `r names(sexab)[3]` : Childhood sexual abuse - abused or not abused, independent variable
+
+친절하게 response variable, independent variable 및 covariate을 규명해놓았다. 
+
+## EDA
+
+### Descriptive Statistics
+```{r}
+library(heplots)
+#skulls 고대 이집트 왕조 부터 로마시대까지 이집트 지역에서 발군된 두개골의 크기를 측정한 데이터
+# 이집트 역사를 5개의 시대로 구분하고 각 시대별로 30개씩의 두개골을 4개의 지표로 측정
+# epoch: 이집트의 시대를 5개로 구분, 독립변수
+# mb : 두개골의 폭, 종속 변수
+# bh : 두개골의 높이, 종속 변수
+# bl : 두개골의 길이, 종속 변수
+# nh : 코의 높이, 종속 변수
+
+library(dplyr)
+sample_n(Skulls,10)
+
+attach(Skulls)# Skulls를 작업 경로에 포함시키기
+search() # 작업 경로 확인인
+# 종속 변수를 결합시켜 하나의 행렬로 만들기
+y<-cbind(mb,bh,bl,nh)
+# 시대별 두개골  길이의 평균 보기
+aggregate(y,by=list(epoch),mean) # 언뜻 보기에 차이가 있는 것 처럼 보임
+# 모집단으로 일반화하기 위해 통계적 검정 시행
+skulls_manova<-manova(y~epoch)
+summary(skulls_manova)
+# 시대별 두개골 측정값이 차이가 있는 것으로 보임
+
+# 구체적으로 어느 두개 골 측정값에서 차이가 나는지 확인
+summary.aov(skulls_manova)
+# nh는 차이가 없는 것으로 보임
+
+## 시간에 따라 두개골 측정이 다르다는 것은 이민족 유입의 혼혈 가능성이 있음
+
+detach(Skulls)# 작업경로에서 삭제제
+
+
+```
+
+위의 요약된 기술 통계량들 중 표준 편차는 유사하지만 평균 ptsd가 약 `r temp['abused','mean']-temp['notAbused','mean']`의 차이를 보여준다. 아래의 histogram역시 성폭력을 경험한 그룹과 경험하지 않은 그룹간의 PTSD 수치가 다른것을 볼 수 있다.
+
+```{r}
+ggplot(data=sexab,aes(x=ptsd,color=csa,fill=csa))+
+geom_histogram(aes(y=..density..),position="identity",fill='white')+
+geom_density(alpha=0.5)+
+labs(title="Histogram, PTSD Grouped by Childhood Sexual Abuse Experience", x="PTSD", y="Desnsity")
+
+```
+
+### One-Way ANOVA 
+
+성폭력 경험 유무에 따른 PTSD 평균 차이가 통계적으로 유의한지 확인하기 위해 ANOVA를 수행한다.
+
+```{r}
+sexab_aov<-aov(ptsd~csa, data=sexab)
+summary(sexab_aov)
+
+```
+
+집단간 변수 csa p value가 <0.05 인 것을 확인할 수 있다. csa는 5% 유의수준에서 유의하다.
+
+하지만 PTSD의 변동량은 아동 학대에 의해 설명될 수도 있기 때문에 ptsd의 평균은 csa뿐만 아니라 cpa에 또한 고려되어야한다.
+
+```{r}
+ggplot(data=sexab,aes(x=cpa,y=ptsd))+geom_point()+geom_smooth(method="lm")+
+labs(title="Scatter Plot, PTSD vs CPA", x="CPA", y="PTSD")
+
+correlation<-cor.test(sexab$cpa,sexab$ptsd, method='pearson')
+
+```
+
+그림과 같이 CPA가 증가하면서 PTSD또한 선형적으로 증가하는 패턴을 관찰할 수 있다. 두 변수간의 상관계수 = `r round(correlation$estimate,2)`이고 p value= `r correlation$p.value`으로 보아 두 변수 사이에 선형적인 상관관계가 있는 것으로 보인다.
+
+```{r}
+ggplot(data=sexab,aes(x=cpa,y=ptsd))+geom_point()+geom_smooth(method="lm")+
+facet_wrap(.~csa)+
+labs(title="Scatter Plot, PTSD vs CPA Grouped By CSA", x="CPA", y="PTSD")
+```
+
+아동기 성폭력 경험 유/무에도 PTSD와 CPA와 선형적인 관계가 있는 것으로 보이기 때문에 CSA의 PTSD로의 효과를 검정하기 위해선 CPA를 조정할 필요가 있는것으로 보인다.
+
+```{r}
+# ptsd로의 순수한 성폭력 경험의 영향도를 얻기 위해서는 아동기 신체적 학대(공변량)에 대해서 고려를 해줘야함
+
+sexab_aov<-aov(ptsd~cpa+csa, data=sexab) 
+summary(sexab_aov)
+```
+
+아동기의 신체적 학대가 일정하다는 가정하에서 PTSD와 성폭력의 순수한 관계는 5% 유의수준에서 유의하고 공변량, CPA를 조정하기전과 그 유의성이 차이가 있음을 관찰할 수 있다.
+
+
+```{r}
+
+# CPA가 제거 된 후에 CSA의 순수한 효과를 알아보기
+
+ancova(ptsd~cpa+csa, data=sexab) 
+```
+
+두 csa집단에서 두 회귀선의 기울기 같고 절편이 다르게 나타나는 것을 관찰 할 수있다. 기울기가 같은 이유는 cpa가 ptsd에 영향을 미치는 정도가 두집단에서 일정하도록 공변량으로서 통제 했기 때문이다. 
+
+## Blog Guide Map Link
+
+* [Statistics Blog](../guide_map/index.qmd)
+* [Engineering Blog](../../Engineering/guide_map/index.qmd)
+* [Deep Learning Blog](../../DL/guide_map/index.qmd)
+* [Machine Learning Blog](../../ML/guide_map/index.qmd)
+* [Mathematics Blog](../../Mathmatics/guide_map/index.qmd)
+* [Patent Blog](../../Patent/guide_map/index.qmd)
+* [Validation Blog](../../Validation/guide_map/index.qmd)

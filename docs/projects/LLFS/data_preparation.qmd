@@ -272,32 +272,73 @@ score=as.matrix(data)%*%beta_coefficients # score of each sample
 probabilities <- ((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05))%>%
 ifelse(.>1,1,.)%>%ifelse(.<0,0,.)
 
-response <- rbinom(sample_size, 1, probabilities) 
+response <-ifelse(rbinom(sample_size, 1, probabilities)==0,'negative','positive')%>%
+factor(.,levels=c('negative','positive'))
 
-
-
-# used data of a variable with the highest effect on outcome
-age_distribution=data%>%
-dplyr::select(grep(group_meta_data[,"group_name"][group_meta_data[,"group_effect"]==0.7],names(data))[1])%>%
-pull()%>%
-scale_function(vector=.,min=65,max=105,method="customized")%>%round(0)
-
-#rbinom(n=sample size,p=0.5)
+# sex distribution
 sex_distribution=rbinom(sample_size,1,0.5)
 
-genotype_quantile_data<-quantile((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05),
-probs=cumsum(c(0.08,0.15,0.086,0.30,0.25)))
+# age distribution
+## use data of a variable with the the lowest p.value of the t test result on response
+## find a variable with the largest difference of the means between the response groups
+temp_df=as.data.frame(matrix(ncol=5))
+for(i in 1:ncol(data)){
+    temp_df[i,]=c(names(data)[i],
+    t.test(data[,i]~response)$estimate[1],
+    t.test(data[,i]~response)$estimate[2],
+    t.test(data[,i]~response)$estimate[2]-t.test(data[,i]~response)$estimate[1],
+    t.test(data[,i]~response)$p.value)
+}
+names(temp_df)<-c('metabolite','mean_neg','mean_pos','mean_diff','p.value')
+
+strong_metabolite=temp_df%>%
+    mutate(
+        mean_neg=as.numeric(mean_neg),
+        mean_pos=as.numeric(mean_pos),
+        mean_diff=as.numeric(mean_diff),
+        p.value=as.numeric(p.value),
+        abs_mean_diff=abs(mean_diff))%>%
+        filter(abs_mean_diff==max(abs_mean_diff))%>%
+    dplyr::select(metabolite)%>%
+    pull
+
+age_distribution=data%>%
+dplyr::select(strong_metabolite)%>%
+scale_function(vector=.,min=65,max=105,method="customized")%>%round(0)
+
+
+
+ttt=cbind(response,age_distribution,data[,strong_metabolite])%>%
+as.data.frame()%>%
+rename(age=2,group3_153=3)
+head(ttt)
+ttt%>%group_by(response)%>%summarise(mean(group3_153))%>%knitr::kable()
+
+ggplot(data=ttt,aes(x=group3_153,color=response))+geom_histogram(fill='white',position="identity")+
+
+str(ttt)
+
+# genotype distribution
+
+genotype_quantile_data<-quantile(data[,strong_metabolite],
+#probs=cumsum(c(0.08,0.15,0.086,0.30,0.25)))
+probs=cumsum(c(0.25,0.3,0.086,0.15,0.08)))
+
+genotype_distribution<-data.frame(
+    metabolite=data[,strong_metabolite])%>%
+    mutate(
+        genotype=ifelse(metabolite<genotype_quantile_data[1],'e4e4',
+        ifelse(metabolite<genotype_quantile_data[2],'e3e4',
+        ifelse(metabolite<genotype_quantile_data[3],'e3e3',
+        ifelse(metabolite<genotype_quantile_data[4],'e2e3',
+        ifelse(metabolite<genotype_quantile_data[5],'e2e4','e4e4'))))))
+
+genotype_distribution%>%group_by(genotype)%>%summarise(n=n())
+ggplot(data=genotype_distribution,aes(x=metabolite,fill=genotype))+geom_histogram(position="identity")
+
 treatment_quantile_data<-quantile((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05),
 probs=cumsum(c(0.7,0.15,0.1)))
 
-genotype_distribution<-data.frame(
-    probability=((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05)))%>%
-    mutate(
-        genotype=ifelse(probability<genotype_quantile_data[1],'e2e2',
-        ifelse(probability<genotype_quantile_data[2],'e2e3',
-        ifelse(probability<genotype_quantile_data[3],'e2e4',
-        ifelse(probability<genotype_quantile_data[4],'e3e3',
-        ifelse(probability<genotype_quantile_data[5],'e3e4','e4e4'))))))
 treatment_distribution<-data.frame(
     probability=((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05)))%>%
     mutate(
@@ -333,6 +374,7 @@ all_data=inner_join(phenotype_data,data%>%mutate(id=1:n()),by="id")
 datapath<-"C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds"
 #datapath<-"C:/Users/kkm/Desktop/projects/website/docs/projects/data/llfs_simulated_data.rds"
 simulated_data=read_rds(datapath)%>%dplyr::select(-1,-probabilities)
+
 all_data=simulated_data
 
 all_data=all_data%>%

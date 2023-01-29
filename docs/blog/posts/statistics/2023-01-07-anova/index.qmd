@@ -1,6 +1,6 @@
 ---
 title: ANOVA
-subtitle: ANOVA, one-way ANOVA, Two-way ANOVA, ANCOVA, repeated measures ANOVA, MANOVA, MANCOVA
+subtitle: ANOVA, one-way ANOVA, Two-way ANOVA, ANCOVA, repeated measures ANOVA, MANOVA
 description: | 
   The analysis of variance (ANOVA) is one of the most widely used statistical techniques. When we conduct a comparison testing of multiple groups such as A, B, and C on each with numeric data, the statistical test for a significant difference among the groups is called analysis of variance, or ANOVA.  
 categories:
@@ -25,8 +25,7 @@ execute:
 
 -   2023-01-27, [repeated measures ANOVA](../2023-01-27_rmANOVA/index.qmd)
 -   2023-01-27, [ANCOVA](../2023-01-27_ANCOVA/index.qmd)
--   2023-01-28, [MANOVA](../2023-01-28_MANNOVA/index.qmd)
--   2023-01-28, [MANCOVA](../2023-01-28_MANCOVA/index.qmd)
+-   2023-01-28, [MANOVA](../2023-01-28_MANOVA/index.qmd)
 
 <ul class="nav nav-pills" id="language-tab" role="tablist">
 
@@ -54,6 +53,16 @@ English
 
 ::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
 
+```{r}
+#| echo: false
+
+if(grep('kkm',getwd())){
+    datapath="C:/Users/kkm/Desktop/projects/website/docs/data/anova_data.csv"
+}else{
+    datapath="C:/Users/kmkim/Desktop/projects/website/docs/data/anova_data.csv"
+}
+
+```
 
 
 ### Description
@@ -129,9 +138,7 @@ ANOVA는 집단 간 분산과 집단 내 분산의 비교하는 방식으로, �
 ```{r}
 #| echo: false
 
-path="C:/Users/kmkim/Desktop/my_project/website/docs/blog/data/anova_data.csv"
-#path="C:/Users/kkm/Desktop/projects/website/docs/blog/data/anova_data.csv"
-raw_data=read.csv(path)%>%
+raw_data=read.csv(datapath)%>%
     mutate(response=((100-1)*(Ct-min(Ct,na.rm=TRUE))/(max(Ct,na.rm=TRUE)-min(Ct,na.rm=T))+1))%>%
     dplyr::select(-sample,-Ct)
 ```

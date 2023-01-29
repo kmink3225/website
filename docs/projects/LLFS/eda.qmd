@@ -10,6 +10,20 @@ format:
     code-fold: true
 ---
 
+
+```{r}
+#| echo: false
+
+rm(list=ls())
+
+if(grep('kkm',getwd())){
+    datapath="C:/Users/kkm/Desktop/projects/website/docs/data/llfs_simulated_data.rds"
+}else{
+    datapath="C:/Users/kmkim/Desktop/projects/website/docs/data/llfs_simulated_data.rds"
+}
+
+```
+
 <ul class="nav nav-pills" id="language-tab" role="tablist">
 
 <li class="nav-item" role="presentation">
@@ -45,9 +59,7 @@ please, read the English section first.
 
 ::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
 ```{r}
-#| echo: false
 #| message: false
-#| code-fold: true
 #| warning: false
 
 library(tidyverse)
@@ -60,27 +72,10 @@ set.seed(20230103)
 knitr::opts_chunk$set(message=FALSE,warning=FALSE)
 ```
 
+### Variables
 ```{r}
 #| message: false
 #| warning: false
-
-scale_function=function(vector=x,min=a,max=b,method="customized"){
-    if(method=="min-max"){
-        result=(vector-min(vector))(max(vector)-min(vector))
-    }else if(method=="customized"){
-        result=(max-min)*(vector-min(vector))/(max(vector)-min(vector))+min
-    }else{
-        result=(vector-mean(vector))/sd(vector)
-    }
-  return(result)
-}
-
-genotype_data_generator=function(temp_data,fun=scale_function,start_quantile,end_quantile){
-    temp=temp_data%>%
-    pull%>%
-    fun(vector=.,min=0,max=1,method="customized")
-    return(ifelse(temp>temp%>%quantile(.,probs=start_quantile)&temp<temp%>%quantile(.,probs=end_quantile),1,0))
-}
 
 # the number of samples
 sample_size <- 1000
@@ -163,10 +158,14 @@ answer_list<-list(
         'treatment2'='10%, bottom 95 % of the percentiles of the outcome probabilities with noises',
         'treatment3'='5%, above the bottom 8 % of the percentiles of the outcome probabilities with noises'
     ))
+```
 
 
-datapath<-"C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds"
-#datapath<-"C:/Users/kkm/Desktop/projects/website/docs/projects/data/llfs_simulated_data.rds"
+
+```{r}
+#| message: false
+#| warning: false
+
 simulated_data=read_rds(datapath)%>%dplyr::select(-1,-probabilities)
 all_data=simulated_data
 
@@ -202,7 +201,6 @@ test<-apply(all_data[,unlist(lapply(all_data, is.numeric))],2,function(x)shapiro
 ### Age vs Catogrical Variables
 
 ```{r}
-#| code-fold: true
 #| message: false
 #| warning: false
 

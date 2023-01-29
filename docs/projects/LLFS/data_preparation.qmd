@@ -16,8 +16,6 @@ execute:
   warning: false
 ---
 
-
-
 ### Simulation Diagram
 
 ```{mermaid}
@@ -107,6 +105,20 @@ please, read the English section first.
 
 ::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
 
+```{r}
+#| echo: false
+
+rm(list=ls())
+
+if(grep('kkm',getwd())){
+    datapath="C:/Users/kkm/Desktop/projects/website/docs/data/llfs_simulated_data.rds"
+}else{
+    datapath="C:/Users/kmkim/Desktop/projects/website/docs/data/llfs_simulated_data.rds"
+}
+
+```
+
+
 ## Simulation
 
 ### Package Loading and Option Settings
@@ -114,7 +126,7 @@ please, read the English section first.
 #| message: false
 #| code-fold: true
 #| warning: false
-rm(list=ls())
+
 library(tidyverse)
 library(tidymodels)
 library(glmnet)
@@ -124,31 +136,11 @@ set.seed(20230121) # the date writing this
 knitr::opts_chunk$set(message=FALSE,warning=FALSE)
 ```
 
-### Global Functions & Variables
+### Variables
 ```{r}
 #| message: false
 #| code-fold: true
 #| warning: false
-
-## Function List
-
-scale_function=function(vector=x,min=a,max=b,method="customized"){
-    if(method=="min-max"){
-        result=(vector-min(vector))(max(vector)-min(vector))
-    }else if(method=="customized"){
-        result=(max-min)*(vector-min(vector))/(max(vector)-min(vector))+min
-    }else{
-        result=(vector-mean(vector))/sd(vector)
-    }
-  return(result)
-}
-
-genotype_data_generator=function(temp_data,fun=scale_function,start_quantile,end_quantile){
-    temp=temp_data%>%
-    pull%>%
-    fun(vector=.,min=0,max=1,method="customized")
-    return(ifelse(temp>temp%>%quantile(.,probs=start_quantile)&temp<temp%>%quantile(.,probs=end_quantile),1,0))
-}
 
 # the number of samples
 sample_size <- 1000
@@ -232,6 +224,35 @@ answer_list<-list(
         'treatment3'='5%, above the bottom 8 % of the percentiles of the outcome probabilities with noises'
     ))
 ```
+
+### Functions
+
+```{r}
+#| eval: false
+
+## Function List
+
+scale_function=function(vector=x,min=a,max=b,method="customized"){
+    if(method=="min-max"){
+        result=(vector-min(vector))(max(vector)-min(vector))
+    }else if(method=="customized"){
+        result=(max-min)*(vector-min(vector))/(max(vector)-min(vector))+min
+    }else{
+        result=(vector-mean(vector))/sd(vector)
+    }
+  return(result)
+}
+
+genotype_data_generator=function(temp_data,fun=scale_function,start_quantile,end_quantile){
+    temp=temp_data%>%
+    pull%>%
+    fun(vector=.,min=0,max=1,method="customized")
+    return(ifelse(temp>temp%>%quantile(.,probs=start_quantile)&temp<temp%>%quantile(.,probs=end_quantile),1,0))
+}
+
+
+```
+
 
 ### Simulation Algorithm
 
@@ -371,8 +392,7 @@ all_data=inner_join(phenotype_data,data%>%mutate(id=1:n()),by="id")
 #| message: false
 #| warning: false
 
-datapath<-"C:/Users/kmkim/Desktop/my_project/website/docs/projects/data/llfs_simulated_data.rds"
-#datapath<-"C:/Users/kkm/Desktop/projects/website/docs/projects/data/llfs_simulated_data.rds"
+
 simulated_data=read_rds(datapath)%>%dplyr::select(-1,-probabilities)
 
 all_data=simulated_data

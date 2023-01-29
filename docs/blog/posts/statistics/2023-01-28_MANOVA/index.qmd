@@ -1,6 +1,6 @@
 ---
 title: MANOVA
-subtitle: ANOVA, one-way ANOVA, Two-way ANOVA, ANCOVA, repeated measures ANOVA, MANOVA, MANCOVA
+subtitle: ANOVA, one-way ANOVA, Two-way ANOVA, ANCOVA, repeated measures ANOVA, MANOVA
 description: | 
   The analysis of variance (ANOVA) is one of the most widely used statistical techniques. When we conduct a comparison testing of multiple groups such as A, B, and C on each with numeric data, the statistical test for a significant difference among the groups is called analysis of variance, or ANOVA.  
 categories:
@@ -106,66 +106,17 @@ detach(Skulls)# 작업경로에서 삭제제
 
 ```
 
-위의 요약된 기술 통계량들 중 표준 편차는 유사하지만 평균 ptsd가 약 `r temp['abused','mean']-temp['notAbused','mean']`의 차이를 보여준다. 아래의 histogram역시 성폭력을 경험한 그룹과 경험하지 않은 그룹간의 PTSD 수치가 다른것을 볼 수 있다.
 
-```{r}
-ggplot(data=sexab,aes(x=ptsd,color=csa,fill=csa))+
-geom_histogram(aes(y=..density..),position="identity",fill='white')+
-geom_density(alpha=0.5)+
-labs(title="Histogram, PTSD Grouped by Childhood Sexual Abuse Experience", x="PTSD", y="Desnsity")
-
-```
 
 ### One-Way ANOVA 
 
-성폭력 경험 유무에 따른 PTSD 평균 차이가 통계적으로 유의한지 확인하기 위해 ANOVA를 수행한다.
-
-```{r}
-sexab_aov<-aov(ptsd~csa, data=sexab)
-summary(sexab_aov)
-
-```
-
-집단간 변수 csa p value가 <0.05 인 것을 확인할 수 있다. csa는 5% 유의수준에서 유의하다.
-
-하지만 PTSD의 변동량은 아동 학대에 의해 설명될 수도 있기 때문에 ptsd의 평균은 csa뿐만 아니라 cpa에 또한 고려되어야한다.
-
-```{r}
-ggplot(data=sexab,aes(x=cpa,y=ptsd))+geom_point()+geom_smooth(method="lm")+
-labs(title="Scatter Plot, PTSD vs CPA", x="CPA", y="PTSD")
-
-correlation<-cor.test(sexab$cpa,sexab$ptsd, method='pearson')
-
-```
-
-그림과 같이 CPA가 증가하면서 PTSD또한 선형적으로 증가하는 패턴을 관찰할 수 있다. 두 변수간의 상관계수 = `r round(correlation$estimate,2)`이고 p value= `r correlation$p.value`으로 보아 두 변수 사이에 선형적인 상관관계가 있는 것으로 보인다.
-
-```{r}
-ggplot(data=sexab,aes(x=cpa,y=ptsd))+geom_point()+geom_smooth(method="lm")+
-facet_wrap(.~csa)+
-labs(title="Scatter Plot, PTSD vs CPA Grouped By CSA", x="CPA", y="PTSD")
-```
-
-아동기 성폭력 경험 유/무에도 PTSD와 CPA와 선형적인 관계가 있는 것으로 보이기 때문에 CSA의 PTSD로의 효과를 검정하기 위해선 CPA를 조정할 필요가 있는것으로 보인다.
-
-```{r}
-# ptsd로의 순수한 성폭력 경험의 영향도를 얻기 위해서는 아동기 신체적 학대(공변량)에 대해서 고려를 해줘야함
-
-sexab_aov<-aov(ptsd~cpa+csa, data=sexab) 
-summary(sexab_aov)
-```
-
-아동기의 신체적 학대가 일정하다는 가정하에서 PTSD와 성폭력의 순수한 관계는 5% 유의수준에서 유의하고 공변량, CPA를 조정하기전과 그 유의성이 차이가 있음을 관찰할 수 있다.
 
 
 ```{r}
 
-# CPA가 제거 된 후에 CSA의 순수한 효과를 알아보기
-
-ancova(ptsd~cpa+csa, data=sexab) 
 ```
 
-두 csa집단에서 두 회귀선의 기울기 같고 절편이 다르게 나타나는 것을 관찰 할 수있다. 기울기가 같은 이유는 cpa가 ptsd에 영향을 미치는 정도가 두집단에서 일정하도록 공변량으로서 통제 했기 때문이다. 
+
 
 ## Blog Guide Map Link
 

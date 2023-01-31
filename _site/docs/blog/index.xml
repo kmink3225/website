@@ -190,9 +190,6 @@ English
 <div class="tab-content" id="language-tabcontent">
 
 <div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
-
-</div>
-<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
 <section id="multivariable-scalar-function" class="level2">
 <h2 class="anchored" data-anchor-id="multivariable-scalar-function">Multivariable Scalar Function</h2>
 <p><img src="https://latex.codecogs.com/png.latex?%0Ay=f(%5Cmathbf%20x),%20%5Cspace%20f:%5Cmathbb%20R%5En%20%5Crightarrow%20%5Cmathbb%20R%0A"></p>
@@ -250,7 +247,41 @@ English
 <li><img src="https://latex.codecogs.com/png.latex?f(x,y)=c"> (x 와 y의 관계가 가려져 있어서 음함수)</li>
 <li>bivariate scalar function <img src="https://latex.codecogs.com/png.latex?f(x_1,x_2)=c">, 등고선 그래프</li>
 </ul>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">fig <span class="op" style="color: #5E5E5E;">=</span> plt.figure(figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">7</span>, <span class="dv" style="color: #AD0000;">7</span>))</span>
+<span id="cb3-2">ax <span class="op" style="color: #5E5E5E;">=</span> fig.add_subplot(<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>)</span>
+<span id="cb3-3">ax.xaxis.set_tick_params(labelsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">18</span>)</span>
+<span id="cb3-4">ax.yaxis.set_tick_params(labelsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">18</span>)</span>
+<span id="cb3-5"></span>
+<span id="cb3-6">x1 <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">51</span>)</span>
+<span id="cb3-7">x2 <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">51</span>)</span>
+<span id="cb3-8">X1, X2 <span class="op" style="color: #5E5E5E;">=</span> np.meshgrid(x1, x2)</span>
+<span id="cb3-9">Z <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">50</span><span class="op" style="color: #5E5E5E;">*</span>(X2 <span class="op" style="color: #5E5E5E;">-</span> X1<span class="op" style="color: #5E5E5E;">**</span><span class="dv" style="color: #AD0000;">2</span>)<span class="op" style="color: #5E5E5E;">**</span><span class="dv" style="color: #AD0000;">2</span> <span class="op" style="color: #5E5E5E;">+</span> (<span class="dv" style="color: #AD0000;">2</span><span class="op" style="color: #5E5E5E;">-</span>X1)<span class="op" style="color: #5E5E5E;">**</span><span class="dv" style="color: #AD0000;">2</span></span>
+<span id="cb3-10"></span>
+<span id="cb3-11">contours <span class="op" style="color: #5E5E5E;">=</span> ax.contour(X1, X2, Z, levels<span class="op" style="color: #5E5E5E;">=</span>[<span class="dv" style="color: #AD0000;">30</span>, <span class="dv" style="color: #AD0000;">200</span>, <span class="dv" style="color: #AD0000;">600</span>],  colors<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'k'</span>, </span>
+<span id="cb3-12">            linestyles<span class="op" style="color: #5E5E5E;">=</span>[<span class="st" style="color: #20794D;">'solid'</span>,<span class="st" style="color: #20794D;">'dashed'</span>, <span class="st" style="color: #20794D;">'dotted'</span>])</span>
+<span id="cb3-13"></span>
+<span id="cb3-14">ax.clabel(contours, contours.levels, fmt<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"</span><span class="sc" style="color: #5E5E5E;">%d</span><span class="st" style="color: #20794D;">"</span>, inline<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">20</span>)</span>
+<span id="cb3-15"></span>
+<span id="cb3-16">ax.set_xlabel(<span class="vs" style="color: #20794D;">r'$x_1$'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">25</span>)</span>
+<span id="cb3-17">ax.set_ylabel(<span class="vs" style="color: #20794D;">r'$x_2$'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">25</span>)</span>
+<span id="cb3-18"></span>
+<span id="cb3-19"><span class="co" style="color: #5E5E5E;">#if file_print == True :</span></span>
+<span id="cb3-20"><span class="co" style="color: #5E5E5E;">#    fig.savefig("imgs/chap3/fig3-6.png", dpi=300, bbox_inches='tight')</span></span>
+<span id="cb3-21"><span class="co" style="color: #5E5E5E;">#    fig.savefig("imgs/chap3/fig3-6.pdf", format='pdf', bbox_inches='tight')</span></span>
+<span id="cb3-22"><span class="co" style="color: #5E5E5E;">#    </span></span>
+<span id="cb3-23">plt.show()</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/function/multivariable_scalar_function_files/figure-html/cell-3-output-1.png" width="654" height="617"></p>
+</div>
+</div>
 </section>
+</div>
+<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
+
 </div>
 <section id="blog-guide-map-link" class="level2">
 <h2 class="anchored" data-anchor-id="blog-guide-map-link">Blog Guide Map Link</h2>
@@ -348,7 +379,9 @@ English
 <div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
 <section id="univariable-scalar-function" class="level2">
 <h2 class="anchored" data-anchor-id="univariable-scalar-function">Univariable Scalar Function</h2>
+<p><img src="https://latex.codecogs.com/png.latex?%0Ay=f(x),%20%5Cspace%20f:%20%5Cmathbb%20R%20%5Crightarrow%20%5Cmathbb%20R%0A"></p>
 <ul>
+<li>One to One</li>
 <li><img src="https://latex.codecogs.com/png.latex?f:%5Cmathbb%7BR%7D%20%5Crightarrow%20%5Cmathbb%7BR%7D"> or <img src="https://latex.codecogs.com/png.latex?y=f(x)"> 으로 표현
 <ul>
 <li><img src="https://latex.codecogs.com/png.latex?f:%5Cmathbb%7BR%7D%20%5Crightarrow%20%5Cmathbb%7BR%7D"> : 입력과 출력의 개수를 직관적으로 알 수 있음</li>
@@ -362,7 +395,7 @@ English
 <ul>
 <li>monomial: one term, 상수 또는 변수 항 하나로 이루어진 식
 <ul>
-<li>ex) <img src="https://latex.codecogs.com/png.latex?2,x,x%5E2,x/3"></li>
+<li>ex) <img src="https://latex.codecogs.com/png.latex?2,x,x%5E2,%5Cfrac%7Bx%7D%7B3%7D"></li>
 </ul></li>
 <li>binomial: two terms, 단항식이 덧셈과 뻴셈으로 연결된 식
 <ul>
@@ -382,9 +415,44 @@ English
 <li>ex) <img src="https://latex.codecogs.com/png.latex?f(x)=x%5E2+2x+4"></li>
 <li>연속이고 미분 가능</li>
 </ul></li>
-<li>Exponential Function</li>
-<li>Log Function</li>
-<li>Logistic Sigmoid Function</li>
+<li>Exponential Function
+<ul>
+<li>정의 : <img src="https://latex.codecogs.com/png.latex?y=a%5Ex"> where <img src="https://latex.codecogs.com/png.latex?z%3E0,%20%5Cspace%20a%5Cnot=1"></li>
+<li>특징
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?a%3E1">: 양의 방향으로 증가</li>
+<li><img src="https://latex.codecogs.com/png.latex?0%3Ca%3C1">: 양의 방향으로 갈 수록 감소</li>
+<li>지수법칙</li>
+<li>입력되는 x 값에 비해 출력되는 y값이 급격히 변화</li>
+<li>미분 가능 &amp; 연속</li>
+<li><a href="https://www.cuemath.com/algebra/exponent-rules/">Exponent Rule</a></li>
+</ul></li>
+</ul></li>
+<li>Log Function
+<ul>
+<li>정의 : <img src="https://latex.codecogs.com/png.latex?log_ax=c%20%5Cleftrightarrow%20a%5Ec=x"></li>
+<li>특징
+<ul>
+<li>미분 가능 &amp; 연속</li>
+<li>지수함수와 역함수 관계</li>
+<li>입력되는 x의 변화량에 비해 출력되는 y의 변화량이 작음
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?y=log_%7B10%7Dx"> : x가 10만큼 증가해야 y가 1 증가함</li>
+<li><img src="https://latex.codecogs.com/png.latex?y=log_%7Be%7Dx"> : x가 e(약 2.718)만큼 증가해야 y가 1 증가함</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>Logistic Sigmoid Function
+<ul>
+<li>정의: <img src="https://latex.codecogs.com/png.latex?%5Csigma(z)=%5Cfrac%7B1%7D%7B1+e%5E%7B-z%7D%7D"></li>
+<li>특징
+<ul>
+<li>미분 가능 &amp; 연속</li>
+<li>신경망에서 뉴런의 활성을 결정하는 활성함수로 사용</li>
+<li>모든 실수<img src="https://latex.codecogs.com/png.latex?z">를 <img src="https://latex.codecogs.com/png.latex?0~1"> 사이로 변환시킴</li>
+<li>입력값을 확률 값으로 출력하기 위해 사용됨</li>
+</ul></li>
+</ul></li>
 </ul>
 </section>
 </section>

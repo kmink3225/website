@@ -1,0 +1,379 @@
+---
+title: Tensor Overview
+subtitle: overview, object creation, indexing, concatenating, casting, shape, transpose, arithematic operations, matrix multiplication, mean, max, argmax, dimension manipulation, automatic differenctiation
+description: |
+  Learn how to manipulate Tensor flow, one of the most commonly used Python frameworks to implement machine learning algorithms using Python. 파이썬을 이용하여 머신러닝 알고리즘을 구현하기 위해 가장 대표적으로 쓰이는 파이썬 package중 하나인 Tensor flow조작법에 대해 알아본다. 
+categories:
+  - ML
+author: Kwangmin Kim
+date: 02/03/2023
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+tbl-colwidths: [50,50]
+execute:
+  eval: false
+---
+
+## Tensor Flow
+
+* 데이터 자료형으로 텐서(tensor) 객체를 사용
+* GPU 사용 지원
+
+### Tensor
+
+* 특징
+    * 다차원 배열
+    * NumPy ndarray 객체와 유사
+    * 기본 python 데이터 유형을 자동 변환 (e.g., list)
+* 속성
+    * 크기 (shape)
+    * 자료형 (data type)
+    * 가속기 메모리에 상주 가능 (e.g., GPU )
+* Numpy 배열과 tf.Tensor의 차이점
+    * 텐서는 가속기 메모리(GPU, TPU)에서 사용 가능
+    * 텐서는 불변성(immutable)
+
+### 텐서(tensor) 객체 생성 (기본 python 데이터 유형)
+
+```{python}
+import tensorflow as tf
+import numpy as np
+
+print(tf.math.add(1, 2))
+print(tf.math.add([1, 2], [3, 4]))
+print(tf.math.square(5))
+print(tf.math.reduce_sum([1, 2, 3]))
+
+# Operator overloading is also supported
+print(tf.math.square(2) + tf.math.square(3))
+
+data = [
+    [1,2],
+    [3,4]
+]
+x = tf.constant(data)
+print(x)
+print(x.shape)
+print(x.dtype)
+print(tf.rank(x)) # tf.rank() : 축(axis)의 개수 출력 (차원의 개수)
+```
+
+### 텐서(tensor) 객체 생성 (numpy)
+
+* TensorFlow 연산은 자동으로 NumPy 배열을 텐서(tensor)로 변환
+* NumPy 연산은 자동으로 텐서(tensor)를 NumPy 배열로 변환
+
+```{python}
+import numpy as np
+ndarray = np.ones([3, 3])
+ndarray
+
+tensor = tf.math.multiply(ndarray, 42)
+tensor
+np.add(tensor, 1)
+tensor.numpy() # numpy.ndarray
+type(tensor.numpy())
+ctensor = tf.constant(ndarray)
+ctensor
+```
+
+### 텐서(tensor) 객체 생성 (tf.Tensor)
+
+tf.ones_like(x) : 값이 1이고 x와 shape & data type이 동일한 텐서 생성
+
+```{python}
+
+x = tf.constant([
+    [5, 7],
+    [3, 2]
+])
+
+x_ones = tf.ones_like(x)
+x_ones
+     
+
+x = tf.constant([
+    [5.1, 7.0],
+    [3.4, 2.1]
+])
+
+x_ones = tf.ones_like(x)
+x_ones
+
+# tf.random.uniform(shape, dtype) : 랜덤 값으로 원하는 shape과 dtype을 갖는 텐서 생성
+x_rand = tf.random.uniform(shape=x.shape, dtype=tf.float32)
+x_rand
+     
+```
+
+### 텐서(tensor) 사용
+
+특정 차원 접근
+
+```{python}
+
+tensor = tf.constant([
+    [1,2,3,4],
+    [5,6,7,8],
+    [9,10,11,12]
+])
+
+print(tensor[0])       # first row
+print(tensor[:, 0])    # first column
+print(tensor[..., -1]) # last column
+
+```
+
+텐서 Concatenate
+
+axis : 어느 축을 기준으로 객체를 이어붙일지 결정
+
+axis=0 : 0번째 축 (=row)
+axis=1 : 1번째 축 (=column)
+
+
+```{python}
+
+tensor = tf.constant([
+    [1,2,3,4],
+    [5,6,7,8],
+    [9,10,11,12]
+])
+
+tensor_concat = tf.concat([tensor, tensor, tensor], axis=0) # row
+tensor_concat
+
+tensor_concat = tf.concat([tensor, tensor, tensor], axis=1) # column
+tensor_concat
+
+```
+
+#### 형변환 (Type Casting)
+
+```{python}
+
+a = tf.constant([2])   # dtype: int32
+b = tf.constant([5.0]) # dtype: float32
+
+print('a dtype: ', a.dtype, '\nb dtype: ', b.dtype)
+```
+
+```{python}
+#| eval: false
+
+a + b # dtype 불일치 -> InvalidArgumentError 발생
+
+```
+
+```{python}
+
+tf.cast(a, tf.float32) + b # a의 dtype을 b의 dtype으로 변환 후 계산
+```
+
+#### 텐서 Shape 변경  
+
+```{python}
+
+x = tf.Variable([1,2,3,4,5,6,7,8])
+y = tf.reshape(x, (4,2))           # row=4, col=2
+y
+
+```
+
+#### x와 y는 서로 다른 객체
+
+```{python}
+x.assign_add([1,1,1,1,1,1,1,1])
+print(x) # 1씩 더해짐
+print(y) # 값 변화 X
+
+```
+
+#### 텐서 차원 교환
+
+`tf.transpose(a, perm=[], ...)`
+a의 차원 순서를 바꾼다.
+perm=[2, 1, 0]일 경우, a의 2번째 축을 첫번째로, 1번째 축을 두번째로, 0번째 축을 세번째로 교환하겠다는 의미
+
+```{python}
+
+a = tf.random.uniform((64, 32, 3))
+print(a.shape)
+
+b = tf.transpose(a, perm=[2, 1, 0]) # 차원 자체를 교환
+print(b.shape)
+     
+
+```
+
+#### 사칙연산
+
+element끼리 연산한다
+
+```{python}
+
+a = tf.constant([
+    [1,2],
+    [3,4]
+])
+b = tf.constant([
+    [1,2],
+    [3,4]
+])
+
+print(a + b)
+print(a - b)
+print(a * b)
+print(a / b)
+```
+
+#### 행렬 곱 (matrix multiplication)
+
+```{python}
+
+
+a = tf.constant([
+    [1,2],
+    [3,4]
+])
+b = tf.constant([
+    [1,2],
+    [3,4]
+])
+tf.matmul(a, b)
+```
+#### 평균 함수 
+
+차원을 축소하며 평균을 계산
+
+* `tf.reduce_mean(a, axis=0)` : 0차원(행)을 축소하여 평균 계산 -> 각 열에 대한 평균
+* `tf.reduce_mean(a, axis=1)` : 1차원(열)을 축소하여 평균 계산 -> 각 행에 대한 평균
+
+```{python}
+a = tf.constant([
+    [1,2,3,4],
+    [5,6,7,8]
+])
+
+print(tf.reduce_mean(a))         # a 전체 평균
+print(tf.reduce_mean(a, axis=0)) # 각 column에 대한 평균
+print(tf.reduce_mean(a, axis=1)) # 각 row에 대한 평균
+
+```
+
+#### 합계 함수
+
+차원을 축소하며 합계를 계산 (평균과 동일하게 동작)
+
+
+```{python}
+a = tf.constant([
+    [1,2,3,4],
+    [5,6,7,8]
+])
+
+print(tf.reduce_sum(a))         # a 전체 합계
+print(tf.reduce_sum(a, axis=0)) # 각 column에 대한 합계
+print(tf.reduce_sum(a, axis=1)) # 각 row에 대한 합계
+
+```
+
+
+#### 최대 함수
+
+* max() : 원소의 최댓값 반환
+* argmax() : 최댓값의 index를 반환
+
+
+```{python}
+
+a = tf.constant([
+    [1,2,3,4],
+    [5,6,7,8]
+])
+
+print(tf.reduce_max(a))         # a 전체 원소의 최댓값
+print(tf.reduce_max(a, axis=0)) # 각 column에 대한 최댓값
+print(tf.reduce_max(a, axis=1)) # 각 row에 대한 최댓값
+print(tf.argmax(a, axis=0)) # 각 column에 대한 최댓값의 index
+print(tf.argmax(a, axis=1)) # 각 row에 대한 최댓값의 index
+```
+
+* 차원 축소
+  * squeeze() : 크기가 1인 차원을 제거
+* 차원 확장
+  * expand_dims() : 크기가 1인 차원을 추가
+  * 흔히 배치(batch) 차원을 추가하기 위한 목적으로 사용됨
+  * pytorch에서는 차원 축소 시, unsqueeze() 사용
+
+
+```{python}
+
+a = tf.constant([
+    [1,2,3,4],
+    [5,6,7,8]
+])
+print('original a shape: ', a.shape)
+
+a = tf.expand_dims(a, 0) # 첫번째 축에 차원 추가
+print('add 0th dims: ', a.shape)
+
+a = tf.expand_dims(a, 3) # 세번째 축에 차원 추가
+print('add 3rd dims: ', a.shape)
+
+
+print(tf.squeeze(a).shape)         # 크기가 1인 차원을 모두 제거 
+print(tf.squeeze(a, axis=3).shape) # 세번째 차원을 제거
+
+
+tf.squeeze(a, axis=1) # 제거하려는 차원의 크기가 1이 아닐 경우 오류 발생
+```
+
+### 자동 미분과 기울기
+
+* 기울기 테이프 (Gradient Tape)
+* 중간 연산들을 테이프에 기록하고 역전파(back propagation)를 수행했을 때 기울기가 계산됨
+* TensorFlow에서는 변수가 아닌 상수에 대해 기본적으로 기울기를 측정하지 않음 (not watched). 또한 변수여도 학습 가능하지 않으면(not trainable) 자동 미분을 사용하지 않음
+
+
+```{python}
+
+
+x = tf.Variable([3.0, 4.0])
+y = tf.Variable([3.0, 4.0])
+
+# with 구문 안에서 진행되는 모든 연산들을 기록
+with tf.GradientTape() as tape:
+  z = x + y
+  loss = tf.math.reduce_mean(z)
+
+dx = tape.gradient(loss, x) # loss가 scalar이므로 계산 가능
+print(dx)
+```
+
+TensorFlow에서는 변수가 아닌 상수에 대해 기본적으로 기울기를 측정하지 않음 (not watched). 또한 변수여도 학습 가능하지 않으면(not trainable) 자동 미분을 사용하지 않음
+
+```{python}
+
+
+x = tf.linspace(-10, 10, 100) # -10 ~ 10까지 100r개의 데이터 생성
+
+with tf.GradientTape() as tape:
+  tape.watch(x) # x에 대해 기울기를 측정할거니까 기록해줘
+  y = tf.nn.sigmoid(x)
+
+dx = tape.gradient(y, x)
+print(dx)
+     
+```
+
+```{python}
+import matplotlib.pyplot as plt
+
+plt.plot(x, y, 'r', label="y")
+plt.plot(x, dx, 'b--', label="dy/dx")
+plt.legend()
+plt.show()
+```

@@ -1,5 +1,5 @@
 ---
-title: Tensor Overview
+title: Tensor Introduction
 subtitle: overview, object creation, indexing, concatenating, casting, shape, transpose, arithematic operations, matrix multiplication, mean, max, argmax, dimension manipulation, automatic differenctiation
 description: |
   Learn how to manipulate Tensor flow, one of the most commonly used Python frameworks to implement machine learning algorithms using Python. 파이썬을 이용하여 머신러닝 알고리즘을 구현하기 위해 가장 대표적으로 쓰이는 파이썬 package중 하나인 Tensor flow조작법에 대해 알아본다. 
@@ -18,27 +18,102 @@ execute:
 
 ## Tensor Flow
 
+* pytorch 이전 까지 deep learning framework로 가장 많이 사용되었다.
+* 2020년 이후로 pytorch를 더 많이 사용하지만 여전히 많은 사람들이 사용중이다.
 * 데이터 자료형으로 텐서(tensor) 객체를 사용
+* Tensorflow에서는 텐서(tensor)를 NumPy 배열처럼 사용할 수 있다.
 * GPU 사용 지원
+
+### <b>1) GPU 사용 여부 체크하기</b>
+
+* GPU를 사용하면 텐서플로우에서 딥러닝 모델을 더욱 효과적으로 학습할 수 있다.
+* 각 텐서(tensor)와 연산이 어떠한 장치에 할당되었는지 출력할 수 있다.
+
+```{python}
+import tensorflow as tf
+# placement 함수: 각 텐서와 연산이 어떠한 장치에 할당되었는지 출력하기
+tf.debugging.set_log_device_placement(True)
+
+# 텐서 생성
+a = tf.constant([
+    [1, 1],
+    [2, 2]
+])
+b = tf.constant([
+    [5, 6],
+    [7, 8]
+])
+
+c = tf.matmul(a, b)
+print(c)
+
+tf.debugging.set_log_device_placement(False)
+```
+
+```{python}
+from tensorflow.python.client import device_lib
+# 구체적으로 사용 중인 장치(device) 정보 출력
+device_lib.list_local_devices()
+```
+
+### <b>2. 텐서 소개 및 생성 방법</b>
+
+* TensorFlow에서의 텐서(tensor)는 기능적으로 넘파이(NumPy)와 매우 유사하다.
+* 기본적으로 <b>다차원 배열</b>을 처리하기에 적합한 자료구조로 이해할 수 있다.
+* TensorFlow의 텐서는 "자동 미분" 기능을 제공한다.
+* TensorFlow는 기능적으로 Pytorch와 거의 같음, 하지만 문법이 불편함
+* TensorFlow 2.0부터는 pytorch와 문법적으로 유사
 
 ### Tensor
 
 * 특징
-    * 다차원 배열
-    * NumPy ndarray 객체와 유사
+    * 기본적으로 <b>다차원 배열</b>을 처리하기에 적합한 자료구조로 이해할 수 있다
+    * TensorFlow에서의 텐서(tensor)는 기능적으로 넘파이(NumPy)의 ndarray 객체와 유사
     * 기본 python 데이터 유형을 자동 변환 (e.g., list)
+    * TensorFlow의 텐서는 "자동 미분" 기능을 제공한다.
 * 속성
     * 크기 (shape)
     * 자료형 (data type)
-    * 가속기 메모리에 상주 가능 (e.g., GPU )
+    * 저장된 장치, 가속기 메모리에 상주 가능 (e.g., GPU )
 * Numpy 배열과 tf.Tensor의 차이점
     * 텐서는 가속기 메모리(GPU, TPU)에서 사용 가능
     * 텐서는 불변성(immutable)
 
+### Tensor 초기화
+
+```{python}
+# 기본적인 모양(shape), 자료형(data type) 출력
+
+data = [
+    [1, 2],
+    [3, 4]
+]
+x = tf.constant(data) # list -> tensor object로 변환
+print(x)
+print(tf.rank(x)) # 축(axis)의 개수 출력 = 차원의 개수 출력
+
+data = tf.constant("String")
+print(data)
+
+# NumPy 배열에서 텐서를 초기화할 수 있다.
+
+a = tf.constant([5])
+b = tf.constant([7])
+
+c = (a + b).numpy()
+print(c)
+print(type(c))
+
+result = c * 10
+tensor = tf.convert_to_tensor(result)
+print(tensor)
+print(type(tensor))
+```
+
 ### 텐서(tensor) 객체 생성 (기본 python 데이터 유형)
 
 ```{python}
-import tensorflow as tf
+
 import numpy as np
 
 print(tf.math.add(1, 2))

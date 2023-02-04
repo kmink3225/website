@@ -1,7 +1,7 @@
 ---
 title: "Data Preparation"
 subtitle: "Simulation"
-description: ""
+description: "I could not share real data due to security issues, so I made simulation data to show a rough analysis methodology used for this projects. Therefore, this simulation data simply reflects generally known facts and the ones published on wikipedia, but does not reflect the distribution of sample data that was actually used, so the information derived from this data may differ from generally known biological or biomedical facts. \n 보안 문제로 real data를 공유하진 못하여 대략적인 분석 방법론을 보여주기위해 시뮬래이션 데이터를 만들었습니다. 따라서, 이 시뮬래이션 데이터는 일반적으로 알려진 사실과 wikipedia에 공개된 사실을 간단히 반영했지만 실제로 사용됐던 sample data의 분포를 반영하지 않았기 때문에 이 데이터에서 나온 정보는 일반적으로 알려진 생물학적 그리고 의학적 사실과 다를 수 있습니다. "
 author: Kwangmin Kim
 date: 2022-12-20
 #image: images/high_dimensions.jpg
@@ -14,62 +14,82 @@ format:
     page-layout: full
 execute:
   warning: false
+  message: false
 ---
 
-### Simulation Diagram
+## Simulation Flowchart
 
 ```{mermaid}
 %%| fig-width: 7.5
 flowchart TB
     subgraph Simulation
         direction TB
-        subgraph assign_frequency
-        direction LR
-        Assign_probabilities     
-        end
-        subgraph generate_multivariate_normal_distribution
-            direction TB
-            determine_sample_size ---
-            determine_number_of_columns---
-            create_covariate_correlation_matrix---
-            apply_noise_to_the_covariance_matrix
-        end
-        subgraph create_weight_matrix
+        subgraph Assign_Setting_Values
             direction LR
-            apply_some_noise_to_the_covariance_matrix
+            Assign_Sample_Size---
+            Assign_Dimension_Size---
+            Assign_Covariance_Correlation---
+            Assign_Several_Proportions---
+            Assign_Noise_Intensity
         end
-        subgraph calculate_score_matrix
+        subgraph Generate_Metabolite_Variables
             direction LR
-            matrix_multiplication_covariance_matrix_weight_matrix---
-            used_logistic_function
+            Generate_Covariance_Matrix---
+            Apply_Noise_to_Covariance---
+            Generate_Weights_Matrix---
+            Use_MVN_Distribution---
+            Generate_Metabolite_Data
         end
-        subgraph create_response_variable
+        subgraph Generate_Outcome_Variable
             direction LR
-            result_of_logistic_function
+            Calculate_Score_Matrix---
+            Use_Logit_Link---
+            Calculate_Outcome_Probabilities---
+            Use_Binomial_Distribution1---
+            Generate_Binary_Outcome_Data
         end
-        subgraph creation_some_discrete_variables
+        subgraph Generate_Sex_Variable
+            direction LR
+            Use_Binomial_Distribution2---
+            Generate_Sex_Data
+        end
+        subgraph Generate_Age_Variable
+            direction LR
+            Search_the_Strongest_Metabolite---
+            Rescale_It_to_Age---
+            Generate_Age_Data
+        end
+        subgraph Generate_Genotype_Variable
             direction LR       
+            Calculate_Marginal_Proportions---
+            Calcualte_Joint_Proportions---
+            Generate_Genotype_data
         end
-        subgraph join
+        subgraph Merge_All_Data
             direction LR
-            all_the_matrix_and_vector_created       
+            Outcome_Variable---
+            Sex_Variable---
+            Age_Variable---
+            Genotype_Variable---
+            Metabolite_Data
         end
-        assign_frequency-->generate_multivariate_normal_distribution-->create_weight_matrix-->
-        calculate_score_matrix-->create_response_variable-->creation_some_discrete_variables-->
-        join
+        Assign_Setting_Values-->Generate_Metabolite_Variables-->Generate_Outcome_Variable-->
+        Generate_Sex_Variable-->Generate_Age_Variable-->Generate_Genotype_Variable-->
+        Merge_All_Data
     end
-    subgraph data_analytics
+    subgraph Data_Analytics
         direction LR
         exploratory_data_analysis---
         statistical_analysis---
         machine_learning
     end
-    subgraph conclusion
+    subgraph Conclusion
         direction LR
     end
-    Simulation-->data_analytics-->conclusion
+    Simulation-->Data_Analytics-->Conclusion
 ```
 
+* MVN: Multivariate Normal Distirubtion
 
 <ul class="nav nav-pills" id="language-tab" role="tablist">
 
@@ -97,13 +117,45 @@ English
 
 ::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
 
-## 준비중
+대략적인 분석 방법론을 간단히 보여주기 위해 Simulation을 수행했다. Simulation 경험은 많지 않아 Simulation의 질이 낮을 수 있고 통계적으로 수학적으로 말이 안되는 부분이 있을 수 있다. 이해를 돕기위해 Simulation 순서도를 간략히 설명하자면 크게 7 단계로 Simulation을 수행했다. 
 
-please, read the English section first. 
+#### 설정값 생성
 
-:::
+**Data Set Size Setting**  
 
-::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
+Simulation에 필요한 몇 가지 설정값들을 Global Variables로 설정하여 후차적으로 작성된 스크립트에서 호출이 자유롭도록 작성했다. 
+
+**Categorial Data Setting**
+
+먼저, 고차원 데이터의 차원을 설정하기 위해 Sample Size와 변수의 수를 설정한 후 Categorical Data를 만들기 위해 잘 알려진 분포, 내가 정한 분포, 혹은 임의로 발생하게 만든 분포를 설정하였다.
+
+**Metabolite Data Setting**
+
+고차원의 metabolite data를 만드는 설정으로, 고차원이면서 그룹내 서로 상관 관계가 있는 변수들을 생성하기 위해 난수에 의해 발생되는 임의의 Covariance를 생성하여 MVN (Multivariate Normal Distribution)에 반영되게 했고 각 그룹의 반응 변수로의 영향(또는 가중치)도 또한 난수로 임의적으로 발생되게 설정했다. 이때, 난수에 의해 임의적으로 발생하는 수치는 내가 임의적으로 범위를 한정했다.
+
+**Outcome Variable Setting**
+
+MVN에 의해 만들어진 Data와 미리 만들어 놓은 가중치 Matrix의 곱을 통해 Score Matrix를 만들고 Logit Link를 이용하여 각 Sample의 확률값을 만들었다. 각 Sample의 확률값을 기반으로 $X ~\text{Bernoulli}(p)$, (여기서 $p$는 각 sample이 갖는 확률값 뜻한다), 을 통해 disease status의 정보를 담은 binary outcome variable를 만들었다. 
+
+**Sex Variable Setting**
+
+Sex 변수는 $X ~\text{Bernoulli}(0.5)$ 을 통해 data를 생성했다.
+
+**Age Variable Setting**
+
+Age 변수는 생물학적, 의학적으로 치매와 연관성이 높은 요인으로 Outcome 변수로 가장 설명이 잘되는 metabolite를 탐색해 선별하여 Age 형태로 변환을 했다. 제일 어린 사람을 65세 그리고 제일 연장자를 105세로 설정하여 min max normalization을 적용했다.
+
+**Genotype Variable Setting**
+
+Genotype 변수의 data는 아직도 어떻게 통계적으로 생성해야하는지 감을 못잡은 상태이기 때문에 더 연구가 필요하다. 하지만, 질병에 대한 유전적 영향도는 반영해야하기 때문에 outcome variable과 이미 잘 알려진 genotype의 분포를 반영하려고 노력했다. 두 변수에 연관성을 갖게하기 위해 각 변수의 proportion을 marginal distirubtion으로 설정하여 두 변수의 joint proportion을 계산하여 Genotype data를 생성했다. 
+
+**Merge All Data**
+
+Simulation을 통해 만들어진 각 변수들을 index를 만들어 병합시켜 data frame의 형태로 만들었다.
+
+**Analytics & Conclusion**
+
+분석 부분은 이 data preparation section에서는 자세히 기술하지 않고 EDA, Statistical Approach 및 ML Approach Section에서 자세히 다룰예정이다. 간략히 말하면, outcome 변수와 통계적으로 유의한 관계를 갖는 metabolite를 선별하고 그 결과가 machine learning을 이용하여 얻은 결과와 얼마나 같은지 비교 분석을 하여 Outcome variable에 가장 연관성이 있는 변수들을 규명하는 방법을 기술할 예정이다.
 
 ```{r}
 #| echo: false
@@ -123,10 +175,6 @@ if(grepl('kkm',getwd())){
 
 ### Package Loading and Option Settings
 ```{r}
-#| message: false
-#| code-fold: true
-#| warning: false
-
 library(tidyverse)
 library(tidymodels)
 library(glmnet)
@@ -136,11 +184,8 @@ set.seed(20230121) # the date writing this
 knitr::opts_chunk$set(message=FALSE,warning=FALSE)
 ```
 
-### Variables
+### Global Variables
 ```{r}
-#| message: false
-#| code-fold: true
-#| warning: false
 
 # the number of samples
 sample_size <- 1000
@@ -182,11 +227,9 @@ group_meta_data[which.min(group_meta_data[,"group_n"]),"group_effect"]<-0.7
 ### set a group effect as -0.5 into a group with the second smallest group number 
 group_meta_data[group_meta_data[,"group_n"]==(sort(group_meta_data[,"group_n"])[2]),"group_effect"]<-(-0.5)
 
-
-
 # initialize a data matrix to assign simulated values
 ## add some noise to data
-data<-matrix(rnorm(sample_size*predictor_size,mean=0,sd=0.01), 
+data<-matrix(rnorm(sample_size*predictor_size,mean=0,sd=0.05), 
              nrow = sample_size, ncol = predictor_size)
 
 # initialize a covariance matrix to assign simulated values
@@ -203,33 +246,19 @@ answer_list<-list(
     'negatively associated predictors'=negatively_associated_predictors,
     'group proportion list'=group_proportion_list,
     'group meta data'=group_meta_data,
-    'data noise intensity'=c('distribution'='rnorm','mean'=0,'sd'=0.01),
+    'data noise intensity'=c('distribution'='rnorm','mean'=0,'sd'=0.05),
     'covariance noise intensity'=c('distribution'='rnorm','mean'=0,'sd'=0.05),
     'effect noise intensity on response'=c('distribution'='rnorm','mean'=0,'sd'=0.05),
-    'link function' = 'logistic function',
-    'link function noise intensity' = c('distribution'='rnorm','mean'=0.2,'sd'=0.05),
+    'link function between the response and predictors' = 'canonical logit link function',
+    'link function noise intensity' = c('distribution'='rnorm','mean'=0,'sd'=0.05),
     'age_distirbution'='used data of a variable with the highest effect on outcome',
     'sex_distribution'='rbinom(n=sample size,p=0.5)',
-    'genotype_distirbution'=list(
-        'e2/e2'='8%, the bottom 8 % of the percentiles of the outcome probabilities with noises',
-        'e2/e3'='15%, the bottom 23 % of the percentiles of the outcome probabilities with noises',
-        'e2/e4'='8.6%, the bottom 31.6 % of the percentiles of the outcome probabilities with noises',
-        'e3/e3'='30%, the bottom 61.6 % of the percentiles of the outcome probabilities with noises',
-        'e3/e4'='25%, the bottom 86.6 % of the percentiles of the outcome probabilities with noises',
-        'e4/e4'='13.4%, above the bottom 86.6 % of the percentiles of the outcome probabilities with noises'),
-    'treatment_distirbution'=list(
-        'control' = '70%, the bottom 70 % of the percentiles of the outcome probabilities with noises',
-        'treatment1'='15%, the bottom 85 % of the percentiles of the outcome probabilities with noises',
-        'treatment2'='10%, bottom 95 % of the percentiles of the outcome probabilities with noises',
-        'treatment3'='5%, above the bottom 8 % of the percentiles of the outcome probabilities with noises'
-    ))
+    'genotype_distirbution'=c('e2' = '8.4%','e3' = '77.9%','e4' = '13.7%'))
 ```
 
 ### Functions
 
 ```{r}
-#| eval: false
-
 ## Function List
 
 scale_function=function(vector=x,min=a,max=b,method="customized"){
@@ -243,14 +272,70 @@ scale_function=function(vector=x,min=a,max=b,method="customized"){
   return(result)
 }
 
-genotype_data_generator=function(temp_data,fun=scale_function,start_quantile,end_quantile){
-    temp=temp_data%>%
-    pull%>%
-    fun(vector=.,min=0,max=1,method="customized")
-    return(ifelse(temp>temp%>%quantile(.,probs=start_quantile)&temp<temp%>%quantile(.,probs=end_quantile),1,0))
+age_data_generator=function(in_data,in_response,fun=scale_function){
+    # this function generates a age (continuous) data that are statistically associated with a simulated variable as designed above.
+
+    ## conduct t test with the response and each variable generated by multivariate normal distributions.
+    ## search a variable with the largest difference in mean between the two groups or with the lowest p value
+    ## In this case, I will pick the former one. 
+    ## (I don't care about the multiple testing problems for now)
+    temp_df=as.data.frame(matrix(ncol=5)) # initialize an empty data frame
+    for(i in 1:ncol(in_data)){
+        temp_df[i,]=c(
+            names(in_data)[i],
+            t.test(in_data[,i]~in_response)$estimate[1],
+            t.test(in_data[,i]~in_response)$estimate[2],
+            t.test(in_data[,i]~in_response)$estimate[2]-t.test(data[,i]~response)$estimate[1],
+            t.test(in_data[,i]~in_response)$p.value)
+    }
+    names(temp_df)<-c('metabolite','mean_neg','mean_pos','mean_diff','p.value')
+
+    ## search a variable with the largest difference in mean
+    strong_metabolite<-
+        temp_df%>%
+        mutate(
+            mean_neg=as.numeric(mean_neg),
+            mean_pos=as.numeric(mean_pos),
+            mean_diff=as.numeric(mean_diff),
+            p.value=as.numeric(p.value),
+            abs_mean_diff=abs(mean_diff))%>%
+        filter(abs_mean_diff==max(abs_mean_diff))%>%
+        dplyr::select(metabolite)%>%pull
+    
+    ## generate age data with min max normalization
+    age_data<-
+        data%>%
+        dplyr::select(strong_metabolite)%>%
+        scale_function(vector=.,min=65,max=105,method="customized")%>%
+        rename(age=1)%>%round(0)
+    return(age_data)
 }
 
 
+genotype_data_generator=function(in_response=response,fun=scale_function){
+    # this function generates a genotype (categorical) data that are jointly and statistically associated with a continuous data and a binary data (I am not so sure if I can generate data that are statistically associated with some fake metabolite data. But, I will give it a try).
+
+    ## Declare the marginal proportions 
+    ## for binary (affected vs unaffected) and a genotype (categorical) data, respectively
+    binary_proportion<-as.numeric(table(in_response)/sample_size) #the simulated proportion for the disease vs non-disease cases
+    genotype_proportion<-c(0.084,0.779,0.137) # the known proportion of APOE genotypes from Wiki
+
+    ## Declare the joint proportion predictor matrix
+    joint_proportion<-matrix(
+        c(binary_proportion[1]*genotype_proportion, # for the unaffected cases
+        binary_proportion[2]*genotype_proportion),  # for the affected cases
+        ncol=2, byrow=FALSE)
+
+    # Generate the genotype (catogrical) data
+    genotype_data = numeric(sample_size) # initialize a vector 
+    for (i in 1:sample_size) {
+        genotype_data[i] = sample(
+            c('e2','e3','e4'),
+             1, 
+             prob=joint_proportion[,ifelse(grepl('neg',in_response[i]),1,2)])
+    }    
+    return(genotype_data)
+}
 ```
 
 
@@ -258,9 +343,6 @@ genotype_data_generator=function(temp_data,fun=scale_function,start_quantile,end
 
 ```{r}
 #| eval: false
-#| message: false
-#| code-fold: true
-#| warning: false
 
 # generate simulation data using multivariate normal distribution
 for (i in 1:nrow(group_meta_data)) {
@@ -290,131 +372,405 @@ score=as.matrix(data)%*%beta_coefficients # score of each sample
 
 # logistic function to get a probability, intercept = 0, 
 ## set probabilities-0.2 to apply noise and negative probabilities into 0
-probabilities <- ((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05))%>%
-ifelse(.>1,1,.)%>%ifelse(.<0,0,.)
+probabilities <- 
+    ((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05))%>%
+    ifelse(.>1,1,.)%>%
+    ifelse(.<0,0,.)
 
-response <-ifelse(rbinom(sample_size, 1, probabilities)==0,'negative','positive')%>%
-factor(.,levels=c('negative','positive'))
+response <-
+    ifelse(rbinom(sample_size, 1, probabilities)==0,'negative','positive')%>%
+    factor(.,levels=c('negative','positive'))
 
-# sex distribution
-sex_distribution=rbinom(sample_size,1,0.5)
+# simulate sex data
+sex_data <- rbinom(sample_size,1,0.5)
 
-# age distribution
-## use data of a variable with the the lowest p.value of the t test result on response
-## find a variable with the largest difference of the means between the response groups
-temp_df=as.data.frame(matrix(ncol=5))
-for(i in 1:ncol(data)){
-    temp_df[i,]=c(names(data)[i],
-    t.test(data[,i]~response)$estimate[1],
-    t.test(data[,i]~response)$estimate[2],
-    t.test(data[,i]~response)$estimate[2]-t.test(data[,i]~response)$estimate[1],
-    t.test(data[,i]~response)$p.value)
-}
-names(temp_df)<-c('metabolite','mean_neg','mean_pos','mean_diff','p.value')
+# simulate age data
+age_data <- age_data_generator(in_data=data,in_response=response)
 
-strong_metabolite=temp_df%>%
-    mutate(
-        mean_neg=as.numeric(mean_neg),
-        mean_pos=as.numeric(mean_pos),
-        mean_diff=as.numeric(mean_diff),
-        p.value=as.numeric(p.value),
-        abs_mean_diff=abs(mean_diff))%>%
-        filter(abs_mean_diff==max(abs_mean_diff))%>%
-    dplyr::select(metabolite)%>%
-    pull
+# simulate genotype data
+genotype_data <- genotype_data_generator(in_response=response)
 
-age_distribution=data%>%
-dplyr::select(strong_metabolite)%>%
-scale_function(vector=.,min=65,max=105,method="customized")%>%round(0)
-
-
-
-ttt=cbind(response,age_distribution,data[,strong_metabolite])%>%
-as.data.frame()%>%
-rename(age=2,group3_153=3)
-head(ttt)
-ttt%>%group_by(response)%>%summarise(mean(group3_153))%>%knitr::kable()
-
-ggplot(data=ttt,aes(x=group3_153,color=response))+geom_histogram(fill='white',position="identity")+
-
-str(ttt)
-
-# genotype distribution
-
-genotype_quantile_data<-quantile(data[,strong_metabolite],
-#probs=cumsum(c(0.08,0.15,0.086,0.30,0.25)))
-probs=cumsum(c(0.25,0.3,0.086,0.15,0.08)))
-
-genotype_distribution<-data.frame(
-    metabolite=data[,strong_metabolite])%>%
-    mutate(
-        genotype=ifelse(metabolite<genotype_quantile_data[1],'e4e4',
-        ifelse(metabolite<genotype_quantile_data[2],'e3e4',
-        ifelse(metabolite<genotype_quantile_data[3],'e3e3',
-        ifelse(metabolite<genotype_quantile_data[4],'e2e3',
-        ifelse(metabolite<genotype_quantile_data[5],'e2e4','e4e4'))))))
-
-genotype_distribution%>%group_by(genotype)%>%summarise(n=n())
-ggplot(data=genotype_distribution,aes(x=metabolite,fill=genotype))+geom_histogram(position="identity")
-
-treatment_quantile_data<-quantile((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05),
-probs=cumsum(c(0.7,0.15,0.1)))
-
-treatment_distribution<-data.frame(
-    probability=((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05)))%>%
-    mutate(
-        treatment=ifelse(probability<treatment_quantile_data[1],'control',
-        ifelse(probability<treatment_quantile_data[2],'trtmnt1',
-        ifelse(probability<treatment_quantile_data[3],'trtmnt2','trtmnt3'))))
-
+# merge the univariables
 phenotype_data<-
     data.frame(
         id=1:sample_size,
         outcome=response,
-        probabilities=probabilities,
-        age=age_distribution,
-        sex=sex_distribution,
-        genotype=genotype_distribution[,'genotype'],
-        treatment=treatment_distribution[,'treatment'])%>%
-        mutate(
-            age=ifelse(outcome=="positive")
-            )
+        age=age_data,
+        sex=sex_data,
+        genotype=genotype_data)
 
-all_data=inner_join(phenotype_data,data%>%mutate(id=1:n()),by="id")
+all_data=inner_join(
+    phenotype_data,
+    data%>%mutate(id=1:n()),
+    by="id")
 
-#write_rds(all_data,"./docs/projects/data/llfs_simulated_data.rds")
+#write_rds(all_data,"./docs/data/llfs_simulated_data.rds")
 ```
 
 ### Load Data
 
 ```{r}
-#| code-fold: true
-#| message: false
-#| warning: false
+# load simulation data
+simulated_data<-read_rds(datapath)
 
-
-simulated_data=read_rds(datapath)%>%dplyr::select(-1,-probabilities)
-
-all_data=simulated_data
-
-all_data=all_data%>%
-mutate(
-      outcome=ifelse(outcome==0,"negative","positive"),
+# simple data pre-processing
+all_data<-
+    simulated_data%>%
+    mutate(
       outcome=factor(outcome,levels=c("negative","positive")),
       sex=ifelse(sex==0,"man","woman"),
       sex=factor(sex,levels=c("man","woman")),
-      treatment=factor(treatment,levels=c("control","trtmnt1","trtmnt2","trtmnt3")),
-      genotype=factor(genotype,levels=c("e3e3","e2e2","e2e3","e2e4","e3e4","e4e4"))
+      genotype=factor(genotype,levels=c("e3","e2","e4"))
       )
- names(all_data)[6:ncol(all_data)]<-paste0("meta",1:predictor_size)
+
+# rename metabolite variables
+names(all_data)[6:ncol(all_data)]<-paste0("meta",1:predictor_size)
  
 
- 
+
 ```
 
 
+## Data Description
+
+This data include `r dim(all_data)[1]` samples and `r dim(all_data)[2]` variables:
+
+* `r names(all_data)[1]`: sample ID.
+* `r names(all_data)[2]`: a disease status (`r unique(all_data[,"outcome"])`), `r unique(all_data[,"outcome"])[1]` is an affected status, `r unique(all_data[,"outcome"])[2]` is an unaffected status, and the reference group is `r unique(all_data[,"outcome"])[1]`.
+* `r names(all_data)[3]`: age
+* `r names(all_data)[4]`: sex (`r unique(all_data[,"sex"])`) and the reference group is `r unique(all_data[,"sex"])[1]`.
+* `r names(all_data)[5]`: APOE genotypes
+    * the apolipoprotein $\epsilon$ (APOE) is a protein produced in the metabolic pathway of fats in mammals, a genotype of which seems to be related to Alzheimer's disease (AD). APOE is polymorphic and has three major alleles, $\epsilon 2$ (e2), $\epsilon 3$(e3), and $\epsilon 4$ (e4). The statistics of the polymorphism are 8.4% for e2, 77.9% for e3, and 13.7% for e4 in worldwide allel frequency, respectively. It is known that the e2, e3, and e4 allels are associated with the protective factor, the neutral one, and the risk one with regard to AD. However, this finding has not been replicated in a large population. Therefore, it is known that we do not know their true associations with AD in the true population. [(from Wiki)](https://en.wikipedia.org/wiki/Apolipoprotein_E)
+        * There are 6 combinations of the genotypes:
+            * e2/e2
+            * e2/e3
+            * e2/e4
+            * e3/e3 
+            * e3/e4
+            * e4/e4
+        * In this study, I generated the 3 major alleles, `r  unique(all_data[,'genotype'])`
+* `r names(all_data)[6]` \~ `r names(all_data)[ncol(all_data)]`: a list of metabolites that were blood-sampled from the APOE carriers.
+
+:::
+
+::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
+
+Simulations were performed to outline the approximate analysis methodology. The quality of the simulation may be low due to lack of my simulation experience, and there may be statistically or mathematically incorrect parts. For your better understanding, I will briefly describe the simulation flow diagram. The simulation was conducted in 9 steps.
+
+#### Settings for Simulation
+
+**Data Set Size Setting**  
+
+Some of the setting values ​​required for simulation are set as global variables so that they can be freely recalled in later scripts. 
+
+**Categorial Data Setting**
+
+I first set the dimensions of my high-dimensional data by setting the sample size and number of variables, then I created categorical data by choosing a well-known distribution, a distribution I determined, or a distribution that occurred randomly. set.
+
+**Metabolite Data Setting**
+
+As a setting for generating high-dimensional metabolomic data, random covariance matrix generated by random numbers is generated to create high-dimensional and mutually correlated variables within a group, which is uase as input in the MVN (Multivariate Normal Distribution) function, and for each group, the variable's influence (or weight) toward the outcome variable is also set to be randomly generated with a random number. At this time, the range of numbers randomly generated by random numbers was arbitrarily limited by myself.
+
+**Outcome Variable Setting**
+
+A score matrix was created through the matrix multiplication of the data created by MVN and a pre-made weight matrix with the probability values of samples that were created using Logit Link. Based on the probability value of each sample, a binary outcome variable representing disease status information was created through $X ~\text{Bernoulli}(p)$, (where $p$ means the probability value of each sample).
+
+**Sex Variable Setting**
+
+The data of the sex variable were generated through $X ~\text{Bernoulli}(0.5)$.
+
+**Age Variable Setting**
+
+Since the Age variable is a important factor related to dementia biologically and medically, the metabolite best explained as an Outcome variable was selected and converted into an age using min max normalization by setting the youngest to 65 and the oldest to 105.
+
+**Genotype Variable Setting**
+
+Personally, I have not yet figured out how to generate data for genotype variables statistically, so further research is needed. However, since the genetic influence on the disease should be reflected, I tried to reflect the distribution of outcome variables and well-known distribution of the genotypes, APOE. To make an association between the two variables, the proportions of each variable were set as marginal distirubtion and the joint distribution of the two variables was calculated to generate genotype data.
+
+**Merge All Data**
+
+Each variable created through simulation was merged into a data frame.
+
+**Analytics & Conclusion**
+
+The analysis part will not be discussed in detail in this data preparation section, but will be covered in detail in the EDA, Statistical Approaches and ML Approaches section. Briefly, I describe a method to identify the variables most associated with the outcome variable by selecting metabolites that have a statistically significant relationship with the outcome variable and comparing how similar the results are to those obtained through machine learning.
+
 
 ```{r}
+#| echo: false
+
+rm(list=ls())
+
+if(grepl('kkm',getwd())){
+    datapath="C:/Users/kkm/Desktop/projects/website/docs/data/llfs_simulated_data.rds"
+}else{
+    datapath="C:/Users/kmkim/Desktop/projects/website/docs/data/llfs_simulated_data.rds"
+}
+
+```
+
+
+## Simulation
+
+### Package Loading and Option Settings
+```{r}
+library(tidyverse)
+library(tidymodels)
+library(glmnet)
+library(MASS)
+library(mixOmics)
+set.seed(20230121) # the date writing this
+knitr::opts_chunk$set(message=FALSE,warning=FALSE)
+```
+
+### Global Variables
+```{r}
+
+# the number of samples
+sample_size <- 1000
+# the number of predictors
+predictor_size <- 5000
+# the number of groups
+group_size <- sample(6:10,1) # at least more than 6, the number of the genotypes
+# the number of predictors truly associated with a response variable
+significant_predictors <- floor(predictor_size*sample((50:100)/1000,1)) 
+
+## set the predictors associated with an outcome
+### the number of predictors positively associated with an outcome
+### the number of predictors negatively associated with an outcome
+positively_associated_predictors<-floor(significant_predictors*0.4) 
+negatively_associated_predictors<-significant_predictors-positively_associated_predictors 
+
+## set the proportion of the groups in which the predictors are correlated with one another
+### randomly sampling proportions to become their sum equal to 1
+group_proportion_list<-sample(seq(1,1+2*(100-group_size)/group_size,
+                            by=2*(100-group_size)/(group_size*(group_size-1)))/100,
+                        group_size,replace=FALSE)%>%round(3) 
+names(group_proportion_list)<-paste0("group",1:length(group_proportion_list))
+### initialize a matrix with a size as sample_size by predictor_size
+predictor_matrix <- matrix(0, ncol = predictor_size, nrow = sample_size)
+### initialize a data frame and assign meta information used to generate simulated data
+group_meta_data<-
+    data.frame(
+        group_name=c(names(group_proportion_list)),
+        proportion=group_proportion_list)%>%
+        mutate(
+            group_n=(predictor_size*group_proportion_list)%>%round(0), # the number of predictors within each group 
+            first_index=c(1,cumsum(group_n[-length(group_proportion_list)])+1), # the 1st index of predictors in each group
+            last_index=cumsum(group_n), # the last index of predictors in each group
+            group_correlation=sample((0:700)/1000,length(group_proportion_list),replace=TRUE), # within-group correlations among the within-group predictors
+            group_effect=sample((-40:30)/100,length(group_proportion_list),replace=TRUE)) # effect of each group on an outcome variable
+### set a group effect as 0.7 into a group with the smallest group number 
+group_meta_data[which.min(group_meta_data[,"group_n"]),"group_effect"]<-0.7
+
+### set a group effect as -0.5 into a group with the second smallest group number 
+group_meta_data[group_meta_data[,"group_n"]==(sort(group_meta_data[,"group_n"])[2]),"group_effect"]<-(-0.5)
+
+# initialize a data matrix to assign simulated values
+## add some noise to data
+data<-matrix(rnorm(sample_size*predictor_size,mean=0,sd=0.05), 
+             nrow = sample_size, ncol = predictor_size)
+
+# initialize a covariance matrix to assign simulated values
+covariance_matrix<-matrix(rnorm(predictor_size*predictor_size,mean=0,sd=0.05),
+                          nrow=predictor_size, ncol=predictor_size)
+beta_coefficients <- rnorm(predictor_size,0,0.05)
+
+answer_list<-list(
+    'sample size'=sample_size,
+    'predictor size'=predictor_size,
+    'group size'=group_size,
+    'significant predictors'=significant_predictors,
+    'positively associated predictors'=positively_associated_predictors,
+    'negatively associated predictors'=negatively_associated_predictors,
+    'group proportion list'=group_proportion_list,
+    'group meta data'=group_meta_data,
+    'data noise intensity'=c('distribution'='rnorm','mean'=0,'sd'=0.05),
+    'covariance noise intensity'=c('distribution'='rnorm','mean'=0,'sd'=0.05),
+    'effect noise intensity on response'=c('distribution'='rnorm','mean'=0,'sd'=0.05),
+    'link function between the response and predictors' = 'canonical logit link function',
+    'link function noise intensity' = c('distribution'='rnorm','mean'=0,'sd'=0.05),
+    'age_distirbution'='used data of a variable with the highest effect on outcome',
+    'sex_distribution'='rbinom(n=sample size,p=0.5)',
+    'genotype_distirbution'=c('e2' = '8.4%','e3' = '77.9%','e4' = '13.7%'))
+```
+
+### Functions
+
+```{r}
+## Function List
+
+scale_function=function(vector=x,min=a,max=b,method="customized"){
+    if(method=="min-max"){
+        result=(vector-min(vector))(max(vector)-min(vector))
+    }else if(method=="customized"){
+        result=(max-min)*(vector-min(vector))/(max(vector)-min(vector))+min
+    }else{
+        result=(vector-mean(vector))/sd(vector)
+    }
+  return(result)
+}
+
+age_data_generator=function(in_data,in_response,fun=scale_function){
+    # this function generates a age (continuous) data that are statistically associated with a simulated variable as designed above.
+
+    ## conduct t test with the response and each variable generated by multivariate normal distributions.
+    ## search a variable with the largest difference in mean between the two groups or with the lowest p value
+    ## In this case, I will pick the former one. 
+    ## (I don't care about the multiple testing problems for now)
+    temp_df=as.data.frame(matrix(ncol=5)) # initialize an empty data frame
+    for(i in 1:ncol(in_data)){
+        temp_df[i,]=c(
+            names(in_data)[i],
+            t.test(in_data[,i]~in_response)$estimate[1],
+            t.test(in_data[,i]~in_response)$estimate[2],
+            t.test(in_data[,i]~in_response)$estimate[2]-t.test(data[,i]~response)$estimate[1],
+            t.test(in_data[,i]~in_response)$p.value)
+    }
+    names(temp_df)<-c('metabolite','mean_neg','mean_pos','mean_diff','p.value')
+
+    ## search a variable with the largest difference in mean
+    strong_metabolite<-
+        temp_df%>%
+        mutate(
+            mean_neg=as.numeric(mean_neg),
+            mean_pos=as.numeric(mean_pos),
+            mean_diff=as.numeric(mean_diff),
+            p.value=as.numeric(p.value),
+            abs_mean_diff=abs(mean_diff))%>%
+        filter(abs_mean_diff==max(abs_mean_diff))%>%
+        dplyr::select(metabolite)%>%pull
+    
+    ## generate age data with min max normalization
+    age_data<-
+        data%>%
+        dplyr::select(strong_metabolite)%>%
+        scale_function(vector=.,min=65,max=105,method="customized")%>%
+        rename(age=1)%>%round(0)
+    return(age_data)
+}
+
+
+genotype_data_generator=function(in_response=response,fun=scale_function){
+    # this function generates a genotype (categorical) data that are jointly and statistically associated with a continuous data and a binary data (I am not so sure if I can generate data that are statistically associated with some fake metabolite data. But, I will give it a try).
+
+    ## Declare the marginal proportions 
+    ## for binary (affected vs unaffected) and a genotype (categorical) data, respectively
+    binary_proportion<-as.numeric(table(in_response)/sample_size) #the simulated proportion for the disease vs non-disease cases
+    genotype_proportion<-c(0.084,0.779,0.137) # the known proportion of APOE genotypes from Wiki
+
+    ## Declare the joint proportion predictor matrix
+    joint_proportion<-matrix(
+        c(binary_proportion[1]*genotype_proportion, # for the unaffected cases
+        binary_proportion[2]*genotype_proportion),  # for the affected cases
+        ncol=2, byrow=FALSE)
+
+    # Generate the genotype (catogrical) data
+    genotype_data = numeric(sample_size) # initialize a vector 
+    for (i in 1:sample_size) {
+        genotype_data[i] = sample(
+            c('e2','e3','e4'),
+             1, 
+             prob=joint_proportion[,ifelse(grepl('neg',in_response[i]),1,2)])
+    }    
+    return(genotype_data)
+}
+```
+
+
+### Simulation Algorithm
+
+```{r}
+#| eval: false
+
+# generate simulation data using multivariate normal distribution
+for (i in 1:nrow(group_meta_data)) {
+    
+    group_range <- group_meta_data[i, "first_index"]:group_meta_data[i, "last_index"]
+    for (j in group_range){
+        for(k in group_range){
+        covariance_matrix[j, k] <- group_meta_data[i, "group_correlation"]
+        }
+    }
+    #covariance_matrix[group_range, group_range]+group_meta_data[i, "group_correlation"]    
+    diag(covariance_matrix) <- 1
+    data[, group_range] <- 
+        mvrnorm(n = sample_size, 
+                mu = rep(0,group_meta_data[i,"group_n"]),
+                Sigma = covariance_matrix[group_range, group_range])
+    data=as.data.frame(data)
+    beta_coefficients[group_meta_data[i, "first_index"]:group_meta_data[i, "last_index"]] <-
+        beta_coefficients[group_meta_data[i, "first_index"]:group_meta_data[i, "last_index"]]+
+        group_meta_data[i,"group_effect"]
+    predictor_names<-paste0(group_meta_data[i,"group_name"],"_",1:group_meta_data[i,"group_n"])
+    names(beta_coefficients)[group_meta_data[i, "first_index"]:group_meta_data[i, "last_index"]] <- predictor_names
+    names(data)[group_meta_data[i, "first_index"]:group_meta_data[i, "last_index"]]<-predictor_names
+        
+}
+score=as.matrix(data)%*%beta_coefficients # score of each sample
+
+# logistic function to get a probability, intercept = 0, 
+## set probabilities-0.2 to apply noise and negative probabilities into 0
+probabilities <- 
+    ((1/(1+exp(-(0+score))))-rnorm(sample_size,m=0.2,sd=0.05))%>%
+    ifelse(.>1,1,.)%>%
+    ifelse(.<0,0,.)
+
+response <-
+    ifelse(rbinom(sample_size, 1, probabilities)==0,'negative','positive')%>%
+    factor(.,levels=c('negative','positive'))
+
+# simulate sex data
+sex_data <- rbinom(sample_size,1,0.5)
+
+# simulate age data
+age_data <- age_data_generator(in_data=data,in_response=response)
+
+# simulate genotype data
+genotype_data <- genotype_data_generator(in_response=response)
+
+# merge the univariables
+phenotype_data<-
+    data.frame(
+        id=1:sample_size,
+        outcome=response,
+        age=age_data,
+        sex=sex_data,
+        genotype=genotype_data)
+
+all_data=inner_join(
+    phenotype_data,
+    data%>%mutate(id=1:n()),
+    by="id")
+
+#write_rds(all_data,"./docs/data/llfs_simulated_data.rds")
+```
+
+### Load Data
+
+```{r}
+# load simulation data
+simulated_data<-read_rds(datapath)
+
+# simple data pre-processing
+all_data<-
+    simulated_data%>%
+    mutate(
+      outcome=factor(outcome,levels=c("negative","positive")),
+      sex=ifelse(sex==0,"man","woman"),
+      sex=factor(sex,levels=c("man","woman")),
+      genotype=factor(genotype,levels=c("e3","e2","e4"))
+      )
+
+# rename metabolite variables
+names(all_data)[6:ncol(all_data)]<-paste0("meta",1:predictor_size)
+ 
+
+
+```
+
+
+```{r to_be_deleted}
 #| echo: false
 #| eval: false
 
@@ -431,24 +787,27 @@ sum(is.na(X.na)) # number of cells with NA
 
 names(all_data)[1:10]
 unique(all_data[,"treatment"])
+
+names(all_data)[1:5]
 ```
 
 ## Data Description
 
 This data include `r dim(all_data)[1]` samples and `r dim(all_data)[2]` variables:
 
--   `r names(all_data)[1]`: a disease status (`r unique(all_data[,"outcome"])`), `r unique(all_data[,"outcome"])[1]` is an affected status, `r unique(all_data[,"outcome"])[2]` is an unaffected status, and the reference group is `r unique(all_data[,"outcome"])[1]`.
--   `r names(all_data)[2]`: an age
--   `r names(all_data)[3]`: a sex status (`r unique(all_data[,"sex"])`) and the reference group is `r unique(all_data[,"sex"])[1]`.
--   `r names(all_data)[5]`: a treatment for the disease (`r unique(all_data[,"treatment"])`) and the reference group is `r unique(all_data[,"treatment"])[2]`.
--   `r names(all_data)[4]`: a genotype of APOE.
-    -   the apolipoprotein $\epsilon$ (APOE) is a protein produced in the metabolic pathway of fats in mammals, a genotype of which seems to be related to Alzheimer's disease (AD). APOE is polymorphic and has three major alleles, $\epsilon 2$ (e2), $\epsilon 3$(e3), and $\epsilon 4$ (e4). The statistics of the polymorphism are 8.4% for e2, 77.9% for e3, and 13.7% for e4 in worldwide allel frequency, respectively. It is known that the e2, e3, and e4 allels are associated with the protective factor, the neutral one, and the risk one with regard to AD. However, this finding has not been replicated in a large population. Therefore, it is known that we do not know their true associations with AD in the true population. [(from Wiki)](https://en.wikipedia.org/wiki/Apolipoprotein_E)
-    -   There are 6 combinations of the genotypes:
-        -   e2/e2
-        -   e2/e3
-        -   e2/e4
-        -   e3/e3 (reference group)
-        -   e3/e4
-        -   e4/e4
--   `r names(all_data)[6]` \~ `r names(all_data)[ncol(all_data)]`: a list of metabolites that were blood-sampled from the APOE carriers.
+* `r names(all_data)[1]`: sample ID.
+* `r names(all_data)[2]`: a disease status (`r unique(all_data[,"outcome"])`), `r unique(all_data[,"outcome"])[1]` is an affected status, `r unique(all_data[,"outcome"])[2]` is an unaffected status, and the reference group is `r unique(all_data[,"outcome"])[1]`.
+* `r names(all_data)[3]`: age
+* `r names(all_data)[4]`: sex (`r unique(all_data[,"sex"])`) and the reference group is `r unique(all_data[,"sex"])[1]`.
+* `r names(all_data)[5]`: APOE genotypes
+    * the apolipoprotein $\epsilon$ (APOE) is a protein produced in the metabolic pathway of fats in mammals, a genotype of which seems to be related to Alzheimer's disease (AD). APOE is polymorphic and has three major alleles, $\epsilon 2$ (e2), $\epsilon 3$(e3), and $\epsilon 4$ (e4). The statistics of the polymorphism are 8.4% for e2, 77.9% for e3, and 13.7% for e4 in worldwide allel frequency, respectively. It is known that the e2, e3, and e4 allels are associated with the protective factor, the neutral one, and the risk one with regard to AD. However, this finding has not been replicated in a large population. Therefore, it is known that we do not know their true associations with AD in the true population. [(from Wiki)](https://en.wikipedia.org/wiki/Apolipoprotein_E)
+        * There are 6 combinations of the genotypes:
+            * e2/e2
+            * e2/e3
+            * e2/e4
+            * e3/e3 
+            * e3/e4
+            * e4/e4
+        * In this study, I generated the 3 major alleles, `r  unique(all_data[,'genotype'])`
+* `r names(all_data)[6]` \~ `r names(all_data)[ncol(all_data)]`: a list of metabolites that were blood-sampled from the APOE carriers.
 :::

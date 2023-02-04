@@ -208,7 +208,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#tensor-초기화" id="toc-tensor-초기화" class="nav-link" data-scroll-target="#tensor-초기화">Tensor 초기화</a></li>
   <li><a href="#텐서tensor-객체-생성-기본-python-데이터-유형" id="toc-텐서tensor-객체-생성-기본-python-데이터-유형" class="nav-link" data-scroll-target="#텐서tensor-객체-생성-기본-python-데이터-유형">텐서(tensor) 객체 생성 (기본 python 데이터 유형)</a></li>
   <li><a href="#텐서tensor-객체-생성-numpy" id="toc-텐서tensor-객체-생성-numpy" class="nav-link" data-scroll-target="#텐서tensor-객체-생성-numpy">텐서(tensor) 객체 생성 (numpy)</a></li>
-  <li><a href="#텐서tensor-객체-생성-tf.tensor" id="toc-텐서tensor-객체-생성-tf.tensor" class="nav-link" data-scroll-target="#텐서tensor-객체-생성-tf.tensor">텐서(tensor) 객체 생성 (tf.Tensor)</a></li>
+  <li><a href="#다른-텐서로부터-텐서-초기화" id="toc-다른-텐서로부터-텐서-초기화" class="nav-link" data-scroll-target="#다른-텐서로부터-텐서-초기화">다른 텐서로부터 텐서 초기화</a></li>
   <li><a href="#텐서tensor-사용" id="toc-텐서tensor-사용" class="nav-link" data-scroll-target="#텐서tensor-사용">텐서(tensor) 사용</a></li>
   <li><a href="#자동-미분과-기울기" id="toc-자동-미분과-기울기" class="nav-link" data-scroll-target="#자동-미분과-기울기">자동 미분과 기울기</a></li>
   </ul></li>
@@ -351,22 +351,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x)</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tf.rank(x)) <span class="co"># 축(axis)의 개수 출력 = 차원의 개수 출력</span></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> tf.constant(<span class="st">"String"</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> tf.constant(<span class="st">"String"</span>) <span class="co"># 문자열 (string)도 int형 tensor로 변환 가능</span></span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(data)</span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># NumPy 배열에서 텐서를 초기화할 수 있다.</span></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> tf.constant([<span class="dv">5</span>])</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> tf.constant([<span class="dv">7</span>])</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> (a <span class="op">+</span> b).numpy()</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(c)</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(c))</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> c <span class="op">*</span> <span class="dv">10</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>tensor <span class="op">=</span> tf.convert_to_tensor(result)</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tensor)</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(tensor))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">## 파이썬의 리스트 넘파이는 compatible하다. 상호보완적으로 교체가 가능</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> tf.constant([<span class="dv">5</span>])</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> tf.constant([<span class="dv">7</span>])</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> (a <span class="op">+</span> b).numpy()</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(c)</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(c))</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> c <span class="op">*</span> <span class="dv">10</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>tensor <span class="op">=</span> tf.convert_to_tensor(result) <span class="co"># numpy -&gt; tensor</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(tensor)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">type</span>(tensor))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -420,9 +422,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </details>
 </div>
 </section>
-<section id="텐서tensor-객체-생성-tf.tensor" class="level3">
-<h3 class="anchored" data-anchor-id="텐서tensor-객체-생성-tf.tensor">텐서(tensor) 객체 생성 (tf.Tensor)</h3>
-<p>tf.ones_like(x) : 값이 1이고 x와 shape &amp; data type이 동일한 텐서 생성</p>
+<section id="다른-텐서로부터-텐서-초기화" class="level3">
+<h3 class="anchored" data-anchor-id="다른-텐서로부터-텐서-초기화">다른 텐서로부터 텐서 초기화</h3>
+<ul>
+<li>텐서(tensor) 객체 생성 (tf.Tensor)</li>
+<li>tf.ones_like(x) : 값이 1이고 x와 shape &amp; data type이 동일한 텐서 생성</li>
+</ul>
 <div class="cell" data-execution_count="6">
 <details>
 <summary>Code</summary>

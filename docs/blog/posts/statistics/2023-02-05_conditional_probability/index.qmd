@@ -1,0 +1,253 @@
+---
+title: Conditional Probability & Bayes' Rule
+subtitle: Conditional Probability, Bayes' Rule, Bayesean Estimation, Naive Bayes
+description: | 
+  Probability for statistics, machine learning and deep learning.
+categories:
+  - Statistics
+author: Kwangmin Kim
+date: 02/05/2023
+draft: false
+format: 
+  html:
+    toc: true
+    number-sections: True
+    code-fold: true
+    page-layout: full
+execute: 
+  warning: false
+  message: false
+---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+
+
+
+## Conditional Probability
+
+$$
+P(A|B)=\frac{P(A\cap B)}{P(B)}
+$$ {#eq-conditional_probability}
+
+주사위를 던질 때 특정 주사위의 눈 (1~6)이 나올 확률은 $\frac{1}{6}$ 으로 같다 (eqaully likely)라고 가정할 때 주사위의 눈이 나올 수 있는 모든 집합 표본 공간 $S$, 특정 주사위의 눈이 나오는 사건 $A$ 에 대한 확률은 $\frac{n(A)}{n(S)}$ 와 같다. 조건부 확률은 2개 이상의 사건에 대해서 하나의 사건이 다른 사건이 발생할 확률에 영향을 미치는 개념을 말한다. 가장 간단한 2개의 사건 $A, B$ 에 대해서 살펴볼 때 조건부 확률은 위의 식(@eq-conditional_probability)과 같다.
+
+예를 들어, 사건 $A$ 는  주사위의 눈이 1이 나오는 사건, 사건 $B$ 는 주사위의 눈이 3이하가 나오는 사건이라고 했을 때 사건 $A$ 가 사건 $B$ 의 부분 집합이므로 두 사건이 서로 독립이 아니다. 즉, $A \cap B $ 사건에서 주사위의 눈이 1 나오는 경우 밖에 없다. 이렇게 사건 $B$ 가 주어졌을 때 혹은 $B$ 가 먼저 일어났을 때 1이 나올 확률은 달라지게 된다. 즉, $A$ 의 sample space = $\{1,2,3,4,5,6\}$ 이고 $A|B$ 의 sample space = $\{1,2,3\}$ 이 되기 때문에 $P(A) \not= P(A|B)$ 가 된다. 
+
+좀 더 구체적으로 계산을 하게 되면, $P(A)=\frac{1}{6}, P(B)=\frac{3}{6}, P(A\cap B)=\frac{1}{6}$ 일 때, 
+
+$$
+P(A|B)=\frac{P(A\cap B)}{P(B)}=\frac{\frac{1}{6}}{\frac{3}{6}}=\frac{1}{3}
+$$ 
+
+인 것을 알 수 있다.
+ 
+## Bayes' Rule
+
+Bayes' rule (베이즈 정리)는 prior probability(사전 확률)과 posterior probability(사후 확률)의 관계를 조건부 확률을 이용하여 확립한 것이다. 좀 더 구체적으로, 2개의 사건 A와 B로 한정시켜 생각해봤을 때, 조건부 확률 $P(A|B)$ 는 각 사건의 확률 $P(A), P(B), P(B|A)$ 를 사용하여 게산될 수 있다. 그래서 베이즈 정리는 $P(B|A)$, $P(B|\overline{A})$, $P(A)$ 의 정보를 알고있거나 계산 가능할 때 아래와 같은 $P(A|B)$ 의 확률을 구할 수 있는 공식을 제공한다. 
+
+$$
+P(A|B)=\frac{P(B|A)P(A)}{P(B)}
+$$
+
+* $P(A|B)$: posterior probability
+* $P(A)$: prior probability
+* $P(B|A)$: likelihood
+* $P(B)$: marginal probability
+
+이 공식을 이해하기 위해선, Law of Total Probability (전 확률 법칙) 또는 Total Probability Rule (전 확률 정리)을 이해해야한다.
+
+### Total Probability Rule
+
+::: {#thm-general}
+
+Let $A_1, A_2, ..., A_k$ be a set of mutually exclusive and exhaustive events. Let $A$ be a event and a partition of sample space $\Omega$, then 
+
+$$
+P(B)=\sum_{i=1}^{n}P(B|A_i)P(A_i)
+$$
+
+:::
+
+::: columns
+::: {.column width="50%"}
+![Law of Total Probability Example - Two Events](law%20of%20total%20probability2.PNG)
+
+[Source: Law of ToTal Probability with Proof](https://byjus.com/maths/total-probability-theorem/)
+:::
+::: {.column width="50%"}
+![Law of Total Probability Example - Multiple Events](law%20of%20total%20probability.PNG)
+
+[Source: MIT RES.6-012 Introduction to Probability, Spring 2018 - Youtube](https://www.youtube.com/watch?v=8odFouBR2wE)
+:::
+:::
+
+
+$$
+\begin{aligned}
+P(B)&=P(B\cap A) + P(B\cap \overline A)\\
+    &=P(B\cap A) + P(B\cap \overline A)\\
+    &=P(B|A)P(A)+P(B|\overline A)P(\overline A)\\
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\therefore 
+P(A|B)&=\frac{P(A \cap B)}{P(B)}\\
+      &=\frac{P(B|A)P(A)}{P(B|A)P(A)+P(B|\overline A)P(\overline A)}
+\end{aligned}
+$$
+
+$$
+P(A\cap B)=P(B|A)P(A)=P(A|B)P(B)
+$$
+
+
+### 예제
+
+[영상 자료 ](https://www.youtube.com/watch?v=Y4ecU7NkiEI&t=29s)
+[슬기로운 통계생활 블로그 ](https://statisticsplaybook.tistory.com/30)
+
+예제로 알아보기 - 초콜릿을 준 코니의 마음
+펭수는 평소 관심이 있던 코니에게서 초콜릿을 선물받습니다. 펭수는 초콜릿을 준 코니가 나를 좋아하는지가 궁금하기 때문에 이것을 통계적으로 해봅니다. 먼저 상황을 간단히 나타내기 위해서 다음 두 상황을 가정합니다.
+
+ 
+
+P(A) (사건 "호감"): 상대방이 나를 좋아한다. 
+
+P(B) (사건 "초콜릿"): 초콜릿을 받았다.
+
+ 
+펭수는 사건 "호감"에 대한 확률, 즉, 코니가 나를 좋아할 확률을 50%, 좋아하지 않을 확률을 50%로 가정합니다. 즉, 
+P(A)=0.5  로 표현이 될 것입니다. 이러한 이유는 펭수는 초콜릿을 준 코니 마음에 대한 아무런 정보가 없기 때문입니다!
+
+**The Principle of Insufficient Reason(이유불충분의 원리): 하나의 사건을 기대할만한 어떤 이유가 없는 경우에는 가능한 모든 사건에 동일한 확률을 할당해야 한다는 원칙.**
+
+쉽게 이해하기 위하여, 주변에 100명의 사람이 있다고 가정합니다. 이유불충분의 원리에 따라 50명은 누군가로부터 호감을 받고 있고, 50명은 호감을 얻고 있지 않고 있겠네요!
+
+ 
+
+그리고 펭수는 조사를 통해 두 가지 정보를 알게됩니다.
+
+* 어떤 사람이 상대방에게 호감이 있어서 초콜릿을 줄 확률은 40%이다. -> P(B|A)=0.4 
+* 어떤 사람이 상대방에게 호감이 없지만 "예의상" 초콜릿을 줄 확률은 30%이다. (어장 관리 그만ㅠ) -> P(B|Ac)=0.3
+ 
+
+이 정보를 토대로 아래 두가지를 유추할 수 있습니다.
+상대방에게 호감이 있지만 초콜릿을 주지 않을 확률은 60%이다. -> P(Bc|A)=0.6
+호감이 없어서 초콜릿을 주지 않을 확률은 70%이다. -> P(Bc|Ac)=0.7
+
+얻은 정보 정리해보기
+위 내용들을 토대로 생각해볼 때, 우리는 아래와 같이 정리할 수 있습니다.
+
+* 감을 얻고 있는 50명 중 40%인 20명은 초콜릿을 받습니다.
+* 감을 얻고 있는 50명 중 60%인 30명은 초콜릿을 받지 못합니다.
+* 감의 대상이 아닌 50명 중 30%인 15명은 예의상 준 초콜릿을 받습니다.
+* 감의 대상이 아닌 50명 중 70%인 35명은 초콜릿을 받지 못합니다.
+
+자, 이제 펭수가 궁금한 P(초콜릿을 받았을 때, 초콜릿을 준 사람이 나를 좋아할 확률)을 위에서 약속한 기호로 표현한다면 
+P(A|B) 으로 나타낼 수 있습니다. 그런데 이것은 펭수가 조사한 확률,
+
+$$
+P(호감이있어서초콜릿을줄확률)=P(B|A)
+$$
+
+에서 조건과 결과가 뒤바뀐 것입니다. 이 확률을 계산하기 위해서 필요한 정보를 정리해봅시다.
+사건 "호감" : 상대방이 나를 좋아한다 -> P(A) = 50% 이고 (이유불충분의 원리, 사전가정!),
+사건 "초콜릿" : 초콜릿을 받았다 -> P(B) = (20+15)/100 = 35% (정리한 노란색 부분)입니다.
+어떤 사람이 상대방에게 호감이 있어서 초콜릿을 줄 확률은 40%이다. -> P(B|A)=40% (펭수가 조사한 정보)
+
+ 
+
+이것을 베이즈정리의 수식에 넣어보면 다음과 같습니다.
+
+ 
+
+P(A|B)=P(B|A)∗P(A)/P(B)=(0.4∗0.5)/0.35=0.57 
+
+이라는 확률이 나옵니다. 따라서, 펭수는 처음의 이유불충분의 원리로 가정했던, 상대방이 나를 좋아할 확률 50%(사전확률) 
+P(A)를 57%(사후확률) P(A|B) 로 업데이트 할 수 있습니다.
+
+ 
+
+이번 글의 가장 중요한 요지는, 베이즈 정리라는 것은 새로운 정보를 통해 사전 확률을 업데이트 하여 사후 확률에 대한 정확도를 높여가는 것이라는 점입니다. 그리고 이러한 개념들이 어떻게 데이터 분석에 활용될 수 있는지 한 번 생각해보고자 합니다. 
+
+ 
+
+혹시 내용에 오류가 있다면 언제든지 댓글/피드백 달아주세요 🎆 잘못된 내용 알려주시는 것 언제나 환영입니다 👩‍🚀
+
+
+## Generalized Bayes' Rule
+
+::: {#thm-general}
+
+Let $A_1, A_2, ..., A_k$ be a set of mutually exclusive and exhaustive events. Let $A$ be a event, then 
+
+$$
+P(A_i|B)=\frac{P(B|A_i)P(A_i)}{\sum_{j=1}^{k}P(B|A_i)P(A_i)}
+$$
+
+:::
+
+::: {#thm-classic}
+
+If in $N$ identical and independent repeated experiments, an event $A$ happens $n$ times, the the probability of $A$ is defined by
+$$
+P(A)=\lim_{N\to\infty}\frac{n}{N}
+$$
+
+:::
+
+* The case of the sample space consisting of $N$ distinctive not equally likely elements,
+* The case of the uncountable sample space 
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+*
+:::
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
+
+
+Bayes' rule provides a formula how to calculate $P(A|B)$ if $P(B|A)$, $P(B|\overline{A})$, $P(A)$ are available
+:::
+
+
+</div>
+
+
+
+## Blog Guide Map Link
+
+* [Statistics Blog](../guide_map/index.qmd)
+* [Engineering Blog](../../Engineering/guide_map/index.qmd)
+* [Deep Learning Blog](../../DL/guide_map/index.qmd)
+* [Machine Learning Blog](../../ML/guide_map/index.qmd)
+* [Mathematics Blog](../../Mathmatics/guide_map/index.qmd)
+* [Patent Blog](../../Patent/guide_map/index.qmd)
+* [Validation Blog](../../Validation/guide_map/index.qmd)
+
+
+

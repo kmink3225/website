@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kwangmin Kim">
-<meta name="dcterms.date" content="2100-03-01">
-<meta name="description" content="Rather than studying pure mathematics, I focus on studying and organizing mathematical concepts by filling out this mathematics blog section with some mathematics stuff for deep learning">
+<meta name="dcterms.date" content="2023-02-05">
+<meta name="description" content="Probability for statistics, machine learning and deep learning.">
 
-<title>Kwangmin Kim - Content List, Mathematics</title>
+<title>Kwangmin Kim - Conditional Probability &amp; Bayes’ Rule</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -138,13 +138,7 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#contents" id="toc-contents" class="nav-link active" data-scroll-target="#contents">Contents</a>
-  <ul class="collapse">
-  <li><a href="#basic" id="toc-basic" class="nav-link" data-scroll-target="#basic">Basic</a></li>
-  <li><a href="#linear-algebra" id="toc-linear-algebra" class="nav-link" data-scroll-target="#linear-algebra">Linear Algebra</a></li>
-  <li><a href="#optimization" id="toc-optimization" class="nav-link" data-scroll-target="#optimization">Optimization</a></li>
-  <li><a href="#reference" id="toc-reference" class="nav-link" data-scroll-target="#reference">Reference</a></li>
-  </ul></li>
+  <li><a href="#blog-guide-map-link" id="toc-blog-guide-map-link" class="nav-link active" data-scroll-target="#blog-guide-map-link"><span class="toc-section-number">4</span>  Blog Guide Map Link</a></li>
   </ul>
 </nav>
     </div>
@@ -153,16 +147,16 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Content List, Mathematics</h1>
-<p class="subtitle lead">Guide Map of Blogs in Mathematics Section</p>
+<h1 class="title">Conditional Probability &amp; Bayes’ Rule</h1>
+<p class="subtitle lead">Conditional Probability, Bayes’ Rule, Bayesean Estimation, Naive Bayes</p>
   <div class="quarto-categories">
-    <div class="quarto-category">Mathematics</div>
+    <div class="quarto-category">Statistics</div>
   </div>
   </div>
 
 <div>
   <div class="description">
-    <p>Rather than studying pure mathematics, I focus on studying and organizing mathematical concepts by filling out this mathematics blog section with some mathematics stuff for deep learning</p>
+    <p>Probability for statistics, machine learning and deep learning.</p>
   </div>
 </div>
 
@@ -179,7 +173,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 1, 2100</p>
+      <p class="date">February 5, 2023</p>
     </div>
   </div>
   
@@ -189,97 +183,149 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<section id="contents" class="level1">
-<h1>Contents</h1>
-<section id="basic" class="level2">
-<h2 class="anchored" data-anchor-id="basic">Basic</h2>
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+<li class="nav-item" role="presentation">
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">
+Korean
+</button>
+</li>
+<li class="nav-item" role="presentation">
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">
+English
+</button>
+</li>
+<div class="tab-content" id="language-tabcontent">
+
+<div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
+<div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
+<section id="conditional-probability" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="conditional-probability"><span class="header-section-number">1</span> Conditional Probability</h2>
+<p><span id="eq-conditional_probability"><span class="math display">\[
+P(A|B)=\frac{P(A\cap B)}{P(B)}
+\tag{1}\]</span></span></p>
+<p>주사위를 던질 때 특정 주사위의 눈 (1~6)이 나올 확률은 <span class="math inline">\(\frac{1}{6}\)</span> 으로 같다 (eqaully likely)라고 가정할 때 주사위의 눈이 나올 수 있는 모든 집합 표본 공간 <span class="math inline">\(S\)</span>, 특정 주사위의 눈이 나오는 사건 <span class="math inline">\(A\)</span> 에 대한 확률은 <span class="math inline">\(\frac{n(A)}{n(S)}\)</span> 와 같다. 조건부 확률은 2개 이상의 사건에 대해서 하나의 사건이 다른 사건이 발생할 확률에 영향을 미치는 개념을 말한다. 가장 간단한 2개의 사건 <span class="math inline">\(A, B\)</span> 에 대해서 살펴볼 때 조건부 확률은 위의 식(<a href="#eq-conditional_probability">Equation&nbsp;1</a>)과 같다.</p>
+<p>예를 들어, 사건 <span class="math inline">\(A\)</span> 는 주사위의 눈이 1이 나오는 사건, 사건 <span class="math inline">\(B\)</span> 는 주사위의 눈이 3이하가 나오는 사건이라고 했을 때 사건 <span class="math inline">\(A\)</span> 가 사건 <span class="math inline">\(B\)</span> 의 부분 집합이므로 두 사건이 서로 독립이 아니다. 즉, $A B $ 사건에서 주사위의 눈이 1 나오는 경우 밖에 없다. 이렇게 사건 <span class="math inline">\(B\)</span> 가 주어졌을 때 혹은 <span class="math inline">\(B\)</span> 가 먼저 일어났을 때 1이 나올 확률은 달라지게 된다. 즉, <span class="math inline">\(A\)</span> 의 sample space = <span class="math inline">\(\{1,2,3,4,5,6\}\)</span> 이고 <span class="math inline">\(A|B\)</span> 의 sample space = <span class="math inline">\(\{1,2,3\}\)</span> 이 되기 때문에 <span class="math inline">\(P(A) \not= P(A|B)\)</span> 가 된다.</p>
+<p>좀 더 구체적으로 계산을 하게 되면, <span class="math inline">\(P(A)=\frac{1}{6}, P(B)=\frac{3}{6}, P(A\cap B)=\frac{1}{6}\)</span> 일 때,</p>
+<p><span class="math display">\[
+P(A|B)=\frac{P(A\cap B)}{P(B)}=\frac{\frac{1}{6}}{\frac{3}{6}}=\frac{1}{3}
+\]</span></p>
+<p>인 것을 알 수 있다.</p>
+</section>
+<section id="bayes-rule" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="bayes-rule"><span class="header-section-number">2</span> Bayes’ Rule</h2>
+<p>Bayes’ rule (베이즈 정리)는 prior probability(사전 확률)과 posterior probability(사후 확률)의 관계를 조건부 확률을 이용하여 확립한 것이다. 좀 더 구체적으로, 2개의 사건 A와 B로 한정시켜 생각해봤을 때, 조건부 확률 <span class="math inline">\(P(A|B)\)</span> 는 각 사건의 확률 <span class="math inline">\(P(A), P(B), P(B|A)\)</span> 를 사용하여 게산될 수 있다. 그래서 베이즈 정리는 <span class="math inline">\(P(B|A)\)</span>, <span class="math inline">\(P(B|\overline{A})\)</span>, <span class="math inline">\(P(A)\)</span> 의 정보를 알고있거나 계산 가능할 때 아래와 같은 <span class="math inline">\(P(A|B)\)</span> 의 확률을 구할 수 있는 공식을 제공한다.</p>
+<p><span class="math display">\[
+P(A|B)=\frac{P(B|A)P(A)}{P(B)}
+\]</span></p>
 <ul>
-<li>1111-11-11, <a href="../../../../../docs/blog/posts/Mathmatics/function/index.html">Function</a>
+<li><span class="math inline">\(P(A|B)\)</span>: posterior probability</li>
+<li><span class="math inline">\(P(A)\)</span>: prior probability</li>
+<li><span class="math inline">\(P(B|A)\)</span>: likelihood</li>
+<li><span class="math inline">\(P(B)\)</span>: marginal probability</li>
+</ul>
+<p>이 공식을 이해하기 위해선, Law of Total Probability (전 확률 법칙) 또는 Total Probability Rule (전 확률 정리)을 이해해야한다.</p>
+<section id="total-probability-rule" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="total-probability-rule"><span class="header-section-number">2.1</span> Total Probability Rule</h3>
+<div id="thm-general" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 1 </strong></span>Let <span class="math inline">\(A_1, A_2, ..., A_k\)</span> be a set of mutually exclusive and exhaustive events. Let <span class="math inline">\(A\)</span> be a event and a partition of sample space <span class="math inline">\(\Omega\)</span>, then</p>
+<p><span class="math display">\[
+P(B)=\sum_{i=1}^{n}P(B|A_i)P(A_i)
+\]</span></p>
+</div>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="law of total probability2.PNG" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Law of Total Probability Example - Two Events</figcaption><p></p>
+</figure>
+</div>
+<p><a href="https://byjus.com/maths/total-probability-theorem/">Source: Law of ToTal Probability with Proof</a></p>
+</div><div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="law of total probability.PNG" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Law of Total Probability Example - Multiple Events</figcaption><p></p>
+</figure>
+</div>
+<p><a href="https://www.youtube.com/watch?v=8odFouBR2wE">Source: MIT RES.6-012 Introduction to Probability, Spring 2018 - Youtube</a></p>
+</div>
+</div>
+<p><span class="math display">\[
+\begin{aligned}
+P(B)&amp;=P(B\cap A) + P(B\cap \overline A)\\
+    &amp;=P(B\cap A) + P(B\cap \overline A)\\
+    &amp;=P(B|A)P(A)+P(B|\overline A)P(\overline A)\\
+\end{aligned}
+\]</span></p>
+<p><span class="math display">\[
+\begin{aligned}
+\therefore
+P(A|B)&amp;=\frac{P(A \cap B)}{P(B)}\\
+      &amp;=\frac{P(B|A)P(A)}{P(B|A)P(A)+P(B|\overline A)P(\overline A)}
+\end{aligned}
+\]</span></p>
+<p><span class="math display">\[
+P(A\cap B)=P(B|A)P(A)=P(A|B)P(B)
+\]</span></p>
+<p><a href="https://www.youtube.com/watch?v=Y4ecU7NkiEI&amp;t=29s">영상 자료</a></p>
+</section>
+<section id="예시" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="예시"><span class="header-section-number">2.2</span> 예시</h3>
+</section>
+</section>
+<section id="generalized-bayes-rule" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="generalized-bayes-rule"><span class="header-section-number">3</span> Generalized Bayes’ Rule</h2>
+<div id="thm-general" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 2 </strong></span>Let <span class="math inline">\(A_1, A_2, ..., A_k\)</span> be a set of mutually exclusive and exhaustive events. Let <span class="math inline">\(A\)</span> be a event, then</p>
+<p><span class="math display">\[
+P(A_i|B)=\frac{P(B|A_i)P(A_i)}{\sum_{j=1}^{k}P(B|A_i)P(A_i)}
+\]</span></p>
+</div>
+<div id="thm-classic" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 3 </strong></span>If in <span class="math inline">\(N\)</span> identical and independent repeated experiments, an event <span class="math inline">\(A\)</span> happens <span class="math inline">\(n\)</span> times, the the probability of <span class="math inline">\(A\)</span> is defined by <span class="math display">\[
+P(A)=\lim_{N\to\infty}\frac{n}{N}
+\]</span></p>
+</div>
 <ul>
-<li>2023-01-31, <a href="../../../../../docs/blog/posts/Mathmatics/function/univariable_scalar_function.html">Function (1) - Univariable Scalar Function (One to One)</a></li>
-<li>2023-01-31, <a href="../../../../../docs/blog/posts/Mathmatics/function/multivariable_scalar_function.html">Function (2) - Multi-variable Scalar Function (Many to One)</a></li>
-<li>2023-01-31, <a href="../../../../../docs/blog/posts/Mathmatics/function/univariable_vector_function.html">Function (3) - Univariable Vector Function (One to Many)</a></li>
-<li>2023-01-31, <a href="../../../../../docs/blog/posts/Mathmatics/function/mutivariable_vector_function.html">Function (4) - Multi-variable Vector Function (Many to Many)</a></li>
-</ul></li>
-<li>1111-11-11, Vector &amp; Matrix</li>
-<li>1111-11-11, Limit, <span class="math inline">\(\epsilon-\delta\)</span> Method</li>
-<li>Derivatives
-<ul>
-<li>2023-02-04, <a href="../../../../../docs/blog/posts/Mathmatics/derivatives/2023-02-04_uni_derivative.html">Derivative (1) - Univariable Scalar Funtion</a></li>
-<li>1111-11-11, Derivative (2) - Gradient</li>
-<li>1111-11-11, Chain Rule</li>
-<li>1111-11-11, Partial Derivative</li>
-<li>1111-11-11,</li>
-</ul></li>
-<li>1111-11-11, Talyer’s Series</li>
-<li>1111-11-11, Gradient Direction</li>
-<li>1111-11-11, Random Variable</li>
-<li>1111-11-11, Probability Distribution</li>
-<li>1111-11-11, Information Theory - Entropy</li>
-<li>1111-11-11,</li>
-<li>1111-11-11,</li>
-<li>1111-11-11,</li>
-<li>1111-11-11,</li>
+<li>The case of the sample space consisting of <span class="math inline">\(N\)</span> distinctive not equally likely elements,</li>
+<li>The case of the uncountable sample space</li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
+<li></li>
 </ul>
 </section>
-<section id="linear-algebra" class="level2">
-<h2 class="anchored" data-anchor-id="linear-algebra">Linear Algebra</h2>
+</div>
+</div>
+<div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
+<div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
+<p>Bayes’ rule provides a formula how to calculate <span class="math inline">\(P(A|B)\)</span> if <span class="math inline">\(P(B|A)\)</span>, <span class="math inline">\(P(B|\overline{A})\)</span>, <span class="math inline">\(P(A)\)</span> are available</p>
+</div>
+</div>
+<section id="blog-guide-map-link" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="blog-guide-map-link"><span class="header-section-number">4</span> Blog Guide Map Link</h2>
 <ul>
-<li>1111-11-11, Vector Space</li>
-<li>1111-11-11, Subspace</li>
-<li>1111-11-11, Inner Product</li>
-<li>1111-11-11, Linear Combination</li>
-<li>1111-11-11, Quadratic Form</li>
-<li>1111-11-11, Linear Independence</li>
-<li>1111-11-11, Basis, Dimension, &amp; Rank</li>
-<li>1111-11-11, Outer Product</li>
-<li>1111-11-11, Eigen Value &amp; Eigen Vector</li>
-<li>1111-11-11, Eigen Decomposition</li>
-<li>1111-11-11, Singular Value Decomposition (SVD)</li>
-<li>1111-11-11, Gram-Schmidt</li>
-<li>1111-11-11, Group</li>
-<li>1111-11-11, Orthogonal Matrix</li>
-<li>1111-11-11, Rotation &amp; Group</li>
-<li>1111-11-11,</li>
-<li>1111-11-11,</li>
-<li>1111-11-11,</li>
-<li>1111-11-11,</li>
-<li>1111-11-11,</li>
-</ul>
-</section>
-<section id="optimization" class="level2">
-<h2 class="anchored" data-anchor-id="optimization">Optimization</h2>
-<ul>
-<li>1111-11-11, Convex Set</li>
-<li>1111-11-11, Convex Function</li>
-<li>1111-11-11, Unconstrained Optimization</li>
-<li>1111-11-11, Non-linear Least Square</li>
-<li>1111-11-11, Largrange Multiplier Method
-<ul>
-<li>1111-11-11, Largrange Primal Function</li>
-<li>1111-11-11, Largrange Dual Function</li>
-<li>1111-11-11, KKT conditions</li>
-</ul></li>
-<li>1111-11-11, Gradient Descent Optimizers</li>
-<li>1111-11-11,</li>
-<li>1111-11-11,</li>
-<li>1111-11-11,</li>
-<li>1111-11-11,</li>
-<li>1111-11-11,</li>
-<li>1111-11-11,</li>
-</ul>
-</section>
-<section id="reference" class="level2">
-<h2 class="anchored" data-anchor-id="reference">Reference</h2>
-<ul>
-<li>Calculus: any James Stewart Series</li>
+<li><a href="../../../../../docs/blog/posts/statistics/guide_map/index.html">Statistics Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/Engineering/guide_map/index.html">Engineering Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/DL/guide_map/index.html">Deep Learning Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/ML/guide_map/index.html">Machine Learning Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/Mathmatics/guide_map/index.html">Mathematics Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/Patent/guide_map/index.html">Patent Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/Validation/guide_map/index.html">Validation Blog</a></li>
 </ul>
 
 
 </section>
-</section>
 
-</main> <!-- /main -->
+</div></ul></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

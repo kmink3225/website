@@ -74,8 +74,6 @@ knitr::opts_chunk$set(message=FALSE,warning=FALSE)
 
 ### Variables
 ```{r}
-#| message: false
-#| warning: false
 
 # the number of samples
 sample_size <- 1000
@@ -117,11 +115,9 @@ group_meta_data[which.min(group_meta_data[,"group_n"]),"group_effect"]<-0.7
 ### set a group effect as -0.5 into a group with the second smallest group number 
 group_meta_data[group_meta_data[,"group_n"]==(sort(group_meta_data[,"group_n"])[2]),"group_effect"]<-(-0.5)
 
-
-
 # initialize a data matrix to assign simulated values
 ## add some noise to data
-data<-matrix(rnorm(sample_size*predictor_size,mean=0,sd=0.01), 
+data<-matrix(rnorm(sample_size*predictor_size,mean=0,sd=0.05), 
              nrow = sample_size, ncol = predictor_size)
 
 # initialize a covariance matrix to assign simulated values
@@ -138,26 +134,14 @@ answer_list<-list(
     'negatively associated predictors'=negatively_associated_predictors,
     'group proportion list'=group_proportion_list,
     'group meta data'=group_meta_data,
-    'data noise intensity'=c('distribution'='rnorm','mean'=0,'sd'=0.01),
+    'data noise intensity'=c('distribution'='rnorm','mean'=0,'sd'=0.05),
     'covariance noise intensity'=c('distribution'='rnorm','mean'=0,'sd'=0.05),
     'effect noise intensity on response'=c('distribution'='rnorm','mean'=0,'sd'=0.05),
-    'link function' = 'logistic function',
-    'link function noise intensity' = c('distribution'='rnorm','mean'=0.2,'sd'=0.05),
+    'link function between the response and predictors' = 'canonical logit link function',
+    'link function noise intensity' = c('distribution'='rnorm','mean'=0,'sd'=0.05),
     'age_distirbution'='used data of a variable with the highest effect on outcome',
     'sex_distribution'='rbinom(n=sample size,p=0.5)',
-    'genotype_distirbution'=list(
-        'e2/e2'='8%, the bottom 8 % of the percentiles of the outcome probabilities with noises',
-        'e2/e3'='15%, the bottom 23 % of the percentiles of the outcome probabilities with noises',
-        'e2/e4'='8.6%, the bottom 31.6 % of the percentiles of the outcome probabilities with noises',
-        'e3/e3'='30%, the bottom 61.6 % of the percentiles of the outcome probabilities with noises',
-        'e3/e4'='25%, the bottom 86.6 % of the percentiles of the outcome probabilities with noises',
-        'e4/e4'='13.4%, above the bottom 86.6 % of the percentiles of the outcome probabilities with noises'),
-    'treatment_distirbution'=list(
-        'control' = '70%, the bottom 70 % of the percentiles of the outcome probabilities with noises',
-        'treatment1'='15%, the bottom 85 % of the percentiles of the outcome probabilities with noises',
-        'treatment2'='10%, bottom 95 % of the percentiles of the outcome probabilities with noises',
-        'treatment3'='5%, above the bottom 8 % of the percentiles of the outcome probabilities with noises'
-    ))
+    'genotype_distirbution'=c('e2' = '8.4%','e3' = '77.9%','e4' = '13.7%'))
 ```
 
 
@@ -166,20 +150,23 @@ answer_list<-list(
 #| message: false
 #| warning: false
 
-simulated_data=read_rds(datapath)%>%dplyr::select(-1,-probabilities)
-all_data=simulated_data
+# load simulation data
+simulated_data<-read_rds(datapath)
 
-all_data=all_data%>%
-mutate(
-      outcome=ifelse(outcome==0,"negative","positive"),
+# simple data pre-processing
+all_data<-
+    simulated_data%>%
+    mutate(
       outcome=factor(outcome,levels=c("negative","positive")),
       sex=ifelse(sex==0,"man","woman"),
       sex=factor(sex,levels=c("man","woman")),
-      treatment=factor(treatment,levels=c("control","trtmnt1","trtmnt2","trtmnt3")),
-      genotype=factor(genotype,levels=c("e3e3","e2e2","e2e3","e2e4","e3e4","e4e4"))
+      genotype=factor(genotype,levels=c("e3","e2","e4"))
       )
- names(all_data)[6:ncol(all_data)]<-paste0("meta",1:predictor_size)
+
+# rename metabolite variables
+names(all_data)[6:ncol(all_data)]<-paste0("meta",1:predictor_size)
  
+
 ```
 
 ## Univariable Analysis
@@ -220,10 +207,7 @@ return(
     )
 }
 
-group_variable="outcome"
-group_variable2="sex"
-summary_variable="age"
-str(group_variable)
+
 getNumericSummary=function(data=all_data,group_variable,summary_variable,set_color=color_function,...){
     # table
     temp<-data %>% 
@@ -291,12 +275,10 @@ getNumericSummary=function(data=all_data,group_variable,summary_variable,set_col
 
 ad_age_summary=getNumericSummary(data=all_data,group_variable="outcome",summary_variable="age")[[1]]
 sex_age_summary=getNumericSummary(data=all_data,group_variable="sex",summary_variable="age")[[1]]
-treatment_age_summary=getNumericSummary(data=all_data,group_variable="treatment",summary_variable="age")[[1]]
 genotype_age_summary=getNumericSummary(data=all_data,group_variable="genotype",summary_variable="age")[[1]]
 age_summary=rbind(
     ad_age_summary,
     sex_age_summary,
-    treatment_age_summary,
     genotype_age_summary)
 ```
 
@@ -310,7 +292,7 @@ Age is known as a strong risk factor of AD or dementia. Human nerve system gets 
 age_summary%>%knitr::kable()
 ```
 
-The table above shows the summary statistics of age grouped by the affected status, AD and non AD. The difference of age between the two groups are about `r round(age_summary%>%filter(group=="positive")%>%dplyr::select(mean)- age_summary%>%filter(group=="negative")%>%dplyr::select(mean),2)`, but their standard deviations are `r round(age_summary%>%filter(group=="positive")%>%dplyr::select(sd),2)` and `r round(age_summary%>%filter(group=="negative")%>%dplyr::select(sd),2)`. Thus, it is hard to say their age in average differ in the affected status because the age variations of the two groups are overlapped. This research has two conflicting characteristics at the population level. First, the participants are the elderly whose age in average is `r mean(all_data$age)%>%round(2)`, which indicates they are likely to develop dementia, an aging disease. Second, the data were collected from the longevity village where people live long and healthy lives and it is expected that where will be some protective factors against dementia. These two conflicting traits may have contributed to this unclear difference.
+The table above shows the summary statistics of age grouped by the affected status, AD and non AD. The difference of age between the two groups are about `r round(age_summary%>%filter(group=="positive")%>%dplyr::select(mean)- age_summary%>%filter(group=="negative")%>%dplyr::select(mean),2)`, but their standard deviations are `r round(age_summary%>%filter(group=="positive")%>%dplyr::select(sd),2)` and `r round(age_summary%>%filter(group=="negative")%>%dplyr::select(sd),2)`. Thus, it is hard to say their age in average differ in the affected status because the age variations of the two groups are overlapped. This research has two conflicting characteristics at the population level. First, the participants are the elderly whose age in average is `r mean(all_data$age)%>%round(2)`, which indicates they are likely to develop dementia, an aging disease. Second, the data were collected from the longevity village where people live long and healthy lifes and it is expected that where will be some protective factors against dementia. These two conflicting traits may have contributed to this unclear difference.
 
 The glaring difference of age is also shown below. As you can see, the people with a negative status a bit younger than those with a positive one.
 ```{r}
@@ -324,7 +306,6 @@ The glaring difference of age is also shown below. As you can see, the people wi
 plot<- ggarrange(
     getNumericSummary(data=all_data,group_variable="outcome",summary_variable="age")[[2]],
     getNumericSummary(data=all_data,group_variable="sex",summary_variable="age")[[2]],
-    getNumericSummary(data=all_data,group_variable="treatment",summary_variable="age")[[2]],
     getNumericSummary(data=all_data,group_variable="genotype",summary_variable="age")[[2]],
     ncol=2, nrow=2,legend="bottom")
 

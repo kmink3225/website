@@ -1,6 +1,6 @@
 ---
 title: Conditional Probability & Bayes' Rule
-subtitle: Conditional Probability, Bayes' Rule, Bayesean Statistics, Frequentist Statistics, Deductive reasoning, Inductive Reasoning, Total Probability Rule, Naive Bayes
+subtitle: Conditional Probability, Bayes' Rule, Bayesean Statistics, Frequentist Statistics, Deductive Method, Inductive Method, Proof by Contratiction, Hypothetical Deductive Method, Total Probability Rule, Naive Bayes
 description: | 
   Probability for statistics, machine learning and deep learning.
 categories:
@@ -39,9 +39,14 @@ execute:
 
 주사위를 던질 때 특정 주사위의 눈 (1~6)이 나올 확률은 **$\frac{1}{6}$ 으로 같다 (eqaully likely)라고 가정할 때** 주사위의 눈이 나올 수 있는 모든 집합 표본 공간 $S$ 에 대한 특정 주사위의 눈이 나오는 사건 $A$ 가 발생할 확률은 $\frac{n(A)}{n(S)}$ 와 같다. 조건부 확률은 2개 이상의 사건에 대해서 하나의 사건이 다른 사건이 발생할 확률에 영향을 미치는 개념을 말한다. 가장 간단한 2개의 사건 $A, B$ 에 대해서 살펴볼 때 조건부 확률은 다음과 (@eq-conditional_probability)과 같다.
 
+::: {#def-conditional_probability}
+
+If $A$ and $B$ are events in sample space $S$, and $P(B)>0$, then the conditional probability of $A$ given $B$, written $P(A|B)$, is
 $$
 P(A|B)=\frac{P(A\cap B)}{P(B)}
 $$ {#eq-conditional_probability}
+:::
+위의 정의에서 볼 수 있듯이, sample space $S$ 가 B로 update 되어 P(B|B)=1이 되고 사건 A의 outcome이 B에 관해서 조정된다. 
 
 예를 들어, 사건 $A$ 는  주사위의 눈이 1이 나오는 사건, 사건 $B$ 는 주사위의 눈이 3 이하가 나오는 사건이라고 했을 때 사건 $A$ 가 사건 $B$ 의 부분 집합이므로 두 사건이 서로 독립이 아니다. 즉, $ A\cap B $ 사건에서 주사위의 눈이 1 나오는 경우 밖에 없다. 이렇게 사건 $B$ 가 주어졌을 때 혹은 $B$ 가 먼저 일어났을 때 1이 나올 확률은 달라지게 된다. 즉, $A$ 의 sample space = $\{1,2,3,4,5,6\}$ 이고 $A|B$ 의 sample space = $\{1,2,3\}$ 이 되기 때문에 $P(A) \not= P(A|B)$ 가 된다. 
 
@@ -59,51 +64,63 @@ Bayes' rule (베이즈 정리)는 prior probability(사전 확률)과 posterior 
 
 ### Activating Schema
 
-Bayes' rule을 좀 더 직관적으로 이해하기 위해선 Bayes' rule와 연관된, 그리고 우리에게 친숙한 개념들이나 논리들을 상기시킬 필요가 있다. 우리에게 친숙한 개념인 연역법과 귀납법에 대해서 간단이 살펴본다. 
+Bayes' rule을 좀 더 직관적으로 이해하기 위해선 Bayes' rule와 연관된 친숙한 개념들을 상기시킬 필요가 있다. 우리에게 친숙한 개념인 연역법과 귀납법에 대해서 간단이 살펴본다. 
 
-#### Deduction vs Induction Method (or Deductive Reasoning)
+#### Deduction vs Induction Method
 
-Deduction method (or deductive reasoning)는 
-연역(演繹, deduction)이란 이미 알고 있는 하나 또는 둘 이상의 명제를 전제로 하여 명확히 규정된 논리적 형식들에 근거해 새로운 명제를 결론으로 이끌어내는 추리의 방법이다. 연역을 일반적인 사실이나 원리에서 개별적이고 특수한 사실이나 원리를 이끌어내는 것으로 정의하기도 한다. 하지만 전제와 결론이 모두 특수 명제인 경우도 있으므로 이는 지나치게 협소한 이해라고 할 수 있다.  
- 
-연역은 귀납(歸納, induction)과 달리 전제와 결론의 구체적인 내용은 문제로 삼지 않으며 엄격한 논리적 규칙에 의존한다. 귀납에서 추론의 타당성은 전제와 결론을 뒷받침하는 내용에 달려 있다. 귀납적 추론은 근본적으로 관찰과 실험에서 얻은 부분적이고 특수한 사례를 근거로 전체에 적용시키는 이른바 ‘귀납적 비약’을 통해 이루어진다. 때문에 귀납에서 얻어진 결론은 일정한 개연성을 지닐 뿐이며, 사실 정보에 따라 타당성의 정도도 달라진다. 하지만 연역에서는 논리적 형식의 타당성을 갖추고 있는 한, 결론은 전제들로부터 필연성을 가지고 도출된다. 연역에서는 전제가 결론을 확립해 주는 결정적 근거가 된다. 전제가 참일 경우 그러한 전제에 의해 뒷받침되는 결론 역시 반드시 참이 되며, 전제와 결론 사이의 이러한 필연 관계는 논리적 형식과 규칙의 타당성에 근거해 성립한다.  
- 
-이처럼 연역은 결론의 내용이 이미 전제 속에 포함되어 있다는 점에서 진리보존적(truth-preserving) 성격을 지닌다. 연역은 전제에 없었던 새로운 사실적 지식의 확장을 가져다 주지는 못하며, 이미 전제 속에 포함되어 있는 정보를 명확하고 새롭게 도출해낼 뿐이다.  
- 
-하지만 연역적 추리(deductive inference)는 논리적 일관성과 체계성을 가져다 준다. 때문에 일상 생활에서도 널리 적용되어 나타난다. 어떤 행위가 옳은 것인지 아닌지를 따지는 윤리적 판단들은 대부분 연역적 방법에 기초해 나타난다. 개별 행위의 유형을 포괄하는 보편적 규범에 기초해 옳고 그름을 판단하기 때문이다. 그리고 수학의 많은 분야들도 연역적 추리에 의존한다.  
- 
-주어진 전제들에서 논리적인 방식으로 결론을 도출하는 연역적 추리의 방법과 절차를 논리적으로 체계화한 것이 연역법(deductive method)이다. 연역적 추론 규칙과 형식에 대한 탐구의 역사는 매우 오래되었다. 일찍이 아리스토텔레스는 삼단논법의 형식을 확립하였고, 오늘날에도 새로운 추론 규칙을 찾는 일은 논리학의 가장 중요한 과제 가운데 하나이다.  
- 
-연역적 추리의 방법은 하나의 전제에서 결론이 도출되는 직접추리와 2개 이상의 전제에서 결론이 나타나는 간접추리로 나뉜다. ‘대전제→소전제→결론’의 형식으로 나타나는 삼단논법이 간접추리의 전형적 형식이다. 이 때 결론의 주어 개념을 ‘소개념’, 결론의 술어 개념을 ‘대개념’, 대전제와 소전제에 공통으로 포함되어 두 전제를 연결하는 개념을 ‘매개념’이라고 한다.  
- 
-모든 사람은 죽는다. A → B (대전제)
-소크라테스는 사람이다. C → A (소전제)
+##### Deduction Method
 
-소크라테스는 죽는다. C → B이다. (결론) 
- 
-연역은 전제로부터 결론을 도출해내는 것이므로 일정한 명제를 출발점으로 한다. 그런데 모든 연역의 출발점이 되는 최초의 명제는 결코 연역에 의해 도출될 수 없다. 그러한 출발점은 결국 인간의 다양한 경험이나 실천 등의 결과를 일반화하는 과정을 통해서 형성된다. 때문에 실제의 학문 연구가 순수히 연역적 형태로서만 이루어질 수는 없으며 관찰이나 실험 등의 증명 과정과 통일되어 적용된다. 오늘날에는 전제로 삼은 가설을 검증하기 위해 그 가설에서 몇 개의 명제를 연역해 실험과 관찰 등을 수행하는 가설연역법(假說演繹法, hypothetical deductive method)이 널리 쓰이고 있다.
+연역법 (deduction method or deductive reasoning)는 하나 (=대전제) 또는 둘 이상의 명제(=대전제+소전제들)를 전제로 하여 명확한 논리에 근거해 새로운 명제(결론)를 도출하는 방법이다. 보통 일반적인 명제에서 구체적인 명제로 도출해내는 방식으로 연역법을 설명하기도 한다. 연역법은 전제와 결론의 타당성보다는 결론을 이끌어내는 논리 전개에 엄격함을 요구한다. 그래서 명쾌한 논리가 보장된다면 연역적 추론의 결론은 그 전제들이 결정적 근거가 되어 전제와 결론이 필연성을 갖게 된다. 따라서, 전제가 진리(=참)이면 결론도 항상 진리(=참)이고 전제가 거짓이면 결론도 거짓으로 도출된다. 하지만, 모든 연역적 추론에서 출발되는 최초의 명제가 결코 연역에 의해 도출될 수 없다는 약점을 갖고있다. 즉, 반드시 검증된 명제를 대전제로 하여 연역적 추리를 시작해야한다. [Source: naver encyclopedia -deductive method](https://terms.naver.com/entry.naver?docId=1126605&cid=40942&categoryId=31530) (cf. [귀류법](https://en.wikipedia.org/wiki/Proof_by_contradiction))
 
-[Source: naver encyclopedia -deductive method](https://terms.naver.com/entry.naver?docId=1126605&cid=40942&categoryId=31530)
+예를 들어, 아리스토텔레스의 삼단논법의 논리 형식이 가장 많이 인용이 된다. 대전제와 소전제가 하나씩있는 둘 이상의 명제로부터 결론이 도출되는 예를 살펴보자.
 
- 
-#### Induction Method (or Inductive Reasoning)
+1. 대전제: 모든 사람은 죽는다.
+1. 소전제: 소크라테스는 사람이다.
+1. 결론: 그러므로 소크라테스도 죽는다.
+
+##### Induction Method
+
+귀납법 (deduction method or deductive reasoning)은 전제와 결론을 뒷받침하는 논리에 의해 그 타당성이 평가된다. 귀납적 추론은 관찰과 실험에서 얻은 특수한 사례 (= data)를 근거로 전체에 적용시키는 **귀납적 비약**을 통해 이루어진다. 이와 같이 귀납에서 얻어진 결론은 일정한 개연성을 지닐 뿐이며, 특정 data에 따라 귀납적 추론의 타당성에 영향을 미친다. 그러므로, 검증된 data가 많을 수록 신뢰도와 타당성이 증가한다는 특징이 있다.하지만, 귀납적 추론의 결론이 진리인 것은 아니다.  [Source: naver encyclopedia - inductive method](https://terms.naver.com/entry.naver?docId=1068410&cid=40942&categoryId=31530)
+
+1. 특수한 사례 (or data): 소크라테스는 죽었다, 플라톤도 죽었다, 아리스토텔레스도 죽었다.
+1. 소전제: 소크라테스는 사람이다.
+1. 결론: 그러므로 소크라테스도 죽는다.
+
+위와 같이 연역적 추론과 귀납적 추론은 서로 반대되는 개념으로 각 각 강점과 약점이 있으며 현실에서는 서로 상호 보완적으로 쓰이고 있다. 따라서, 전제로 삼는 대전제 역시 검증 과정이 필요하고 그 가설에서 몇 개의 명제를 연역해 실험과 관찰 등을 수행하는 가설연역법(hypothetical deductive method)이 널리 쓰이고 있다.
 
 #### Frequentism vs Bayeseanism
+
+통계학에선 모수(parameter)를 추정하는 여러 방법론들이 있는데 이번 블로그에서는 Frequentism와 Bayeseanism, 이 2가지 방법론에 초점을 둔다.
+
+##### Frequentism (frequentist statistics)
+
+통계학에서 가장 널리쓰이고 있는 방법론으로, 연역법에 근거한 결론 도출 방식을 이용한다. 간단히 말하면, 이미 알려진 분포에서 연구자의 관측치가 발생할 확률을 관찰하여 결론을 유도 하는 방법이다. p-value에 의한 결론 도출방식이 그 대표적인 예이다. 연구자의 데이터가 여러 수학자와 통계학자들이 증명해 놓은 분포하에서 발생한 사실이 입증이 됐을 때 연구자의 관측치가 그 named distribution(like normal distribution)에서 발생할 확률이 낮을 수록 p-value가 작아지고 일정 유의수준에 따라 연구자는 귀무가설을 기각하는 논리방식을 따른다. 
+
+##### Bayeseanism
+
+통계학에서 역시 많이 쓰이는 방법론으로, 귀납법에 근거한 결론 도출 방식을 이용한다. 간단히 말하면, 확률을 확률변수가 갖는 sample space에 대한 특정 사건이 발생한 사건의 비로 보는 것 (equally likely라고 가정)이 아니라 내가 설정한 가설에 대한 신뢰도로 바라보는 것이다. 따라서, 사전에 이미 알고있는 데이터가 있어 사전 확률 (prior probability)을 알고있고 이 사전 확률이 추가적인 data에 의해 조정되는 사후 확률 (posterior probability)이 계산된다. 이때 사전 확률자체보다는 추가적인 data와 사후 확률을 계산하는데 사용되는 likelihood의 타당성이 더 중요하다. 더 구체적인 내용은 Bayesean statistics에 기본이 되는 Bayes' rule에서 살펴보기로 한다.
 
 [source: Frequentism vs Bayeseanism](https://www.redjournal.org/article/S0360-3016(21)03256-9/fulltext)
 
 
-### Definition of Bayes' Rule
+### Bayes' Rule Formula
+
+::: {#thm-Bayes}
 $$
-P(A|B)=\frac{P(B|A)P(A)}{P(B)}
+\begin{aligned}
+P(A|B)&=\frac{P(B|A)P(A)}{P(B)}\\
+      &=\frac{P(B|A)P(A)}{P(B|A)P(A)+P(B|\overline A)P(\overline A)}
+\end{aligned}
 $$ {#eq-Bayes_rule}
 
-* $P(A|B)$: posterior probability
-* $P(A)$: prior probability
-* $P(B|A)$: likelihood
-* $P(B)$: marginal probability
+:::
 
-이 공식을 이해하기 위해선, Law of Total Probability (전 확률 법칙) 또는 Total Probability Rule (전 확률 정리)을 이해해야한다.
+* $P(A|B)$: posterior probability, B(data)가 주어졌을때 가설 A에 대한 신뢰도
+* $P(A)$: prior probability, 가설 A에대한 신뢰도
+* $P(B|A)$: likelihood, 가설 A가 주어졌을때 B(Data)가 발생할 신뢰도
+* $P(B)$: marginal probability, Data의 신뢰도
+
+@eq-Bayes_rule 의 두 분째 등식을 이해하기 위해선, Law of Total Probability (전 확률 법칙) 또는 Total Probability Rule (전 확률 정리)을 이해해야한다.
 
 ### Total Probability Rule
 
@@ -154,76 +171,49 @@ $$
 
 ### 예제
 
-[영상 자료 ](https://www.youtube.com/watch?v=Y4ecU7NkiEI&t=29s)
-[슬기로운 통계생활 블로그 ](https://statisticsplaybook.tistory.com/30)
+펭수는 평소 관심이 있던 코니에게서 초콜릿을 선물받았다. 펭수는 초콜릿을 준 코니가 나를 좋아하는지가 궁금하기 때문에 이것을 통계적으로 계산해본다. 
 
-예제로 알아보기 - 초콜릿을 준 코니의 마음
-펭수는 평소 관심이 있던 코니에게서 초콜릿을 선물받습니다. 펭수는 초콜릿을 준 코니가 나를 좋아하는지가 궁금하기 때문에 이것을 통계적으로 해봅니다. 먼저 상황을 간단히 나타내기 위해서 다음 두 상황을 가정합니다.
+펭수는 먼저 다음 두 상황을 가정한다.
 
- 
+* $P(like)=0.5$
+  * 코니가 펭수를 좋아한다는 가설의 신뢰도는 반 반이다. 즉, 정보없는 상태에서의 펭수의 prior probability. 
+  * 0.5로 설정한 이유는 다음의 원리를 따랐다. **The Principle of Insufficient Reason(이유불충분의 원리): 하나의 사건을 기대할만한 어떤 이유가 없는 경우에는 가능한 모든 사건에 동일한 확률을 할당해야 한다는 원칙.**
+* $P(choco)$
+  * 초콜릿을 받았다라는 data가 발생할 신뢰도
 
-P(A) (사건 "호감"): 상대방이 나를 좋아한다. 
+**펭수는 코니에게 자신을 좋아하는지 알 길이 없으니 사람이 호감이 있을 때에 대한 초콜릿 선물 데이터를 조사**하기 시작한다. 즉, 호감의 근거는 초콜릿으로 한정했고 초콜릿 선물 방식의 불확실성을 호감으로 설명하는 문헌을 찾기 시작했다. 그리고 펭수는 도서관에 있는 일반인 100명을 대상으로 초콜릿과 호감과의 관계를 연구한 *초콜릿과 호감* 논문을 통해 두 가지 정보를 알게된다.
 
-P(B) (사건 "초콜릿"): 초콜릿을 받았다.
+  * 일반적으로, 어떤 사람이 상대방에게 호감이 있어서 초콜릿을 줄 확률은 $40%$ 이다. 즉, $P(choco|like)=0.4$
+  * 일반적으로, 어떤 사람이 상대방에게 호감이 없지만 *예의상* 초콜릿을 줄 확률은 $30%$ 이다. 즉, $P(choco|\overline{like})=0.3$
+* 위의 2가지 정보로 유추 가능한 정보
+  * $P(\overline{choco}|like)=0.6$
+  * $P(\overline{choco}|\overline{like})=0.7$
+* 초콜릿에 관한 조사를 토대로 얻은 4가지 정보로 유추할 수 있는 정보
+  * $P(choco|like)=0.4$: like를 받고 있는 50명 중 $40%$ 인 20명은 초콜릿을 받는다.
+  * $P(\overline{choco}|like)=0.6$: like를 받고 있는 50명 중 $60%$ 인 30명은 초콜릿을 받지 못한다.
+  * $P(choco|\overline{like})=0.3$: like를 받지 않는 50명 중 $30%$ 인 15명은 예의상 준 초콜릿을 받는다.
+  * $P(\overline{choco}|\overline{like})=0.7$: like를 받지 않는 50명 중 $70%$ 인 35명은 초콜릿을 받지 못한다.
 
- 
-펭수는 사건 "호감"에 대한 확률, 즉, 코니가 나를 좋아할 확률을 50%, 좋아하지 않을 확률을 50%로 가정합니다. 즉, 
-P(A)=0.5  로 표현이 될 것입니다. 이러한 이유는 펭수는 초콜릿을 준 코니 마음에 대한 아무런 정보가 없기 때문입니다!
+펭수의 관점으로 정보를 재분류
 
-**The Principle of Insufficient Reason(이유불충분의 원리): 하나의 사건을 기대할만한 어떤 이유가 없는 경우에는 가능한 모든 사건에 동일한 확률을 할당해야 한다는 원칙.**
+* 펭수가 궁금한 정보
+  * $P(like|choco)=?$: posterior probability
+* 펭수가 가정한 정보
+  * $P(like)=0.5$: prior probability by **The Principle of Insufficient Reason**
+* 펭수가 조사한 정보
+  * $P(choco|like)=0.4$: likelihood
+  * $P(choco)$: marginal probability
+    * $P(choco)=P(choco|like)+P(choco|\overline{like})=\frac{20+15}{100}=0.35$
 
-쉽게 이해하기 위하여, 주변에 100명의 사람이 있다고 가정합니다. 이유불충분의 원리에 따라 50명은 누군가로부터 호감을 받고 있고, 50명은 호감을 얻고 있지 않고 있겠네요!
-
- 
-
-그리고 펭수는 조사를 통해 두 가지 정보를 알게됩니다.
-
-* 어떤 사람이 상대방에게 호감이 있어서 초콜릿을 줄 확률은 40%이다. -> P(B|A)=0.4 
-* 어떤 사람이 상대방에게 호감이 없지만 "예의상" 초콜릿을 줄 확률은 30%이다. (어장 관리 그만ㅠ) -> P(B|Ac)=0.3
- 
-
-이 정보를 토대로 아래 두가지를 유추할 수 있습니다.
-상대방에게 호감이 있지만 초콜릿을 주지 않을 확률은 60%이다. -> P(Bc|A)=0.6
-호감이 없어서 초콜릿을 주지 않을 확률은 70%이다. -> P(Bc|Ac)=0.7
-
-얻은 정보 정리해보기
-위 내용들을 토대로 생각해볼 때, 우리는 아래와 같이 정리할 수 있습니다.
-
-* 감을 얻고 있는 50명 중 40%인 20명은 초콜릿을 받습니다.
-* 감을 얻고 있는 50명 중 60%인 30명은 초콜릿을 받지 못합니다.
-* 감의 대상이 아닌 50명 중 30%인 15명은 예의상 준 초콜릿을 받습니다.
-* 감의 대상이 아닌 50명 중 70%인 35명은 초콜릿을 받지 못합니다.
-
-자, 이제 펭수가 궁금한 P(초콜릿을 받았을 때, 초콜릿을 준 사람이 나를 좋아할 확률)을 위에서 약속한 기호로 표현한다면 
-P(A|B) 으로 나타낼 수 있습니다. 그런데 이것은 펭수가 조사한 확률,
+위의 정리한 정보를 Bayes' rule에 대입하면,
 
 $$
-P(호감이있어서초콜릿을줄확률)=P(B|A)
+P(like|choco)=P(choco|like)∗P(like)/P(choco)=(0.4∗0.5)/0.35=0.57 
 $$
 
-에서 조건과 결과가 뒤바뀐 것입니다. 이 확률을 계산하기 위해서 필요한 정보를 정리해봅시다.
-사건 "호감" : 상대방이 나를 좋아한다 -> P(A) = 50% 이고 (이유불충분의 원리, 사전가정!),
-사건 "초콜릿" : 초콜릿을 받았다 -> P(B) = (20+15)/100 = 35% (정리한 노란색 부분)입니다.
-어떤 사람이 상대방에게 호감이 있어서 초콜릿을 줄 확률은 40%이다. -> P(B|A)=40% (펭수가 조사한 정보)
+펭수의 prior probability($P(A)=0.5$)가 posterior probability($P(A|B)=0.57$)로 업데이트 될 수 있다. *초콜릿과 호감* 논문을 읽고 코니가 자신을 좋아할 확률이 높아진 것에 대해 기대감을 얻은 용기가 없는 펭수는 100명 보다 더 많은 독립적인 사람들로 실험한 논문을 찾아 다시 자신의 업데이트 된 사전 확률을 계속해서 업데이트할 생각이다. 그리고 자신의 사전 확률을 추가적인 데이터를 갖고 사후 확률로 계속해서 업데이트시켜 정확한 확률을 구한다.
 
- 
-
-이것을 베이즈정리의 수식에 넣어보면 다음과 같습니다.
-
- 
-
-P(A|B)=P(B|A)∗P(A)/P(B)=(0.4∗0.5)/0.35=0.57 
-
-이라는 확률이 나옵니다. 따라서, 펭수는 처음의 이유불충분의 원리로 가정했던, 상대방이 나를 좋아할 확률 50%(사전확률) 
-P(A)를 57%(사후확률) P(A|B) 로 업데이트 할 수 있습니다.
-
- 
-
-이번 글의 가장 중요한 요지는, 베이즈 정리라는 것은 새로운 정보를 통해 사전 확률을 업데이트 하여 사후 확률에 대한 정확도를 높여가는 것이라는 점입니다. 그리고 이러한 개념들이 어떻게 데이터 분석에 활용될 수 있는지 한 번 생각해보고자 합니다. 
-
- 
-
-혹시 내용에 오류가 있다면 언제든지 댓글/피드백 달아주세요 🎆 잘못된 내용 알려주시는 것 언제나 환영입니다 👩‍🚀
+위의 예시는 [영상 자료: 초콜릿을 준 코니의 마음](https://www.youtube.com/watch?v=Y4ecU7NkiEI&t=29s)을 시청하고 영감을 얻은 슬기로운 통계생활 tistory에 있는 베이즈 정리(Bayes' rule) 완벽히 정리하기 [Source: 슬기로운 통계생활 블로그](https://statisticsplaybook.tistory.com/30)를 요약 및 약간의 각색을 했다.  
 
 
 ## Generalized Bayes' Rule
@@ -238,28 +228,6 @@ $$
 
 :::
 
-::: {#thm-classic}
-
-If in $N$ identical and independent repeated experiments, an event $A$ happens $n$ times, the the probability of $A$ is defined by
-$$
-P(A)=\lim_{N\to\infty}\frac{n}{N}
-$$
-
-:::
-
-* The case of the sample space consisting of $N$ distinctive not equally likely elements,
-* The case of the uncountable sample space 
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
-*
 :::
 </div>
 

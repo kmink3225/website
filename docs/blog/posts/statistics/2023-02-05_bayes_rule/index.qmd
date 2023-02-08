@@ -1,0 +1,286 @@
+---
+title: Bayes' Rule
+subtitle: Bayesean Statistics, Frequentist Statistics, Deductive Method, Inductive Method, Proof by Contratiction, Hypothetical Deductive Method, Total Probability Rule, Naive Bayes
+description: | 
+  Probability for statistics, machine learning and deep learning. Studying conditional probability is fundamental to stochastic processes, reinforcement learning, and naive Bayes classification, so it's important to understand the concept.
+categories:
+  - Statistics
+author: Kwangmin Kim
+date: 02/05/2023
+draft: false
+format: 
+  html:
+    toc: true
+    number-sections: True
+    code-fold: true
+    page-layout: full
+execute: 
+  warning: false
+  message: false
+---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+
+## Bayes' Rule
+
+Bayes' rule (베이즈 정리)는 prior probability(사전 확률)과 posterior probability(사후 확률)의 관계를 조건부 확률을 이용하여 확립한 것이다. 
+
+* prior probability(사전 확률)는 데이터를 얻기 전 연구자의 가설이 들어간 일종의 사건 발생의 신뢰도로 해석하기도 하고 prior probability density function (사전 확률 밀도 함수) 라고도 표현된다. 
+* posterior probability(사후 확률)는 데이터가 주어진 후 연구자의 가설이 들어간 사건 발생의 신뢰도로 해석하기도 하고 posterior probability desnsity function(사후 확률 밀도 함수) 라고도 표현된다. 
+
+좀 더 구체적으로, 2개의 사건 A와 B로 한정시켜 생각해봤을 때, 조건부 확률 $P(A|B)$ 는 각 사건의 확률 $P(A), P(B), P(B|A)$ 를 사용하여 게산될 수 있다. 그래서 베이즈 정리는 $P(B|A)$, $P(B|\overline{A})$, $P(A)$ 의 정보를 알고있거나 계산 가능할 때 아래와 같은 $P(A|B)$ 의 확률을 구할 수 있는 공식을 제공한다(@eq-Bayes_rule). 
+
+### Activating Schema
+
+Bayes' rule을 좀 더 직관적으로 이해하기 위해선 Bayes' rule와 연관된 친숙한 개념들을 상기시킬 필요가 있다. 우리에게 친숙한 개념인 연역법과 귀납법에 대해서 간단이 살펴본다. 
+
+#### Deduction vs Induction Method
+
+##### Deduction Method
+
+연역법 (deduction method or deductive reasoning)는 하나 (=대전제) 또는 둘 이상의 명제(=대전제+소전제들)를 전제로 하여 명확한 논리에 근거해 새로운 명제(결론)를 도출하는 방법이다. 보통 일반적인 명제에서 구체적인 명제로 도출해내는 방식으로 연역법을 설명하기도 한다. 연역법은 전제와 결론의 타당성보다는 결론을 이끌어내는 논리 전개에 엄격함을 요구한다. 그래서 명쾌한 논리가 보장된다면 연역적 추론의 결론은 그 전제들이 결정적 근거가 되어 전제와 결론이 필연성을 갖게 된다. 따라서, 전제가 진리(=참)이면 결론도 항상 진리(=참)이고 전제가 거짓이면 결론도 거짓으로 도출된다. 하지만, 모든 연역적 추론에서 출발되는 최초의 명제가 결코 연역에 의해 도출될 수 없다는 약점을 갖고있다. 즉, 반드시 검증된 명제를 대전제로 하여 연역적 추리를 시작해야한다. [Source: naver encyclopedia -deductive method](https://terms.naver.com/entry.naver?docId=1126605&cid=40942&categoryId=31530) (cf. [귀류법](https://en.wikipedia.org/wiki/Proof_by_contradiction))
+
+예를 들어, 아리스토텔레스의 삼단논법의 논리 형식이 가장 많이 인용이 된다. 대전제와 소전제가 하나씩있는 둘 이상의 명제로부터 결론이 도출되는 예를 살펴보자.
+
+1. 대전제: 모든 사람은 죽는다.
+1. 소전제: 소크라테스는 사람이다.
+1. 결론: 그러므로 소크라테스도 죽는다.
+
+##### Induction Method
+
+귀납법 (deduction method or deductive reasoning)은 전제와 결론을 뒷받침하는 논리에 의해 그 타당성이 평가된다. 귀납적 추론은 관찰과 실험에서 얻은 특수한 사례 (= data)를 근거로 전체에 적용시키는 **귀납적 비약**을 통해 이루어진다. 이와 같이 귀납에서 얻어진 결론은 일정한 개연성을 지닐 뿐이며, 특정 data에 따라 귀납적 추론의 타당성에 영향을 미친다. 그러므로, 검증된 data가 많을 수록 신뢰도와 타당성이 증가한다는 특징이 있다.하지만, 귀납적 추론의 결론이 진리인 것은 아니다.  [Source: naver encyclopedia - inductive method](https://terms.naver.com/entry.naver?docId=1068410&cid=40942&categoryId=31530)
+
+1. 특수한 사례 (or data): 소크라테스는 죽었다, 플라톤도 죽었다, 아리스토텔레스도 죽었다.
+1. 소전제: 소크라테스는 사람이다.
+1. 결론: 그러므로 소크라테스도 죽는다.
+
+위와 같이 연역적 추론과 귀납적 추론은 서로 반대되는 개념으로 각 각 강점과 약점이 있으며 현실에서는 서로 상호 보완적으로 쓰이고 있다. 따라서, 전제로 삼는 대전제 역시 검증 과정이 필요하고 그 가설에서 몇 개의 명제를 연역해 실험과 관찰 등을 수행하는 가설연역법(hypothetical deductive method)이 널리 쓰이고 있다.
+
+#### Frequentism vs Bayeseanism
+
+통계학에선 모수(parameter)를 추정하는 여러 방법론들이 있는데 이번 블로그에서는 Frequentism와 Bayeseanism, 이 2가지 방법론에 초점을 둔다.
+
+##### Frequentism (frequentist statistics)
+
+통계학에서 가장 널리쓰이고 있는 방법론으로, 연역법에 근거한 결론 도출 방식을 이용한다. 간단히 말하면, 이미 알려진 분포에서 연구자의 관측치가 발생할 확률을 관찰하여 결론을 유도 하는 방법이다. p-value에 의한 결론 도출방식이 그 대표적인 예이다. 연구자의 데이터가 여러 수학자와 통계학자들이 증명해 놓은 분포하에서 발생한 사실이 입증이 됐을 때 연구자의 관측치가 그 named distribution(like normal distribution)에서 발생할 확률이 낮을 수록 p-value가 작아지고 일정 유의수준에 따라 연구자는 귀무가설을 기각하는 논리방식을 따른다. 
+
+##### Bayeseanism
+
+통계학에서 역시 많이 쓰이는 방법론으로, 귀납법에 근거한 결론 도출 방식을 이용한다. 간단히 말하면, 확률을 확률변수가 갖는 sample space에 대한 특정 사건이 발생한 사건의 비로 보는 것 (equally likely라고 가정)이 아니라 내가 설정한 가설에 대한 신뢰도로 바라보는 것이다. 따라서, 사전에 이미 알고있는 데이터가 있어 사전 확률 (prior probability)을 알고있고 이 사전 확률이 추가적인 data에 의해 조정되는 사후 확률 (posterior probability)이 계산된다. 이때 사전 확률자체보다는 추가적인 data와 사후 확률을 계산하는데 사용되는 likelihood의 타당성이 더 중요하다. 더 구체적인 내용은 Bayesean statistics에 기본이 되는 Bayes' rule에서 살펴보기로 한다.
+
+[source: Frequentism vs Bayeseanism](https://www.redjournal.org/article/S0360-3016(21)03256-9/fulltext)
+
+
+### Bayes' Rule Formula
+
+::: {#thm-Bayes}
+$$
+\begin{aligned}
+P(A|B)&=\frac{P(B|A)P(A)}{P(B)}\\
+      &=\frac{P(B|A)P(A)}{P(B|A)P(A)+P(B|\overline A)P(\overline A)}
+\end{aligned}
+$$ {#eq-Bayes_rule}
+
+:::
+
+* $P(A|B)$: posterior probability, B(data)가 주어졌을때 가설 A에 대한 신뢰도
+* $P(A)$: prior probability, 가설 A에대한 신뢰도
+* $P(B|A)$: likelihood, 가설 A가 주어졌을때 B(Data)가 발생할 신뢰도
+* $P(B)$: marginal probability, Data의 신뢰도
+
+@eq-Bayes_rule 의 두 분째 등식을 이해하기 위해선, Law of Total Probability (전 확률 법칙) 또는 Total Probability Rule (전 확률 정리)을 이해해야한다.
+
+### Total Probability Rule
+
+::: {#thm-general}
+
+Let $A_1, A_2, ..., A_k$ be a set of mutually exclusive and exhaustive events. Let $A$ be a event and a partition of sample space $\Omega$, then 
+
+$$
+P(B)=\sum_{i=1}^{n}P(B|A_i)P(A_i)
+$$
+
+:::
+
+::: columns
+::: {.column width="50%"}
+![Law of Total Probability Example - Two Events](law%20of%20total%20probability2.PNG){#fig-two_events}
+
+[Source: Law of ToTal Probability with Proof](https://byjus.com/maths/total-probability-theorem/)
+:::
+::: {.column width="50%"}
+![Law of Total Probability Example - Multiple Events](law%20of%20total%20probability.PNG){#fig-multiple_events}
+
+[Source: MIT RES.6-012 Introduction to Probability, Spring 2018 - Youtube](https://www.youtube.com/watch?v=8odFouBR2wE)
+:::
+:::
+
+$$
+\begin{aligned}
+P(B)&=P(B\cap A) + P(B\cap \overline A)\\
+    &=P(B\cap A) + P(B\cap \overline A)\\
+    &=P(B|A)P(A)+P(B|\overline A)P(\overline A)\\
+P(A\cap B)&=P(B|A)P(A)=P(A|B)P(B)\\
+\therefore 
+P(A|B)&=\frac{P(A \cap B)}{P(B)}\\
+      &=\frac{P(B|A)P(A)}{P(B|A)P(A)+P(B|\overline A)P(\overline A)}
+\end{aligned}
+$$ {#eq-total_conditional_probability}
+
+Law of total probability 를 이용하여 Bayes' rule이 @eq-total_conditional_probability 와 같이 변형되었다. 최종식을 보면 좀 더 직관적인 해석이 가능해지는데 P(B) 가 A와의 교집합 확률의 총합이 되면서 분자가 그 일부가 되는 비율의 개념으로 해석될 수 있다. @fig-two_events 를 보면 $P(A|B)=\frac{P(B \cap A)}{P(B)}=\frac{P(B \cap A)}{P(B \cap A)+P(B \cap \overline A)}$ 로 표현되는 것을 볼 수 있다. 그 것을 조금 더 일반화 한 경우는 @fig-multiple_events 를 참고하여 유추할 수 있다.
+
+### Notation
+$$
+\begin{aligned}
+P(A|B)&=\frac{P(B|A)P(A)}{P(B|A)P(A)+P(B|\overline A)P(\overline A)}\\
+P(\theta|x)&=\frac{P(x|\theta)P(\theta)}{P(x|\theta)P(\theta)+P(x|\overline \theta)P(\overline \theta)}
+\end{aligned}
+$$
+
+많은 참고 문헌에서 사건 A, B를 모수, $\theta$ 와 data, $x$ 로 표현하기도 한다. 즉, data $x$ 가 주어졌을 때 모수 $\theta$ 가 발생할 확률이 data에 의해서 update된다.
+
+* $P(\theta)$
+  * prior probability density function
+  * 데이터없이 초기에 임시로 부여된 모델 또는 모수의 확률
+* $P(x|\theta)$ 
+  * likelihood 
+  * 초기에 임시로 부여된 모델 또는 모수가 주어졌을 때 data x가 발생할 우도
+  * 좀 더 파격적으로 해석하면, 초기에 임시로 부여된 모델 또는 모수가 data x에 들어맞을(or fittng) 확률
+* $P(x)$
+  * marginal proability
+  * 데이터가 발생할 확률로 $\theta$ 와 상관없기 때문에 상수로 취급한다.
+* $P(\theta|x)$
+  * posterior probability density function
+  * data가 주어졌을 때 모델 또는 모수의 확률
+  * Bayes' Rule에 의한 최적화에서 다음 최적화 iteration에서 Prior로 쓰인다.
+
+$P(x)$ 는 상수이기 때문에 생략가능 하여 아래의 식과 같이 정리 할 수 있다.
+$$
+P(\theta|x)\propto P(x|\theta)P(\theta)
+$$
+
+$P(\theta|x)$ 는 $P(x|\theta)P(\theta)$ 에만 영향을 받는 것을 볼 수 있다.
+
+### 예제
+
+펭수는 평소 관심이 있던 코니에게서 초콜릿을 선물받았다. 펭수는 초콜릿을 준 코니가 나를 좋아하는지가 궁금하기 때문에 이것을 통계적으로 계산해본다. 
+
+펭수는 먼저 다음 두 상황을 가정한다.
+
+* $P(like)=0.5$
+  * 코니가 펭수를 좋아한다는 가설의 신뢰도는 반 반이다. 즉, 정보없는 상태에서의 펭수의 prior probability. 
+  * 0.5로 설정한 이유는 다음의 원리를 따랐다. **The Principle of Insufficient Reason(이유불충분의 원리- 하나의 사건을 기대할만한 어떤 이유가 없는 경우에는 가능한 모든 사건에 동일한 확률을 할당해야 한다는 원칙).**
+* $P(choco)$
+  * 초콜릿을 받았다라는 data가 발생할 신뢰도
+
+**펭수는 코니에게 자신을 좋아하는지 알 길이 없으니 사람이 호감이 있을 때에 대한 초콜릿 선물 데이터를 조사**하기 시작한다. 즉, 호감의 근거는 초콜릿으로 한정했고 초콜릿 선물 방식의 불확실성을 호감으로 설명하는 문헌을 찾기 시작했다. 그리고 펭수는 도서관에 있는 일반인 100명을 대상으로 초콜릿과 호감과의 관계를 연구한 *초콜릿과 호감* 논문을 통해 두 가지 정보를 알게된다.
+
+  * 일반적으로, 어떤 사람이 상대방에게 호감이 있어서 초콜릿을 줄 확률은 $40%$ 이다. 즉, $P(choco|like)=0.4$
+  * 일반적으로, 어떤 사람이 상대방에게 호감이 없지만 *예의상* 초콜릿을 줄 확률은 $30%$ 이다. 즉, $P(choco|\overline{like})=0.3$
+* 위의 2가지 정보로 유추 가능한 정보
+  * $P(\overline{choco}|like)=0.6$
+  * $P(\overline{choco}|\overline{like})=0.7$
+* 초콜릿에 관한 조사를 토대로 얻은 4가지 정보로 유추할 수 있는 정보
+  * $P(choco|like)=0.4$: like를 받고 있는 50명 중 $40%$ 인 20명은 초콜릿을 받는다.
+  * $P(\overline{choco}|like)=0.6$: like를 받고 있는 50명 중 $60%$ 인 30명은 초콜릿을 받지 못한다.
+  * $P(choco|\overline{like})=0.3$: like를 받지 않는 50명 중 $30%$ 인 15명은 예의상 준 초콜릿을 받는다.
+  * $P(\overline{choco}|\overline{like})=0.7$: like를 받지 않는 50명 중 $70%$ 인 35명은 초콜릿을 받지 못한다.
+
+펭수의 관점으로 정보를 재분류
+
+* 펭수가 궁금한 정보
+  * $P(like|choco)=?$, posterior probability
+* 펭수가 가정한 정보
+  * $P(like)=0.5$, prior probability by **The Principle of Insufficient Reason**
+* 펭수가 조사한 정보
+  * $P(choco|like)=0.4$, likelihood
+  * $P(choco)$: marginal probability
+    * $P(choco)=P(choco|like)+P(choco|\overline{like})=\frac{20+15}{100}=0.35$
+
+위의 정리한 정보를 Bayes' rule에 대입하면,
+
+$$
+P(like|choco)=\frac{P(choco|like)\times P(like)}{P(choco)}=\frac{0.4\times 0.5}{0.35}=0.57 
+$$
+
+펭수의 prior probability($P(A)=0.5$)가 posterior probability($P(A|B)=0.57$)로 업데이트 될 수 있다. *초콜릿과 호감* 논문을 읽고 코니가 자신을 좋아할 확률이 높아진 것에 대해 기대감을 얻은 용기가 없는 펭수는 100명 보다 더 많은 독립적인 사람들로 실험한 논문을 찾아 다시 자신의 업데이트 된 사전 확률을 계속해서 업데이트할 생각이다. 그리고 자신의 사전 확률을 추가적인 데이터를 갖고 사후 확률로 계속해서 업데이트시켜 정확한 확률을 구한다.
+
+위의 예시는 [영상 자료: 초콜릿을 준 코니의 마음](https://www.youtube.com/watch?v=Y4ecU7NkiEI&t=29s)을 시청하고 영감을 얻은 슬기로운 통계생활 tistory에 있는 [Source: 베이즈 정리(Bayes' rule) 완벽히 정리하기  슬기로운 통계생활 블로그](https://statisticsplaybook.tistory.com/30)를 요약 및 약간의 각색을 한 것이다.
+
+
+## Generalized Bayes' Rule
+
+::: {#thm-general}
+
+Let $A_1, A_2, ..., A_k$ be a set of mutually exclusive and exhaustive events. Let $A$ be a event, then 
+
+$$
+P(A_i|B)=\frac{P(B|A_i)P(A_i)}{\sum_{j=1}^{k}P(B|A_i)P(A_i)}
+$$
+
+:::
+
+## Maximum a Posterior Estimation (MAP)
+
+Maximum a posterior estimation는 statistical estimation methods의 큰 기둥 중 하나인 maximum likelihood estimation과 더불어 parameter $\theta$ 를 추정하는데 많이 사용되는 방법론이다. 사후 확률 밀도 함수 $f(x|\theta)$ 또는 $P(x|\theta)$ 를 최대화하는 $\theta$ 의 추정치를 구하는 방법이며 아래와 같은 argument로 표현할 수 있다.
+
+$$
+\begin{aligned}
+\hat{\theta}&=\arg \max_{\theta}\frac{f(x|\theta)f(\theta)}{\int f(x|\theta)f(\theta)}\\
+            &\propto\arg \max_{\theta}f(x|\theta)f(\theta)
+\end{aligned}
+$$
+
+최대 우도 추정량과 달리 최대 사후 추정량에는 최대화하는 식에 사전 확률이 추가되어 있는 것을 볼 수 있다. 그러므로 분자 부분인 $f(x|\theta)f(\theta)$ 만을 최대화 한다. 분모 부분인 $\int f(x|\theta)f(\theta)$ nomarlizing penalty 또는 constant로 간주한다. 여기서 $P(\theta)$ 초기 가정치 인데 아무렇게나 설정하기 보다는 good estimate로 설정해야 통계학자들로부터의 공격을 최소화시킬 수 있다. MAP는 나이브 베이즈의 알고리즘의 핵심이다. 
+
+[참고] 최대 우도 추정량
+$$
+\begin{aligned}
+\hat{\theta}=\arg \max_{\theta}L(x|\theta)=\arg \max_{\theta}\Pi_{i=1}^{n}f(x|\theta)
+\end{aligned}
+$$
+
+## Naive Bayes Classifier
+
+Naive Bayes에 대한 구체적인 글은 [다른 블로그](../../ML/2023-02-06_naive_bayes/index.qmd)에 소개한다. Naive Bayes는 Bayes' Rule을 이용해 $\theta$ 를 최적화 시킨다. Naive Bayes의 Naive는 features 또는 explanotry variables이 서로 conditionally indepdent라고 가정한 것에서 이름 붙여졌다.
+ 
+:::
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
+
+
+Bayes' rule provides a formula how to calculate $P(A|B)$ if $P(B|A)$, $P(B|\overline{A})$, $P(A)$ are available
+:::
+
+
+</div>
+
+
+
+## Blog Guide Map Link
+
+* [Statistics Blog](../guide_map/index.qmd)
+* [Engineering Blog](../../Engineering/guide_map/index.qmd)
+* [Deep Learning Blog](../../DL/guide_map/index.qmd)
+* [Machine Learning Blog](../../ML/guide_map/index.qmd)
+* [Mathematics Blog](../../Mathmatics/guide_map/index.qmd)
+* [Patent Blog](../../Patent/guide_map/index.qmd)
+* [Validation Blog](../../Validation/guide_map/index.qmd)
+
+
+

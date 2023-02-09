@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.335">
+<meta name="generator" content="quarto-1.2.313">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -266,10 +266,33 @@ English
 <p>목적 함수 <span class="math inline">\(f(x;w)\)</span> 가 정의 됐을 때 목적 함수의 극 값을 구하기 위해서 변화량을 관찰해야 한다. 비단 목적함수를 포함한 어떤 현상을 함수로 표현할 때에도 문제를 해결하기 위해 변화량을 관찰하는 경우가 빈번하다.</p>
 <p>예를 들어, 선풍기 바람의 세기를 조절할 때 입력값은 바람 세기 버튼 출력값은 바람의 세기로 가정한다면 선풍기 바람 세기 입력에 따라 적절한 출력값을 갖도록 조정하고 싶을 것이다. 이때 변화량 관찰이 요구된다. 변화량을 잘 대변하는 것이 함수의 기울기이다. 함수의 기울기는 민감도 (sensitivity)로 표현되기도 한다(wiki). 기울기는 아래와 같이 정의된다.</p>
 </section>
+<section id="미분의-종류" class="level2">
+<h2 class="anchored" data-anchor-id="미분의-종류">미분의 종류</h2>
+<ul>
+<li>직접 미분
+<ul>
+<li>이번 블로그에서 정리한 내용</li>
+<li>수동 미분: 식을 알고 손으로 미분하여 도함수를 얻음</li>
+<li>symbolic 연산: 기호를 이용하여 미분 연산 <span class="math inline">\(\rightarrow\)</span> sympy package 이용</li>
+<li>함수 복잡하면 풀기 매우 어려움</li>
+</ul></li>
+<li>간접 미분
+<ul>
+<li>수치 미분 (numerical differentiation): 도함수를 몰라도 미분계수를 구하는데 사용</li>
+<li>함수 복잡하면 시간 오래 걸림</li>
+</ul></li>
+<li>자동 미분 (automatic differentiation)
+<ul>
+<li>복잡한 함수를 간단한 함수로 쪼개어 직접 미분 - Pytorch</li>
+<li>실무에서, 정합성 검사를 위해 자동 미분의 결과를 간접 미분의 결과와 맞추기도 한다.</li>
+<li>간접 미분이 정답이 된다.</li>
+</ul></li>
+</ul>
+</section>
 <section id="일-변수-함수의-미분" class="level2">
 <h2 class="anchored" data-anchor-id="일-변수-함수의-미분">일 변수 함수의 미분</h2>
 <div id="def-Slope" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 1 </strong></span>The slope of line connected with the two points <span class="math inline">\(P_1(x_1,y_1) and P_2(x_2,y_2)\)</span> is <span class="math display">\[
+<p><span class="theorem-title"><strong>Definition 1 </strong></span>The slope of line connected with the two points <span class="math inline">\(P_1(x_1,y_1)\)</span> and <span class="math inline">\(P_2(x_2,y_2)\)</span> is <span class="math display">\[
 m=\frac{y_2-y_1}{x_2-x_1}
 \]</span></p>
 </div>
@@ -418,35 +441,16 @@ y=\frac{f(x)}{g(x)}, y'=\frac{f'(x)g(x)-f(x)g'(x)}{g(x)^2}
 <h3 class="anchored" data-anchor-id="example-1">Example</h3>
 <ol type="1">
 <li><span class="math inline">\(S(x)=\frac{1}{1+e^{-ax}}\)</span> 를 <span class="math inline">\(x\)</span> 에 대해 미분해보시오.</li>
-<li><span class="math inline">\(f(x)=\alpha_1 + \frac{\alpha_2-\alpha_1}{1+10^{-\alpha_4(x-\alpha_3)}}\)</span> 를 어떻게 미분할 것인지 생각해 보시오.</li>
+<li><span class="math inline">\(f(x)=\alpha_1 + \frac{\alpha_2-\alpha_1}{1+e^{-\alpha_4(x-\alpha_3)}}\)</span> 를 어떻게 미분할 것인지 생각해 보시오.</li>
 <li><span class="math inline">\(y=f(x)=(4x+3)^2\)</span> 를 <span class="math inline">\(x\)</span> 에 대해 미분해보시오</li>
 <li><span class="math inline">\(y=f(x)=(4x+3)^{20}\)</span> 를 <span class="math inline">\(x\)</span> 에 대해 어떻게 미분할 것인지 생각해보시오. (hint: composite function - Leibniz)</li>
 </ol>
 </section>
-<section id="미분의-종류" class="level3">
-<h3 class="anchored" data-anchor-id="미분의-종류">미분의 종류</h3>
-<ul>
-<li>직접 미분
-<ul>
-<li>이번 블로그에서 정리한 내용</li>
-<li>수동 미분: 식을 알고 손으로 미분하여 도함수를 얻음</li>
-<li>함수 복잡하면 풀기 매우 어려움</li>
-</ul></li>
-<li>간접 미분
-<ul>
-<li>수치 미분: 도함수를 몰라도 미분계수를 구하는데 사용</li>
-<li>함수 복잡하면 시간 오래 걸림</li>
-</ul></li>
-<li>자동 미분
-<ul>
-<li>복잡한 함수를 간단한 함수로 쪼개어 직접 미분 - Pytorch</li>
-<li>정합성 검사를 위해 자동 미분의 결과를 간접 미분의 결과와 맞춘다.</li>
-<li>간접 미분이 정답이 된다.</li>
-</ul></li>
-</ul>
-</section>
 <section id="example-answer" class="level3">
 <h3 class="anchored" data-anchor-id="example-answer">Example Answer</h3>
+<section id="sympy-package-example" class="level4">
+<h4 class="anchored" data-anchor-id="sympy-package-example">sympy package example</h4>
+<p>앞서와 언급한대로 파이썬 sympy package를 사용할 것인데 간단한 예를 본다. 먼저 기호의 정의를 해주고 수학 연산을 진행하면 된다.</p>
 <div class="cell" data-execution_count="1">
 <details>
 <summary>Code</summary>
@@ -458,84 +462,186 @@ y=\frac{f(x)}{g(x)}, y'=\frac{f'(x)g(x)-f(x)g'(x)}{g(x)^2}
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>x<span class="op">=</span>S.Symbol(<span class="st">'x'</span>)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>h<span class="op">=</span>S.Symbol(<span class="st">'h'</span>)</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>n<span class="op">=</span>S.Symbol(<span class="st">'n'</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>a<span class="op">=</span>S.Symbol(<span class="st">'a'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>a<span class="op">=</span>S.Symbol(<span class="st">'a'</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>a1<span class="op">=</span>S.Symbol(<span class="st">'a1'</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>a2<span class="op">=</span>S.Symbol(<span class="st">'a2'</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>a3<span class="op">=</span>S.Symbol(<span class="st">'a3'</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>a4<span class="op">=</span>S.Symbol(<span class="st">'a4'</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">## 인수분해</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>S.factor(x<span class="op">**</span><span class="dv">2</span><span class="op">+</span><span class="dv">4</span><span class="op">*</span>x<span class="op">+</span><span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-display" data-execution_count="1">
+<p><span class="math inline">\(\displaystyle \left(x + 2\right)^{2}\)</span></p>
+</div>
 </div>
 <ul>
-<li><span class="math inline">\(f(x)=c\)</span> where c is a constant</li>
+<li>인수분해와 값 넣기</li>
 </ul>
 <div class="cell" data-execution_count="2">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span><span class="dv">2</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit(((<span class="dv">2</span>)<span class="op">-</span><span class="dv">2</span>)<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'f='</span>,f,<span class="st">', df='</span>, S.simplify(df))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span>S.factor(x<span class="op">**</span><span class="dv">2</span><span class="op">-</span><span class="dv">5</span><span class="op">*</span>x<span class="op">+</span><span class="dv">6</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(f.subs({x:<span class="dv">3</span>}))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(f.subs({x:<span class="dv">5</span>}))</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>f</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>f= 2 , df= 0</code></pre>
+<pre><code>0
+6</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<p><span class="math inline">\(\displaystyle \left(x - 3\right) \left(x - 2\right)\)</span></p>
 </div>
 </div>
 <ul>
-<li><span class="math inline">\(f(x)=\log x\)</span></li>
+<li><span class="math inline">\(2^x\)</span> 미분과 값 넣기</li>
 </ul>
 <div class="cell" data-execution_count="3">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span>S.log(x)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((S.log(x<span class="op">+</span>h)<span class="op">-</span>S.log(x))<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'f='</span>,f,<span class="st">', df='</span>, S.simplify(df))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((<span class="dv">2</span><span class="op">**</span>(x<span class="op">+</span>h)<span class="op">-</span><span class="dv">2</span><span class="op">**</span>x)<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.subs({x:<span class="dv">3</span>}))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.subs({x:<span class="dv">5</span>}))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.subs({x:<span class="dv">3</span>}).evalf()) <span class="co"># 정확한 값을 원할 경우</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>f= log(x) , df= 1/x</code></pre>
+<pre><code>8*log(2)
+32*log(2)
+5.54517744447956</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="3">
+<p><span class="math inline">\(\displaystyle 2^{x} \log{\left(2 \right)}\)</span></p>
 </div>
 </div>
 <ul>
-<li><span class="math inline">\(f(x)=e^x\)</span></li>
+<li><span class="math inline">\(x^n\)</span> 미분</li>
 </ul>
 <div class="cell" data-execution_count="4">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span>S.exp(x)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((S.exp(x<span class="op">+</span>h)<span class="op">-</span>S.exp(x))<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'f='</span>,f,<span class="st">', df='</span>, S.simplify(df))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit(((x<span class="op">+</span>h)<span class="op">**</span>n<span class="op">-</span>x<span class="op">**</span>n)<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.subs({x:<span class="dv">3</span>}))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(df.subs({x:<span class="dv">5</span>}))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>f= exp(x) , df= exp(x)</code></pre>
+<pre><code>3**(n - 1)*n
+5**(n - 1)*n</code></pre>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<p><span class="math inline">\(\displaystyle n x^{n - 1}\)</span></p>
 </div>
 </div>
+</section>
+<section id="example-answers" class="level4">
+<h4 class="anchored" data-anchor-id="example-answers">Example Answers</h4>
 <ul>
-<li><span class="math inline">\(f(x)=\sin x\)</span></li>
+<li><span class="math inline">\(f(x)=c\)</span> 의 도함수 where c is a constant. c=2로 고정</li>
 </ul>
 <div class="cell" data-execution_count="5">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span>S.sin(x)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((S.sin(x<span class="op">+</span>h)<span class="op">-</span>S.sin(x))<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'f='</span>,f,<span class="st">', df='</span>, S.simplify(df))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span><span class="dv">2</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit(((<span class="dv">2</span>)<span class="op">-</span><span class="dv">2</span>)<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>f= sin(x) , df= cos(x)</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<p><span class="math inline">\(\displaystyle 0\)</span></p>
+</div>
+</div>
+<ul>
+<li><span class="math inline">\(f(x)=\log x\)</span> 의 도함수</li>
+</ul>
+<div class="cell" data-execution_count="6">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span>S.log(x)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((S.log(x<span class="op">+</span>h)<span class="op">-</span>S.log(x))<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<p><span class="math inline">\(\displaystyle \frac{1}{x}\)</span></p>
+</div>
+</div>
+<ul>
+<li><span class="math inline">\(f(x)=e^x\)</span> 의 도함수</li>
+</ul>
+<div class="cell" data-execution_count="7">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span>S.exp(x)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((S.exp(x<span class="op">+</span>h)<span class="op">-</span>S.exp(x))<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<p><span class="math inline">\(\displaystyle e^{x}\)</span></p>
+</div>
+</div>
+<ul>
+<li><span class="math inline">\(f(x)=\sin x\)</span> 의 도함수</li>
+</ul>
+<div class="cell" data-execution_count="8">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span>S.sin(x)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((S.sin(x<span class="op">+</span>h)<span class="op">-</span>S.sin(x))<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="8">
+<p><span class="math inline">\(\displaystyle \cos{\left(x \right)}\)</span></p>
 </div>
 </div>
 <ul>
 <li><span class="math inline">\(S(x)=\frac{1}{1+e^{-ax}}\)</span> 를 <span class="math inline">\(x\)</span> 에 대해 미분해보시오.</li>
 </ul>
-<div class="cell" data-execution_count="6">
+<div class="cell" data-execution_count="9">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span><span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>S.exp(<span class="op">-</span>a<span class="op">*</span>x))</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((<span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>S.exp(<span class="op">-</span>a<span class="op">*</span>(x<span class="op">+</span>h)))<span class="op">-</span><span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>S.exp(<span class="op">-</span>a<span class="op">*</span>x)))<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'f='</span>,f,<span class="st">', df='</span>, S.simplify(df))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span><span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>S.exp(<span class="op">-</span>a<span class="op">*</span>x))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((<span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>S.exp(<span class="op">-</span>a<span class="op">*</span>(x<span class="op">+</span>h)))<span class="op">-</span><span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>S.exp(<span class="op">-</span>a<span class="op">*</span>x)))<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>f= 1/(1 + exp(-a*x)) , df= a/(4*cosh(a*x/2)**2)</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<p><span class="math inline">\(\displaystyle \frac{a e^{a x}}{\left(e^{a x} + 1\right)^{2}}\)</span></p>
 </div>
 </div>
+<p>이번 문제에서 <span class="math inline">\(\frac{ae^x}{(e^{-ax}+1)^2}\)</span> 라는 sigmoid function의 도함수를 얻었다. 이 도함수를 간단한 수학적 조작으로 다른 표현으로 유도해보면 다음과 같다. <span class="math display">\[
+\begin{aligned}
+\frac{d}{dx}S(x)&amp;=\frac{ae^{-ax}}{(e^{ax}+1)^2}\\
+                &amp;=a\frac{1}{(e^{ax}+1)}\frac{e^{-ax}}{(e^{ax}+1)}\\
+                &amp;=a\frac{1}{(e^{ax}+1)}\frac{1+e^{-ax}-1}{(e^{ax}+1)}\\
+                &amp;=a\frac{1}{(e^{ax}+1)}(1-\frac{1}{(e^{ax}+1)})\\
+                &amp;=aS(x)(1-S(x))\\
+\end{aligned}
+\]</span></p>
+<p>위와 같이 <span class="math inline">\(S(x)\)</span> 의 도함수는 <span class="math inline">\(aS(x)(1-S(x))\)</span> 로 표현될 수 있다. sigmoid function은 neural network에서 activation function으로 사용되는데 forward propagation에서 이미 한 번 계산이 된다. backward propagation에서 activation function인 <span class="math inline">\(S(x)\)</span> 의 도함수를 다시 연산을 해야하는데 도함수가 <span class="math inline">\(aS(x)(1-S(x))\)</span> 것을 알면 복잡한 고차원 행렬곱 연산을 다시 수행하지 않아도 된다. 그래서 <span class="math inline">\(S(x)\)</span> 의 도함수를 <span class="math inline">\(\frac{ae^x}{(e^{-ax}+1)^2}\)</span> 라고 코딩하는 것 보다는 <span class="math inline">\(S(x)\)</span> 의 행렬을 재활용하여 <span class="math inline">\(aS(x)(1-S(x))\)</span> 로 코딩해놓으면 연산 과정에서의 시간 복잡도를 줄일 수 있다. 이처럼 machine learning에서 수학적 통계적 지식을 잘 활용하면 좀 더 효율적인 모델링을 구현 할 수 있다.</p>
 <ul>
-<li><span class="math inline">\(f(x)=\alpha_1 + \frac{\alpha_2-\alpha_1}{1+10^{-\alpha_4(x-\alpha_3)}}\)</span> 를 어떻게 미분할 것인지 생각해 보시오.</li>
-<li><span class="math inline">\(y=f(x)=(4x+3)^2\)</span> 를 <span class="math inline">\(x\)</span> 에 대해 미분해보시오</li>
+<li><span class="math inline">\(f(x;\mathbf\alpha)=\alpha_1 + \frac{\alpha_2-\alpha_1}{1+e^{-\alpha_4(x-\alpha_3)}}\)</span> 를 어떻게 미분할 것인지 생각해 보시오.</li>
+</ul>
+<p>위의 식은 logistic fucntion의 genral formular 형태인데 sigmoid function이 특수한 예이다. 함수의 shpae는 parameter에 의해 결정되는데 위의 경우 <span class="math inline">\(\alpha_1\)</span> 은 함수의 최솟값 , <span class="math inline">\(\alpha_2\)</span> 은 함수의 최댓값, <span class="math inline">\(\alpha_3\)</span> 은 함수의 변곡점 및 <span class="math inline">\(\alpha_4\)</span> logistic curve가 변곡점을 지나면서 증가하는 변화율을 묘사한다. sigmoid 형태의 data를 fitting하기 위해 위의 함수를 이용한다면 error를 최소화하는 parameter를 구해야하는데 이 또한 최적화 문제로 4개의 변수에 대한 미분이 필요하다. 2개 이상의 변수에 대해서 미분은 partial derivative (편미분)라고 하는데 다음 블로그에서 다룰 것이다.</p>
+<ul>
+<li><span class="math inline">\(y=f(x)=(4x+3)^2\)</span> 를 <span class="math inline">\(x\)</span> 에 대해 미분해보시오.</li>
+</ul>
+<div class="cell" data-execution_count="10">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit(((<span class="dv">4</span><span class="op">*</span>(x<span class="op">+</span>h)<span class="op">+</span><span class="dv">3</span>)<span class="op">**</span><span class="dv">2</span><span class="op">-</span>(<span class="dv">4</span><span class="op">*</span>x<span class="op">+</span><span class="dv">3</span>)<span class="op">**</span><span class="dv">2</span>)<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="10">
+<p><span class="math inline">\(\displaystyle 32 x + 24\)</span></p>
+</div>
+</div>
+<p>위의 도함수는 미분 공식 중 곱의 법칙을 사용하면 구할 수 있다.</p>
+<ul>
 <li><span class="math inline">\(y=f(x)=(4x+3)^{20}\)</span> 를 <span class="math inline">\(x\)</span> 에 대해 어떻게 미분할 것인지 생각해보시오. (hint: composite function - Leibniz)</li>
 </ul>
+<p>위의 문제처럼 곱의 법칙을 사용하면 20개의 인수에 대해서 차례대로 미분을 해야하므로 계산량이 엄청나게 많아진다. 이때 composite function (합성 함수)의 derivative를 구하는 chain rule을 이용하면 간단한 연산으로 도함수를 구할 수 있게 된다. deep learning 모델의 기초인 neural network는 layer nodes이 복잡하게 합성이 되는 합성 함수를 만들면서 forward propagation을 진행하고 backward propabation에서 이 복잡한 합성 함수의 미분을 수행하게 된다. 그러므로 합성 함수의 미분이 어떻게 수행되는지 아는 것은 deep learning을 수리적으로 이해하고 싶은 사람에게 있어서 중요할 수 있다. 합성 함수의 미분은 다른 블로그에서 다루도록 하겠다.</p>
+</section>
 </section>
 </section>
 </div>

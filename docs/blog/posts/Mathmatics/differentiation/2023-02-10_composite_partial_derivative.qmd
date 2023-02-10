@@ -1,6 +1,6 @@
 ---
-title: Differentiation - Compostite Function
-subtitle: Derivative of Composite Function
+title: Differentiation - Chain Rule & Partial Derivative
+subtitle: Derivative of Multivariable Composite Function
 description: |
   To solve optimization problems, it is required to know about derivatives because derivatives are mostly used 최적화 문제를 풀기위해 미분이 항상 사용되기 떄문에 미분에 대해서 알 필요가 있다. 
 categories:
@@ -28,65 +28,114 @@ draft: False
 
 ## Overview
 
-미분은 최적화 문제를 푼다는 의미는 목적함수를 최적화한다는 말이고 그 과정에서 대부분의 경우 미분을 사용하여 상황에 맞게 목적함수의 극소값이나 극대값을 구하게 된다. 예를 들어, 목적 함수 $f(x;w)$ 가 매개변수 또는 가중치 $w$ 에 의해 그 모양이 결정되므로 $f(x;w)$ 를 최소화하는 최적화 문제를 풀고 싶을 때 $f(x;w)$ 를 cost function (=$f(x;w)$ 의 함수) 또는 loss function (=$f(x;w)$ 의 함수) 으로 잘 정의를 한 후 cost function 또는 loss function을 최소화하는 매개변수 $w$ 를 구해야한다.
-대부분의 경우, Machine Learning (Deep Learning 포함) 에서 미분은 error를 줄이기 위해 사용한다.
+Neural Network (NN)는 여러 노드(node)가 여러 층(layer)을 갖고 층 사이에 함수 관계가 있는 구조이다. 
+NN의 결과값을 계산할 때 순방향(forward)으로 전 층의 노드가 그 다음 층의 입력값으로 들어가 복잡한 합성 함수가 만들어져 결과값을 출력하고, 
+학습을 할 때 역방향(backword)으로 그 합성 함수의 미분을 수행하게 된다 (Back Propagation). 
+NN은 deep learning의 기본 구조가 되므로 합성 함수가 무엇이고 어떤 원리로 미분이 되는지 알 필요가 있다.
 
-목적 함수 $f(x;w)$ 가 정의 됐을 때 목적 함수의 극 값을 구하기 위해서 변화량을 관찰해야 한다. 비단 목적함수를 포함한 어떤 현상을 함수로 표현할 때에도 문제를 해결하기 위해 변화량을 관찰하는 경우가 빈번하다.
+## Chain Rule
 
-예를 들어, 선풍기 바람의 세기를 조절할 때 입력값은 바람 세기 버튼 출력값은 바람의 세기로 가정한다면 선풍기 바람 세기 입력에 따라 적절한 출력값을 갖도록 조정하고 싶을 것이다. 이때 변화량 관찰이 요구된다. 변화량을 잘 대변하는 것이 함수의 기울기이다. 함수의 기울기는 민감도 (sensitivity)로 표현되기도 한다(wiki). 기울기는 아래와 같이 정의된다.
+::: {#thm-chianRule}
 
-## 미분의 종류
-
-* 직접 미분
-  * 이번 블로그에서 정리한 내용
-  * 수동 미분: 식을 알고 손으로 미분하여 도함수를 얻음
-  * symbolic 연산: 기호를 이용하여 미분 연산 $\rightarrow$ sympy package 이용
-  * 함수 복잡하면 풀기 매우 어려움
-* 간접 미분 
-  * 수치 미분 (numerical differentiation): 도함수를 몰라도 미분계수를 구하는데 사용
-  * 함수 복잡하면 시간 오래 걸림
-* 자동 미분 (automatic differentiation)
-  * 복잡한 함수를 간단한 함수로 쪼개어 직접 미분 - Pytorch
-  * 실무에서, 정합성 검사를 위해 자동 미분의 결과를 간접 미분의 결과와 맞추기도 한다.
-  * 간접 미분이 정답이 된다.
-
-## 일 변수 함수의 미분
-
-::: {#def-Slope}
-
-The slope of line connected with the two points $P_1(x_1,y_1)$ and $P_2(x_2,y_2)$ is
+If the fucntions, $f(x)$, $g(x)$, are differentiable and the composite function of $f(x)$ and $g(x)$ is $u(x)=g(f(x))$, the chain rule is
 $$
-m=\frac{y_2-y_1}{x_2-x_1}
+\begin{aligned}
+u'(x)&=g'(f(x))f'(x) \space\space \text{or}
+\end{aligned}
 $$
 
+$\frac{du}{dx} = \frac{du}{df}\frac{df}{dx}$ in Leibniz’s notation
 :::
 
-::: {#thm-PointSlope}
+Chain rule은 합성 함수의 미분으로 겉에 있는 함수를 미분하고 안에 있는 함수를 미분을 연달아 하는 방식이다.
+$\Delta x\rightarrow \Delta y \rightarrow \Delta z$
 
-The point slope equation of line through $P_1(x_1,y_1)$ with slope $m$ is
-$$
-y-y_1=m(x-x_1)
-$$
+### Example
 
-:::
+다음 식들의 도함수를 chain rule에 따라 구해본다.
 
-::: {#thm-SlopeIntercept}
-
-The slope intercept euation of line with slope m and y-intercept b is
-$$
-y=mx+b
-$$
-
-:::
+* $u(x)=(4x^2+7x)^{50}$
 
 $$
 \begin{aligned}
-\text{기울기}(slope)&=\frac{\text{출력의 변화량}}{\text{입력의 변화량}}\\ 
-&= \text{입력 변화량에 대한 출력 변화량} \\
-&=\frac{\Delta output}{\Delta input}\\
-&= \text{단위 입력당 출력의 변화량}\\ 
-&= \text{민감도, 평균 변화율 (Rates Of Change), or etc}.\\
+&\text{when the two functions are }f(x)=4x^2+7x, \space g(x)=x^{50}, \\
+&u(x)=(4x^2+7x)^{50}=g(f(x))\\
+&f'(x)=8x+7\\
+&g'(x)=50x^{49}\\
+&u'(x)=g'(f(x))=g'(f(x))f'(x)\\
+&u'(x)=50f(x)^{49}(8x+7)=50(4x^2+7x)^{49}(8x+7)
 \end{aligned}
+$$
+
+* $f(x)=x+1$, $g(x)=\sqrt{x+1}$, $u(x)=g(f(x))$
+
+$$
+\begin{aligned}
+&f(x)=x+1, \space g(x)=\sqrt{x+1} \\
+&u(x)=g(f(x))=\sqrt{(x+1)+1}\\
+&f'(x)=1\\
+&g'(x)=\frac{1}{2\sqrt{x+1}}\\
+&u'(x)=g'(f(x))f'(x)\\
+&u'(x)=\frac{1}{2\sqrt{f(x)+1}}f'(x)=\frac{1}{2\sqrt{(x+1)+1}}
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\lim_{\Delta x \to0}\frac{\Delta z}{\Delta x}&=
+\lim_{\Delta y \to0}\frac{\Delta z}{\Delta y}\lim_{\Delta x \to0}\frac{\Delta y}{\Delta x}\\&=\lim_{\Delta y \to0}\frac{\Delta z}{\Delta y}\frac{dy}{dx}\\
+\frac{dz}{dx}&=\frac{dz}{dy}\frac{dy}{dx} \\
+&(\because \Delta x \to 0 \Longrightarrow \Delta y \to 0 )
+
+\end{aligned}
+$$
+
+* $y=e^{\sin(2x+3)}$
+
+```{python}
+import sympy as S
+
+# 심볼 정의
+x=S.Symbol('x')
+h=S.Symbol('h')
+n=S.Symbol('n')
+a=S.Symbol('a')
+a1=S.Symbol('a1')
+a2=S.Symbol('a2')
+a3=S.Symbol('a3')
+a4=S.Symbol('a4')
+
+S.diff(S.E**S.sin(2*x+3))
+# chain rule
+z=S.Symbol('z')
+out3=S.diff(S.E**z,z)
+out2=S.diff(S.sin(z),z)
+out1=S.diff(2*x+3)
+dz=out3*out2
+dw=out2*out1
+print(dz)
+print(dw)
+dz=out3*dw
+print(dz)
+# substitution
+dz.subs({z:3*x+1})
+
+```
+
+::: {#thm-partialDerivative}
+
+
+$$
+\frac{\partial}{\partial}
+$$
+
+:::
+
+
+$$
+\frac{\partial f}{\partial x_k}(x_1, x_2, \dots, x_k, \dots,x_n) \\
+=\lim_{h \to 0}\frac{f(x_1,x_2,\dots,x_k+h,\dots,x_n)-f(x_1,x_2,\dots,x_k,\dots,x_n)}{h}$$
+
 $$
 
 

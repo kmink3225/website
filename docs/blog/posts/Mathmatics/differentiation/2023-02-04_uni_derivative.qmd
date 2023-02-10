@@ -237,10 +237,24 @@ $$
 앞서와 언급한대로 파이썬 sympy package를 사용할 것인데 간단한 예를 본다. 먼저 기호의 정의를 해주고 수학 연산을 진행하면 된다.
 
 ```{python}
+# import packages
 import numpy as np
 import matplotlib.pyplot as plt
 import sympy as S
+import matplotlib as mpl
+from mpl_toolkits import mplot3d
+import matplotlib.font_manager as mfm
+# numpy 출력 형식 지정
+np.set_printoptions(precision=4, linewidth=150)
 
+# matplotlib 스타일 지정
+mpl.style.use('bmh')
+mpl.style.use('seaborn-whitegrid')
+style = plt.style.library['bmh']
+
+```
+
+```{python}
 # 심볼 정의
 x=S.Symbol('x')
 h=S.Symbol('h')
@@ -250,7 +264,6 @@ a1=S.Symbol('a1')
 a2=S.Symbol('a2')
 a3=S.Symbol('a3')
 a4=S.Symbol('a4')
-
 
 ## 인수분해
 S.factor(x**2+4*x+4)
@@ -312,6 +325,7 @@ df=S.limit((S.sin(x+h)-S.sin(x))/h,h,0)
 df
 ```
 * $S(x)=\frac{1}{1+e^{-ax}}$ 를 $x$ 에 대해 미분해보시오.
+
 ```{python}
 f=1/(1+S.exp(-a*x))
 df=S.limit((1/(1+S.exp(-a*(x+h)))-1/(1+S.exp(-a*x)))/h,h,0)
@@ -331,16 +345,34 @@ $$
 
 위와 같이 $S(x)$ 의 도함수는 $aS(x)(1-S(x))$ 로 표현될 수 있다. sigmoid function은 neural network에서 activation function으로 사용되는데 forward propagation에서 이미 한 번 계산이 된다. backward propagation에서 activation function인 $S(x)$ 의 도함수를 다시 연산을 해야하는데 도함수가 $aS(x)(1-S(x))$ 것을 알면 복잡한 고차원 행렬곱 연산을 다시 수행하지 않아도 된다. 그래서 $S(x)$ 의 도함수를 $\frac{ae^x}{(e^{-ax}+1)^2}$ 라고 코딩하는 것 보다는 $S(x)$ 의 행렬을 재활용하여 $aS(x)(1-S(x))$ 로 코딩해놓으면 연산 과정에서의 시간 복잡도를 줄일 수 있다. 이처럼 machine learning에서 수학적 통계적 지식을 잘 활용하면 좀 더 효율적인 모델링을 구현 할 수 있다.
 
+```{python}
+
+x1 = np.linspace(-6, 6, 100)
+sx = 1/(1+np.exp(-x1))
+d_sx = sx*(1-sx)
+
+plt.plot(x1,sx,color='black',label='S(x)')
+plt.plot(x1,d_sx,color='red',label='dS(x)')
+
+plt.xlabel('X')
+plt.xlabel('S(x)')
+plt.title('Simgoid Curve with its Derivative')
+plt.legend()
+plt.show()
+
+```
+
+
 * $f(x;\mathbf\alpha)=\alpha_1 + \frac{\alpha_2-\alpha_1}{1+e^{-\alpha_4(x-\alpha_3)}}$ 를 어떻게 미분할 것인지 생각해 보시오.
 
 위의 식은 logistic fucntion의 genral formular 형태인데 sigmoid function이 특수한 예이다. 함수의 shpae는 parameter에 의해 결정되는데 위의 경우 $\alpha_1$ 은 함수의 최솟값 , $\alpha_2$ 은 함수의 최댓값, $\alpha_3$ 은 함수의 변곡점 및 $\alpha_4$ logistic curve가 변곡점을 지나면서 증가하는 변화율을 묘사한다. sigmoid 형태의 data를 fitting하기 위해 위의 함수를 이용한다면 error를 최소화하는 parameter를 구해야하는데 이 또한 최적화 문제로 4개의 변수에 대한 미분이 필요하다. 2개 이상의 변수에 대해서 미분은 partial derivative (편미분)라고 하는데 다음 블로그에서 다룰 것이다.
+
 
 * $y=f(x)=(4x+3)^2$ 를  $x$ 에 대해 미분해보시오.
 
 ```{python}
 
-df=S.limit(((4*(x+h)+3)**2-(4*x+3)**2)/h,h,0)
-df
+S.limit(((4*(x+h)+3)**2-(4*x+3)**2)/h,h,0)
 ```
 
 위의 도함수는 미분 공식 중 곱의 법칙을 사용하면 구할 수 있다.

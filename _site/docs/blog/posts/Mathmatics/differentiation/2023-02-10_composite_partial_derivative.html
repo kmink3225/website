@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kwangmin Kim">
-<meta name="dcterms.date" content="2023-02-04">
+<meta name="dcterms.date" content="2023-02-10">
 <meta name="description" content="To solve optimization problems, it is required to know about derivatives because derivatives are mostly used 최적화 문제를 풀기위해 미분이 항상 사용되기 떄문에 미분에 대해서 알 필요가 있다.">
 
-<title>Kwangmin Kim - Differentiation - Univariabe Function</title>
+<title>Kwangmin Kim - Differentiation - Chain Rule &amp; Partial Derivative</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -210,8 +210,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Differentiation - Univariabe Function</h1>
-<p class="subtitle lead">Univariable Differentiation</p>
+<h1 class="title">Differentiation - Chain Rule &amp; Partial Derivative</h1>
+<p class="subtitle lead">Derivative of Multivariable Composite Function</p>
   <div class="quarto-categories">
     <div class="quarto-category">Mathematics</div>
   </div>
@@ -236,7 +236,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 4, 2023</p>
+      <p class="date">February 10, 2023</p>
     </div>
   </div>
   
@@ -262,61 +262,110 @@ English
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
 <section id="overview" class="level2">
 <h2 class="anchored" data-anchor-id="overview">Overview</h2>
-<p>미분은 최적화 문제를 푼다는 의미는 목적함수를 최적화한다는 말이고 그 과정에서 대부분의 경우 미분을 사용하여 상황에 맞게 목적함수의 극소값이나 극대값을 구하게 된다. 예를 들어, 목적 함수 <span class="math inline">\(f(x;w)\)</span> 가 매개변수 또는 가중치 <span class="math inline">\(w\)</span> 에 의해 그 모양이 결정되므로 <span class="math inline">\(f(x;w)\)</span> 를 최소화하는 최적화 문제를 풀고 싶을 때 <span class="math inline">\(f(x;w)\)</span> 를 cost function (=<span class="math inline">\(f(x;w)\)</span> 의 함수) 또는 loss function (=<span class="math inline">\(f(x;w)\)</span> 의 함수) 으로 잘 정의를 한 후 cost function 또는 loss function을 최소화하는 매개변수 <span class="math inline">\(w\)</span> 를 구해야한다. 대부분의 경우, Machine Learning (Deep Learning 포함) 에서 미분은 error를 줄이기 위해 사용한다.</p>
-<p>목적 함수 <span class="math inline">\(f(x;w)\)</span> 가 정의 됐을 때 목적 함수의 극 값을 구하기 위해서 변화량을 관찰해야 한다. 비단 목적함수를 포함한 어떤 현상을 함수로 표현할 때에도 문제를 해결하기 위해 변화량을 관찰하는 경우가 빈번하다.</p>
-<p>예를 들어, 선풍기 바람의 세기를 조절할 때 입력값은 바람 세기 버튼 출력값은 바람의 세기로 가정한다면 선풍기 바람 세기 입력에 따라 적절한 출력값을 갖도록 조정하고 싶을 것이다. 이때 변화량 관찰이 요구된다. 변화량을 잘 대변하는 것이 함수의 기울기이다. 함수의 기울기는 민감도 (sensitivity)로 표현되기도 한다(wiki). 기울기는 아래와 같이 정의된다.</p>
+<p>Neural Network (NN)는 여러 노드(node)가 여러 층(layer)을 갖고 층 사이에 함수 관계가 있는 구조이다. NN의 결과값을 계산할 때 순방향(forward)으로 전 층의 노드가 그 다음 층의 입력값으로 들어가 복잡한 합성 함수가 만들어져 결과값을 출력하고, 학습을 할 때 역방향(backword)으로 그 합성 함수의 미분을 수행하게 된다 (Back Propagation). NN은 deep learning의 기본 구조가 되므로 합성 함수가 무엇이고 어떤 원리로 미분이 되는지 알 필요가 있다.</p>
 </section>
-<section id="미분의-종류" class="level2">
-<h2 class="anchored" data-anchor-id="미분의-종류">미분의 종류</h2>
+<section id="chain-rule" class="level2">
+<h2 class="anchored" data-anchor-id="chain-rule">Chain Rule</h2>
+<div id="thm-chianRule" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 1 </strong></span>If the fucntions, <span class="math inline">\(f(x)\)</span>, <span class="math inline">\(g(x)\)</span>, are differentiable and the composite function of <span class="math inline">\(f(x)\)</span> and <span class="math inline">\(g(x)\)</span> is <span class="math inline">\(u(x)=g(f(x))\)</span>, the chain rule is <span class="math display">\[
+\begin{aligned}
+u'(x)&amp;=g'(f(x))f'(x) \space\space \text{or}
+\end{aligned}
+\]</span></p>
+<p><span class="math inline">\(\frac{du}{dx} = \frac{du}{df}\frac{df}{dx}\)</span> in Leibniz’s notation</p>
+</div>
+<p>Chain rule은 합성 함수의 미분으로 겉에 있는 함수를 미분하고 안에 있는 함수를 미분을 연달아 하는 방식이다. <span class="math inline">\(\Delta x\rightarrow \Delta y \rightarrow \Delta z\)</span></p>
+<section id="example" class="level3">
+<h3 class="anchored" data-anchor-id="example">Example</h3>
+<p>다음 식들의 도함수를 chain rule에 따라 구해본다.</p>
 <ul>
-<li>직접 미분
-<ul>
-<li>이번 블로그에서 정리한 내용</li>
-<li>수동 미분: 식을 알고 손으로 미분하여 도함수를 얻음</li>
-<li>symbolic 연산: 기호를 이용하여 미분 연산 <span class="math inline">\(\rightarrow\)</span> sympy package 이용</li>
-<li>함수 복잡하면 풀기 매우 어려움</li>
-</ul></li>
-<li>간접 미분
-<ul>
-<li>수치 미분 (numerical differentiation): 도함수를 몰라도 미분계수를 구하는데 사용</li>
-<li>함수 복잡하면 시간 오래 걸림</li>
-</ul></li>
-<li>자동 미분 (automatic differentiation)
-<ul>
-<li>복잡한 함수를 간단한 함수로 쪼개어 직접 미분 - Pytorch</li>
-<li>실무에서, 정합성 검사를 위해 자동 미분의 결과를 간접 미분의 결과와 맞추기도 한다.</li>
-<li>간접 미분이 정답이 된다.</li>
-</ul></li>
+<li><span class="math inline">\(u(x)=(4x^2+7x)^{50}\)</span></li>
 </ul>
-</section>
-<section id="일-변수-함수의-미분" class="level2">
-<h2 class="anchored" data-anchor-id="일-변수-함수의-미분">일 변수 함수의 미분</h2>
-<div id="def-Slope" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 1 </strong></span>The slope of line connected with the two points <span class="math inline">\(P_1(x_1,y_1)\)</span> and <span class="math inline">\(P_2(x_2,y_2)\)</span> is <span class="math display">\[
-m=\frac{y_2-y_1}{x_2-x_1}
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\text{when the two functions are }f(x)=4x^2+7x, \space g(x)=x^{50}, \\
+&amp;u(x)=(4x^2+7x)^{50}=g(f(x))\\
+&amp;f'(x)=8x+7\\
+&amp;g'(x)=50x^{49}\\
+&amp;u'(x)=g'(f(x))=g'(f(x))f'(x)\\
+&amp;u'(x)=50f(x)^{49}(8x+7)=50(4x^2+7x)^{49}(8x+7)
+\end{aligned}
 \]</span></p>
-</div>
-<div id="thm-PointSlope" class="theorem">
-<p><span class="theorem-title"><strong>Theorem 1 </strong></span>The point slope equation of line through <span class="math inline">\(P_1(x_1,y_1)\)</span> with slope <span class="math inline">\(m\)</span> is <span class="math display">\[
-y-y_1=m(x-x_1)
+<ul>
+<li><span class="math inline">\(f(x)=x+1\)</span>, <span class="math inline">\(g(x)=\sqrt{x+1}\)</span>, <span class="math inline">\(u(x)=g(f(x))\)</span></li>
+</ul>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;f(x)=x+1, \space g(x)=\sqrt{x+1} \\
+&amp;u(x)=g(f(x))=\sqrt{(x+1)+1}\\
+&amp;f'(x)=1\\
+&amp;g'(x)=\frac{1}{2\sqrt{x+1}}\\
+&amp;u'(x)=g'(f(x))f'(x)\\
+&amp;u'(x)=\frac{1}{2\sqrt{f(x)+1}}f'(x)=\frac{1}{2\sqrt{(x+1)+1}}
+\end{aligned}
 \]</span></p>
+$$
+<span class="math display">\[\begin{aligned}
+\lim_{\Delta x \to0}\frac{\Delta z}{\Delta x}&amp;=
+\lim_{\Delta y \to0}\frac{\Delta z}{\Delta y}\lim_{\Delta x \to0}\frac{\Delta y}{\Delta x}\\&amp;=\lim_{\Delta y \to0}\frac{\Delta z}{\Delta y}\frac{dy}{dx}\\
+\frac{dz}{dx}&amp;=\frac{dz}{dy}\frac{dy}{dx} \\
+&amp;(\because \Delta x \to 0 \Longrightarrow \Delta y \to 0 )
+
+\end{aligned}\]</span>
+<p>$$</p>
+<ul>
+<li><span class="math inline">\(y=e^{\sin(2x+3)}\)</span></li>
+</ul>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sympy <span class="im">as</span> S</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 심볼 정의</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>x<span class="op">=</span>S.Symbol(<span class="st">'x'</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>h<span class="op">=</span>S.Symbol(<span class="st">'h'</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>n<span class="op">=</span>S.Symbol(<span class="st">'n'</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>a<span class="op">=</span>S.Symbol(<span class="st">'a'</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>a1<span class="op">=</span>S.Symbol(<span class="st">'a1'</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>a2<span class="op">=</span>S.Symbol(<span class="st">'a2'</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>a3<span class="op">=</span>S.Symbol(<span class="st">'a3'</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>a4<span class="op">=</span>S.Symbol(<span class="st">'a4'</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>S.diff(S.E<span class="op">**</span>S.sin(<span class="dv">2</span><span class="op">*</span>x<span class="op">+</span><span class="dv">3</span>))</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># chain rule</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>z<span class="op">=</span>S.Symbol(<span class="st">'z'</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>out3<span class="op">=</span>S.diff(S.E<span class="op">**</span>z,z)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>out2<span class="op">=</span>S.diff(S.sin(z),z)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>out1<span class="op">=</span>S.diff(<span class="dv">2</span><span class="op">*</span>x<span class="op">+</span><span class="dv">3</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>dz<span class="op">=</span>out3<span class="op">*</span>out2</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>dw<span class="op">=</span>out2<span class="op">*</span>out1</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dz)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dw)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>dz<span class="op">=</span>out3<span class="op">*</span>dw</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dz)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co"># substitution</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>dz.subs({z:<span class="dv">3</span><span class="op">*</span>x<span class="op">+</span><span class="dv">1</span>})</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>exp(z)*cos(z)
+2*cos(z)
+2*exp(z)*cos(z)</code></pre>
 </div>
-<div id="thm-SlopeIntercept" class="theorem">
-<p><span class="theorem-title"><strong>Theorem 2 </strong></span>The slope intercept euation of line with slope m and y-intercept b is <span class="math display">\[
-y=mx+b
+<div class="cell-output cell-output-display" data-execution_count="1">
+<p><span class="math inline">\(\displaystyle 2 e^{3 x + 1} \cos{\left(3 x + 1 \right)}\)</span></p>
+</div>
+</div>
+<div id="thm-partialDerivative" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 2 </strong></span><span class="math display">\[
+\frac{\partial}{\partial}
 \]</span></p>
 </div>
 <p><span class="math display">\[
-\begin{aligned}
-\text{기울기}(slope)&amp;=\frac{\text{출력의 변화량}}{\text{입력의 변화량}}\\
-&amp;= \text{입력 변화량에 대한 출력 변화량} \\
-&amp;=\frac{\Delta output}{\Delta input}\\
-&amp;= \text{단위 입력당 출력의 변화량}\\
-&amp;= \text{민감도, 평균 변화율 (Rates Of Change), or etc}.\\
-\end{aligned}
-\]</span></p>
+\frac{\partial f}{\partial x_k}(x_1, x_2, \dots, x_k, \dots,x_n) \\
+=\lim_{h \to 0}\frac{f(x_1,x_2,\dots,x_k+h,\dots,x_n)-f(x_1,x_2,\dots,x_k,\dots,x_n)}{h}\]</span></p>
+<p>$$</p>
 <div id="def-평균변화율" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 2 </strong></span><span class="math display">\[
+<p><span class="theorem-title"><strong>Definition 1 </strong></span><span class="math display">\[
 \begin{aligned}
 \text{평균 변화율}&amp;=\Delta x\text{에 대한} \Delta y\text{의 비율}\\
 &amp;=\frac{\Delta y}{\Delta x}=\frac{f(b)-f(a)}{b-a}\\
@@ -336,14 +385,14 @@ y=mx+b
 <li>이 때, 입력값의 구간을 <strong>충분히</strong> 짧게 만들어 출력값의 변화량을 관찰하는 것이 미분이다. (limit의 개념, <span class="math inline">\(\epsilon-\delta\)</span> method)</li>
 </ul>
 <div id="def-TangentLine" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 3 </strong></span>The tangent line to the curve <span class="math inline">\(y=f(x)\)</span> at the point <span class="math inline">\(P(a,f(a))\)</span> is the line through P with slope</p>
+<p><span class="theorem-title"><strong>Definition 2 </strong></span>The tangent line to the curve <span class="math inline">\(y=f(x)\)</span> at the point <span class="math inline">\(P(a,f(a))\)</span> is the line through P with slope</p>
 <p><span class="math display">\[
 m = \lim_{x\to a} f(x)
 \]</span></p>
 <p>provided that this limit exists.</p>
 </div>
 <div id="def-Derivative" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 4 </strong></span>When <span class="math inline">\(f: \mathbb{R} \rightarrow \mathbb{R}\)</span> is continuous and differentiable, the derivative of a function <span class="math inline">\(f\)</span> at a number <span class="math inline">\(a \in \mathbb R\)</span>, denoted by <span class="math inline">\(f'(a)\)</span>, is</p>
+<p><span class="theorem-title"><strong>Definition 3 </strong></span>When <span class="math inline">\(f: \mathbb{R} \rightarrow \mathbb{R}\)</span> is continuous and differentiable, the derivative of a function <span class="math inline">\(f\)</span> at a number <span class="math inline">\(a \in \mathbb R\)</span>, denoted by <span class="math inline">\(f'(a)\)</span>, is</p>
 <p><span class="math display">\[
 \begin{aligned}
 f'(a) &amp;= \lim_{h\to 0} \frac{f(a+h)-f(a)}{h}
@@ -359,7 +408,7 @@ f'(a) &amp;= \lim_{h\to 0} \frac{f(a+h)-f(a)}{h}
 </figure>
 </div>
 <div id="def-Differentiable" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 5 </strong></span>A function <span class="math inline">\(f\)</span> is differentiable at <span class="math inline">\(a\)</span> if <span class="math inline">\(f'(a)\)</span> exists. It is differentiable on an open interval (a,b) [or (a,<span class="math inline">\(\infty\)</span>), (-<span class="math inline">\(\infty\)</span>,a) or (-<span class="math inline">\(\infty\)</span>,<span class="math inline">\(\infty\)</span>)] if it is differentiable at every number in the interval.</p>
+<p><span class="theorem-title"><strong>Definition 4 </strong></span>A function <span class="math inline">\(f\)</span> is differentiable at <span class="math inline">\(a\)</span> if <span class="math inline">\(f'(a)\)</span> exists. It is differentiable on an open interval (a,b) [or (a,<span class="math inline">\(\infty\)</span>), (-<span class="math inline">\(\infty\)</span>,a) or (-<span class="math inline">\(\infty\)</span>,<span class="math inline">\(\infty\)</span>)] if it is differentiable at every number in the interval.</p>
 </div>
 <div id="thm-Continuous" class="theorem">
 <p><span class="theorem-title"><strong>Theorem 3 </strong></span>If <span class="math inline">\(f\)</span> is differentiable at <span class="math inline">\(a\)</span>, then <span class="math inline">\(f\)</span> is continuous at <span class="math inline">\(a\)</span>.</p>
@@ -373,9 +422,10 @@ f'(a) &amp;= \lim_{h\to 0} \frac{f(a+h)-f(a)}{h}
 <li>에러를 줄이는 데에는 값으로 나오는 순간 변화율을 구하는 것이 일반적으로 실현성이 있는 문제</li>
 </ul>
 <div id="def-NaturalNumber" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 6 </strong></span>The natural number, <span class="math inline">\(e\)</span> is the number such that <span class="math inline">\(\lim_{h\to 0} \frac{e^h-1}{h}=1\)</span>.</p>
+<p><span class="theorem-title"><strong>Definition 5 </strong></span>The natural number, <span class="math inline">\(e\)</span> is the number such that <span class="math inline">\(\lim_{h\to 0} \frac{e^h-1}{h}=1\)</span>.</p>
 </div>
 <p>모든 지수 함수 <span class="math inline">\(f(x)=a^x\)</span> 중에서 <span class="math inline">\(f(x)=e^x\)</span> 가 점 (0.1) 에서의 접선의 기울기가 <span class="math inline">\(f'(0)=1\)</span> 이 되는 수를 <span class="math inline">\(e=2.71828...\)</span> 라고 정의한다.</p>
+</section>
 <section id="notation" class="level3">
 <h3 class="anchored" data-anchor-id="notation">Notation</h3>
 <p><span class="math inline">\(f'(x)\)</span> 는 다음과 같은 기호들로도 흔히 표현된다.</p>
@@ -402,8 +452,8 @@ f'(a) &amp;= \lim_{h\to 0} \frac{f(a+h)-f(a)}{h}
 </ul></li>
 </ul>
 </section>
-<section id="example" class="level3">
-<h3 class="anchored" data-anchor-id="example">Example</h3>
+<section id="example-1" class="level3">
+<h3 class="anchored" data-anchor-id="example-1">Example</h3>
 <p>다음의 함수를 미분의 정의를 이용하여 도함수를 계산하시오</p>
 <ol type="1">
 <li><span class="math inline">\(f(x)=c\)</span> where c is a constant</li>
@@ -437,8 +487,8 @@ y=\frac{f(x)}{g(x)}, y'=\frac{f'(x)g(x)-f(x)g'(x)}{g(x)^2}
 </div>
 <p>증명은 James Stewart의 Calculus Series 중 1개를 골라 참고하시기 바랍니다.</p>
 </section>
-<section id="example-1" class="level3">
-<h3 class="anchored" data-anchor-id="example-1">Example</h3>
+<section id="example-2" class="level3">
+<h3 class="anchored" data-anchor-id="example-2">Example</h3>
 <ol type="1">
 <li><span class="math inline">\(S(x)=\frac{1}{1+e^{-ax}}\)</span> 를 <span class="math inline">\(x\)</span> 에 대해 미분해보시오.</li>
 <li><span class="math inline">\(f(x)=\alpha_1 + \frac{\alpha_2-\alpha_1}{1+e^{-\alpha_4(x-\alpha_3)}}\)</span> 를 어떻게 미분할 것인지 생각해 보시오.</li>
@@ -451,48 +501,28 @@ y=\frac{f(x)}{g(x)}, y'=\frac{f'(x)g(x)-f(x)g'(x)}{g(x)^2}
 <section id="sympy-package-example" class="level4">
 <h4 class="anchored" data-anchor-id="sympy-package-example">sympy package example</h4>
 <p>앞서와 언급한대로 파이썬 sympy package를 사용할 것인데 간단한 예를 본다. 먼저 기호의 정의를 해주고 수학 연산을 진행하면 된다.</p>
-<div class="cell" data-execution_count="1">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import packages</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sympy <span class="im">as</span> S</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib <span class="im">as</span> mpl</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mpl_toolkits <span class="im">import</span> mplot3d</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.font_manager <span class="im">as</span> mfm</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># numpy 출력 형식 지정</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>np.set_printoptions(precision<span class="op">=</span><span class="dv">4</span>, linewidth<span class="op">=</span><span class="dv">150</span>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># matplotlib 스타일 지정</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>mpl.style.use(<span class="st">'bmh'</span>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>mpl.style.use(<span class="st">'seaborn-whitegrid'</span>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>style <span class="op">=</span> plt.style.library[<span class="st">'bmh'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>C:\Users\kmkim\AppData\Local\Temp\ipykernel_28604\2778790261.py:13: MatplotlibDeprecationWarning:
-
-The seaborn styles shipped by Matplotlib are deprecated since 3.6, as they no longer correspond to the styles shipped by seaborn. However, they will remain available as 'seaborn-v0_8-&lt;style&gt;'. Alternatively, directly use the seaborn API instead.
-</code></pre>
-</div>
-</div>
 <div class="cell" data-execution_count="2">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 심볼 정의</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>x<span class="op">=</span>S.Symbol(<span class="st">'x'</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>h<span class="op">=</span>S.Symbol(<span class="st">'h'</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>n<span class="op">=</span>S.Symbol(<span class="st">'n'</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>a<span class="op">=</span>S.Symbol(<span class="st">'a'</span>)</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>a1<span class="op">=</span>S.Symbol(<span class="st">'a1'</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>a2<span class="op">=</span>S.Symbol(<span class="st">'a2'</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>a3<span class="op">=</span>S.Symbol(<span class="st">'a3'</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>a4<span class="op">=</span>S.Symbol(<span class="st">'a4'</span>)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">## 인수분해</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>S.factor(x<span class="op">**</span><span class="dv">2</span><span class="op">+</span><span class="dv">4</span><span class="op">*</span>x<span class="op">+</span><span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sympy <span class="im">as</span> S</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 심볼 정의</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>x<span class="op">=</span>S.Symbol(<span class="st">'x'</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>h<span class="op">=</span>S.Symbol(<span class="st">'h'</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>n<span class="op">=</span>S.Symbol(<span class="st">'n'</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>a<span class="op">=</span>S.Symbol(<span class="st">'a'</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>a1<span class="op">=</span>S.Symbol(<span class="st">'a1'</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>a2<span class="op">=</span>S.Symbol(<span class="st">'a2'</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>a3<span class="op">=</span>S.Symbol(<span class="st">'a3'</span>)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>a4<span class="op">=</span>S.Symbol(<span class="st">'a4'</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">## 인수분해</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>S.factor(x<span class="op">**</span><span class="dv">2</span><span class="op">+</span><span class="dv">4</span><span class="op">*</span>x<span class="op">+</span><span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="14">
+<div class="cell-output cell-output-display" data-execution_count="2">
 <p><span class="math inline">\(\displaystyle \left(x + 2\right)^{2}\)</span></p>
 </div>
 </div>
@@ -511,7 +541,7 @@ The seaborn styles shipped by Matplotlib are deprecated since 3.6, as they no lo
 <pre><code>0
 6</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="15">
+<div class="cell-output cell-output-display" data-execution_count="3">
 <p><span class="math inline">\(\displaystyle \left(x - 3\right) \left(x - 2\right)\)</span></p>
 </div>
 </div>
@@ -533,7 +563,7 @@ The seaborn styles shipped by Matplotlib are deprecated since 3.6, as they no lo
 32*log(2)
 5.54517744447956</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="16">
+<div class="cell-output cell-output-display" data-execution_count="4">
 <p><span class="math inline">\(\displaystyle 2^{x} \log{\left(2 \right)}\)</span></p>
 </div>
 </div>
@@ -549,10 +579,13 @@ The seaborn styles shipped by Matplotlib are deprecated since 3.6, as they no lo
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>3**(n - 1)*n
+<pre><code>3**(n - 1)*n</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
 5**(n - 1)*n</code></pre>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="17">
+<div class="cell-output cell-output-display" data-execution_count="5">
 <p><span class="math inline">\(\displaystyle n x^{n - 1}\)</span></p>
 </div>
 </div>
@@ -565,11 +598,11 @@ The seaborn styles shipped by Matplotlib are deprecated since 3.6, as they no lo
 <div class="cell" data-execution_count="6">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span><span class="dv">2</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit(((<span class="dv">2</span>)<span class="op">-</span><span class="dv">2</span>)<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span><span class="dv">2</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit(((<span class="dv">2</span>)<span class="op">-</span><span class="dv">2</span>)<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="18">
+<div class="cell-output cell-output-display" data-execution_count="6">
 <p><span class="math inline">\(\displaystyle 0\)</span></p>
 </div>
 </div>
@@ -579,11 +612,11 @@ The seaborn styles shipped by Matplotlib are deprecated since 3.6, as they no lo
 <div class="cell" data-execution_count="7">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span>S.log(x)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((S.log(x<span class="op">+</span>h)<span class="op">-</span>S.log(x))<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span>S.log(x)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((S.log(x<span class="op">+</span>h)<span class="op">-</span>S.log(x))<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="19">
+<div class="cell-output cell-output-display" data-execution_count="7">
 <p><span class="math inline">\(\displaystyle \frac{1}{x}\)</span></p>
 </div>
 </div>
@@ -593,11 +626,11 @@ The seaborn styles shipped by Matplotlib are deprecated since 3.6, as they no lo
 <div class="cell" data-execution_count="8">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span>S.exp(x)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((S.exp(x<span class="op">+</span>h)<span class="op">-</span>S.exp(x))<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span>S.exp(x)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((S.exp(x<span class="op">+</span>h)<span class="op">-</span>S.exp(x))<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="20">
+<div class="cell-output cell-output-display" data-execution_count="8">
 <p><span class="math inline">\(\displaystyle e^{x}\)</span></p>
 </div>
 </div>
@@ -607,11 +640,11 @@ The seaborn styles shipped by Matplotlib are deprecated since 3.6, as they no lo
 <div class="cell" data-execution_count="9">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span>S.sin(x)</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((S.sin(x<span class="op">+</span>h)<span class="op">-</span>S.sin(x))<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span>S.sin(x)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((S.sin(x<span class="op">+</span>h)<span class="op">-</span>S.sin(x))<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="21">
+<div class="cell-output cell-output-display" data-execution_count="9">
 <p><span class="math inline">\(\displaystyle \cos{\left(x \right)}\)</span></p>
 </div>
 </div>
@@ -621,11 +654,11 @@ The seaborn styles shipped by Matplotlib are deprecated since 3.6, as they no lo
 <div class="cell" data-execution_count="10">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span><span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>S.exp(<span class="op">-</span>a<span class="op">*</span>x))</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((<span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>S.exp(<span class="op">-</span>a<span class="op">*</span>(x<span class="op">+</span>h)))<span class="op">-</span><span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>S.exp(<span class="op">-</span>a<span class="op">*</span>x)))<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>f<span class="op">=</span><span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>S.exp(<span class="op">-</span>a<span class="op">*</span>x))</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit((<span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>S.exp(<span class="op">-</span>a<span class="op">*</span>(x<span class="op">+</span>h)))<span class="op">-</span><span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>S.exp(<span class="op">-</span>a<span class="op">*</span>x)))<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="22">
+<div class="cell-output cell-output-display" data-execution_count="10">
 <p><span class="math inline">\(\displaystyle \frac{a e^{a x}}{\left(e^{a x} + 1\right)^{2}}\)</span></p>
 </div>
 </div>
@@ -639,26 +672,6 @@ The seaborn styles shipped by Matplotlib are deprecated since 3.6, as they no lo
 \end{aligned}
 \]</span></p>
 <p>위와 같이 <span class="math inline">\(S(x)\)</span> 의 도함수는 <span class="math inline">\(aS(x)(1-S(x))\)</span> 로 표현될 수 있다. sigmoid function은 neural network에서 activation function으로 사용되는데 forward propagation에서 이미 한 번 계산이 된다. backward propagation에서 activation function인 <span class="math inline">\(S(x)\)</span> 의 도함수를 다시 연산을 해야하는데 도함수가 <span class="math inline">\(aS(x)(1-S(x))\)</span> 것을 알면 복잡한 고차원 행렬곱 연산을 다시 수행하지 않아도 된다. 그래서 <span class="math inline">\(S(x)\)</span> 의 도함수를 <span class="math inline">\(\frac{ae^x}{(e^{-ax}+1)^2}\)</span> 라고 코딩하는 것 보다는 <span class="math inline">\(S(x)\)</span> 의 행렬을 재활용하여 <span class="math inline">\(aS(x)(1-S(x))\)</span> 로 코딩해놓으면 연산 과정에서의 시간 복잡도를 줄일 수 있다. 이처럼 machine learning에서 수학적 통계적 지식을 잘 활용하면 좀 더 효율적인 모델링을 구현 할 수 있다.</p>
-<div class="cell" data-execution_count="11">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>x1 <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">6</span>, <span class="dv">6</span>, <span class="dv">100</span>)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>sx <span class="op">=</span> <span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span><span class="op">+</span>np.exp(<span class="op">-</span>x1))</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>d_sx <span class="op">=</span> sx<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>sx)</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>plt.plot(x1,sx,color<span class="op">=</span><span class="st">'black'</span>,label<span class="op">=</span><span class="st">'S(x)'</span>)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>plt.plot(x1,d_sx,color<span class="op">=</span><span class="st">'red'</span>,label<span class="op">=</span><span class="st">'dS(x)'</span>)</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'X'</span>)</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'S(x)'</span>)</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Simgoid Curve with its Derivative'</span>)</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-display">
-<p><img src="2023-02-04_uni_derivative_files/figure-html/cell-12-output-1.png" width="563" height="447"></p>
-</div>
-</div>
 <ul>
 <li><span class="math inline">\(f(x;\mathbf\alpha)=\alpha_1 + \frac{\alpha_2-\alpha_1}{1+e^{-\alpha_4(x-\alpha_3)}}\)</span> 를 어떻게 미분할 것인지 생각해 보시오.</li>
 </ul>
@@ -666,12 +679,13 @@ The seaborn styles shipped by Matplotlib are deprecated since 3.6, as they no lo
 <ul>
 <li><span class="math inline">\(y=f(x)=(4x+3)^2\)</span> 를 <span class="math inline">\(x\)</span> 에 대해 미분해보시오.</li>
 </ul>
-<div class="cell" data-execution_count="12">
+<div class="cell" data-execution_count="11">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>S.limit(((<span class="dv">4</span><span class="op">*</span>(x<span class="op">+</span>h)<span class="op">+</span><span class="dv">3</span>)<span class="op">**</span><span class="dv">2</span><span class="op">-</span>(<span class="dv">4</span><span class="op">*</span>x<span class="op">+</span><span class="dv">3</span>)<span class="op">**</span><span class="dv">2</span>)<span class="op">/</span>h,h,<span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>df<span class="op">=</span>S.limit(((<span class="dv">4</span><span class="op">*</span>(x<span class="op">+</span>h)<span class="op">+</span><span class="dv">3</span>)<span class="op">**</span><span class="dv">2</span><span class="op">-</span>(<span class="dv">4</span><span class="op">*</span>x<span class="op">+</span><span class="dv">3</span>)<span class="op">**</span><span class="dv">2</span>)<span class="op">/</span>h,h,<span class="dv">0</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="24">
+<div class="cell-output cell-output-display" data-execution_count="11">
 <p><span class="math inline">\(\displaystyle 32 x + 24\)</span></p>
 </div>
 </div>

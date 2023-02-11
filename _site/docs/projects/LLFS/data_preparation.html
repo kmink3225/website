@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.313">
+<meta name="generator" content="quarto-1.2.335">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -237,7 +237,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/LLFS/self_description.html" class="sidebar-item-text sidebar-link">Description</a>
+  <a href="../../../docs/projects/LLFS/self_description.html" class="sidebar-item-text sidebar-link">Project Description</a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -322,7 +322,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <section id="simulation-flowchart" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="simulation-flowchart"><span class="header-section-number">1</span> Simulation Flowchart</h2>
-<div class="cell" data-fig-width="7.5">
+<div class="cell" data-fig-width="7.5" data-fig-height="9">
 <div class="cell-output-display">
 <div>
 <p>
@@ -427,9 +427,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><strong>Metabolite Data Setting</strong></p>
 <p>고차원의 metabolite data를 만드는 설정으로, 고차원이면서 그룹내 서로 상관 관계가 있는 변수들을 생성하기 위해 난수에 의해 발생되는 임의의 Covariance를 생성하여 MVN (Multivariate Normal Distribution)에 반영되게 했고 각 그룹의 반응 변수로의 영향(또는 가중치)도 또한 난수로 임의적으로 발생되게 설정했다. 이때, 난수에 의해 임의적으로 발생하는 수치는 내가 임의적으로 범위를 한정했다.</p>
 <p><strong>Outcome Variable Setting</strong></p>
-<p>MVN에 의해 만들어진 Data와 미리 만들어 놓은 가중치 Matrix의 곱을 통해 Score Matrix를 만들고 Logit Link를 이용하여 각 Sample의 확률값을 만들었다. 각 Sample의 확률값을 기반으로 <span class="math inline">\(X ~\text{Bernoulli}(p)\)</span>, (여기서 <span class="math inline">\(p\)</span>는 각 sample이 갖는 확률값 뜻한다), 을 통해 disease status의 정보를 담은 binary outcome variable를 만들었다.</p>
+<p>MVN에 의해 만들어진 Data와 미리 만들어 놓은 가중치 Matrix의 곱을 통해 Score Matrix를 만들고 Logit Link를 이용하여 각 Sample의 확률값을 만들었다. 각 Sample의 확률값을 기반으로 <span class="math inline">\(X \sim \text{Bernoulli}(p)\)</span>, (여기서 <span class="math inline">\(p\)</span>는 각 sample이 갖는 확률값 뜻한다), 을 통해 disease status의 정보를 담은 binary outcome variable를 만들었다.</p>
 <p><strong>Sex Variable Setting</strong></p>
-<p>Sex 변수는 <span class="math inline">\(X ~\text{Bernoulli}(0.5)\)</span> 을 통해 data를 생성했다.</p>
+<p>Sex 변수는 <span class="math inline">\(X \sim \text{Bernoulli}(0.5)\)</span> 을 통해 data를 생성했다.</p>
 <p><strong>Age Variable Setting</strong></p>
 <p>Age 변수는 생물학적, 의학적으로 치매와 연관성이 높은 요인으로 Outcome 변수로 가장 설명이 잘되는 metabolite를 탐색해 선별하여 Age 형태로 변환을 했다. 제일 어린 사람을 65세 그리고 제일 연장자를 105세로 설정하여 min max normalization을 적용했다.</p>
 <p><strong>Genotype Variable Setting</strong></p>
@@ -493,44 +493,49 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">group_name=</span><span class="fu">c</span>(<span class="fu">names</span>(group_proportion_list)),</span>
 <span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">proportion=</span>group_proportion_list)<span class="sc">%&gt;%</span></span>
 <span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>            <span class="at">group_n=</span>(predictor_size<span class="sc">*</span>group_proportion_list)<span class="sc">%&gt;%</span><span class="fu">round</span>(<span class="dv">0</span>), <span class="co"># the number of predictors within each group </span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>            <span class="at">first_index=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="fu">cumsum</span>(group_n[<span class="sc">-</span><span class="fu">length</span>(group_proportion_list)])<span class="sc">+</span><span class="dv">1</span>), <span class="co"># the 1st index of predictors in each group</span></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>            <span class="at">last_index=</span><span class="fu">cumsum</span>(group_n), <span class="co"># the last index of predictors in each group</span></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>            <span class="at">group_correlation=</span><span class="fu">sample</span>((<span class="dv">0</span><span class="sc">:</span><span class="dv">700</span>)<span class="sc">/</span><span class="dv">1000</span>,<span class="fu">length</span>(group_proportion_list),<span class="at">replace=</span><span class="cn">TRUE</span>), <span class="co"># within-group correlations among the within-group predictors</span></span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>            <span class="at">group_effect=</span><span class="fu">sample</span>((<span class="sc">-</span><span class="dv">40</span><span class="sc">:</span><span class="dv">30</span>)<span class="sc">/</span><span class="dv">100</span>,<span class="fu">length</span>(group_proportion_list),<span class="at">replace=</span><span class="cn">TRUE</span>)) <span class="co"># effect of each group on an outcome variable</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="do">### set a group effect as 0.7 into a group with the smallest group number </span></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>group_meta_data[<span class="fu">which.min</span>(group_meta_data[,<span class="st">"group_n"</span>]),<span class="st">"group_effect"</span>]<span class="ot">&lt;-</span><span class="fl">0.7</span></span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="do">### set a group effect as -0.5 into a group with the second smallest group number </span></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>group_meta_data[group_meta_data[,<span class="st">"group_n"</span>]<span class="sc">==</span>(<span class="fu">sort</span>(group_meta_data[,<span class="st">"group_n"</span>])[<span class="dv">2</span>]),<span class="st">"group_effect"</span>]<span class="ot">&lt;-</span>(<span class="sc">-</span><span class="fl">0.5</span>)</span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize a data matrix to assign simulated values</span></span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="do">## add some noise to data</span></span>
-<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>data<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rnorm</span>(sample_size<span class="sc">*</span>predictor_size,<span class="at">mean=</span><span class="dv">0</span>,<span class="at">sd=</span><span class="fl">0.05</span>), </span>
-<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>             <span class="at">nrow =</span> sample_size, <span class="at">ncol =</span> predictor_size)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>            <span class="co"># the number of predictors within each group </span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>            <span class="at">group_n=</span>(predictor_size<span class="sc">*</span>group_proportion_list)<span class="sc">%&gt;%</span><span class="fu">round</span>(<span class="dv">0</span>),</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>            <span class="co"># the 1st index of predictors in each group</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>            <span class="at">first_index=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="fu">cumsum</span>(group_n[<span class="sc">-</span><span class="fu">length</span>(group_proportion_list)])<span class="sc">+</span><span class="dv">1</span>), </span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>            <span class="co"># the last index of predictors in each group</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>            <span class="at">last_index=</span><span class="fu">cumsum</span>(group_n),</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>            <span class="co"># within-group correlations among the within-group predictors </span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>            <span class="at">group_correlation=</span><span class="fu">sample</span>((<span class="dv">0</span><span class="sc">:</span><span class="dv">700</span>)<span class="sc">/</span><span class="dv">1000</span>,<span class="fu">length</span>(group_proportion_list),<span class="at">replace=</span><span class="cn">TRUE</span>),</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>            <span class="co"># effect of each group on an outcome variable </span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>            <span class="at">group_effect=</span><span class="fu">sample</span>((<span class="sc">-</span><span class="dv">40</span><span class="sc">:</span><span class="dv">30</span>)<span class="sc">/</span><span class="dv">100</span>,<span class="fu">length</span>(group_proportion_list),<span class="at">replace=</span><span class="cn">TRUE</span>)) </span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="do">### set a group effect as 0.7 into a group with the smallest group number </span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>group_meta_data[<span class="fu">which.min</span>(group_meta_data[,<span class="st">"group_n"</span>]),<span class="st">"group_effect"</span>]<span class="ot">&lt;-</span><span class="fl">0.7</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="do">### set a group effect as -0.5 into a group with the second smallest group number </span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>group_meta_data[group_meta_data[,<span class="st">"group_n"</span>]<span class="sc">==</span>(<span class="fu">sort</span>(group_meta_data[,<span class="st">"group_n"</span>])[<span class="dv">2</span>]),<span class="st">"group_effect"</span>]<span class="ot">&lt;-</span>(<span class="sc">-</span><span class="fl">0.5</span>)</span>
 <span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize a covariance matrix to assign simulated values</span></span>
-<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>covariance_matrix<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rnorm</span>(predictor_size<span class="sc">*</span>predictor_size,<span class="at">mean=</span><span class="dv">0</span>,<span class="at">sd=</span><span class="fl">0.05</span>),</span>
-<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>                          <span class="at">nrow=</span>predictor_size, <span class="at">ncol=</span>predictor_size)</span>
-<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>beta_coefficients <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(predictor_size,<span class="dv">0</span>,<span class="fl">0.05</span>)</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize a data matrix to assign simulated values</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="do">## add some noise to data</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>data<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rnorm</span>(sample_size<span class="sc">*</span>predictor_size,<span class="at">mean=</span><span class="dv">0</span>,<span class="at">sd=</span><span class="fl">0.05</span>), </span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>             <span class="at">nrow =</span> sample_size, <span class="at">ncol =</span> predictor_size)</span>
 <span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>answer_list<span class="ot">&lt;-</span><span class="fu">list</span>(</span>
-<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>    <span class="st">'sample size'</span><span class="ot">=</span>sample_size,</span>
-<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>    <span class="st">'predictor size'</span><span class="ot">=</span>predictor_size,</span>
-<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>    <span class="st">'group size'</span><span class="ot">=</span>group_size,</span>
-<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>    <span class="st">'significant predictors'</span><span class="ot">=</span>significant_predictors,</span>
-<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>    <span class="st">'positively associated predictors'</span><span class="ot">=</span>positively_associated_predictors,</span>
-<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>    <span class="st">'negatively associated predictors'</span><span class="ot">=</span>negatively_associated_predictors,</span>
-<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>    <span class="st">'group proportion list'</span><span class="ot">=</span>group_proportion_list,</span>
-<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>    <span class="st">'group meta data'</span><span class="ot">=</span>group_meta_data,</span>
-<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    <span class="st">'data noise intensity'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'distribution'</span><span class="ot">=</span><span class="st">'rnorm'</span>,<span class="st">'mean'</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">'sd'</span><span class="ot">=</span><span class="fl">0.05</span>),</span>
-<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>    <span class="st">'covariance noise intensity'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'distribution'</span><span class="ot">=</span><span class="st">'rnorm'</span>,<span class="st">'mean'</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">'sd'</span><span class="ot">=</span><span class="fl">0.05</span>),</span>
-<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    <span class="st">'effect noise intensity on response'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'distribution'</span><span class="ot">=</span><span class="st">'rnorm'</span>,<span class="st">'mean'</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">'sd'</span><span class="ot">=</span><span class="fl">0.05</span>),</span>
-<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>    <span class="st">'link function between the response and predictors'</span> <span class="ot">=</span> <span class="st">'canonical logit link function'</span>,</span>
-<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>    <span class="st">'link function noise intensity'</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'distribution'</span><span class="ot">=</span><span class="st">'rnorm'</span>,<span class="st">'mean'</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">'sd'</span><span class="ot">=</span><span class="fl">0.05</span>),</span>
-<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>    <span class="st">'age_distirbution'</span><span class="ot">=</span><span class="st">'used data of a variable with the highest effect on outcome'</span>,</span>
-<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>    <span class="st">'sex_distribution'</span><span class="ot">=</span><span class="st">'rbinom(n=sample size,p=0.5)'</span>,</span>
-<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>    <span class="st">'genotype_distirbution'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'e2'</span> <span class="ot">=</span> <span class="st">'8.4%'</span>,<span class="st">'e3'</span> <span class="ot">=</span> <span class="st">'77.9%'</span>,<span class="st">'e4'</span> <span class="ot">=</span> <span class="st">'13.7%'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize a covariance matrix to assign simulated values</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>covariance_matrix<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rnorm</span>(predictor_size<span class="sc">*</span>predictor_size,<span class="at">mean=</span><span class="dv">0</span>,<span class="at">sd=</span><span class="fl">0.05</span>),</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>                          <span class="at">nrow=</span>predictor_size, <span class="at">ncol=</span>predictor_size)</span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>beta_coefficients <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(predictor_size,<span class="dv">0</span>,<span class="fl">0.05</span>)</span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>answer_list<span class="ot">&lt;-</span><span class="fu">list</span>(</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>    <span class="st">'sample size'</span><span class="ot">=</span>sample_size,</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>    <span class="st">'predictor size'</span><span class="ot">=</span>predictor_size,</span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>    <span class="st">'group size'</span><span class="ot">=</span>group_size,</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    <span class="st">'significant predictors'</span><span class="ot">=</span>significant_predictors,</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>    <span class="st">'positively associated predictors'</span><span class="ot">=</span>positively_associated_predictors,</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    <span class="st">'negatively associated predictors'</span><span class="ot">=</span>negatively_associated_predictors,</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>    <span class="st">'group proportion list'</span><span class="ot">=</span>group_proportion_list,</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>    <span class="st">'group meta data'</span><span class="ot">=</span>group_meta_data,</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>    <span class="st">'data noise intensity'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'distribution'</span><span class="ot">=</span><span class="st">'rnorm'</span>,<span class="st">'mean'</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">'sd'</span><span class="ot">=</span><span class="fl">0.05</span>),</span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>    <span class="st">'covariance noise intensity'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'distribution'</span><span class="ot">=</span><span class="st">'rnorm'</span>,<span class="st">'mean'</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">'sd'</span><span class="ot">=</span><span class="fl">0.05</span>),</span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>    <span class="st">'effect noise intensity on response'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'distribution'</span><span class="ot">=</span><span class="st">'rnorm'</span>,<span class="st">'mean'</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">'sd'</span><span class="ot">=</span><span class="fl">0.05</span>),</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>    <span class="st">'link function between the response and predictors'</span> <span class="ot">=</span> <span class="st">'canonical logit link function'</span>,</span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>    <span class="st">'link function noise intensity'</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'distribution'</span><span class="ot">=</span><span class="st">'rnorm'</span>,<span class="st">'mean'</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">'sd'</span><span class="ot">=</span><span class="fl">0.05</span>),</span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>    <span class="st">'age_distirbution'</span><span class="ot">=</span><span class="st">'used data of a variable with the highest effect on outcome'</span>,</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>    <span class="st">'sex_distribution'</span><span class="ot">=</span><span class="st">'rbinom(n=sample size,p=0.5)'</span>,</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>    <span class="st">'genotype_distirbution'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'e2'</span> <span class="ot">=</span> <span class="st">'8.4%'</span>,<span class="st">'e3'</span> <span class="ot">=</span> <span class="st">'77.9%'</span>,<span class="st">'e4'</span> <span class="ot">=</span> <span class="st">'13.7%'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -817,44 +822,49 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">group_name=</span><span class="fu">c</span>(<span class="fu">names</span>(group_proportion_list)),</span>
 <span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">proportion=</span>group_proportion_list)<span class="sc">%&gt;%</span></span>
 <span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(</span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>            <span class="at">group_n=</span>(predictor_size<span class="sc">*</span>group_proportion_list)<span class="sc">%&gt;%</span><span class="fu">round</span>(<span class="dv">0</span>), <span class="co"># the number of predictors within each group </span></span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>            <span class="at">first_index=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="fu">cumsum</span>(group_n[<span class="sc">-</span><span class="fu">length</span>(group_proportion_list)])<span class="sc">+</span><span class="dv">1</span>), <span class="co"># the 1st index of predictors in each group</span></span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>            <span class="at">last_index=</span><span class="fu">cumsum</span>(group_n), <span class="co"># the last index of predictors in each group</span></span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>            <span class="at">group_correlation=</span><span class="fu">sample</span>((<span class="dv">0</span><span class="sc">:</span><span class="dv">700</span>)<span class="sc">/</span><span class="dv">1000</span>,<span class="fu">length</span>(group_proportion_list),<span class="at">replace=</span><span class="cn">TRUE</span>), <span class="co"># within-group correlations among the within-group predictors</span></span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>            <span class="at">group_effect=</span><span class="fu">sample</span>((<span class="sc">-</span><span class="dv">40</span><span class="sc">:</span><span class="dv">30</span>)<span class="sc">/</span><span class="dv">100</span>,<span class="fu">length</span>(group_proportion_list),<span class="at">replace=</span><span class="cn">TRUE</span>)) <span class="co"># effect of each group on an outcome variable</span></span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="do">### set a group effect as 0.7 into a group with the smallest group number </span></span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>group_meta_data[<span class="fu">which.min</span>(group_meta_data[,<span class="st">"group_n"</span>]),<span class="st">"group_effect"</span>]<span class="ot">&lt;-</span><span class="fl">0.7</span></span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="do">### set a group effect as -0.5 into a group with the second smallest group number </span></span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>group_meta_data[group_meta_data[,<span class="st">"group_n"</span>]<span class="sc">==</span>(<span class="fu">sort</span>(group_meta_data[,<span class="st">"group_n"</span>])[<span class="dv">2</span>]),<span class="st">"group_effect"</span>]<span class="ot">&lt;-</span>(<span class="sc">-</span><span class="fl">0.5</span>)</span>
-<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize a data matrix to assign simulated values</span></span>
-<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a><span class="do">## add some noise to data</span></span>
-<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>data<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rnorm</span>(sample_size<span class="sc">*</span>predictor_size,<span class="at">mean=</span><span class="dv">0</span>,<span class="at">sd=</span><span class="fl">0.05</span>), </span>
-<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>             <span class="at">nrow =</span> sample_size, <span class="at">ncol =</span> predictor_size)</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>            <span class="co"># the number of predictors within each group </span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>            <span class="at">group_n=</span>(predictor_size<span class="sc">*</span>group_proportion_list)<span class="sc">%&gt;%</span><span class="fu">round</span>(<span class="dv">0</span>),</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>            <span class="co"># the 1st index of predictors in each group </span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>            <span class="at">first_index=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="fu">cumsum</span>(group_n[<span class="sc">-</span><span class="fu">length</span>(group_proportion_list)])<span class="sc">+</span><span class="dv">1</span>), </span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>            <span class="co"># the last index of predictors in each group</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>            <span class="at">last_index=</span><span class="fu">cumsum</span>(group_n),</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>            <span class="co"># within-group correlations among the within-group predictors </span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>            <span class="at">group_correlation=</span><span class="fu">sample</span>((<span class="dv">0</span><span class="sc">:</span><span class="dv">700</span>)<span class="sc">/</span><span class="dv">1000</span>,<span class="fu">length</span>(group_proportion_list),<span class="at">replace=</span><span class="cn">TRUE</span>), </span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>            <span class="co"># effect of each group on an outcome variable</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>            <span class="at">group_effect=</span><span class="fu">sample</span>((<span class="sc">-</span><span class="dv">40</span><span class="sc">:</span><span class="dv">30</span>)<span class="sc">/</span><span class="dv">100</span>,<span class="fu">length</span>(group_proportion_list),<span class="at">replace=</span><span class="cn">TRUE</span>)) </span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="do">### set a group effect as 0.7 into a group with the smallest group number </span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>group_meta_data[<span class="fu">which.min</span>(group_meta_data[,<span class="st">"group_n"</span>]),<span class="st">"group_effect"</span>]<span class="ot">&lt;-</span><span class="fl">0.7</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a><span class="do">### set a group effect as -0.5 into a group with the second smallest group number </span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>group_meta_data[group_meta_data[,<span class="st">"group_n"</span>]<span class="sc">==</span>(<span class="fu">sort</span>(group_meta_data[,<span class="st">"group_n"</span>])[<span class="dv">2</span>]),<span class="st">"group_effect"</span>]<span class="ot">&lt;-</span>(<span class="sc">-</span><span class="fl">0.5</span>)</span>
 <span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize a covariance matrix to assign simulated values</span></span>
-<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>covariance_matrix<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rnorm</span>(predictor_size<span class="sc">*</span>predictor_size,<span class="at">mean=</span><span class="dv">0</span>,<span class="at">sd=</span><span class="fl">0.05</span>),</span>
-<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>                          <span class="at">nrow=</span>predictor_size, <span class="at">ncol=</span>predictor_size)</span>
-<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>beta_coefficients <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(predictor_size,<span class="dv">0</span>,<span class="fl">0.05</span>)</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize a data matrix to assign simulated values</span></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a><span class="do">## add some noise to data</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>data<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rnorm</span>(sample_size<span class="sc">*</span>predictor_size,<span class="at">mean=</span><span class="dv">0</span>,<span class="at">sd=</span><span class="fl">0.05</span>), </span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>             <span class="at">nrow =</span> sample_size, <span class="at">ncol =</span> predictor_size)</span>
 <span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>answer_list<span class="ot">&lt;-</span><span class="fu">list</span>(</span>
-<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    <span class="st">'sample size'</span><span class="ot">=</span>sample_size,</span>
-<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    <span class="st">'predictor size'</span><span class="ot">=</span>predictor_size,</span>
-<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>    <span class="st">'group size'</span><span class="ot">=</span>group_size,</span>
-<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>    <span class="st">'significant predictors'</span><span class="ot">=</span>significant_predictors,</span>
-<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>    <span class="st">'positively associated predictors'</span><span class="ot">=</span>positively_associated_predictors,</span>
-<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>    <span class="st">'negatively associated predictors'</span><span class="ot">=</span>negatively_associated_predictors,</span>
-<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>    <span class="st">'group proportion list'</span><span class="ot">=</span>group_proportion_list,</span>
-<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>    <span class="st">'group meta data'</span><span class="ot">=</span>group_meta_data,</span>
-<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>    <span class="st">'data noise intensity'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'distribution'</span><span class="ot">=</span><span class="st">'rnorm'</span>,<span class="st">'mean'</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">'sd'</span><span class="ot">=</span><span class="fl">0.05</span>),</span>
-<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>    <span class="st">'covariance noise intensity'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'distribution'</span><span class="ot">=</span><span class="st">'rnorm'</span>,<span class="st">'mean'</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">'sd'</span><span class="ot">=</span><span class="fl">0.05</span>),</span>
-<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>    <span class="st">'effect noise intensity on response'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'distribution'</span><span class="ot">=</span><span class="st">'rnorm'</span>,<span class="st">'mean'</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">'sd'</span><span class="ot">=</span><span class="fl">0.05</span>),</span>
-<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>    <span class="st">'link function between the response and predictors'</span> <span class="ot">=</span> <span class="st">'canonical logit link function'</span>,</span>
-<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>    <span class="st">'link function noise intensity'</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'distribution'</span><span class="ot">=</span><span class="st">'rnorm'</span>,<span class="st">'mean'</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">'sd'</span><span class="ot">=</span><span class="fl">0.05</span>),</span>
-<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>    <span class="st">'age_distirbution'</span><span class="ot">=</span><span class="st">'used data of a variable with the highest effect on outcome'</span>,</span>
-<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>    <span class="st">'sex_distribution'</span><span class="ot">=</span><span class="st">'rbinom(n=sample size,p=0.5)'</span>,</span>
-<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>    <span class="st">'genotype_distirbution'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'e2'</span> <span class="ot">=</span> <span class="st">'8.4%'</span>,<span class="st">'e3'</span> <span class="ot">=</span> <span class="st">'77.9%'</span>,<span class="st">'e4'</span> <span class="ot">=</span> <span class="st">'13.7%'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize a covariance matrix to assign simulated values</span></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>covariance_matrix<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">rnorm</span>(predictor_size<span class="sc">*</span>predictor_size,<span class="at">mean=</span><span class="dv">0</span>,<span class="at">sd=</span><span class="fl">0.05</span>),</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>                          <span class="at">nrow=</span>predictor_size, <span class="at">ncol=</span>predictor_size)</span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>beta_coefficients <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(predictor_size,<span class="dv">0</span>,<span class="fl">0.05</span>)</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>answer_list<span class="ot">&lt;-</span><span class="fu">list</span>(</span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>    <span class="st">'sample size'</span><span class="ot">=</span>sample_size,</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>    <span class="st">'predictor size'</span><span class="ot">=</span>predictor_size,</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>    <span class="st">'group size'</span><span class="ot">=</span>group_size,</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>    <span class="st">'significant predictors'</span><span class="ot">=</span>significant_predictors,</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>    <span class="st">'positively associated predictors'</span><span class="ot">=</span>positively_associated_predictors,</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>    <span class="st">'negatively associated predictors'</span><span class="ot">=</span>negatively_associated_predictors,</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>    <span class="st">'group proportion list'</span><span class="ot">=</span>group_proportion_list,</span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>    <span class="st">'group meta data'</span><span class="ot">=</span>group_meta_data,</span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>    <span class="st">'data noise intensity'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'distribution'</span><span class="ot">=</span><span class="st">'rnorm'</span>,<span class="st">'mean'</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">'sd'</span><span class="ot">=</span><span class="fl">0.05</span>),</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>    <span class="st">'covariance noise intensity'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'distribution'</span><span class="ot">=</span><span class="st">'rnorm'</span>,<span class="st">'mean'</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">'sd'</span><span class="ot">=</span><span class="fl">0.05</span>),</span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>    <span class="st">'effect noise intensity on response'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'distribution'</span><span class="ot">=</span><span class="st">'rnorm'</span>,<span class="st">'mean'</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">'sd'</span><span class="ot">=</span><span class="fl">0.05</span>),</span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>    <span class="st">'link function between the response and predictors'</span> <span class="ot">=</span> <span class="st">'canonical logit link function'</span>,</span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>    <span class="st">'link function noise intensity'</span> <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'distribution'</span><span class="ot">=</span><span class="st">'rnorm'</span>,<span class="st">'mean'</span><span class="ot">=</span><span class="dv">0</span>,<span class="st">'sd'</span><span class="ot">=</span><span class="fl">0.05</span>),</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>    <span class="st">'age_distirbution'</span><span class="ot">=</span><span class="st">'used data of a variable with the highest effect on outcome'</span>,</span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>    <span class="st">'sex_distribution'</span><span class="ot">=</span><span class="st">'rbinom(n=sample size,p=0.5)'</span>,</span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>    <span class="st">'genotype_distirbution'</span><span class="ot">=</span><span class="fu">c</span>(<span class="st">'e2'</span> <span class="ot">=</span> <span class="st">'8.4%'</span>,<span class="st">'e3'</span> <span class="ot">=</span> <span class="st">'77.9%'</span>,<span class="st">'e4'</span> <span class="ot">=</span> <span class="st">'13.7%'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -877,74 +887,80 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>age_data_generator<span class="ot">=</span><span class="cf">function</span>(in_data,in_response,<span class="at">fun=</span>scale_function){</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># this function generates a age (continuous) data that are statistically associated with a simulated variable as designed above.</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="do">## conduct t test with the response and each variable generated by multivariate normal distributions.</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="do">## search a variable with the largest difference in mean between the two groups or with the lowest p value</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="do">## In this case, I will pick the former one. </span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="do">## (I don't care about the multiple testing problems for now)</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    temp_df<span class="ot">=</span><span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(<span class="at">ncol=</span><span class="dv">5</span>)) <span class="co"># initialize an empty data frame</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(in_data)){</span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        temp_df[i,]<span class="ot">=</span><span class="fu">c</span>(</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>            <span class="fu">names</span>(in_data)[i],</span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>            <span class="fu">t.test</span>(in_data[,i]<span class="sc">~</span>in_response)<span class="sc">$</span>estimate[<span class="dv">1</span>],</span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>            <span class="fu">t.test</span>(in_data[,i]<span class="sc">~</span>in_response)<span class="sc">$</span>estimate[<span class="dv">2</span>],</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>            <span class="fu">t.test</span>(in_data[,i]<span class="sc">~</span>in_response)<span class="sc">$</span>estimate[<span class="dv">2</span>]<span class="sc">-</span><span class="fu">t.test</span>(data[,i]<span class="sc">~</span>response)<span class="sc">$</span>estimate[<span class="dv">1</span>],</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>            <span class="fu">t.test</span>(in_data[,i]<span class="sc">~</span>in_response)<span class="sc">$</span>p.value)</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(temp_df)<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">'metabolite'</span>,<span class="st">'mean_neg'</span>,<span class="st">'mean_pos'</span>,<span class="st">'mean_diff'</span>,<span class="st">'p.value'</span>)</span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>    <span class="do">## search a variable with the largest difference in mean</span></span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    strong_metabolite<span class="ot">&lt;-</span></span>
-<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>        temp_df<span class="sc">%&gt;%</span></span>
-<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(</span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_neg=</span><span class="fu">as.numeric</span>(mean_neg),</span>
-<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_pos=</span><span class="fu">as.numeric</span>(mean_pos),</span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_diff=</span><span class="fu">as.numeric</span>(mean_diff),</span>
-<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>            <span class="at">p.value=</span><span class="fu">as.numeric</span>(p.value),</span>
-<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>            <span class="at">abs_mean_diff=</span><span class="fu">abs</span>(mean_diff))<span class="sc">%&gt;%</span></span>
-<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>        <span class="fu">filter</span>(abs_mean_diff<span class="sc">==</span><span class="fu">max</span>(abs_mean_diff))<span class="sc">%&gt;%</span></span>
-<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">select</span>(metabolite)<span class="sc">%&gt;%</span>pull</span>
-<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>    <span class="do">## generate age data with min max normalization</span></span>
-<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>    age_data<span class="ot">&lt;-</span></span>
-<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>        data<span class="sc">%&gt;%</span></span>
-<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">select</span>(strong_metabolite)<span class="sc">%&gt;%</span></span>
-<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>        <span class="fu">scale_function</span>(<span class="at">vector=</span>.,<span class="at">min=</span><span class="dv">65</span>,<span class="at">max=</span><span class="dv">105</span>,<span class="at">method=</span><span class="st">"customized"</span>)<span class="sc">%&gt;%</span></span>
-<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>        <span class="fu">rename</span>(<span class="at">age=</span><span class="dv">1</span>)<span class="sc">%&gt;%</span><span class="fu">round</span>(<span class="dv">0</span>)</span>
-<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(age_data)</span>
-<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># this function generates a age (continuous) data that are statistically associated </span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># with a simulated variable as designed above.</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="do">## conduct t test with the response and each variable generated by multivariate normal distributions.</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="do">## search a variable with the largest difference in mean between the two groups or with the lowest p value</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="do">## In this case, I will pick the former one. </span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="do">## (I don't care about the multiple testing problems for now)</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    temp_df<span class="ot">=</span><span class="fu">as.data.frame</span>(<span class="fu">matrix</span>(<span class="at">ncol=</span><span class="dv">5</span>)) <span class="co"># initialize an empty data frame</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">ncol</span>(in_data)){</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        temp_df[i,]<span class="ot">=</span><span class="fu">c</span>(</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>            <span class="fu">names</span>(in_data)[i],</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>            <span class="fu">t.test</span>(in_data[,i]<span class="sc">~</span>in_response)<span class="sc">$</span>estimate[<span class="dv">1</span>],</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>            <span class="fu">t.test</span>(in_data[,i]<span class="sc">~</span>in_response)<span class="sc">$</span>estimate[<span class="dv">2</span>],</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>            <span class="fu">t.test</span>(in_data[,i]<span class="sc">~</span>in_response)<span class="sc">$</span>estimate[<span class="dv">2</span>]<span class="sc">-</span><span class="fu">t.test</span>(data[,i]<span class="sc">~</span>response)<span class="sc">$</span>estimate[<span class="dv">1</span>],</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>            <span class="fu">t.test</span>(in_data[,i]<span class="sc">~</span>in_response)<span class="sc">$</span>p.value)</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(temp_df)<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="st">'metabolite'</span>,<span class="st">'mean_neg'</span>,<span class="st">'mean_pos'</span>,<span class="st">'mean_diff'</span>,<span class="st">'p.value'</span>)</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    <span class="do">## search a variable with the largest difference in mean</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    strong_metabolite<span class="ot">&lt;-</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>        temp_df<span class="sc">%&gt;%</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_neg=</span><span class="fu">as.numeric</span>(mean_neg),</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_pos=</span><span class="fu">as.numeric</span>(mean_pos),</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>            <span class="at">mean_diff=</span><span class="fu">as.numeric</span>(mean_diff),</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>            <span class="at">p.value=</span><span class="fu">as.numeric</span>(p.value),</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>            <span class="at">abs_mean_diff=</span><span class="fu">abs</span>(mean_diff))<span class="sc">%&gt;%</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>        <span class="fu">filter</span>(abs_mean_diff<span class="sc">==</span><span class="fu">max</span>(abs_mean_diff))<span class="sc">%&gt;%</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">select</span>(metabolite)<span class="sc">%&gt;%</span>pull</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>    <span class="do">## generate age data with min max normalization</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>    age_data<span class="ot">&lt;-</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>        data<span class="sc">%&gt;%</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">select</span>(strong_metabolite)<span class="sc">%&gt;%</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>        <span class="fu">scale_function</span>(<span class="at">vector=</span>.,<span class="at">min=</span><span class="dv">65</span>,<span class="at">max=</span><span class="dv">105</span>,<span class="at">method=</span><span class="st">"customized"</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>        <span class="fu">rename</span>(<span class="at">age=</span><span class="dv">1</span>)<span class="sc">%&gt;%</span><span class="fu">round</span>(<span class="dv">0</span>)</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(age_data)</span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>genotype_data_generator<span class="ot">=</span><span class="cf">function</span>(<span class="at">in_response=</span>response,<span class="at">fun=</span>scale_function){</span>
-<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>    <span class="co"># this function generates a genotype (categorical) data that are jointly and statistically associated with a continuous data and a binary data (I am not so sure if I can generate data that are statistically associated with some fake metabolite data. But, I will give it a try).</span></span>
-<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>    <span class="do">## Declare the marginal proportions </span></span>
-<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>    <span class="do">## for binary (affected vs unaffected) and a genotype (categorical) data, respectively</span></span>
-<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>    binary_proportion<span class="ot">&lt;-</span><span class="fu">as.numeric</span>(<span class="fu">table</span>(in_response)<span class="sc">/</span>sample_size) <span class="co">#the simulated proportion for the disease vs non-disease cases</span></span>
-<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>    genotype_proportion<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="fl">0.084</span>,<span class="fl">0.779</span>,<span class="fl">0.137</span>) <span class="co"># the known proportion of APOE genotypes from Wiki</span></span>
-<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>    <span class="do">## Declare the joint proportion predictor matrix</span></span>
-<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>    joint_proportion<span class="ot">&lt;-</span><span class="fu">matrix</span>(</span>
-<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>        <span class="fu">c</span>(binary_proportion[<span class="dv">1</span>]<span class="sc">*</span>genotype_proportion, <span class="co"># for the unaffected cases</span></span>
-<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>        binary_proportion[<span class="dv">2</span>]<span class="sc">*</span>genotype_proportion),  <span class="co"># for the affected cases</span></span>
-<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>        <span class="at">ncol=</span><span class="dv">2</span>, <span class="at">byrow=</span><span class="cn">FALSE</span>)</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>genotype_data_generator<span class="ot">=</span><span class="cf">function</span>(<span class="at">in_response=</span>response,<span class="at">fun=</span>scale_function){</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>    <span class="co"># this function generates a genotype (categorical) data </span></span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>    <span class="co"># that are jointly and statistically associated with a continuous data and a binary data </span></span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>    <span class="co"># (I am not so sure if I can generate data that are statistically associated </span></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>    <span class="co"># with some fake metabolite data. But, I will give it a try).</span></span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>    <span class="do">## Declare the marginal proportions </span></span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>    <span class="do">## for binary (affected vs unaffected) and a genotype (categorical) data, respectively</span></span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>    <span class="do">##the simulated proportion for the disease vs non-disease cases</span></span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>    binary_proportion<span class="ot">&lt;-</span><span class="fu">as.numeric</span>(<span class="fu">table</span>(in_response)<span class="sc">/</span>sample_size) </span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>    genotype_proportion<span class="ot">&lt;-</span><span class="fu">c</span>(<span class="fl">0.084</span>,<span class="fl">0.779</span>,<span class="fl">0.137</span>) <span class="co"># the known proportion of APOE genotypes from Wiki</span></span>
 <span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate the genotype (catogrical) data</span></span>
-<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>    genotype_data <span class="ot">=</span> <span class="fu">numeric</span>(sample_size) <span class="co"># initialize a vector </span></span>
-<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>sample_size) {</span>
-<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>        genotype_data[i] <span class="ot">=</span> <span class="fu">sample</span>(</span>
-<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>            <span class="fu">c</span>(<span class="st">'e2'</span>,<span class="st">'e3'</span>,<span class="st">'e4'</span>),</span>
-<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>             <span class="dv">1</span>, </span>
-<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>             <span class="at">prob=</span>joint_proportion[,<span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="st">'neg'</span>,in_response[i]),<span class="dv">1</span>,<span class="dv">2</span>)])</span>
-<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>    }    </span>
-<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(genotype_data)</span>
-<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>    <span class="do">## Declare the joint proportion predictor matrix</span></span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>    joint_proportion<span class="ot">&lt;-</span><span class="fu">matrix</span>(</span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>        <span class="fu">c</span>(binary_proportion[<span class="dv">1</span>]<span class="sc">*</span>genotype_proportion, <span class="co"># for the unaffected cases</span></span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>        binary_proportion[<span class="dv">2</span>]<span class="sc">*</span>genotype_proportion),  <span class="co"># for the affected cases</span></span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>        <span class="at">ncol=</span><span class="dv">2</span>, <span class="at">byrow=</span><span class="cn">FALSE</span>)</span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Generate the genotype (catogrical) data</span></span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>    genotype_data <span class="ot">=</span> <span class="fu">numeric</span>(sample_size) <span class="co"># initialize a vector </span></span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>sample_size) {</span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>        genotype_data[i] <span class="ot">=</span> <span class="fu">sample</span>(</span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>            <span class="fu">c</span>(<span class="st">'e2'</span>,<span class="st">'e3'</span>,<span class="st">'e4'</span>),</span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>             <span class="dv">1</span>, </span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>             <span class="at">prob=</span>joint_proportion[,<span class="fu">ifelse</span>(<span class="fu">grepl</span>(<span class="st">'neg'</span>,in_response[i]),<span class="dv">1</span>,<span class="dv">2</span>)])</span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a>    }    </span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(genotype_data)</span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
-<section id="simulation-algorithm-1" class="level3" data-number="4.4">
-<h3 data-number="4.4" class="anchored" data-anchor-id="simulation-algorithm-1"><span class="header-section-number">4.4</span> Simulation Algorithm</h3>
+<section id="simulation-2" class="level3" data-number="4.4">
+<h3 data-number="4.4" class="anchored" data-anchor-id="simulation-2"><span class="header-section-number">4.4</span> Simulation</h3>
 <div class="cell">
 <details>
 <summary>Show the code</summary>

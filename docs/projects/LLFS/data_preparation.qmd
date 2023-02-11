@@ -21,6 +21,7 @@ execute:
 
 ```{mermaid}
 %%| fig-width: 7.5
+%%| fig-height: 9
 flowchart TB
     subgraph Simulation
         direction TB
@@ -135,11 +136,11 @@ Simulation에 필요한 몇 가지 설정값들을 Global Variables로 설정하
 
 **Outcome Variable Setting**
 
-MVN에 의해 만들어진 Data와 미리 만들어 놓은 가중치 Matrix의 곱을 통해 Score Matrix를 만들고 Logit Link를 이용하여 각 Sample의 확률값을 만들었다. 각 Sample의 확률값을 기반으로 $X ~\text{Bernoulli}(p)$, (여기서 $p$는 각 sample이 갖는 확률값 뜻한다), 을 통해 disease status의 정보를 담은 binary outcome variable를 만들었다. 
+MVN에 의해 만들어진 Data와 미리 만들어 놓은 가중치 Matrix의 곱을 통해 Score Matrix를 만들고 Logit Link를 이용하여 각 Sample의 확률값을 만들었다. 각 Sample의 확률값을 기반으로 $X \sim \text{Bernoulli}(p)$, (여기서 $p$는 각 sample이 갖는 확률값 뜻한다), 을 통해 disease status의 정보를 담은 binary outcome variable를 만들었다. 
 
 **Sex Variable Setting**
 
-Sex 변수는 $X ~\text{Bernoulli}(0.5)$ 을 통해 data를 생성했다.
+Sex 변수는 $X \sim \text{Bernoulli}(0.5)$ 을 통해 data를 생성했다.
 
 **Age Variable Setting**
 
@@ -216,11 +217,16 @@ group_meta_data<-
         group_name=c(names(group_proportion_list)),
         proportion=group_proportion_list)%>%
         mutate(
-            group_n=(predictor_size*group_proportion_list)%>%round(0), # the number of predictors within each group 
-            first_index=c(1,cumsum(group_n[-length(group_proportion_list)])+1), # the 1st index of predictors in each group
-            last_index=cumsum(group_n), # the last index of predictors in each group
-            group_correlation=sample((0:700)/1000,length(group_proportion_list),replace=TRUE), # within-group correlations among the within-group predictors
-            group_effect=sample((-40:30)/100,length(group_proportion_list),replace=TRUE)) # effect of each group on an outcome variable
+            # the number of predictors within each group 
+            group_n=(predictor_size*group_proportion_list)%>%round(0),
+            # the 1st index of predictors in each group
+            first_index=c(1,cumsum(group_n[-length(group_proportion_list)])+1), 
+            # the last index of predictors in each group
+            last_index=cumsum(group_n),
+            # within-group correlations among the within-group predictors 
+            group_correlation=sample((0:700)/1000,length(group_proportion_list),replace=TRUE),
+            # effect of each group on an outcome variable 
+            group_effect=sample((-40:30)/100,length(group_proportion_list),replace=TRUE)) 
 ### set a group effect as 0.7 into a group with the smallest group number 
 group_meta_data[which.min(group_meta_data[,"group_n"]),"group_effect"]<-0.7
 
@@ -261,7 +267,7 @@ answer_list<-list(
 ```{r}
 ## Function List
 
-scale_function=function(vector=x,min=a,max=b,method="customized"){
+scale_function=function(vector=x,min=NULL,max=NULL,method="customized"){
     if(method=="min-max"){
         result=(vector-min(vector))(max(vector)-min(vector))
     }else if(method=="customized"){
@@ -555,11 +561,16 @@ group_meta_data<-
         group_name=c(names(group_proportion_list)),
         proportion=group_proportion_list)%>%
         mutate(
-            group_n=(predictor_size*group_proportion_list)%>%round(0), # the number of predictors within each group 
-            first_index=c(1,cumsum(group_n[-length(group_proportion_list)])+1), # the 1st index of predictors in each group
-            last_index=cumsum(group_n), # the last index of predictors in each group
-            group_correlation=sample((0:700)/1000,length(group_proportion_list),replace=TRUE), # within-group correlations among the within-group predictors
-            group_effect=sample((-40:30)/100,length(group_proportion_list),replace=TRUE)) # effect of each group on an outcome variable
+            # the number of predictors within each group 
+            group_n=(predictor_size*group_proportion_list)%>%round(0),
+            # the 1st index of predictors in each group 
+            first_index=c(1,cumsum(group_n[-length(group_proportion_list)])+1), 
+            # the last index of predictors in each group
+            last_index=cumsum(group_n),
+            # within-group correlations among the within-group predictors 
+            group_correlation=sample((0:700)/1000,length(group_proportion_list),replace=TRUE), 
+            # effect of each group on an outcome variable
+            group_effect=sample((-40:30)/100,length(group_proportion_list),replace=TRUE)) 
 ### set a group effect as 0.7 into a group with the smallest group number 
 group_meta_data[which.min(group_meta_data[,"group_n"]),"group_effect"]<-0.7
 
@@ -612,7 +623,8 @@ scale_function=function(vector=x,min=a,max=b,method="customized"){
 }
 
 age_data_generator=function(in_data,in_response,fun=scale_function){
-    # this function generates a age (continuous) data that are statistically associated with a simulated variable as designed above.
+    # this function generates a age (continuous) data that are statistically associated 
+    # with a simulated variable as designed above.
 
     ## conduct t test with the response and each variable generated by multivariate normal distributions.
     ## search a variable with the largest difference in mean between the two groups or with the lowest p value
@@ -652,11 +664,16 @@ age_data_generator=function(in_data,in_response,fun=scale_function){
 
 
 genotype_data_generator=function(in_response=response,fun=scale_function){
-    # this function generates a genotype (categorical) data that are jointly and statistically associated with a continuous data and a binary data (I am not so sure if I can generate data that are statistically associated with some fake metabolite data. But, I will give it a try).
+    # this function generates a genotype (categorical) data 
+    # that are jointly and statistically associated with a continuous data and a binary data 
+    # (I am not so sure if I can generate data that are statistically associated 
+    # with some fake metabolite data. But, I will give it a try).
 
     ## Declare the marginal proportions 
     ## for binary (affected vs unaffected) and a genotype (categorical) data, respectively
-    binary_proportion<-as.numeric(table(in_response)/sample_size) #the simulated proportion for the disease vs non-disease cases
+
+    ##the simulated proportion for the disease vs non-disease cases
+    binary_proportion<-as.numeric(table(in_response)/sample_size) 
     genotype_proportion<-c(0.084,0.779,0.137) # the known proportion of APOE genotypes from Wiki
 
     ## Declare the joint proportion predictor matrix
@@ -678,7 +695,7 @@ genotype_data_generator=function(in_response=response,fun=scale_function){
 ```
 
 
-### Simulation Algorithm
+### Simulation
 
 ```{r}
 #| eval: false

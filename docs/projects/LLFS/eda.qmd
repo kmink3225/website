@@ -4,6 +4,9 @@ subtitle: "Explorative Data Analysis"
 description: "Both EDA and Data Mining are used"
 author: Kwangmin Kim
 date: 2023-01-03
+execute:
+  warning: false
+  message: false
 format: 
   html:
     page-layout: full
@@ -23,6 +26,7 @@ if(grepl('kkm',getwd())){
 }
 
 ```
+
 
 <ul class="nav nav-pills" id="language-tab" role="tablist">
 
@@ -59,8 +63,6 @@ please, read the English section first.
 
 ::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
 ```{r}
-#| message: false
-#| warning: false
 
 library(tidyverse)
 library(tidymodels)
@@ -144,6 +146,39 @@ answer_list<-list(
     'genotype_distirbution'=c('e2' = '8.4%','e3' = '77.9%','e4' = '13.7%'))
 ```
 
+## Function List
+
+```{r}
+
+scale_function=function(vector=x,min=NULL,max=NULL,method="customized"){
+    if(method=="min-max"){
+        result=(vector-min(vector))(max(vector)-min(vector))
+    }else if(method=="customized"){
+        result=(max-min)*(vector-min(vector))/(max(vector)-min(vector))+min
+    }else{
+        result=(vector-mean(vector))/sd(vector)
+    }
+  return(result)
+}
+
+multiple_shapiro_test<-function(in_data){
+    normality_test<-apply(in_data[,unlist(lapply(in_data, is.numeric))],2,function(x)shapiro.test(x))
+
+    temp<-data.frame(matrix(nrow=length(normality_test),ncol=4))
+    for (i in 1:length(normality_test)){
+        temp[i,]<-c(
+            coloumn_name=names(normality_test)[i],
+            statistic=normality_test[[i]]$statistic,
+            p_value=normality_test[[i]]$p.value,
+            method=normality_test[[i]]$method)
+    }
+    names(temp)<-c('column_name','statistic','p_value','method')
+    output<-temp%>%
+        mutate(significant=ifelse(p_value<0.05,'not_normal','normal'))
+    return(output)
+}
+
+```
 
 
 ```{r}
@@ -171,17 +206,20 @@ names(all_data)[6:ncol(all_data)]<-paste0("meta",1:predictor_size)
 
 ## Univariable Analysis
 
-mean, sd, normality check with p value
+### Normality Test
 
 ```{r}
-#| eval: false
-#| echo: false
-#| code-fold: true
-#| message: false
-#| warning: false
-test<-apply(all_data[,unlist(lapply(all_data, is.numeric))],2,function(x)shapiro.test(x))
-
+# raw data
+normality_test_result<-multiple_shapiro_test(all_data)%>%
+    group_by(significant)%>%
+    summarise(count=n())%>%
+    mutate(proportion=round(count/sum(count),3))
+    
+normality_test_result%>%
+    knitr::kable(caption="Summary of the Result of Shapiro Wilk Tests on Numeric Variables")
 ```
+
+
 
 ## Bivariable Analysis
 

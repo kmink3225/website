@@ -8,7 +8,7 @@
 
 <meta name="author" content="Kwangmin Kim">
 <meta name="dcterms.date" content="2023-01-03">
-<meta name="description" content="Due to security concerns, it is difficult to display the data used in this project. Therefore, I will generate fake data to reproduce and demonstrate a rough analysis pipeline. 보안 문제로 인해 이 프로젝트에서 사용된 데이터를 공유하기 어렵습니다. 따라서 대략적인 분석 파이프라인을 재현하고 시연하기 위해 가상의 데이터를 생성할 것입니다.">
+<meta name="description" content="Due to security concerns, it is difficult to display the data used in this project. This project was not only a project I worked at Columbia University Irving Medical Center, but also used for my graduate school graduation research practicum. Although the goal of each step was different, the subject matter is the same, so I will combine them to explain the project. 보안 문제로 인해 이 프로젝트에서 사용된 데이터를 공유하기 어렵습니다. 이 프로젝트는 Columbia University Irving Medical Center에서 근무했던 프로젝트 였던 것 뿐만 아니라 제 대학원 졸업 연구 발표용으로도 사용됐습니다. 각 단계에서의 목표는 달랐지만 주제는 같으므로 통합해서 설명하겠습니다.">
 
 <title>Kwangmin Kim - Description</title>
 <style>
@@ -65,6 +65,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../../site_libs/quarto-diagram/mermaid-init.js"></script>
 <link href="../../../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
@@ -218,16 +219,13 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#analysis-pipeline-architecture" id="toc-analysis-pipeline-architecture" class="nav-link" data-scroll-target="#analysis-pipeline-architecture">Analysis Pipeline Architecture</a>
   <ul class="collapse">
   <li><a href="#overview" id="toc-overview" class="nav-link" data-scroll-target="#overview">Overview</a></li>
-  <li><a href="#data-collection" id="toc-data-collection" class="nav-link" data-scroll-target="#data-collection">Data Collection</a></li>
   <li><a href="#data-qc-quality-control" id="toc-data-qc-quality-control" class="nav-link" data-scroll-target="#data-qc-quality-control">Data QC (Quality Control)</a></li>
   <li><a href="#analytics" id="toc-analytics" class="nav-link" data-scroll-target="#analytics">Analytics</a>
   <ul class="collapse">
-  <li><a href="#eda-exploratory-data-analysis" id="toc-eda-exploratory-data-analysis" class="nav-link" data-scroll-target="#eda-exploratory-data-analysis">EDA (Exploratory Data Analysis)</a></li>
-  <li><a href="#data-mining" id="toc-data-mining" class="nav-link" data-scroll-target="#data-mining">Data Mining</a></li>
+  <li><a href="#eda-and-data-mining" id="toc-eda-and-data-mining" class="nav-link" data-scroll-target="#eda-and-data-mining">EDA and Data Mining</a></li>
   <li><a href="#statistical-analysis" id="toc-statistical-analysis" class="nav-link" data-scroll-target="#statistical-analysis">Statistical Analysis</a></li>
   <li><a href="#machine-learning" id="toc-machine-learning" class="nav-link" data-scroll-target="#machine-learning">Machine Learning</a></li>
   </ul></li>
-  <li><a href="#reporting" id="toc-reporting" class="nav-link" data-scroll-target="#reporting">Reporting</a></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul></li>
   </ul>
@@ -244,7 +242,7 @@ ul.task-list li input[type="checkbox"] {
 
 <div>
   <div class="description">
-    Due to security concerns, it is difficult to display the data used in this project. Therefore, I will generate fake data to reproduce and demonstrate a rough analysis pipeline. 보안 문제로 인해 이 프로젝트에서 사용된 데이터를 공유하기 어렵습니다. 따라서 대략적인 분석 파이프라인을 재현하고 시연하기 위해 가상의 데이터를 생성할 것입니다.
+    Due to security concerns, it is difficult to display the data used in this project. This project was not only a project I worked at Columbia University Irving Medical Center, but also used for my graduate school graduation research practicum. Although the goal of each step was different, the subject matter is the same, so I will combine them to explain the project. 보안 문제로 인해 이 프로젝트에서 사용된 데이터를 공유하기 어렵습니다. 이 프로젝트는 Columbia University Irving Medical Center에서 근무했던 프로젝트 였던 것 뿐만 아니라 제 대학원 졸업 연구 발표용으로도 사용됐습니다. 각 단계에서의 목표는 달랐지만 주제는 같으므로 통합해서 설명하겠습니다.
   </div>
 </div>
 
@@ -293,47 +291,22 @@ English
 </section>
 <section id="objective" class="level2">
 <h2 class="anchored" data-anchor-id="objective">Objective</h2>
-<p>LLFS(Long Life Family Study) 프로젝트의 목적은 유전체, 전사체, 단백질체 및 대사체 단계를 통해 유전체에서 대사체 단계에 이르는 다단계에서 통계 및 기계 학습을 사용하여 분석 파이프라인을 구축하고 알츠하이머병에 대한 중요한 바이오마커를 식별하기 위함이다.</p>
-</section>
-<section id="goal" class="level2">
-<h2 class="anchored" data-anchor-id="goal">Goal</h2>
-<p>이 시뮬레이션 연구에서는 정규분포 하에서 대사 물질 데이터를 생성하여 대사 단계에서 가상의 데이터를 생성하는 데에만 집중할 것이다. 시뮬레이션 연구에 경험이 많지 않아 시뮬레이션이 수학적으로 통계적으로 틀린 부분이 있을 수 있다. 시뮬레이션은 내가 수행했던 분석 방법론을 간단히 재현하는 용도로 사용하는 것이니 시뮬레이션 자체에 많은 시간을 할애하진 않았다. 이 시뮬레이션 연구의 목표는 AD와 None AD와 관련된 biomarkers를 구별할 수 있는 일련의 예측인자(또는 대사물질 또는 생화학물질)를 식별하는 것이다.</p>
-</section>
-<section id="feature" class="level2">
-<h2 class="anchored" data-anchor-id="feature">Feature</h2>
-<ul>
-<li>보안 문제로 인해 이 프로젝트에 사용된 실제 데이터와 전체 분석 파이프라인을 표시하기 어렵다. 따라서 시뮬레이션을 통해 대략적인 분석 파이프라인을 재현하고 시연하기 위해 시뮬레이션 데이터를 생성한다.시뮬레이션 데이터는 실제 연구를 위해 표본으로 쓰인 sample 데이터의 분포를 전혀 반영하지 않는다.</li>
-<li>이 시뮬레이션 연구에서, 실제 데이터의 분포를 반영하지 않았고 범주형 변수 및 연속형 변수와 종속 변수를 통계적으로 잘 연관시키지 못했기 때문에 분석 결과가 생물학적인 사실과 많이 다를 수 있다.</li>
-</ul>
-</section>
-<section id="development-environment" class="level2">
-<h2 class="anchored" data-anchor-id="development-environment">Development Environment</h2>
-<ul>
-<li>Operating System
-<ul>
-<li>Window</li>
-<li>Ubuntu 20.04</li>
-</ul></li>
-<li>Software
-<ul>
-<li>Quarto for dynamic documentation</li>
-<li>VS code</li>
-<li>R studio 2022.07.2+576</li>
-<li>R base 4.2.2 used for coding in the English section</li>
-<li>Python 3.11 used for coding in the Korean section</li>
-</ul></li>
-</ul>
+<p>LLFS(Long Life Family Study) 프로젝트의 목적은 유전체, 전사체, 단백질체 및 대사체 단계를 통해 유전체에서 대사체 단계에 이르는 여러 단계에서 통계 및 기계 학습을 사용하여 분석 파이프라인을 구축하고 알츠하이머병에 대한 중요한 바이오마커를 식별하기 위함이다.</p>
 </section>
 <section id="how-to-read-the-contents" class="level2">
 <h2 class="anchored" data-anchor-id="how-to-read-the-contents">How to Read the Contents</h2>
-<p>읽기의 편의성을 위해 이 프로젝트를 5개 섹션으로 나누었다.</p>
+<p>읽기의 편의성을 위해 LLFS project를 project와 self project 와 같이 2개의 section으로 나누었다.</p>
 <ul>
-<li>Description (Current)</li>
+<li>Project Description (Current)</li>
+<li>Self Project
+<ul>
+<li>Self Project Description</li>
 <li>Data Preparation</li>
 <li>EDA (Exploratory Data Analysis)</li>
 <li>Method1: statistical approach</li>
 <li>Method2: ML Approach</li>
 <li>Conclusion</li>
+</ul></li>
 </ul>
 </section>
 </div>
@@ -345,35 +318,6 @@ English
 <section id="objective-1" class="level2">
 <h2 class="anchored" data-anchor-id="objective-1">Objective</h2>
 <p>The objective of the Long Life Family Study (LLFS) project was to build an analysis pipeline of identifying significant biomarkers for AD using statistics and machine learning at the multi-stages from the genomic to the metabolomic stage through the transcriptomic and proteomic stage.</p>
-</section>
-<section id="goal-1" class="level2">
-<h2 class="anchored" data-anchor-id="goal-1">Goal</h2>
-<p>In this simulation study, I will focus only on generating fake data at the metabolomic stage by generating data under multivariate normal distributions. The aim of this simulation study is to identify a set of predictors (or metabolites or bio-chemicals) that will enable to differentiate bio-markers that are associated with AD vs.&nbsp;non-AD.</p>
-</section>
-<section id="feature-1" class="level2">
-<h2 class="anchored" data-anchor-id="feature-1">Feature</h2>
-<ul>
-<li>In this article, due to security concerns, it is difficult to display the real data and the entire analysis pipeline used in this project. Therefore, I prepared simulated data to reproduce and demonstrate a rough analysis pipeline. The simulated data does not reflect the distribution of the truely sampled data used in the LLFS at all.</li>
-<li>In this simulation, since the categorical and continuous variables and the dependent variable could not be statistically associated properly, the analysis result for the discrete variables could be very different from the biological or medical fact.</li>
-</ul>
-</section>
-<section id="development-environment-1" class="level2">
-<h2 class="anchored" data-anchor-id="development-environment-1">Development Environment</h2>
-<ul>
-<li>Operating System
-<ul>
-<li>Window</li>
-<li>Ubuntu 20.04</li>
-</ul></li>
-<li>Software
-<ul>
-<li>Quarto for dynamic documentation</li>
-<li>VS code</li>
-<li>R studio 2022.07.2+576</li>
-<li>R base 4.2.2 used for coding in the English section</li>
-<li>Python 3.11 used for coding in the Korean section</li>
-</ul></li>
-</ul>
 </section>
 <section id="how-to-read-the-contents-1" class="level2">
 <h2 class="anchored" data-anchor-id="how-to-read-the-contents-1">How to Read the Contents</h2>
@@ -430,56 +374,33 @@ Data_Collection--&gt;Quality_Control--&gt;Analytics--&gt;Reporting_and_Conclusio
 </div>
 </div>
 </div>
-</section>
-<section id="data-collection" class="level2">
-<h2 class="anchored" data-anchor-id="data-collection">Data Collection</h2>
-<div class="cell" data-fig-width="7.5">
-<div class="cell-output-display">
-<div>
-<p>
-</p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-2">flowchart TB
-    subgraph Data_Collection
-        direction TB
-        multi-centered_medical_centers---
-        set_inclusion\exclusion_criteria---
-        patient_visit---
-        blood_sampling---
-        store_samples_in_labs
-    end
-    subgraph Mass_Spectrometry
-        direction LR
-        conduct_mass_spectrometry---
-        digitalization---
-        store_in_database_system    
-    end
-    subgraph Data_Transfer
-        direction TB
-        subgraph Data
-            direction LR
-            metabolome_data---
-            clinical_data---
-            demographic_data---
-            dietary_habit_data
-        end
-        Data---csv_or_excel_format
-    end
-Data_Collection--&gt;Mass_Spectrometry--&gt;Data_Transfer
-</pre>
-<div id="mermaid-tooltip-2" class="mermaidTooltip">
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+<li class="nav-item" role="presentation">
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">
+Korean
+</button>
+</li>
+<li class="nav-item" role="presentation">
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">
+English
+</button>
+</li>
+<div class="tab-content" id="language-tabcontent">
 
+<div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
+<p>Data는 장수 마을에 거주하는 백인 남성을 대상으로 New York, Bonston, Pittsburgh 및 Denmark에 있는 여러 medical centers에서 sampled blood를 MS Spectromtetry로 Digitalization을 했다. 여러 과정을 통해 data를 csv형태로 받아 data의 QC(Quality Control)를 진행한뒤 Data 분석 업무를 수행했다. EDA (Exploratory Data Analysis) 와 Data Mining을 통해 data에 대한 이해도를 높였고 이를 토대로 통계 분석과 machine learning을 이용하여 이 data에 적합한 모형을 찾았다. 모든 결과물은 The Taub Institute for Research on Alzheimer’s Disease and the Aging Brain 의 biostaticians, medical doctors, biologists, neurologists, bioinformaticians 및 epidemiologists와 공유를 했다.</p>
 </div>
-<p></p>
+<div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
+<p>Data were obtained by MS Spectromtetry digitization of blood samples from multiple medical centers in New York, Bonston, Pittsburgh, and Denmark for Caucasians residing in longevity villages. After receiving the data in csv format through various processes, QC (Quality Control) of the data and data analysis were performed. To better understand data, exploratory data analyses (EDA) and data mining were conducted. Based on the information on data, the machine learning model to explain the data moset was selcted. All findings were shared with biostatisticians, medical doctors, biologists, neurologists and epidemiologists at the neurology department and the Taub Institute for Research on Alzheimer’s Disease and the Aging Brain in the Columbia University Irving Medical Center.</p>
 </div>
-</div>
-</div>
-</section>
+</div></ul></section>
 <section id="data-qc-quality-control" class="level2">
 <h2 class="anchored" data-anchor-id="data-qc-quality-control">Data QC (Quality Control)</h2>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <p>
-</p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-3">flowchart LR
+</p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-2">flowchart LR
     subgraph Data_Quality_Control
         direction TB
         identify_anomaly_data---
@@ -499,20 +420,21 @@ Data_Collection--&gt;Mass_Spectrometry--&gt;Data_Transfer
         direction TB
         data_transformation---
         log_transformation---
-        min_max_normalization---
         standardization
     end
 
 Data_Quality_Control--&gt;Data_Preprocessing
 
 </pre>
-<div id="mermaid-tooltip-3" class="mermaidTooltip">
+<div id="mermaid-tooltip-2" class="mermaidTooltip">
 
 </div>
 <p></p>
 </div>
 </div>
 </div>
+<p>Data의 품질 관리를 위해 data를 생성한 biochemists와 소통하여 실험실 기준에 따라 결측치와 이상치를 구분하여 labeling을 수행했고 missing value analysis를 통해 결과에 따라 medical doctors를 포함한 다른 faculty members와 상의하여 결측치 처리를 했다. data QC criteria는 rowwise 와 columwise sum의 합이 sample size에 대해 missing values의 비율이 5%가 넘는 환자와 변수는 분석 대상에서 제외 됐다. 모든 metabolites data는 log transoformation 와 standardization을 통해 data의 단위를 표준화 했다.</p>
+<p>For data quality control, I communicated with the biochemists who generated the data, classified missing values ​​and outliers according to laboratory standards, and labeled them. Based on the results through missing value analysis, I processed the missing values through consultation with other faculty members several times, including medical doctors. For the data QC criteria, patients and variables whose ratio of missing values ​​for the sum of the rowwise and columnwise sums exceeded 5% for the sample size were excluded from the analysis. All metabolites data were standardized through log transformation and standardization.</p>
 </section>
 <section id="analytics" class="level2">
 <h2 class="anchored" data-anchor-id="analytics">Analytics</h2>
@@ -520,7 +442,7 @@ Data_Quality_Control--&gt;Data_Preprocessing
 <div class="cell-output-display">
 <div>
 <p>
-</p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-4">flowchart TB
+</p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-3">flowchart TB
     subgraph Data_Analytics
         direction TB
         Exploratory_Data_Analysis---
@@ -529,53 +451,35 @@ Data_Quality_Control--&gt;Data_Preprocessing
         Machine_Learning
     end
 </pre>
-<div id="mermaid-tooltip-4" class="mermaidTooltip">
+<div id="mermaid-tooltip-3" class="mermaidTooltip">
 
 </div>
 <p></p>
 </div>
 </div>
 </div>
-<section id="eda-exploratory-data-analysis" class="level3">
-<h3 class="anchored" data-anchor-id="eda-exploratory-data-analysis">EDA (Exploratory Data Analysis)</h3>
-</section>
-<section id="data-mining" class="level3">
-<h3 class="anchored" data-anchor-id="data-mining">Data Mining</h3>
+<p>Data 분석은 크게 EDA (Exploratory Data Analysis), Statistical Analysis 및 Machine Learning, 이렇게 3 단계로 수행했다. 각 단계에서 나온 결과가 각 각의 단계에서 일관되게 나오는지 확인하는 분석을 수행했다.</p>
+<p>Data analysis was performed in three stages: Exploratory Data Analysis (EDA), Statistical Analysis, and Machine Learning. An analysis was performed to ensure that the results from each stage were consistent at each stage.</p>
+<section id="eda-and-data-mining" class="level3">
+<h3 class="anchored" data-anchor-id="eda-and-data-mining">EDA and Data Mining</h3>
+<p>student t tests, Wilcoxon Man Whiteney tests, <span class="math inline">\(\chi^2\)</span> tests, Fisher Exact Tests, ANOVAs, Kruskal Wallis Tests 및 regression testing이 수행됐고 visualization을 통해 검정 결과를 재확인하는 작업을 수행했다. 고차원 데이터를 시각화하여 data의 pattern 관찰하기 위해 KNN, PCA, K means, Clustering 및 DB Scan을 이용했다.</p>
+<p>Student t tests, Wilcoxon Man Whiteney tests, <span class="math inline">\(\chi^2\)</span> tests, Fisher Exact Tests, ANOVAs, Kruskal Wallis Tests, and regression testing were performed, and I visualizaed data to reconfirm the test results. To visualize high-dimensional data and observe data patterns, KNN, PCA, K means, Clustering, and DB Scan were used.</p>
 </section>
 <section id="statistical-analysis" class="level3">
 <h3 class="anchored" data-anchor-id="statistical-analysis">Statistical Analysis</h3>
+<p>multivariable linear regression, logistic regression 및 Cox PH(Proportional Hazards) regression anayses 가 수행됐고 질병과 유의한 metabolites를 선별했다. multiple testing으로 인해 1 종 오류를 범하는 것을 줄이기 위해 permuted p-values를 계산하여 유의성을 한번 더 확인했다.</p>
+<p>Multivariable linear regression, logistic regression, and Cox PH (Proportional Hazards) regression analyses were conducted and the metabolites that are signficantly associated with the disease status were selected. In order to reduce the possibility of making a type 1 error due to multiple testing, the significance was confirmed once more by calculating permuted p-values.</p>
 </section>
 <section id="machine-learning" class="level3">
 <h3 class="anchored" data-anchor-id="machine-learning">Machine Learning</h3>
+<p>Lasso, ridge regression, elastic net, decision tree, random rorests, ada boosting, gradient descent boosting, SVM (support vector machine), partial least square 및 sparse partial least square 사용됐다. 질병을 가장 잘 예측하는 classifier를 평가하여 최적의 classifier를 선택했다.</p>
+<p>Lasso, ridge regression, elastic net, decision tree, random rorests, ada boosting, gradient descent boosting, support vector machine (SVM), partial least square, and sparse partial least square were used. The optimal classifier was selected by evaluating the classifier that best predicted the disease status.</p>
 </section>
-</section>
-<section id="reporting" class="level2">
-<h2 class="anchored" data-anchor-id="reporting">Reporting</h2>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<p>
-</p><pre class="mermaid mermaid-js" data-tooltip-selector="#mermaid-tooltip-5">flowchart TB
-    subgraph report_to_faculty_members
-        direction TB
-        share_with_medical_doctors---
-        share_with_epidemiologists---
-        share_with_neurologists---
-        share_with_biologists---
-        share_with_biostatisticians---
-        share_with_bioinformatician
-    end
-</pre>
-<div id="mermaid-tooltip-5" class="mermaidTooltip">
-
-</div>
-<p></p>
-</div>
-</div>
-</div>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>146개의 관측치와 약 3,000여개의 변수로 구성된 data에서 약 50개의 대사물질이 질병과 1% 유의수준으로 유의한 관계가 있는 것으로 관찰됐고 partial least suare 가 가장 성능이 좋은 것으로 관찰됐다.</p>
+<p>In the data consisting of 146 observations and about 3,000 variables, about 50 metabolites were observed to have a significant relationship with the disease at the 1% significance level, and partial least suare was observed to perform the best.</p>
 
 
 </section>

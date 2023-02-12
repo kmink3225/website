@@ -64,11 +64,23 @@ please, read the English section first.
 ::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
 ```{r}
 #| echo: false
+
+if(!require(janitor)) install.packages("janitor") 
+if(!require(tidyverse)) install.packages("tidyverse") 
+if(!require(tidymodels)) install.packages("tidymodels") 
+if(!require(glmnet)) install.packages("glmnet") 
+if(!require(MASS)) install.packages("MASS") 
+if(!require(ggpubr)) install.packages("ggpubr") 
+if(!require(car)) install.packages("car") 
+if(!require(mixOmics)) install.packages("mixOmics") 
+
+library(janitor)
 library(tidyverse)
 library(tidymodels)
 library(glmnet)
 library(MASS)
 library(ggpubr)
+library(car) # homoscedasticity test
 library(mixOmics)
 set.seed(20230103) 
 knitr::opts_chunk$set(message=FALSE,warning=FALSE)
@@ -149,44 +161,15 @@ answer_list<-list(
 ## Function List
 
 ```{r}
-
-scale_function=function(vector=x,min=NULL,max=NULL,method="customized"){
-    if(method=="min-max"){
-        result=(vector-min(vector))(max(vector)-min(vector))
-    }else if(method=="customized"){
-        result=(max-min)*(vector-min(vector))/(max(vector)-min(vector))+min
-    }else{
-        result=(vector-mean(vector))/sd(vector)
-    }
-  return(result)
-}
-
-multiple_shapiro_test<-function(in_data){
-    normality_test<-apply(in_data[,unlist(lapply(in_data, is.numeric))],2,function(x)shapiro.test(x))
-
-    temp<-data.frame(matrix(nrow=length(normality_test),ncol=4))
-    for (i in 1:length(normality_test)){
-        temp[i,]<-c(
-            coloumn_name=names(normality_test)[i],
-            statistic=normality_test[[i]]$statistic,
-            p_value=normality_test[[i]]$p.value,
-            method=normality_test[[i]]$method)
-    }
-    names(temp)<-c('column_name','statistic','p_value','method')
-    output<-temp%>%
-        mutate(significant=ifelse(p_value<0.05,'not_normal','normal'))
-    return(output)
-}
-
-color_function<-function(summary_data){
+color_function<-function(category_number){
 return(
-    if(nrow(summary_data)==2){
+    if(category_number==2){
         c("darkblue","darkred")
-    }else if(nrow(summary_data)==3){
+    }else if(category_number==3){
         c("darkblue","darkred","yellow4")
-    }else if(nrow(summary_data)==4){
+    }else if(category_number==4){
         c("darkblue","darkred","yellow4","blueviolet")
-    }else if(nrow(summary_data)==5){
+    }else if(category_number==5){
         c("darkblue","darkred","yellow4","blueviolet","darkorange")
     }else{
         c("darkblue","darkred","yellow4","blueviolet","darkorange","darkgreen")
@@ -194,8 +177,115 @@ return(
     )
 }
 
+scale_function=function(vector=x,min=NULL,max=NULL,method){
+    scaling_methods<-c('min_max normalization','customized normalization','standardization')
 
-getNumericSummary=function(data=all_data,group_variable,summary_variable,set_color=color_function,...){
+    if(method=="min-max"){
+        output=(vector-min(vector))(max(vector)-min(vector))
+    }else if(method=="customized"){
+        output=(max-min)*(vector-min(vector))/(max(vector)-min(vector))+min
+    }else if(method=="standarized"){
+        output=(vector-mean(vector))/sd(vector)
+    }else{
+        paste0("Error!, no such a scaling method in this module. Please, put the first word of each method you want to use in the 'method' argument among the following tests: ", paste(scaling_methods,collapse=", "))
+    }
+  return(output)
+}
+
+multiple_shapiro_test<-function(in_data){
+        normality_test<-apply(in_data[,unlist(lapply(in_data, is.numeric))],2,
+                            function(x)shapiro.test(x))
+        temp<-data.frame(matrix(nrow=length(normality_test),ncol=4))
+        for (i in 1:length(normality_test)){
+            temp[i,]<-c(
+                coloumn_name=names(normality_test)[i],
+                statistic=normality_test[[i]]$statistic,
+                p_value=normality_test[[i]]$p.value,
+                method=normality_test[[i]]$method)
+        }
+        names(temp)<-c('column_name','statistic','p_value','method')
+        output<-temp%>%
+            mutate(p_adjusted=p.adjust(p_value,method="bonferroni"),
+            type=ifelse(p_adjusted<0.05,'not_normal','normal'))%>%
+            dplyr::select('column_name','statistic','p_value','p_adjusted','type','method')
+        return(output)
+}    
+
+multiple_levene_test<-function(in_data,categorical_variable){
+        homoscedasticity_test<-apply(in_data[,unlist(lapply(in_data, is.numeric))],2,
+                                    function(x)leveneTest(x~in_data[,categorical_variable]))
+        temp<-data.frame(matrix(nrow=length(homoscedasticity_test),ncol=6))
+            for (i in 1:length(homoscedasticity_test)){
+                temp[i,]<-c(
+                    coloumn_name=names(homoscedasticity_test)[i],
+                    group_df=homoscedasticity_test[[i]]$Df[1],
+                    residual_df=homoscedasticity_test[[i]]$Df[2],
+                    statistic=homoscedasticity_test[[i]]$`F value`[1],
+                    p_value=homoscedasticity_test[[i]]$`Pr(>F)`[1],
+                    method="levene's test")
+            }
+            names(temp)<-c('column_name','group_df','residual_df','statistic','p_value','method')
+            output<-temp%>%
+                mutate(p_adjusted=p.adjust(p_value,method="bonferroni"),
+                type=ifelse(p_adjusted<0.05,'heteroscedasticity','homoscedasticity'))%>%
+                dplyr::select('column_name','group_df','residual_df','statistic','p_value','p_adjusted','type','method')
+        return(output)} 
+
+categorical_variable='outcome'
+
+multiple_unpaired_t_test<-function(in_data,categorical_variable,homo_variables,hetero_variables){
+    homo_unpaired_t_test<-apply(in_data[,unlist(lapply(in_data, is.numeric))][,homo_variables],2,
+                                    function(x)t.test(x~in_data[,categorical_variable],var.equal=TRUE))
+    hetero_unpaired_t_test<-apply(in_data[,unlist(lapply(in_data, is.numeric))][,hetero_variables],2,
+                                    function(x)t.test(x~in_data[,categorical_variable],var.equal=FALSE)) 
+    unpaired_t_test<-c(homo_unpaired_t_test,hetero_unpaired_t_test)
+
+    temp<-data.frame(matrix(nrow=length(unpaired_t_test),ncol=7))
+        for (i in 1:length(unpaired_t_test)){
+            temp[i,]<-c(names(unpaired_t_test)[i], 
+                        unpaired_t_test[[i]]$estimate,
+                        unpaired_t_test[[i]]$parameter,
+                        unpaired_t_test[[i]]$statistic,
+                        unpaired_t_test[[i]]$p.value,
+                        unpaired_t_test[[i]]$method)
+        }
+        names(temp)<-c('column_name',names(unpaired_t_test[[1]]$estimate),'df','statistic','p_value','method')
+        output<-temp%>%
+            mutate(p_adjusted=p.adjust(p_value,method="bonferroni"),
+            type=ifelse(p_adjusted<0.05,'significant','insignificant'))%>%
+            dplyr::select('column_name',names(unpaired_t_test[[1]]$estimate),'df','statistic','p_value','p_adjusted','type','method')
+    return(output)} 
+
+main_statistical_test<-function(
+    in_data,method,categorical_variable,
+    homo_variables=NULL,hetero_variables=NULL,
+    fun1=multiple_shapiro_test,
+    fun2=multiple_levene_test,
+    fun3=multiple_unpaired_t_test){
+    test_list<-c("shapiro wilks test","levene's test","student t test")#,"ANOVA", "ANCOVA","MANOVA","wilcoxon manwhitney",'kruskal wallis test')
+    error_massage<-paste0("Error!, no such a test in this module. Please, put the first word of each method you want to use in the 'method' argument among the following tests: ", paste(test_list,collapse=", "))
+    if(grepl('shapiro',method)){
+        output=multiple_shapiro_test(in_data)
+    }else if(grepl('levene',method)){
+        output=multiple_levene_test(in_data,categorical_variable)
+        # var.test()
+    }else if(grepl('student',method)){
+        # code unpaired vs paired t test in the future
+        output=multiple_unpaired_t_test(in_data,categorical_variable,homo_variables,hetero_variables)
+    }else if(grepl('kruskal',method)){
+        return(error_massage)
+    }else if(grepl('wilcoxon'|'manwhitney',method)){
+        return(error_massage)
+    }else if(grepl('anova',method)){
+        return(error_massage)
+    }else{
+        return(error_massage)
+    }
+    return(output)
+}
+
+
+getNumericSummaryTable=function(data,group_variable,summary_variable,set_color=color_function,...){
     # table
     temp<-data %>% 
     #group_by_at(vars(...)) %>% 
@@ -216,7 +306,7 @@ getNumericSummary=function(data=all_data,group_variable,summary_variable,set_col
                  as.data.frame()
     names(temp)<-c("group",
     sapply(names(temp)[-1],function(x)str_replace(x,paste0(summary_variable,"_"),"")))
-    temp<-temp%>%
+    output<-temp%>%
     mutate(
         variable=group_variable,
         summary=summary_variable,
@@ -230,7 +320,10 @@ getNumericSummary=function(data=all_data,group_variable,summary_variable,set_col
     IQR_max=Q3+(Q3-Q1)*1.5%>%round(2),
     proportion=paste0(round(n/nrow(all_data)*100,2),"%"))%>%
     dplyr::select(variable,group,summary,n,proportion,mean,sd,min,IQR_min,Q1,median,Q3,IQR_max,max)
+    return(output)
+}
 
+getNumericSummaryPlot=function(data=all_data,group_variable,summary_variable,set_color=color_function,...){
     # plot
     temp2=temp
     names(temp2)[2]=group_variable
@@ -289,17 +382,70 @@ names(all_data)[6:ncol(all_data)]<-paste0("meta",1:predictor_size)
 ```{r}
 # raw data
 normality_test_result<-multiple_shapiro_test(all_data)%>%
-    group_by(significant)%>%
+    group_by(type)%>%
     summarise(count=n())%>%
     mutate(proportion=round(count/sum(count),3),
-    sum=sum(count))
+    total=sum(count))%>%
+    dplyr::select(type,total,everything())
     
 normality_test_result%>%
     knitr::kable(caption="Summary of the Result of Shapiro Wilk Tests on Numeric Variables")
     
 ```
 
-Out of `r normality_test_result[1,'sum']` numeric variables, the variables following a normal distribution are `r normality_test_result[1,'count']` (`r normality_test_result[1,'proportion']*100`%) and the ones that do not are `r normality_test_result[2,'count']` (`r normality_test_result[2,'proportion']*100`%).
+Out of `r normality_test_result[1,'total']` numeric variables, the variables following a normal distribution are `r normality_test_result[1,'count']` (`r normality_test_result[1,'proportion']*100`%) and the ones that do not are `r normality_test_result[2,'count']` (`r normality_test_result[2,'proportion']*100`%).
+
+### Visualization
+
+#### 16 Variables That Follow Normal Distributions
+
+
+```{r}
+#| fig-width: 9
+#| fig-height: 10
+
+# 16 numeric variables randomly selected
+normal_variables<-
+    multiple_shapiro_test(all_data)%>%
+        filter(p_value>0.05)%>%
+            dplyr::select(column_name)%>%
+            pull%>%sample(16)
+
+normal_data<-
+    all_data%>%
+        dplyr::select(outcome,normal_variables)%>%
+        gather(key=metabolite,value=value,normal_variables)
+
+normal_data%>%
+    ggplot(aes(x=value))+
+    geom_histogram(aes(y=..density..))+
+    geom_density(color='red',size=1.5)+
+    facet_wrap(.~metabolite)+
+    labs(title="Histogram, Numeric Variables Following Normal Distribution")
+
+normal_data%>%
+    ggplot(aes(x=metabolite,y=value))+
+    geom_boxplot()+
+    theme(axis.text.x = element_text(angle=90, vjust=.5, hjust=1))+
+    labs(title="Boxplot, Numeric Variables Following Normal Distribution")
+
+normal_data%>%
+    ggplot(aes(x=value,fill=outcome))+
+    geom_histogram(aes(y=..density..),alpha=0.5)+
+    geom_density(size=1,alpha=0.5)+
+    scale_fill_manual(values=color_function(length(unique(normal_data$outcome))))+
+    facet_wrap(.~metabolite)+
+    labs(title="Numeric Variables Following Normal Distribution Grouped by Disease Status")    
+normal_data%>%
+    ggplot(aes(x=metabolite,y=value,fill=outcome))+
+    geom_boxplot()+
+    scale_fill_manual(values=color_function(length(unique(normal_data$outcome))))+
+    theme(axis.text.x = element_text(angle=90, vjust=.5, hjust=1))+
+    labs(title="Boxplot, Numeric Variables Following Normal Distribution")
+
+```
+
+#### 16 Variables That Do Not Follow Normal Distributions
 
 ```{r}
 #| fig-width: 9
@@ -312,39 +458,129 @@ not_normal_variables<-
             dplyr::select(column_name)%>%
             pull%>%sample(16)
 
-all_data%>%
-    dplyr::select(outcome,not_normal_variables)%>%
-    gather(key=metabolite,value=value,not_normal_variables)%>%
+not_normal_data<-
+    all_data%>%
+        dplyr::select(outcome,not_normal_variables)%>%
+        gather(key=metabolite,value=value,not_normal_variables)
+
+not_normal_data%>%
     ggplot(aes(x=value))+
     geom_histogram(aes(y=..density..))+
     geom_density(color='red',size=1.5)+
     facet_wrap(.~metabolite)+
-    labs(title="Numeric Variables not Following Normal Distribution")
+    labs(title="Histogram, Numeric Variables not Following Normal Distribution")
 
-all_data%>%
-    dplyr::select(outcome,not_normal_variables)%>%
-    gather(key=metabolite,value=value,not_normal_variables)%>%
-    ggplot(aes(x=value,fill=outcome,alpha=0.5))+
-    geom_histogram(aes(y=..density..))+
-    geom_density(size=1)+
+not_normal_data%>%
+    ggplot(aes(x=metabolite,y=value))+
+    geom_boxplot()+
+    theme(axis.text.x = element_text(angle=90, vjust=.5, hjust=1))+
+    labs(title="Boxplot, Numeric Variables not Following Normal Distribution")
+
+not_normal_data%>%
+    ggplot(aes(x=value,fill=outcome))+
+    geom_histogram(aes(y=..density..),alpha=0.5)+
+    geom_density(size=1,alpha=0.5)+
+    scale_fill_manual(values=color_function(length(unique(not_normal_data$outcome))))+
     facet_wrap(.~metabolite)+
     labs(title="Numeric Variables not Following Normal Distribution Grouped by Disease Status")    
+not_normal_data%>%
+    ggplot(aes(x=metabolite,y=value,fill=outcome))+
+    geom_boxplot()+
+    scale_fill_manual(values=color_function(length(unique(not_normal_data$outcome))))+
+    theme(axis.text.x = element_text(angle=90, vjust=.5, hjust=1))+
+    labs(title="Boxplot, Numeric Variables not Following Normal Distribution")
 
 ```
 
+Randomly Sampled 16 variables that do not follow a normal distribution to visualize their distributions.
+
 ## Bivariable Analysis
 
+### AD vs Metabolites
+
+#### Homoscedasticity Test
+
+```{r}
+
+leven_test_result<-main_statistical_test(in_data=all_data,method="levene",categorical_variable="outcome")
+
+homo_variable<-leven_test_result%>%
+filter(p_adjusted>0.05)%>%
+dplyr::select(column_name)%>%
+pull()%>%
+unique()
+
+hetero_variable<-leven_test_result%>%
+filter(p_adjusted<0.05)%>%
+dplyr::select(column_name)%>%
+pull()%>%
+unique()
+
+hetero_variable_data<-all_data%>%dplyr::select(outcome,hetero_variable)%>%
+        gather(key=metabolite,value=value,hetero_variable)
+
+hetero_variable_data%>%
+    ggplot(aes(x=metabolite,y=value,fill=outcome))+
+    geom_boxplot()+
+    scale_fill_manual(values=color_function(length(unique(hetero_variable_data$outcome))))+
+    theme(axis.text.x = element_text(angle=90, vjust=.5, hjust=1))+
+    labs(title="Boxplot, Metabolites with Heteroscedasticity")
+
+```
+
+#### Unpaired Two Sample Mean t Test
+
+```{r}
+t_test_result<-main_statistical_test(in_data=all_data,method="student",categorical_variable="outcome",homo_variables=homo_variable,hetero_variables=hetero_variable)
+
+metabolites_associated_AD<-t_test_result%>%
+    filter(type=="significant"&column_name!='age')%>%
+    arrange(p_adjusted)%>%
+    dplyr::select(column_name)%>%pull
+
+metabolites_associated_AD_data<-all_data%>%
+    dplyr::select(outcome,sex,genotype,metabolites_associated_AD)%>%
+    gather(key=metabolite,value=value,metabolites_associated_AD)        
+
+metabolites_associated_AD_data%>%
+    group_by(outcome)%>%
+    summarise(n=n(),mean=mean(value),sd=sd(value))%>%
+    knitr::kable()
+
+
+
+top_metabolites_associated_AD<-t_test_result%>%
+    filter(type=="significant"&column_name!='age')%>%
+    arrange(p_adjusted)%>%head(16)%>%
+    dplyr::select(column_name)%>%pull
+
+top_metabolites_associated_AD_data<-all_data%>%
+dplyr::select(outcome,top_metabolites_associated_AD)%>%
+        gather(key=metabolite,value=value,top_metabolites_associated_AD)        
+
+top_metabolites_associated_AD_data%>%
+ggplot(aes(x=metabolite,y=value,fill=outcome))+
+geom_boxplot()+
+scale_fill_manual(values=color_function(length(unique(hetero_variable_data$outcome))))+
+theme(axis.text.x = element_text(angle=90, vjust=.5, hjust=1))+
+labs(title="Boxplot, Metabolites Associated with AD")
+```
+
 ### Age vs Catogrical Variables
+
+
+```{r}
+getNumericSummaryTable(data=all_data,group_variable='outcome',summary_variable='age')
+```
+
 
 ```{r}
 #| message: false
 #| warning: false
 
-
-
-ad_age_summary=getNumericSummary(data=all_data,group_variable="outcome",summary_variable="age")[[1]]
-sex_age_summary=getNumericSummary(data=all_data,group_variable="sex",summary_variable="age")[[1]]
-genotype_age_summary=getNumericSummary(data=all_data,group_variable="genotype",summary_variable="age")[[1]]
+ad_age_summary=getNumericSummaryTable(data=all_data,group_variable="outcome",summary_variable="age")
+sex_age_summary=getNumericSummaryTable(data=all_data,group_variable="sex",summary_variable="age")
+genotype_age_summary=getNumericSummaryTable(data=all_data,group_variable="genotype",summary_variable="age")
 age_summary=rbind(
     ad_age_summary,
     sex_age_summary,
@@ -422,6 +658,19 @@ One way Anova
 
 ### AD vs Genotypes
 
+```{r}
+metabolites_associated_AD_data%>%
+    group_by(outcome,sex)%>%
+    summarise(n=n(),mean=mean(value),sd=sd(value))%>%
+    knitr::kable()
+
+metabolites_associated_AD_data%>%
+    group_by(outcome,genotype)%>%
+    summarise(n=n(),mean=mean(value),sd=sd(value))%>%
+    knitr::kable()
+
+
+```
 Chisquare test
 
 ### AD vs Treatment

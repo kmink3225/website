@@ -27,11 +27,11 @@ format:
 
 ## Background
 
-알츠하이머병(Alzheimer's Disease, AD)은 수백만 명의 미국인에게 영향을 미치는 가장 흔한 형태의 치매이다. 알츠하이머병은 기억력, 사고력 및 행동에 영향을 주지만 증상이 나타나기까지 거의 20년에 걸쳐 진행이 된다. 따라서 전 임상 단계에서 생리학을 이해하는 것이 필수적이다. 유전적 요인이 AD에 거의 50% 기여하는 것으로 추정된다. 유전자가 세포 환경을 변경하여 알츠하이머병 위험에 어떻게 기여하는지 더 잘 이해하기 위해 AD와 연관이 있는 유전자인 APOE를 보유한 사람들의 대사체(Metabolome)를 조사했다. 대사체는 유전체(Genome)과 단백질체(Proteome)에서 생성된 산물을 의;미한다. 이러한 생화학 부산물은 유전적 요인과 환경적 요인 모두의 영향을 받는다. 모집단은 장수마을에 사는 Caucasian (백인) 참여자들이다. 
+알츠하이머병(Alzheimer's Disease, AD)은 수백만 명의 미국인에게 영향을 미치는 가장 흔한 형태의 치매이다. 알츠하이머병은 기억력, 사고력 및 행동에 영향을 주지만 증상이 나타나기까지 거의 20년에 걸쳐 진행이 된다. 따라서 전 임상 단계에서 생리학을 이해하는 것이 필수적이다. 유전적 요인이 AD에 거의 50% 기여하는 것으로 추정된다. 유전자가 세포 환경을 변경하여 알츠하이머병 위험에 어떻게 기여하는지 더 잘 이해하기 위해 AD와 연관이 있는 유전자인 APOE를 보유한 사람들의 대사체(Metabolome)를 조사했다. 대사체는 유전체(Genome)과 단백질체(Proteome)에서 생성된 산물을 의미한다. 이러한 생화학 부산물은 유전적 요인과 환경적 요인 모두의 영향을 받는다. 모집단은 장수마을에 사는 Caucasian (백인) 참여자들이다. 
 
 ## Objective
 
-LLFS(Long Life Family Study) 프로젝트의 목적은 유전체, 전사체, 단백질체 및 대사체 단계를 통해 유전체에서 대사체 단계에 이르는 여러 단계에서 통계 및 기계 학습을 사용하여 분석 파이프라인을 구축하고 알츠하이머병에 대한 중요한 바이오마커를 식별하기 위함이다.
+LLFS(Long Life Family Study) 프로젝트의 목적은 유전체, 전사체, 단백질체 및 대사체 단계를 통해 유전체에서 대사체 단계에 이르는 여러 단계에서 통계 및 기계 학습을 사용하여 분석 파이프라인을 구축하고 알츠하이머병에 대한 중요한 바이오마커를 식별하는 것이다.
 
 ## How to Read the Contents
 
@@ -112,7 +112,7 @@ Data_Quality_Control-->Data_Preprocessing
 
 Data의 품질 관리를 위해 data를 생성한 biochemists와 소통하여 실험실 기준에 따라 결측치와 이상치를 구분하여 labeling을 수행했고 missing value analysis를 통해 결과에 따라 medical doctors를 포함한 다른 faculty members와 상의하여 결측치 처리를 했다. data QC criteria는 rowwise 와 columwise sum의 합이 sample size에 대하여 missing values의 비율이 5%가 넘는 환자와 변수는 분석 대상에서 제외 됐다. 모든 metabolites data는 log transoformation 과 standardization을 통해 data의 단위를 표준화 했다. 
 
-### Analytics
+### Methods
 ```{mermaid}
 flowchart TB
     subgraph Data_Analytics
@@ -124,21 +124,21 @@ flowchart TB
     end
 ```
 
-Data 분석은 크게 EDA (Exploratory Data Analysis), Statistical Analysis 및 Machine Learning과 같이 3 단계로 수행했다. 각 단계에서 나온 결과가 각 각의 단계에서 일관되게 나오는지 확인하는 분석을 수행했다.
+Data 분석은 크게 EDA (Exploratory Data Analysis), Statistical Analysis 및 Machine Learning과 같이 3 단계로 수행했다. 각 단계에서 나온 결과가 각 각의 단계에서 일관되게 나오는 metabolites를 선별했다.
 
 #### EDA and Data Mining
 
-student t tests, Wilcoxon Man Whiteney tests, $\chi^2$ tests, Fisher Exact Tests, ANOVAs, Kruskal Wallis Tests 및 regression analysis이 수행됐고 visualization을 통해 검정 결과를 재확인하는 작업을 수행했다. 고차원 데이터를 시각화하여 data의 pattern을 관찰하기 위해 KNN, PCA, K means, Clustering 및 DB Scan을 이용했다.
+student t tests, Wilcoxon Man Whiteney tests, $\chi^2$ tests, Fisher Exact Tests, ANOVAs, Kruskal Wallis Tests 및 regression analysis이 수행됐고 visualization을 통해 검정 결과를 재확인하는 작업을 수행했다. 고차원 데이터를 시각화하여 data의 pattern을 관찰하기 위해 KNN, PCA, K means clustering 및 DB Scan을 이용했다.
 
 #### Statistical Analysis
 
-multivariable linear regression, logistic regression 및 Cox PH(Proportional Hazards) regression anayses 가 수행됐고 질병과 유의한 metabolites를 선별했다. multiple testing으로 인해 1 종 오류를 범하는 것을 줄이기 위해 permuted p-values를 계산하여 유의성을 한번 더 확인했다.
+multivariable linear regression, logistic regression 및 Cox PH(Proportional Hazards) regression anayses 가 수행됐고 질병과 유의한 metabolites를 선별했다. multiple testing으로 인한 1 종 오류를 범하는 것을 줄이기 위해 permuted p-values를 계산하여 유의성을 한번 더 확인했다.
 
 #### Machine Learning
 
-Lasso, ridge regression, elastic net, decision tree, random rorests, ada boosting, gradient descent boosting, SVM (support vector machine), partial least square 및 sparse partial least square 사용됐다. 질병을 가장 잘 예측하는 classifier를 평가하여 최적의 classifier를 선택했다.
+Lasso, ridge regression, elastic net, decision tree, random rorests, ada boosting, gradient descent boosting, SVM (support vector machine), partial least square 및 sparse partial least square가 사용됐다. 질병을 가장 잘 예측하는 classifier를 평가하여 최적의 classifier를 선택했다.
 
-### Conclusion
+### Results & Conclusion
 
 146개의 관측치와 약 3,000여개의 변수로 구성된 data에서 약 60개 내외의 대사물질이 질병과 5% 유의수준으로 유의한 관계가 있는 것으로 관찰됐고 partial least suare 가 가장 성능이 좋은 것으로 관찰됐다. 
 
@@ -149,7 +149,7 @@ Lasso, ridge regression, elastic net, decision tree, random rorests, ada boostin
 
 ## Background
 
-Alzheimer Disease (AD) is the most common form of dementia that affects millions of Americans. AD affects memory, thinking and behavior, but its progression is slow, spanning nearly two decades before the symptoms appear. Thus, it is imperative to understand the physiology at the pre-clinical stage. It is estimated that genetic factors contribute nearly 50% to AD. To better understand how genes contribute to the risk of AD by altering cellular milieu, we have examined the metabolome of individuals with the AD-related genotype, APOE. The metabolome represents the products that were generated from the genome and proteome. These biochemical products represent influences of both genetic and environmental factors. The population is Caucasian participants living in longevity village. 
+Alzheimer Disease (AD) is the most common form of dementia that affects millions of Americans. AD affects memory, thinking and behavior, but its progression is slow, spanning nearly two decades before the symptoms appear. Thus, it is imperative to understand the physiology at the pre-clinical stage. It is estimated that genetic factors contribute nearly 50% to AD. To better understand how genes contribute to the risk of AD by altering cellular milieu, I have examined the metabolome of individuals with the AD-related genotype, APOE. The metabolome represents the products that were generated from the genome and proteome. These biochemical products represent influences of both genetic and environmental factors. The population is Caucasian participants living in longevity village. 
 
 ## Objective
 
@@ -157,7 +157,7 @@ The objective of the Long Life Family Study (LLFS) project was to build an analy
 
 ## How to Read the Contents
 
-For the convenience of reading, the LLFS project is divided into the two sections: project and self-project. The project section described the process of the project I actually carried out, and the self project one described the methodology in a roughly simplified form.
+For the convenience of reading, the LLFS project is divided into the two sections: project and self-project. The project section roughly described the process of the project I actually carried out, and the self project one described the methodology in a roughly simplified form.
 
 * Project Description (Current)
 * Self Project
@@ -253,9 +253,9 @@ digraph G {
 
 ```
 
-For data quality control, I communicated with whom generated the data, classified missing values ​​and outliers according to laboratory standards, and labeled them. Based on the results through missing value analysis, I processed the missing values through consultation with other faculty members several times. For the data QC criteria, patients and variables whose ratio of missing values ​​for the sum of the rowwise and columnwise sums exceeded 5% for the sample size were excluded from the analysis. All metabolites data were standardized through log transformation and standardization.
+For data quality control, I communicated with whom generated the data, classified missing values ​​and outliers according to laboratory standards, and labeled them. Based on the results through missing value analysis, I processed the missing values through consultation with the faculty members several times. For the data QC criteria, patients and variables whose ratio of missing values ​​for the sum of the rowwise and columnwise sums exceeded 5% for the sample size were excluded from the analysis. All metabolites data were standardized through log transformation and standardization.
 
-### Analytics
+### Methods
 
 ```{dot}
   digraph G {
@@ -276,7 +276,7 @@ For data quality control, I communicated with whom generated the data, classifie
 
 ```
 
-Data analysis was performed in three stages: Exploratory Data Analysis (EDA), Statistical Analysis, and Machine Learning. An analysis was performed to ensure that the results from each stage were consistent at each stage.
+Data analysis was performed in three stages: Exploratory Data Analysis (EDA), Statistical Analysis, and Machine Learning. In each stage, metabolites commonly associated with diseases were selected.
 
 #### EDA and Data Mining
 
@@ -290,7 +290,7 @@ Multivariable linear regression, logistic regression, and Cox PH (Proportional H
 
 Lasso, ridge regression, elastic net, decision tree, random rorests, ada boosting, gradient descent boosting, support vector machine (SVM), partial least square, and sparse partial least square were used. The optimal classifier was selected by evaluating the classifier that best predicted the disease status.
 
-### Conclusion
+### Results & Conclusion
 
 In the data consisting of 146 observations and about 3,000 variables, about 60 metabolites were observed to have a significant relationship with the disease at the 5% significance level, and partial least suare was observed to perform the best.
 

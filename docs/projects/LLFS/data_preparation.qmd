@@ -124,35 +124,35 @@ English
 
 **Data Set Size Setting**  
 
-Simulation에 필요한 몇 가지 설정값들을 Global Variables로 설정하여 후차적으로 작성된 스크립트에서 호출이 자유롭도록 작성했다. 변수들은 **Global Variables** 에서 확인 가능하다.
+Simulation에 필요한 몇 가지 설정값들을 Global Variables로 설정하여 후차적으로 작성된 스크립트에서 호출이 자유롭도록 작성했다. 변수들은 아래의 Simulation section에 있는 **Global Variables** (see @sec-global_variables) 에서 확인 가능하다.
 
 **Categorial Data Setting**
 
-먼저, 고차원 데이터의 차원을 설정하기 위해 Sample Size와 변수의 수를 설정한 후 Categorical Data를 만들기 위해 잘 알려진 분포, 내가 정한 분포, 혹은 임의로 발생하게 만든 분포를 설정하였다.
-
-**Metabolite Data Setting**
-
-고차원의 metabolite data를 만드는 설정으로, 고차원이면서 그룹내 서로 상관 관계가 있는 변수들을 생성하기 위해 난수에 의해 발생되는 임의의 Covariance를 생성하여 MVN (Multivariate Normal Distribution)에 반영되게 했고 각 그룹의 반응 변수로의 영향(또는 가중치)도 또한 난수로 임의적으로 발생되게 설정했다. 이때, 난수에 의해 임의적으로 발생하는 수치는 내가 임의적으로 범위를 한정했다. 재현성을 위해 seed number를 고정했다.
-
-**Outcome Variable Setting**
-
-MVN에 의해 만들어진 Data와 미리 만들어 놓은 가중치 Matrix의 곱을 통해 Score Matrix를 만들고 Logit Link를 이용하여 각 Sample의 확률값을 만들었다. 각 Sample의 확률값을 기반으로 $X \sim \text{Bernoulli}(p)$, (여기서 $p$는 각 sample이 갖는 확률값을 뜻한다), 을 통해 disease status의 정보를 담은 binary outcome variable를 만들었다. 
+먼저, 고차원 데이터의 차원을 설정하기 위해 Sample Size와 변수의 수를 설정한 후 Categorical predictors를 만들기 위해 잘 알려진 분포, 내가 정한 분포, 혹은 임의로 발생하게 만든 분포를 설정하였다. (see @sec-global_variables, @sec-functions, and @sec-simulation)
 
 **Sex Variable Setting**
 
-Sex 변수는 $X \sim \text{Bernoulli}(0.5)$ 을 통해 data를 생성했다.
-
-**Age Variable Setting**
-
-Age 변수는 생물학적, 의학적으로 치매와 연관성이 높은 요인으로 Outcome 변수로 가장 설명이 잘되는 metabolite를 탐색해 선별하여 Age 형태로 변환을 했다. 제일 어린 사람을 65세 그리고 제일 연장자를 105세로 설정하여 min max normalization을 적용했다.
+Sex 변수는 $X \sim \text{Bernoulli}(0.5)$ 을 통해 data를 생성했다. (see @sec-simulation)
 
 **Genotype Variable Setting**
 
-Genotype 변수의 data는 아직도 어떻게 통계적으로 생성해야하는지 감을 못잡은 상태이기 때문에 더 연구가 필요하다. 하지만, 질병에 대한 유전적 영향도는 반영해야하기 때문에 outcome variable과 이미 잘 알려진 genotype의 분포를 반영하려고 노력했다. 두 변수에 연관성을 갖게하기 위해 각 변수의 proportion을 marginal distirubtion으로 설정하여 두 변수의 joint proportion을 계산하여 Genotype data를 생성했다. 
+Genotype 변수의 data는 아직도 어떻게 통계적으로 생성해야하는지 감을 못잡은 상태이기 때문에 더 연구가 필요하다. 하지만, 질병에 대한 유전적 영향도는 반영해야하기 때문에 outcome variable과 이미 잘 알려진 genotype의 분포를 반영하려고 노력했다. 두 변수에 연관성을 갖게하기 위해 각 변수의 proportion을 marginal distirubtion으로 설정하여 두 변수의 joint proportion을 계산하여 Genotype data를 생성했다. (see @sec-functions and @sec-simulation)
+
+**Metabolite Data Setting**
+
+고차원의 metabolite data를 만드는 설정으로, 고차원이면서 그룹내 서로 상관 관계가 있는 변수들을 생성하기 위해 난수에 의해 발생되는 임의의 Covariance를 생성하여 MVN (Multivariate Normal Distribution)에 반영되게 했고 각 그룹의 반응 변수로의 영향(또는 가중치)도 또한 난수로 임의적으로 발생되게 설정했다. 이때, 난수에 의해 임의적으로 발생하는 수치는 내가 임의적으로 범위를 한정했다. 재현성을 위해 seed number를 고정했다. (see @sec-simulation)
+
+**Outcome Variable Setting**
+
+MVN에 의해 만들어진 Data와 미리 만들어 놓은 가중치 Matrix의 곱을 통해 Score Matrix를 만들고 Logit Link를 이용하여 각 Sample의 확률값을 만들었다. 각 Sample의 확률값을 기반으로 $X \sim \text{Bernoulli}(p)$, (여기서 $p$는 각 sample이 갖는 확률값을 뜻한다), 을 통해 disease status의 정보를 담은 binary outcome variable를 만들었다. (see @sec-simulation)
+
+**Age Variable Setting**
+
+Age 변수는 생물학적, 의학적으로 치매와 연관성이 높은 요인으로 Outcome 변수로 가장 설명이 잘되는 metabolite를 탐색해 선별하여 Age 형태로 변환을 했다. 제일 어린 사람을 65세 그리고 제일 연장자를 105세로 설정하여 min max normalization을 적용했다. (see (see @sec-functions and @sec-simulation)
 
 **Merge All Data**
 
-Simulation을 통해 만들어진 각 변수들을 index를 만들어 병합시켜 data frame의 형태로 만들었다.
+Simulation을 통해 만들어진 각 변수들을 index를 만들어 병합시켜 data frame의 형태로 만들었다. (see @sec-simulation)
 
 **Analytics & Conclusion**
 
@@ -181,13 +181,12 @@ library(tidymodels)
 library(glmnet)
 library(MASS)
 library(mixOmics)
-set.seed(20230121) # the date writing this
+set.seed(20230121) 
 knitr::opts_chunk$set(message=FALSE,warning=FALSE)
 ```
 
-### Global Variables
+### Global Variables {#sec-global_variables}
 ```{r}
-
 # the number of samples
 sample_size <- 1000
 # the number of predictors
@@ -262,7 +261,7 @@ answer_list<-list(
     'genotype_distirbution'=c('e2' = '8.4%','e3' = '77.9%','e4' = '13.7%'))
 ```
 
-### Functions
+### Functions {#sec-functions}
 
 ```{r}
 ## Function List
@@ -345,7 +344,7 @@ genotype_data_generator=function(in_response=response,fun=scale_function){
 ```
 
 
-### Simulation Algorithm
+### Simulation {#sec-simulation}
 
 ```{r}
 #| eval: false
@@ -432,8 +431,6 @@ all_data<-
 # rename metabolite variables
 names(all_data)[6:ncol(all_data)]<-paste0("meta",1:predictor_size)
  
-
-
 ```
 
 
@@ -467,35 +464,35 @@ Simulations were performed to outline the approximate analysis methodology. The 
 
 **Data Set Size Setting**  
 
-Some of the setting values ​​required for simulation are set as global variables so that they can be freely recalled in later scripts. 
+Some of the setting values ​​required for simulation are set as global variables so that they can be freely called in the later scripts. (see @sec-global_variables)
 
 **Categorial Data Setting**
 
-I first set the dimensions of my high-dimensional data by setting the sample size and number of variables, then I created categorical data by choosing a well-known distribution, a distribution I determined, or a distribution that occurred randomly. set.
-
-**Metabolite Data Setting**
-
-As a setting for generating high-dimensional metabolomic data, random covariance matrix generated by random numbers is generated to create high-dimensional and mutually correlated variables within a group, which is uase as input in the MVN (Multivariate Normal Distribution) function, and for each group, the variable's influence (or weight) toward the outcome variable is also set to be randomly generated with a random number. At this time, the range of numbers randomly generated by random numbers was arbitrarily limited by myself. The seed number was fixed for reproducibility.
-
-**Outcome Variable Setting**
-
-A score matrix was created through the matrix multiplication of the data created by MVN and a pre-made weight matrix with the probability values of samples that were created using Logit Link. Based on the probability value of each sample, a binary outcome variable representing disease status information was created through $X ~\text{Bernoulli}(p)$, (where $p$ means the probability value of each sample).
+I first set the dimensions of my high-dimensional data by setting the sample size and number of variables, then I created categorical data by choosing a well-known distribution, a distribution I determined, or a distribution that occurred randomly set. (see @sec-global_variables, @sec-functions, and @sec-simulation)
 
 **Sex Variable Setting**
 
-The data of the sex variable were generated through $X ~\text{Bernoulli}(0.5)$.
-
-**Age Variable Setting**
-
-Since the Age variable is a important factor related to dementia biologically and medically, the metabolite best explained as an Outcome variable was selected and converted into an age using min max normalization by setting the youngest to 65 and the oldest to 105.
+The data of the sex variable were generated through $X ~\text{Bernoulli}(0.5)$. (@sec-simulation)
 
 **Genotype Variable Setting**
 
-Personally, I have not yet figured out how to generate data for genotype variables statistically, so further research is needed. However, since the genetic influence on the disease should be reflected, I tried to reflect the distribution of outcome variables and well-known distribution of the genotypes, APOE. To make an association between the two variables, the proportions of each variable were set as marginal distirubtion and the joint distribution of the two variables was calculated to generate genotype data.
+Personally, I have not yet figured out how to generate data for genotype variables statistically, so further research is needed. However, since the genetic influence on the disease should be reflected, I tried to reflect the distribution of outcome variables and well-known distribution of the genotypes, APOE [(from Wiki)](https://en.wikipedia.org/wiki/Apolipoprotein_E). To make an association between the two variables, the proportions of each variable were set as marginal distirubtion and the joint distribution of the two variables was calculated to generate genotype data. (@sec-functions and @sec-simulation)
+
+**Metabolite Data Setting**
+
+As a setting for generating high-dimensional metabolomic data, a covariance matrix generated by random numbers is generated to create high-dimensional and mutually correlated metabolites within a group, which is used as input in the MVN (Multivariate Normal Distribution) function, and for each group, the metabolites' effect (or weight) toward the outcome variable is also set to be randomly generated with a random number. At this time, the range of numbers randomly generated by random numbers was arbitrarily limited by myself. A seed number was fixed for reproducibility. (@sec-simulation)
+
+**Outcome Variable Setting**
+
+A score matrix was created through the matrix multiplication of the data created by MVN and a pre-made weight matrix with the probability values of samples that were created using the Logit Link. Based on the probability value of each sample, a binary outcome variable representing disease status information was created through $X ~\text{Bernoulli}(p)$, (where $p$ means the probability value of each sample). (@sec-simulation)
+
+**Age Variable Setting**
+
+Since the Age variable is a important factor related to dementia biologically and medically, the metabolite best explained as an Outcome variable was selected and converted into an age using min max normalization by setting the youngest to 65 and the oldest to 105. (@sec-functions and @sec-simulation)
 
 **Merge All Data**
 
-Each variable created through simulation was merged into a data frame.
+Each variable created through simulation was merged into a data frame. (@sec-simulation)
 
 **Analytics & Conclusion**
 

@@ -79,8 +79,8 @@ library(tidyverse)
 library(tidymodels)
 library(glmnet)
 library(MASS)
-library(ggpubr)
-library(car) # homoscedasticity test
+library(ggpubr) 
+library(car) 
 library(mixOmics)
 set.seed(20230103) 
 knitr::opts_chunk$set(message=FALSE,warning=FALSE)
@@ -256,13 +256,53 @@ multiple_unpaired_t_test<-function(in_data,categorical_variable,homo_variables,h
             dplyr::select('column_name',names(unpaired_t_test[[1]]$estimate),'df','statistic','p_value','p_adjusted','type','method')
     return(output)} 
 
+
+multiple_correlation_test<-function(in_data,in_numeric_variable){
+    correlation_test<-apply(in_data[,unlist(lapply(in_data, is.numeric))],2,
+                                    function(x)cor.test(x,in_data[,in_numeric_variable],method='pearson'))
+    temp<-data.frame(matrix(nrow=length(correlation_test),ncol=6))
+        for (i in 1:length(correlation_test)){
+            temp[i,]<-c(names(correlation_test)[i], 
+                        correlation_test[[i]]$estimate,
+                        correlation_test[[i]]$parameter,
+                        correlation_test[[i]]$statistic,
+                        correlation_test[[i]]$p.value,
+                        correlation_test[[i]]$method)
+        }
+        names(temp)<-c('column_name',names(correlation_test[[1]]$estimate),'df','statistic','p_value','method')
+        output<-temp%>%
+            mutate(p_adjusted=p.adjust(p_value,method="bonferroni"),
+            type=ifelse(p_adjusted<0.05,'significant','insignificant'))%>%
+            dplyr::select('column_name',names(correlation_test[[1]]$estimate),'df','statistic','p_value','p_adjusted','type','method')
+    return(output)} 
+
+multiple_anova_test<-function(in_data,in_numeric_variable, in_categorical_variable){
+    correlation_test<-apply(in_data[,unlist(lapply(in_data, is.numeric))],2,
+                                    function(x)anova(x,in_data[,in_categorical_variable]))
+    temp<-data.frame(matrix(nrow=length(correlation_test),ncol=6))
+        for (i in 1:length(correlation_test)){
+            temp[i,]<-c(names(correlation_test)[i], 
+                        correlation_test[[i]]$estimate,
+                        correlation_test[[i]]$parameter,
+                        correlation_test[[i]]$statistic,
+                        correlation_test[[i]]$p.value,
+                        correlation_test[[i]]$method)
+        }
+        names(temp)<-c('column_name',names(correlation_test[[1]]$estimate),'df','statistic','p_value','method')
+        output<-temp%>%
+            mutate(p_adjusted=p.adjust(p_value,method="bonferroni"),
+            type=ifelse(p_adjusted<0.05,'significant','insignificant'))%>%
+            dplyr::select('column_name',names(correlation_test[[1]]$estimate),'df','statistic','p_value','p_adjusted','type','method')
+    return(output)} 
+
+
 main_statistical_test<-function(
-    in_data,method,categorical_variable,
+    in_data,method,categorical_variable,in_numeric_variable,
     homo_variables=NULL,hetero_variables=NULL,
     fun1=multiple_shapiro_test,
     fun2=multiple_levene_test,
     fun3=multiple_unpaired_t_test){
-    test_list<-c("shapiro wilks test","levene's test","student t test")#,"ANOVA", "ANCOVA","MANOVA","wilcoxon manwhitney",'kruskal wallis test')
+    test_list<-c("shapiro wilks test","levene's test","student t test","pearson correlation test")#,"ANOVA", "ANCOVA","MANOVA","wilcoxon manwhitney",'kruskal wallis test')
     error_massage<-paste0("Error!, no such a test in this module. Please, put the first word of each method you want to use in the 'method' argument among the following tests: ", paste(test_list,collapse=", "))
     if(grepl('shapiro',method)){
         output=multiple_shapiro_test(in_data)
@@ -274,10 +314,12 @@ main_statistical_test<-function(
         output=multiple_unpaired_t_test(in_data,categorical_variable,homo_variables,hetero_variables)
     }else if(grepl('kruskal',method)){
         return(error_massage)
-    }else if(grepl('wilcoxon'|'manwhitney',method)){
+    }else if(grepl('wilcoxon|manwhitney',method)){
         return(error_massage)
     }else if(grepl('anova',method)){
         return(error_massage)
+    }else if(grepl('cor',method)){
+        output=multiple_correlation_test(in_data,in_numeric_variable)
     }else{
         return(error_massage)
     }
@@ -285,9 +327,9 @@ main_statistical_test<-function(
 }
 
 
-getNumericSummaryTable=function(data,group_variable,summary_variable,set_color=color_function,...){
+getNumericSummaryTable=function(in_data,group_variable,summary_variable,set_color=color_function,...){
     # table
-    temp<-data %>% 
+    temp<-in_data %>% 
     #group_by_at(vars(...)) %>% 
     group_by_at(vars(group_variable)) %>% 
     mutate(count=n())%>%
@@ -323,20 +365,24 @@ getNumericSummaryTable=function(data,group_variable,summary_variable,set_color=c
     return(output)
 }
 
-getNumericSummaryPlot=function(data=all_data,group_variable,summary_variable,set_color=color_function,...){
+getNumericSummaryPlot=function(
+    in_data=all_data,group_variable,summary_variable,
+    set_color=color_function,
+    summary_function=getNumericSummaryTable,...){
     # plot
+    temp=getNumericSummaryTable(in_data,group_variable,summary_variable)
     temp2=temp
     names(temp2)[2]=group_variable
     plot<-
-    data%>%
+    in_data%>%
     dplyr::select(group_variable,summary_variable)%>%
     inner_join(.,temp2,by=group_variable)%>%
     ggplot(aes(x=age,fill=get(group_variable),color=get(group_variable)))+
     geom_histogram(aes(y=..density..),binwidth=1,alpha=0.5, position="identity")+
     geom_vline(aes(xintercept=mean,color=get(group_variable)), linetype="dashed", size=1.5) + 
     geom_density(aes(y=..density..),alpha=0.3) +
-    scale_color_manual(values=set_color(temp2))+
-    scale_fill_manual(values=set_color(temp2))+
+    scale_color_manual(values=set_color(nrow(temp2)))+
+    scale_fill_manual(values=set_color(nrow(temp2)))+
     theme_bw()+
     theme(legend.position = c(.95, .95),
     legend.justification = c("right", "top"),
@@ -349,7 +395,7 @@ getNumericSummaryPlot=function(data=all_data,group_variable,summary_variable,set
     ggtitle(paste0("Histogram & Density, ", summary_variable, " Grouped by ", group_variable))+
         labs(x=summary_variable, y = "Density")
 
-    result<-list(temp,plot)
+    result<-plot
     return(result)
 }
 ```
@@ -375,13 +421,16 @@ names(all_data)[6:ncol(all_data)]<-paste0("meta",1:predictor_size)
 
 ```
 
-## Univariable Analysis
+## EDA
+
+### Univariable Analysis
 
 ### Normality Test
 
 ```{r}
 # raw data
 normality_test_result<-multiple_shapiro_test(all_data)%>%
+    filter(column_name!='id')%>%
     group_by(type)%>%
     summarise(count=n())%>%
     mutate(proportion=round(count/sum(count),3),
@@ -390,7 +439,7 @@ normality_test_result<-multiple_shapiro_test(all_data)%>%
     
 normality_test_result%>%
     knitr::kable(caption="Summary of the Result of Shapiro Wilk Tests on Numeric Variables")
-    
+
 ```
 
 Out of `r normality_test_result[1,'total']` numeric variables, the variables following a normal distribution are `r normality_test_result[1,'count']` (`r normality_test_result[1,'proportion']*100`%) and the ones that do not are `r normality_test_result[2,'count']` (`r normality_test_result[2,'proportion']*100`%).
@@ -407,7 +456,7 @@ Out of `r normality_test_result[1,'total']` numeric variables, the variables fol
 # 16 numeric variables randomly selected
 normal_variables<-
     multiple_shapiro_test(all_data)%>%
-        filter(p_value>0.05)%>%
+        filter(p_value>0.05,column_name!='id')%>%
             dplyr::select(column_name)%>%
             pull%>%sample(16)
 
@@ -419,7 +468,7 @@ normal_data<-
 normal_data%>%
     ggplot(aes(x=value))+
     geom_histogram(aes(y=..density..))+
-    geom_density(color='red',size=1.5)+
+    geom_density(color='red',linewidth=1.5)+
     facet_wrap(.~metabolite)+
     labs(title="Histogram, Numeric Variables Following Normal Distribution")
 
@@ -432,7 +481,7 @@ normal_data%>%
 normal_data%>%
     ggplot(aes(x=value,fill=outcome))+
     geom_histogram(aes(y=..density..),alpha=0.5)+
-    geom_density(size=1,alpha=0.5)+
+    geom_density(linewidth=1.5,alpha=0.5)+
     scale_fill_manual(values=color_function(length(unique(normal_data$outcome))))+
     facet_wrap(.~metabolite)+
     labs(title="Numeric Variables Following Normal Distribution Grouped by Disease Status")    
@@ -445,64 +494,25 @@ normal_data%>%
 
 ```
 
-#### 16 Variables That Do Not Follow Normal Distributions
+#### Variables That Do Not Follow Normal Distributions
 
-```{r}
-#| fig-width: 9
-#| fig-height: 10
+There is no variable that do not follow a normal distribution.
 
-# 16 numeric variables randomly selected
-not_normal_variables<-
-    multiple_shapiro_test(all_data)%>%
-        filter(p_value<0.05)%>%
-            dplyr::select(column_name)%>%
-            pull%>%sample(16)
+### Bivariable Analysis
 
-not_normal_data<-
-    all_data%>%
-        dplyr::select(outcome,not_normal_variables)%>%
-        gather(key=metabolite,value=value,not_normal_variables)
+#### AD vs Metabolites
 
-not_normal_data%>%
-    ggplot(aes(x=value))+
-    geom_histogram(aes(y=..density..))+
-    geom_density(color='red',size=1.5)+
-    facet_wrap(.~metabolite)+
-    labs(title="Histogram, Numeric Variables not Following Normal Distribution")
+Through the exploratory data analysis above, it was confirmed that all variables follow a normal distribution, and a t test is conducted to select metabolites that have a significant relationship with the disease, AD.
 
-not_normal_data%>%
-    ggplot(aes(x=metabolite,y=value))+
-    geom_boxplot()+
-    theme(axis.text.x = element_text(angle=90, vjust=.5, hjust=1))+
-    labs(title="Boxplot, Numeric Variables not Following Normal Distribution")
+* Homoscedasticity Test
 
-not_normal_data%>%
-    ggplot(aes(x=value,fill=outcome))+
-    geom_histogram(aes(y=..density..),alpha=0.5)+
-    geom_density(size=1,alpha=0.5)+
-    scale_fill_manual(values=color_function(length(unique(not_normal_data$outcome))))+
-    facet_wrap(.~metabolite)+
-    labs(title="Numeric Variables not Following Normal Distribution Grouped by Disease Status")    
-not_normal_data%>%
-    ggplot(aes(x=metabolite,y=value,fill=outcome))+
-    geom_boxplot()+
-    scale_fill_manual(values=color_function(length(unique(not_normal_data$outcome))))+
-    theme(axis.text.x = element_text(angle=90, vjust=.5, hjust=1))+
-    labs(title="Boxplot, Numeric Variables not Following Normal Distribution")
-
-```
-
-Randomly Sampled 16 variables that do not follow a normal distribution to visualize their distributions.
-
-## Bivariable Analysis
-
-### AD vs Metabolites
-
-#### Homoscedasticity Test
+Leven's test is performed to confirm equal variance, one of the assumptions of the t test.
 
 ```{r}
 
-leven_test_result<-main_statistical_test(in_data=all_data,method="levene",categorical_variable="outcome")
+leven_test_result<-
+    main_statistical_test(in_data=all_data,method="levene",categorical_variable="outcome")%>%
+    filter(column_name!='id')
 
 homo_variable<-leven_test_result%>%
 filter(p_adjusted>0.05)%>%
@@ -516,182 +526,208 @@ dplyr::select(column_name)%>%
 pull()%>%
 unique()
 
-hetero_variable_data<-all_data%>%dplyr::select(outcome,hetero_variable)%>%
-        gather(key=metabolite,value=value,hetero_variable)
+```
 
-hetero_variable_data%>%
+*  10 variables randomly selected out of `r length(homo_variable)` variables with equal variance: `r homo_variable%>%sample(10)`
+* `r length(hetero_variable)` variables randomly selected with equal variance: `r hetero_variable`
+
+```{r}
+
+homo_variable_sample<-homo_variable%>%sample(10)
+hetero_variable_sample<-hetero_variable
+
+stratified_levene_data<-all_data%>%
+    dplyr::select(outcome,homo_variable_sample,hetero_variable_sample)%>%
+    gather(key=metabolite,value=value,c(homo_variable_sample,hetero_variable_sample))%>%
+    mutate(levene_test=ifelse(metabolite%in%(homo_variable_sample),"homoscedasticity","heteroscedasticity"))
+
+stratified_levene_data%>%
     ggplot(aes(x=metabolite,y=value,fill=outcome))+
     geom_boxplot()+
-    scale_fill_manual(values=color_function(length(unique(hetero_variable_data$outcome))))+
+    scale_fill_manual(values=color_function(length(unique(stratified_levene_data$outcome))))+
     theme(axis.text.x = element_text(angle=90, vjust=.5, hjust=1))+
-    labs(title="Boxplot, Metabolites with Heteroscedasticity")
+    facet_wrap(.~levene_test)+
+    labs(title="Boxplot, Metabolites with Heteroscedasticity vs Homoscedasticity")
 
 ```
 
-#### Unpaired Two Sample Mean t Test
+* Unpaired Two Sample Mean t Test
 
 ```{r}
-t_test_result<-main_statistical_test(in_data=all_data,method="student",categorical_variable="outcome",homo_variables=homo_variable,hetero_variables=hetero_variable)
+t_test_result<-
+    main_statistical_test(in_data=all_data,method="student",
+                        categorical_variable="outcome",
+                        homo_variables=homo_variable,
+                        hetero_variables=hetero_variable)
 
-metabolites_associated_AD<-t_test_result%>%
+metabolites_associated_AD<-
+    t_test_result%>%
     filter(type=="significant"&column_name!='age')%>%
     arrange(p_adjusted)%>%
     dplyr::select(column_name)%>%pull
 
-metabolites_associated_AD_data<-all_data%>%
+metabolites_associated_AD_data<-
+    all_data%>%
     dplyr::select(outcome,sex,genotype,metabolites_associated_AD)%>%
     gather(key=metabolite,value=value,metabolites_associated_AD)        
 
 metabolites_associated_AD_data%>%
     group_by(outcome)%>%
-    summarise(n=n(),mean=mean(value),sd=sd(value))%>%
+    summarise(mean=mean(value),sd=sd(value))%>%
     knitr::kable()
-
-
 
 top_metabolites_associated_AD<-t_test_result%>%
     filter(type=="significant"&column_name!='age')%>%
-    arrange(p_adjusted)%>%head(16)%>%
+    arrange(p_adjusted)%>%head(10)%>%
     dplyr::select(column_name)%>%pull
 
-top_metabolites_associated_AD_data<-all_data%>%
-dplyr::select(outcome,top_metabolites_associated_AD)%>%
-        gather(key=metabolite,value=value,top_metabolites_associated_AD)        
+top_metabolites_associated_AD_data<-
+    all_data%>%
+    dplyr::select(outcome,top_metabolites_associated_AD)%>%
+    gather(key=metabolite,value=value,top_metabolites_associated_AD)        
 
-top_metabolites_associated_AD_data%>%
-ggplot(aes(x=metabolite,y=value,fill=outcome))+
-geom_boxplot()+
-scale_fill_manual(values=color_function(length(unique(hetero_variable_data$outcome))))+
-theme(axis.text.x = element_text(angle=90, vjust=.5, hjust=1))+
-labs(title="Boxplot, Metabolites Associated with AD")
+bottom_metabolites_associated_AD<-t_test_result%>%
+    filter(type=="significant"&column_name!='age')%>%
+    arrange(p_adjusted)%>%tail(10)%>%
+    dplyr::select(column_name)%>%pull
+
+bottom_metabolites_associated_AD_data<-
+    all_data%>%
+    dplyr::select(outcome,bottom_metabolites_associated_AD)%>%
+    gather(key=metabolite,value=value,bottom_metabolites_associated_AD)        
+
+a1<-top_metabolites_associated_AD_data%>%
+    ggplot(aes(x=metabolite,y=value,fill=outcome))+
+    geom_boxplot()+
+    scale_fill_manual(values=color_function(length(unique(top_metabolites_associated_AD_data$outcome))))+
+    theme(axis.text.x = element_text(angle=90, vjust=.5, hjust=1), legend.position="top")+
+    labs(title="Boxplot, Metabolites Strongly Associated with AD")
+
+a2<-bottom_metabolites_associated_AD_data%>%
+    ggplot(aes(x=metabolite,y=value,fill=outcome))+
+    geom_boxplot()+
+    scale_fill_manual(values=color_function(length(unique(bottom_metabolites_associated_AD_data$outcome))))+
+    theme(axis.text.x = element_text(angle=90, vjust=.5, hjust=1), legend.position="top")+
+    labs(title="Boxplot, Metabolites Weakly Associated with AD")
+
+ggarrange(a1, a2, ncol=2, nrow=1)
 ```
 
-### Age vs Catogrical Variables
+As a result of the t test, metabolites with the highest significance were designated as *strong metabolites* and metabolites with the lowest significance among metabolites significantly related to AD were designated as *weak metabolites*, and the expression level of metabolites between the disease status was confirmed through visualization. As a result, a greater difference was observed in strong metabolites than in weak metabolites, but both groups were not clearly separated in terms of AD. 
 
+#### AD vs Sex
 
 ```{r}
-getNumericSummaryTable(data=all_data,group_variable='outcome',summary_variable='age')
+ad_sex_summary<-all_data%>%
+    group_by(outcome,sex)%>%
+    summarise(count=n(),
+            mean_age=mean(age),
+            sd_age=sd(age))%>%
+            ungroup%>%
+    mutate(sum=sum(count),
+    proportion=paste0(count/sum*100,"%"))%>%
+    dplyr::select(outcome, sex,count,proportion,mean_age,sd_age)%>%
+    mutate(p_value=chisq.test(all_data$outcome,all_data$sex)$p.value,
+    method="chisquare_test")
+
+ad_sex_summary%>%knitr::kable()
+```
+
+#### AD vs Genotype
+
+```{r}
+ad_genotype_summary<-all_data%>%
+    group_by(outcome,genotype)%>%
+    summarise(count=n(),
+            mean_age=mean(age),
+            sd_age=sd(age))%>%
+            ungroup%>%
+    mutate(sum=sum(count),
+    proportion=paste0(count/sum*100,"%"))%>%
+    dplyr::select(outcome, genotype,count,proportion,mean_age,sd_age)%>%
+    mutate(p_value=chisq.test(all_data$outcome,all_data$genotype)$p.value,
+    method="chisquare_test")
+ad_genotype_summary%>%knitr::kable()
 ```
 
 
-```{r}
-#| message: false
-#| warning: false
+#### Age vs AD, Sex, Genotype
 
-ad_age_summary=getNumericSummaryTable(data=all_data,group_variable="outcome",summary_variable="age")
-sex_age_summary=getNumericSummaryTable(data=all_data,group_variable="sex",summary_variable="age")
-genotype_age_summary=getNumericSummaryTable(data=all_data,group_variable="genotype",summary_variable="age")
+Age is known as a strong risk factor of AD or dementia. Human nerve system gets damaged as people are aged and the nerve fibrosis symptoms progress gradually. For this reason, we need to look into how the sample data are distributed in terms of age.
+
+```{r}
+getNumericSummaryTable(in_data=all_data,group_variable='outcome',summary_variable='age')
+```
+
+```{r}
+ad_age_summary=getNumericSummaryTable(in_data=all_data,group_variable="outcome",summary_variable="age")
+sex_age_summary=getNumericSummaryTable(in_data=all_data,group_variable="sex",summary_variable="age")
+genotype_age_summary=getNumericSummaryTable(in_data=all_data,group_variable="genotype",summary_variable="age")
 age_summary=rbind(
     ad_age_summary,
     sex_age_summary,
     genotype_age_summary)
+
+
 ```
 
-Age is known as a strong risk factor of AD or dementia. Human nerve system gets damaged as people are aged and the nerve fibrosis symptoms progress gradually (some reference, to be added after figuring out how to add bibliography in quarto). For this reason, we need to look into how the sample data are distributed in terms of age.
-
 ```{r}
-#| eval: false
-#| code-fold: true
-#| message: false
-#| warning: false
 age_summary%>%knitr::kable()
 ```
 
-The table above shows the summary statistics of age grouped by the affected status, AD and non AD. The difference of age between the two groups are about `r round(age_summary%>%filter(group=="positive")%>%dplyr::select(mean)- age_summary%>%filter(group=="negative")%>%dplyr::select(mean),2)`, but their standard deviations are `r round(age_summary%>%filter(group=="positive")%>%dplyr::select(sd),2)` and `r round(age_summary%>%filter(group=="negative")%>%dplyr::select(sd),2)`. Thus, it is hard to say their age in average differ in the affected status because the age variations of the two groups are overlapped. This research has two conflicting characteristics at the population level. First, the participants are the elderly whose age in average is `r mean(all_data$age)%>%round(2)`, which indicates they are likely to develop dementia, an aging disease. Second, the data were collected from the longevity village where people live long and healthy lifes and it is expected that where will be some protective factors against dementia. These two conflicting traits may have contributed to this unclear difference.
-
-The glaring difference of age is also shown below. As you can see, the people with a negative status a bit younger than those with a positive one.
 ```{r}
-#| eval: false
-#| code-fold: true
-#| message: false
-#| warning: false
-#| fig-width: 10
-#| fig-height: 15
 
 plot<- ggarrange(
-    getNumericSummary(data=all_data,group_variable="outcome",summary_variable="age")[[2]],
-    getNumericSummary(data=all_data,group_variable="sex",summary_variable="age")[[2]],
-    getNumericSummary(data=all_data,group_variable="genotype",summary_variable="age")[[2]],
+    getNumericSummaryPlot(in_data=all_data,group_variable="outcome",summary_variable="age"),
+    getNumericSummaryPlot(in_data=all_data,group_variable="sex",summary_variable="age"),
+    getNumericSummaryPlot(in_data=all_data,group_variable="genotype",summary_variable="age"),
     ncol=2, nrow=2,legend="bottom")
 
-d=lapply(all_data[,sapply(all_data,function(x)is.numeric(x))],function(x)t.test(x~outcome,data=all_data))
-
-str(d[[1]])
-lapply(d,function(x)
-c('variable'=names(d),
-x$estimate[1],
-x$estimate[2],
-'p'=x$p.value,
-'lower'=x$conf.int[1],
-'upper'=x$conf.int[2]))
-sd=lapply(d,function(x)c('p'=x$p.value))%>%do.call("rbind",.)%>%as.data.frame%>%mutate(variable=rownames(.))
-names(sd)[1]='p'
-
-sdf=sd%>%mutate(test=ifelse(p<0.05/5000,1,0))
-table(sdf$test)
 ```
 
+The table above shows the summary statistics of age grouped by the affected status, AD and non AD. The difference of age between the two groups are about `r round(age_summary%>%filter(group=="positive")%>%dplyr::select(mean)- age_summary%>%filter(group=="negative")%>%dplyr::select(mean),2)`, but their standard deviations are `r round(age_summary%>%filter(group=="positive")%>%dplyr::select(sd),2)` and `r round(age_summary%>%filter(group=="negative")%>%dplyr::select(sd),2)`. Thus, it is hard to say their age in average differ in the affected status because the age variations of the two groups are overlapped. This research has two conflicting characteristics at the population level. 
 
-### Metabolites vs Categorical Variable
+The glaring difference of age is also shown below. As you can see, the people with a negative status `r (ad_age_table[1,2] - ad_age_table[2,2])%>%round(3)` younger than those with a positive one.
 
-#### Metabolites vs AD
-t-test
 
 ```{r}
-#F-test to test for homogeneity in variances
-#| echo: false
-#| eval: false
-var.test
+a1<-all_data%>%
+    dplyr::select(outcome,age)%>%
+    ggplot(aes(x=age,fill=outcome))+
+    geom_histogram(aes(y=..density..),alpha=0.5)+
+    geom_density(linewidth=1.5,alpha=0.5)+
+    scale_fill_manual(values=color_function(length(unique(all_data$outcome))))+
+    theme(legend.position="top")+
+    labs(title="Histogra, Age Distribution Grouped by Disease Status")   
+a2<-all_data%>%
+    dplyr::select(outcome,age)%>%
+    ggplot(aes(x=outcome,y=age,fill=outcome))+
+    geom_boxplot()+
+    scale_fill_manual(values=color_function(length(unique(all_data$outcome))))+
+    theme(axis.text.x = element_text(angle=90, vjust=.5, hjust=1), legend.position="top")+
+    labs(title="Boxplot, Age Distribution Grouped by Disease Status")
+
+ggarrange(a1, a2, ncol=2, nrow=1)
 ```
 
-#### Metabolites vs Genotypes
+#### Age vs Metabolites
+
+```{r}
+age_correlation_data<-
+    main_statistical_test(in_data=all_data,in_numeric_variable = 'age',method = "cor")%>%
+    filter(p_adjusted<0.05,column_name!='id')
+```
+
+`r nrow(age_correlation_data)` metabolites are significantly associated with age.
+
+
+#### Genotype vs Metabolites
+
+### Multivariable Analysis
+
 One way Anova
 
-#### Metabolites vs treatment
-One way Anova
-
-### Metabolites vs Genotypes
-
-## AD vs Categorical Variable
-
-### AD vs Sex
-
-### AD vs Genotypes
-
-```{r}
-metabolites_associated_AD_data%>%
-    group_by(outcome,sex)%>%
-    summarise(n=n(),mean=mean(value),sd=sd(value))%>%
-    knitr::kable()
-
-metabolites_associated_AD_data%>%
-    group_by(outcome,genotype)%>%
-    summarise(n=n(),mean=mean(value),sd=sd(value))%>%
-    knitr::kable()
-
-
-```
-Chisquare test
-
-### AD vs Treatment
-
-chisquare test
-
-```{r}
-#| echo: false
-#| eval: false
-
-for (i in 1:p) {
- form = paste("lm(", paste0(var[i], collapse="+"), "~ . , data=as.data.frame(data) ) ")
- fit = eval(parse(text=form)); fit
- lm_result[i] = list(summary(fit))
-}
-
-```
-
-## Multivariate Analysis
-
-##
+## Data Mining
 
 ### PCA (Principal Component Analysis)
 

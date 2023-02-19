@@ -42,6 +42,33 @@ Thanslations are about vertical and horizontal sifts. To be more sepecific, if $
 
 draw $y=x$, $y=(x-3)$, $y=x-3$, $y=(x+3)$, $y=x+3$
 
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+x = np.linspace(-10, 10, 1000)
+y = x
+y2 = x-3
+y3 = x+3
+
+
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.axhline(y=0, color='k')
+plt.axvline(x=0, color='k')
+plt.grid(True, which='both')
+
+plt.plot(x,y,color='black',label='y=x')
+plt.plot(x,y2,color='red',label='y=(x-3) or (y+3)=x')
+plt.plot(x,y3,color='blue',label='y=(x+3) or (y-3)=x')
+
+plt.title('Traslation of Functions')
+plt.legend()
+plt.show()
+
+```
+
 ### Transformations
 
 There are largely two types of transofrmations of functions: stretching and reflecting. To be more sepecific, if $c$ is larger than 1, then
@@ -51,7 +78,98 @@ There are largely two types of transofrmations of functions: stretching and refl
 * $y=f(cx)$, shrink the graph of $y=f(x)$ horizontally by a factor of $c$
 * $y=f(\frac{x}{c})$, stretch the graph of $y=f(x)$ horizontally by a factor of $c$
 
+#### Example 
+
 draw $y=\sin x$, $y=\sin 2x$, $y=\frac{1}{2} \sin x$
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.linspace(-10, 10, 1000)
+y = np.sin(x)
+y2 = np.sin(2*x)
+y3 = np.sin(x/2)
+y4 = 2*np.sin(x)
+y5 = np.sin(x)/2
+
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.axhline(y=0, color='k')
+plt.axvline(x=0, color='k')
+plt.grid(True, which='both')
+
+plt.plot(x,y,color='black',label='y=sin(x)')
+plt.plot(x,y2,color='red',label='y=sin(2x)')
+plt.plot(x,y3,color='blue',label=r'y=sin($\frac{x}{2}$)')
+plt.plot(x,y4,color='green',label=r'y=2sin(x)')
+plt.plot(x,y5,color='orange',label=r'y=$\frac{1}{2}$sin(x) or (2y)=sin(x)')
+
+plt.title('Trasformation of Functions')
+plt.legend(shadow=True, loc=(-0.2, 1.05), handlelength=1.5, fontsize=8)
+plt.show()
+
+```
+
+#### Example
+
+* draw $x^2+y^2=1$, $\frac{x^2}{4}+\frac{y^2}{9}=1$, $(x-3)^2+(y-3)^2=1$, $\frac{(x-3)^2}{4}+\frac{(y-3)^2}{9}=1$
+
+```{python}
+
+# initialize x and y using radian
+# theta = np.linspace(0, 2*np.pi, 1000)
+# x = np.cos(theta)
+# y = np.sin(theta)
+
+# initialize x and y without using radian
+x = np.linspace(-1, 1, 1000)
+y1 = np.sqrt(1 - x*x)
+y2 = -np.sqrt(1 - x*x)
+
+fig, ax = plt.subplots()
+
+# unit circle
+ax.plot(x, y1, color='black', label=r'$x^2+y^2=1$')
+ax.plot(x, y2, color='black')
+ax.plot(0,0,'o',color='black', label='(0,0)')
+
+# unit circle translated by 2
+ax.plot(x+3, y1+3, color='red', label=r'$(x-3)^2+(y-3)^2=1$')
+ax.plot(x+3, y2+3, color='red')
+ax.plot(3,3,'o',color='red', label='(3,3)')
+
+# eplipse: a unit circle transformed by 2,3 in x, y
+ax.plot(2*x, 3*y1, color='blue', label=r'$\frac{x^2}{4}+\frac{y^2}{9}=1$')
+ax.plot(2*x, 3*y2, color='blue')
+ax.plot(0,-np.sqrt(9-4), 'o', color='blue', label=r'$F_1=(0,\sqrt{5}),F_2=(0,-\sqrt{5})$')
+ax.plot(0,np.sqrt(9-4), 'o', color='blue')
+
+# translated eplipse: a unit circle translated by 2 and transformed by 2,3 in x, y
+ax.plot(2*x+3, 3*y1+3, color='green', label=r'$\frac{(x-3)^2}{4}+\frac{(y-3)^2}{9}=1$')
+ax.plot(2*x+3, 3*y2+3, color='green')
+ax.plot(0+3,-np.sqrt(9-4)+3, 'o', color='green', label=r'$F_1=(3,\sqrt{5}+3),F_2=(3,-\sqrt{5}+3)$')
+ax.plot(0+3,np.sqrt(9-4)+3, 'o', color='green')
+
+# height/width=1
+ax.set_aspect(1)
+
+ax.set_xlim([-4, 7])
+ax.set_ylim([-4, 7])
+
+ax.grid(True)
+ax.set_title("Transformation of Functions")
+ax.set_xlabel("x-axis")
+ax.set_ylabel("y-axis")
+
+plt.legend(shadow=True, loc=(-0.5, 1.05), handlelength=1.5, fontsize=8)
+
+# show the plot
+plt.show()
+
+```
+
+* Try by yourself, using $y=\sin (\theta)$, $x=\cos (\theta)$, draw $x^2+y^2=1$, $\frac{x^2}{4}+\frac{y^2}{9}=1$, $(x-3)^2+(y-3)^2=1$, $\frac{(x-3)^2}{4}+\frac{(y-3)^2}{9}=1$
 
 ### Reflections
 
@@ -60,7 +178,81 @@ draw $y=\sin x$, $y=\sin 2x$, $y=\frac{1}{2} \sin x$
 * $-y=f(-x)$, reflect the graph of $y=f(x)$ about the origin on the 2D plain
 * $x=f(y)$, reflect the graph of $y=f(x)$ about the $y=x$
 
-draw $y=\sin x$, $y=\sin (-x)$, $y=-\sin x$, $-y=-\sin x$, $x=-\sin y$ 
+#### Example
+
+* draw $y=\sin x$, $y=\sin (-x)$, $y=-\sin x$, $-y=-\sin x$, $x=-\sin y$ 
+
+```{python}
+
+x = np.linspace(0, 2*np.pi, 1000)
+x1 = np.linspace(-2*np.pi, 2*np.pi, 1000)
+y = np.sin(x)
+
+fig, ax = plt.subplots()
+
+# unit circle
+ax.plot(x, y, color='black', label='$y=\sin (x)$')
+ax.plot(-x, y, color='blue', label='$y=\sin (-x)$')
+ax.plot(x, -y, color='green', label='$y=-\sin (x)$')
+ax.plot(-x, -y, color='orange', label='$-y=-\sin (x)$')
+ax.plot(x1,x1, color='red', label='$y=x$')
+ax.plot(np.sin(y),x, color='black', label='$y=sin^{-1}(x)$',linestyle='dashed')
+
+# height/width=1
+ax.set_aspect(1)
+
+ax.set_xlim([-7, 7])
+ax.set_ylim([-7, 7])
+
+ax.grid(True)
+ax.set_title("Reflection of Functions")
+ax.set_xlabel("x-axis")
+ax.set_ylabel("y-axis")
+plt.legend(shadow=True, loc=(-0.25, 1.05), handlelength=1.5, fontsize=8)
+# show the plot
+plt.show()
+
+```
+
+* Draw $S(x)=\frac{1}{1+e^{-x}}$
+
+
+```{python}
+
+x = np.linspace(-10, 10, 1000)
+y = 1/(1+np.exp(-x))
+
+fig, ax = plt.subplots()
+
+# unit circle
+ax.plot(x, y, color='black', label='$y=S(x)$')
+ax.plot(-x, y, color='blue', label='$y=S(-x)$')
+ax.plot(x, -y, color='green', label='$y=-S(x)$')
+ax.plot(-x, -y, color='orange', label='$-y=-S(x)$')
+ax.plot(x,x, color='red', label='$y=x$')
+ax.plot(np.sin(y),x, color='black', label='$y=S^{-1}(x)$',linestyle='dashed')
+
+# height/width=1
+ax.set_aspect(1)
+
+ax.set_xlim([-3, 3])
+ax.set_ylim([-3, 3])
+
+ax.grid(True)
+ax.set_title("Reflection of Functions")
+ax.set_xlabel("x-axis")
+ax.set_ylabel("y-axis")
+plt.legend(shadow=True, loc=(-0.25, 1.05), handlelength=1.5, fontsize=8)
+# show the plot
+plt.show()
+
+```
+
+## Thinking About ...
+
+* Transformation in Statistics?
+* Transformation in Linear Algebra?
+* Transformation in Machine Learning?
 
 </div>
 
@@ -80,6 +272,33 @@ Thanslations are about vertical and horizontal sifts. To be more sepecific, if $
 
 draw $y=x$, $y=(x-3)$, $y=x-3$, $y=(x+3)$, $y=x+3$
 
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+
+x = np.linspace(-10, 10, 1000)
+y = x
+y2 = x-3
+y3 = x+3
+
+
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.axhline(y=0, color='k')
+plt.axvline(x=0, color='k')
+plt.grid(True, which='both')
+
+plt.plot(x,y,color='black',label='y=x')
+plt.plot(x,y2,color='red',label='y=(x-3) or (y+3)=x')
+plt.plot(x,y3,color='blue',label='y=(x+3) or (y-3)=x')
+
+plt.title('Traslation of Functions')
+plt.legend()
+plt.show()
+
+```
+
 ### Transformations
 
 There are largely two types of transofrmations of functions: stretching and reflecting. To be more sepecific, if $c$ is larger than 1, then
@@ -89,7 +308,98 @@ There are largely two types of transofrmations of functions: stretching and refl
 * $y=f(cx)$, shrink the graph of $y=f(x)$ horizontally by a factor of $c$
 * $y=f(\frac{x}{c})$, stretch the graph of $y=f(x)$ horizontally by a factor of $c$
 
+#### Example 
+
 draw $y=\sin x$, $y=\sin 2x$, $y=\frac{1}{2} \sin x$
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.linspace(-10, 10, 1000)
+y = np.sin(x)
+y2 = np.sin(2*x)
+y3 = np.sin(x/2)
+y4 = 2*np.sin(x)
+y5 = np.sin(x)/2
+
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.axhline(y=0, color='k')
+plt.axvline(x=0, color='k')
+plt.grid(True, which='both')
+
+plt.plot(x,y,color='black',label='y=sin(x)')
+plt.plot(x,y2,color='red',label='y=sin(2x)')
+plt.plot(x,y3,color='blue',label=r'y=sin($\frac{x}{2}$)')
+plt.plot(x,y4,color='green',label=r'y=2sin(x)')
+plt.plot(x,y5,color='orange',label=r'y=$\frac{1}{2}$sin(x) or (2y)=sin(x)')
+
+plt.title('Trasformation of Functions')
+plt.legend(shadow=True, loc=(-0.2, 1.05), handlelength=1.5, fontsize=8)
+plt.show()
+
+```
+
+#### Example
+
+* draw $x^2+y^2=1$, $\frac{x^2}{4}+\frac{y^2}{9}=1$, $(x-3)^2+(y-3)^2=1$, $\frac{(x-3)^2}{4}+\frac{(y-3)^2}{9}=1$
+
+```{python}
+
+# initialize x and y using radian
+# theta = np.linspace(0, 2*np.pi, 1000)
+# x = np.cos(theta)
+# y = np.sin(theta)
+
+# initialize x and y without using radian
+x = np.linspace(-1, 1, 1000)
+y1 = np.sqrt(1 - x*x)
+y2 = -np.sqrt(1 - x*x)
+
+fig, ax = plt.subplots()
+
+# unit circle
+ax.plot(x, y1, color='black', label=r'$x^2+y^2=1$')
+ax.plot(x, y2, color='black')
+ax.plot(0,0,'o',color='black', label='(0,0)')
+
+# unit circle translated by 2
+ax.plot(x+3, y1+3, color='red', label=r'$(x-3)^2+(y-3)^2=1$')
+ax.plot(x+3, y2+3, color='red')
+ax.plot(3,3,'o',color='red', label='(3,3)')
+
+# eplipse: a unit circle transformed by 2,3 in x, y
+ax.plot(2*x, 3*y1, color='blue', label=r'$\frac{x^2}{4}+\frac{y^2}{9}=1$')
+ax.plot(2*x, 3*y2, color='blue')
+ax.plot(0,-np.sqrt(9-4), 'o', color='blue', label=r'$F_1=(0,\sqrt{5}),F_2=(0,-\sqrt{5})$')
+ax.plot(0,np.sqrt(9-4), 'o', color='blue')
+
+# translated eplipse: a unit circle translated by 2 and transformed by 2,3 in x, y
+ax.plot(2*x+3, 3*y1+3, color='green', label=r'$\frac{(x-3)^2}{4}+\frac{(y-3)^2}{9}=1$')
+ax.plot(2*x+3, 3*y2+3, color='green')
+ax.plot(0+3,-np.sqrt(9-4)+3, 'o', color='green', label=r'$F_1=(3,\sqrt{5}+3),F_2=(3,-\sqrt{5}+3)$')
+ax.plot(0+3,np.sqrt(9-4)+3, 'o', color='green')
+
+# height/width=1
+ax.set_aspect(1)
+
+ax.set_xlim([-4, 7])
+ax.set_ylim([-4, 7])
+
+ax.grid(True)
+ax.set_title("Transformation of Functions")
+ax.set_xlabel("x-axis")
+ax.set_ylabel("y-axis")
+
+plt.legend(shadow=True, loc=(-0.5, 1.05), handlelength=1.5, fontsize=8)
+
+# show the plot
+plt.show()
+
+```
+
+* Try by yourself, using $y=\sin (\theta)$, $x=\cos (\theta)$, draw $x^2+y^2=1$, $\frac{x^2}{4}+\frac{y^2}{9}=1$, $(x-3)^2+(y-3)^2=1$, $\frac{(x-3)^2}{4}+\frac{(y-3)^2}{9}=1$
 
 ### Reflections
 
@@ -98,8 +408,140 @@ draw $y=\sin x$, $y=\sin 2x$, $y=\frac{1}{2} \sin x$
 * $-y=f(-x)$, reflect the graph of $y=f(x)$ about the origin on the 2D plain
 * $x=f(y)$, reflect the graph of $y=f(x)$ about the $y=x$
 
-draw $y=\sin x$, $y=\sin (-x)$, $y=-\sin x$, $-y=-\sin x$, $x=-\sin y$ 
+#### Example
 
+* draw $y=\sin x$, $y=\sin (-x)$, $y=-\sin x$, $-y=-\sin x$, $x=-\sin y$ 
+
+```{python}
+
+x = np.linspace(0, 2*np.pi, 1000)
+x1 = np.linspace(-2*np.pi, 2*np.pi, 1000)
+y = np.sin(x)
+
+fig, ax = plt.subplots()
+
+# unit circle
+ax.plot(x, y, color='black', label='$y=\sin (x)$')
+ax.plot(-x, y, color='blue', label='$y=\sin (-x)$')
+ax.plot(x, -y, color='green', label='$y=-\sin (x)$')
+ax.plot(-x, -y, color='orange', label='$-y=-\sin (x)$')
+ax.plot(x1,x1, color='red', label='$y=x$')
+ax.plot(np.sin(y),x, color='black', label='$y=sin^{-1}(x)$',linestyle='dashed')
+
+# height/width=1
+ax.set_aspect(1)
+
+ax.set_xlim([-7, 7])
+ax.set_ylim([-7, 7])
+
+ax.grid(True)
+ax.set_title("Reflection of Functions")
+ax.set_xlabel("x-axis")
+ax.set_ylabel("y-axis")
+plt.legend(shadow=True, loc=(-0.25, 1.05), handlelength=1.5, fontsize=8)
+# show the plot
+plt.show()
+
+```
+
+* Draw $S(x)=\frac{1}{1+e^{-x}}$
+
+
+```{python}
+
+x = np.linspace(-10, 10, 1000)
+y = 1/(1+np.exp(-x))
+
+fig, ax = plt.subplots()
+
+# unit circle
+ax.plot(x, y, color='black', label='$y=S(x)$')
+ax.plot(-x, y, color='blue', label='$y=S(-x)$')
+ax.plot(x, -y, color='green', label='$y=-S(x)$')
+ax.plot(-x, -y, color='orange', label='$-y=-S(x)$')
+ax.plot(x,x, color='red', label='$y=x$')
+ax.plot(np.sin(y),x, color='black', label='$y=S^{-1}(x)$',linestyle='dashed')
+
+# height/width=1
+ax.set_aspect(1)
+
+ax.set_xlim([-3, 3])
+ax.set_ylim([-3, 3])
+
+ax.grid(True)
+ax.set_title("Reflection of Functions")
+ax.set_xlabel("x-axis")
+ax.set_ylabel("y-axis")
+plt.legend(shadow=True, loc=(-0.25, 1.05), handlelength=1.5, fontsize=8)
+# show the plot
+plt.show()
+
+```
+
+#### Application
+
+* Standardization
+
+$\frac{(x-3)^2}{4}+\frac{(y-3)^2}{9}=1$
+
+```{python}
+fig = plt.figure(figsize=(7, 7))
+ax = fig.add_subplot(1, 1, 1)
+
+x1 = np.linspace(-100, 100, 1000)
+x1 = (x1 + 3)*10
+x2 = np.linspace(-100, 100, 1000)
+x1, x2 = np.meshgrid(x1, x2)
+y = 2*(x2 - x1**2)**2 + (2-x1)**2
+#y= 50*(x2 - x1**2)**2 + (2-x1)**2
+
+contours = ax.contour(x1, x2, y, levels=[200, 400, 800],  colors='k', 
+            linestyles=['solid','dashed', 'dotted'])
+
+ax.clabel(contours, contours.levels, fmt="%d", inline=True, fontsize=10)
+
+ax.set_xlabel(r'$x_1$', fontsize=20)
+ax.set_ylabel(r'$x_2$', fontsize=20)
+ 
+ax.set_xlim([-10, 20])
+ax.set_ylim([-10, 100])
+
+plt.show()
+
+```
+
+* Standard Normal Distribution
+
+```{python}
+
+# Generate some random data
+data = np.random.normal(size=1000)
+
+# Define the range of values to evaluate the PDF
+x = np.linspace(data.min(), data.max(), 1000)
+
+# Define the bandwidth of the kernel
+bandwidth = 0.2
+
+# Calculate the kernel density estimate at each point in the range
+pdf = np.zeros_like(x)
+for i, xi in enumerate(x):
+    pdf[i] = np.sum(np.exp(-0.5*((xi - data)/bandwidth)**2)) / (bandwidth * np.sqrt(2*np.pi))
+
+# Plot the data and PDF
+plt.hist(data, density=True, alpha=0.5)
+plt.plot(x, pdf)
+plt.show()
+
+
+
+```
+
+## Thinking About ...
+
+* Transformation in Statistics?
+* Transformation in Linear Algebra?
+* Transformation in Machine Learning?
 
 </div>
 

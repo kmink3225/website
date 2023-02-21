@@ -43,10 +43,8 @@ Thanslations are about vertical and horizontal sifts. To be more sepecific, if $
 draw $y=x$, $y=(x-3)$, $y=x-3$, $y=(x+3)$, $y=x+3$
 
 ```{python}
-
 import numpy as np
 import matplotlib.pyplot as plt
-np.random.seed(20230218)
 
 x = np.linspace(-10, 10, 1000)
 y = x
@@ -84,8 +82,6 @@ There are largely two types of transofrmations of functions: stretching and refl
 draw $y=\sin x$, $y=\sin 2x$, $y=\frac{1}{2} \sin x$
 
 ```{python}
-import numpy as np
-import matplotlib.pyplot as plt
 
 x = np.linspace(-10, 10, 1000)
 y = np.sin(x)
@@ -170,7 +166,7 @@ plt.show()
 
 ```
 
-* Try by yourself, using $y=\sin (\theta)$, $x=\cos (\theta)$, draw $x^2+y^2=1$, $\frac{x^2}{4}+\frac{y^2}{9}=1$, $(x-3)^2+(y-3)^2=1$, $\frac{(x-3)^2}{4}+\frac{(y-3)^2}{9}=1$
+* Try using $y=\sin (\theta)$, $x=\cos (\theta)$, by yourself, to draw $x^2+y^2=1$, $\frac{x^2}{4}+\frac{y^2}{9}=1$, $(x-3)^2+(y-3)^2=1$, $\frac{(x-3)^2}{4}+\frac{(y-3)^2}{9}=1$
 
 ### Reflections
 
@@ -249,59 +245,95 @@ plt.show()
 
 ```
 
+#### Application: Standardization
+
+* Distribution of Raw Data
 
 ```{python}
-#| eval: false
 
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import StandardScaler
+data1 = np.random.normal(loc=5,scale=6.0,size=1000) #loc=mean, scale=sd
+data2 = np.random.normal(loc=-4,scale=2.0,size=1000)
+data3 = np.random.normal(loc=-7,scale=2.5,size=1000)
+data4 = np.random.normal(loc=0,scale=1.0,size=1000)
 
-X = np.random.randn(100, 2)
-y = (X[:,0] + X[:,1] > 0).astype(int)
+# the range of values to evaluate the PDF
+x = np.linspace(data2.min(), data1.max(), 10000)
 
+bins_number=100
 
-reg1 = LogisticRegression(penalty='none').fit(X, y)
+# Plot the data and PDF
+plt.hist(data1, density=True, color="red", alpha=0.5, bins=bins_number,label=r'$X \sim N(5,6^2)$')
+plt.hist(data2, density=True, color="green", alpha=0.5, bins=bins_number,label=r'$X \sim N(-4,2^2)$')
+plt.hist(data3, density=True, color="blue", alpha=0.5, bins=bins_number,label=r'$X \sim N(-7,2.5^2)$')
+plt.hist(data4, density=True, color="black", alpha=0.5, bins=bins_number,label=r'$X \sim N(0,1)$')
 
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-reg2 = LogisticRegression(penalty='none').fit(X_scaled, y)
-
-xmin, xmax = X[:,0].min() - 1, X[:,0].max() + 1
-ymin, ymax = X[:,1].min() - 1, X[:,1].max() + 1
-xx, yy = np.meshgrid(np.linspace(xmin, xmax, 100), np.linspace(ymin, ymax, 100))
-grid = np.c_[xx.ravel(), yy.ravel()]
-
-
-Z1 = reg1.predict(grid).reshape(xx.shape)
-Z2 = reg2.predict(scaler.transform(grid)).reshape(xx.shape)
-
-
-fig, ax = plt.subplots(ncols=2, figsize=(10, 4))
-
-ax[0].contourf(xx, yy, Z1, cmap=plt.cm.RdBu_r, alpha=0.5)
-ax[0].scatter(X[:,0], X[:,1], c=y, cmap=plt.cm.RdBu_r, edgecolor='k')
-ax[0].set_title("Logistic regression without scaling")
-
-ax[1].contourf(xx, yy, Z2, cmap=plt.cm.RdBu_r, alpha=0.5)
-ax[1].scatter(X[:,0], X[:,1], c=y, cmap=plt.cm.RdBu_r, edgecolor='k')
-ax[1].set_title("Logistic regression with scaling")
-
+plt.legend(shadow=True, loc=(-0.25, 1.05), handlelength=1.5, fontsize=8)
+plt.title("Distribution of Raw Data")
 plt.show()
-
 
 ```
 
+* Distribution of Translated Raw Data
+
+```{python}
+
+# Plot the data and PDF
+plt.hist(data1-data1.mean(), density=True, color="red", alpha=0.5, bins=bins_number,label=r'$X \sim N(5-5,6^2)$')
+plt.hist(data2-data2.mean(), density=True, color="green", alpha=0.5, bins=bins_number,label=r'$X \sim N(-4-(-4),2^2)$')
+plt.hist(data3-data3.mean(), density=True, color="blue", alpha=0.5, bins=bins_number,label=r'$X \sim N(-7-(-7),2.5^2)$')
+plt.hist(data4-data4.mean(), density=True, color="black", alpha=0.5, bins=bins_number,label=r'$X \sim N(0-0,1)$')
+
+plt.legend(shadow=True, loc=(-0.25, 1.05), handlelength=1.5, fontsize=8)
+plt.title("Distribution of Translated Raw Data")
+plt.show()
+
+```
+
+* Distribution of Transformed Raw Data
+
+```{python}
+
+# Plot the data and PDF
+plt.hist(data1/data1.std(), density=True, color="red", alpha=0.5, bins=bins_number,label=r'$X \sim N(5,6^2/6^2)$')
+plt.hist(data2/data2.std(), density=True, color="green", alpha=0.5, bins=bins_number,label=r'$X \sim N(-4,2^2/2^2)$')
+plt.hist(data3/data3.std(), density=True, color="blue", alpha=0.5, bins=bins_number,label=r'$X \sim N(-7,2.5^2/5^2)$')
+plt.hist(data4/data4.std(), density=True, color="black", alpha=0.5, bins=bins_number,label=r'$X \sim N(0,1/1)$')
+
+plt.legend(shadow=True, loc=(-0.25, 1.05), handlelength=1.5, fontsize=8)
+plt.title("Distribution of Transformed Raw Data")
+plt.show()
+
+```
+
+* Distribution of Standardized Raw Data
+
+```{python}
+
+# Plot the data and PDF
+plt.hist((data1-data1.mean())/data1.std(), density=True, color="red", alpha=0.5, bins=bins_number,label=r'$X \sim N(0,1)$')
+plt.hist((data2-data2.mean())/data2.std(), density=True, color="green", alpha=0.5, bins=bins_number,label=r'$X \sim N(0,1)$')
+plt.hist((data3-data3.mean())/data3.std(), density=True, color="blue", alpha=0.5, bins=bins_number,label=r'$X \sim N(0,1)$')
+plt.hist((data4-data4.mean())/data4.std(), density=True, color="black", alpha=0.5, bins=bins_number,label=r'$X \sim N(0,1)$')
+
+plt.legend(shadow=True, loc=(-0.25, 1.05), handlelength=1.5, fontsize=8)
+plt.title("Distribution of Standardized Raw Data")
+plt.show()
+
+```
+
+
+
 ## Thinking About ...
 
-* Transformation in Statistics?
-* Transformation in Linear Algebra?
-* Transformation in Machine Learning?
+* Transformation in Statistics? ex) transformation of random variable
+* Transformation in Linear Algebra? ex) linear transformation or linear mapping (transformation matrix) 
+* Transformation in Machine Learning? ex) scaling (min-max normalization or standardization) 
+
 
 </div>
 
 <div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
 ## Transformations of Functions
 
 ### Translations
@@ -439,7 +471,7 @@ plt.show()
 
 ```
 
-* Try by yourself, using $y=\sin (\theta)$, $x=\cos (\theta)$, draw $x^2+y^2=1$, $\frac{x^2}{4}+\frac{y^2}{9}=1$, $(x-3)^2+(y-3)^2=1$, $\frac{(x-3)^2}{4}+\frac{(y-3)^2}{9}=1$
+* Try using $y=\sin (\theta)$, $x=\cos (\theta)$, by yourself, to draw $x^2+y^2=1$, $\frac{x^2}{4}+\frac{y^2}{9}=1$, $(x-3)^2+(y-3)^2=1$, $\frac{(x-3)^2}{4}+\frac{(y-3)^2}{9}=1$
 
 ### Reflections
 
@@ -518,39 +550,9 @@ plt.show()
 
 ```
 
-#### Application
+#### Application: Standardization
 
-* Standardization
-
-$\frac{(x-3)^2}{4}+\frac{(y-3)^2}{9}=1$
-
-```{python}
-fig = plt.figure(figsize=(7, 7))
-ax = fig.add_subplot(1, 1, 1)
-
-x1 = np.linspace(-100, 100, 1000)
-x1 = (x1 + 3)*10
-x2 = np.linspace(-100, 100, 1000)
-x1, x2 = np.meshgrid(x1, x2)
-y = 2*(x2 - x1**2)**2 + (2-x1)**2
-#y= 50*(x2 - x1**2)**2 + (2-x1)**2
-
-contours = ax.contour(x1, x2, y, levels=[200, 400, 800],  colors='k', 
-            linestyles=['solid','dashed', 'dotted'])
-
-ax.clabel(contours, contours.levels, fmt="%d", inline=True, fontsize=10)
-
-ax.set_xlabel(r'$x_1$', fontsize=20)
-ax.set_ylabel(r'$x_2$', fontsize=20)
- 
-ax.set_xlim([-10, 20])
-ax.set_ylim([-10, 100])
-
-plt.show()
-
-```
-
-* Standard Normal Distribution
+* Distribution of Raw Data
 
 ```{python}
 
@@ -570,11 +572,60 @@ plt.hist(data2, density=True, color="green", alpha=0.5, bins=bins_number,label=r
 plt.hist(data3, density=True, color="blue", alpha=0.5, bins=bins_number,label=r'$X \sim N(-7,2.5^2)$')
 plt.hist(data4, density=True, color="black", alpha=0.5, bins=bins_number,label=r'$X \sim N(0,1)$')
 
-plt.legend()
+plt.legend(shadow=True, loc=(-0.25, 1.05), handlelength=1.5, fontsize=8)
+plt.title("Distribution of Raw Data")
 plt.show()
 
 ```
 
+* Distribution of Translated Raw Data
+
+```{python}
+
+# Plot the data and PDF
+plt.hist(data1-data1.mean(), density=True, color="red", alpha=0.5, bins=bins_number,label=r'$X \sim N(5-5,6^2)$')
+plt.hist(data2-data2.mean(), density=True, color="green", alpha=0.5, bins=bins_number,label=r'$X \sim N(-4-(-4),2^2)$')
+plt.hist(data3-data3.mean(), density=True, color="blue", alpha=0.5, bins=bins_number,label=r'$X \sim N(-7-(-7),2.5^2)$')
+plt.hist(data4-data4.mean(), density=True, color="black", alpha=0.5, bins=bins_number,label=r'$X \sim N(0-0,1)$')
+
+plt.legend(shadow=True, loc=(-0.25, 1.05), handlelength=1.5, fontsize=8)
+plt.title("Distribution of Translated Raw Data")
+plt.show()
+
+```
+
+* Distribution of Transformed Raw Data
+
+```{python}
+
+# Plot the data and PDF
+plt.hist(data1/data1.std(), density=True, color="red", alpha=0.5, bins=bins_number,label=r'$X \sim N(5,6^2/6^2)$')
+plt.hist(data2/data2.std(), density=True, color="green", alpha=0.5, bins=bins_number,label=r'$X \sim N(-4,2^2/2^2)$')
+plt.hist(data3/data3.std(), density=True, color="blue", alpha=0.5, bins=bins_number,label=r'$X \sim N(-7,2.5^2/5^2)$')
+plt.hist(data4/data4.std(), density=True, color="black", alpha=0.5, bins=bins_number,label=r'$X \sim N(0,1/1)$')
+
+plt.legend(shadow=True, loc=(-0.25, 1.05), handlelength=1.5, fontsize=8)
+plt.title("Distribution of Transformed Raw Data")
+plt.show()
+
+```
+
+
+* Distribution of Standardized Raw Data
+
+```{python}
+
+# Plot the data and PDF
+plt.hist((data1-data1.mean())/data1.std(), density=True, color="red", alpha=0.5, bins=bins_number,label=r'$X \sim N(0,1)$')
+plt.hist((data2-data2.mean())/data2.std(), density=True, color="green", alpha=0.5, bins=bins_number,label=r'$X \sim N(0,1)$')
+plt.hist((data3-data3.mean())/data3.std(), density=True, color="blue", alpha=0.5, bins=bins_number,label=r'$X \sim N(0,1)$')
+plt.hist((data4-data4.mean())/data4.std(), density=True, color="black", alpha=0.5, bins=bins_number,label=r'$X \sim N(0,1)$')
+
+plt.legend(shadow=True, loc=(-0.25, 1.05), handlelength=1.5, fontsize=8)
+plt.title("Distribution of Standardized Raw Data")
+plt.show()
+
+```
 
 ## Thinking About ...
 

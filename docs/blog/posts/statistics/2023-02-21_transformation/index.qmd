@@ -39,9 +39,9 @@ execute:
 
 ### Introduction
 
-확률 변수 2개 이상에 대한 확률 분포를 joint probability distribution (결합확률분포)라고 하는데 두 확률 변수 $X$ 와 $Y$ 의 관계에 대해서 규명해야 할 때가 있다. 예를 들어, X 와 Y의 높은 상관계수라든지 혹은 비선형적인 관계가 관찰될 때 그 관계가 수리적으로 모델링이 가능하고 한 확률 변수의 분포에 대한 정보를 알고있다면 미지의 다른 확률 변수의 분포가 추정가능해진다. 이 때 두 변수에 대한 관계 정도가 높으면 높을수록 추정이 쉬워진다.
+확률 변수 2개 이상에 대한 확률 분포를 joint probability distribution (결합확률분포)라고 하는데 두 확률 변수 $X$ 와 $Y$ 의 관계에 대해서 규명해야 할 때가 있다. 예를 들어, X 와 Y의 높은 상관계수라든지 또는 비선형적인 관계가 관찰될 때 그 관계가 수리적으로 모델링이 가능하고 한 확률 변수의 분포에 대한 정보를 알고있다면 미지의 다른 확률 변수의 분포가 추정가능해진다. 이 때 두 변수에 대한 관계 정도가 높으면 높을수록 추정이 쉬워진다.
 
-이번 블로그에서는 주어진 확률 변수 $X$ 에 대해서 $X$ 의 pmf 혹은 pdf $f_x(x)$ 를 알고있을 때 확률 변수에 $X$ 에 적절한 함수의 변환을 적용해 확률 변수 $Y$ 를 $Y=u(X)$ 라는 관계식이 정의 가능할 때 $Y$ 의 pdf를 구하는 방법에 집중한다. 후에 MGF (Momment Generating Function)에 응용될 수 있는 개념으로 잘 정리할 필요가 있다. 
+이번 블로그에서는 주어진 확률 변수 $X$ 에 대해서 $X$ 의 pmf 또는 pdf $f_x(x)$ 를 알고있을 때 확률 변수에 $X$ 에 적절한 함수의 변환을 적용해 확률 변수 $Y$ 를 $Y=u(X)$ 라는 관계식이 정의 가능할 때 $Y$ 의 pdf를 구하는 방법에 집중한다. 후에 MGF (Momment Generating Function)에 응용될 수 있는 개념으로 잘 정리할 필요가 있다. 
 
 ### Trnasformation of Discrete Random Variables
 
@@ -59,7 +59,7 @@ $$
 
 * When it is a One-to-One relation
 
-동전을 독립적으로 2번 던질 때, 확률 변수 $X$ 는 앞면이 나오는 수라고 했을 때, 확률 분포는 다음과 같다. 이 때 $Y=2x+1$ 라는 관계가 성립할 때 Y의 분포는 다음과 같다.
+동전을 독립적으로 2번 던질 때, 확률 변수 $X$ 는 앞면이 나오는 수라고 했을 때, 확률 분포는 다음과 같다. 이 때 $Y=2X+1$ 라는 관계가 성립할 때 $Y$ 의 분포는 다음과 같다.
 
 ::: {#tbl-panel layout-ncol=2}
 
@@ -80,7 +80,7 @@ Exmaple: Transformation of Discrete Random Variable (One to One)
 
 * When it is not a One-to-One relation
 
-동전을 독립적으로 2번 던질 때, 확률 변수 $X$ 는 앞면이 나오는 수가 짝수일 때, 확률 분포는 다음과 같다. 이 때 $Y=mod(X,2)$ 라는 관계가 성립할 때 Y의 분포는 다음과 같다.
+동전을 독립적으로 2번 던질 때, 확률 변수 $X$ 는 앞면이 나오는 수가 짝수일 때, 확률 분포는 다음과 같다. 이 때 $Y=mod(X,2)$ 라는 관계가 성립할 때 $Y$ 의 분포는 다음과 같다.
 
 ::: {#tbl-panel layout-ncol=2}
 
@@ -94,12 +94,29 @@ Exmaple: Transformation of Discrete Random Variable (One to One)
 |----------|:----:|:-----:|
 | $P_Y(Y=y)$| $\frac{2}{4}$ | $\frac{2}{4}$ |
 
-: Probability Distribution of $Y=2X+1$
+: Probability Distribution of $Y=mod(x,2)$
 
 Exmaple: Transformation of Discrete Random Variable (Not One to One)
 :::
 
 위의 예시와 같이 두 확률 변수가 one to one 관계일 때는 확률분포가 그대로 유지되어서 쉽게 변환된 확률 변수의 분포가 추정가능하지만 one to one 관계가 아닐 경우 확률 분포가 바뀌게 된다.
+
+* When it is not a One-to-One relation (another example)
+
+$X \sim Geometric(/frac{4}{5})$ 일 때 $X$ 의 확률분포 $f(x)=/frac{4}{5}(\frac{1}{5})^{(x-1)}$, $x=1,2,3 ...$ 가 기하분포일 때 $Y=X^2$ 의 확률분포는?
+
+$$
+\begin{aligned}
+  y&=u(x)=x^2 \\
+  x&=w(y)=\sqrt{y} \text{ } (x>0)\\
+  f_Y(y)&=f_X(w(y))=f_X(\sqrt{y})=\frac{4}{5}(\frac{1}{5}^{(\sqrt{y}-1)})\\
+  \therefore f_Y(y)&=
+  \begin{cases} 
+    \frac{4}{5}(\frac{1}{5}^{(\sqrt{y}-1)}) &\text{if} \text{  } y =1, 4, 9, ...\\
+     0 \text{  } & \text{otherwise}
+    \end{cases}
+\end{aligned}
+$$
 
 ### Trnasformation of Joint Discrete Random Variables
 
@@ -113,8 +130,48 @@ $$
 
 :::
 
+#### Example 
+
+* exmaple 1
+
+$X_1$ and $X_2$ 가 다음과 같은 multinomial distribution을 따를 때 
+$$
+f(x_1,x_2) = \binom{2}{x_1,x_2,2-x_1-x_2}\frac{1}{4}^{x_1}\frac{1}{3}^{x_2}\frac{5}{12}^{2-x_1-x_2} x_1=0,1,2, \space x_2=0,1,2, \space x_1+x_2\le 2
+$$
+
+$Y_1=X_1+X_2$ 와 $Y_2=X_1-X_2$ 의 결합 확률 분포를 구해라
+
+$$
+\begin{aligned}
+  y_1&=u_1(x_1,x_2)=x_1+x_2\\
+  y_2&=u_2(x_1,x_2)=x_1-x_2\\
+  x_1&=w_1(y_1,y_2)=\frac{y_1+y_2}{2}\\
+  x_2&=w_2(y_1,y_2)=\frac{y_1-y_2}{2}\\
+  f_Y(y_1,y_2)&=\binom{2}{\frac{y_1+y_2}{2},\frac{y_1-y_2}{2},2-y_1 }\frac{1}{4}^{\frac{y_1+y_2}{2}}\frac{5}{12}^{2-y_1} y_1=0,1,2, \space y_2=-2,-1,0,1,2
+\end{aligned}
+$$
 
 
+* exmaple 2
+
+$X_1$ 과 $X_2$ 의 결합확률분포가 다음과 같을 때 변환된 $Y_1=X_1+X_2$ 와 $Y_2=X_1X_2$ 의 결합확률 분포는?
+
+::: {#tbl-panel layout-ncol=2}
+
+| $(x_1,x_2)$|   (0, 0) |     (0, 1) | (1, 0) | (1, 1) |
+|----------|:----:|:-----:|:------:|:------:|
+| $f_X(x_1,x_2)$| $\frac{1}{4}$ | $\frac{1}{4}$ | $\frac{1}{4}$ | $\frac{1}{4}$ |
+
+: Probability Distribution of $X$
+
+| $(y_1,y_2)$|   (0, 0)| (1, 0) | (2, 1) |
+|----------|:----:|:-----:|:------:|:------:|
+| $f_Y(y_1,y_2)$| $\frac{1}{4}$ | $\frac{2}{4}$ | $\frac{1}{4}$ |
+
+: Probability Distribution of $Y$
+
+Exmaple: Transformation of Joint Discrete Random Variable (Not One to One)
+:::
 
 ### Trnasformation of Continuous Random Variables
 

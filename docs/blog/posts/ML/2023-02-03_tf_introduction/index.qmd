@@ -11,28 +11,27 @@ format:
   html:
     page-layout: full
     code-fold: true
-tbl-colwidths: [50,50]
 execute:
-  eval: false
+  warning: false
 ---
 
 ## Tensor Flow
 
-* pytorch 이전 까지 deep learning framework로 가장 많이 사용되었다.
-* 2020년 이후로 pytorch를 더 많이 사용하지만 여전히 많은 사람들이 사용중이다.
+* pytorch 이전 까지 deep learning을 위해 가장 많이 사용되었던 Framework
+* 2020년 이후로 pytorch를 더 많이 사용하지만 여전히 많은 사람들이 Tensor Flow 사용
 * 데이터 자료형으로 텐서(tensor) 객체를 사용
 * Tensorflow에서는 텐서(tensor)를 NumPy 배열처럼 사용할 수 있다.
 * GPU 사용 지원
 
-### <b>1) GPU 사용 여부 체크하기</b>
+### GPU 사용 여부 체크하기
 
-* GPU를 사용하면 텐서플로우에서 딥러닝 모델을 더욱 효과적으로 학습할 수 있다.
+* GPU를 사용하면 TensorFlow나 pytorch에서 딥러닝 모델을 효과적 구현 가능
 * 각 텐서(tensor)와 연산이 어떠한 장치에 할당되었는지 출력할 수 있다.
 
 ```{python}
 import tensorflow as tf
 # placement 함수: 각 텐서와 연산이 어떠한 장치에 할당되었는지 출력하기
-tf.debugging.set_log_device_placement(True)
+#tf.debugging.set_log_device_placement(True)
 
 # 텐서 생성
 a = tf.constant([
@@ -45,9 +44,9 @@ b = tf.constant([
 ])
 
 c = tf.matmul(a, b)
-print(c)
+print("matrix multiplication: ", c)
 
-tf.debugging.set_log_device_placement(False)
+#tf.debugging.set_log_device_placement(False)
 ```
 
 ```{python}
@@ -56,7 +55,7 @@ from tensorflow.python.client import device_lib
 device_lib.list_local_devices()
 ```
 
-### <b>2. 텐서 소개 및 생성 방법</b>
+### 텐서 소개 및 생성 방법
 
 * TensorFlow에서의 텐서(tensor)는 기능적으로 넘파이(NumPy)와 매우 유사하다.
 * 기본적으로 <b>다차원 배열</b>을 처리하기에 적합한 자료구조로 이해할 수 있다.
@@ -406,7 +405,7 @@ print(tf.squeeze(a).shape)         # 크기가 1인 차원을 모두 제거
 print(tf.squeeze(a, axis=3).shape) # 세번째 차원을 제거
 
 
-tf.squeeze(a, axis=1) # 제거하려는 차원의 크기가 1이 아닐 경우 오류 발생
+#tf.squeeze(a, axis=1) # 제거하려는 차원의 크기가 1이 아닐 경우 오류 발생
 ```
 
 ### 자동 미분과 기울기

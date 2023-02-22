@@ -3238,6 +3238,7 @@ Sorted: True
 
 
 
+<p>아직 GPU를 못잡았음 -&gt; Google Colab에서만 돌아감</p>
 <section id="pytorch-overview" class="level2">
 <h2 class="anchored" data-anchor-id="pytorch-overview">Pytorch Overview</h2>
 <ul>
@@ -3252,8 +3253,8 @@ Sorted: True
 <li>Google Colab에서는 <b>[런타임]</b> - <b>[런타임 유형 변경]</b>에서 <b>GPU를 선택</b>할 수 있다.</li>
 <li>Google Colab에선 pytoch가 내장되어 있기 때문에 따로 설치할 필요 없음</li>
 </ul>
-<section id="gpu-사용-여부-체크하기" class="level4">
-<h4 class="anchored" data-anchor-id="gpu-사용-여부-체크하기"><b>1) GPU 사용 여부 체크하기</b></h4>
+<section id="gpu-사용-여부-체크하기" class="level3">
+<h3 class="anchored" data-anchor-id="gpu-사용-여부-체크하기">GPU 사용 여부 체크하기</h3>
 <ul>
 <li>텐서간의 연산을 수행할 때, 기본적으로 <strong>두 텐서가 같은 장치</strong>에 있어야 한다.</li>
 <li>연산을 수행하는 텐서들을 모두 GPU에 올린 뒤에 연산을 수행한다.</li>
@@ -3266,20 +3267,22 @@ Sorted: True
 <div class="cell" data-execution_count="1">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="co" style="color: #5E5E5E;"># data initialization: 초기화된 데이터는 gpu에 있음</span></span>
-<span id="cb1-2">data <span class="op" style="color: #5E5E5E;">=</span> [</span>
-<span id="cb1-3">  [<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>],</span>
-<span id="cb1-4">  [<span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">4</span>]</span>
-<span id="cb1-5">]</span>
-<span id="cb1-6"></span>
-<span id="cb1-7">x <span class="op" style="color: #5E5E5E;">=</span> torch.tensor(data) <span class="co" style="color: #5E5E5E;"># list를 tensor 형태로 바꾸기. </span></span>
-<span id="cb1-8"><span class="bu" style="color: null;">print</span>(x.is_cuda)</span>
-<span id="cb1-9"></span>
-<span id="cb1-10">x <span class="op" style="color: #5E5E5E;">=</span> x.cuda() <span class="co" style="color: #5E5E5E;"># CPU -&gt; GPU로 옮기기</span></span>
-<span id="cb1-11"><span class="bu" style="color: null;">print</span>(x.is_cuda)</span>
-<span id="cb1-12"></span>
-<span id="cb1-13">x <span class="op" style="color: #5E5E5E;">=</span> x.cpu() <span class="co" style="color: #5E5E5E;"># GPU -&gt; CPU로 옮기기</span></span>
-<span id="cb1-14"><span class="bu" style="color: null;">print</span>(x.is_cuda)</span></code></pre></div>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;">import</span> torch</span>
+<span id="cb1-2"></span>
+<span id="cb1-3"><span class="co" style="color: #5E5E5E;"># data initialization: 초기화된 데이터는 gpu에 있음</span></span>
+<span id="cb1-4">data <span class="op" style="color: #5E5E5E;">=</span> [</span>
+<span id="cb1-5">  [<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>],</span>
+<span id="cb1-6">  [<span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">4</span>]</span>
+<span id="cb1-7">]</span>
+<span id="cb1-8"></span>
+<span id="cb1-9">x <span class="op" style="color: #5E5E5E;">=</span> torch.tensor(data) <span class="co" style="color: #5E5E5E;"># list를 tensor 형태로 바꾸기. </span></span>
+<span id="cb1-10"><span class="bu" style="color: null;">print</span>(x.is_cuda)</span>
+<span id="cb1-11"></span>
+<span id="cb1-12">x <span class="op" style="color: #5E5E5E;">=</span> x.cuda() <span class="co" style="color: #5E5E5E;"># CPU -&gt; GPU로 옮기기</span></span>
+<span id="cb1-13"><span class="bu" style="color: null;">print</span>(x.is_cuda)</span>
+<span id="cb1-14"></span>
+<span id="cb1-15">x <span class="op" style="color: #5E5E5E;">=</span> x.cpu() <span class="co" style="color: #5E5E5E;"># GPU -&gt; CPU로 옮기기</span></span>
+<span id="cb1-16"><span class="bu" style="color: null;">print</span>(x.is_cuda)</span></code></pre></div>
 </details>
 </div>
 <ul>

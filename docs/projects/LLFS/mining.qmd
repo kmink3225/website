@@ -39,61 +39,61 @@ format:
 #| echo: false
 
 # clear objects
-rm(list=ls())
+rm(list = ls())
 
 # setting datapath
-if(grepl('kkm',getwd())){
-    datapath="C:/Users/kkm/Desktop/projects/website/docs/"
-}else{
-    datapath="C:/Users/kmkim/Desktop/projects/website/docs/"
+if (grepl("kkm", getwd())) {
+    datapath <- "C:/Users/kkm/Desktop/projects/website/docs/"
+} else {
+    datapath <- "C:/Users/kmkim/Desktop/projects/website/docs/"
 }
 
 # load libraries
-if(!require(janitor)) install.packages("janitor") 
-if(!require(tidyverse)) install.packages("tidyverse") 
-if(!require(tidymodels)) install.packages("tidymodels") 
-if(!require(glmnet)) install.packages("glmnet") 
-if(!require(MASS)) install.packages("MASS") 
-if(!require(ggpubr)) install.packages("ggpubr") 
-if(!require(car)) install.packages("car") 
-if(!require(plotly)) install.packages("plotly") 
-if(!require(mixOmics)) install.packages("mixOmics") 
-#if(!require(reticulate)) install.packages("reticulate") 
+if (!require(janitor)) install.packages("janitor")
+if (!require(tidyverse)) install.packages("tidyverse")
+if (!require(tidymodels)) install.packages("tidymodels")
+if (!require(glmnet)) install.packages("glmnet")
+if (!require(MASS)) install.packages("MASS")
+if (!require(ggpubr)) install.packages("ggpubr")
+if (!require(car)) install.packages("car")
+if (!require(plotly)) install.packages("plotly")
+if (!require(mixOmics)) install.packages("mixOmics")
+# if(!require(reticulate)) install.packages("reticulate")
 library(janitor)
 library(tidyverse)
 library(tidymodels)
 library(glmnet)
 library(MASS)
-library(ggpubr) 
-library(car) 
+library(ggpubr)
+library(car)
 library(mixOmics)
 library(plotly)
-#library(reticulate)
+# library(reticulate)
 
 # set a seed number
-set.seed(20230223) 
+set.seed(20230223)
 
 # load functions
-source(paste0(datapath,"functions/R/functions.r"))
+source(paste0(datapath, "functions/R/functions.r"))
 
-knitr::opts_chunk$set(message=FALSE,warning=FALSE)
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
 
 # load simulation data
-simulated_data<-read_rds(paste0(datapath,"data/llfs_simulated_data.rds"))
-significant_metabolites<-read_rds(paste0(datapath,"data/llfs_fake_significant_metabolites.rds"))
+simulated_data <- read_rds(paste0(datapath, "data/llfs_simulated_data.rds"))
+significant_metabolites <- read_rds(paste0(datapath, "data/llfs_fake_significant_metabolites.rds"))
 # simple data pre-processing
-all_data<-
-    simulated_data%>%
+all_data <-
+    simulated_data %>%
     mutate(
-      outcome=factor(outcome,levels=c("negative","positive")),
-      sex=ifelse(sex==0,"man","woman"),
-      sex=factor(sex,levels=c("man","woman")),
-      genotype=factor(genotype,levels=c("e3","e2","e4"))
-      )
+        outcome = factor(outcome, levels = c("negative", "positive")),
+        sex = ifelse(sex == 0, "man", "woman"),
+        sex = factor(sex, levels = c("man", "woman")),
+        genotype = factor(genotype, levels = c("e3", "e2", "e4"))
+    )
 
 # rename metabolite variables
-predictor_size=1000
-names(all_data)[6:ncol(all_data)]<-paste0("meta",1:predictor_size)
+predictor_size <- 1000
+names(all_data)[6:ncol(all_data)] <- paste0("meta", 1:predictor_size)
 
 
 ```
@@ -103,111 +103,127 @@ names(all_data)[6:ncol(all_data)]<-paste0("meta",1:predictor_size)
 ### PCA (Principal Component Analysis)
 
 ```{r}
-metabolite_data <- all_data[,-c(1:5)]
-outcome_data <- all_data[,2]
+metabolite_data <- all_data[, -c(1:5)]
+outcome_data <- all_data[, 2]
 
 # normalize the metaoblites
-normalized_metabolite_data <- 
-  as.data.frame(lapply(metabolite_data, function(x)scale_function(vector=x,method="min-max")))
+normalized_metabolite_data <-
+    as.data.frame(lapply(metabolite_data, function(x) scale_function(vector = x, method = "min-max")))
 
 # extract the latent variables (PCs: Principal Components)
-pc_metabolites <- 
-  prcomp(normalized_metabolite_data)
+pc_metabolites <-
+    prcomp(normalized_metabolite_data)
 
-transformed_metabolites <- 
-  as.data.frame(pc_metabolites$x)%>%
-  janitor::clean_names()%>%
-  mutate(row_names=1:n())
+transformed_metabolites <-
+    as.data.frame(pc_metabolites$x) %>%
+    janitor::clean_names() %>%
+    mutate(row_names = 1:n())
 
-temp <- 
-  as.data.frame(pc_metabolites$rotation)%>%
-  janitor::clean_names()
-loadings_metabolites<-temp%>%  
-  mutate(
-    metabolites=rownames(.),
-    arrow_size_normalization=min(
-      (max(transformed_metabolites[,'pc1']) - min(transformed_metabolites[,'pc1'])/
-      (max(temp[,'pc1'])-min(temp[,'pc1']))),
-      (max(transformed_metabolites[,'pc2']) - min(transformed_metabolites[,'pc2'])/
-      (max(temp[,'pc2'])-min(temp[,'pc2']))),
-      (max(transformed_metabolites[,'pc3']) - min(transformed_metabolites[,'pc3'])/
-      (max(temp[,'pc3'])-min(temp[,'pc3'])))),
-    arrow_pc1=arrow_size_normalization*pc1,
-    arrow_pc2=arrow_size_normalization*pc2,
-    arrow_pc3=arrow_size_normalization*pc3
-  )
+temp <-
+    as.data.frame(pc_metabolites$rotation) %>%
+    janitor::clean_names()
+loadings_metabolites <- temp %>%
+    mutate(
+        metabolites = rownames(.),
+        arrow_size_normalization = min(
+            (max(transformed_metabolites[, "pc1"]) - min(transformed_metabolites[, "pc1"]) /
+                (max(temp[, "pc1"]) - min(temp[, "pc1"]))),
+            (max(transformed_metabolites[, "pc2"]) - min(transformed_metabolites[, "pc2"]) /
+                (max(temp[, "pc2"]) - min(temp[, "pc2"]))),
+            (max(transformed_metabolites[, "pc3"]) - min(transformed_metabolites[, "pc3"]) /
+                (max(temp[, "pc3"]) - min(temp[, "pc3"])))
+        ),
+        arrow_pc1 = arrow_size_normalization * pc1,
+        arrow_pc2 = arrow_size_normalization * pc2,
+        arrow_pc3 = arrow_size_normalization * pc3
+    )
 # arrow_size_normalization is a normalization factor that
 # ensures the variable loading arrows are scaled appropriately relative to the data points.
-# The min() function to find the smallest ratio between the range of the data points and 
-# the range of the variable loadings along each principal component axis (pc1, pc2, and pc3). 
-# The reason why I select the first 3 components is that 
+# The min() function to find the smallest ratio between the range of the data points and
+# the range of the variable loadings along each principal component axis (pc1, pc2, and pc3).
+# The reason why I select the first 3 components is that
 # '3' is the maximum dimension that can visualize the PCA results in 3d.
 
-outcome_transformed_metabolites <- 
-  transformed_metabolites%>%
-  mutate(outcome=outcome_data,
-  row_names=1:n())
+outcome_transformed_metabolites <-
+    transformed_metabolites %>%
+    mutate(
+        outcome = outcome_data,
+        row_names = 1:n()
+    )
 
 # total variance
-total_variance<-
-  data.frame(pc=1:500,
-  total_variance_explained=(pc_metabolites$sdev)^2/sum((pc_metabolites$sdev)^2))
+total_variance <-
+    data.frame(
+        pc = 1:500,
+        total_variance_explained = (pc_metabolites$sdev)^2 / sum((pc_metabolites$sdev)^2)
+    )
 
-ggplot(data=total_variance%>%filter(pc<21),
-  aes(x=pc,y=total_variance_explained,group=1))+
-  geom_point()+
-  geom_line()+
-  labs(title="Scree Plot, Total Variance Explained by 20 PCs")+
-  ylab("Total Variance Explained")+
-  xlab("Principal Components")
+ggplot(
+    data = total_variance %>% filter(pc < 21),
+    aes(x = pc, y = total_variance_explained, group = 1)
+) +
+    geom_point() +
+    geom_line() +
+    labs(title = "Scree Plot, Total Variance Explained by 20 PCs") +
+    ylab("Total Variance Explained") +
+    xlab("Principal Components")
 
 # 2D PCA Scatter Plots with PC1 and PC2
-ggplot(data=outcome_transformed_metabolites, 
-  aes(x=pc1, y=pc2,color=outcome)) +
-  geom_text(alpha=.5, size=3, aes(label=row_names))+
-  stat_ellipse(type='norm', level=.99) +
-  geom_hline(aes(yintercept=0),alpha=0.5, size=.1)+ 
-  geom_vline(aes(xintercept=0),alpha=0.5, size=.1)+
-  scale_color_manual(values=color_function(length(unique(outcome_transformed_metabolites$outcome))))+
-  labs(title = '2D Scatter Plot of the First 2 PCs Grouped by AD status')
+ggplot(
+    data = outcome_transformed_metabolites,
+    aes(x = pc1, y = pc2, color = outcome)
+) +
+    geom_text(alpha = .5, size = 3, aes(label = row_names)) +
+    stat_ellipse(type = "norm", level = .99) +
+    geom_hline(aes(yintercept = 0), alpha = 0.5, size = .1) +
+    geom_vline(aes(xintercept = 0), alpha = 0.5, size = .1) +
+    scale_color_manual(values = color_function(length(unique(outcome_transformed_metabolites$outcome)))) +
+    labs(title = "2D Scatter Plot of the First 2 PCs Grouped by AD status")
 
 # biplot
 
-ggplot(data=outcome_transformed_metabolites, aes(x=pc1, y=pc2,color=outcome))+ 
-  geom_text(alpha=.75, size=3, aes(label=row_names))+
-  geom_hline(aes(yintercept=0),alpha=0.5, size=.1)+ 
-  geom_vline(aes(xintercept=0),alpha=0.5, size=.1)+
-  coord_equal() + 
-  scale_color_manual(values=color_function(length(unique(outcome_transformed_metabolites$outcome))))+
-  geom_text(data=loadings_metabolites, aes(x=arrow_pc1, y=arrow_pc2, label=metabolites), 
-  alpha=0.5, size = 5, vjust=1, color="red")+
-  geom_segment(data=loadings_metabolites, aes(x=0, y=0, xend=arrow_pc1, yend=arrow_pc2), 
-  arrow=arrow(length=unit(0.5,"cm")), alpha=0.5, color="red")+
-  labs(title="Biplot, the Effect of Metabolites on Samples with Disease Status")+
-  ylab("PC2")+
-  xlab("PC1")
+ggplot(data = outcome_transformed_metabolites, aes(x = pc1, y = pc2, color = outcome)) +
+    geom_text(alpha = .75, size = 3, aes(label = row_names)) +
+    geom_hline(aes(yintercept = 0), alpha = 0.5, size = .1) +
+    geom_vline(aes(xintercept = 0), alpha = 0.5, size = .1) +
+    coord_equal() +
+    scale_color_manual(values = color_function(length(unique(outcome_transformed_metabolites$outcome)))) +
+    geom_text(
+        data = loadings_metabolites, aes(x = arrow_pc1, y = arrow_pc2, label = metabolites),
+        alpha = 0.5, size = 5, vjust = 1, color = "red"
+    ) +
+    geom_segment(
+        data = loadings_metabolites, aes(x = 0, y = 0, xend = arrow_pc1, yend = arrow_pc2),
+        arrow = arrow(length = unit(0.5, "cm")), alpha = 0.5, color = "red"
+    ) +
+    labs(title = "Biplot, the Effect of Metabolites on Samples with Disease Status") +
+    ylab("PC2") +
+    xlab("PC1")
 
-fig<-plot_ly(
-  x=~outcome_transformed_metabolites$pc1, 
-  y=~outcome_transformed_metabolites$pc2, 
-  z=~outcome_transformed_metabolites$pc3, type="scatter3d", mode="markers", color=~outcome_transformed_metabolites$outcome,
-  colors=color_function(2),
-  size=2)%>%
-  layout(
-    title = 'Effect of Metabolites on Samples with Disease Status in 3d',
-    scene = list(bgcolor = "#e5ecf6"),
-    xaxis = list(title = 'PC1'),
-    yaxis = list(title = 'PC2'),
-    zaxis = list(title = 'PC3')); fig
+fig <- plot_ly(
+    x = ~ outcome_transformed_metabolites$pc1,
+    y = ~ outcome_transformed_metabolites$pc2,
+    z = ~ outcome_transformed_metabolites$pc3, type = "scatter3d", mode = "markers", color = ~ outcome_transformed_metabolites$outcome,
+    colors = color_function(2),
+    size = 2
+) %>%
+    layout(
+        title = "Effect of Metabolites on Samples with Disease Status in 3d",
+        scene = list(bgcolor = "#e5ecf6"),
+        xaxis = list(title = "PC1"),
+        yaxis = list(title = "PC2"),
+        zaxis = list(title = "PC3")
+    )
+fig
 
-#for (i in nrow(loadings_metabolites)){
+# for (i in nrow(loadings_metabolites)){
 #  fig <- fig %>%
 #    add_segments(
 #      x = 0, xend = loadings_metabolites[i,'pc1'],
 #      y = 0, yend = loadings_metabolites[i,'pc2'],
-#      z = 0, yend = loadings_metabolites[i,'pc2'], 
-#      line = list(color = 'black'),inherit = FALSE, showlegend = FALSE) 
-#}
+#      z = 0, yend = loadings_metabolites[i,'pc2'],
+#      line = list(color = 'black'),inherit = FALSE, showlegend = FALSE)
+# }
 
 
 #
@@ -215,18 +231,18 @@ fig<-plot_ly(
 #    add_segments(
 #      x = 0, xend = loadings_metabolites$pc1,
 #      y = 0, yend = loadings_metabolites$pc2,
-#      z = 0, yend = loadings_metabolites$pc3, 
-#      line = list(color = 'red'),inherit = FALSE, showlegend = FALSE) 
-#    
+#      z = 0, yend = loadings_metabolites$pc3,
+#      line = list(color = 'red'),inherit = FALSE, showlegend = FALSE)
+#
 #    add_annotations(
-#      x=loadings_metabolites$pc1, 
-#      y=loadings_metabolites$pc2, 
-#      z=loadings_metabolites$pc3, ax = 0, ay = 0, text = loadings_metabolites$metabolites, 
+#      x=loadings_metabolites$pc1,
+#      y=loadings_metabolites$pc2,
+#      z=loadings_metabolites$pc3, ax = 0, ay = 0, text = loadings_metabolites$metabolites,
 #      xanchor = 'center', yanchor= 'bottom')
 #
-#plot_ly(x=loadings_metabolites$pc1, y=loadings_metabolites$pc2, z=loadings_metabolites$pc3, type="scatter3d", mode="markers", color='red')    
+# plot_ly(x=loadings_metabolites$pc1, y=loadings_metabolites$pc2, z=loadings_metabolites$pc3, type="scatter3d", mode="markers", color='red')
 #
-#loadings_metabolites%>%head()
+# loadings_metabolites%>%head()
 ```
 
 ### K-means Clustering
@@ -234,39 +250,39 @@ fig<-plot_ly(
 ```{r}
 
 # K means
-km_fit = kmeans(all_data[,-c(1:5)],centers = 2,iter.max = 300 )
+km_fit <- kmeans(all_data[, -c(1:5)], centers = 2, iter.max = 300)
 
 # "K-Means Clustering- Confusion matrix")
 # table(all_data[,1],km_fit$cluster)
 
-mat_avgss = matrix(nrow = 20, ncol = 2)
+mat_avgss <- matrix(nrow = 20, ncol = 2)
 
 # Average within the cluster sum of square
 print(paste("Avg. Within sum of squares"))
-for (i in (1:20)){
-  km_fit = kmeans(all_data[,-c(1:6)],centers = i,iter.max = 300 )
-  mean_km = mean(km_fit$withinss)
-  print(paste("K-Value",i,",Avg.within sum of squares",round(mean_km,2)))
-  mat_avgss[i,1] = i
-  mat_avgss[i,2] = mean_km
+for (i in (1:20)) {
+    km_fit <- kmeans(all_data[, -c(1:6)], centers = i, iter.max = 300)
+    mean_km <- mean(km_fit$withinss)
+    print(paste("K-Value", i, ",Avg.within sum of squares", round(mean_km, 2)))
+    mat_avgss[i, 1] <- i
+    mat_avgss[i, 2] <- mean_km
 }
 
-plot(mat_avgss[,1],mat_avgss[,2],type = 'o',xlab = "K_Value",ylab = "Avg. within sum of square")
+plot(mat_avgss[, 1], mat_avgss[, 2], type = "o", xlab = "K_Value", ylab = "Avg. within sum of square")
 title("Avg. within sum of squares vs. K-value")
 
 
-mat_varexp = matrix(nrow = 20, ncol = 2)
+mat_varexp <- matrix(nrow = 20, ncol = 2)
 # Percentage of Variance explained
 print(paste("Percent. variance explained"))
-for (i in (1:20)){
-  km_fit = kmeans(all_data[,-c(1:6)],centers = i,iter.max = 300 )
-  var_exp = km_fit$betweenss/km_fit$totss
-  print(paste("K-Value",i,",Percent var explained",round(var_exp,4)))
-  mat_varexp[i,1]=i
-  mat_varexp[i,2]=var_exp
+for (i in (1:20)) {
+    km_fit <- kmeans(all_data[, -c(1:6)], centers = i, iter.max = 300)
+    var_exp <- km_fit$betweenss / km_fit$totss
+    print(paste("K-Value", i, ",Percent var explained", round(var_exp, 4)))
+    mat_varexp[i, 1] <- i
+    mat_varexp[i, 2] <- var_exp
 }
 
-plot(mat_varexp[,1],mat_varexp[,2],type = 'o',xlab = "K_Value",ylab = "Percent Var explained")
+plot(mat_varexp[, 1], mat_varexp[, 2], type = "o", xlab = "K_Value", ylab = "Percent Var explained")
 title("Avg. within sum of squares vs. K-value")
 ```
 
@@ -276,30 +292,30 @@ title("Avg. within sum of squares vs. K-value")
 #| eval: false
 #| echo: false
 
-#SVD 
+# SVD
 library(svd)
 
-digits_data = read.csv("digitsdata.csv")
+digits_data <- read.csv("digitsdata.csv")
 
-remove_cols = c("target")
-x_data = digits_data[,!(names(digits_data) %in% remove_cols)]
-y_data = digits_data[,c("target")]
+remove_cols <- c("target")
+x_data <- digits_data[, !(names(digits_data) %in% remove_cols)]
+y_data <- digits_data[, c("target")]
 
 
 
-sv2 <- svd(x_data,nu=15)
+sv2 <- svd(x_data, nu = 15)
 
-sv_check = sv2$d
+sv_check <- sv2$d
 
 # Computing the square of the singular values, which can be thought of as the vector of matrix energy
 # in order to pick top singular values which preserve at least 80% of variance explained
-energy <- sv2$d ^ 2
-tot_varexp = data.frame(cumsum(energy) / sum(energy))
+energy <- sv2$d^2
+tot_varexp <- data.frame(cumsum(energy) / sum(energy))
 
-names(tot_varexp) = "cum_var_explained"
-tot_varexp$K_value = 1:nrow(tot_varexp)
+names(tot_varexp) <- "cum_var_explained"
+tot_varexp$K_value <- 1:nrow(tot_varexp)
 
-plot(tot_varexp[,2],tot_varexp[,1],type = 'o',xlab = "K_Value",ylab = "Prop. of Var Explained")
+plot(tot_varexp[, 2], tot_varexp[, 1], type = "o", xlab = "K_Value", ylab = "Prop. of Var Explained")
 title("SVD - Prop. of Var explained with K-value")
 
 
@@ -310,9 +326,10 @@ title("SVD - Prop. of Var explained with K-value")
 #| eval: false
 
 for (i in 1:p) {
- form = paste("lm(", paste0(var[i], collapse="+"), "~ . , data=as.data.frame(data) ) ")
- fit = eval(parse(text=form)); fit
- lm_result[i] = list(summary(fit))
+    form <- paste("lm(", paste0(var[i], collapse = "+"), "~ . , data=as.data.frame(data) ) ")
+    fit <- eval(parse(text = form))
+    fit
+    lm_result[i] <- list(summary(fit))
 }
 
 ```
@@ -329,4 +346,7 @@ for (i in 1:p) {
 
 
 </div>
+
+
+
 

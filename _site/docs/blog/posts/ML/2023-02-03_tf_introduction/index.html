@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.335">
+<meta name="generator" content="quarto-1.2.313">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -312,7 +312,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
  memory_limit: 268435456
  locality {
  }
- incarnation: 6340912646566651041
+ incarnation: 379260854129484694
  xla_global_id: -1]</code></pre>
 </div>
 </div>
@@ -498,8 +498,8 @@ array([[1., 1., 1.],
 </details>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>&lt;tf.Tensor: shape=(2, 2), dtype=float32, numpy=
-array([[0.5591178 , 0.3012141 ],
-       [0.05377734, 0.12353182]], dtype=float32)&gt;</code></pre>
+array([[0.9109676 , 0.42210162],
+       [0.0669024 , 0.5198258 ]], dtype=float32)&gt;</code></pre>
 </div>
 </div>
 </section>
@@ -805,10 +805,8 @@ tf.Tensor([3 3], shape=(2,), dtype=int64)</code></pre>
 <span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a><span class="co">#tf.squeeze(a, axis=1) # 제거하려는 차원의 크기가 1이 아닐 경우 오류 발생</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>original a shape:  (2, 4)</code></pre>
-</div>
-<div class="cell-output cell-output-stdout">
-<pre><code>add 0th dims:  (1, 2, 4)
+<pre><code>original a shape:  (2, 4)
+add 0th dims:  (1, 2, 4)
 add 3rd dims:  (1, 2, 4, 1)
 (2, 4)
 (1, 2, 4)</code></pre>
@@ -826,16 +824,16 @@ add 3rd dims:  (1, 2, 4, 1)
 <div class="cell" data-execution_count="21">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> tf.Variable([<span class="fl">3.0</span>, <span class="fl">4.0</span>])</span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> tf.Variable([<span class="fl">3.0</span>, <span class="fl">4.0</span>])</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># with 구문 안에서 진행되는 모든 연산들을 기록</span></span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  z <span class="op">=</span> x <span class="op">+</span> y</span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  loss <span class="op">=</span> tf.math.reduce_mean(z)</span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>dx <span class="op">=</span> tape.gradient(loss, x) <span class="co"># loss가 scalar이므로 계산 가능</span></span>
-<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dx)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> tf.Variable([<span class="fl">3.0</span>, <span class="fl">4.0</span>])</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> tf.Variable([<span class="fl">3.0</span>, <span class="fl">4.0</span>])</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co"># with 구문 안에서 진행되는 모든 연산들을 기록</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  z <span class="op">=</span> x <span class="op">+</span> y</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  loss <span class="op">=</span> tf.math.reduce_mean(z)</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>dx <span class="op">=</span> tape.gradient(loss, x) <span class="co"># loss가 scalar이므로 계산 가능</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dx)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>tf.Tensor([0.5 0.5], shape=(2,), dtype=float32)</code></pre>
@@ -845,14 +843,14 @@ add 3rd dims:  (1, 2, 4, 1)
 <div class="cell" data-execution_count="22">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> tf.linspace(<span class="op">-</span><span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">100</span>) <span class="co"># -10 ~ 10까지 100r개의 데이터 생성</span></span>
-<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</span>
-<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  tape.watch(x) <span class="co"># x에 대해 기울기를 측정할거니까 기록해줘</span></span>
-<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> tf.nn.sigmoid(x)</span>
-<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>dx <span class="op">=</span> tape.gradient(y, x)</span>
-<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dx)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> tf.linspace(<span class="op">-</span><span class="dv">10</span>, <span class="dv">10</span>, <span class="dv">100</span>) <span class="co"># -10 ~ 10까지 100r개의 데이터 생성</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> tf.GradientTape() <span class="im">as</span> tape:</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  tape.watch(x) <span class="co"># x에 대해 기울기를 측정할거니까 기록해줘</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> tf.nn.sigmoid(x)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>dx <span class="op">=</span> tape.gradient(y, x)</span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dx)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>tf.Tensor(
@@ -886,12 +884,12 @@ add 3rd dims:  (1, 2, 4, 1)
 <div class="cell" data-execution_count="23">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>plt.plot(x, y, <span class="st">'r'</span>, label<span class="op">=</span><span class="st">"y"</span>)</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>plt.plot(x, dx, <span class="st">'b--'</span>, label<span class="op">=</span><span class="st">"dy/dx"</span>)</span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>plt.plot(x, y, <span class="st">'r'</span>, label<span class="op">=</span><span class="st">"y"</span>)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>plt.plot(x, dx, <span class="st">'b--'</span>, label<span class="op">=</span><span class="st">"dy/dx"</span>)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <p><img src="index_files/figure-html/cell-24-output-1.png" width="571" height="411"></p>

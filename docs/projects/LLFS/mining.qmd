@@ -3,7 +3,7 @@ title: "Data Mining"
 subtitle: "Unsupervised Learning"
 description: "Data mining was performed to observe patterns of data in macroscopic observations or in the level of large data."
 author: Kwangmin Kim
-date: 2023-02-18
+date: 2023-02-25
 execute:
   warning: false
   message: false
@@ -14,6 +14,8 @@ format:
     number-sections: true
     page-layout: full
     code-fold: true
+    fig-width: 8
+    fig-height: 8
 ---
 
 
@@ -54,6 +56,7 @@ if(!require(glmnet)) install.packages("glmnet")
 if(!require(MASS)) install.packages("MASS") 
 if(!require(ggpubr)) install.packages("ggpubr") 
 if(!require(car)) install.packages("car") 
+if(!require(plotly)) install.packages("plotly") 
 if(!require(mixOmics)) install.packages("mixOmics") 
 #if(!require(reticulate)) install.packages("reticulate") 
 library(janitor)
@@ -64,6 +67,7 @@ library(MASS)
 library(ggpubr) 
 library(car) 
 library(mixOmics)
+library(plotly)
 #library(reticulate)
 
 # set a seed number
@@ -98,22 +102,6 @@ names(all_data)[6:ncol(all_data)]<-paste0("meta",1:predictor_size)
 
 ### PCA (Principal Component Analysis)
 
-* PCA using mixOmics
-```{r}
-#| eval: false
-#| echo: false
-
-X<-all_data[,-c(1:5)]
-X<-all_data[,-c(1:5)]%>%dplyr::select(all_of(significant_metabolites))
-result_pca<-mixOmics::pca(X)
-names(all_data)%>%head
-plotIndiv(result_pca,group=all_data[,'outcome'])
-plotIndiv(result_pca,group=all_data[,'outcome'])  # plot the samples
-plotVar(result_pca)    # plot the variables
-
-```
-
-* Basic Coding
 ```{r}
 metabolite_data <- all_data[,-c(1:5)]
 outcome_data <- all_data[,2]
@@ -124,77 +112,121 @@ normalized_metabolite_data <-
 
 # extract the latent variables (PCs: Principal Components)
 pc_metabolites <- 
-  prcomp(normalized_metabolite_data)%>%
-  janitor::clean_names()
+  prcomp(normalized_metabolite_data)
 
-loadings_metabolites <- 
-  as.data.frame(pc_metabolites$rotation)%>%
-  janitor::clean_names()
 transformed_metabolites <- 
   as.data.frame(pc_metabolites$x)%>%
-  janitor::clean_names()
+  janitor::clean_names()%>%
+  mutate(row_names=1:n())
 
+temp <- 
+  as.data.frame(pc_metabolites$rotation)%>%
+  janitor::clean_names()
+loadings_metabolites<-temp%>%  
+  mutate(
+    metabolites=rownames(.),
+    arrow_size_normalization=min(
+      (max(transformed_metabolites[,'pc1']) - min(transformed_metabolites[,'pc1'])/
+      (max(temp[,'pc1'])-min(temp[,'pc1']))),
+      (max(transformed_metabolites[,'pc2']) - min(transformed_metabolites[,'pc2'])/
+      (max(temp[,'pc2'])-min(temp[,'pc2']))),
+      (max(transformed_metabolites[,'pc3']) - min(transformed_metabolites[,'pc3'])/
+      (max(temp[,'pc3'])-min(temp[,'pc3'])))),
+    arrow_pc1=arrow_size_normalization*pc1,
+    arrow_pc2=arrow_size_normalization*pc2,
+    arrow_pc3=arrow_size_normalization*pc3
+  )
+# arrow_size_normalization is a normalization factor that
+# ensures the variable loading arrows are scaled appropriately relative to the data points.
+# The min() function to find the smallest ratio between the range of the data points and 
+# the range of the variable loadings along each principal component axis (pc1, pc2, and pc3). 
+# The reason why I select the first 3 components is that 
+# '3' is the maximum dimension that can visualize the PCA results in 3d.
 
 outcome_transformed_metabolites <- 
   transformed_metabolites%>%
-  mutate(outcome=outcome_data)
+  mutate(outcome=outcome_data,
+  row_names=1:n())
 
-ggplot(data=outcome_transformed_metabolites, aes(x=pc1, y=pc2)) +
-  geom_point(alpha=.3) +
+# total variance
+total_variance<-
+  data.frame(pc=1:500,
+  total_variance_explained=(pc_metabolites$sdev)^2/sum((pc_metabolites$sdev)^2))
+
+ggplot(data=total_variance%>%filter(pc<21),
+  aes(x=pc,y=total_variance_explained,group=1))+
+  geom_point()+
+  geom_line()+
+  labs(title="Scree Plot, Total Variance Explained by 20 PCs")+
+  ylab("Total Variance Explained")+
+  xlab("Principal Components")
+
+# 2D PCA Scatter Plots with PC1 and PC2
+ggplot(data=outcome_transformed_metabolites, 
+  aes(x=pc1, y=pc2,color=outcome)) +
+  geom_text(alpha=.5, size=3, aes(label=row_names))+
   stat_ellipse(type='norm', level=.99) +
-  geom_abline(intercept = 0, slope = loadings_metabolites[2,1]/loadings_metabolites[1,1]) +
-  geom_abline(intercept = 0, slope = loadings_metabolites[2,2]/loadings_metabolites[1,2]) +
+  geom_hline(aes(yintercept=0),alpha=0.5, size=.1)+ 
+  geom_vline(aes(xintercept=0),alpha=0.5, size=.1)+
+  scale_color_manual(values=color_function(length(unique(outcome_transformed_metabolites$outcome))))+
   labs(title = '2D Scatter Plot of the First 2 PCs Grouped by AD status')
 
-pr_components_df = data.frame(pr_components)
-pr_components_df = cbind(pr_components_df,digits_data$target)
-names(pr_components_df)[K_prcomps+1] = "target"
+# biplot
 
-out <- split( pr_components_df , f = pr_components_df$target )
-zero_df = out$`0`;one_df = out$`1`;two_df = out$`2`; three_df = out$`3`; four_df = out$`4`
-five_df = out$`5`;six_df = out$`6`;seven_df = out$`7`;eight_df = out$`8`;nine_df = out$`9`
+ggplot(data=outcome_transformed_metabolites, aes(x=pc1, y=pc2,color=outcome))+ 
+  geom_text(alpha=.75, size=3, aes(label=row_names))+
+  geom_hline(aes(yintercept=0),alpha=0.5, size=.1)+ 
+  geom_vline(aes(xintercept=0),alpha=0.5, size=.1)+
+  coord_equal() + 
+  scale_color_manual(values=color_function(length(unique(outcome_transformed_metabolites$outcome))))+
+  geom_text(data=loadings_metabolites, aes(x=arrow_pc1, y=arrow_pc2, label=metabolites), 
+  alpha=0.5, size = 5, vjust=1, color="red")+
+  geom_segment(data=loadings_metabolites, aes(x=0, y=0, xend=arrow_pc1, yend=arrow_pc2), 
+  arrow=arrow(length=unit(0.5,"cm")), alpha=0.5, color="red")+
+  labs(title="Biplot, the Effect of Metabolites on Samples with Disease Status")+
+  ylab("PC2")+
+  xlab("PC1")
+
+fig<-plot_ly(
+  x=~outcome_transformed_metabolites$pc1, 
+  y=~outcome_transformed_metabolites$pc2, 
+  z=~outcome_transformed_metabolites$pc3, type="scatter3d", mode="markers", color=~outcome_transformed_metabolites$outcome,
+  colors=color_function(2),
+  size=2)%>%
+  layout(
+    title = 'Effect of Metabolites on Samples with Disease Status in 3d',
+    scene = list(bgcolor = "#e5ecf6"),
+    xaxis = list(title = 'PC1'),
+    yaxis = list(title = 'PC2'),
+    zaxis = list(title = 'PC3')); fig
+
+#for (i in nrow(loadings_metabolites)){
+#  fig <- fig %>%
+#    add_segments(
+#      x = 0, xend = loadings_metabolites[i,'pc1'],
+#      y = 0, yend = loadings_metabolites[i,'pc2'],
+#      z = 0, yend = loadings_metabolites[i,'pc2'], 
+#      line = list(color = 'black'),inherit = FALSE, showlegend = FALSE) 
+#}
 
 
-
-# Plotting 2-dimensional PCA
-ggplot(pr_components_df, aes(x = PC1, y = PC2, color = factor(target,labels = c("zero","one","two",
-        "three","four","five","six","seven","eight","nine")))) + 
-        geom_point()+ggtitle("2-D PCA on Digits Data") +
-        labs(color = "Digtis")
-
-
-
-# 3- Dimensional PCA
-# Plotting 3-dimensional PCA
-K_prcomps = 3
-
-pr_components = pr_components_all[,1:K_prcomps]
-pr_components_df = data.frame(pr_components)
-pr_components_df = cbind(pr_components_df,digits_data$target)
-names(pr_components_df)[K_prcomps+1] = "target"
-
-pr_components_df$target = as.factor(pr_components_df$target)
-
-out <- split( pr_components_df , f = pr_components_df$target )
-zero_df = out$`0`;one_df = out$`1`;two_df = out$`2`; three_df = out$`3`; four_df = out$`4`
-five_df = out$`5`;six_df = out$`6`;seven_df = out$`7`;eight_df = out$`8`;nine_df = out$`9`
-
-library(scatterplot3d)
-
-colors <- c("darkred", "darkseagreen4", "deeppink4", "greenyellow", "orange"
-            , "navyblue", "red", "tan3", "steelblue1", "slateblue")
-colors <- colors[as.numeric(pr_components_df$target)]
-s3d = scatterplot3d(pr_components_df[,1:3], pch = 16, color=colors,
-              xlab = "PC1",ylab = "PC2",zlab = "PC3",col.grid="lightblue",main = "3-D PCA on Digits Data")
-legend(s3d$xyz.convert(3.1, 0.1, -3.5), pch = 16, yjust=0,
-       legend = levels(pr_components_df$target),col =colors,cex = 1.1,xjust = 0)
-       
-# Chosing number of Principal Components
-pr_var =pr_out$sdev ^2
-pr_totvar = pr_var/sum(pr_var)
-plot(cumsum(pr_totvar), xlab="Principal Component", ylab ="Cumilative Prop. of Var.",
-     ylim=c(0,1),type="b",main = "PCAs vs. Cum prop of Var Explained")
-
+#
+#    add_annotations(x=loadings[i, 1], y=loadings[i, 2], ax = 0, ay = 0,text = features[i], xanchor = 'center', yanchor= 'bottom')
+#    add_segments(
+#      x = 0, xend = loadings_metabolites$pc1,
+#      y = 0, yend = loadings_metabolites$pc2,
+#      z = 0, yend = loadings_metabolites$pc3, 
+#      line = list(color = 'red'),inherit = FALSE, showlegend = FALSE) 
+#    
+#    add_annotations(
+#      x=loadings_metabolites$pc1, 
+#      y=loadings_metabolites$pc2, 
+#      z=loadings_metabolites$pc3, ax = 0, ay = 0, text = loadings_metabolites$metabolites, 
+#      xanchor = 'center', yanchor= 'bottom')
+#
+#plot_ly(x=loadings_metabolites$pc1, y=loadings_metabolites$pc2, z=loadings_metabolites$pc3, type="scatter3d", mode="markers", color='red')    
+#
+#loadings_metabolites%>%head()
 ```
 
 ### K-means Clustering

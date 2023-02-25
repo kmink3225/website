@@ -177,21 +177,34 @@ if(grepl('kkm',getwd())){
 
 ### Package Loading and Option Settings
 ```{r}
+if(!require(janitor)) install.packages("janitor") 
+if(!require(tidyverse)) install.packages("tidyverse") 
+if(!require(tidymodels)) install.packages("tidymodels") 
+if(!require(glmnet)) install.packages("glmnet") 
+if(!require(MASS)) install.packages("MASS") 
+if(!require(ggpubr)) install.packages("ggpubr") 
+if(!require(car)) install.packages("car") 
+if(!require(mixOmics)) install.packages("mixOmics") 
+
+library(janitor)
 library(tidyverse)
 library(tidymodels)
 library(glmnet)
 library(MASS)
+library(ggpubr) 
+library(car) 
 library(mixOmics)
-set.seed(20230121) 
+set.seed(20230103) 
 knitr::opts_chunk$set(message=FALSE,warning=FALSE)
+
 ```
 
 ### Global Variables {#sec-global_variables}
 ```{r}
 # the number of samples
-sample_size <- 1000
+sample_size <- 500 #1000
 # the number of predictors
-predictor_size <- 5000
+predictor_size <- 1000 #5000
 # the number of groups
 group_size <- sample(6:10,1) # at least more than 6, the number of the genotypes
 # the number of predictors truly associated with a response variable
@@ -522,12 +535,24 @@ if(grepl('kkm',getwd())){
 
 ### Package Loading and Option Settings
 ```{r}
+if(!require(janitor)) install.packages("janitor") 
+if(!require(tidyverse)) install.packages("tidyverse") 
+if(!require(tidymodels)) install.packages("tidymodels") 
+if(!require(glmnet)) install.packages("glmnet") 
+if(!require(MASS)) install.packages("MASS") 
+if(!require(ggpubr)) install.packages("ggpubr") 
+if(!require(car)) install.packages("car") 
+if(!require(mixOmics)) install.packages("mixOmics") 
+
+library(janitor)
 library(tidyverse)
 library(tidymodels)
 library(glmnet)
 library(MASS)
+library(ggpubr) 
+library(car) 
 library(mixOmics)
-set.seed(20230121) # the date writing this
+set.seed(20230103) 
 knitr::opts_chunk$set(message=FALSE,warning=FALSE)
 ```
 
@@ -535,9 +560,9 @@ knitr::opts_chunk$set(message=FALSE,warning=FALSE)
 ```{r}
 
 # the number of samples
-sample_size <- 1000
+sample_size <- 500 #1000
 # the number of predictors
-predictor_size <- 5000
+predictor_size <- 1000 #5000
 # the number of groups
 group_size <- sample(6:10,1) # at least more than 6, the number of the genotypes
 # the number of predictors truly associated with a response variable
@@ -615,7 +640,7 @@ answer_list<-list(
 
 scale_function=function(vector=x,min=a,max=b,method="customized"){
     if(method=="min-max"){
-        result=(vector-min(vector))(max(vector)-min(vector))
+        result=(vector-min(vector))/(max(vector)-min(vector))
     }else if(method=="customized"){
         result=(max-min)*(vector-min(vector))/(max(vector)-min(vector))+min
     }else{

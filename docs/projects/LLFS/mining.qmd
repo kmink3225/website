@@ -109,34 +109,63 @@ outcome_data <- all_data[, 2]
 # normalize the metaoblites
 normalized_metabolite_data <-
     as.data.frame(lapply(metabolite_data, function(x) scale_function(vector = x, method = "min-max")))
+normalized_significant_metabolite_data<-
+    normalized_metabolite_data%>%
+    dplyr::select(all_of(significant_metabolites))
 
 # extract the latent variables (PCs: Principal Components)
 pc_metabolites <-
     prcomp(normalized_metabolite_data)
+pc_significant_metabolites <-
+    prcomp(normalized_significant_metabolite_data)
 
-transformed_metabolites <-
+# calculate scores
+scores <- 
     as.data.frame(pc_metabolites$x) %>%
+    janitor::clean_names() %>%
+    mutate(row_names = 1:n())
+significant_scores <- 
+    as.data.frame(pc_significant_metabolites$x) %>%
     janitor::clean_names() %>%
     mutate(row_names = 1:n())
 
 temp <-
     as.data.frame(pc_metabolites$rotation) %>%
     janitor::clean_names()
-loadings_metabolites <- temp %>%
+loadings <- temp %>%
     mutate(
         metabolites = rownames(.),
         arrow_size_normalization = min(
-            (max(transformed_metabolites[, "pc1"]) - min(transformed_metabolites[, "pc1"]) /
+            (max(scores[, "pc1"]) - min(scores[, "pc1"]) /
                 (max(temp[, "pc1"]) - min(temp[, "pc1"]))),
-            (max(transformed_metabolites[, "pc2"]) - min(transformed_metabolites[, "pc2"]) /
+            (max(scores[, "pc2"]) - min(scores[, "pc2"]) /
                 (max(temp[, "pc2"]) - min(temp[, "pc2"]))),
-            (max(transformed_metabolites[, "pc3"]) - min(transformed_metabolites[, "pc3"]) /
+            (max(scores[, "pc3"]) - min(scores[, "pc3"]) /
                 (max(temp[, "pc3"]) - min(temp[, "pc3"])))
         ),
         arrow_pc1 = arrow_size_normalization * pc1,
         arrow_pc2 = arrow_size_normalization * pc2,
         arrow_pc3 = arrow_size_normalization * pc3
     )
+
+temp <-
+    as.data.frame(pc_significant_metabolites$rotation) %>%
+    janitor::clean_names()
+significant_loadings <- temp %>%
+    mutate(
+        metabolites = rownames(.),
+        arrow_size_normalization = min(
+            (max(scores[, "pc1"]) - min(scores[, "pc1"]) /
+                (max(temp[, "pc1"]) - min(temp[, "pc1"]))),
+            (max(scores[, "pc2"]) - min(scores[, "pc2"]) /
+                (max(temp[, "pc2"]) - min(temp[, "pc2"]))),
+            (max(scores[, "pc3"]) - min(scores[, "pc3"]) /
+                (max(temp[, "pc3"]) - min(temp[, "pc3"])))
+        ),
+        arrow_pc1 = arrow_size_normalization * pc1,
+        arrow_pc2 = arrow_size_normalization * pc2,
+        arrow_pc3 = arrow_size_normalization * pc3
+    )    
 # arrow_size_normalization is a normalization factor that
 # ensures the variable loading arrows are scaled appropriately relative to the data points.
 # The min() function to find the smallest ratio between the range of the data points and
@@ -144,105 +173,134 @@ loadings_metabolites <- temp %>%
 # The reason why I select the first 3 components is that
 # '3' is the maximum dimension that can visualize the PCA results in 3d.
 
-outcome_transformed_metabolites <-
-    transformed_metabolites %>%
+outcome_scores <-
+    scores %>%
+    mutate(
+        outcome = outcome_data,
+        row_names = 1:n()
+    )
+outcome_significant_scores <-
+    significant_scores %>%
     mutate(
         outcome = outcome_data,
         row_names = 1:n()
     )
 
+
 # total variance
 total_variance <-
     data.frame(
-        pc = 1:500,
-        total_variance_explained = (pc_metabolites$sdev)^2 / sum((pc_metabolites$sdev)^2)
+        pc = 1:length(pc_metabolites$sdev),
+        pc_variance_proportion=summary(pc_metabolites)[['importance']]['Proportion of Variance',],
+        cumulative_proportion=summary(pc_metabolites)[['importance']]['Cumulative Proportion',]*100
+    )
+total_variance_significance <-
+    data.frame(
+        pc = 1:length(pc_significant_metabolites$sdev),
+        pc_variance_proportion=summary(pc_significant_metabolites)[['importance']]['Proportion of Variance',],
+        cumulative_proportion=summary(pc_significant_metabolites)[['importance']]['Cumulative Proportion',]*100
     )
 
-ggplot(
-    data = total_variance %>% filter(pc < 21),
-    aes(x = pc, y = total_variance_explained, group = 1)
-) +
-    geom_point() +
-    geom_line() +
-    labs(title = "Scree Plot, Total Variance Explained by 20 PCs") +
-    ylab("Total Variance Explained") +
-    xlab("Principal Components")
+scree_plot<-function(indata){
+    scree_plot1<-ggplot(
+        data = indata,
+        aes(x = pc, y = pc_variance_proportion, group = 1)) +
+        geom_point() +
+        geom_line() +
+        labs(title='',subtitle = paste0("Scree Plot, Total Variance(", 
+                            round(tail(indata,1)['cumulative_proportion'],3) ,
+                            "%)Explained by ", nrow(indata), " PCs")) +
+        ylab("Total Variance Explained") +
+        xlab("Principal Components")
+    scree_plot2<-ggplot(
+        data = indata%>%filter(pc<13),
+        aes(x = pc, y = pc_variance_proportion, group = 1)) +
+        geom_point() +
+        geom_line() +
+        labs(title='',subtitle = paste0("Scree Plot, Part of Variance(", 
+                            round(tail(indata%>%filter(pc<13),1)['cumulative_proportion'],3) ,
+                            "%)Explained by ", indata%>%filter(pc<13)%>%nrow ," PCs")) +
+        ylab("Total Variance Explained") +
+        xlab("Principal Components")    
+    return(ggarrange(scree_plot1,scree_plot2,nrow=1))
+}
+
+ggarrange(scree_plot(total_variance),scree_plot(total_variance_significance),
+            labels=c(paste0('All ',ncol(metabolite_data),' Metabolites'),
+                    paste0(length(significant_metabolites),' Significant Metabolites')),nrow=2)
+
 
 # 2D PCA Scatter Plots with PC1 and PC2
-ggplot(
-    data = outcome_transformed_metabolites,
-    aes(x = pc1, y = pc2, color = outcome)
-) +
+
+scatter_plot<-function(in_data){
+   p<- ggplot(data = in_data,
+    aes(x = pc1, y = pc2, color = outcome)) +
     geom_text(alpha = .5, size = 3, aes(label = row_names)) +
     stat_ellipse(type = "norm", level = .99) +
     geom_hline(aes(yintercept = 0), alpha = 0.5, size = .1) +
     geom_vline(aes(xintercept = 0), alpha = 0.5, size = .1) +
-    scale_color_manual(values = color_function(length(unique(outcome_transformed_metabolites$outcome)))) +
-    labs(title = "2D Scatter Plot of the First 2 PCs Grouped by AD status")
+    scale_color_manual(values = color_function(length(unique(in_data$outcome)))) +
+    labs(title = "2D Scatter Plot of the First 2 PCs Grouped by AD status",
+    subtitle=paste0(ncol(in_data)-2,' Metabolites'))
+    return(p)}
+
+ggarrange(scatter_plot(outcome_scores),
+    scatter_plot(outcome_significant_scores),nrow=2)
+
 
 # biplot
+bi_plot<-function(in_data){
+    p<-
+        ggplot(data = in_data, aes(x = pc1, y = pc2, color = outcome)) +
+        geom_text(alpha = .75, size = 3, aes(label = row_names)) +
+        geom_hline(aes(yintercept = 0), alpha = 0.5, size = .1) +
+        geom_vline(aes(xintercept = 0), alpha = 0.5, size = .1) +
+        coord_equal() +
+        scale_color_manual(values = color_function(length(unique(in_data$outcome)))) +
+        stat_ellipse(type = "norm", level = .99) +
+        geom_text(
+            data = loadings, aes(x = arrow_pc1, y = arrow_pc2, label = metabolites),
+            alpha = 0.5, size = 5, vjust = 1, color = "red") +
+        geom_segment(
+            data = loadings, aes(x = 0, y = 0, xend = arrow_pc1, yend = arrow_pc2),
+            arrow = arrow(length = unit(0.5, "cm")), alpha = 0.5, color = "red") +
+        labs(title = "Biplot, the Effect of Metabolites on Samples with Disease Status",
+        subtitle=paste0(ncol(in_data)-2,' Metabolites')) +
+        ylab("PC2") + xlab("PC1")
+    return(p)
+}
+ggarrange(bi_plot(outcome_scores),bi_plot(outcome_significant_scores),nrow=2)
 
-ggplot(data = outcome_transformed_metabolites, aes(x = pc1, y = pc2, color = outcome)) +
-    geom_text(alpha = .75, size = 3, aes(label = row_names)) +
-    geom_hline(aes(yintercept = 0), alpha = 0.5, size = .1) +
-    geom_vline(aes(xintercept = 0), alpha = 0.5, size = .1) +
-    coord_equal() +
-    scale_color_manual(values = color_function(length(unique(outcome_transformed_metabolites$outcome)))) +
-    geom_text(
-        data = loadings_metabolites, aes(x = arrow_pc1, y = arrow_pc2, label = metabolites),
-        alpha = 0.5, size = 5, vjust = 1, color = "red"
-    ) +
-    geom_segment(
-        data = loadings_metabolites, aes(x = 0, y = 0, xend = arrow_pc1, yend = arrow_pc2),
-        arrow = arrow(length = unit(0.5, "cm")), alpha = 0.5, color = "red"
-    ) +
-    labs(title = "Biplot, the Effect of Metabolites on Samples with Disease Status") +
-    ylab("PC2") +
-    xlab("PC1")
 
-fig <- plot_ly(
-    x = ~ outcome_transformed_metabolites$pc1,
-    y = ~ outcome_transformed_metabolites$pc2,
-    z = ~ outcome_transformed_metabolites$pc3, type = "scatter3d", mode = "markers", color = ~ outcome_transformed_metabolites$outcome,
+
+plot_ly(data=outcome_scores,
+    x = ~pc1, y = ~pc2, z = ~pc3, 
+    type = "scatter3d", mode = "markers", color = ~ outcome_scores$outcome,
     colors = color_function(2),
-    size = 2
-) %>%
+    size = 2) %>%
     layout(
-        title = "Effect of Metabolites on Samples with Disease Status in 3d",
-        scene = list(bgcolor = "#e5ecf6"),
-        xaxis = list(title = "PC1"),
-        yaxis = list(title = "PC2"),
-        zaxis = list(title = "PC3")
+        title = "Effect of 500 Metabolites on Samples with Disease Status in 3d",
+        scene = list(bgcolor = "#e5ecf6",
+                     xaxis = list(title='PC1'),
+                     yaxis = list(title = "PC2"),
+                     zaxis = list(title = "PC3")),
+        legend = list(title = list(text='Disease(AD) Status'))
     )
-fig
 
-# for (i in nrow(loadings_metabolites)){
-#  fig <- fig %>%
-#    add_segments(
-#      x = 0, xend = loadings_metabolites[i,'pc1'],
-#      y = 0, yend = loadings_metabolites[i,'pc2'],
-#      z = 0, yend = loadings_metabolites[i,'pc2'],
-#      line = list(color = 'black'),inherit = FALSE, showlegend = FALSE)
-# }
+plot_ly(data=outcome_significant_scores,
+    x = ~pc1, y = ~pc2, z = ~pc3, 
+    type = "scatter3d", mode = "markers", color = ~ outcome_scores$outcome,
+    colors = color_function(2),
+    size = 2) %>%
+    layout(
+        title = "Effect of 201 Metabolites on Samples with Disease Status in 3d",
+        scene = list(bgcolor = "#e5ecf6",
+                     xaxis = list(title='PC1'),
+                     yaxis = list(title = "PC2"),
+                     zaxis = list(title = "PC3")),
+        legend = list(title = list(text='Disease(AD) Status'))
+    )
 
-
-#
-#    add_annotations(x=loadings[i, 1], y=loadings[i, 2], ax = 0, ay = 0,text = features[i], xanchor = 'center', yanchor= 'bottom')
-#    add_segments(
-#      x = 0, xend = loadings_metabolites$pc1,
-#      y = 0, yend = loadings_metabolites$pc2,
-#      z = 0, yend = loadings_metabolites$pc3,
-#      line = list(color = 'red'),inherit = FALSE, showlegend = FALSE)
-#
-#    add_annotations(
-#      x=loadings_metabolites$pc1,
-#      y=loadings_metabolites$pc2,
-#      z=loadings_metabolites$pc3, ax = 0, ay = 0, text = loadings_metabolites$metabolites,
-#      xanchor = 'center', yanchor= 'bottom')
-#
-# plot_ly(x=loadings_metabolites$pc1, y=loadings_metabolites$pc2, z=loadings_metabolites$pc3, type="scatter3d", mode="markers", color='red')
-#
-# loadings_metabolites%>%head()
 ```
 
 ### K-means Clustering

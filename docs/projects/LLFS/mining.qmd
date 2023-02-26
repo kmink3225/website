@@ -56,6 +56,7 @@ if (!require(glmnet)) install.packages("glmnet")
 if (!require(MASS)) install.packages("MASS")
 if (!require(ggpubr)) install.packages("ggpubr")
 if (!require(car)) install.packages("car")
+if (!require(caret)) install.packages("caret")
 if (!require(plotly)) install.packages("plotly")
 if (!require(mixOmics)) install.packages("mixOmics")
 # if(!require(reticulate)) install.packages("reticulate")
@@ -66,6 +67,7 @@ library(glmnet)
 library(MASS)
 library(ggpubr)
 library(car)
+library(caret)
 library(mixOmics)
 library(plotly)
 # library(reticulate)
@@ -308,17 +310,45 @@ plot_ly(data=outcome_significant_scores,
 ```{r}
 
 # K means
-km_fit <- kmeans(all_data[, -c(1:5)], centers = 2, iter.max = 300)
+km_clustering <- kmeans(normalized_metabolite_data, centers = 2, iter.max = 300)
+km_significant_clustering <- kmeans(normalized_significant_metabolite_data, centers = 2, iter.max = 300)
 
-# "K-Means Clustering- Confusion matrix")
-# table(all_data[,1],km_fit$cluster)
+confusionMatrix(table(all_data[,2],ifelse(km_clustering$cluster==1,'negative','positive')))
+confusionMatrix(table(all_data[,2],ifelse(km_significant_clustering$cluster==1,'negative','positive')))
+
+outcome_pca_km<-outcome_scores%>%
+    mutate(km_clusters=km_clustering$cluster,
+         km_clusters=factor(km_clusters,levels=c(1,2)),
+         km_significant_clusters=km_significant_clustering$cluster,
+         km_significant_clusters=factor(km_significant_clusters,levels=c(1,2)))
+
+
+ggplot(data = outcome_pca_km,
+    aes(x = pc1, y = pc2, color = km_clusters)) +
+    geom_text(alpha = .5, size = 3, aes(label = row_names)) +
+    stat_ellipse(type = "norm", level = .99) +
+    geom_hline(aes(yintercept = 0), alpha = 0.5, size = .1) +
+    geom_vline(aes(xintercept = 0), alpha = 0.5, size = .1) +
+    scale_color_manual(values = color_function(2)) +
+    labs(title = "2D Scatter Plot of the First 2 PCs Grouped by K Mean Clusters, AD Status",
+    subtitle=paste0(ncol(outcome_scores)-2,' Metabolites'))
+
+ggplot(data = outcome_pca_km,
+    aes(x = pc1, y = pc2, color = km_significant_clusters)) +
+    geom_text(alpha = .5, size = 3, aes(label = row_names)) +
+    stat_ellipse(type = "norm", level = .99) +
+    geom_hline(aes(yintercept = 0), alpha = 0.5, size = .1) +
+    geom_vline(aes(xintercept = 0), alpha = 0.5, size = .1) +
+    scale_color_manual(values = color_function(2)) +
+    labs(title = "2D Scatter Plot of the First 2 PCs Grouped by K Mean Clusters, AD Status",
+    subtitle=paste0(ncol(outcome_significant_scores)-2,' Metabolites'))
 
 mat_avgss <- matrix(nrow = 20, ncol = 2)
 
 # Average within the cluster sum of square
-print(paste("Avg. Within sum of squares"))
+
 for (i in (1:20)) {
-    km_fit <- kmeans(all_data[, -c(1:6)], centers = i, iter.max = 300)
+    km_fit <- kmeans(normalized_metabolite_data, centers = i, iter.max = 300)
     mean_km <- mean(km_fit$withinss)
     print(paste("K-Value", i, ",Avg.within sum of squares", round(mean_km, 2)))
     mat_avgss[i, 1] <- i

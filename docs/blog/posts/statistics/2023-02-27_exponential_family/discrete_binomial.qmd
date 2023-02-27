@@ -1,0 +1,161 @@
+---
+title: Binomial Distribution
+subtitle: Exponential Family
+description: | 
+ 
+categories:
+  - Statistics
+author: Kwangmin Kim
+date: 02/27/2023
+draft: false
+format: 
+  html:
+    toc: true
+    number-sections: True
+    code-fold: true
+    page-layout: full
+execute: 
+  warning: false
+  message: false
+---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+
+
+
+## Binomial Distribution
+
+::: {#def-binomial}
+
+성공 확률이 p인 bernoulli distribution을 n 번 시행했을 때 성공횟수를 확률 변수 X로 갖는 probability distribution을 binomial distribution이라 한다.
+probability mass function은 
+
+즉, 
+$$
+\begin{aligned}
+  f_X(x;n,p)&=\binom{n}{x}p^{x}(1-p)^{n-x} \text{ } (y=0,1,2, ..., n)\\
+\end{aligned}
+$$ 
+이고 Notation은 보통 $X \sim Bin(n,p) \text{ or } X \sim B(n,p) \text{ or } X \sim Binomial(n,p)$ 와 같이 쓰인다 (binomial distribution은 bernoulli distribution을 전제로 한다). 
+
+:::
+
+
+### Expectation
+$$
+\begin{aligned}
+    \text{Let } &I_i \text{ be } 1\{x_i=1\} \\ 
+    X&=\sum_{i=1}^{n}I_i=I_1+I_2+ ... +I_n\\
+  \text{E}(X)&=\text{E}(\sum_{i=1}^{n}I_i)\\
+             &=\text{E}(I_1+I_2+ ... +I_n)\\
+             &=\text{E}(I_1)+\text{E}(I_2)+ ... +\text{E}(I_n)\\
+             &=p+p+...+p\\
+             &=np
+\end{aligned}
+$$ 
+
+
+### Variance
+$$
+\begin{aligned}
+  \text{Var}(X)&=\text{Var}(I_1+I_2+ ... +I_n)\\
+             &=\text{Var}(I_1)+\text{Var}(I_2)+ ... +\text{Var}(I_n)\\
+             &=p(1-p)+p(1-p)+...+p(1-p)\\
+             &=np(1-p)
+\end{aligned}
+$$ 
+
+### Example
+
+쌍란이 나올 확률이 0.05라고 가정했을 때 Super Market에서 1 pack of 12 eggs을 구매했을 때 
+
+*  3개의 eggs에서 쌍란이 나올 확률은
+$$
+\begin{aligned}
+    X&\sim Bin(12,0.05)\\
+    f(X=3)&=\binom{12}{3}0.05^3 0.95^9
+\end{aligned}
+$$
+이다.
+
+*  적어도 3개의 eggs에서 쌍란이 나올 확률은
+$$
+\begin{aligned}
+    P(X\ge3)&=1-F_X(3)\\
+            &=1-(f(X=3)+f(X=2)+f(X=1)+f(X=0))\\
+            &=1-(\binom{12}{3}0.05^3 0.95^9+\binom{12}{2}0.05^2 0.95^{10}+\\
+            &\binom{12}{1}0.05^1 0.95^{11}+\binom{12}{0}0.05^0 0.95^{12}\\
+\end{aligned}
+$$
+이다.
+
+
+다른 예시로는, 분자 진단 시장에서 golden standard라고 평가받는 PCR (Polynomial Chain Reaction)에 사용되는 medical device가 2000 대 중 5대 꼴로 기계적 결함이 발견된다고 가정할 때, 
+1년에 평균 100대의 분잔 진단 장비를 공급받는 구매자 입장에서 장비의 결함이 발생할 연간 평균과 분산의 추정은 다음과 같다.
+
+$$
+\begin{aligned}
+    X&\sim Bin(100,\frac{5}{2000})\\
+    f(X=x)&=\binom{100}{x}\frac{5}{2000}^x (1-\frac{5}{2000})^{100-x}\\
+    \text{E}(X)&=100(\frac{5}{2000})\\
+    \text{Var}(X)&=100(\frac{5}{2000})(1-\frac{5}{2000})
+\end{aligned}
+$$
+
+
+## Multinomial Distribution
+
+::: {#def-multinomial}
+
+n번의 독립 시행에서 각 각 p_1, p_2, ..., p_n 의 성공 확률로 E_1, E_2, ..., E_n 중 어느 하나를 발생시킬 때 각 event E_i에 대응되는 발생 횟수를 확률 변수 X_1, X_2, ..., X_n 로 갖는 joint probability mass function은 
+
+$$
+\begin{aligned}
+  f_X(\mathbf X = x_1,x_2, ...,x_n)&=\binom{n}{x_1,x_2, ..., x_n}p_1^{x_1}(p_2)^{x_2}\dots (p_n)^{x_n} \\ 
+\end{aligned}
+$$ 
+이다. (단, $\sum_{i=1}^{n}x_i=n, \sum_{i=1}^{n}p_i=1$) 
+
+:::
+
+### Example
+
+주사위를 5 번 던질 때 1 또는 6의 눈이 1번, 3, 4 또는 5의 눈이 2번 , 2의 눈이 2번 나올 확률은
+
+$$
+\begin{aligned}
+    &x_1= 1, x_2=2, x_3=2\\
+    f(X=(1,2,2))&=\binom{5}{1,2,3}\frac{1}{3}^1\frac{1}{2}^2\frac{1}{6}^2
+\end{aligned}
+$$
+이다.
+
+:::
+
+</div>
+
+
+## Blog Guide Map Link
+
+* [Statistics Blog](../guide_map/index.qmd)
+* [Engineering Blog](../../Engineering/guide_map/index.qmd)
+* [Deep Learning Blog](../../DL/guide_map/index.qmd)
+* [Machine Learning Blog](../../ML/guide_map/index.qmd)
+* [Mathematics Blog](../../Mathmatics/guide_map/index.qmd)
+* [Patent Blog](../../Patent/guide_map/index.qmd)
+* [Validation Blog](../../Validation/guide_map/index.qmd)
+
+
+

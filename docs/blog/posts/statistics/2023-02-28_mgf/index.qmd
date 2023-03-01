@@ -1,0 +1,193 @@
+---
+title: Momment Generating Function
+subtitle: Moment
+description: | 
+ 
+categories:
+  - Statistics
+author: Kwangmin Kim
+date: 03/01/2023
+draft: false
+format: 
+  html:
+    toc: true
+    number-sections: True
+    code-fold: true
+    page-layout: full
+execute: 
+  warning: false
+  message: false
+---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+
+
+
+## Momment Generating Function
+
+::: {#def-moment}
+
+확률 변수 $X^r$ 의 expectation, $\text{E}((X-\mu)^r)$ 를 확률 변수 $X$ 의 평균 $\mu$ 에 대한 $r$ 차 중심 적률(moment) 이라하고 그 notation은 $\mu_r'=\text{E}((X-\mu)^r)$ 로 한다.
+$\mu_r'=\text{E}(X^r)$ 은 원점에 대한 $r$ 차 중심 적률이라 한다.
+
+즉,
+
+$$
+\begin{aligned}
+  \mu_{r}'&= 
+    \begin{cases}
+      \text{E}((X-\mu)^r)&=
+        \begin{cases}
+          \sum_{x}(x-\mu)^rf(x), & \text{if }x \text{ is discrete}\\
+          \int_{-\infty}^{\infty}(x-\mu)^rf(x)dx, & \text{if }x \text{ is continuous}\\
+        \end{cases} & \text{moment about }\mu\\
+      \text{E}(X^r)&=
+        \begin{cases}
+          \sum_{x}x^rf(x), & \text{if }x \text{ is discrete}\\
+          \int_{-\infty}^{\infty}x^rf(x)dx, & \text{if }x \text{ is continuous}\\
+        \end{cases} & \text{moment about origin}\\\\
+    \end{cases}  
+\end{aligned}
+$$ 
+
+이다. 
+
+:::
+
+
+
+분포의 특징을 묘사하는 parameters 중 많은 종류가 확률 변수의 적률을 이용해 계산될 수 있다. 그 대표적인 예가
+
+* 평균 (mean): 분포의 위치를 나타내는 척도, 1차 중심 적률로 계산
+* 분산 (variance): 분포가 평균으로부터 퍼진 정도를 나타내는 척도, 2차 중심 적률로 계산
+* 왜도 (skewedness): 분포가 기울어진 방향과 정도를 나타내는 척도, 3차 중심 적률로 계산
+* 첨도 (kurtosis): 분포가 위로 뾰족한 정도를 나타내는 척도, 4차 중심 적률로 계산
+
+
+::: {#def-mgf}
+
+확률 변수 $X$ 의 적률 생성 함수 (Moment Generating Function, mgf), $\text{M}_X(t) =\text{E}(e^{tX})$ 로 정의한다.
+
+즉,
+
+$$
+\begin{aligned}
+  M_X(t)=\text{E}(e^{tX})&=
+        \begin{cases}
+          \sum_{x}e^{tx}f(x), & \text{if }x \text{ is discrete}\\
+          \int_{-\infty}^{\infty}e^{tx}f(x)dx, & \text{if }x \text{ is continuous}\\
+        \end{cases} 
+\end{aligned}
+$$ 
+
+이다. 
+
+:::
+
+
+::: {#thm-mgf}
+
+확률 변수 $X$ 의 적률 생성 함수 (Moment Generating Function, mgf), $\text{M}_x(t) =\text{E}(e^{tX})$ 로 r차 적률 계산은 다음과 같이 할 수 있다.
+
+$$
+\begin{aligned}
+  \frac{d^r}{dt^r}M_X(t) \bigg|_{t=0}=M_X^r(0)=\text{E}(X^r)=\mu_r'
+\end{aligned}
+$$ 
+
+이다. 즉, 적률 생성 함수 (mgf) $M_X(t)$ 를 구하고 r 번 미번한 후에 $t=0$ 대입하면 r차 중심 적률을 구할 수 있다.
+
+proof (for the only continuous case) 
+
+$$
+\begin{aligned}
+  \text{First Order Moment}\\
+  \frac{d}{dt}M_X(t)&= \frac{d}{dt}\text{E}(e^{tX})\\
+    &=  \frac{d}{dt}\int_{-\infty}^{\infty}e^{tx}f(x)dx\\
+    &=  \int_{-\infty}^{\infty}\frac{d}{dt}e^{tx}f(x)dx\\
+    &=  \int_{-\infty}^{\infty}xe^{tx}f(x)dx\bigg|_{t=0}\\
+    &=  \int_{-\infty}^{\infty}xf(x)dx\\
+    &=  \text{E}(X)\\
+    &=  \mu_1'\\
+  \text{Second Order Moment}\\
+  \frac{d^2}{dt^2}M_X(t)&= \frac{d^2}{dt^2}\text{E}(e^{tX})\\
+    &=  \frac{d^2}{dt^2}\int_{-\infty}^{\infty}e^{tx}f(x)dx\\
+    &=  \int_{-\infty}^{\infty}\frac{d}{dt}xe^{tx}f(x)dx\\
+    &=  \int_{-\infty}^{\infty}x^2e^{tx}f(x)dx\bigg|_{t=0}\\
+    &=  \int_{-\infty}^{\infty}x^2f(x)dx\\
+    &=  \text{E}(X^2)\\
+    &=  \mu_2'\\
+  \vdots\\
+  \text{r th Order Moment}\\
+  \frac{d^r}{dt^r}M_X(t)&= \frac{d^r}{dt^r}\text{E}(e^{tX})\\
+    &=  \frac{d^r}{dt^r}\int_{-\infty}^{\infty}e^{tx}f(x)dx\\
+    &=  \int_{-\infty}^{\infty}x^re^{tx}f(x)dx\bigg|_{t=0}\\
+    &=  \int_{-\infty}^{\infty}x^rf(x)dx\\
+    &=  \text{E}(X^r)\\
+    &=  \mu_r'
+\end{aligned}
+$$
+
+:::
+
+### Example
+
+#### MGF of $X\sim B(n,p)$
+
+* 확률 변수 $X \sim B(n,p)$ $X$ 의 mgf, $M_X(t)$, $\text{E}(X)$ 및 $\text{Var}(X)$ 는 다음과 같다.
+
+$$
+\begin{aligned}
+  f(x)&=\binom{n}{x}p^xq^{n-x}\\
+  \sum_{x=0}^{n}f(x)&=\sum_{x=0}^{n}\binom{n}{x}p^xq^{n-x}=(a+b)^n\\
+  M_X(t)&=\sum_{x=0}^{n}e^{tx}f(x)=\sum_{x=0}^{n}e^{tx}\binom{n}{x}p^xq^{n-x}\\
+        &=\sum_{x=0}^{n}\binom{n}{x}(pe^t)^xq^{n-x}=(pe^t+q)^n\\
+  \text{E}(x)&=\mu_1'=\frac{d}{dt}M_X(t)\bigg|_{t=0}\\
+  \frac{d}{dt}M_X(t)\bigg|_{t=0}&=\frac{d}{dt}(pe^t+q)^n\\
+    &=n(pe^t+q)^{n-1}pe^t\bigg|_{t=0}\\
+    &=n(p+q)^{n-1}p=np\\
+  \text{E}(X^2)&=\mu_2'=\frac{d^2}{dt^2}M_X(t)\bigg|_{t=0}\\
+    &=\mu_2'=(\mu_1')'=\frac{d}{dt}\mu_1'\bigg|_{t=0}\\
+    &=\frac{d}{dt}(n(pe^t+q)^{n-1}pe^t)\bigg|_{t=0}\\
+    &=(n(n-1)(pe^t+q)^{n-2}pe^tpe^t+n(pe^t+q)^{n-1}pe^t)\bigg|_{t=0}\\
+    &=n(n-1)(p+q)^{n-2}p^2+n(p+q)^{n-1}p\\
+    &=n(n-1)p^2+np\\
+  \text{Var}(X)&=\text{E}(X^2)-(\text{E}(X))^2\\
+    &=n(n-1)p^2+np-(np)^2\\
+    &=n^2p^2-np^2+np-n^2p^2\\
+    &=np(1-p)=npq
+\end{aligned}
+$$
+
+
+#### MGF of $X\sim Poisson(\lambda)$
+
+:::
+
+</div>
+
+
+## Blog Guide Map Link
+
+* [Statistics Blog](../guide_map/index.qmd)
+* [Engineering Blog](../../Engineering/guide_map/index.qmd)
+* [Deep Learning Blog](../../DL/guide_map/index.qmd)
+* [Machine Learning Blog](../../ML/guide_map/index.qmd)
+* [Mathematics Blog](../../Mathmatics/guide_map/index.qmd)
+* [Patent Blog](../../Patent/guide_map/index.qmd)
+* [Validation Blog](../../Validation/guide_map/index.qmd)
+
+
+

@@ -30,9 +30,6 @@
 <li>2023-02-05, <a href="../../../../../docs/blog/posts/statistics/2023-02-05_bayes_rule/index.html">Bayes’ Rule</a></li>
 <li>2023-02-05, Random Variable</li>
 <li>1111-11-11, Probability Distribution</li>
-<li>1111-11-11, Discrete Random Variable</li>
-<li>1111-11-11, Continuous Random Variable</li>
-<li>1111-11-11, Normal Distribution</li>
 <li>1111-11-11, Joint Distribution and Marginal Distribution</li>
 <li>2023-02-21, <a href="../../../../../docs/blog/posts/statistics/2023-02-21_transformation/index.html">Transformation of Random Variables</a></li>
 <li>1111-11-11, Expected Value vs Realizaed Value</li>
@@ -43,17 +40,23 @@
 <li>1111-11-11, Variance and Bias</li>
 <li>1111-11-11, Exponential Family Distributions
 <ul>
-<li>1111-11-11, Bernoulli Distribution</li>
-<li>1111-11-11, Binomial Distribution</li>
-<li>1111-11-11, Poisson Distribution</li>
+<li>Discrete Random Variable
+<ul>
+<li>2023-02-27,<a href="../../../../../docs/blog/posts/statistics/2023-02-27_exponential_family/discrete_bernoulli.html">Bernoulli Distribution</a></li>
+<li>2023-02-28,<a href="../../../../../docs/blog/posts/statistics/2023-02-27_exponential_family/discrete_binomial.html">Binomial Distribution</a></li>
+<li>2023-03-01,<a href="../../../../../docs/blog/posts/statistics/2023-02-27_exponential_family/discrete_poisson.html">Poisson Distribution</a></li>
+<li>2023-03-01,<a href="../../../../../docs/blog/posts/statistics/2023-02-27_exponential_family/discrete_geometric.html">Geometric Distribution</a></li>
+<li>1111-11-11, Hypergeometric Distribution</li>
+</ul></li>
+<li>Continuous Random Variable
+<ul>
 <li>1111-11-11, Normal Distribution</li>
 <li>1111-11-11, Exponential Distribution</li>
 <li>1111-11-11, Beta Distribution</li>
 <li>1111-11-11, Chi-squared Distribution</li>
-<li>1111-11-11, Geometric Distribution</li>
-<li>1111-11-11, Hypergeometric Distribution</li>
-<li>1111-11-11,</li>
 </ul></li>
+</ul></li>
+<li>1111-11-11,</li>
 </ul>
 </section>
 <section id="test" class="level2">
@@ -611,6 +614,162 @@
   <pubDate>Sat, 31 Dec 2089 15:00:00 GMT</pubDate>
 </item>
 <item>
+  <title>Poisson Distribution</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/statistics/2023-02-27_exponential_family/discrete_poisson.html</link>
+  <description><![CDATA[ 
+
+
+
+<ul class="nav nav-pills" id="language-tab">
+<li class="nav-item">
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
+Korean
+</button>
+</li>
+<li class="nav-item">
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
+English
+</button>
+</li>
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" aria-labelledby="Korean-tab">
+
+<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
+<section id="poisson-distribution" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="poisson-distribution"><span class="header-section-number">1</span> Poisson Distribution</h2>
+<div id="def-poisson" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 1 </strong></span>모수 (parameter)가 단위 시간 또는 공간 당 평균 발생 횟수 <img src="https://latex.codecogs.com/png.latex?%5Clambda"> 일 때 주어진 단위 시간 또는 공간 내에 발생하는 사건의 횟수를 확률 변수 <img src="https://latex.codecogs.com/png.latex?X"> 로 하는 분포를 Poisson Distribution이라 한다. <img src="https://latex.codecogs.com/png.latex?X"> 의 probability mass function은 <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20f_X(x;%5Clambda)&amp;=%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7Bx%7D%7D%7Bx!%7D%20&amp;(x=0,1,2,%20..)%0A%5Cend%7Baligned%7D%0A"> (<img src="https://latex.codecogs.com/png.latex?%5Clambda"> 는 단위 시간 또는 공간 당 평균 발생 횟수) 이다.</p>
+</div>
+<section id="expectation" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="expectation"><span class="header-section-number">1.1</span> Expectation</h3>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%5Ctext%7BE%7D(X)&amp;=%5Csum_%7Bx=0%7D%5E%7B%5Cinfty%7Dxf(x)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Csum_%7Bx=0%7D%5E%7B%5Cinfty%7Dx%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7Bx%7D%7D%7Bx!%7D%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Csum_%7Bx=1%7D%5E%7B%5Cinfty%7Dx%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7Bx%7D%7D%7Bx!%7D%20&amp;%5Cbecause%20x=0%20%5Crightarrow%20%5Ctext%7Bequation%7D=0%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Csum_%7Bx=1%7D%5E%7B%5Cinfty%7D%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7Bx%7D%7D%7B(x-1)!%7D%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Clambda%5Csum_%7Bx-1=0%7D%5E%7B%5Cinfty%7D%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7Bx-1%7D%7D%7B(x-1)!%7D%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Clambda%5Csum_%7By=0%7D%5E%7B%5Cinfty%7D%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7By%7D%7D%7B(y)!%7D%20&amp;%5Cbecause%20x-1=y%20%5Ctext%7B%20%20%7D(y=0,1,2,%20...)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Clambda%0A%5Cend%7Baligned%7D%0A"></p>
+</section>
+<section id="variance" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="variance"><span class="header-section-number">1.2</span> Variance</h3>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%20%20%5Ctext%7BE%7D(X(X-1))&amp;=%5Csum_%7Bx=0%7D%5E%7B%5Cinfty%7Dx(x-1)f(x)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Csum_%7Bx=0%7D%5E%7B%5Cinfty%7Dx(x-1)%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7Bx%7D%7D%7Bx!%7D%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Clambda%5E2%5Csum_%7Bx=2%7D%5E%7B%5Cinfty%7D%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7Bx-2%7D%7D%7B(x-2)!%7D%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Clambda%5E2%5Csum_%7By=0%7D%5E%7B%5Cinfty%7D%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7By%7D%7D%7B(y)!%7D%20&amp;%5Cbecause%20x-2=y%20%5Ctext%7B%20%20%7D(y=0,1,2,%20...)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Clambda%5E2%0A%20%20%20%20%5Ctext%7BE%7D(X%5E2)&amp;=%5Clambda%5E2+%5Clambda%5C%5C%0A%20%20%20%20%5Ctext%7BVar%7D(X)&amp;=%5Clambda%5E2+%5Clambda-%5Clambda%5E2=%5Clambda%5C%5C%0A%5Cend%7Baligned%7D%0A"></p>
+</section>
+<section id="example" class="level3" data-number="1.3">
+<h3 data-number="1.3" class="anchored" data-anchor-id="example"><span class="header-section-number">1.3</span> Example</h3>
+<p>어느 의료 장비 제조 업체의 의료 장비 불량률이 2% 라고 가정했을 때 임의로 100대의 의료 장비를 구매하여 제조 업체의 Quality Control (QC) guide line을 따라 Quality Control (QC)를 진행 했을 때 불량품이 하나도 발생하지 않을 확률은 다음과 같다.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%5Clambda%20&amp;=%20100*0.02=2%5C%5C%0A%20%20f(x)&amp;=%5Cfrac%7B%5Clambda%5E%7Bx%7De%5E%7B-%5Clambda%7D%7D%7Bx!%7D=%5Cfrac%7B2%5E%7Bx%7De%5E%7B-2%7D%7D%7Bx!%7D%5C%5C%0A%20%20f(0)&amp;=%5Cfrac%7B2%5E%7B0%7De%5E%7B-2%7D%7D%7B0!%7D=e%5E%7B-2%7D%0A%5Cend%7Baligned%7D%0A"></p>
+</section></section></div>
+<div id="def-aprroximation" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 2 </strong></span><img src="https://latex.codecogs.com/png.latex?X%5Csim%20B(n,p)"> 일 때 <img src="https://latex.codecogs.com/png.latex?p"> 가 충분히 작고 <img src="https://latex.codecogs.com/png.latex?n%20%5Crightarrow%20%5Cinfty"> 고 <img src="https://latex.codecogs.com/png.latex?np=%5Clambda"> 한다면 <img src="https://latex.codecogs.com/png.latex?x=0,1,2,%20..."> 에 대하여</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%5Clim_%7Bn%20%5Cto%20%5Cinfty%7D%5Cbinom%7Bn%7D%7Bx%7Dp%5E%7Bx%7D(1-p)%5E%7Bn-x%7D=%5Cfrac%7B%5Clambda%5E%7Bx%7De%5E%7B-%5Clambda%7D%7D%7Bx!%7D%0A%5Cend%7Baligned%7D%0A"> (<img src="https://latex.codecogs.com/png.latex?%5Clambda"> 는 단위 시간 또는 공간 당 평균 발생 횟수) 이다.</p>
+</div>
+
+
+</div>
+<section id="blog-guide-map-link" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="blog-guide-map-link"><span class="header-section-number">2</span> Blog Guide Map Link</h2>
+<ul>
+<li><a href="../../../../../docs/blog/posts/statistics/guide_map/index.html">Statistics Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/Engineering/guide_map/index.html">Engineering Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/DL/guide_map/index.html">Deep Learning Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/ML/guide_map/index.html">Machine Learning Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/Mathmatics/guide_map/index.html">Mathematics Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/Patent/guide_map/index.html">Patent Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/Validation/guide_map/index.html">Validation Blog</a></li>
+</ul>
+
+
+</section>
+
+</div></ul> ]]></description>
+  <category>Statistics</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/statistics/2023-02-27_exponential_family/discrete_poisson.html</guid>
+  <pubDate>Tue, 28 Feb 2023 15:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Momment Generating Function</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/statistics/2023-02-28_mgf/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<ul class="nav nav-pills" id="language-tab">
+<li class="nav-item">
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
+Korean
+</button>
+</li>
+<li class="nav-item">
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
+English
+</button>
+</li>
+<div class="tab-content" id="language-tabcontent">
+
+<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
+<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
+<section id="momment-generating-function" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="momment-generating-function"><span class="header-section-number">1</span> Momment Generating Function</h2>
+<div id="def-moment" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 1 </strong></span>확률 변수 <img src="https://latex.codecogs.com/png.latex?X%5Er"> 의 expectation, <img src="https://latex.codecogs.com/png.latex?%5Ctext%7BE%7D((X-%5Cmu)%5Er)"> 를 확률 변수 <img src="https://latex.codecogs.com/png.latex?X"> 의 평균 <img src="https://latex.codecogs.com/png.latex?%5Cmu"> 에 대한 <img src="https://latex.codecogs.com/png.latex?r"> 차 중심 적률(moment) 이라하고 그 notation은 <img src="https://latex.codecogs.com/png.latex?%5Cmu_r'=%5Ctext%7BE%7D((X-%5Cmu)%5Er)"> 로 한다. <img src="https://latex.codecogs.com/png.latex?%5Cmu_r'=%5Ctext%7BE%7D(X%5Er)"> 은 원점에 대한 <img src="https://latex.codecogs.com/png.latex?r"> 차 중심 적률이라 한다.</p>
+<p>즉,</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%5Cmu_%7Br%7D'&amp;=%0A%20%20%20%20%5Cbegin%7Bcases%7D%0A%20%20%20%20%20%20%5Ctext%7BE%7D((X-%5Cmu)%5Er)&amp;=%0A%20%20%20%20%20%20%20%20%5Cbegin%7Bcases%7D%0A%20%20%20%20%20%20%20%20%20%20%5Csum_%7Bx%7D(x-%5Cmu)%5Erf(x),%20&amp;%20%5Ctext%7Bif%20%7Dx%20%5Ctext%7B%20is%20discrete%7D%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%5Cint_%7B-%5Cinfty%7D%5E%7B%5Cinfty%7D(x-%5Cmu)%5Erf(x)dx,%20&amp;%20%5Ctext%7Bif%20%7Dx%20%5Ctext%7B%20is%20continuous%7D%5C%5C%0A%20%20%20%20%20%20%20%20%5Cend%7Bcases%7D%20&amp;%20%5Ctext%7Bmoment%20about%20%7D%5Cmu%5C%5C%0A%20%20%20%20%20%20%5Ctext%7BE%7D(X%5Er)&amp;=%0A%20%20%20%20%20%20%20%20%5Cbegin%7Bcases%7D%0A%20%20%20%20%20%20%20%20%20%20%5Csum_%7Bx%7Dx%5Erf(x),%20&amp;%20%5Ctext%7Bif%20%7Dx%20%5Ctext%7B%20is%20discrete%7D%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%5Cint_%7B-%5Cinfty%7D%5E%7B%5Cinfty%7Dx%5Erf(x)dx,%20&amp;%20%5Ctext%7Bif%20%7Dx%20%5Ctext%7B%20is%20continuous%7D%5C%5C%0A%20%20%20%20%20%20%20%20%5Cend%7Bcases%7D%20&amp;%20%5Ctext%7Bmoment%20about%20origin%7D%5C%5C%5C%5C%0A%20%20%20%20%5Cend%7Bcases%7D%20%20%0A%5Cend%7Baligned%7D%0A"></p>
+<p>이다.</p>
+</div>
+<p>분포의 특징을 묘사하는 parameters 중 많은 종류가 확률 변수의 적률을 이용해 계산될 수 있다. 그 대표적인 예가</p>
+<ul>
+<li>평균 (mean): 분포의 위치를 나타내는 척도, 1차 중심 적률로 계산</li>
+<li>분산 (variance): 분포가 평균으로부터 퍼진 정도를 나타내는 척도, 2차 중심 적률로 계산</li>
+<li>왜도 (skewedness): 분포가 기울어진 방향과 정도를 나타내는 척도, 3차 중심 적률로 계산</li>
+<li>첨도 (kurtosis): 분포가 위로 뾰족한 정도를 나타내는 척도, 4차 중심 적률로 계산</li>
+</ul>
+<div id="def-mgf" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 2 </strong></span>확률 변수 <img src="https://latex.codecogs.com/png.latex?X"> 의 적률 생성 함수 (Moment Generating Function, mgf), <img src="https://latex.codecogs.com/png.latex?%5Ctext%7BM%7D_X(t)%20=%5Ctext%7BE%7D(e%5E%7BtX%7D)"> 로 정의한다.</p>
+<p>즉,</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20M_X(t)=%5Ctext%7BE%7D(e%5E%7BtX%7D)&amp;=%0A%20%20%20%20%20%20%20%20%5Cbegin%7Bcases%7D%0A%20%20%20%20%20%20%20%20%20%20%5Csum_%7Bx%7De%5E%7Btx%7Df(x),%20&amp;%20%5Ctext%7Bif%20%7Dx%20%5Ctext%7B%20is%20discrete%7D%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%5Cint_%7B-%5Cinfty%7D%5E%7B%5Cinfty%7De%5E%7Btx%7Df(x)dx,%20&amp;%20%5Ctext%7Bif%20%7Dx%20%5Ctext%7B%20is%20continuous%7D%5C%5C%0A%20%20%20%20%20%20%20%20%5Cend%7Bcases%7D%0A%5Cend%7Baligned%7D%0A"></p>
+<p>이다.</p>
+</div>
+<div id="thm-mgf" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 1 </strong></span>확률 변수 <img src="https://latex.codecogs.com/png.latex?X"> 의 적률 생성 함수 (Moment Generating Function, mgf), <img src="https://latex.codecogs.com/png.latex?%5Ctext%7BM%7D_x(t)%20=%5Ctext%7BE%7D(e%5E%7BtX%7D)"> 로 r차 적률 계산은 다음과 같이 할 수 있다.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%5Cfrac%7Bd%5Er%7D%7Bdt%5Er%7DM_X(t)%20%5Cbigg%7C_%7Bt=0%7D=M_X%5Er(0)=%5Ctext%7BE%7D(X%5Er)=%5Cmu_r'%0A%5Cend%7Baligned%7D%0A"></p>
+<p>이다. 즉, 적률 생성 함수 (mgf) <img src="https://latex.codecogs.com/png.latex?M_X(t)"> 를 구하고 r 번 미번한 후에 <img src="https://latex.codecogs.com/png.latex?t=0"> 대입하면 r차 중심 적률을 구할 수 있다.</p>
+<p>proof (for the only continuous case)</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%5Ctext%7BFirst%20Order%20Moment%7D%5C%5C%0A%20%20%5Cfrac%7Bd%7D%7Bdt%7DM_X(t)&amp;=%20%5Cfrac%7Bd%7D%7Bdt%7D%5Ctext%7BE%7D(e%5E%7BtX%7D)%5C%5C%0A%20%20%20%20&amp;=%20%20%5Cfrac%7Bd%7D%7Bdt%7D%5Cint_%7B-%5Cinfty%7D%5E%7B%5Cinfty%7De%5E%7Btx%7Df(x)dx%5C%5C%0A%20%20%20%20&amp;=%20%20%5Cint_%7B-%5Cinfty%7D%5E%7B%5Cinfty%7D%5Cfrac%7Bd%7D%7Bdt%7De%5E%7Btx%7Df(x)dx%5C%5C%0A%20%20%20%20&amp;=%20%20%5Cint_%7B-%5Cinfty%7D%5E%7B%5Cinfty%7Dxe%5E%7Btx%7Df(x)dx%5Cbigg%7C_%7Bt=0%7D%5C%5C%0A%20%20%20%20&amp;=%20%20%5Cint_%7B-%5Cinfty%7D%5E%7B%5Cinfty%7Dxf(x)dx%5C%5C%0A%20%20%20%20&amp;=%20%20%5Ctext%7BE%7D(X)%5C%5C%0A%20%20%20%20&amp;=%20%20%5Cmu_1'%5C%5C%0A%20%20%5Ctext%7BSecond%20Order%20Moment%7D%5C%5C%0A%20%20%5Cfrac%7Bd%5E2%7D%7Bdt%5E2%7DM_X(t)&amp;=%20%5Cfrac%7Bd%5E2%7D%7Bdt%5E2%7D%5Ctext%7BE%7D(e%5E%7BtX%7D)%5C%5C%0A%20%20%20%20&amp;=%20%20%5Cfrac%7Bd%5E2%7D%7Bdt%5E2%7D%5Cint_%7B-%5Cinfty%7D%5E%7B%5Cinfty%7De%5E%7Btx%7Df(x)dx%5C%5C%0A%20%20%20%20&amp;=%20%20%5Cint_%7B-%5Cinfty%7D%5E%7B%5Cinfty%7D%5Cfrac%7Bd%7D%7Bdt%7Dxe%5E%7Btx%7Df(x)dx%5C%5C%0A%20%20%20%20&amp;=%20%20%5Cint_%7B-%5Cinfty%7D%5E%7B%5Cinfty%7Dx%5E2e%5E%7Btx%7Df(x)dx%5Cbigg%7C_%7Bt=0%7D%5C%5C%0A%20%20%20%20&amp;=%20%20%5Cint_%7B-%5Cinfty%7D%5E%7B%5Cinfty%7Dx%5E2f(x)dx%5C%5C%0A%20%20%20%20&amp;=%20%20%5Ctext%7BE%7D(X%5E2)%5C%5C%0A%20%20%20%20&amp;=%20%20%5Cmu_2'%5C%5C%0A%20%20%5Cvdots%5C%5C%0A%20%20%5Ctext%7Br%20th%20Order%20Moment%7D%5C%5C%0A%20%20%5Cfrac%7Bd%5Er%7D%7Bdt%5Er%7DM_X(t)&amp;=%20%5Cfrac%7Bd%5Er%7D%7Bdt%5Er%7D%5Ctext%7BE%7D(e%5E%7BtX%7D)%5C%5C%0A%20%20%20%20&amp;=%20%20%5Cfrac%7Bd%5Er%7D%7Bdt%5Er%7D%5Cint_%7B-%5Cinfty%7D%5E%7B%5Cinfty%7De%5E%7Btx%7Df(x)dx%5C%5C%0A%20%20%20%20&amp;=%20%20%5Cint_%7B-%5Cinfty%7D%5E%7B%5Cinfty%7Dx%5Ere%5E%7Btx%7Df(x)dx%5Cbigg%7C_%7Bt=0%7D%5C%5C%0A%20%20%20%20&amp;=%20%20%5Cint_%7B-%5Cinfty%7D%5E%7B%5Cinfty%7Dx%5Erf(x)dx%5C%5C%0A%20%20%20%20&amp;=%20%20%5Ctext%7BE%7D(X%5Er)%5C%5C%0A%20%20%20%20&amp;=%20%20%5Cmu_r'%0A%5Cend%7Baligned%7D%0A"></p>
+</div>
+<section id="example" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="example"><span class="header-section-number">1.1</span> Example</h3>
+<section id="mgf-of-xsim-bnp" class="level4" data-number="1.1.1">
+<h4 data-number="1.1.1" class="anchored" data-anchor-id="mgf-of-xsim-bnp"><span class="header-section-number">1.1.1</span> MGF of <img src="https://latex.codecogs.com/png.latex?X%5Csim%20B(n,p)"></h4>
+<ul>
+<li>확률 변수 <img src="https://latex.codecogs.com/png.latex?X%20%5Csim%20B(n,p)"> <img src="https://latex.codecogs.com/png.latex?X"> 의 mgf, <img src="https://latex.codecogs.com/png.latex?M_X(t)">, <img src="https://latex.codecogs.com/png.latex?%5Ctext%7BE%7D(X)"> 및 <img src="https://latex.codecogs.com/png.latex?%5Ctext%7BVar%7D(X)"> 는 다음과 같다.</li>
+</ul>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20f(x)&amp;=%5Cbinom%7Bn%7D%7Bx%7Dp%5Exq%5E%7Bn-x%7D%5C%5C%0A%20%20%5Csum_%7Bx=0%7D%5E%7Bn%7Df(x)&amp;=%5Csum_%7Bx=0%7D%5E%7Bn%7D%5Cbinom%7Bn%7D%7Bx%7Dp%5Exq%5E%7Bn-x%7D=(a+b)%5En%5C%5C%0A%20%20M_X(t)&amp;=%5Csum_%7Bx=0%7D%5E%7Bn%7De%5E%7Btx%7Df(x)=%5Csum_%7Bx=0%7D%5E%7Bn%7De%5E%7Btx%7D%5Cbinom%7Bn%7D%7Bx%7Dp%5Exq%5E%7Bn-x%7D%5C%5C%0A%20%20%20%20%20%20%20%20&amp;=%5Csum_%7Bx=0%7D%5E%7Bn%7D%5Cbinom%7Bn%7D%7Bx%7D(pe%5Et)%5Exq%5E%7Bn-x%7D=(pe%5Et+q)%5En%5C%5C%0A%20%20%5Ctext%7BE%7D(x)&amp;=%5Cmu_1'=%5Cfrac%7Bd%7D%7Bdt%7DM_X(t)%5Cbigg%7C_%7Bt=0%7D%5C%5C%0A%20%20%5Cfrac%7Bd%7D%7Bdt%7DM_X(t)%5Cbigg%7C_%7Bt=0%7D&amp;=%5Cfrac%7Bd%7D%7Bdt%7D(pe%5Et+q)%5En%5C%5C%0A%20%20%20%20&amp;=n(pe%5Et+q)%5E%7Bn-1%7Dpe%5Et%5Cbigg%7C_%7Bt=0%7D%5C%5C%0A%20%20%20%20&amp;=n(p+q)%5E%7Bn-1%7Dp=np%5C%5C%0A%20%20%5Ctext%7BE%7D(X%5E2)&amp;=%5Cmu_2'=%5Cfrac%7Bd%5E2%7D%7Bdt%5E2%7DM_X(t)%5Cbigg%7C_%7Bt=0%7D%5C%5C%0A%20%20%20%20&amp;=%5Cmu_2'=(%5Cmu_1')'=%5Cfrac%7Bd%7D%7Bdt%7D%5Cmu_1'%5Cbigg%7C_%7Bt=0%7D%5C%5C%0A%20%20%20%20&amp;=%5Cfrac%7Bd%7D%7Bdt%7D(n(pe%5Et+q)%5E%7Bn-1%7Dpe%5Et)%5Cbigg%7C_%7Bt=0%7D%5C%5C%0A%20%20%20%20&amp;=(n(n-1)(pe%5Et+q)%5E%7Bn-2%7Dpe%5Etpe%5Et+n(pe%5Et+q)%5E%7Bn-1%7Dpe%5Et)%5Cbigg%7C_%7Bt=0%7D%5C%5C%0A%20%20%20%20&amp;=n(n-1)(p+q)%5E%7Bn-2%7Dp%5E2+n(p+q)%5E%7Bn-1%7Dp%5C%5C%0A%20%20%20%20&amp;=n(n-1)p%5E2+np%5C%5C%0A%20%20%5Ctext%7BVar%7D(X)&amp;=%5Ctext%7BE%7D(X%5E2)-(%5Ctext%7BE%7D(X))%5E2%5C%5C%0A%20%20%20%20&amp;=n(n-1)p%5E2+np-(np)%5E2%5C%5C%0A%20%20%20%20&amp;=n%5E2p%5E2-np%5E2+np-n%5E2p%5E2%5C%5C%0A%20%20%20%20&amp;=np(1-p)=npq%0A%5Cend%7Baligned%7D%0A"></p>
+</section>
+<section id="mgf-of-xsim-poissonlambda" class="level4" data-number="1.1.2">
+<h4 data-number="1.1.2" class="anchored" data-anchor-id="mgf-of-xsim-poissonlambda"><span class="header-section-number">1.1.2</span> MGF of <img src="https://latex.codecogs.com/png.latex?X%5Csim%20Poisson(%5Clambda)"></h4>
+</section>
+</section>
+</section>
+</div>
+</div>
+<section id="blog-guide-map-link" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="blog-guide-map-link"><span class="header-section-number">2</span> Blog Guide Map Link</h2>
+<ul>
+<li><a href="../../../../../docs/blog/posts/statistics/guide_map/index.html">Statistics Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/Engineering/guide_map/index.html">Engineering Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/DL/guide_map/index.html">Deep Learning Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/ML/guide_map/index.html">Machine Learning Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/Mathmatics/guide_map/index.html">Mathematics Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/Patent/guide_map/index.html">Patent Blog</a></li>
+<li><a href="../../../../../docs/blog/posts/Validation/guide_map/index.html">Validation Blog</a></li>
+</ul>
+
+
+</section>
+
+</div></ul> ]]></description>
+  <category>Statistics</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/statistics/2023-02-28_mgf/index.html</guid>
+  <pubDate>Tue, 28 Feb 2023 15:00:00 GMT</pubDate>
+</item>
+<item>
   <title>Bernoulli Distribution</title>
   <dc:creator>Kwangmin Kim</dc:creator>
   <link>kmink3225.netlify.app/docs/blog/posts/statistics/2023-02-27_exponential_family/bernoulli copy 2.html</link>
@@ -928,132 +1087,6 @@ English
 <item>
   <title>Bernoulli Distribution</title>
   <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/statistics/2023-02-27_exponential_family/bernoulli copy 7.html</link>
-  <description><![CDATA[ 
-
-
-
-<ul class="nav nav-pills" id="language-tab">
-<li class="nav-item">
-<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
-Korean
-</button>
-</li>
-<li class="nav-item">
-<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
-English
-</button>
-</li>
-<div class="tab-content" id="language-tabcontent">
-
-<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
-<p>::: {#Korean .tab-pane .fade .show .active role=“tabpanel” aria-labelledby=“Korean-tab”}</p>
-<section id="bernoulli-distribution" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="bernoulli-distribution"><span class="header-section-number">1</span> Bernoulli Distribution</h2>
-<div id="def-bernoulli" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 1 </strong></span>확률 변수 <img src="https://latex.codecogs.com/png.latex?X"> 가 1(=성공) 또는 0(=실패) 중 하나이고 성공일 확률이 <img src="https://latex.codecogs.com/png.latex?p"> 일 때 <img src="https://latex.codecogs.com/png.latex?X"> 는 bernoulli distirbution 따르고 probability function은 <img src="https://latex.codecogs.com/png.latex?f(x=1)=p"> 와 <img src="https://latex.codecogs.com/png.latex?f(x=0)=1-p"> 이다. 즉, <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20f_X(x)&amp;=%0A%20%20%5Cbegin%7Bcases%7D%0A%20%20%20%20p%20%20%20&amp;%20x=1%20%5C%5C%0A%20%20%20%201-p%20&amp;%20x=0%0A%20%20%5Cend%7Bcases%7D%0A%5Cend%7Baligned%7D%0A"> 이다.</p>
-</div>
-<section id="expectation" class="level3" data-number="1.1">
-<h3 data-number="1.1" class="anchored" data-anchor-id="expectation"><span class="header-section-number">1.1</span> Expectation</h3>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%5Ctext%7BE%7D(X)&amp;=%5Csum_%7Bx%5Cin%5C%7B1,0%5C%7D%7DXf(X=x)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=1%20f(X=1)%20+%200f(X=0)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=p%5C%5C%0A%5Cend%7Baligned%7D%0A"></p>
-</section>
-<section id="variance" class="level3" data-number="1.2">
-<h3 data-number="1.2" class="anchored" data-anchor-id="variance"><span class="header-section-number">1.2</span> Variance</h3>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%5Ctext%7BE%7D(X%5E2)&amp;=%5Csum_%7Bx%20%5Cin%20%5C%7B1,0%5C%7D%7DX%5E2f(X=x)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=1%20f(X=1)%20+%200f(X=0)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=p%5C%5C%0A%20%20%5Ctext%7BVar%7D(X)&amp;=%5Ctext%7BE%7D(X%5E2)-%5Ctext%7BE%7D(X)%5E2%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=p-p%5E2%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=p(1-p)%5C%5C%0A%5Cend%7Baligned%7D%0A"></p>
-</section>
-<section id="example" class="level3" data-number="1.3">
-<h3 data-number="1.3" class="anchored" data-anchor-id="example"><span class="header-section-number">1.3</span> Example</h3>
-<p>주사위의 눈이 짝수일 때 확률 변수 X = 0, 그 외의 경우는 X = 1 일 때 기댓값과 분산은</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%20%5Ctext%7BE%7D(X)&amp;=%5Csum_%7Bx%5Cin%5C%7B1,0%5C%7D%7DXf(X=x)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=1%20f(X=1)%20+%200f(X=0)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Cfrac%7B3%7D%7B6%7D=%5Cfrac%7B1%7D%7B2%7D%5C%5C%0A%20%20%5Ctext%7BE%7D(X%5E2)&amp;=%5Csum_%7Bx%20%5Cin%20%5C%7B1,0%5C%7D%7DX%5E2f(X=x)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=1%20f(X=1)%20+%200f(X=0)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Cfrac%7B3%7D%7B6%7D=%5Cfrac%7B1%7D%7B2%7D%5C%5C%0A%20%20%5Ctext%7BVar%7D(X)&amp;=%5Ctext%7BE%7D(X%5E2)-%5Ctext%7BE%7D(X)%5E2%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Cfrac%7B1%7D%7B2%7D%5Cfrac%7B1%7D%7B2%7D%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Cfrac%7B1%7D%7B4%7D%5C%5C%0A%5Cend%7Baligned%7D%0A"></p>
-</section>
-</section>
-</div>
-<section id="blog-guide-map-link" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="blog-guide-map-link"><span class="header-section-number">2</span> Blog Guide Map Link</h2>
-<ul>
-<li><a href="../../../../../docs/blog/posts/statistics/guide_map/index.html">Statistics Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/Engineering/guide_map/index.html">Engineering Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/DL/guide_map/index.html">Deep Learning Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/ML/guide_map/index.html">Machine Learning Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/Mathmatics/guide_map/index.html">Mathematics Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/Patent/guide_map/index.html">Patent Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/Validation/guide_map/index.html">Validation Blog</a></li>
-</ul>
-
-
-</section>
-
-</div></ul> ]]></description>
-  <category>Statistics</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/statistics/2023-02-27_exponential_family/bernoulli copy 7.html</guid>
-  <pubDate>Sun, 26 Feb 2023 15:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Bernoulli Distribution</title>
-  <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/statistics/2023-02-27_exponential_family/bernoulli copy 8.html</link>
-  <description><![CDATA[ 
-
-
-
-<ul class="nav nav-pills" id="language-tab">
-<li class="nav-item">
-<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
-Korean
-</button>
-</li>
-<li class="nav-item">
-<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
-English
-</button>
-</li>
-<div class="tab-content" id="language-tabcontent">
-
-<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
-<p>::: {#Korean .tab-pane .fade .show .active role=“tabpanel” aria-labelledby=“Korean-tab”}</p>
-<section id="bernoulli-distribution" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="bernoulli-distribution"><span class="header-section-number">1</span> Bernoulli Distribution</h2>
-<div id="def-bernoulli" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 1 </strong></span>확률 변수 <img src="https://latex.codecogs.com/png.latex?X"> 가 1(=성공) 또는 0(=실패) 중 하나이고 성공일 확률이 <img src="https://latex.codecogs.com/png.latex?p"> 일 때 <img src="https://latex.codecogs.com/png.latex?X"> 는 bernoulli distirbution 따르고 probability function은 <img src="https://latex.codecogs.com/png.latex?f(x=1)=p"> 와 <img src="https://latex.codecogs.com/png.latex?f(x=0)=1-p"> 이다. 즉, <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20f_X(x)&amp;=%0A%20%20%5Cbegin%7Bcases%7D%0A%20%20%20%20p%20%20%20&amp;%20x=1%20%5C%5C%0A%20%20%20%201-p%20&amp;%20x=0%0A%20%20%5Cend%7Bcases%7D%0A%5Cend%7Baligned%7D%0A"> 이다.</p>
-</div>
-<section id="expectation" class="level3" data-number="1.1">
-<h3 data-number="1.1" class="anchored" data-anchor-id="expectation"><span class="header-section-number">1.1</span> Expectation</h3>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%5Ctext%7BE%7D(X)&amp;=%5Csum_%7Bx%5Cin%5C%7B1,0%5C%7D%7DXf(X=x)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=1%20f(X=1)%20+%200f(X=0)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=p%5C%5C%0A%5Cend%7Baligned%7D%0A"></p>
-</section>
-<section id="variance" class="level3" data-number="1.2">
-<h3 data-number="1.2" class="anchored" data-anchor-id="variance"><span class="header-section-number">1.2</span> Variance</h3>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%5Ctext%7BE%7D(X%5E2)&amp;=%5Csum_%7Bx%20%5Cin%20%5C%7B1,0%5C%7D%7DX%5E2f(X=x)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=1%20f(X=1)%20+%200f(X=0)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=p%5C%5C%0A%20%20%5Ctext%7BVar%7D(X)&amp;=%5Ctext%7BE%7D(X%5E2)-%5Ctext%7BE%7D(X)%5E2%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=p-p%5E2%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=p(1-p)%5C%5C%0A%5Cend%7Baligned%7D%0A"></p>
-</section>
-<section id="example" class="level3" data-number="1.3">
-<h3 data-number="1.3" class="anchored" data-anchor-id="example"><span class="header-section-number">1.3</span> Example</h3>
-<p>주사위의 눈이 짝수일 때 확률 변수 X = 0, 그 외의 경우는 X = 1 일 때 기댓값과 분산은</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%20%5Ctext%7BE%7D(X)&amp;=%5Csum_%7Bx%5Cin%5C%7B1,0%5C%7D%7DXf(X=x)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=1%20f(X=1)%20+%200f(X=0)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Cfrac%7B3%7D%7B6%7D=%5Cfrac%7B1%7D%7B2%7D%5C%5C%0A%20%20%5Ctext%7BE%7D(X%5E2)&amp;=%5Csum_%7Bx%20%5Cin%20%5C%7B1,0%5C%7D%7DX%5E2f(X=x)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=1%20f(X=1)%20+%200f(X=0)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Cfrac%7B3%7D%7B6%7D=%5Cfrac%7B1%7D%7B2%7D%5C%5C%0A%20%20%5Ctext%7BVar%7D(X)&amp;=%5Ctext%7BE%7D(X%5E2)-%5Ctext%7BE%7D(X)%5E2%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Cfrac%7B1%7D%7B2%7D%5Cfrac%7B1%7D%7B2%7D%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Cfrac%7B1%7D%7B4%7D%5C%5C%0A%5Cend%7Baligned%7D%0A"></p>
-</section>
-</section>
-</div>
-<section id="blog-guide-map-link" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="blog-guide-map-link"><span class="header-section-number">2</span> Blog Guide Map Link</h2>
-<ul>
-<li><a href="../../../../../docs/blog/posts/statistics/guide_map/index.html">Statistics Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/Engineering/guide_map/index.html">Engineering Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/DL/guide_map/index.html">Deep Learning Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/ML/guide_map/index.html">Machine Learning Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/Mathmatics/guide_map/index.html">Mathematics Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/Patent/guide_map/index.html">Patent Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/Validation/guide_map/index.html">Validation Blog</a></li>
-</ul>
-
-
-</section>
-
-</div></ul> ]]></description>
-  <category>Statistics</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/statistics/2023-02-27_exponential_family/bernoulli copy 8.html</guid>
-  <pubDate>Sun, 26 Feb 2023 15:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Bernoulli Distribution</title>
-  <dc:creator>Kwangmin Kim</dc:creator>
   <link>kmink3225.netlify.app/docs/blog/posts/statistics/2023-02-27_exponential_family/discrete_bernoulli.html</link>
   <description><![CDATA[ 
 
@@ -1237,7 +1270,7 @@ English
 <section id="example" class="level3" data-number="1.3">
 <h3 data-number="1.3" class="anchored" data-anchor-id="example"><span class="header-section-number">1.3</span> Example</h3>
 <p>한 장비 제조 업체에서 사람의 건강과 생명을 진단하는데 사용되는 medical device가 1000 개마다 평균 2개 꼴로 불량이 발생한다고 가정할 때 그 장비를 공급받는 구매자가 medical device의 공급 업체의 불량 평가 기준으로 quality control을 1대 씩 진행할 때 불량 장비가 3번째 검사에서 발생할 확률은</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%20%5Ctext%7Bf%7D(X=3,%5Cfrac%7B2%7D%7B1000%7D)&amp;=(%5Cfrac%7B998%7D%7B1000%7D)%5E2%5Cfrac%7B2%7D%7B1000%7D%5C%5C%0A%5Cend%7Baligned%7D%0A"> 이다. 평균과 분산 각 각 <img src="https://latex.codecogs.com/png.latex?(%5Cfrac%7B2%7D%7B1000%7D)%5E%7B-1%7D">, <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B1-%5Cfrac%7B2%7D%7B1000%7D%7D%7B(%5Cfrac%7B2%7D%7B1000%7D)%5E2%7D"> 이다.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%20%5Ctext%7Bf%7D(x=3;p=%5Cfrac%7B2%7D%7B1000%7D)&amp;=(%5Cfrac%7B998%7D%7B1000%7D)%5E2%5Cfrac%7B2%7D%7B1000%7D%5C%5C%0A%5Cend%7Baligned%7D%0A"> 이다. 평균과 분산 각 각 <img src="https://latex.codecogs.com/png.latex?(%5Cfrac%7B2%7D%7B1000%7D)%5E%7B-1%7D">, <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B1-%5Cfrac%7B2%7D%7B1000%7D%7D%7B(%5Cfrac%7B2%7D%7B1000%7D)%5E2%7D"> 이다.</p>
 </section>
 </section>
 </div>

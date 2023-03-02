@@ -111,8 +111,8 @@ outcome_data <- all_data[, 2]
 # normalize the metaoblites
 normalized_metabolite_data <-
     as.data.frame(lapply(metabolite_data, function(x) scale_function(vector = x, method = "min-max")))
-normalized_significant_metabolite_data<-
-    normalized_metabolite_data%>%
+normalized_significant_metabolite_data <-
+    normalized_metabolite_data %>%
     dplyr::select(all_of(significant_metabolites))
 
 # extract the latent variables (PCs: Principal Components)
@@ -122,11 +122,11 @@ pc_significant_metabolites <-
     prcomp(normalized_significant_metabolite_data)
 
 # calculate scores
-scores <- 
+scores <-
     as.data.frame(pc_metabolites$x) %>%
     janitor::clean_names() %>%
     mutate(row_names = 1:n())
-significant_scores <- 
+significant_scores <-
     as.data.frame(pc_significant_metabolites$x) %>%
     janitor::clean_names() %>%
     mutate(row_names = 1:n())
@@ -167,7 +167,7 @@ significant_loadings <- temp %>%
         arrow_pc1 = arrow_size_normalization * pc1,
         arrow_pc2 = arrow_size_normalization * pc2,
         arrow_pc3 = arrow_size_normalization * pc3
-    )    
+    )
 # arrow_size_normalization is a normalization factor that
 # ensures the variable loading arrows are scaled appropriately relative to the data points.
 # The min() function to find the smallest ratio between the range of the data points and
@@ -193,66 +193,82 @@ outcome_significant_scores <-
 total_variance <-
     data.frame(
         pc = 1:length(pc_metabolites$sdev),
-        pc_variance_proportion=summary(pc_metabolites)[['importance']]['Proportion of Variance',],
-        cumulative_proportion=summary(pc_metabolites)[['importance']]['Cumulative Proportion',]*100
+        pc_variance_proportion = summary(pc_metabolites)[["importance"]]["Proportion of Variance", ],
+        cumulative_proportion = summary(pc_metabolites)[["importance"]]["Cumulative Proportion", ] * 100
     )
 total_variance_significance <-
     data.frame(
         pc = 1:length(pc_significant_metabolites$sdev),
-        pc_variance_proportion=summary(pc_significant_metabolites)[['importance']]['Proportion of Variance',],
-        cumulative_proportion=summary(pc_significant_metabolites)[['importance']]['Cumulative Proportion',]*100
+        pc_variance_proportion = summary(pc_significant_metabolites)[["importance"]]["Proportion of Variance", ],
+        cumulative_proportion = summary(pc_significant_metabolites)[["importance"]]["Cumulative Proportion", ] * 100
     )
 
-scree_plot<-function(indata){
-    scree_plot1<-ggplot(
+scree_plot <- function(indata) {
+    scree_plot1 <- ggplot(
         data = indata,
-        aes(x = pc, y = pc_variance_proportion, group = 1)) +
+        aes(x = pc, y = pc_variance_proportion, group = 1)
+    ) +
         geom_point() +
         geom_line() +
-        labs(title='',subtitle = paste0("Scree Plot, Total Variance(", 
-                            round(tail(indata,1)['cumulative_proportion'],3) ,
-                            "%)Explained by ", nrow(indata), " PCs")) +
+        labs(title = "", subtitle = paste0(
+            "Scree Plot, Total Variance(",
+            round(tail(indata, 1)["cumulative_proportion"], 3),
+            "%)Explained by ", nrow(indata), " PCs"
+        )) +
         ylab("Total Variance Explained") +
         xlab("Principal Components")
-    scree_plot2<-ggplot(
-        data = indata%>%filter(pc<13),
-        aes(x = pc, y = pc_variance_proportion, group = 1)) +
+    scree_plot2 <- ggplot(
+        data = indata %>% filter(pc < 13),
+        aes(x = pc, y = pc_variance_proportion, group = 1)
+    ) +
         geom_point() +
         geom_line() +
-        labs(title='',subtitle = paste0("Scree Plot, Part of Variance(", 
-                            round(tail(indata%>%filter(pc<13),1)['cumulative_proportion'],3) ,
-                            "%)Explained by ", indata%>%filter(pc<13)%>%nrow ," PCs")) +
+        labs(title = "", subtitle = paste0(
+            "Scree Plot, Part of Variance(",
+            round(tail(indata %>% filter(pc < 13), 1)["cumulative_proportion"], 3),
+            "%)Explained by ", indata %>% filter(pc < 13) %>% nrow(), " PCs"
+        )) +
         ylab("Total Variance Explained") +
-        xlab("Principal Components")    
-    return(ggarrange(scree_plot1,scree_plot2,nrow=1))
+        xlab("Principal Components")
+    return(ggarrange(scree_plot1, scree_plot2, nrow = 1))
 }
 
-ggarrange(scree_plot(total_variance),scree_plot(total_variance_significance),
-            labels=c(paste0('All ',ncol(metabolite_data),' Metabolites'),
-                    paste0(length(significant_metabolites),' Significant Metabolites')),nrow=2)
+ggarrange(scree_plot(total_variance), scree_plot(total_variance_significance),
+    labels = c(
+        paste0("All ", ncol(metabolite_data), " Metabolites"),
+        paste0(length(significant_metabolites), " Significant Metabolites")
+    ), nrow = 2
+)
 
 
 # 2D PCA Scatter Plots with PC1 and PC2
 
-scatter_plot<-function(in_data){
-   p<- ggplot(data = in_data,
-    aes(x = pc1, y = pc2, color = outcome)) +
-    geom_text(alpha = .5, size = 3, aes(label = row_names)) +
-    stat_ellipse(type = "norm", level = .99) +
-    geom_hline(aes(yintercept = 0), alpha = 0.5, size = .1) +
-    geom_vline(aes(xintercept = 0), alpha = 0.5, size = .1) +
-    scale_color_manual(values = color_function(length(unique(in_data$outcome)))) +
-    labs(title = "2D Scatter Plot of the First 2 PCs Grouped by AD status",
-    subtitle=paste0(ncol(in_data)-2,' Metabolites'))
-    return(p)}
+scatter_plot <- function(in_data) {
+    p <- ggplot(
+        data = in_data,
+        aes(x = pc1, y = pc2, color = outcome)
+    ) +
+        geom_text(alpha = .5, size = 3, aes(label = row_names)) +
+        stat_ellipse(type = "norm", level = .99) +
+        geom_hline(aes(yintercept = 0), alpha = 0.5, size = .1) +
+        geom_vline(aes(xintercept = 0), alpha = 0.5, size = .1) +
+        scale_color_manual(values = color_function(length(unique(in_data$outcome)))) +
+        labs(
+            title = "2D Scatter Plot of the First 2 PCs Grouped by AD status",
+            subtitle = paste0(ncol(in_data) - 2, " Metabolites")
+        )
+    return(p)
+}
 
 ggarrange(scatter_plot(outcome_scores),
-    scatter_plot(outcome_significant_scores),nrow=2)
+    scatter_plot(outcome_significant_scores),
+    nrow = 2
+)
 
 
 # biplot
-bi_plot<-function(in_data){
-    p<-
+bi_plot <- function(in_data) {
+    p <-
         ggplot(data = in_data, aes(x = pc1, y = pc2, color = outcome)) +
         geom_text(alpha = .75, size = 3, aes(label = row_names)) +
         geom_hline(aes(yintercept = 0), alpha = 0.5, size = .1) +
@@ -262,45 +278,58 @@ bi_plot<-function(in_data){
         stat_ellipse(type = "norm", level = .99) +
         geom_text(
             data = loadings, aes(x = arrow_pc1, y = arrow_pc2, label = metabolites),
-            alpha = 0.5, size = 5, vjust = 1, color = "red") +
+            alpha = 0.5, size = 5, vjust = 1, color = "red"
+        ) +
         geom_segment(
             data = loadings, aes(x = 0, y = 0, xend = arrow_pc1, yend = arrow_pc2),
-            arrow = arrow(length = unit(0.5, "cm")), alpha = 0.5, color = "red") +
-        labs(title = "Biplot, the Effect of Metabolites on Samples with Disease Status",
-        subtitle=paste0(ncol(in_data)-2,' Metabolites')) +
-        ylab("PC2") + xlab("PC1")
+            arrow = arrow(length = unit(0.5, "cm")), alpha = 0.5, color = "red"
+        ) +
+        labs(
+            title = "Biplot, the Effect of Metabolites on Samples with Disease Status",
+            subtitle = paste0(ncol(in_data) - 2, " Metabolites")
+        ) +
+        ylab("PC2") +
+        xlab("PC1")
     return(p)
 }
-ggarrange(bi_plot(outcome_scores),bi_plot(outcome_significant_scores),nrow=2)
+ggarrange(bi_plot(outcome_scores), bi_plot(outcome_significant_scores), nrow = 2)
 
 
 
-plot_ly(data=outcome_scores,
-    x = ~pc1, y = ~pc2, z = ~pc3, 
+plot_ly(
+    data = outcome_scores,
+    x = ~pc1, y = ~pc2, z = ~pc3,
     type = "scatter3d", mode = "markers", color = ~ outcome_scores$outcome,
     colors = color_function(2),
-    size = 2) %>%
+    size = 2
+) %>%
     layout(
         title = "Effect of 500 Metabolites on Samples with Disease Status in 3d",
-        scene = list(bgcolor = "#e5ecf6",
-                     xaxis = list(title='PC1'),
-                     yaxis = list(title = "PC2"),
-                     zaxis = list(title = "PC3")),
-        legend = list(title = list(text='Disease(AD) Status'))
+        scene = list(
+            bgcolor = "#e5ecf6",
+            xaxis = list(title = "PC1"),
+            yaxis = list(title = "PC2"),
+            zaxis = list(title = "PC3")
+        ),
+        legend = list(title = list(text = "Disease(AD) Status"))
     )
 
-plot_ly(data=outcome_significant_scores,
-    x = ~pc1, y = ~pc2, z = ~pc3, 
+plot_ly(
+    data = outcome_significant_scores,
+    x = ~pc1, y = ~pc2, z = ~pc3,
     type = "scatter3d", mode = "markers", color = ~ outcome_scores$outcome,
     colors = color_function(2),
-    size = 2) %>%
+    size = 2
+) %>%
     layout(
         title = "Effect of 201 Metabolites on Samples with Disease Status in 3d",
-        scene = list(bgcolor = "#e5ecf6",
-                     xaxis = list(title='PC1'),
-                     yaxis = list(title = "PC2"),
-                     zaxis = list(title = "PC3")),
-        legend = list(title = list(text='Disease(AD) Status'))
+        scene = list(
+            bgcolor = "#e5ecf6",
+            xaxis = list(title = "PC1"),
+            yaxis = list(title = "PC2"),
+            zaxis = list(title = "PC3")
+        ),
+        legend = list(title = list(text = "Disease(AD) Status"))
     )
 
 ```
@@ -309,69 +338,126 @@ plot_ly(data=outcome_significant_scores,
 
 ```{r}
 
+kmean_result_list <- list(
+    "mse_list" = list(
+        "all_metabolites" = matrix(nrow = 20),
+        "significant_metabolites" = matrix(nrow = 20)
+    ),
+    "cluster_sse_list" = list(
+        "all_metabolites" = matrix(nrow = 20, ncol = 2),
+        "significant_metabolites" = matrix(nrow = 20, ncol = 2)
+    ),
+    "Variance_Explained" = list(
+        "all_metabolites" = matrix(nrow = 20),
+        "significant_metabolites" = matrix(nrow = 20)
+    )
+)
+
+for (j in c("all_metabolites", "significant_metabolites")) {
+    for (i in (1:20)) {
+        if (j == "all_metabolites") {
+            kmean_fit <- kmeans(normalized_metabolite_data, centers = i, iter.max = 300)
+        } else {
+            kmean_fit <- kmeans(normalized_significant_metabolite_data, centers = i, iter.max = 300)
+        }
+        kmean_result_list[["mse_list"]][[j]][i] <- mean(kmean_fit$withinss) %>% round(3)
+        kmean_result_list[["cluster_sse_list"]][[j]][i, 1] <- i
+        kmean_result_list[["cluster_sse_list"]][[j]][i, 2] <- kmean_result_list[["mse_list"]][[j]][i]
+        kmean_result_list[["Variance_Explained"]][[j]][i] <- kmean_fit$betweenss / kmean_fit$totss
+        cat(
+            "For ", j, ", K: ", i,
+            "within-cluster MSE: ", kmean_result_list[["mse_list"]][[j]][i],
+            "Variance_Explained: ", kmean_result_list[["Variance_Explained"]][[j]][i], "\n"
+        )
+    }
+}
+
+kmean_mse_data <-
+    rbind(
+        data.frame(
+            metabolites = "all_metabolites",
+            k = kmean_result_list[["cluster_sse_list"]][["all_metabolites"]][, 1],
+            mse = kmean_result_list[["cluster_sse_list"]][["all_metabolites"]][, 2],
+            variance_exaplained = kmean_result_list[["Variance_Explained"]][["all_metabolites"]]
+        ),
+        data.frame(
+            metabolites = "significant_metabolites",
+            k = kmean_result_list[["cluster_sse_list"]][["significant_metabolites"]][, 1],
+            mse = kmean_result_list[["cluster_sse_list"]][["significant_metabolites"]][, 2],
+            variance_exaplained = kmean_result_list[["Variance_Explained"]][["significant_metabolites"]]
+        )
+    )
+
+ggarrange(
+    ggplot(
+        data = kmean_mse_data,
+        aes(x = k, y = mse, group = metabolites, color = metabolites)
+    ) +
+        geom_line() +
+        geom_point() +
+        scale_color_manual(values = color_function(2)) +
+        labs(title = "K Mean Clustering Result: MSE for All Metabolites vs Significant Ones") +
+        xlab("Number of Clusters") +
+        ylab("Mean Squared Error"),
+    ggplot(
+        data = kmean_mse_data,
+        aes(x = k, y = variance_exaplained, group = metabolites, color = metabolites)
+    ) +
+        geom_line() +
+        geom_point() +
+        scale_color_manual(values = color_function(2)) +
+        labs(title = "K Mean Clustering Result: Variance Explained for All Metabolites vs Significant Ones") +
+        xlab("Number of Clusters") +
+        ylab("Variance Exaplained"),
+    ncol = 1
+)
+
 # K means
 km_clustering <- kmeans(normalized_metabolite_data, centers = 2, iter.max = 300)
 km_significant_clustering <- kmeans(normalized_significant_metabolite_data, centers = 2, iter.max = 300)
 
-confusionMatrix(table(all_data[,2],ifelse(km_clustering$cluster==1,'negative','positive')))
-confusionMatrix(table(all_data[,2],ifelse(km_significant_clustering$cluster==1,'negative','positive')))
+confusionMatrix(table(all_data[, 2], ifelse(km_clustering$cluster == 1, "negative", "positive")))
+confusionMatrix(table(all_data[, 2], ifelse(km_significant_clustering$cluster == 1, "negative", "positive")))
 
-outcome_pca_km<-outcome_scores%>%
-    mutate(km_clusters=km_clustering$cluster,
-         km_clusters=factor(km_clusters,levels=c(1,2)),
-         km_significant_clusters=km_significant_clustering$cluster,
-         km_significant_clusters=factor(km_significant_clusters,levels=c(1,2)))
+outcome_pca_km <- outcome_scores %>%
+    mutate(
+        km_clusters = km_clustering$cluster,
+        km_clusters = factor(km_clusters, levels = c(1, 2)),
+        km_significant_clusters = km_significant_clustering$cluster,
+        km_significant_clusters = factor(km_significant_clusters, levels = c(1, 2))
+    )
 
 
-ggplot(data = outcome_pca_km,
-    aes(x = pc1, y = pc2, color = km_clusters)) +
+ggplot(
+    data = outcome_pca_km,
+    aes(x = pc1, y = pc2, color = km_clusters)
+) +
     geom_text(alpha = .5, size = 3, aes(label = row_names)) +
     stat_ellipse(type = "norm", level = .99) +
     geom_hline(aes(yintercept = 0), alpha = 0.5, size = .1) +
     geom_vline(aes(xintercept = 0), alpha = 0.5, size = .1) +
     scale_color_manual(values = color_function(2)) +
-    labs(title = "2D Scatter Plot of the First 2 PCs Grouped by K Mean Clusters, AD Status",
-    subtitle=paste0(ncol(outcome_scores)-2,' Metabolites'))
+    labs(
+        title = "2D Scatter Plot of the First 2 PCs Grouped by K Mean Clusters, AD Status",
+        subtitle = paste0(ncol(outcome_scores) - 2, " Metabolites")
+    )
 
-ggplot(data = outcome_pca_km,
-    aes(x = pc1, y = pc2, color = km_significant_clusters)) +
+ggplot(
+    data = outcome_pca_km,
+    aes(x = pc1, y = pc2, color = km_significant_clusters)
+) +
     geom_text(alpha = .5, size = 3, aes(label = row_names)) +
     stat_ellipse(type = "norm", level = .99) +
     geom_hline(aes(yintercept = 0), alpha = 0.5, size = .1) +
     geom_vline(aes(xintercept = 0), alpha = 0.5, size = .1) +
     scale_color_manual(values = color_function(2)) +
-    labs(title = "2D Scatter Plot of the First 2 PCs Grouped by K Mean Clusters, AD Status",
-    subtitle=paste0(ncol(outcome_significant_scores)-2,' Metabolites'))
-
-mat_avgss <- matrix(nrow = 20, ncol = 2)
-
-# Average within the cluster sum of square
-
-for (i in (1:20)) {
-    km_fit <- kmeans(normalized_metabolite_data, centers = i, iter.max = 300)
-    mean_km <- mean(km_fit$withinss)
-    print(paste("K-Value", i, ",Avg.within sum of squares", round(mean_km, 2)))
-    mat_avgss[i, 1] <- i
-    mat_avgss[i, 2] <- mean_km
-}
-
-plot(mat_avgss[, 1], mat_avgss[, 2], type = "o", xlab = "K_Value", ylab = "Avg. within sum of square")
-title("Avg. within sum of squares vs. K-value")
+    labs(
+        title = "2D Scatter Plot of the First 2 PCs Grouped by K Mean Clusters, AD Status",
+        subtitle = paste0(ncol(outcome_significant_scores) - 2, " Metabolites")
+    )
 
 
-mat_varexp <- matrix(nrow = 20, ncol = 2)
-# Percentage of Variance explained
-print(paste("Percent. variance explained"))
-for (i in (1:20)) {
-    km_fit <- kmeans(all_data[, -c(1:6)], centers = i, iter.max = 300)
-    var_exp <- km_fit$betweenss / km_fit$totss
-    print(paste("K-Value", i, ",Percent var explained", round(var_exp, 4)))
-    mat_varexp[i, 1] <- i
-    mat_varexp[i, 2] <- var_exp
-}
 
-plot(mat_varexp[, 1], mat_varexp[, 2], type = "o", xlab = "K_Value", ylab = "Percent Var explained")
-title("Avg. within sum of squares vs. K-value")
 ```
 
 
@@ -437,4 +523,26 @@ for (i in 1:p) {
 
 
 
+
+
+
+#
+#
+
+#
+#
+
+#
+#
+
+#
+#
+
+#
+#
+#
+#
+#
+#
+#
 

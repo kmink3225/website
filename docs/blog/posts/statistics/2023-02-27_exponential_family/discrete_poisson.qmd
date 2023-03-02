@@ -1,0 +1,121 @@
+---
+title: Poisson Distribution
+subtitle: Exponential Family
+description: | 
+ 
+categories:
+  - Statistics
+author: Kwangmin Kim
+date: 03/01/2023
+draft: false
+format: 
+  html:
+    toc: true
+    number-sections: True
+    code-fold: true
+    page-layout: full
+execute: 
+  warning: false
+  message: false
+---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+
+
+
+## Poisson Distribution
+
+::: {#def-poisson}
+
+모수 (parameter)가 단위 시간 또는 공간 당 평균 발생 횟수 $\lambda$ 일 때 주어진 단위 시간 또는 공간 내에 발생하는 사건의 횟수를 확률 변수 $X$ 로 하는 분포를 Poisson Distribution이라 한다. $X$ 의 probability mass function은 
+$$
+\begin{aligned}
+  f_X(x;\lambda)&=\frac{e^{-\lambda}\lambda^{x}}{x!} &(x=0,1,2, ..)
+\end{aligned}
+$$ 
+($\lambda$ 는 단위 시간 또는 공간 당 평균 발생 횟수)
+이다.  
+
+:::
+
+### Expectation
+$$
+\begin{aligned}
+  \text{E}(X)&=\sum_{x=0}^{\infty}xf(x)\\
+             &=\sum_{x=0}^{\infty}x\frac{e^{-\lambda}\lambda^{x}}{x!}\\
+             &=\sum_{x=1}^{\infty}x\frac{e^{-\lambda}\lambda^{x}}{x!} &\because x=0 \rightarrow \text{equation}=0\\
+             &=\sum_{x=1}^{\infty}\frac{e^{-\lambda}\lambda^{x}}{(x-1)!}\\
+             &=\lambda\sum_{x-1=0}^{\infty}\frac{e^{-\lambda}\lambda^{x-1}}{(x-1)!}\\
+             &=\lambda\sum_{y=0}^{\infty}\frac{e^{-\lambda}\lambda^{y}}{(y)!} &\because x-1=y \text{  }(y=0,1,2, ...)\\
+             &=\lambda
+\end{aligned}
+$$
+
+### Variance
+
+$$
+\begin{aligned}
+    \text{E}(X(X-1))&=\sum_{x=0}^{\infty}x(x-1)f(x)\\
+             &=\sum_{x=0}^{\infty}x(x-1)\frac{e^{-\lambda}\lambda^{x}}{x!}\\
+             &=\lambda^2\sum_{x=2}^{\infty}\frac{e^{-\lambda}\lambda^{x-2}}{(x-2)!}\\
+             &=\lambda^2\sum_{y=0}^{\infty}\frac{e^{-\lambda}\lambda^{y}}{(y)!} &\because x-2=y \text{  }(y=0,1,2, ...)\\
+             &=\lambda^2
+    \text{E}(X^2)&=\lambda^2+\lambda\\
+    \text{Var}(X)&=\lambda^2+\lambda-\lambda^2=\lambda\\
+\end{aligned}
+$$ 
+
+
+### Example
+
+어느 의료 장비 제조 업체의 의료 장비 불량률이 2% 라고 가정했을 때 임의로 100대의 의료 장비를 구매하여 제조 업체의 Quality Control (QC) guide line을 따라 Quality Control (QC)를 진행 했을 때 불량품이 하나도 발생하지 않을 확률은 다음과 같다.
+
+$$
+\begin{aligned}
+  \lambda &= 100*0.02=2\\
+  f(x)&=\frac{\lambda^{x}e^{-\lambda}}{x!}=\frac{2^{x}e^{-2}}{x!}\\
+  f(0)&=\frac{2^{0}e^{-2}}{0!}=e^{-2}
+\end{aligned}
+$$
+
+</div>
+
+::: {#def-aprroximation}
+
+$X\sim B(n,p)$ 일 때 $p$ 가 충분히 작고  $n \rightarrow \infty$ 고 $np=\lambda$ 한다면 $x=0,1,2, ...$ 에 대하여 
+
+$$
+\begin{aligned}
+  \lim_{n \to \infty}\binom{n}{x}p^{x}(1-p)^{n-x}=\frac{\lambda^{x}e^{-\lambda}}{x!}
+\end{aligned}
+$$ 
+($\lambda$ 는 단위 시간 또는 공간 당 평균 발생 횟수)
+이다.  
+
+:::
+
+:::
+## Blog Guide Map Link
+
+* [Statistics Blog](../guide_map/index.qmd)
+* [Engineering Blog](../../Engineering/guide_map/index.qmd)
+* [Deep Learning Blog](../../DL/guide_map/index.qmd)
+* [Machine Learning Blog](../../ML/guide_map/index.qmd)
+* [Mathematics Blog](../../Mathmatics/guide_map/index.qmd)
+* [Patent Blog](../../Patent/guide_map/index.qmd)
+* [Validation Blog](../../Validation/guide_map/index.qmd)
+
+
+

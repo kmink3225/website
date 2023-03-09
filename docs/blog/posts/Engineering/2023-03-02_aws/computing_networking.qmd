@@ -1,0 +1,250 @@
+---
+title: Computing and Networking
+subtitle: template
+description: |
+  template
+categories:
+  - template
+author: Kwangmin Kim
+date: 03/09/2023
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    toc: true
+    number-sections: true
+draft: False
+---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+
+## Some Basics
+
+* AWS global infrastructure – Region / Availability zone (AZ) / Data Center
+* AWS region consideration : Compliance – Latency – Pricing – Service availability 
+* Interacting with AWS  
+    * AWS Management console 
+    * AWS Command Line Interface (CLI) - unified tool to manage AWS services,  
+    * AWS Software Development Kits (SDKs) - executing code with programming languages. 
+* Security in the AWS Cloud 
+    * Responsibility - Customer & AWS
+        * AWS – security of the cloud, responsible for protecting and securing the infrastructure that runs all the services 
+        * Customer – security in the cloud, responsible for properly configuring the service and your applications, as well as ensuring your data is secure. 
+    * Root user (unristricted access)
+    * Multi-Factor Authentication
+* AWS Identity and Access Management 
+    * Introduction to AWS IAM (Identity and Access Management) 
+    * AWS account나 resource에 대한 권한을 관리하게 해주는 서비스
+    * Authentication (인증)
+    * Authorization (인가): resource에 대한 권한
+        * Ex) 회사의 AWS account가 존재한다면, 회사 구성원들은 account 에 접근하기 위해 모두 IAM user가 되고 (authentication), account 내부의 각 AWS resource에 대한 접근 권한을 부여받아야 한다. (authorization)
+    * IAM policy: Effect (Allow/Deny), Action, Resource, Condition
+    * IAM Group 
+    * IAM roles : IAM user나 AWS resource에 권한을 부여하기 위한 권한 세부 조정 
+    * [reference](https://aws-tc-largeobjects.s3-us-west-2.amazonaws.com/DEV-AWS-MO-GCNv2/exercise-2-iam.html)
+
+## Computing and Networking
+
+### Introduction			 
+
+* Computing  
+    * it gives our application power in the form of CPU, memory, and networking capacity so that we can process our users' requests. 
+    * Compute Solution Examples  
+        * EC2 
+        * container services: Amazon ECS(Elastic Container Service) and Amazon ECS (Elastic Container Service) 
+        * serverless options AWS Lambda
+    * compare them to one another.
+        * when and how to apply each service, to different use cases. 
+* Networking
+    * needed for being hands-on with Amazon EC2 
+    * launch an EC2 instance to host the employee directory application.
+    * How to Launch? → put an EC2 instance in a network, VPCs on AWS
+
+### Computing 
+
+- Apps requiring computing capacity for running  such as
+    - web servers, batch jobs, databases, HR software, machine learning, or something else
+    - on-premises computing resources are costly and have many things to deal with
+    - AWS already is ready to be used
+        - built the infrastructure
+        - secured the data centers.
+        - bought the servers,
+        - racked and stacked them
+        - are already online,
+    - 3 computing services for different use cases.
+        - EC2 (Elastsic Compute Cloud)
+        - container services
+        - serverless compute.
+    - EC2 (Flexible and scalable)
+        - **EC2 instances Characteristics**
+            - a lot of flexibility and control in the cloud
+            - configure them to meet your needs.
+            - Payment
+                - at the end of the billing cycle, you only pay for what you use, either per second or per hour, depending on the type of instance.
+                - terminate (stop) the instance and you will stop incurring charges.
+            - a range of operating systems including
+                - Linux, Mac OS, Ubuntu, Windows, and more
+                - To select the OS for your server, you must choose
+                    - **AMI** (Amazon Machine Image)
+                        - can set several configurations according to users’ use case
+                    - You can launch one or many instances from a single AMI, which would create multiple instances that all have the same configurations.
+            - The instance types are grouped for use cases like
+                - compute optimized
+                - memory optimized
+                - storage optimized, and more.
+                - read AWS documentation
+                - For example,
+                    - the G instance family (graphics-intensive applications)
+                    - the M5 general purpose EC2 instance family (balance of resources)
+                    - The T3 or A1 is the instance family (the blend of the hardware capabilities)
+                    - Then there's the size like small, medium, large. It goes down to nano and up to many, many extra large sizes, depending on the instance type.
+                - this type of selection: you are no longer locked into hardware decisions up front.
+                    - choose an initial EC2 instance type→ evaluate its performance for your specific use case, → change to a different type
+                - EC2 is also resizable with
+                    - a few clicks in the console or
+                    - can be done programmatically through an API call
+            - EC2 Instance Lifecycle
+                - you **launch** an EC2 instance from an AMI
+                    - it enters a **pending state** (booting up).
+                    - it enters **the running state** (start being charged for the EC2 instance)
+                        - running options
+                            - reboot the instance
+                            - stop your instance (stopping phase like powering down your laptop)
+                            - stop hibernate (the stopping phase - no boot sequence required)
+                            - the terminate (the shutting down phase - get rid of an instance)
+                            - termination protection (back up in persistent storage in EC2)
+                        - charged if you are in the running state or if you are in the stopping state, preparing to hibernate.
+    - Container Services
+        - efficiency and portability: container orchestration tools in AWS
+            - Container orchestration
+                - processes to start, stop, restart and monitor containers running across not just one EC2 instance, but a number of them together that we call a cluster of EC2 instances.
+                - hundreds or thousands of containers - hard to manage them
+                - Orchestration tools : run and manage containers.
+                - Amazon ECS (Elastic Container Service)
+                    - ECS is designed to help you manage your own container orchestration software.
+                - Amazon EKS (Elastic Kubernetes Service)
+            - The way you interact with these container services
+                - the orchestration tool's API
+                - the orchestration tool carries out the management tasks.
+                - automate scaling of your cluster
+                - automate hosting your containers
+                - automate the scaling of the containers themselves.
+            - super fast response to increasing demand when compared to virtual machines.
+            - hosting options : either ECS or EKS.
+    - Serverless Compute Platform
+        - an alternative to hosting containers
+            - When using Amazon EC2 or Container Services running on top of EC2 as a compute platform, you are required to set up and manage your fleet of instances. This means that you are responsible for patching your instances when new software packages come out or when new security updates come out.
+        - Serverless meaning
+            - can not see or access the underlying infrastructure or instances that are hosting your solution.
+            - Instead, the management of the underlying environment from a provisioning, scaling, fault-tolerance and maintenance perspective is taken care of for a user.
+            - All you need to do is focus on your application.
+            - serverless offerings are very convenient to use.
+        - AWS Fargate (the container hosting platform)
+            - serverless compute platform for ECS or EKS.
+            - The scaling or fault-tolerance, OS or environments are built in
+            - For user to do just
+                - define your container
+                - how you want your container to be run
+                - it scales on-demand.
+        - AWS Lambda (the serverless compute platform)
+            - package and upload your code to the Lambda service, creating what's called a Lambda function.
+            - Lambda functions run in response to triggers.
+            - You configure a trigger
+            - common examples of triggers for Lambda functions
+                - an HTTP request
+                - an upload of a file to the storage service, Amazon S3
+                - events originating from other AWS services or
+                - even in-app activity from mobile devices
+            - When the trigger is detected, the code is automatically run in a managed environment.
+            - Lambda is currently designed to run code that has a runtime of under 15 minutes.
+                - So, this isn't for long running processes like deep learning or batch jobs, you wouldn't host something like a WordPress site on AWS Lambda.
+                - It's more suited for quick processing, like a web backend for handling requests or a backend report processing service.
+            - not billed for code that isn't running, you only get billed for the resources that you use, down to 100 millisecond intervals.
+
+### Networking
+
+- the network, or VPC
+    - to launch instances, you needed to select a network. Building a custom VPC for our application that is more secure and provides more granular access to the Internet than the default option we originally chose.
+    - Networking on AWS is the basis of most architectures. In this section, geared towards EC2-related services.
+    - a Lambda function
+        - might not need a network at all
+- Creation and Concept of VPC
+    - Creation and Concept of VPC
+        - Concept
+            - It creates a boundary where your applications and resources are isolated from any outside movement.
+            - nothing comes into and comes out of the VPC without your explicit permission.
+        - Creation
+            - To create a VPC, two specific settings to declare
+                1. the region you're selecting (In this example, the Oregon region)
+                2. the IP range in the form of CIDR notation. (In this example, 10.1.0.0/16)
+            - the VPC name: app-vpc
+        - Divide VPC space into subnets
+            - put your resources such as your EC2 Instances inside of these subnets.
+            - The goal of these subnets is to provide more granular controls over access to your resources.
+            - With public resources, put those resources inside a subnet with internet connectivity.
+            - With private resources like a database, create another subnet and have different controls to keep those resources private.
+            - To create a subnet, you need three main things,
+                - the VPC your subnet to live in which is this one,
+                - the AZ (example. AZ-A = US-West-2a) your subnet to live in,
+                - IP range for your subnet which must be a subset of the VPC IP range
+        - internet gateway for public resource
+            - enable internet connectivity
+            - When you create an internet gateway, you then need to attach it to your VPC.
+        - VGW (Virtual Private Gateway) for private resource
+            - create a VPN connection between a private network like an On-premise data center or internal corporate network to your VPC.
+            - establish an encrypted VPN connection to your private internal AWS resources.
+        - having high availability: one option to make VPC better
+            - What that means is if this AZ goes down for whatever reason, what happens to our resources in that AZ? They go down too. So ideally, we would have resources in another easy to take on the traffic coming to our application.
+            - To do this, we'd need to duplicate the resources in this AZ into the second AZ. So that means we need to create two additional subnets each within another AZ, say AZ b. All right
+- Amazon VPC Routing
+    - The example has two additional subnets, one public, one private in a different AZ for a total of four subnets including an EC2 instance hosting our employee directory inside of the public subnet in AZ A.
+    - route tables
+        - provide a path for the internet traffic to enter the internet gateway and find the right subnet.
+        - A route table contains a set of rules, called routes
+            - determine where network traffic is directed
+            - These route tables can be applied on either the subnet level or at the VPC level.
+            - When creating a brand new VPC, AWS creates a route table called the main route table and applies it to the entire VPC.
+            - AWS assumes that when you create a new VPC with subnets, you want traffic to flow between those subnets.
+            - The default configuration of the main route table is to allow traffic between all subnets local to the VPC.
+            - the main route table of the VPC can be created in console
+                - click on route tables on the side panel
+                - create route table.
+                - give it a name such as app-route-table-public
+                - choose the app-vpc and then click create.
+                
+- Secure Network with Amazone VPC Security
+    - at the base level, any new VPC is isolated from internet traffic to prevent risk.
+    - when allowing internet traffic by opening up routes, you need two options to keep your network secure, network access control lists
+        1. network ACLs
+            - a firewall at the subnet level
+            - control what kind of traffic is allowed to enter, and leave, your subnet
+            - The default network ACL allows all traffic in and out of your subnet.
+            - Using this default configuration is a good starting place but if needed, you can change the configuration of your network ACLs to further lock down your subnets.
+            - For example, if you only wanted to allow HTTPS traffic into my subnet, you can do that by creating an inbound rule and outbound rule in my ACL, that allows HTTPS traffic from anywhere on port 443 and denies everything else.
+        2. security groups
+            - firewalls that exist at the EC2 instance level.
+            - Any time you create an EC2 instance, you'll need to place that EC2 instance inside a security group that allows the appropriate kinds of traffic to flow to your application.
+:::
+
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
+
+:::
+
+
+</div>

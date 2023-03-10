@@ -34,7 +34,6 @@ execute:
 ::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
 
 
-
 ## Momment Generating Function
 
 ::: {#def-moment}
@@ -99,7 +98,7 @@ $$
 
 ::: {#thm-mgf}
 
-확률 변수 $X$ 의 적률 생성 함수 (Moment Generating Function, mgf), $\text{M}_x(t) =\text{E}(e^{tX})$ 로 r차 적률 계산은 다음과 같이 할 수 있다.
+확률 변수 $X$ 의 적률 생성 함수 (Moment Generating Function, mgf), $\text{M}_X(t) =\text{E}(e^{tX})$ 로 r차 적률 계산은 다음과 같이 할 수 있다.
 
 $$
 \begin{aligned}
@@ -108,6 +107,8 @@ $$
 $$ 
 
 이다. 즉, 적률 생성 함수 (mgf) $M_X(t)$ 를 구하고 r 번 미번한 후에 $t=0$ 대입하면 r차 중심 적률을 구할 수 있다.
+
+:::
 
 proof (for the only continuous case) 
 
@@ -140,13 +141,15 @@ $$
 \end{aligned}
 $$
 
-:::
+
 
 ### Example
 
-#### MGF of $X\sim B(n,p)$
+#### Discrete Random Variables
 
-* 확률 변수 $X \sim B(n,p)$ $X$ 의 mgf, $M_X(t)$, $\text{E}(X)$ 및 $\text{Var}(X)$ 는 다음과 같다.
+* MGF of $X\sim B(n,p)$
+
+확률 변수 $X \sim B(n,p)$ $X$ 의 mgf, $M_X(t)$, $\text{E}(X)$ 및 $\text{Var}(X)$ 는 다음과 같다.
 
 $$
 \begin{aligned}
@@ -172,7 +175,101 @@ $$
 $$
 
 
-#### MGF of $X\sim Poisson(\lambda)$
+* MGF of $X\sim Poisson(\lambda)$
+
+확률 변수 $X \sim Poisson(\lambda)$ $X$ 의 mgf, $M_X(t)$, $\text{E}(X)$ 및 $\text{Var}(X)$ 는 다음과 같다.
+
+$$
+\begin{aligned}
+  f(x)&=\frac{e^{-\lambda}\lambda^{x}}{x!}\\
+  M_X(t)&=\sum_{x=0}^{\infty}e^{tx}f(x)=\sum_{x=0}^{\infty}e^{tx}\frac{e^{-\lambda}\lambda^{x}}{x!}\\
+        &=e^{-\lambda}\sum_{x=0}^{\infty}\frac{{e^{t}\lambda^{x}}^x}{x!}\\
+        &=e^{-\lambda}e^{\lambda e^t} \because \text{(Maclaurin's Series)}\\
+        &=e^{\lambda(e^t-1)} \\
+        (&\text{Maclaurin's Series: } \sum_{n=0}^{\infty}\frac{x^n}{n!}=1+x+\frac{x^2}{2!}+\frac{x^3}{3!}+ ... =e^x)\\     
+  \text{E}(X)&=\mu_1'=\frac{d}{dt}M_X(t)\bigg|_{t=0}\\
+  \frac{d}{dt}M_X(t)\bigg|_{t=0}&=\frac{d}{dt}e^{\lambda(e^t-1)}\bigg|_{t=0}\\
+    &=\lambda e^{e^t}e^{\lambda(e^t-1)}\bigg|_{t=0}=\lambda\\
+  
+  \text{E}(X^2)&=\mu_2'=\frac{d^2}{dt^2}M_X(t)\bigg|_{t=0}\\
+    &=\mu_2'=(\mu_1')'=\frac{d}{dt}\mu_1'\bigg|_{t=0}\\
+    &=\frac{d}{dt}\lambda e^{e^t}e^{\lambda(e^t-1)}\bigg|_{t=0}\\
+    &=\lambda e^te^{\lambda (e^t-1)}+\lambda e^t\lambda e^te^{\lambda(e^t-1)}\bigg|_{t=0}\\
+    &=\lambda + \lambda^2\\
+
+  \text{Var}(X)&=\text{E}(X^2)-(\text{E}(X))^2\\
+    &=\lambda + \lambda^2 -\lambda^2\\
+    &=\lambda
+\end{aligned}
+$$
+
+#### Continuous Random Variables
+
+* MGF of $X\sim N(0,1)$
+
+확률 변수 $X \sim N(0,1)$ $X$ 의 mgf, $M_X(t)$, $\text{E}(X)$ 및 $\text{Var}(X)$ 는 다음과 같다.
+
+$$
+\begin{aligned}
+  f(x)&=\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}}(-\infty < x < \infty)\\
+  M_X(t)&=\int_{-\infty}^{\infty}e^{tx}f(x)dx=\int_{-\infty}^{\infty}e^{tx}\frac{1}{\sqrt{2\pi}}e^{-\frac{x^2}{2}}dx\\
+        &=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}e^{-\frac{x^2}{2}+tx}dx\\
+        &=\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}e^{-\frac{1}{2}(x-t)^2+\frac{1}{2}t^2}dx\\
+        &=e^{\frac{t^2}{2}}\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}e^{-\frac{1}{2}(x-t)^2}dx\\
+        &=e^{\frac{t^2}{2}}\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}e^{-\frac{1}{2}u^2}du \text{  }(\because x-t=u \rightarrow dx=du)\\
+        &=e^{\frac{t^2}{2}} \\     
+  \text{E}(X)&=\mu_1'=\frac{d}{dt}M_X(t)\bigg|_{t=0}\\
+  \frac{d}{dt}M_X(t)\bigg|_{t=0}&=\frac{d}{dt}e^{\frac{t^2}{2}}\bigg|_{t=0}\\
+    &=te^{\frac{t^2}{2}}\bigg|_{t=0}\\
+    &=0\\
+  
+  \text{E}(X^2)&=\mu_2'=\frac{d^2}{dt^2}M_X(t)\bigg|_{t=0}\\
+    &=\mu_2'=(\mu_1')'=\frac{d}{dt}\mu_1'\bigg|_{t=0}\\
+    &=\frac{d}{dt}te^{\frac{t^2}{2}}\bigg|_{t=0}\\
+    &=e^{\frac{t^2}{2}}+t(te^{\frac{t^2}{2}})\bigg|_{t=0}\\
+    &=1\\
+
+  \text{Var}(X)&=\text{E}(X^2)-(\text{E}(X))^2\\
+    &=1
+    
+\end{aligned}
+$$
+
+
+:::
+
+
+::: {#thm-identical_distribution}
+
+확률 변수 $X$ 와 $Y$ 가 유한한 같은 적률 생성 함수를 가지면 두 확률 변수는 같은 확률 분포를 갖는다. 
+(단, $t\in[-c,c]$ where $c$ is a positive constant)
+$$
+\text{M}_X(t) =\text{M}_Y(t) \rightarrow F_X(a)=F_Y(a) \text{ for } a \in \mathbb{R} 
+$$
+다시 말해서, 확률 변수의 분포의 특징이 적률 생성 함수에 의하여 유일하게 결정된다.
+
+:::
+
+[Proof Reference-Washington University](https://courses.cs.washington.edu/courses/cse312/22wi/files/student_drive/5.6.pdf)
+
+[MGF reference](https://www.probabilitycourse.com/chapter6/6_1_3_moment_functions.php)
+
+::: {#thm-independent_mgf}
+
+서로 독립인 확률 변수 $X_1,X_2, ..., X_n$ 의 적률 생성 함수가 각 각  $\text{M}_{X_1}(t), \text{M}_{X_2}(t), ..., \text{M}_{X_n}(t)$ 일 때,
+확률 변수 $Y=X_1+X_2+...+X_n$ 의 적률 생성함수 $\text{M}_Y(t)$ 는 $\text{M}_{X_1}(t)\text{M}_{X_2}(t) \dots \text{M}_{X_n}(t)$ 이다.
+
+$$
+\begin{aligned}
+  \text{M}_Y(t) &= E(e^{Yt})\\
+                &= E(e^{t(X_1,X_2, ..., X_n)})\\
+                &= E(e^{tX_1}e^{tX_2}\dots e^{tX_n})\\
+                &= E(e^{tX_1})E(e^{tX_2})\dots E(e^{tX_n}) \because X_i \text{ are independent}\\
+                &= E(e^{Yt})\\
+                &= \text{M}_{X_1}(t)\text{M}_{X_2}(t) \dots \text{M}_{X_n}(t)
+\end{aligned}
+$$
+다시 말해서, 확률 변수의 분포의 특징이 적률 생성 함수에 의하여 유일하게 결정된다.
 
 :::
 

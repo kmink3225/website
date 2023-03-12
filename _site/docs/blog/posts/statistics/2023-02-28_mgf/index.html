@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.335">
+<meta name="generator" content="quarto-1.2.313">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -364,6 +364,33 @@ $$
     
 \end{aligned}\]</span>
 <p>$$</p>
+<ul>
+<li>MGF of <span class="math inline">\(X\sim N(\mu,\sigma^2)\)</span></li>
+</ul>
+<p>확률 변수 <span class="math inline">\(X\sim N(\mu,\sigma^2)\)</span> <span class="math inline">\(X\)</span> 의 mgf, <span class="math inline">\(M_X(t)\)</span>, <span class="math inline">\(\text{E}(X)\)</span> 및 <span class="math inline">\(\text{Var}(X)\)</span> 는 다음과 같다.</p>
+$$
+<span class="math display">\[\begin{aligned}
+  f(x)&amp;=\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}(-\infty &lt; x &lt; \infty)\\
+  M_X(t)&amp;=\int_{-\infty}^{\infty}e^{tx}f(x)dx\\
+        &amp;=\frac{1}{\sqrt{2\pi\sigma^2}}\int_{-\infty}^{\infty}e^{-\frac{(x-\mu)^2}{2\sigma^2}+tx}dx\\
+        &amp;=e^{\frac{t^2\sigma^2}{2}+t\mu}\int_{-\infty}^{\infty}\frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{1}{2}(\frac{(x-(t\sigma^2+\mu))}{\sigma})^2}dx\\
+        &amp;=e^{\frac{t^2\sigma^2}{2}+t\mu}\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}e^{\frac{u^2}{2}}du\\
+        (&amp;\because \frac{x-(t\sigma^2+\mu)}{\sigma}=u \rightarrow \frac{dx}{\sigma}=du) \\
+        &amp;=e^{\frac{t^2\sigma^2}{2}+t\mu}\frac{1}{\sqrt{2\pi}}\int_{-\infty}^{\infty}e^{-\frac{u^2}{2}}du\\
+        &amp;=e^{\frac{t^2\sigma^2}{2}+t\mu}\\
+  
+  \text{E}(X)&amp;=\mu_1'=\frac{d}{dt}M_X(t)\bigg|_{t=0}\\
+  \frac{d}{dt}M_X(t)\bigg|_{t=0}&amp;=\frac{d}{dt}e^{\frac{t^2\sigma^2}{2}+t\mu}\bigg|_{t=0}\\
+    &amp;=e^{\frac{t^2\sigma^2}{2}+t\mu}(\sigma^2t+\mu)\bigg|_{t=0}\\
+    &amp;=\mu\\
+  \text{E}(X^2)&amp;=\mu_2'=\frac{d^2}{dt^2}M_X(t)\bigg|_{t=0}\\
+    &amp;=\mu_2'=(\mu_1')'=\frac{d}{dt}\mu_1'\bigg|_{t=0}\\
+    &amp;=\frac{d}{dt}e^{\frac{t^2\sigma^2}{2}+t\mu}(\sigma^2t+\mu)\bigg|_{t=0}\\
+    &amp;=\sigma^2+\mu^2 \\
+  \text{Var}(X)&amp;=\text{E}(X^2)-(\text{E}(X))^2\\
+    &amp;=\sigma^2
+\end{aligned}\]</span>
+<p>$$</p>
 </section>
 </section>
 </section>
@@ -375,19 +402,58 @@ $$
 </div>
 <p><a href="https://courses.cs.washington.edu/courses/cse312/22wi/files/student_drive/5.6.pdf">Proof Reference-Washington University</a></p>
 <p><a href="https://www.probabilitycourse.com/chapter6/6_1_3_moment_functions.php">MGF reference</a></p>
+<div id="thm-linearity_mgf" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 3 </strong></span><span class="math display">\[
+\text{M}_{X+a}(t) =e^{at}\text{M}_X(t)
+\]</span></p>
+</div>
+<p>Proof) <span class="math inline">\(\text{E}(e^{t(x+a)})=\text{E}(e^{at}e^{tx})=e^{at}\text{E}(e^{tx})=e^{at}\text{M}_X(t)\)</span></p>
+<div id="thm-transform_mgf" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 4 </strong></span><span class="math display">\[
+\text{M}_{aX}(t) =\text{M}_X(at)
+\]</span></p>
+</div>
+<p>Proof) <span class="math inline">\(\text{E}(e^{atx})=\text{E}(e^{at(x)})=\text{M}_X(at)\)</span></p>
+<ul>
+<li>Example) when <span class="math inline">\(X \sim N(0,1)\)</span>, the mgf of <span class="math inline">\(Y=aX+b\)</span> is ?</li>
+</ul>
+<p><span class="math display">\[
+\begin{aligned}
+  \text{M}_Y(t)&amp;=\text{M}_{aX+b}(t)\\
+               &amp;=e^{bt}\text{M}_{X}(at)\\
+               &amp;=e^{bt}e^{\frac{a^2t^2}{2}}\\
+               &amp;=e^{bt+\frac{a^2t^2}{2}}
+\end{aligned}
+\]</span></p>
 <div id="thm-independent_mgf" class="theorem">
-<p><span class="theorem-title"><strong>Theorem 3 </strong></span>서로 독립인 확률 변수 <span class="math inline">\(X_1,X_2, ..., X_n\)</span> 의 적률 생성 함수가 각 각 <span class="math inline">\(\text{M}_{X_1}(t), \text{M}_{X_2}(t), ..., \text{M}_{X_n}(t)\)</span> 일 때, 확률 변수 <span class="math inline">\(Y=X_1+X_2+...+X_n\)</span> 의 적률 생성함수 <span class="math inline">\(\text{M}_Y(t)\)</span> 는 <span class="math inline">\(\text{M}_{X_1}(t)\text{M}_{X_2}(t) \dots \text{M}_{X_n}(t)\)</span> 이다.</p>
+<p><span class="theorem-title"><strong>Theorem 5 </strong></span>서로 독립인 확률 변수 <span class="math inline">\(X_1,X_2, ..., X_n\)</span> 의 적률 생성 함수가 각 각 <span class="math inline">\(\text{M}_{X_1}(t), \text{M}_{X_2}(t), ..., \text{M}_{X_n}(t)\)</span> 일 때, 확률 변수 <span class="math inline">\(Y=X_1+X_2+...+X_n\)</span> 의 적률 생성함수 <span class="math inline">\(\text{M}_Y(t)\)</span> 는 <span class="math inline">\(\text{M}_{X_1}(t)\text{M}_{X_2}(t) \dots \text{M}_{X_n}(t)\)</span> 이다.</p>
 <p><span class="math display">\[
 \begin{aligned}
   \text{M}_Y(t) &amp;= E(e^{Yt})\\
-                &amp;= E(e^{t(X_1,X_2, ..., X_n)})\\
+                &amp;= E(e^{t(X_1+X_2+ ...+ X_n)})\\
                 &amp;= E(e^{tX_1}e^{tX_2}\dots e^{tX_n})\\
                 &amp;= E(e^{tX_1})E(e^{tX_2})\dots E(e^{tX_n}) \because X_i \text{ are independent}\\
-                &amp;= E(e^{Yt})\\
                 &amp;= \text{M}_{X_1}(t)\text{M}_{X_2}(t) \dots \text{M}_{X_n}(t)
 \end{aligned}
-\]</span> 다시 말해서, 확률 변수의 분포의 특징이 적률 생성 함수에 의하여 유일하게 결정된다.</p>
+\]</span></p>
 </div>
+<ul>
+<li>Example) <span class="math inline">\(X_1, X_2, ..., X_n\)</span> 가 서로 독립이고 parameter 가 각 각 <span class="math inline">\(\lambda_1, \lambda_2, ..., \lambda_n\)</span> 인 poisson 분포를 따른다면 <span class="math inline">\(Y=X_1+X_2+...+X_n\)</span> 의 mgf는</li>
+</ul>
+$$
+<span class="math display">\[\begin{aligned}
+  \text{M}_X(t) &amp;= e^{\lambda(e^t-1)}\\
+  \text{M}_Y(t) &amp;= E(e^{Yt})\\
+                &amp;= E(e^{t(X_1+X_2+ ...+ X_n)})\\
+                &amp;= E(e^{tX_1}e^{tX_2}\dots e^{tX_n})\\
+                &amp;= E(e^{tX_1})E(e^{tX_2})\dots E(e^{tX_n}) \because X_i \text{ are independent}\\
+                &amp;= \text{M}_{X_1}(t)\text{M}_{X_2}(t) \dots \text{M}_{X_n}(t)\\
+                &amp;= e^{\lambda_1(e^t-1)}+e^{\lambda_2(e^t-1)}+\dots+e^{\lambda_n(e^t-1)}\\
+                &amp;= e^{(\lambda_1+\lambda_2+\dots+\lambda_n)(e^t-1)}\\
+                &amp;= e^{\sum_{i=1}^{n}\lambda_i(e^t-1)}\\
+\end{aligned}\]</span>
+<p>$$</p>
+<p>이다. 즉, Y는 parameter가 <span class="math inline">\(\sum_{i=1}^{n}\lambda_i\)</span> 인 poisson 분포를 따른다. 뿐만 아니라, 정규 분포, poisson 분포, 카이제곱 분포의 경우 독립 변수들의 합으로 만든 분포도 같은 종류의 분포를 따르게 된다.</p>
 </div>
 <section id="blog-guide-map-link" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="blog-guide-map-link"><span class="header-section-number">2</span> Blog Guide Map Link</h2>

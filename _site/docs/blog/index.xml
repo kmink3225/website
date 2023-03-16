@@ -752,9 +752,66 @@ English
 <div id="def-maclaurin_series" class="theorem definition">
 <p><span class="theorem-title"><strong>Definition 7 </strong></span><img src="https://latex.codecogs.com/png.latex?f"> is said to be a <strong>Maclaurin series</strong> if f has a Taylor’s series with the special case <img src="https://latex.codecogs.com/png.latex?a=0">: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%20%20f(x)&amp;=%5Csum_%7Bn=0%7D%5E%7B%5Cinfty%7D%20%5Cfrac%7Bf%5E%7B(n)%7D(0)%7D%7Bn!%7D(x)%5En%20%5C%5C%0A%20%20%20%20%20%20%20%20&amp;=%20%5Cfrac%7Bf%5E%7B(0)%7D(0)%7D%7B0!%7Dx%5E0+%5Cfrac%7Bf%5E%7B(1)%7D(0)%7D%7B1!%7Dx%5E1+%5Cfrac%7Bf%5E%7B(2)%7D(0)%7D%7B2!%7Dx%5E2+%5Cfrac%7Bf%5E%7B(3)%7D(0)%7D%7B3!%7Dx%5E3%20+%20%5Cdots%20%5C%5C%0A%20%20%20%20%20%20%20%20&amp;=%20f(0)+%5Cfrac%7Bf%5E%7B(1)%7D(0)%7D%7B1!%7Dx%5E1+%5Cfrac%7Bf%5E%7B(2)%7D(0)%7D%7B2!%7Dx%5E2+%5Cfrac%7Bf%5E%7B(3)%7D(0)%7D%7B3!%7Dx%5E3%20+%20%5Cdots%0A%5Cend%7Baligned%7D%0A"></p>
 </div>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;">import</span> math</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;">import</span> numpy <span class="im" style="color: #00769E;">as</span> np</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;">as</span> plt</span>
+<span id="cb1-4"></span>
+<span id="cb1-5">degrees <span class="op" style="color: #5E5E5E;">=</span> (<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">7</span>)</span>
+<span id="cb1-6">ls <span class="op" style="color: #5E5E5E;">=</span> (<span class="st" style="color: #20794D;">'-'</span>, <span class="st" style="color: #20794D;">'--'</span>, <span class="st" style="color: #20794D;">'-.'</span>, <span class="st" style="color: #20794D;">':'</span>)</span>
+<span id="cb1-7"></span>
+<span id="cb1-8"><span class="kw" style="color: #003B4F;">def</span>  taylor_e(x, a, n) :</span>
+<span id="cb1-9">    <span class="co" style="color: #5E5E5E;">"""</span></span>
+<span id="cb1-10"><span class="co" style="color: #5E5E5E;">    x* = a 에서 전개</span></span>
+<span id="cb1-11"><span class="co" style="color: #5E5E5E;">    f(x) = f(a) + f'(a)*(x-a) + (1/2!)f''(a)(x-a)^2 + ... + (1/k!)f^(k)(a)(x-a)^k + R_k</span></span>
+<span id="cb1-12"><span class="co" style="color: #5E5E5E;">    """</span></span>
+<span id="cb1-13">    signs  <span class="op" style="color: #5E5E5E;">=</span> (<span class="dv" style="color: #AD0000;">1</span>, <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>)</span>
+<span id="cb1-14">    derivs <span class="op" style="color: #5E5E5E;">=</span> (np.cos, np.sin, np.cos, np.sin)</span>
+<span id="cb1-15"></span>
+<span id="cb1-16">    fx <span class="op" style="color: #5E5E5E;">=</span>  np.sin(a) </span>
+<span id="cb1-17">    </span>
+<span id="cb1-18">    <span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(<span class="dv" style="color: #AD0000;">1</span>, n<span class="op" style="color: #5E5E5E;">+</span><span class="dv" style="color: #AD0000;">1</span>) : </span>
+<span id="cb1-19">        fx <span class="op" style="color: #5E5E5E;">+=</span> (signs[(i<span class="op" style="color: #5E5E5E;">%</span><span class="dv" style="color: #AD0000;">4</span>)<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>]<span class="op" style="color: #5E5E5E;">*</span>derivs[(i<span class="op" style="color: #5E5E5E;">%</span><span class="dv" style="color: #AD0000;">4</span>)<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>](a)) <span class="op" style="color: #5E5E5E;">/</span> math.factorial(i)<span class="op" style="color: #5E5E5E;">*</span>(x<span class="op" style="color: #5E5E5E;">-</span>a)<span class="op" style="color: #5E5E5E;">**</span>i</span>
+<span id="cb1-20">    </span>
+<span id="cb1-21">    <span class="cf" style="color: #003B4F;">return</span> fx</span>
+<span id="cb1-22">    </span>
+<span id="cb1-23">x <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">10</span>, <span class="dv" style="color: #AD0000;">10</span>, <span class="dv" style="color: #AD0000;">100</span>)</span>
+<span id="cb1-24">y <span class="op" style="color: #5E5E5E;">=</span> np.sin(x)</span>
+<span id="cb1-25"></span>
+<span id="cb1-26">fig <span class="op" style="color: #5E5E5E;">=</span> plt.figure(figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">12</span>,<span class="dv" style="color: #AD0000;">5</span>))</span>
+<span id="cb1-27">ax <span class="op" style="color: #5E5E5E;">=</span> fig.add_subplot(<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>)</span>
+<span id="cb1-28"></span>
+<span id="cb1-29">ax.xaxis.set_tick_params(labelsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">18</span>)</span>
+<span id="cb1-30">ax.yaxis.set_tick_params(labelsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">18</span>)</span>
+<span id="cb1-31">ax.set_xlabel(<span class="vs" style="color: #20794D;">r'$x$'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">25</span>)</span>
+<span id="cb1-32">ax.set_ylabel(<span class="vs" style="color: #20794D;">r'$x$'</span>, fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">25</span>)</span>
+<span id="cb1-33">ax.grid(<span class="va" style="color: #111111;">False</span>)</span>
+<span id="cb1-34"></span>
+<span id="cb1-35">taylors <span class="op" style="color: #5E5E5E;">=</span> (taylor_e(x, <span class="dv" style="color: #AD0000;">0</span>, i) <span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> degrees)</span>
+<span id="cb1-36">ax.plot(x, y , lw<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">3</span>, color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'gray'</span>, </span>
+<span id="cb1-37">        label<span class="op" style="color: #5E5E5E;">=</span><span class="vs" style="color: #20794D;">r"sin(x)"</span>)</span>
+<span id="cb1-38"></span>
+<span id="cb1-39"><span class="cf" style="color: #003B4F;">for</span> i, taylor <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">enumerate</span>(taylors) :</span>
+<span id="cb1-40">    ax.plot(x, taylor, lw<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">2</span>, ls<span class="op" style="color: #5E5E5E;">=</span>ls[i], color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'k'</span>, </span>
+<span id="cb1-41">            label<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">"degree </span><span class="sc" style="color: #5E5E5E;">{}</span><span class="st" style="color: #20794D;">"</span>.<span class="bu" style="color: null;">format</span>(degrees[i]))</span>
+<span id="cb1-42"></span>
+<span id="cb1-43"></span>
+<span id="cb1-44">ax.legend(fontsize<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">18</span>)<span class="op" style="color: #5E5E5E;">;</span></span>
+<span id="cb1-45">ax.set_ylim([<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">5</span>])</span>
+<span id="cb1-46"></span>
+<span id="cb1-47"><span class="co" style="color: #5E5E5E;"># plt.suptitle("Taylor series, order=1,2,3", fontsize=15)</span></span>
+<span id="cb1-48"></span>
+<span id="cb1-49"></span>
+<span id="cb1-50">plt.show()</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/taylor_series/index_files/figure-html/cell-2-output-1.png" width="995" height="460"></p>
+</div>
+</div>
 </section>
 </div>
-<p>:::</p>
 </div>
 <div id="English" class="tab-pane fade" aria-labelledby="English-tab">
 <div id="English" class="tab-pane fade" aria-labelledby="English-tab">

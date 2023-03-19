@@ -14,8 +14,8 @@ format:
     number-sections: true
     page-layout: full
     code-fold: true
-    fig-width: 8
-    fig-height: 8
+    fig-width: 7.5
+    fig-height: 7.5
 ---
 
 
@@ -413,6 +413,8 @@ ggarrange(
 )
 
 # K means
+
+
 km_clustering <- kmeans(normalized_metabolite_data, centers = 2, iter.max = 300)
 km_significant_clustering <- kmeans(normalized_significant_metabolite_data, centers = 2, iter.max = 300)
 
@@ -460,7 +462,9 @@ ggplot(
 
 ```
 
+비지도 학습 방법인 PCA와 K-means clustering를 이용하여 차원 축소와 군집화를 시도하였으나, 이 방법을 사용하는 모든 대사체에 대해 AD 상태가 명확하게 분류되지 않는 것으로 보인다. PCA와 K-means는 EDA에서 선별된 대사산물로 군집화를 수행했을 때 전체 metabolites 보다 선별된 metabolites 에서 AD 상태에 대한 정보가 조금 더 많이 설명되는 것을 PCA를 통해 관찰할 수 있었다. K means clustering도 선별된 metabolites에 대해서 성능 향상을 보여준다. 그러나 전반적인 정확도가 매우 낮기 때문에 지도 학습을 통해 AD 상태를 잘 설명하는 대사체를 선택할 것이다.
 
+Dimensionality reduction and clustering were attempted using PCA and K-means clustering, which are unsupervised learning methods, but AD status seems to not be clearly classified for all metabolites using the methods. When PCA and K means clustering were performed with the metabolites selected from EDA, it was observed through PCA that a little more information about AD status was explained with the selected metabolites than with the entire set of metaboliotes. K means clustering also showed an improvement in performance with the selected metabolites. However, the overall accuracy is very low, so we will select metabolites that explain AD status well through supervised learning.
 
 ```{r}
 #| eval: false
@@ -521,28 +525,4 @@ for (i in 1:p) {
 
 </div>
 
-
-
-
-
-
-#
-#
-
-#
-#
-
-#
-#
-
-#
-#
-
-#
-#
-#
-#
-#
-#
-#
 

@@ -3,9 +3,218 @@ title: "Statistical Approach"
 subtitle: "Statistics"
 description: "Use Statistics"
 author: Kwangmin Kim
-date: 2023-01-03
+date: 2023-03-20
+execute:
+  warning: false
+  message: false
+  freeze: true
+  eval: false
+  echo: false
 format: 
   html:
+    toc: true
+    number-sections: true
     page-layout: full
     code-fold: true
+    fig-width: 7.5
+    fig-height: 7.5
 ---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+
+
+```{r}
+#| echo: false
+
+# clear objects
+rm(list = ls())
+
+# setting datapath
+if (grepl("kkm", getwd())) {
+    datapath <- "C:/Users/kkm/Desktop/projects/website/docs/"
+} else {
+    datapath <- "C:/Users/kmkim/Desktop/projects/website/docs/"
+}
+
+# load libraries
+if (!require(janitor)) install.packages("janitor")
+if (!require(tidyverse)) install.packages("tidyverse")
+if (!require(tidymodels)) install.packages("tidymodels")
+if (!require(glmnet)) install.packages("glmnet")
+if (!require(MASS)) install.packages("MASS")
+if (!require(ggpubr)) install.packages("ggpubr")
+if (!require(car)) install.packages("car")
+if (!require(caret)) install.packages("caret")
+if (!require(plotly)) install.packages("plotly")
+if (!require(mixOmics)) install.packages("mixOmics")
+# if(!require(reticulate)) install.packages("reticulate")
+library(janitor)
+library(tidyverse)
+library(tidymodels)
+library(glmnet)
+library(MASS)
+library(ggpubr)
+library(car)
+library(caret)
+library(mixOmics)
+library(plotly)
+# library(reticulate)
+
+# set a seed number
+set.seed(20230223)
+
+# load functions
+source(paste0(datapath, "functions/R/functions.r"))
+
+knitr::opts_chunk$set(message = FALSE, warning = FALSE)
+
+# load simulation data
+simulated_data <- read_rds(paste0(datapath, "data/llfs_simulated_data.rds"))
+significant_metabolites <- read_rds(paste0(datapath, "data/llfs_fake_significant_metabolites.rds"))
+# simple data pre-processing
+all_data <-
+    simulated_data %>%
+    mutate(
+        outcome = factor(outcome, levels = c("negative", "positive")),
+        sex = ifelse(sex == 0, "man", "woman"),
+        sex = factor(sex, levels = c("man", "woman")),
+        genotype = factor(genotype, levels = c("e3", "e2", "e4"))
+    )
+
+# rename metabolite variables
+predictor_size <- 1000
+names(all_data)[6:ncol(all_data)] <- paste0("meta", 1:predictor_size)
+
+data<-all_data
+
+
+```
+```{r}
+# Split the data into a training set and a test set
+
+train_indices <- sample(1:nrow(data), size = round(0.7 * nrow(data)), replace = FALSE)
+train_data <- data[train_indices, ]
+test_data <- data[-train_indices, ]
+
+# Fit a logistic regression model using the selected predictors
+
+x_train <- as.matrix(train_data[, significant_metabolites])
+y_train <- train_data$outcome
+fit <- cv.glmnet(x_train, y_train, family = "binomial", alpha = 1, nfolds = 5)
+
+# Make predictions on the test set
+x_test <- as.matrix(test_data[, significant_metabolites])
+y_test <- test_data$outcome
+pred <- predict(fit, newx = x_test, s = "lambda.min", type = "response")
+pred_class <- ifelse(pred > 0.5, 1, 0)
+
+# Evaluate the model's performance on the test set
+
+confusionMatrix(table(ifelse(pred_class==1,'positive','negative'), y_test))
+
+```
+
+```{r}
+
+# Split the data into K folds for cross-validation
+K <- 5
+
+cv_folds <- sample(rep(1:K, length.out = nrow(all_data)))
+
+# Initialize a list to store the cross-validation results
+cv_results <- list()
+
+# Loop over each fold
+for (k in 1:K) {
+  
+  # Extract the training and validation sets for this fold
+  x_train <- as.matrix(data[cv_folds != k, significant_metabolites])
+  y_train <- data$class_label[cv_folds != k]
+  x_valid <- as.matrix(data[cv_folds == k, significant_metabolites])
+  y_valid <- data$class_label[cv_folds == k]
+  
+  # Fit a logistic regression model using the selected predictors
+  fit <- glmnet(x_train, y_train, family = "binomial", alpha = 1, lambda = NULL)
+  
+  # Use the model to make predictions on the validation set
+  pred <- predict(fit, newx = x_valid, s = "lambda.min", type = "response")
+  pred_class <- ifelse(pred > 0.5, 1, 0)
+  
+  # Compute performance metrics for this fold
+  tp <- sum(pred_class == 1 & y_valid == 1)
+  tn <- sum(pred_class == 0 & y_valid == 0)
+  fp <- sum(pred_class == 1 & y_valid == 0)
+  fn <- sum(pred_class == 0 & y_valid == 1)
+  accuracy <- (tp + tn) / (tp + tn + fp + fn)
+  precision <- tp / (tp + fp)
+  recall <- tp / (tp + fn)
+  f1_score <- 2 * precision * recall / (precision + recall)
+  
+  # Store the results in the cv_results list
+  cv_results[[k]] <- list(tp = tp, tn = tn, fp = fp, fn = fn, accuracy = accuracy, precision = precision, recall = recall, f1_score = f1_score)
+}
+
+# Compute the average performance metrics across all folds
+tp_avg <- mean(sapply(cv_results, function(x) x$tp))
+tn_avg <- mean(sapply(cv_results, function(x) x$tn))
+fp_avg <- mean(sapply(cv_results, function(x) x$fp))
+fn_avg <- mean(sapply(cv_results, function(x) x$fn))
+accuracy_avg <- mean(sapply(cv_results, function(x) x$accuracy))
+precision_avg <- mean(sapply(cv_results, function(x) x$precision))
+recall_avg <- mean(sapply(cv_results, function(x) x$recall))
+f1_score_avg <- mean(sapply(cv_results, function(x) x$f1_score))
+
+# Print the average performance metrics
+cat("TP:", tp_avg, "\n")
+cat("TN:", tn_avg, "\n")
+cat("FP:", fp_avg, "\n")
+cat("FN:", fn_avg, "\n")
+cat("Accuracy:", accuracy_avg, "\n")
+cat("Precision:", precision_avg, "\n")
+cat("Recall:", recall_avg, "\n")
+cat("F1 Score:", f1_score_avg, "\n")
+```
+
+
+:::
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
+
+:::
+
+
+</div>
+
+```{python}
+#| echo: false
+#| eval: true
+radius = 10
+from IPython.display import display, Markdown
+display(Markdown("""
+The radius of the circle is {radius}.
+""".format(radius = radius)))
+```
+
+
+# Go to Project Content List
+
+[Project Content List](./docs/projects/index.qmd)
+
+# Go to Blog Content List
+
+[Blog Content List](./docs/blog/posts/content_list.qmd)

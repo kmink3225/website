@@ -362,6 +362,70 @@ a_1+ a_2+ a_3+ \dots+ a_n+ a_{n+1} \dots
 <p><img src="index_files/figure-html/cell-2-output-1.png" width="995" height="460"></p>
 </div>
 </div>
+<div id="thm-taylor_series" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 1 </strong></span><span class="math inline">\(f\)</span> is differentiable (and therefore continuous) <span class="math inline">\(n\)</span> times on <span class="math inline">\([a,b]\)</span> , <span class="math inline">\(x^*,x \in [a,b]\)</span>, and <span class="math inline">\(x\ne x^*\)</span>, there exists <span class="math inline">\(\theta\)</span> such that <span class="math inline">\(0&lt;\theta&lt;1\)</span> and<br>
+<span class="math display">\[
+\begin{aligned}
+    f(x)&amp;=f(x^*)+f'(x^*)(x-x^*)+\frac{f^{(2)}(x^*)^2}{2!}(x-x^*)^2+\dots+\\
+    &amp;\frac{f^{(n-1)}(x^*)}{(n-1)!}(x-x^*)^{n-1} + \frac{f^{(n)}(x^*+\theta(x-x^*))}{n!}(x-x^*)^{n}
+\end{aligned}
+\]</span> .</p>
+</div>
+<p>In the given expression, the symbol <span class="math inline">\(\theta\)</span> represents a value between 0 and 1, and it is used in the context of Taylor’s theorem with remainder (see <a href="#def-taylor_series">Definition&nbsp;6</a>). The general form of Taylor’s theorem with remainder is:</p>
+<p><span class="math display">\[
+f(x) = f(a) + \frac{f'(a)}{1!}(x-a) + \frac{f''(a)}{2!}(x-a)^2 + ... + \frac{f^{(n)}(a)}{n!}(x-a)^n + R_n(x)
+\]</span></p>
+<p>where <span class="math inline">\(R_n(x)\)</span> is the remainder term that involves the <span class="math inline">\(n+1\)</span> th derivative of f evaluated at some point <span class="math inline">\(c\)</span> between <span class="math inline">\(x\)</span> and <span class="math inline">\(a\)</span>:</p>
+<p><span class="math display">\[
+\begin{aligned}
+  R_n(x)&amp;=f(x)- (f(a) + \frac{f'(a)}{1!}(x-a) + \frac{f''(a)}{2!}(x-a)^2 + ... + \frac{f^{(n)}(a)}{n!}(x-a)^n)\\
+  R_n(x)&amp;= \frac{f^{(n+1)}(c)}{(n+1)!}(x-a)^{n+1}
+\end{aligned}
+\]</span></p>
+<p>In the given expression, <span class="math inline">\(x^*+\theta(x-x^*)\)</span> is the value of <span class="math inline">\(c\)</span> that lies between <span class="math inline">\(x\)</span> and <span class="math inline">\(x^*\)</span>, where <span class="math inline">\(\theta\)</span> is a scalar value between <span class="math inline">\(0\)</span> and <span class="math inline">\(1\)</span>. Therefore, the remainder term in the expression is:</p>
+<p><span class="math display">\[
+\frac{f^{(n)}(x^*+\theta(x-x^*))}{(n)!}(x-x^*)^{n}
+\]</span></p>
+<p>This term represents the error or the difference between the true value of the function at <span class="math inline">\(x\)</span> and the value obtained from the Taylor series approximation up to the <span class="math inline">\(n\)</span> th order.</p>
+<section id="example" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="example"><span class="header-section-number">1.1</span> Example</h3>
+<p><span class="math inline">\(f(x)=x^3-3x^2+4\)</span></p>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f(x):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x<span class="op">**</span><span class="dv">3</span><span class="op">-</span><span class="dv">3</span><span class="op">*</span>x<span class="op">**</span><span class="dv">2</span><span class="op">+</span><span class="dv">4</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> df(x):</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">3</span><span class="op">*</span>x<span class="op">**</span><span class="dv">2</span><span class="op">-</span><span class="dv">6</span><span class="op">*</span>x</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> d2f(x):</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">6</span><span class="op">*</span>x<span class="op">-</span><span class="dv">6</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> d3f(x):</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">6</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> d4f(x):</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the Taylor series expansion up to the 4th order</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> taylor(x):</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> f(<span class="dv">0</span>) <span class="op">+</span> df(<span class="dv">0</span>)<span class="op">*</span>x <span class="op">+</span> d2f(<span class="dv">0</span>)<span class="op">*</span>(x<span class="op">**</span><span class="dv">2</span>)<span class="op">/</span><span class="dv">2</span> <span class="op">+</span> d3f(<span class="dv">0</span>)<span class="op">*</span>(x<span class="op">**</span><span class="dv">3</span>)<span class="op">/</span><span class="dv">6</span> <span class="op">+</span> d4f(<span class="dv">0</span>)<span class="op">*</span>(x<span class="op">**</span><span class="dv">4</span>)<span class="op">/</span><span class="dv">24</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a range of x values</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="op">-</span>np.pi, np.pi, <span class="dv">100</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the function and its approximation using the Taylor series expansion</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> f(x)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>y_approx <span class="op">=</span> taylor(x)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the function and its approximation</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>plt.plot(x, y, label<span class="op">=</span><span class="vs">r'$f(x)=x^3-3x^2+4$'</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>plt.plot(x, y_approx, label<span class="op">=</span><span class="st">'Taylor Approximation'</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="index_files/figure-html/cell-3-output-1.png" width="577" height="411"></p>
+</div>
+</div>
+</section>
 </section>
 </div>
 </div>

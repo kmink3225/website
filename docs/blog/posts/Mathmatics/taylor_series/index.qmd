@@ -116,6 +116,7 @@ $$
 :::
 
 ```{python}
+
 import math
 import numpy as np
 import matplotlib.pyplot as plt
@@ -144,10 +145,10 @@ y = np.sin(x)
 fig = plt.figure(figsize=(12,5))
 ax = fig.add_subplot(1, 1, 1)
 
-ax.xaxis.set_tick_params(labelsize=18)
-ax.yaxis.set_tick_params(labelsize=18)
-ax.set_xlabel(r'$x$', fontsize=25)
-ax.set_ylabel(r'$x$', fontsize=25)
+ax.xaxis.set_tick_params(labelsize=12)
+ax.yaxis.set_tick_params(labelsize=12)
+ax.set_xlabel(r'$x$', fontsize=15)
+ax.set_ylabel(r'$x$', fontsize=15)
 ax.grid(False)
 
 taylors = (taylor_e(x, 0, i) for i in degrees)
@@ -167,6 +168,132 @@ ax.set_ylim([-5, 5])
 
 plt.show()
 ```
+
+::: {#thm-taylor_series_remainder}
+
+ If $f$ is differentiable (and therefore continuous) $n$ times on $[a,b]$ , then there exists $c$ such that
+$$
+\begin{aligned}
+    f(b)&=f(a)+f'(a)(b-a)+\frac{f^{(2)}(a)^2}{2!}(b-a)^2+\dots+\\
+    &\frac{f^{(n-1)}(a)}{(n-1)!}(b-a)^{n-1} + \frac{f^{(n)}(c)}{n!}(b-a)^{n}, a<c<b
+\end{aligned}
+$$
+.
+:::
+
+Proof) find $c$ such that $f(b)&=f(a)+f'(a)(b-a)+\frac{f^{(2)}(a)^2}{2!}(b-a)^2+\dots+\frac{f^{(n-1)}(a)}{(n-1)!}(b-a)^{n-1} + \frac{f^{(n)}(c)}{n!}(b-a)^{n}, a<c<b$.
+
+$$
+\begin{aligned}
+    \text{Let }F(x)&=f(b)-(f(a)+f'(a)(b-a)+\frac{f^{(2)}(a)^2}{2!}(b-a)^2+\dots+\\
+    &\frac{f^{(n-1)}(a)}{(n-1)!}(b-a)^{n-1} + k(b-a)^{n}) \text{ where }k=\frac{f^{(n)}(c)}{n!}
+\end{aligned}
+$$
+Then, $F(x)$ is differentiable on $[a,b]$. In addition, since $F(a)=F(b)=0$, there exists $c$ such that $F'(c)=0$, $a<c<b$ by the Mean Value Theorem. Thus,
+
+$$
+\begin{aligned}
+  F'(x)&=-\frac{f^{(n)}(x)}{(n-1)!}(b-x)^{n-1}+kn(b-x)^{n-1}\\
+  F'(c)&=-\frac{f^{(n)}(c)}{(n-1)!}(b-c)^{n-1}+kn(b-c)^{n-1}=0\\
+  kn&=\frac{f^{(n)}(c)}{(n-1)!}\\
+  \therefore k&=\frac{f^{(n)}(c)}{n!}
+\end{aligned}
+$$
+
+::: {#thm-taylor_series_remainder2}
+
+ If $f$ is differentiable (and therefore continuous) $n$ times on $[a,b]$ , $x^*,x \in [a,b]$, and $x\ne x^*$, there exists $\theta$ such that $0<\theta<1$ and  
+$$
+\begin{aligned}
+    f(x)&=f(x^*)+f'(x^*)(x-x^*)+\frac{f^{(2)}(x^*)^2}{2!}(x-x^*)^2+\dots+\\
+    &\frac{f^{(n-1)}(x^*)}{(n-1)!}(x-x^*)^{n-1} + \frac{f^{(n)}(x^*+\theta(x-x^*))}{n!}(x-x^*)^{n}
+\end{aligned}
+$$
+.
+:::
+
+Proof) next work -> To be continued from here...
+
+
+In the given expression, the symbol $\theta$ represents a value between 0 and 1, and it is used in the context of Taylor's theorem with remainder (see @def-taylor_series). The general form of Taylor's theorem with remainder is:
+
+$$
+f(x) = f(a) + \frac{f'(a)}{1!}(x-a) + \frac{f''(a)}{2!}(x-a)^2 + ... + \frac{f^{(n)}(a)}{n!}(x-a)^n + R_n(x)
+$$
+
+where $R_n(x)$ is the remainder term that involves the $n+1$ th derivative of f evaluated at some point $c$ between $x$ and $a$:
+
+$$
+\begin{aligned}
+  R_n(x)&=f(x)- (f(a) + \frac{f'(a)}{1!}(x-a) + \frac{f''(a)}{2!}(x-a)^2 + ... + \frac{f^{(n)}(a)}{n!}(x-a)^n)\\
+  R_n(x)&= \frac{f^{(n+1)}(c)}{(n+1)!}(x-a)^{n+1}
+\end{aligned}
+$$
+
+In the given expression, $x^*+\theta(x-x^*)$ is the value of $c$ that lies between $x$ and $x^*$, where $\theta$ is a scalar value between $0$ and $1$. Therefore, the remainder term in the expression is:
+
+$$
+\frac{f^{(n)}(x^*+\theta(x-x^*))}{(n)!}(x-x^*)^{n}
+$$
+
+This term represents the error or the difference between the true value of the function at $x$ and the value obtained from the Taylor series approximation up to the $n$ th order.
+
+### Example
+
+$f(x)=x^3-3x^2+4$
+
+```{python}
+
+def f(x):
+    return x**3-3*x**2+4
+def df(x):
+    return 3*x**2-6*x
+def d2f(x):
+    return 6*x-6
+def d3f(x):
+    return np.repeat(6,len(x))
+
+
+
+# Define the Taylor series expansion up to the 3rd order
+def taylor(x):
+    return f(0) + df(0)*x + d2f(0)*(x**2)/2 + d3f(0)*(x**3)/6 
+
+# Create a range of x values
+x = np.linspace(-np.pi, np.pi, 100)
+
+# Calculate the function and its approximation using the Taylor series expansion
+y = f(x)
+y2 = df(x)
+y3 = d2f(x)
+y_approx = taylor(x)
+
+# Plot the function and its approximation
+
+plt.plot(x, y, label=r'$f(x)=x^3-3x^2+4$')
+plt.plot(x, df(x), label=r'$f(x)=3x^2-6x$')
+plt.plot(x, d2f(x), label=r'$f(x)=6x-6$')
+plt.plot(x, d3f(x), label=r'$f(x)=6$')
+plt.plot(x, y_approx, label='Taylor Approximation')
+plt.legend()
+plt.show()
+
+```
+
+
+If $f(x)=x^3-3x^2+4$, then $\frac{df(x)}{dx}=3x^2-6x$, $\frac{d^2f(x)}{dx^2}=6x-6$, $\frac{d^3f(x)}{dx^3}=6$, $\frac{d^nf(x)}{dx^n}=0, n\ge 4$. For $x\ne x^*$,
+
+$$
+\begin{aligned}
+  f(x)&=f(x^*)+f'(x^*)(x-x^*)+\frac{f^{(2)}(x^*)^2}{2!}(x-x^*)^2+\frac{f^{(3)}(x^*)^3}{3!}(x-x^*)^3\\
+  f(x)&=f(x^*)+(3x^2-6x)(x-x^*)+\frac{(6x-6)}{2!}(x-x^*)^2+\frac{6}{3!}(x-x^*)^3\\
+  f(x)&=f(0)+(3x^2-6x)(x)+\frac{(6x-6)}{2!}(x)^2+\frac{6}{3!}(x)^3 \text{ } (x=x^*)\\
+  f(x)&=x^3-3x^2+4
+\end{aligned}     
+$$
+
+### Second Derivative Test
+
 
 
 :::

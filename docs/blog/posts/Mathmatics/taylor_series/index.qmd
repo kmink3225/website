@@ -1,6 +1,6 @@
 ---
 title: Taylor's Series
-subtitle: Taylor's Series
+subtitle: Taylor's Series and Second Derivative Test
 description: |
   
 categories:
@@ -181,7 +181,7 @@ $$
 .
 :::
 
-Proof) find $c$ such that $f(b)&=f(a)+f'(a)(b-a)+\frac{f^{(2)}(a)^2}{2!}(b-a)^2+\dots+\frac{f^{(n-1)}(a)}{(n-1)!}(b-a)^{n-1} + \frac{f^{(n)}(c)}{n!}(b-a)^{n}, a<c<b$.
+Proof) find $c$ such that $f(b)=f(a)+f'(a)(b-a)+\frac{f^{(2)}(a)^2}{2!}(b-a)^2+\dots+\frac{f^{(n-1)}(a)}{(n-1)!}(b-a)^{n-1} + \frac{f^{(n)}(c)}{n!}(b-a)^{n}, a<c<b$.
 
 $$
 \begin{aligned}
@@ -250,14 +250,14 @@ def df(x):
     return 3*x**2-6*x
 def d2f(x):
     return 6*x-6
-def d3f(x):
-    return np.repeat(6,len(x))
+def d3f(n):
+    return np.repeat(6,n)
 
 
 
 # Define the Taylor series expansion up to the 3rd order
 def taylor(x):
-    return f(0) + df(0)*x + d2f(0)*(x**2)/2 + d3f(0)*(x**3)/6 
+    return f(0) + df(0)*x + d2f(0)*(x**2)/2 + d3f(len(x))*(x**3)/6 
 
 # Create a range of x values
 x = np.linspace(-np.pi, np.pi, 100)
@@ -270,10 +270,10 @@ y_approx = taylor(x)
 
 # Plot the function and its approximation
 
-plt.plot(x, y, label=r'$f(x)=x^3-3x^2+4$')
+plt.plot(x, y, '--',lw=5, label=r'$f(x)=x^3-3x^2+4$')
 plt.plot(x, df(x), label=r'$f(x)=3x^2-6x$')
 plt.plot(x, d2f(x), label=r'$f(x)=6x-6$')
-plt.plot(x, d3f(x), label=r'$f(x)=6$')
+plt.plot(x, d3f(len(x)), label=r'$f(x)=6$')
 plt.plot(x, y_approx, label='Taylor Approximation')
 plt.legend()
 plt.show()
@@ -281,7 +281,9 @@ plt.show()
 ```
 
 
-If $f(x)=x^3-3x^2+4$, then $\frac{df(x)}{dx}=3x^2-6x$, $\frac{d^2f(x)}{dx^2}=6x-6$, $\frac{d^3f(x)}{dx^3}=6$, $\frac{d^nf(x)}{dx^n}=0, n\ge 4$. For $x\ne x^*$,
+If $f(x)=x^3-3x^2+4$, then $\frac{df(x)}{dx}=3x^2-6x$, $\frac{d^2f(x)}{dx^2}=6x-6$, $\frac{d^3f(x)}{dx^3}=6$, $\frac{d^nf(x)}{dx^n}=0, n\ge 4$. 
+
+For $x\ne x^*$,
 
 $$
 \begin{aligned}
@@ -294,6 +296,104 @@ $$
 
 ### Second Derivative Test
 
+The second derivative test is a method used to determine whether a critical point of a function is a local maximum, local minimum, or a saddle point. The test uses the sign of the second derivative of the function at the critical point to determine its nature. In other words, the second derivative test uses the sign of the second derivative to determine the concavity of the function at a critical point, which in turn determines whether the critical point is a local maximum, local minimum, or a saddle point.
+
+::: {#def-2nd_derivative}
+
+Let $f$ be a function with a critical point at $x^*$. If $f$ is twice differentiable at $x^*$, then:
+
+* If $f''(x^*) > 0$, then $f$ has a local minimum at $x^*$.
+* If $f''(x^*) < 0$, then $f$ has a local maximum at $x^*$.
+* If $f''(x^*) = 0$ and there exist values of $x$ close to $x^*$ such that $f''(x) < 0$ and $f''(x) > 0$, then $f$ has a saddle point at $x^*$.
+* If $f''(x^*) = 0$ and there do not exist values of $x$ close to $x^*$ such that $f''(x) < 0$ and $f''(x) > 0$, then the test is inconclusive and we may need to use other methods to determine the nature of the critical point.
+
+:::
+
+The second derivative test is a method used to determine the nature of a critical point of a function by examining the concavity of the function at that point.
+
+If the second derivative of the function is positive at a critical point, then the function is concave up at that point, and the critical point is a local minimum. If the second derivative is negative, then the function is concave down, and the critical point is a local maximum. If the second derivative is zero, the test is inconclusive, and the other methods should be tried to determine the nature of the critical point. If there exist values of $x$ close to $x^*$ such that $f''(x) < 0$ and $f''(x) > 0$, then $f$ has a saddle point at $x^*$ (see @fig-saddle). 
+
+
+::: {.callout-tip}
+
+## What Is a Saddle Point? 
+
+A saddle point is a type of critical point of a function where the first-order partial derivatives of the function are zero, but the behavior of the function around the point is neither a local maximum nor a local minimum. Instead, the behavior is like a saddle shape, hence the name "saddle point" (see @fig-saddle).
+
+At a saddle point, the function changes concavity in different directions, meaning that the function is concave up in some directions and concave down in other directions. In other words, the Hessian matrix of the function (the matrix of second-order partial derivatives) evaluated at the saddle point has both positive and negative eigenvalues, indicating that the curvature of the function changes in different directions.
+
+Saddle points are important in optimization and machine learning because they can cause difficulties in finding the global minimum of a function. At a saddle point, gradient-based optimization algorithms can get stuck because the gradient is zero but the curvature of the function prevents the algorithm from moving in a direction that decreases the function value. This can result in slow convergence or even convergence to a suboptimal solution.
+
+:::
+
+![Saddle Point Example](./saddle_point.PNG){width=100, #fig-saddle}
+
+[Sourced from Wiki By Nicoguaro - Own work, CC BY 3.0](https://commons.wikimedia.org/w/index.php?curid=20570051)
+
+Thus, for the problem of finding the maximum and minimum, it is usually sufficient for $f$ to be differentiable twice in a taylor series. 
+
+
+
+
+$$
+\begin{aligned}
+    f(x)&=f(x^*)+f'(x^*)(x-x^*)+\frac{f^{(2)}(x^*+\theta(x-x^*))}{2!}(x-x^*)^{2} ,\text{ } 0<\theta<1
+\end{aligned}
+$$ {#eq-second_derivative}
+
+It is the case that $f'(x^*)=0$ to find $x^*$ that makes the extrema (minimum or maximum) of $f$. So, we can set $f'(x^*)$ in @eq-second_derivative as $0$. Then,
+
+$$
+\begin{aligned}
+    f(x)&=f(x^*)+\frac{f^{(2)}(x^*+\theta(x-x^*))}{2!}(x-x^*)^{2} ,\text{ } 0<\theta<1
+\end{aligned}
+$$ {#eq-second_derivative2}
+
+In @eq-second_derivative2, we can make a certain conclusion on the second derivative test depending on the sign of the variable (not a constant because of $\theta$), $f^{(2)}(x^*+\theta(x-x^*))$ because $(x-x^*)^{2}>0$:
+
+* If $f'(x^*)=0$, $x \in [a,b]$, and $f''(x)>0$, then $f(x)=f(x^*)+d, \text{ } (d>0)$  
+$\therefore f(x)>f(x^*)$, which means that $f(x)$ has a minimum at $x^*$.
+* If $f'(x^*)=0$, $x \in [a,b]$, and $f''(x)<0$, then $f(x)=f(x^*)-d, \text{ } (d>0)$   
+$\therefore f(x)<f(x^*)$, which means that $f(x)$ has a maximum at $x^*$.
+
+
+#### Example
+
+If $f(x)=e^{x^2}, f'(x)=2xe^{x^2}, \text{ and } f^{''}(x)=(2+4x^2)e^{x^2}$, the case $f'(x^*)=0$ is when $x^*=0$. Since $f^{''}(x)>0$ for all $x \in \mathbb{R}$, $f(0)=1$ is a minimum at $x^*$.
+
+$f(x)=e^{x^2}$
+
+```{python}
+
+def f(x):
+    return np.exp(x**2)
+def df(x):
+    return 2*x*np.exp(x**2)
+def d2f(x):
+    return (2+4*x**2)*np.exp(x**2)
+
+# Create a range of x values
+x = np.linspace(-1, 1, 100)
+
+# Calculate the function and its approximation using the Taylor series expansion
+y = f(x)
+y2 = df(x)
+y3 = d2f(x)
+y_approx = taylor(x)
+
+# Plot the function and its approximation
+
+plt.plot(x, y, label=r"$f(x)=e^{x^2}$")
+plt.plot(x, df(x), label=r"$f'(x)=2xe^{x^2}$")
+plt.plot(x, d2f(x), label=r"$f^{''}(x)=(2+4x^2)e^{x^2}$")
+plt.axhline(y=0, color='gray')
+plt.axvline(x=0, color='gray')
+
+plt.plot(x, y_approx, label='Taylor Approximation')
+plt.legend()
+plt.show()
+
+```
 
 
 :::

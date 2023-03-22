@@ -81,15 +81,36 @@ $$
 where $x$ is a variable and the $c_n$'s are constants called the coefficients of the series.
 :::
 
-::: {#def-power_series_expansion}
+::: {#thm-power_series_expansion}
 
  $f$ is said to be a **expanded power series centered at a** :
 $$
-\text{if }f(x)=\sum_{n=0}^{\infty} c_n(x-a)^n, \text{ then } c_n=\frac{f^{(n)}(a)}{n!}
+\text{if }f(x)=\sum_{n=0}^{\infty} c_n(x-a)^n |x-a|<R, \text{ then, its coefficients are given by the formula } c_n=\frac{f^{(n)}(a)}{n!}
 $$
 
 where $x$ is a variable and the $c_n$'s are constants called the coefficients of the series.
 :::
+
+Proof)
+
+Let $f$ is any function that can be represented by a powerseries.
+
+$$
+\begin{aligned}
+    
+    f(x) &= c_0+c_1(x-a)^1+c_2(x-a)^2+ \dots+ c_n(x-a)^n+c_{n+1}(x-a)^{n+1}+\dots \text{  }|x-a|<R\\
+    f(a) &= 0\\
+    f'(x) &= c_1+2c_2(x-a)+ 3c_3(x-a)^2+ \dots \text{  }|x-a|<R\\ \\
+    f'(a) &= c_1 \\
+    f''(x) &= 2c_2(x-a)+ 2\times 3c_3(x-a)+ 3\times 4c_4(x-a)^2+ \dots \text{  }|x-a|<R\\
+    f''(a) &= 2c_2 \\
+    f'''(x) &= 3!c_3 + 4! c_4(x-a)+3\times 4 \times 5 c_4(x-a)^2 \dots \text{  }|x-a|<R\\
+    f'''(a) &= 3!c_3 \\
+    \vdots \\
+    f^{(n)}(a) &= n!c_n \\
+    c_n&=\frac{f^{(n)}}{n!}
+\end{aligned}
+$$
 
 ::: {#def-taylor_series}
 
@@ -171,7 +192,7 @@ plt.show()
 
 ::: {#thm-taylor_series_remainder}
 
- If $f$ is differentiable (and therefore continuous) $n$ times on $[a,b]$ , then there exists $c$ such that
+ If $f(x)$ is differentiable (and therefore continuous) $n$ times on $[a,b]$ , then there exists $c$ such that
 $$
 \begin{aligned}
     f(b)&=f(a)+f'(a)(b-a)+\frac{f^{(2)}(a)^2}{2!}(b-a)^2+\dots+\\
@@ -181,14 +202,15 @@ $$
 .
 :::
 
-Proof) find $c$ such that $f(b)=f(a)+f'(a)(b-a)+\frac{f^{(2)}(a)^2}{2!}(b-a)^2+\dots+\frac{f^{(n-1)}(a)}{(n-1)!}(b-a)^{n-1} + \frac{f^{(n)}(c)}{n!}(b-a)^{n}, a<c<b$.
+Proof) find $k$ such that $f(b)-(f(a)+f'(a)(b-a)+\frac{f^{(2)}(a)^2}{2!}(b-a)^2+\dots+\frac{f^{(n-1)}(a)}{(n-1)!}(b-a)^{n-1} + k(b-a)^{n})=0$.
 
 $$
 \begin{aligned}
-    \text{Let }F(x)&=f(b)-(f(a)+f'(a)(b-a)+\frac{f^{(2)}(a)^2}{2!}(b-a)^2+\dots+\\
-    &\frac{f^{(n-1)}(a)}{(n-1)!}(b-a)^{n-1} + k(b-a)^{n}) \text{ where }k=\frac{f^{(n)}(c)}{n!}
+    \text{Let }F(x)&=f(b)-(f(x)+f'(x)(b-x)+\frac{f^{(2)}(a)^2}{2!}(b-x)^2+\dots+\\
+    &\frac{f^{(n-1)}(x)}{(n-1)!}(b-x)^{n-1} + k(b-x)^{n})
 \end{aligned}
 $$
+
 Then, $F(x)$ is differentiable on $[a,b]$. In addition, since $F(a)=F(b)=0$, there exists $c$ such that $F'(c)=0$, $a<c<b$ by the Mean Value Theorem. Thus,
 
 $$
@@ -212,31 +234,27 @@ $$
 .
 :::
 
-Proof) next work -> To be continued from here...
-
-
-In the given expression, the symbol $\theta$ represents a value between 0 and 1, and it is used in the context of Taylor's theorem with remainder (see @def-taylor_series). The general form of Taylor's theorem with remainder is:
+In the above expression (@thm-taylor_series_remainder2), $f(x)$ can be expressed with finite terms because it is differentiable $n$ times. The symbol $\theta$ represents a value between 0 and 1, and it is used in the context of Taylor's theorem with remainder (see @def-taylor_series). The general form of Taylor's theorem with remainder is:
 
 $$
-f(x) = f(a) + \frac{f'(a)}{1!}(x-a) + \frac{f''(a)}{2!}(x-a)^2 + ... + \frac{f^{(n)}(a)}{n!}(x-a)^n + R_n(x)
+f(x) = f(x^*) + \frac{f'(x^*)}{1!}(x-x^*) + \frac{f''(x^*)}{2!}(x-x^*)^2 + ... + \frac{f^{(n)}(x^*)}{n!}(x-x^*)^n + R_n(x)
 $$
 
-where $R_n(x)$ is the remainder term that involves the $n+1$ th derivative of f evaluated at some point $c$ between $x$ and $a$:
+where $R_n(x)$ is the remainder term that involves the $n+1$ th derivative of f evaluated at some point $c$ between $x$ and $x^*$:
 
 $$
 \begin{aligned}
-  R_n(x)&=f(x)- (f(a) + \frac{f'(a)}{1!}(x-a) + \frac{f''(a)}{2!}(x-a)^2 + ... + \frac{f^{(n)}(a)}{n!}(x-a)^n)\\
-  R_n(x)&= \frac{f^{(n+1)}(c)}{(n+1)!}(x-a)^{n+1}
+  R_n(x)&=f(x)- (f(x^*) + \frac{f'(x^*)}{1!}(x-x^*) + \frac{f''(x^*)}{2!}(x-a)^2 + ... + \frac{f^{(n)}(x^*)}{n!}(x-x^*)^n)\\
+  R_n(x)&= \frac{f^{(n+1)}(c)}{(n+1)!}(x-x^*)^{n+1}
 \end{aligned}
 $$
 
-In the given expression, $x^*+\theta(x-x^*)$ is the value of $c$ that lies between $x$ and $x^*$, where $\theta$ is a scalar value between $0$ and $1$. Therefore, the remainder term in the expression is:
+In the given expression, $x^*+\theta(x-x^*)$ is the value of $c$ that lies between $x$ and $x^*$, where $\theta$ is a scalar value between $0$ and $1$. In other words, $c$ is an internally dividing point, $i$  that divides the segment $\overline{xx^*}$ in the ratio $\overline{x^*i}:\overline{ix}=\theta:(1-\theta)$ because $x^*+\theta(x-x^*)=x^*(1-\theta)+\theta x$ .Therefore, $x^*+\theta(x-x^*)$ of the remainder term in the expression is somewhere between $x and x^*$:
 
 $$
 \frac{f^{(n)}(x^*+\theta(x-x^*))}{(n)!}(x-x^*)^{n}
 $$
 
-This term represents the error or the difference between the true value of the function at $x$ and the value obtained from the Taylor series approximation up to the $n$ th order.
 
 ### Example
 
@@ -287,12 +305,14 @@ For $x\ne x^*$,
 
 $$
 \begin{aligned}
-  f(x)&=f(x^*)+f'(x^*)(x-x^*)+\frac{f^{(2)}(x^*)^2}{2!}(x-x^*)^2+\frac{f^{(3)}(x^*)^3}{3!}(x-x^*)^3\\
+  f(x)&=f(x^*)+f'(x^*)(x-x^*)+\frac{f^{(2)}(x^*)^2}{2!}(x-x^*)^2+\frac{f^{(3)}(x^*+\theta(x-x^*))^3}{3!}(x-x^*)^3\\
   f(x)&=f(x^*)+(3x^2-6x)(x-x^*)+\frac{(6x-6)}{2!}(x-x^*)^2+\frac{6}{3!}(x-x^*)^3\\
-  f(x)&=f(0)+(3x^2-6x)(x)+\frac{(6x-6)}{2!}(x)^2+\frac{6}{3!}(x)^3 \text{ } (x=x^*)\\
+  f(x)&=f(0)+(3x^2-6x)(x)+\frac{(6x-6)}{2!}(x)^2+\frac{6}{3!}(x)^3 \text{ } (x^*=0)\\
   f(x)&=x^3-3x^2+4
 \end{aligned}     
 $$
+
+If f is differentated 3 times, f is expressed with $\theta$. But, if differentiated more than 4 times, the $\theta$ disappears.
 
 ### Second Derivative Test
 

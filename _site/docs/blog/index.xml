@@ -825,6 +825,155 @@
   <pubDate>Sat, 31 Dec 2089 15:00:00 GMT</pubDate>
 </item>
 <item>
+  <title>Tensorflow - Data Input Pipeline</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/Language/pipeline.html</link>
+  <description><![CDATA[ 
+
+
+
+<ul class="nav nav-pills" id="language-tab">
+<li class="nav-item">
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
+Korean
+</button>
+</li>
+<li class="nav-item">
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
+English
+</button>
+</li>
+<div class="tab-content" id="language-tabcontent">
+
+<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
+<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
+<section id="input-pipeline" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="input-pipeline"><span class="header-section-number">1</span> Input Pipeline</h2>
+<p>Tensorflow 공식 문서 중 Dataset에 대한 기능 및 성능에 대한 비교 자료</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The <code>tf.data API</code> makes it possible to handle large amounts of data, read from different data formats, and perform complex transformations. The tf.data API introduces a tf.data.Dataset abstraction that represents a sequence of elements, in which each element consists of one or more components. For example, in an image pipeline, an element might be a single training example, with a pair of tensor components representing the image and its label. <a href="https://www.tensorflow.org/guide/data">Source: https://www.tensorflow.org/guide/data</a></p>
+</div>
+</div>
+<section id="장점" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="장점"><span class="header-section-number">1.1</span> 장점</h3>
+<ul>
+<li>어떠한 데이터의 형태가 오더라도 Dataset object 자체가 iterative한 interface를 제공해서 for loop 등의 iteration을 이용하여 데이터의 입력 형태가 변경되어도 코드의 일관성을 유지할 수 있음</li>
+</ul>
+<p>To create an input pipeline, you must start with a data source. For example, to construct a Dataset from data in memory, you can use tf.data.Dataset.from_tensors() or tf.data.Dataset.from_tensor_slices(). Alternatively, if your input data is stored in a file in the recommended TFRecord format, you can use tf.data.TFRecordDataset().</p>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;">import</span> tensorflow <span class="im" style="color: #00769E;">as</span> tf</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;">import</span> pathlib</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;">import</span> os</span>
+<span id="cb1-4"><span class="im" style="color: #00769E;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;">as</span> plt</span>
+<span id="cb1-5"><span class="im" style="color: #00769E;">import</span> pandas <span class="im" style="color: #00769E;">as</span> pd</span>
+<span id="cb1-6"><span class="im" style="color: #00769E;">import</span> numpy <span class="im" style="color: #00769E;">as</span> np</span>
+<span id="cb1-7"></span>
+<span id="cb1-8">np.set_printoptions(precision<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">4</span>)</span>
+<span id="cb1-9"></span>
+<span id="cb1-10">dataset <span class="op" style="color: #5E5E5E;">=</span> tf.data.Dataset.from_tensor_slices([<span class="dv" style="color: #AD0000;">8</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">8</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb1-11">dataset</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="6">
+<pre><code>&lt;TensorSliceDataset element_spec=TensorSpec(shape=(), dtype=tf.int32, name=None)&gt;</code></pre>
+</div>
+</div>
+<p>Once you have a Dataset object, you can transform it into a new Dataset by chaining method calls on the tf.data.Dataset object. For example, you can apply per-element transformations such as Dataset.map, and multi-element transformations such as Dataset.batch. Refer to the documentation for tf.data.Dataset for a complete list of transformations. The Dataset object is a Python iterable. This makes it possible to consume its elements using a for loop:</p>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="cf" style="color: #003B4F;">for</span> z <span class="kw" style="color: #003B4F;">in</span> dataset:</span>
+<span id="cb3-2">    <span class="bu" style="color: null;">print</span>(z.numpy())</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>8
+3
+0
+8
+2
+1</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="optimize-pipeline-performance" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="optimize-pipeline-performance"><span class="header-section-number">2</span> Optimize pipeline performance</h2>
+<ul>
+<li>Dataset을 사용은 prefetch 기능과 interleaving 기능에 의한 연산 속도를 향상 시킬수있다.
+<ul>
+<li>사용할 수 없는 (또는 사용하지 말아야 할) 특별한 이유가 없다면 필수로 사용해야 할 듯</li>
+</ul></li>
+<li>Pipeline을 쓸 때 연산 처리 속도가 빨리지는 이유 -&gt; cpu architecture 관련
+<ul>
+<li>X86, ARM 프로세서
+<ul>
+<li>실행을 위해 D램 올라감 -&gt; cpu에서 하나의 명령이 거치는 step들 fetch(cpu에 로드), decode(해석), execution(수행) -&gt; load (다시 메모리 이동)</li>
+<li>각 단계에서 수행 소요 시간 존재</li>
+</ul></li>
+</ul></li>
+<li>파이프라인 구조를 가지면, 한 스텝 수행 시 다음 데이터가 다른 스텝 수행 가능 -&gt; 시간 단축</li>
+</ul>
+<p><a href="https://www.tensorflow.org/guide/data">Tensor Flow Pipeline</a></p>
+<section id="prefetch" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="prefetch"><span class="header-section-number">2.1</span> Prefetch</h3>
+<p>앞쪽 데이터 트레이닝 동안 다음 데이터를 미리 읽어옴</p>
+</section>
+<section id="interleaving" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="interleaving"><span class="header-section-number">2.2</span> Interleaving</h3>
+<p>어떤 작업이 끝나기 전에 dependency 없는 다른 작업 수행(async 하게)</p>
+</section>
+<section id="caching" class="level3" data-number="2.3">
+<h3 data-number="2.3" class="anchored" data-anchor-id="caching"><span class="header-section-number">2.3</span> Caching</h3>
+<p>같은 데이터를 반복적으로 사용시 한번 읽은 데이터를 계속 메모리에 가지고 있음</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+floating point 로 인한 error 누적
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Tensorflow와 Numpy로 구현한 값에 오차가 발생하는 이유는 Tensorflow를 어떻게 compile 하였느냐에 따른 차이.</p>
+<ul>
+<li>Floating point (IEEE-754)에서는 값의 표현에 대한 정의만 있고 실제 연산은 processor vendor마다 다르므로 약간의 오차가 있을 수 있으며, 부동소수점 연산기능을 지원하는 명령들 중 어떠한 명령을 사용하도록 compile하였느냐에 따라 계산값에 차이 발생 가능하고 대부분 무시하지만 오차가 누적이 되면 error rate에 영향이 있을 수 있음.</li>
+<li>부동소수점의 precision이 낮을수록 overfitting 가능성 저하되어 오히려 학습이 잘될 수도 있으며 모델을 경량화 할 수 있음 <img src="https://latex.codecogs.com/png.latex?%5Crightarrow"> bfloat16 type이 생기게 된 이유.</li>
+</ul>
+</div>
+</div>
+</section>
+</section>
+</div>
+</div>
+<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
+<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
+
+</div>
+</div>
+<section id="go-to-blog-content-list" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="go-to-blog-content-list"><span class="header-section-number">3</span> Go to Blog Content List</h2>
+<p><a href="./docs/blog/posts/content_list.qmd">Blog Content List</a></p>
+
+
+</section>
+
+</div></ul> ]]></description>
+  <category>Language</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Language/pipeline.html</guid>
+  <pubDate>Thu, 23 Mar 2023 15:00:00 GMT</pubDate>
+</item>
+<item>
   <title>Minimizer &amp; Maximizer</title>
   <dc:creator>Kwangmin Kim</dc:creator>
   <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/optimization/minimizer.html</link>
@@ -3014,75 +3163,6 @@ English
   <category>Engineering</category>
   <guid>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-03-02_aws/computing_networking.html</guid>
   <pubDate>Wed, 08 Mar 2023 15:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Poisson Distribution</title>
-  <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/statistics/2023-02-27_exponential_family/discrete_poisson.html</link>
-  <description><![CDATA[ 
-
-
-
-<ul class="nav nav-pills" id="language-tab">
-<li class="nav-item">
-<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
-Korean
-</button>
-</li>
-<li class="nav-item">
-<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
-English
-</button>
-</li>
-<div class="tab-content" id="language-tabcontent">
-
-<div class="tab-pane fade  show active" id="Korean" aria-labelledby="Korean-tab">
-
-<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
-<section id="poisson-distribution" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="poisson-distribution"><span class="header-section-number">1</span> Poisson Distribution</h2>
-<div id="def-poisson" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 1 </strong></span>모수 (parameter)가 단위 시간 또는 공간 당 평균 발생 횟수 <img src="https://latex.codecogs.com/png.latex?%5Clambda"> 일 때 주어진 단위 시간 또는 공간 내에 발생하는 사건의 횟수를 확률 변수 <img src="https://latex.codecogs.com/png.latex?X"> 로 하는 분포를 Poisson Distribution이라 한다. <img src="https://latex.codecogs.com/png.latex?X"> 의 probability mass function은 <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20f_X(x;%5Clambda)&amp;=%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7Bx%7D%7D%7Bx!%7D%20&amp;(x=0,1,2,%20..)%0A%5Cend%7Baligned%7D%0A"> (<img src="https://latex.codecogs.com/png.latex?%5Clambda"> 는 단위 시간 또는 공간 당 평균 발생 횟수) 이다.</p>
-</div>
-<section id="expectation" class="level3" data-number="1.1">
-<h3 data-number="1.1" class="anchored" data-anchor-id="expectation"><span class="header-section-number">1.1</span> Expectation</h3>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%5Ctext%7BE%7D(X)&amp;=%5Csum_%7Bx=0%7D%5E%7B%5Cinfty%7Dxf(x)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Csum_%7Bx=0%7D%5E%7B%5Cinfty%7Dx%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7Bx%7D%7D%7Bx!%7D%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Csum_%7Bx=1%7D%5E%7B%5Cinfty%7Dx%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7Bx%7D%7D%7Bx!%7D%20&amp;%5Cbecause%20x=0%20%5Crightarrow%20%5Ctext%7Bequation%7D=0%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Csum_%7Bx=1%7D%5E%7B%5Cinfty%7D%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7Bx%7D%7D%7B(x-1)!%7D%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Clambda%5Csum_%7Bx-1=0%7D%5E%7B%5Cinfty%7D%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7Bx-1%7D%7D%7B(x-1)!%7D%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Clambda%5Csum_%7By=0%7D%5E%7B%5Cinfty%7D%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7By%7D%7D%7B(y)!%7D%20&amp;%5Cbecause%20x-1=y%20%5Ctext%7B%20%20%7D(y=0,1,2,%20...)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Clambda%0A%5Cend%7Baligned%7D%0A"></p>
-</section>
-<section id="variance" class="level3" data-number="1.2">
-<h3 data-number="1.2" class="anchored" data-anchor-id="variance"><span class="header-section-number">1.2</span> Variance</h3>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%20%20%5Ctext%7BE%7D(X(X-1))&amp;=%5Csum_%7Bx=0%7D%5E%7B%5Cinfty%7Dx(x-1)f(x)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Csum_%7Bx=0%7D%5E%7B%5Cinfty%7Dx(x-1)%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7Bx%7D%7D%7Bx!%7D%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Clambda%5E2%5Csum_%7Bx=2%7D%5E%7B%5Cinfty%7D%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7Bx-2%7D%7D%7B(x-2)!%7D%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Clambda%5E2%5Csum_%7By=0%7D%5E%7B%5Cinfty%7D%5Cfrac%7Be%5E%7B-%5Clambda%7D%5Clambda%5E%7By%7D%7D%7B(y)!%7D%20&amp;%5Cbecause%20x-2=y%20%5Ctext%7B%20%20%7D(y=0,1,2,%20...)%5C%5C%0A%20%20%20%20%20%20%20%20%20%20%20%20%20&amp;=%5Clambda%5E2%5C%5C%0A%20%20%20%20%5Ctext%7BE%7D(X%5E2)&amp;=%5Clambda%5E2+%5Clambda%5C%5C%0A%20%20%20%20%5Ctext%7BVar%7D(X)&amp;=%5Clambda%5E2+%5Clambda-%5Clambda%5E2=%5Clambda%5C%5C%0A%5Cend%7Baligned%7D%0A"></p>
-</section>
-<section id="example" class="level3" data-number="1.3">
-<h3 data-number="1.3" class="anchored" data-anchor-id="example"><span class="header-section-number">1.3</span> Example</h3>
-<p>어느 의료 장비 제조 업체의 의료 장비 불량률이 2% 라고 가정했을 때 임의로 100대의 의료 장비를 구매하여 제조 업체의 Quality Control (QC) guide line을 따라 Quality Control (QC)를 진행 했을 때 불량품이 하나도 발생하지 않을 확률은 다음과 같다.</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%5Clambda%20&amp;=%20100*0.02=2%5C%5C%0A%20%20f(x)&amp;=%5Cfrac%7B%5Clambda%5E%7Bx%7De%5E%7B-%5Clambda%7D%7D%7Bx!%7D=%5Cfrac%7B2%5E%7Bx%7De%5E%7B-2%7D%7D%7Bx!%7D%5C%5C%0A%20%20f(0)&amp;=%5Cfrac%7B2%5E%7B0%7De%5E%7B-2%7D%7D%7B0!%7D=e%5E%7B-2%7D%0A%5Cend%7Baligned%7D%0A"></p>
-</section></section></div>
-<div id="def-aprroximation" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 2 </strong></span><img src="https://latex.codecogs.com/png.latex?X%5Csim%20B(n,p)"> 일 때 <img src="https://latex.codecogs.com/png.latex?p"> 가 충분히 작고 <img src="https://latex.codecogs.com/png.latex?n%20%5Crightarrow%20%5Cinfty"> 고 <img src="https://latex.codecogs.com/png.latex?np=%5Clambda"> 한다면 <img src="https://latex.codecogs.com/png.latex?x=0,1,2,%20..."> 에 대하여</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%5Clim_%7Bn%20%5Cto%20%5Cinfty%7D%5Cbinom%7Bn%7D%7Bx%7Dp%5E%7Bx%7D(1-p)%5E%7Bn-x%7D=%5Cfrac%7B%5Clambda%5E%7Bx%7De%5E%7B-%5Clambda%7D%7D%7Bx!%7D%0A%5Cend%7Baligned%7D%0A"> (<img src="https://latex.codecogs.com/png.latex?%5Clambda"> 는 단위 시간 또는 공간 당 평균 발생 횟수) 이다.</p>
-</div>
-
-
-</div>
-<section id="blog-guide-map-link" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="blog-guide-map-link"><span class="header-section-number">2</span> Blog Guide Map Link</h2>
-<ul>
-<li><a href="../../../../../docs/blog/posts/statistics/guide_map/index.html">Statistics Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/Engineering/guide_map/index.html">Engineering Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/DL/guide_map/index.html">Deep Learning Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/ML/guide_map/index.html">Machine Learning Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/Mathmatics/guide_map/index.html">Mathematics Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/Patent/guide_map/index.html">Patent Blog</a></li>
-<li><a href="../../../../../docs/blog/posts/Validation/guide_map/index.html">Validation Blog</a></li>
-</ul>
-
-
-</section>
-
-</div></ul> ]]></description>
-  <category>Statistics</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/statistics/2023-02-27_exponential_family/discrete_poisson.html</guid>
-  <pubDate>Tue, 28 Feb 2023 15:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>

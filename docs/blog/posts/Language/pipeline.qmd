@@ -1,0 +1,127 @@
+---
+title: Tensorflow - Data Input Pipeline
+subtitle: tf.data, optimize pipeline performance, analyze pipeline performance
+description: |
+  template
+categories:
+  - Language
+author: Kwangmin Kim
+date: 03/24/2023
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    toc: true
+    number-sections: true
+draft: False
+---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+
+## Input Pipeline
+
+Tensorflow 공식 문서 중 Dataset에 대한 기능 및 성능에 대한 비교 자료
+
+::: {.callout-note}
+The `tf.data API` makes it possible to handle large amounts of data, read from different data formats, and perform complex transformations. The tf.data API introduces a tf.data.Dataset abstraction that represents a sequence of elements, in which each element consists of one or more components. For example, in an image pipeline, an element might be a single training example, with a pair of tensor components representing the image and its label. [Source: https://www.tensorflow.org/guide/data](https://www.tensorflow.org/guide/data)
+:::
+
+### 장점
+
+* 어떠한 데이터의 형태가 오더라도 Dataset object 자체가 iterative한 interface를 제공해서 for loop 등의 iteration을 이용하여 데이터의 입력 형태가 변경되어도 코드의 일관성을 유지할 수 있음
+
+To create an input pipeline, you must start with a data source. For example, to construct a Dataset from data in memory, you can use tf.data.Dataset.from_tensors() or tf.data.Dataset.from_tensor_slices(). Alternatively, if your input data is stored in a file in the recommended TFRecord format, you can use tf.data.TFRecordDataset().
+
+```{python}
+import tensorflow as tf
+import pathlib
+import os
+import matplotlib.pyplot as plt
+import pandas as pd
+import numpy as np
+
+np.set_printoptions(precision=4)
+
+dataset = tf.data.Dataset.from_tensor_slices([8, 3, 0, 8, 2, 1])
+dataset
+```
+
+Once you have a Dataset object, you can transform it into a new Dataset by chaining method calls on the tf.data.Dataset object. For example, you can apply per-element transformations such as Dataset.map, and multi-element transformations such as Dataset.batch. Refer to the documentation for tf.data.Dataset for a complete list of transformations.
+The Dataset object is a Python iterable. This makes it possible to consume its elements using a for loop:
+
+```{python}
+for z in dataset:
+    print(z.numpy())
+```
+
+
+## Optimize pipeline performance
+
+* Dataset을 사용은 prefetch 기능과 interleaving 기능에 의한 연산 속도를 향상 시킬수있다.
+    * 사용할 수 없는 (또는 사용하지 말아야 할) 특별한 이유가 없다면 필수로 사용해야 할 듯
+* Pipeline을 쓸 때 연산 처리 속도가 빨리지는 이유 -> cpu architecture 관련
+    * X86, ARM 프로세서
+        * 실행을 위해 D램 올라감 -> cpu에서 하나의 명령이 거치는 step들 fetch(cpu에 로드), decode(해석), execution(수행) -> load (다시 메모리 이동)
+        * 각 단계에서 수행 소요 시간 존재
+* 파이프라인 구조를 가지면, 한 스텝 수행 시 다음 데이터가 다른 스텝 수행 가능 -> 시간 단축
+
+[Tensor Flow Pipeline](https://www.tensorflow.org/guide/data)
+
+### Prefetch
+
+앞쪽 데이터 트레이닝 동안 다음 데이터를 미리 읽어옴
+
+### Interleaving
+
+어떤 작업이 끝나기 전에 dependency 없는 다른 작업 수행(async 하게)
+
+
+### Caching
+
+같은 데이터를 반복적으로 사용시 한번 읽은 데이터를 계속 메모리에 가지고 있음
+
+::: {.callout-tip}
+
+### floating point 로 인한 error 누적 
+
+Tensorflow와 Numpy로 구현한 값에 오차가 발생하는 이유는 Tensorflow를 어떻게 compile 하였느냐에 따른 차이.  
+
+* Floating point (IEEE-754)에서는 값의 표현에 대한 정의만 있고 실제 연산은 processor vendor마다 다르므로 약간의 오차가 있을 수 있으며, 부동소수점 연산기능을 지원하는 명령들 중 어떠한 명령을 사용하도록 compile하였느냐에 따라 계산값에 차이 발생 가능하고 대부분 무시하지만 오차가 누적이 되면 error rate에 영향이 있을 수 있음.
+* 부동소수점의 precision이 낮을수록 overfitting 가능성 저하되어 오히려 학습이 잘될 수도 있으며 모델을 경량화 할 수 있음 $\rightarrow$ bfloat16 type이 생기게 된 이유.
+:::
+
+
+
+
+
+
+
+
+:::
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
+
+:::
+
+
+</div>
+
+
+## Go to Blog Content List
+
+[Blog Content List](./docs/blog/posts/content_list.qmd)

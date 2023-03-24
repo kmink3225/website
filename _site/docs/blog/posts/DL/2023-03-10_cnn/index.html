@@ -223,7 +223,7 @@ ul.task-list li input[type="checkbox"] {
 <p>로 구성되어 있다 (See <a href="#fig-CNN_structure">Figure&nbsp;1</a>).</p>
 <section id="convolution-layer-conv" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="convolution-layer-conv"><span class="header-section-number">2.1</span> Convolution Layer (Conv)</h2>
-<p>kernel, receptive field, 또는 filter라고 불리는 특징 추출기(Feature detector)를 사용하여 데이터의 특징을 추출하는 CNN 모델의 핵심 부분이다. Receptive field 를 정의해 입력 층의 이미지의 feature를 추출한다. Receptive field는 region feature의 크기를 정의하고 weight을 설정한다. 예를 들어, receptive field를 (3x3)으로 정하면 9칸에 가중치를 설정하여 이미지 픽셀값과 receptive field의 weight의 선형결합으로 conv layer를 구성하는 하나의 값을 얻어낸다 (See <a href="#fig-CNN_structure">Figure&nbsp;1</a> 의 노란색 사각형).</p>
+<p>kernel 또는 filter라고 불리는 특징 추출기(Feature detector)를 사용하여 데이터의 특징을 추출하는 CNN 모델의 핵심 부분이다. kernel 를 정의해 입력 층의 이미지의 feature를 추출한다. kernel는 region feature의 크기와 weight을 정의하게 된다. 예를 들어, kernel을 (3x3)으로 정하면 9칸에 가중치를 설정하여 이미지 픽셀값 (a part of input feature map)과 kernel의 weight의 선형결합으로 conv layer를 구성하는 하나의 값을 얻어낸다 (See <a href="#fig-CNN_structure">Figure&nbsp;1</a> 의 노란색 사각형).</p>
 <p>convolution layer의 input/output은 보통 feature map이라고 부르며 input data를 input feature map, output data를 output feature map로 부르기도 한다. 즉, feature map 과 input/output data는 같은 의미로 사용되고 feature map = input data + kernel (= receptive field = filter)로 구성된다.</p>
 <section id="convolution-operation" class="level3" data-number="2.1.1">
 <h3 data-number="2.1.1" class="anchored" data-anchor-id="convolution-operation"><span class="header-section-number">2.1.1</span> Convolution Operation</h3>
@@ -247,11 +247,11 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li>padding : 입력 데이터의 테두리를 0으로 채워 데이터의 크기를 늘려준다
 <ul>
-<li><strong>왜 padding을 사용하는가?</strong> padding이 없을 경우 합성곱은 입력 데이터의 1행 1열부터 시작된다. 그런데 합성곱은 입력 데이터에서 kernel size만큼의 영역을 하나로 축소하여 특징을 추출하기 때문에 이 경우 입력 데이터의 가장자리, edge 부분의 특징을 추출하기 어렵다. edge의 특징까지 추출하고자 하면 적어도 0행 0열부터 kernel을 적용해야 하는데 허공에서 element-wise 계산을 할 수 없으니 0을 추가해준다. 다시 말해서, padding은 output data size를 조정할 목적으로 사용된다.</li>
+<li><strong>왜 padding을 사용하는가?</strong> padding이 없을 경우 합성곱은 입력 데이터의 1행 1열부터 시작된다. 그런데 합성곱은 입력 데이터에서 kernel size만큼의 영역을 하나로 축소하여 특징을 추출하기 때문에 이 경우 입력 데이터의 가장자리, edge 부분의 특징을 추출하기 어렵다. edge의 특징까지 추출하고자 하면 적어도 0행 0열부터 kernel을 적용해야 하는데 허공에서 element-wise 계산을 할 수 없으니 0을 추가해준다. 다시 말해서, padding은 output data size를 조정할 목적으로 사용된다. <img src="../2023-03-10_cnn/output_featuremap.png" id="fig-output_featuremap" class="img-fluid" alt="Output Feature Map"></li>
 </ul></li>
 <li>stride : kernel이 얼만큼씩 이동하면서 합성곱 계산을 할 것인지를 의미한다.
 <ul>
-<li>stride를 키우게 되면 output data size가 작아지기 때문에 일반적으로 한 칸씩 이동한다.</li>
+<li>stride를 키우게 되면 output data size가 작아지기 때문에 일반적으로 한 칸씩 이동한다. <img src="../../../../../images/cnn/stride.PNG" id="fig-stride" class="img-fluid" alt="Stride Example"></li>
 </ul></li>
 <li>weight sharing:<br>
 </li>
@@ -259,7 +259,11 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li>사이즈가 작을수록 국소 단위의 특징을 추출한다.</li>
 </ul></li>
-<li>kernel 개수 : 몇 개의 feature map을 추출하고 싶은지에 따라 kernel 개수를 정한다.</li>
+<li>kernel 개수 또는 channel 개수 : 몇 개의 feature map을 추출하고 싶은지에 따라 kernel 개수를 정한다. <img src="../../../../../images/cnn/channel number.PNG" id="fig-channel_number" class="img-fluid" alt="Channel Number"></li>
+<li>이미지 데이터에서의 channel 예시
+<ul>
+<li>고양이 이미지와 같이 컬러 이미지 데이터는 하나의 이미지에 대해 Red, Green, Blue (RGB) 3개의 색상으로 이루어져 있다 <img src="../../../../../images/cnn/image_featuremap.png" id="fig-img_featuremap" class="img-fluid" alt="RGB 이미지를 red, green, blue channel 별 분리하여 표시"> <img src="../../../../../images/cnn/image_featuremap_convolution.png" id="fig-img_featuremap_conv" class="img-fluid" alt="이미지 데이터의 RGB channel에 대한 convolution 계산 예시"></li>
+</ul></li>
 </ul>
 </section>
 <section id="feature-map의-shape-계산-방법" class="level3" data-number="2.1.3">

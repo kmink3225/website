@@ -61,15 +61,19 @@ Convolution Operation (합성곱 연산)은 filter operation (filter 연산)이�
 
 - padding : 입력 데이터의 테두리를 0으로 채워 데이터의 크기를 늘려준다
     - **왜 padding을 사용하는가?** padding이 없을 경우 합성곱은 입력 데이터의 1행 1열부터 시작된다. 그런데 합성곱은 입력 데이터에서 kernel size만큼의 영역을 하나로 축소하여 특징을 추출하기 때문에 이 경우 입력 데이터의 가장자리, edge 부분의 특징을 추출하기 어렵다. edge의 특징까지 추출하고자 하면 적어도 0행 0열부터 kernel을 적용해야 하는데 허공에서 element-wise 계산을 할 수 없으니 0을 추가해준다. 다시 말해서, padding은 output data size를 조정할 목적으로 사용된다.
+    ![Output Feature Map](../2023-03-10_cnn/output_featuremap.png){#fig-output_featuremap}
 - stride : kernel이 얼만큼씩 이동하면서 합성곱 계산을 할 것인지를 의미한다.
     - stride를 키우게 되면 output data size가 작아지기 때문에 일반적으로 한 칸씩 이동한다.
-    ![Stride Example](../../../../../images/cnn/stride.PNG)
+    ![Stride Example](../../../../../images/cnn/stride.PNG){#fig-stride}
 - weight sharing:    
 - kernel size : kernel의 행과 열 개수
     - 사이즈가 작을수록 국소 단위의 특징을 추출한다.
 - kernel 개수 또는 channel 개수 : 몇 개의 feature map을 추출하고 싶은지에 따라 kernel 개수를 정한다.
-    ![Channel Number](../../../../../images/cnn/channel%20number.PNG)
-
+    ![Channel Number](../../../../../images/cnn/channel%20number.PNG){#fig-channel_number}
+* 이미지 데이터에서의 channel 예시
+  * 고양이 이미지와 같이 컬러 이미지 데이터는 하나의 이미지에 대해 Red, Green, Blue (RGB) 3개의 색상으로 이루어져 있다 
+    ![RGB 이미지를 red, green, blue channel 별 분리하여 표시](../../../../../images/cnn/image_featuremap.png){#fig-img_featuremap}
+    ![이미지 데이터의 RGB channel에 대한 convolution 계산 예시](../../../../../images/cnn/image_featuremap_convolution.png){#fig-img_featuremap_conv}
 
 ### feature map의 shape 계산 방법
 
@@ -102,7 +106,7 @@ $$
 * 예시2- input size: (7x7), P:0, S:2, filter size : (3x3)일 때, $(OH,OW)=(3,3)$
 * 예시3- input size: (28x31), P:2, S:3, filter size : (5x5)일 때, $(OH,OW)=(10,11)$
 
-![Output Feature Map](../2023-03-10_cnn/output_featuremap.png)
+
 
 #### 3 Dimension Input Data Size
 

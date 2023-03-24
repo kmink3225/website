@@ -1,0 +1,142 @@
+---
+title: LDA (2) - Concept
+subtitle: Overview
+description: |
+  template
+categories:
+  - Statistics
+author: Kwangmin Kim
+date: 03/24/2023
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    toc: true
+    number-sections: true
+draft: False
+---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+
+## Notations
+
+* $y_{ij}$ : the response for the $i$ th subject at the $j$ th occasion or measurement
+* $x_{ij}$ : the predictor at time $t_{ij}$
+* $i=1, \dots, m$ : the $i$ th subject
+* $j=1, \dots, n_i$ : the $j$ th measurement of the $i$ th subject
+* $\mathbf y_i$ : $(y_{i1},y_{i2},\dots ,y_{in_i})$ of the $i$ th subject
+* $\mathbf Y$ : the reponse matrix including $i$ th subject at the $j$ th occasion
+* $\mathbf X$ : the predictor matrix including $i$ th subject at the $j$ th occasion
+* $\text{E}(y_{ij})$ : $\mu_{ij}$
+* $\text{E}(\mathbf y_i)$ : $\mathbf \mu_{i}$
+* $\text{Var}(\mathbf y_i)$ : 
+$$
+\begin{bmatrix}
+    \text{Var}(\mathbf y_{i1}) & \text{Cov}(\mathbf y_{i1},\mathbf y_{i2}) & \dots & \text{Cov}(\mathbf y_{i1},\mathbf y_{in_i}) \\
+                               & \text{Var}(\mathbf y_{i2}) & \dots & \text{Cov}(\mathbf y_{i2},\mathbf y_{in_i}) \\
+                                 &                           & \ddots & \vdots \\
+                                 &&                            \dots & \text{Var}(\mathbf y_{in_i}) \\
+\end{bmatrix}
+$$
+
+## For Continuous Responses
+
+* Marginal Models
+    * $\text{E}(y_{ij}) = \beta x_{ij}$
+    * $\text{Var}(\mathbf y_i)=V_i$
+* Mixed Effects Models
+    * $\text{E}(y_{ij}|\beta_i) = \beta x_{ij}$
+    * Panel studies (sociology and economics)
+    * Prospective studies (clinical trials)
+
+::: {.callout-tip}
+
+### Longitudinal Study vs Cross-Sectional Study Example
+
+A cross-sectional study found that older people smoke more.
+
+Possible explanations:
+
+* People tend to smoke more when they get older.
+* Older people grew up in an environment where the harm of smoking was less widely accepted. In other words, when older people were younger, smoking was more socially acceptable and its harmful effects were not well-known or well-publicized. As a result, they may have started smoking earlier in life and developed a stronger habit or addiction. This explanation implies that younger people today may be less likely to smoke because they are growing up in an environment where smoking is less socially acceptable and the risks are more widely known.
+
+LDA can distinguish the effect due to aging (i.e., changes over time within subject) from cohort effects (i.e., difference between subjects at baseline). Cross-sectional study cannot.
+:::
+
+## Advantages of Longitudinal Data Analysis
+
+* Each subject can serve as his/her own control. Influence of genetic make-up, environmental exposures, and maybe unmeasured characteristics tend to persist over time.
+    * in certain types of studies or experiments, individuals can be used as their own comparison group. This means that the same person is tested or measured at different points in time, and the differences observed can be attributed to changes over time rather than to differences between individuals. 
+    * For example, in a study looking at the effect of a new medication on blood pressure, each participant's blood pressure before and after taking the medication would be compared to determine if there was a change. By using the same participant as their own control, the effects of genetic factors, environmental exposures, and other individual differences that might influence blood pressure would be minimized.
+    * However, even when using this approach, some individual differences that are not directly measured or controlled for may persist over time and influence the results. These could include factors such as diet, stress levels, or other lifestyle habits that could impact the outcome being measured.
+* Distinguish the degree of variation in $Y$ across time within a subject from the variation in $Y$ between subjects. With repeated values, one can borrow strength across time for the person of interest as well as across people.
+    * when you have repeated measurements of a variable (Y) for the same person over time, you can use the information from those repeated measurements to better estimate the true value of Y for that person at any given time point. This is known as borrowing strength across time.
+    * Additionally, you can also use the information from the repeated measurements of Y across different people to better estimate the true value of Y for a particular time point across the population. This is known as borrowing strength across people.
+    * By doing both, you can distinguish the degree of variation in Y across time within a subject (i.e., how much Y varies for a particular person over time) from the variation in Y between subjects (i.e., how much Y varies between different people at a particular time point).
+* Increased power, by repeated measurements. The repeated measurements from the same subject are rarely perfectly correlated. Hence, longitudinal studies are more powerful than cross-sectional studies.
+    * Longitudinal studies are more powerful than cross-sectional studies because they allow researchers to directly model and account for the within-subject correlation among repeated measurements. In other words, longitudinal studies take advantage of the fact that individuals are their own controls by measuring outcomes at multiple time points, which allows for a more accurate estimation of the true effect of an exposure or intervention.
+    * In contrast, cross-sectional studies only measure outcomes at a single time point, which makes it difficult to distinguish between within-subject variability and between-subject variability. In a cross-sectional study, any observed differences between groups may be due to differences in the underlying populations, or due to differences in the timing of the outcome measurement, or both. 
+    * Furthermore, longitudinal studies can also provide information on the rate of change in the outcome over time, which can be important in understanding disease progression, treatment effects, or the impact of other time-dependent factors.
+* Therefore, because longitudinal studies allow for a more accurate estimation of the true effect of an exposure or intervention and provide more information about disease progression, they are generally considered more powerful than cross-sectional studies.
+
+### Specialty of LDA
+
+LDA requires special statistical methods because the set of observations on one subject tends to be inter-correlated.
+
+[Copied from Diggle et al. (2002, page 2).](./childhood%20readbility.PNG)
+
+* Consider the example, variation of readability of child as they get aged.
+    * Assume this is a longitudinal study with two measurements per child at two age or time points.
+    * The two measurements per subject may be highly correlated.
+    * If we use cross-sectional methods to analyze the data, we may not be able to distinguish changes over time within individual and difference among people in their baseline levels.
+        * Only plot (a) is from cross sectional study. Not using connected lines might mislead the time trend within subjects.
+* In general, repeated observations $y_{i1}, \dots , y_{in_i}$ for subject $i$ are likely to be correlated, so the independence assumption is violated.
+* The standard regression methods (ignoring correlation) may lead to
+    * Incorrect inference
+        * the violation of the independence assumption means that the errors in the model are correlated across observations, and this correlation can bias the estimated coefficients.
+        * The errors in the model are correlated across observations when there is some form of dependence or clustering in the data. This means that the error term in one observation is related to the error terms in other observations, either through some underlying factor or because of the way the data is collected.
+        * When the errors are correlated across observations, the estimated coefficients from standard regression methods may be biased because the regression model assumes that the errors are independent. 
+        * The bias in the estimated coefficients can arise in several ways:
+            * The standard errors of the estimated coefficients will be too small, which can lead to overconfidence in the results.
+            * The estimated coefficients may not reflect the true relationships between the dependent variable and the independent variables, as the correlation between the errors can distort the estimates.
+            * The estimates of the standard errors will be biased, leading to incorrect inference in hypothesis testing and confidence interval construction.
+        * To sum up, failing to account for the correlation between errors can lead to incorrect and imprecise estimates of the coefficients and standard errors in a regression model.
+    * Inefficient estimates of $\beta$
+        * the estimates are less precise than they could be if the correlation between observations were taken into account. 
+        * The standard errors of the estimates will be too large, which means that confidence intervals will be wider and hypothesis tests will have less power.
+    * Oversight of important correlation structure
+        * the standard regression methods may miss important patterns of correlation in the data that could be used to improve the accuracy and precision of the estimates. 
+        * For example, if there is a time trend in the data that is not accounted for, the standard errors of the estimates may be too large, and the estimates may not capture the true effect of the independent variables. 
+        * Accounting for the correlation structure in the data can lead to more accurate and precise estimates, and can also help identify interesting patterns and relationships that might otherwise be missed.
+
+:::
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
+
+:::
+
+</div>
+
+
+# Go to Project Content List
+
+[Project Content List](./docs/projects/index.qmd)
+
+# Go to Blog Content List
+
+[Blog Content List](./docs/blog/posts/content_list.qmd)

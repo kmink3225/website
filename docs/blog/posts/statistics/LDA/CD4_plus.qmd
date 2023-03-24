@@ -1,0 +1,123 @@
+---
+title: LDA (2) - CD4+ Cell Depletion
+subtitle: Overview
+description: |
+  template
+categories:
+  - Statistics
+author: Kwangmin Kim
+date: 03/23/2023
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    toc: true
+    number-sections: true
+draft: False
+---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+
+Goals 
+
+* Characterize the time course of CD4+ cell depletion.
+* Identify factors which predict CD4+ cell changes.
+* Characterize the degree of heterogeneity across men in the rate of progression.
+Data are highly unbalanced with irregular observation times and numbers.
+
+In a usual regression analysis,
+
+$$
+\begin{aligned}
+    \mathbf Y&=\mathbf X\mathbf\beta+\mathbf\epsilon\\
+    y_{ij}&=\beta x_{ij}+\epsilon_{ij}
+\end{aligned}
+$$
+where $i$ = the $i$ th person, $j$= the $j$ th observation, and $\epsilon_{ij}$=  the $j$ th measurement error of the $i$ th person.
+
+Since repeated measurements on a subject are likely correlated, the assumption of independence is likely to be violated.
+
+To see the correlation structure within each subject, 
+* First regress $y_{ij}$ onto $x_{ij}$ using the ordinary least-squares (OLS) and obtain the residuals $r_{ij} = y_{ij} - \hat{\beta_{ij}}x_{ij}$ or $$\mathbf R= \mathbf Y - \mathbf X\hat{\mathbf\beta } $$.  
+* Then create the scatter plots of residuals at different time points (or time intervals if the time points are not regular).
+
+
+```{r}
+#| eval: false
+
+# this file contains code for linear marginal models for longitudinal data
+# We test different covariance patterns and show how to fit model with WLS and REML
+# By Gen Li, 1/1/2018
+# also check lme4
+
+
+library(nlme)
+library(tidyverse)
+opposites <- read.table("https://stats.idre.ucla.edu/stat/r/examples/alda/data/opposites_pp.txt",header=TRUE,sep=",")
+head(opposites)
+
+# spaghetti plot
+p = ggplot(opposites, aes(time, opp, group=id)) + geom_line()
+print(p)
+
+
+# Fit different cov model with REML
+###################################################
+# unstructured covariance
+unstruct <- gls(opp~time*ccog,opposites, correlation=corSymm(form = ~ 1 |id),  weights=varIdent(form = ~ 1| wave),method="REML")
+# check ?gls ?corClasses ?corSymm
+summary(unstruct) # focus on corr, var, (weight)
+unstruct$modelStruct$corStruct # corr
+unstruct$modelStruct$varStruct # variance:weight
+unstruct$sigma # standard deviation
+cov2cor(unstruct$varBeta)
+
+
+# compound symmetry
+comsym <- gls(opp~time,opposites, correlation=corCompSymm(form = ~ 1|id),   weights=varIdent(form = ~ 1| wave), method="REML")
+summary(comsym)
+corMatrix(comsym$modelStruct$corStruct)[[1]]
+
+
+
+# AR(1)
+auto1 <- gls(opp~time ,opposites, correlation=corAR1(form = ~ 1 |id), method="REML")
+summary(auto1)
+corMatrix(auto1$modelStruct$corStruct)[[1]]
+
+
+
+```
+
+
+:::
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
+
+:::
+
+</div>
+
+
+# Go to Project Content List
+
+[Project Content List](./docs/projects/index.qmd)
+
+# Go to Blog Content List
+
+[Blog Content List](./docs/blog/posts/content_list.qmd)

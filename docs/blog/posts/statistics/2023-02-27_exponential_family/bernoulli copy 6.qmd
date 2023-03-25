@@ -7,7 +7,7 @@ categories:
   - Statistics
 author: Kwangmin Kim
 date: 02/27/2023
-draft: false
+draft: true
 format: 
   html:
     toc: true
@@ -35,77 +35,74 @@ execute:
 
 
 
-## Bernoulli Distribution
+The negative binomial distribution is a probability distribution that can be used to model count data. In the pharma industry, count data are often encountered in various applications, such as:
 
-::: {#def-bernoulli}
+Clinical trials: In clinical trials, the number of events (e.g., adverse reactions, treatment failures, hospitalizations) can be modeled using the negative binomial distribution. For example, the negative binomial distribution can be used to model the number of hospitalizations due to a specific condition among a group of patients receiving a particular treatment.
 
-확률 변수 $X$ 가 1(=성공) 또는 0(=실패) 중 하나이고 성공일 확률이 $p$ 일 때 $X$ 는 bernoulli distirbution 따르고 probability function은 $f(x=1)=p$ 와 $f(x=0)=1-p$ 이다.
-즉, 
-$$
-\begin{aligned}
-  f_X(x)&=
-  \begin{cases}
-    p   & x=1 \\
-    1-p & x=0
-  \end{cases}
-\end{aligned}
-$$ 
-이다.  
+Manufacturing: In the pharmaceutical manufacturing process, the number of defects or the number of particles in a given volume can be modeled using the negative binomial distribution. For example, the negative binomial distribution can be used to model the number of defective tablets produced in a batch.
+
+Sales forecasting: In the pharma industry, the number of prescriptions filled for a particular drug can be modeled using the negative binomial distribution. This can be useful for forecasting sales and estimating market demand.
+
+Epidemiology: In epidemiological studies, the number of cases of a disease or infection can be modeled using the negative binomial distribution. For example, the negative binomial distribution can be used to model the number of cases of a specific infection among a group of patients.
+
+Overall, the negative binomial distribution is a versatile tool in the pharma industry for modeling count data and can be used in a variety of applications, such as clinical trials, manufacturing, sales forecasting, and epidemiology.
+
+
+In clinical trials, the negative binomial distribution can be used to model the number of events (e.g., adverse reactions, treatment failures, hospitalizations) that occur within a given period of time or over a specified number of trials.
+
+The negative binomial distribution is a probability distribution that describes the number of successes in a sequence of independent and identically distributed Bernoulli trials before a specified number of failures occur. It is defined by two parameters: the number of failures r and the probability of success p.
+
+In the context of clinical trials, the negative binomial distribution can be used to model the number of events that occur among a group of patients receiving a particular treatment. For example, consider a clinical trial in which a new drug is being tested for its effectiveness in reducing the number of hospitalizations due to a specific condition. The trial enrolls n patients, and each patient is followed for a fixed period of time, say t months.
+
+Let Y_i be the number of hospitalizations that occur for patient i during the t-month period. We assume that Y_i follows a negative binomial distribution with parameters r and p, where r is the dispersion parameter and p is the probability of hospitalization for each patient.
+
+The probability mass function (PMF) of the negative binomial distribution is given by:
+
+P(Y_i = k) = (k + r - 1) choose (k) * p^k * (1 - p)^r
+
+where (k + r - 1) choose (k) is the binomial coefficient. The mean and variance of the negative binomial distribution are:
+
+mean = r * (1 - p) / p
+
+variance = r * (1 - p) / p^2
+
+To estimate the parameters r and p from the data, we can use the method of maximum likelihood. The likelihood function for the negative binomial distribution is:
+
+L(r, p | y) = product(P(Y_i = y_i))
+
+where y = (y_1, y_2, ..., y_n) is the vector of observed hospitalizations. The log-likelihood function is:
+
+log L(r, p | y) = sum(log(P(Y_i = y_i)))
+
+The maximum likelihood estimators (MLEs) of r and p are obtained by maximizing the log-likelihood function. These estimators can be computed using numerical optimization techniques such as the Newton-Raphson method or the Fisher scoring method.
+
+Once we have estimated the parameters r and p, we can use the negative binomial distribution to make predictions about the number of hospitalizations that would occur in a larger population of patients receiving the same treatment. We can also compare the number of hospitalizations observed in the treatment group to the number expected under the null hypothesis (i.e., no difference between the treatment and control groups) using a hypothesis test based on the negative binomial distribution.
+
+In summary, the negative binomial distribution can be a useful tool for modeling count data in clinical trials, particularly when the data exhibit overdispersion (i.e., the variance is larger than the mean). By estimating the parameters of the negative binomial distribution using maximum likelihood, we can make predictions about the number of events that would occur in a larger population and test hypotheses about the effectiveness of a treatment.
+
+
+In Poisson regression, the variance of the response variable is assumed to be equal to the mean. However, in some cases, this assumption may not hold, and the variance can be greater than the mean. This is called overdispersion, and it can occur when there are unobserved or unmeasured factors that affect the response variable.
+
+Negative binomial regression is a type of generalized linear model that can be used as an alternative to Poisson regression when there is overdispersion. The negative binomial distribution is a probability distribution that is similar to the Poisson distribution but allows for greater variance than the mean.
+
+In negative binomial regression, the mean and variance of the response variable are related by a dispersion parameter, which allows the variance to be greater than the mean. The dispersion parameter can be estimated from the data, and the negative binomial regression model can then be used to estimate the coefficients of the predictors, just like in Poisson regression.
+
+Compared to Poisson regression, negative binomial regression can be more robust to overdispersion and can provide better estimates of the coefficients when the variance is greater than the mean. Therefore, negative binomial regression can be a useful alternative to Poisson regression in situations where overdispersion is present.
+
+
+Negative binomial regression is a type of generalized linear model that is used when the response variable has a negative binomial distribution. The negative binomial distribution is similar to the Poisson distribution in that it models the count of rare events. However, unlike the Poisson distribution, which assumes that the mean and variance of the count are equal, the negative binomial distribution allows for the variance to be greater than the mean, which is often the case in real-world data.
+
+In negative binomial regression, the goal is to model the relationship between the response variable and a set of predictor variables, just like in Poisson regression. The model assumes that the mean of the response variable is a function of the predictor variables, but the variance is not fixed and is instead allowed to vary with the mean through a dispersion parameter. This means that the variance can be greater or smaller than the mean, depending on the value of the dispersion parameter.
+
+The dispersion parameter can be estimated from the data, typically using maximum likelihood estimation. Once the dispersion parameter is estimated, the negative binomial regression model can be used to estimate the coefficients of the predictor variables. These coefficients represent the change in the log of the mean of the response variable for a unit change in the predictor variable, holding all other variables constant.
+
+Compared to Poisson regression, negative binomial regression can be more flexible and can provide better estimates of the coefficients when the variance is greater than the mean. This is because the negative binomial distribution can capture both overdispersion and underdispersion, while the Poisson distribution assumes that the variance is equal to the mean. Therefore, negative binomial regression can be a useful alternative to Poisson regression when there is overdispersion in the data.
+
+
+In a negative binomial regression model, the link function is typically the logarithmic function, just like in Poisson regression. This means that the expected value of the response variable (i.e., the mean) is modeled as a linear combination of the predictors, transformed by the natural logarithm. Specifically, the model can be written as:
+
+log(mu) = X * beta
+
+where mu is the expected value of the response variable, X is a matrix of predictor variables, and beta is a vector of regression coefficients. The dispersion parameter is also included in the model and is typically assumed to be constant across all observations.
 
 :::
-
-### Expectation
-$$
-\begin{aligned}
-  \text{E}(X)&=\sum_{x\in\{1,0\}}Xf(X=x)\\
-             &=1 f(X=1) + 0f(X=0)\\
-              &=p\\
-\end{aligned}
-$$ 
-
-
-### Variance
-$$
-\begin{aligned}
-  \text{E}(X^2)&=\sum_{x \in \{1,0\}}X^2f(X=x)\\
-             &=1 f(X=1) + 0f(X=0)\\
-             &=p\\
-  \text{Var}(X)&=\text{E}(X^2)-\text{E}(X)^2\\
-             &=p-p^2\\
-             &=p(1-p)\\
-\end{aligned}
-$$ 
-
-### Example
-
-주사위의 눈이 짝수일 때 확률 변수 X = 0, 그 외의 경우는 X = 1 일 때 기댓값과 분산은
-
-$$
-\begin{aligned}
-   \text{E}(X)&=\sum_{x\in\{1,0\}}Xf(X=x)\\
-             &=1 f(X=1) + 0f(X=0)\\
-              &=\frac{3}{6}=\frac{1}{2}\\
-  \text{E}(X^2)&=\sum_{x \in \{1,0\}}X^2f(X=x)\\
-             &=1 f(X=1) + 0f(X=0)\\
-             &=\frac{3}{6}=\frac{1}{2}\\
-  \text{Var}(X)&=\text{E}(X^2)-\text{E}(X)^2\\
-             &=\frac{1}{2}\frac{1}{2}\\
-             &=\frac{1}{4}\\
-\end{aligned}
-$$
-
-</div>
-
-
-## Blog Guide Map Link
-
-* [Statistics Blog](../guide_map/index.qmd)
-* [Engineering Blog](../../Engineering/guide_map/index.qmd)
-* [Deep Learning Blog](../../DL/guide_map/index.qmd)
-* [Machine Learning Blog](../../ML/guide_map/index.qmd)
-* [Mathematics Blog](../../Mathmatics/guide_map/index.qmd)
-* [Patent Blog](../../Patent/guide_map/index.qmd)
-* [Validation Blog](../../Validation/guide_map/index.qmd)
-
-
-

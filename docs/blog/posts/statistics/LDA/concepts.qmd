@@ -13,7 +13,7 @@ format:
     code-fold: true
     toc: true
     number-sections: true
-draft: False
+draft: True
 ---
 
 <ul class="nav nav-pills" id="language-tab" role="tablist">
@@ -89,6 +89,240 @@ We find MLE for the linear regression with the 3 things: the normal distribution
 * Transition Models
   * $\text{E}(y_{ij}|y_{i,j-1},\dots,y_{i,1},\mathbf x_{ij})$
   * Markov Process: the response variable in the previous time point will affect the measurement in the current time point.
+
+m(n-1)/2 paratemeters to estimate
+
+compound symmetry: sigma^2 and rho -> computational benefit
+without any contraint on sigma^2-> you gonna get closed form estimate
+covariance variance matrix is plugged into likelihood function to estimate 3 parameters sigma^2, rho, and beta
+so parsimonuous that it could be unrealistic-> not commonly used
+
+toeplitz (more flexible)
+correlations of the measurements on any adjcent time point are the same
+free parameters to estimate are (n-1)+1 = n parameters
+time interval between different measurement is the smae
+The larger time differences the smaller its correlations
+
+autoregressive
+a special case of toeplitz with corr(y_ij,y_ij+k)=rho^k
+simpler than toeplitz -> only 2 parameters
+
+banded
+
+exponential
+the most general and reasonable structure
+take acture time points (time difference), the larger time difference the smaller correlation
+
+assuption that the variance of different measurements over time is the same, which can be easily generalized. You can put different variance on the diagonal
+
+### General Linear Model
+
+assume that we picked one, exponential structure. How do we estimate parameters with the corr structures?
+
+
+1. use OLS to estimate beta->min||y-xbeta||^2 -> tilde beta->(X^TX)^-1X^TY-> tilde betea is unbiased, why?-> E(tilde beta)=E((XTX)^-1X^TY)=(XTX)^-1X^TE(Y)
+
+
+To show that this formula is unbiased, we need to show that the expected value of beta equals the true value of the coefficients, that is E(beta) = (b0, b1).
+
+Let's start by calculating the expected value of beta:
+
+E(beta) = E((X^T X)^{-1} X^T Y)
+
+Since X and Y are assumed to be random variables, we can use the properties of matrix expectations to simplify this expression:
+
+E(beta) = (X^T X)^{-1} X^T E(Y)
+
+Since Y = b0 + b1*X + e (where e is the error term), we have:
+
+E(Y) = E(b0 + b1X + e) = b0 + b1E(X) + E(e) = b0 + b1*X
+
+where we have used the fact that E(e) = 0 and E(X) is a constant.
+
+Substituting this expression for E(Y) into the previous equation, we get:
+
+E(beta) = (X^T X)^{-1} X^T (b0 + b1*X)
+
+Expanding this expression, we get:
+
+E(beta) = (X^T X)^{-1} X^T b0 + (X^T X)^{-1} X^T b1*X
+
+Using the distributive property of matrix multiplication, we can simplify this expression further:
+
+E(beta) = (X^T X)^{-1} X^T b0 + b1 (X^T X)^{-1} (X^T X)
+
+Since (X^T X)^{-1} (X^T X) = I (the identity matrix), we have:
+
+E(beta) = (X^T X)^{-1} X^T b0 + b1 I
+
+Finally, we can compare this expression with the true value of the coefficients (b0, b1):
+
+(b0, b1) = (X^T X)^{-1} X^T Y
+
+Substituting Y = b0 + b1*X + e into this expression, we get:
+
+(b0, b1) = (X^T X)^{-1} X^T (b0 + b1*X + e)
+
+Using the distributive property of matrix multiplication, we can simplify this expression to:
+
+(b0, b1) = (X^T X)^{-1} X^T b0 + b1 (X^T X)^{-1} X^T X + (X^T X)^{-1} X^T e
+
+Since E(e) = 0, the third term in this expression is zero.
+
+2. WLS
+
+In weighted least squares (WLS) regression, the goal is to find the values of the coefficients b0 and b1 that minimize the weighted sum of the squared residuals. The weights are used to adjust the influence of each data point on the fitting line.
+
+The formula for the coefficients b0 and b1 in WLS is very similar to the one in OLS, with the addition of a weight matrix W.
+
+The equation for WLS is Y = b0 + b1*X + e, where e is the error term and W is a diagonal matrix of weights.
+
+To derive the formula for the coefficients b0 and b1 in WLS, we need to define the following matrices:
+
+X: the matrix of independent variables (also called the design matrix)
+Y: the matrix of dependent variables
+W: the weight matrix (a diagonal matrix of weights)
+beta: the vector of coefficients to be estimated
+The formula for beta in WLS is beta = (X^T W X)^{-1} X^T W Y, where (^T) denotes the transpose of a matrix and (^{-1}) denotes the inverse of a matrix.
+
+To show that this formula is unbiased, we need to show that the expected value of beta equals the true value of the coefficients, that is E(beta) = (b0, b1).
+
+Let's start by calculating the expected value of beta:
+
+E(beta) = E((X^T W X)^{-1} X^T W Y)
+
+Using the properties of matrix expectations, we can simplify this expression:
+
+E(beta) = (X^T W X)^{-1} X^T W E(Y)
+
+Since Y = b0 + b1*X + e, we have:
+
+E(Y) = E(b0 + b1X + e) = b0 + b1E(X) + E(e) = b0 + b1*X
+
+where we have used the fact that E(e) = 0 and E(X) is a constant.
+
+Substituting this expression for E(Y) into the previous equation, we get:
+
+E(beta) = (X^T W X)^{-1} X^T W (b0 + b1*X)
+
+Expanding this expression, we get:
+
+E(beta) = (X^T W X)^{-1} X^T W b0 + (X^T W X)^{-1} X^T W b1*X
+
+Using the distributive property of matrix multiplication, we can simplify this expression further:
+
+E(beta) = (X^T W X)^{-1} X^T W b0 + b1 (X^T W X)^{-1} (X^T W X)
+
+Since (X^T W X)^{-1} (X^T W X) = I (the identity matrix), we have:
+
+E(beta) = (X^T W X)^{-1} X^T W b0 + b1 I
+
+Finally, we can compare this expression with the true value of the coefficients (b0, b1):
+
+(b0, b1) = (X^T W X)^{-1} X^T W Y
+
+Substituting Y = b0 + b1*X + e into this expression, we get:
+
+(b0, b1) = (X^T W X)^{-1} X^T W (b0 + b1*X + e)
+
+Using the distributive property of matrix multiplication, we can simplify this expression to:
+
+(b0, b1) = (X^T W X)^{-1} X^T W b0 + b1 (X^T W X)^{-1} X^T W X
+
+uniasedness of WLS
+
+To show that (b0, b1) = (X^T W X)^{-1} X^T W b0 + b1 (X^T W X)^{-1} X^T W X is an unbiased estimator of the true coefficients (b0, b1), we need to show that E((b0, b1)) = (b0, b1).
+
+Taking the expected value of both sides of the equation (b0, b1) = (X^T W X)^{-1} X^T W b0 + b1 (X^T W X)^{-1} X^T W X, we have:
+
+E((b0, b1)) = E((X^T W X)^{-1} X^T W b0 + b1 (X^T W X)^{-1} X^T W X)
+
+Using the linearity of the expectation operator, we can distribute it inside the sum, obtaining:
+
+E((b0, b1)) = E((X^T W X)^{-1} X^T W b0) + E(b1 (X^T W X)^{-1} X^T W X)
+
+We can calculate each term separately. First, let's consider the term E((X^T W X)^{-1} X^T W b0):
+
+E((X^T W X)^{-1} X^T W b0) = (X^T W X)^{-1} X^T W E(b0)
+
+Since b0 is a constant, we have E(b0) = b0. Substituting this in the expression above, we get:
+
+E((X^T W X)^{-1} X^T W b0) = (X^T W X)^{-1} X^T W b0
+
+Now let's consider the term E(b1 (X^T W X)^{-1} X^T W X):
+
+E(b1 (X^T W X)^{-1} X^T W X) = b1 E((X^T W X)^{-1} X^T W X)
+
+We need to show that E((X^T W X)^{-1} X^T W X) = I, where I is the identity matrix. This is true because:
+
+E((X^T W X)^{-1} X^T W X) = (X^T W X)^{-1} X^T W E(X) = (X^T W X)^{-1} X^T W X
+
+where we have used the fact that E(X) is a constant and W is a diagonal matrix with non-zero entries. Therefore, we have:
+
+E(b1 (X^T W X)^{-1} X^T W X) = b1 I
+
+Substituting these expressions for the two terms back into the original equation, we obtain:
+
+E((b0, b1)) = (X^T W X)^{-1} X^T W b0 + b1 I
+
+Comparing this with the true coefficients (b0, b1), we see that they are equal. Therefore, we have shown that (b0, b1) = (X^T W X)^{-1} X^T W b0 + b1 (X^T W X)^{-1} X^T W X is an unbiased estimator of the true coefficients in weighted least squares regression.
+
+
+The expression "blkdiag(\Sigma)^{-1}" means the inverse of a block diagonal matrix where each block is a covariance matrix denoted by Sigma (\Sigma). Specifically, if we have n covariance matrices \Sigma_1, \Sigma_2, ..., \Sigma_n, then the block diagonal matrix is given by:
+
+blkdiag(\Sigma_1, \Sigma_2, ..., \Sigma_n) = \begin{bmatrix} \Sigma_1 & 0 & \cdots & 0 \ 0 & \Sigma_2 & \cdots & 0 \ \vdots & \vdots & \ddots & \vdots \ 0 & 0 & \cdots & \Sigma_n \end{bmatrix}
+
+The inverse of this block diagonal matrix can be computed by taking the inverse of each block matrix and placing them on the diagonal, resulting in the following expression:
+
+[blkdiag(\Sigma_1, \Sigma_2, ..., \Sigma_n)]^{-1} = \begin{bmatrix} \Sigma_1^{-1} & 0 & \cdots & 0 \ 0 & \Sigma_2^{-1} & \cdots & 0 \ \vdots & \vdots & \ddots & \vdots \ 0 & 0 & \cdots & \Sigma_n^{-1} \end{bmatrix}
+
+Therefore, blkdiag(\Sigma)^{-1} is a block diagonal matrix where each block is the inverse of the corresponding covariance matrix, and it can be computed by taking the inverse of each block and placing them on the diagonal.
+
+
+## If  W=blkdiag(\Sigma)^{-1} in longitudinal data analysis, why more efficient than OLS?
+
+In longitudinal data analysis, it is common to use a generalized linear mixed model (GLMM) to account for the correlated nature of the data. The GLMM framework includes random effects to capture the individual-level variation and allows for the specification of a covariance structure to model the correlation between the repeated measurements within each individual. When fitting a GLMM, the covariance matrix of the random effects, denoted by \Sigma, needs to be estimated.
+
+One way to estimate \Sigma is to use maximum likelihood estimation (MLE), which involves maximizing the likelihood function of the GLMM with respect to the unknown parameters, including \Sigma. However, the MLE of \Sigma can be inefficient when the number of repeated measurements per individual is small or the correlation between the repeated measurements is weak.
+
+To improve the efficiency of the MLE of \Sigma, a weighted likelihood method can be used, where the likelihood function is multiplied by a weight matrix that depends on the estimated covariance matrix. Specifically, the weight matrix is given by W = blkdiag(\Sigma)^{-1}, where blkdiag(\Sigma) is the block diagonal matrix of the estimated covariance matrix \Sigma. The inverse of blkdiag(\Sigma) is taken because it is a positive definite matrix and its inverse exists.
+
+By weighting the likelihood function with W, the resulting weighted likelihood estimator (WLE) of \Sigma is more efficient than the MLE because it incorporates additional information about the covariance structure of the data. The WLE of \Sigma is then used in the GLMM to estimate the other parameters, such as the fixed effects.
+
+In summary, using W = blkdiag(\Sigma)^{-1} as a weight matrix in the GLMM framework can improve the efficiency of the MLE of the covariance matrix \Sigma and result in more accurate estimates of the other parameters in the model, making it more efficient than the OLS estimator, which assumes independence between the observations.
+
+### Family and Longitudinal Data
+
+
+In longitudinal data analysis with family data, one common approach to estimating the regression coefficients is to use a linear mixed-effects model, also known as a multilevel model or a hierarchical model. The linear mixed-effects model can handle the within-subject correlation due to repeated measurements over time and the within-family correlation due to shared genetic or environmental factors among family members.
+
+The linear mixed-effects model assumes that the outcome variable Y is a function of the fixed effects X and the random effects b, which can account for the within-subject and within-family correlation. The model can be written as:
+
+Y = Xβ + Zb + ε
+
+where β is the vector of fixed effects coefficients, b is the vector of random effects coefficients, Z is the design matrix for the random effects, and ε is the error term.
+
+To estimate the fixed effects coefficients β, one can use maximum likelihood estimation (MLE) or restricted maximum likelihood estimation (REML) methods. The MLE estimates the variance components for both the random effects and the error term, while the REML estimates the variance components for only the random effects and adjusts for the bias in the likelihood function.
+
+To fit the linear mixed-effects model, one can use software packages such as R, SAS, or Stata, which have functions for fitting linear mixed-effects models with repeated measurements and random effects. In R, for example, one can use the lme4 package to fit the linear mixed-effects model using the lmer() function. The output of the function includes the estimated fixed effects coefficients β and the estimated variance components for the random effects and the error term.
+
+Overall, estimating the fixed effects coefficients β of family data with repeated measurements in longitudinal data analysis requires fitting a linear mixed-effects model that accounts for the within-subject and within-family correlation, and the choice of model depends on the research question and assumptions of the data.
+
+In longitudinal data analysis with repeated measurements and correlated subjects, the variance-covariance matrix of the responses can be modeled using a mixed-effects model or a generalized estimating equation (GEE) model.
+
+In the mixed-effects model, the variance-covariance matrix of the responses is decomposed into two components: the within-subject covariance and the between-subject covariance. The within-subject covariance accounts for the correlation between the repeated measurements within the same subject, while the between-subject covariance accounts for the correlation between subjects. The mixed-effects model allows for the inclusion of both fixed effects and random effects, which can model the mean and the variance structure of the responses.
+
+In the GEE model, the variance-covariance matrix of the responses is modeled using a working correlation matrix, which specifies the correlation structure between the observations. The GEE model allows for the inclusion of fixed effects, but not random effects, and estimates the population-averaged mean and the variance structure of the responses.
+
+To design the variance-covariance matrix of the responses in a mixed-effects model or a GEE model, one needs to specify the correlation structure between the repeated measurements within the same subject and between subjects. Common correlation structures for the within-subject covariance include the autoregressive (AR), the exchangeable, and the unstructured covariance structures, while common correlation structures for the between-subject covariance include the independent and the compound symmetry covariance structures.
+
+The choice of correlation structure depends on the research question and assumptions of the data. For example, the AR(1) correlation structure assumes that the correlation between two measurements decreases as the time lag between them increases, while the exchangeable correlation structure assumes that all measurements within the same subject are equally correlated. The choice of correlation structure can be evaluated using statistical criteria such as the Akaike information criterion (AIC) or the Bayesian information criterion (BIC).
+
+Overall, designing the variance-covariance matrix of the responses in longitudinal data analysis with repeated measurements and correlated subjects requires specifying the correlation structure between the repeated measurements within the same subject and between subjects, and the choice of model depends on the research question and assumptions of the data.
+
+
+
+
 
 ::: {.callout-tip}
 

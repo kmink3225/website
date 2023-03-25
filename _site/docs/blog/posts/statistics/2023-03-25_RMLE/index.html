@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kwangmin Kim">
-<meta name="dcterms.date" content="2023-03-23">
+<meta name="dcterms.date" content="2023-03-24">
 <meta name="description" content="template">
 
-<title>Kwangmin Kim - LDA (2) - CD4+ Cell Depletion</title>
+<title>Kwangmin Kim - MLE</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -125,7 +125,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   }
 }</script>
 
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="../../../../../styles.css">
 </head>
@@ -196,22 +195,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#go-to-project-content-list" id="toc-go-to-project-content-list" class="nav-link active" data-scroll-target="#go-to-project-content-list"><span class="toc-section-number">1</span>  Go to Project Content List</a></li>
-  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link" data-scroll-target="#go-to-blog-content-list"><span class="toc-section-number">2</span>  Go to Blog Content List</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content">
+<main class="content column-page" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">LDA (2) - CD4+ Cell Depletion</h1>
+<h1 class="title">MLE</h1>
 <p class="subtitle lead">Overview</p>
   <div class="quarto-categories">
     <div class="quarto-category">Statistics</div>
@@ -237,7 +229,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 23, 2023</p>
+      <p class="date">March 24, 2023</p>
     </div>
   </div>
   
@@ -247,102 +239,56 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 </header>
 
-<ul class="nav nav-pills" id="language-tab" role="tablist">
-<li class="nav-item" role="presentation">
-<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">
-Korean
-</button>
-</li>
-<li class="nav-item" role="presentation">
-<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">
-English
-</button>
-</li>
-<div class="tab-content" id="language-tabcontent">
-
-<div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
-<div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
-<p>Goals</p>
-<ul>
-<li>Characterize the time course of CD4+ cell depletion.</li>
-<li>Identify factors which predict CD4+ cell changes.</li>
-<li>Characterize the degree of heterogeneity across men in the rate of progression. Data are highly unbalanced with irregular observation times and numbers.</li>
-</ul>
-<p>In a usual regression analysis,</p>
-<p><span class="math display">\[
-\begin{aligned}
-    \mathbf Y&amp;=\mathbf X\mathbf\beta+\mathbf\epsilon\\
-    y_{ij}&amp;=\beta x_{ij}+\epsilon_{ij}
-\end{aligned}
-\]</span> where <span class="math inline">\(i\)</span> = the <span class="math inline">\(i\)</span> th person, <span class="math inline">\(j\)</span>= the <span class="math inline">\(j\)</span> th observation, and <span class="math inline">\(\epsilon_{ij}\)</span>= the <span class="math inline">\(j\)</span> th measurement error of the <span class="math inline">\(i\)</span> th person.</p>
-<p>Since repeated measurements on a subject are likely correlated, the assumption of independence is likely to be violated.</p>
-<p>To see the correlation structure within each subject, * First regress <span class="math inline">\(y_{ij}\)</span> onto <span class="math inline">\(x_{ij}\)</span> using the ordinary least-squares (OLS) and obtain the residuals <span class="math inline">\(r_{ij} = y_{ij} - \hat{\beta_{ij}}x_{ij}\)</span> or <span class="math display">\[\mathbf R= \mathbf Y - \mathbf X\hat{\mathbf\beta } \]</span>.<br>
-* Then create the scatter plots of residuals at different time points (or time intervals if the time points are not regular).</p>
+<p>Maximum likelihood estimation (MLE) and restricted maximum likelihood estimation (REML) are both methods used to estimate the parameters of a statistical model. The main difference between MLE and REML lies in the way they estimate the variance-covariance matrix of the random effects in mixed-effects models.</p>
+<p>In MLE, the variance-covariance matrix of the random effects is estimated using the full likelihood, which includes both the fixed and random effects. However, the maximum likelihood estimate of the variance-covariance matrix can be biased downward due to the inclusion of the fixed effects in the likelihood function. This bias is referred to as the “degrees of freedom” problem, and it can lead to an overestimation of the significance of the fixed effects.</p>
+<p>In REML, the variance-covariance matrix of the random effects is estimated using a likelihood function that is based only on the random effects. The fixed effects are eliminated from the likelihood function by taking conditional distributions of the data given the random effects. By eliminating the fixed effects from the likelihood function, REML avoids the degrees of freedom problem and produces an unbiased estimate of the variance-covariance matrix of the random effects.</p>
+<p>In summary, MLE estimates both the fixed and random effects using the full likelihood function, while REML estimates only the variance-covariance matrix of the random effects using a likelihood function that eliminates the fixed effects. REML is preferred over MLE when the goal is to estimate the variance-covariance matrix of the random effects without bias. However, MLE is sometimes preferred when the goal is to estimate the fixed effects as well as the variance-covariance matrix of the random effects.</p>
+<p>One famous example of using REML is in the analysis of variance (ANOVA) of a mixed-effects model. In this case, the goal is to estimate the variance components of the random effects, which can be used to make inferences about the variability among the different levels of the grouping factor.</p>
+<p>For example, consider a study where the effect of a treatment is being tested on a response variable measured in different subjects over time. The subjects are considered as random effects, and the time and treatment effects are considered fixed effects. A mixed-effects model can be used to model this data, where the response variable is modeled as a function of time, treatment, and subject:</p>
+<p>Y = Xβ + Zb + ε</p>
+<p>where Y is the response variable, X and Z are design matrices for the fixed and random effects, β and b are the corresponding parameter vectors, and ε is the residual error.</p>
+<p>In this case, the REML method can be used to estimate the variance components of the random effects, which represent the variability among the different subjects. The fixed effects, including the treatment and time effects, can be estimated using either REML or MLE.</p>
+<p>REML is preferred over MLE in this case because the goal is to estimate the variability among the subjects without bias. By using REML, the degrees of freedom problem associated with MLE is avoided, which can lead to biased estimates of the variance components. The estimates obtained using REML can then be used to test the significance of the treatment effect and to make inferences about the variability among the different subjects.</p>
+<p>The likelihood function for a mixed-effects model can be written as:</p>
+<p>L(θ|y) = (2π)-n/2|V(θ)|^-1/2 exp[-1/2(y-μ(θ))’V(θ)^-1(y-μ(θ))]</p>
+<p>where θ is the vector of unknown parameters, y is the vector of observed data, V(θ) is the variance-covariance matrix of the random effects, and μ(θ) is the vector of expected values for the response variable.</p>
+<p>The REML estimator is obtained by maximizing the likelihood function with respect to the parameters after integrating out the random effects. This involves maximizing a modified likelihood function:</p>
+<p>L’(θ|y) = (2π)-n/2|W(θ)|^-1/2 exp[-1/2(y-Xβ(θ))’W(θ)^-1(y-Xβ(θ)))]</p>
+<p>where W(θ) = V(θ) - V(θ)X(X’V(θ)<sup>-1X)</sup>-1X’V(θ) is a matrix that depends on both the variance-covariance matrix of the random effects and the design matrix X.</p>
+<p>To show that the REML estimator is unbiased, we need to show that the expected value of the estimator equals the true value of the parameter:</p>
+<p>E(θREML) = θ</p>
+<p>We can do this by taking the derivative of the log-likelihood function with respect to the parameters and evaluating it at the true value of the parameter:</p>
+<p>d/dθ log L’(θ|y)|θ=θtrue = 0</p>
+<p>This gives us the score equations, which can be used to solve for the maximum likelihood estimates of the parameters.</p>
+<p>We can then take the expected value of the score equations and evaluate them at the true value of the parameter:</p>
+<p>E[d/dθ log L’(θ|y)|θ=θtrue] = 0</p>
+<p>This shows that the expected value of the score equations equals zero, which implies that the REML estimator is unbiased.</p>
+<p>Sure, here is an example of how REML can be used to estimate the coefficients of a mixed-effects model:</p>
+<p>Suppose we have a dataset of 100 patients who are measured for their blood pressure (BP) at four different time points (t=0, 1, 2, 3) before and after receiving a treatment. We want to estimate the effect of the treatment on BP while taking into account the correlation among the repeated measurements within each patient.</p>
+<p>We can model this data using a mixed-effects model with patient-specific intercepts and slopes over time:</p>
+<p>BPij = β0i + β1itij + β2Txij + εij</p>
+<p>where BPij is the blood pressure measurement for patient i at time j, β0i and β1i are the patient-specific intercept and slope for time, β2 is the treatment effect, Txij is the treatment indicator variable (1 if patient i received the treatment at time j, 0 otherwise), and εij is the residual error.</p>
+<p>To estimate the coefficients of this model using REML, we need to first estimate the variance-covariance matrix of the random effects (patient-specific intercepts and slopes). This can be done using the lme() function in R with the method argument set to “REML”:</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># this file contains code for linear marginal models for longitudinal data</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We test different covariance patterns and show how to fit model with WLS and REML</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># By Gen Li, 1/1/2018</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># also check lme4</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>opposites <span class="ot">&lt;-</span> <span class="fu">read.table</span>(<span class="st">"https://stats.idre.ucla.edu/stat/r/examples/alda/data/opposites_pp.txt"</span>,<span class="at">header=</span><span class="cn">TRUE</span>,<span class="at">sep=</span><span class="st">","</span>)</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(opposites)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># spaghetti plot</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>p <span class="ot">=</span> <span class="fu">ggplot</span>(opposites, <span class="fu">aes</span>(time, opp, <span class="at">group=</span>id)) <span class="sc">+</span> <span class="fu">geom_line</span>()</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(p)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit different cov model with REML</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="do">###################################################</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="co"># unstructured covariance for marginal model</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>unstruct <span class="ot">&lt;-</span> <span class="fu">gls</span>(opp<span class="sc">~</span>time<span class="sc">*</span>ccog,opposites, <span class="at">correlation=</span><span class="fu">corSymm</span>(<span class="at">form =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span>id),  <span class="at">weights=</span><span class="fu">varIdent</span>(<span class="at">form =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span> wave),<span class="at">method=</span><span class="st">"REML"</span>)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># corSymm(form = ~ 1 |id) : the same covariance across different measurement, same correlation matrix for different subjects</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co"># check ?gls ?corClasses ?corSymm</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(unstruct) <span class="co"># focus on corr, var, (weight)</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>unstruct<span class="sc">$</span>modelStruct<span class="sc">$</span>corStruct <span class="co"># corr</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>unstruct<span class="sc">$</span>modelStruct<span class="sc">$</span>varStruct <span class="co"># variance:weight</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>unstruct<span class="sc">$</span>sigma <span class="co"># standard deviation</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="fu">cov2cor</span>(unstruct<span class="sc">$</span>varBeta)</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># compound symmetry</span></span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>comsym <span class="ot">&lt;-</span> <span class="fu">gls</span>(opp<span class="sc">~</span>time,opposites, <span class="at">correlation=</span><span class="fu">corCompSymm</span>(<span class="at">form =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span>id),   <span class="at">weights=</span><span class="fu">varIdent</span>(<span class="at">form =</span> <span class="sc">~</span> <span class="dv">1</span><span class="sc">|</span> wave), <span class="at">method=</span><span class="st">"REML"</span>)</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(comsym)</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a><span class="fu">corMatrix</span>(comsym<span class="sc">$</span>modelStruct<span class="sc">$</span>corStruct)[[<span class="dv">1</span>]]</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="co"># AR(1)</span></span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>auto1 <span class="ot">&lt;-</span> <span class="fu">gls</span>(opp<span class="sc">~</span>time ,opposites, <span class="at">correlation=</span><span class="fu">corAR1</span>(<span class="at">form =</span> <span class="sc">~</span> <span class="dv">1</span> <span class="sc">|</span>id), <span class="at">method=</span><span class="st">"REML"</span>)</span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(auto1)</span>
-<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a><span class="fu">corMatrix</span>(auto1<span class="sc">$</span>modelStruct<span class="sc">$</span>corStruct)[[<span class="dv">1</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#library(nlme)</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="do">## Fit mixed-effects model using REML</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">#model &lt;- lme(BP ~ t*Tx, random = ~t|patient, data = data, method = "REML")</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Extract coefficient estimates</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">#summary(model)$tTable</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-</div>
-</div>
-<div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
-<div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
-
-</div>
-</div>
-<section id="go-to-project-content-list" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Go to Project Content List</h1>
-<p><a href="./docs/projects/index.qmd">Project Content List</a></p>
-</section>
-<section id="go-to-blog-content-list" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Go to Blog Content List</h1>
-<p><a href="./docs/blog/posts/content_list.qmd">Blog Content List</a></p>
+<p>This code fits the mixed-effects model to the data using the lme() function from the nlme package in R. The random argument specifies that the intercept and slope for time are patient-specific random effects. The method argument is set to “REML” to use the REML method to estimate the variance-covariance matrix of the random effects.</p>
+<p>The output of this code gives us the estimated coefficients for the fixed effects, including the treatment effect (β2), as well as the estimated variance-covariance matrix of the random effects. The estimated coefficient for the treatment effect tells us the expected change in blood pressure associated with receiving the treatment, while controlling for the effect of time and the correlation among the repeated measurements within each patient.</p>
+<p>Note that the variance-covariance matrix of the random effects estimated using REML can be used to test the significance of the patient-level variability, as well as to make inferences about the correlation among the repeated measurements within each patient.</p>
 
 
-</section>
 
-</div></ul></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

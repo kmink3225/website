@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kwangmin Kim">
-<meta name="dcterms.date" content="2023-03-24">
+<meta name="dcterms.date" content="2023-03-25">
 <meta name="description" content="template">
 
-<title>Kwangmin Kim - LDA (2) - Concept</title>
+<title>Kwangmin Kim - LDA (3) - Weight Least Square &amp; REML</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -211,7 +211,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">LDA (2) - Concept</h1>
+<h1 class="title">LDA (3) - Weight Least Square &amp; REML</h1>
 <p class="subtitle lead">Overview</p>
   <div class="quarto-categories">
     <div class="quarto-category">Statistics</div>
@@ -237,7 +237,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 24, 2023</p>
+      <p class="date">March 25, 2023</p>
     </div>
   </div>
   
@@ -303,273 +303,58 @@ English
 </ul></li>
 </ul>
 </section>
-<section id="assumptions" class="level2" data-number="0.2">
-<h2 data-number="0.2" class="anchored" data-anchor-id="assumptions"><span class="header-section-number">0.2</span> Assumptions</h2>
-<ul>
-<li>the measurements for the same subject are not independent.</li>
-<li>the measurements for the different subject are independent.</li>
-<li>some correlation structures of the different measurements.</li>
-</ul>
-</section>
-<section id="for-continuous-responses" class="level2" data-number="0.3">
-<h2 data-number="0.3" class="anchored" data-anchor-id="for-continuous-responses"><span class="header-section-number">0.3</span> For Continuous Responses</h2>
-<ul>
-<li>Marginal Models
-<ul>
-<li><span class="math inline">\(\text{E}(y_{ij}) = \mathbf x_{ij} \mathbf \beta\)</span></li>
-<li><span class="math inline">\(\text{Var}(\mathbf y_i)= \mathbf V_i\)</span></li>
-<li>to build a marginal model, we just need info on the 3 things
-<ul>
-<li>the distribution : a multivariate normal distribution</li>
-<li>mean and variance-covariance</li>
-</ul></li>
-<li><span class="math inline">\(\beta\)</span> is fixed. That’s why we call this marginal models ‘fixed effect’</li>
-</ul></li>
-</ul>
-<div class="callout-tip callout callout-style-default callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Recall
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>We find MLE for the linear regression with the 3 things: the normal distribution (iid), <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma^2\)</span></p>
-</div>
-</div>
-<ul>
-<li>Mixed Effects Models
-<ul>
-<li><span class="math inline">\(\text{E}(y_{ij}|\mathbf \beta_i) = \mathbf x_{ij} \mathbf \beta_i\)</span></li>
-<li><span class="math inline">\(\mathbf \beta_i = \mathbf \beta (\text{fixed effect}) + \mathbf u_i (\text{subject-specific random effect})\)</span></li>
-<li><span class="math inline">\(\mathbf \beta_i\)</span> is a random coefficient specific for the <span class="math inline">\(i\)</span> th subject, That’s why we call this mixed effect models ‘random effect’</li>
-<li>subject-specific random effect: differenct subjects have different <span class="math inline">\(\mathbf \beta_i\)</span></li>
-</ul></li>
-<li>Transition Models
-<ul>
-<li><span class="math inline">\(\text{E}(y_{ij}|y_{i,j-1},\dots,y_{i,1},\mathbf x_{ij})\)</span></li>
-<li>Markov Process: the response variable in the previous time point will affect the measurement in the current time point.</li>
-</ul></li>
-</ul>
-<section id="marginal-models" class="level3" data-number="0.3.1">
-<h3 data-number="0.3.1" class="anchored" data-anchor-id="marginal-models"><span class="header-section-number">0.3.1</span> Marginal Models</h3>
-<p>Consider an example of a simple linear model (i.e., a univaiable linear model) <span class="math display">\[
-y_{ij}=\beta_0+\beta_1t_{ij} + \epsilon_{ij}
-\]</span></p>
-<ul>
-<li>mean part: <span class="math inline">\(\text{E}(y_{ij})\)</span></li>
-<li>variance part: <span class="math inline">\(\text{Var}(\mathbf y_{i})=\text{Var}(\mathbf \epsilon_{i})\)</span>
-<ul>
-<li>more often, a correlation matrix is used in LDA because correlation is more interpretable.</li>
-</ul></li>
-</ul>
+<section id="ols-vs-gls" class="level2" data-number="0.2">
+<h2 data-number="0.2" class="anchored" data-anchor-id="ols-vs-gls"><span class="header-section-number">0.2</span> OLS vs GLS</h2>
+<p>OLS (Ordinary Least Squares) and GLS (Generalized Least Squares) are both methods of regression analysis used to model the relationship between a dependent variable and one or more independent variables. The main difference between OLS and GLS is in the assumptions about the errors in the model.</p>
+<section id="ols" class="level3" data-number="0.2.1">
+<h3 data-number="0.2.1" class="anchored" data-anchor-id="ols"><span class="header-section-number">0.2.1</span> OLS</h3>
+<p>It assumes that the errors are homoscedastic and independent of each other. OLS is a simpler and more commonly used method, but it may not be appropriate for datasets with non-constant variances or autocorrelation in the errors.</p>
+<section id="ols-solutions" class="level4" data-number="0.2.1.1">
+<h4 data-number="0.2.1.1" class="anchored" data-anchor-id="ols-solutions"><span class="header-section-number">0.2.1.1</span> OLS Solutions</h4>
 <p><span class="math display">\[
-\text{Corr}(\mathbf y_i) =
-\begin{bmatrix}
-1 &amp; \rho_{12}&amp; \dots &amp; \rho_{1n_i} \\
-\rho_{21} &amp; 1 &amp; \dots &amp; \rho_{2n_i} \\
-\vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
-\rho_{n_i1} &amp; \rho_{n_i2}&amp; \dots &amp; 1
-\end{bmatrix}
+\begin{aligned}
+  \hat{\beta}&amp;=\min_\beta||Y-X\beta||^2 \\
+  &amp;=(X^TX)^{-1}X^TY
+\end{aligned}
 \]</span></p>
-<ul>
-<li>in this correlation matrix, there are <span class="math inline">\(\frac{n(n-1)}{2}\)</span> parameters to estimate</li>
-<li>in the mean part, there are 2 parameters, <span class="math inline">\(\mathbf \beta\)</span> to estimate Likewise, the number of the estimators depends on the number of the measurements and the covriates.</li>
-</ul>
-<p>In LDA, since the responses are multiple, we need to look into the correlation characteristics. In empirical observations about the nature of the correlation among repeated measures,</p>
-<ul>
-<li>correlations are usually positive</li>
-<li>decrease with increasing time separation</li>
-<li>rarely approach zero</li>
-<li>approach one if a pair of repeated measures are taken very closely in time</li>
-</ul>
-</section>
-<section id="modeling-covariance-structure" class="level3" data-number="0.3.2">
-<h3 data-number="0.3.2" class="anchored" data-anchor-id="modeling-covariance-structure"><span class="header-section-number">0.3.2</span> Modeling Covariance Structure</h3>
-<p>There are 2 types of covariance structure: unbalanced design and balanced design. For now, let’s focus on the balanced design.</p>
-<section id="balanced-design" class="level4" data-number="0.3.2.1">
-<h4 data-number="0.3.2.1" class="anchored" data-anchor-id="balanced-design"><span class="header-section-number">0.3.2.1</span> balanced design</h4>
-<ul>
-<li>number and timing of the repeated measurements are the same for all individuals.</li>
-<li>Then, <span class="math inline">\(t_{ij}\)</span> can be denoted as <span class="math inline">\(t_j\)</span> where <span class="math inline">\(j \in 1, \dots, n\)</span> because the size of the measurements is the same (<span class="math inline">\(n_i\)</span> is the same)</li>
-<li>The covariance of the response variable <span class="math inline">\(\mathbf Y_{m\times n}\)</span> :</li>
-</ul>
-$$
-<span class="math display">\[\begin{aligned}
-  \text{Cov}(\mathbf Y)
-  &amp;=\text{Cov}(\mathbf y_1,\dots,y_m) \\
-  &amp;=
-  \begin{bmatrix}
-    \text{Var}(\mathbf y_1) &amp; 0 &amp; \dots &amp; 0 \\
-    0 &amp; \text{Var}(\mathbf y_2) &amp; \dots &amp; 0 \\
-    \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
-    0 &amp; 0 &amp; \dots &amp; \text{Var}(\mathbf y_m)
-  \end{bmatrix}\\
-  &amp;=
-  \begin{bmatrix}
-    \begin{bmatrix}
-    \text{Var}(y_{11}) &amp; \text{Cov}( y_{11}, y_{12}) &amp; \dots &amp; \text{Cov}( y_{11}, y_{1n_1}) \\
-                               &amp; \text{Var}( y_{12}) &amp; \dots &amp; \text{Cov}( y_{12}, y_{1n_1}) \\
-                                 &amp;                           &amp; \ddots &amp; \vdots \\
-                                 &amp;&amp;                            \dots &amp; \text{Var}( y_{1n_1})
-\end{bmatrix} &amp; 0 &amp; \dots &amp; 0 \\
-    0 &amp; \begin{bmatrix}
-    \text{Var}(y_{21}) &amp; \text{Cov}( y_{21}, y_{22}) &amp; \dots &amp; \text{Cov}( y_{21}, y_{in_2}) \\
-                               &amp; \text{Var}( y_{22}) &amp; \dots &amp; \text{Cov}( y_{22}, y_{in_2}) \\
-                                 &amp;                           &amp; \ddots &amp; \vdots \\
-                                 &amp;&amp;                            \dots &amp; \text{Var}( y_{2n_2})
-\end{bmatrix} &amp; \dots &amp; 0 \\
-    \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
-    0 &amp; 0 &amp; \dots &amp; \begin{bmatrix}
-    \text{Var}(y_{m1}) &amp; \text{Cov}( y_{m1}, y_{m2}) &amp; \dots &amp; \text{Cov}( y_{m1}, y_{mn_m}) \\
-                               &amp; \text{Var}( y_{m2}) &amp; \dots &amp; \text{Cov}( y_{m2}, y_{mn_m}) \\
-                                 &amp;                           &amp; \ddots &amp; \vdots \\
-                                 &amp;&amp;                            \dots &amp; \text{Var}( y_{mn_m})
-\end{bmatrix}
-
-  \end{bmatrix} \\
-  &amp;=
-  \begin{bmatrix}
-    \Sigma_1 &amp; 0 &amp; \dots &amp; 0 \\
-    0 &amp; \Sigma_1 &amp; \dots &amp; 0 \\
-    \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
-    0 &amp; 0 &amp; \dots &amp; \Sigma_m
-  \end{bmatrix}
-\end{aligned}\]</span>
-<p>$$</p>
-<p>If we assume the covariance matrices for different subjects are the same, we can denote <span class="math inline">\(\text{Cov}(\mathbf Y)=\Sigma\)</span>.</p>
+<p><span class="math inline">\(\hat \beta\)</span> is unbiased because if we assume that the errors <span class="math inline">\(\epsilon \sim N(0,\simga^2I)\)</span>, <span class="math inline">\(E(\hat \beta)=\text{E}((X^TX)^{-1}X^TY)=(X^TX)^{-1}X^T\text{E}(Y)=(X^TX)^{-1}X^TX\beta=\beta\)</span></p>
 </section>
 </section>
-<section id="covariance-structure-pattern-models" class="level3" data-number="0.3.3">
-<h3 data-number="0.3.3" class="anchored" data-anchor-id="covariance-structure-pattern-models"><span class="header-section-number">0.3.3</span> Covariance Structure Pattern Models</h3>
-<section id="compound-symmetry-structure" class="level4" data-number="0.3.3.1">
-<h4 data-number="0.3.3.1" class="anchored" data-anchor-id="compound-symmetry-structure"><span class="header-section-number">0.3.3.1</span> Compound symmetry Structure</h4>
+<section id="gls" class="level3" data-number="0.2.2">
+<h3 data-number="0.2.2" class="anchored" data-anchor-id="gls"><span class="header-section-number">0.2.2</span> GLS</h3>
+<p>It relaxes the assumptions of OLS and allows for heteroscedasticity and autocorrelation in the data. GLS is a more flexible method that can handle heteroscedasticity and autocorrelation in the data, but it requires more complex computations and may be computationally expensive for large datasets.</p>
+<section id="generalized-least-squares" class="level4" data-number="0.2.2.1">
+<h4 data-number="0.2.2.1" class="anchored" data-anchor-id="generalized-least-squares"><span class="header-section-number">0.2.2.1</span> Generalized Least Squares</h4>
+<p>The estimator <span class="math inline">\(\hat{\beta}\)</span>, which is also known as the generalized least squares estimator, is given by <span class="math inline">\(\hat{\beta}=(X^TWX)^{-1}X^TWY\)</span>, where <span class="math inline">\(W\)</span> is a positive definite weighting matrix.</p>
 <p><span class="math display">\[
-  \text{Cov}(\mathbf y_i)=
-  \sigma^2  
-  \begin{bmatrix}
-    1 &amp; \rho &amp; \rho &amp; \dots &amp; \rho \\
-    \rho &amp; 1 &amp; \rho &amp; \dots &amp; \rho \\
-    \rho &amp; \rho &amp; 1 &amp; \dots &amp; \rho \\
-    \vdots &amp; \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
-    \rho &amp; \rho &amp; \rho &amp; \dots &amp; 1
-  \end{bmatrix}
+\begin{aligned}
+  \hat{\beta}&amp;=\min_\beta||Y-X\beta||^2 \\
+  &amp;=(X^TWX)^{-1}X^TWY
+\end{aligned}
 \]</span></p>
-<ul>
-<li>compound symmetry is a.k.a <strong>Exchangeable</strong></li>
-<li>Assume variance is constant across visits (say <span class="math inline">\(\sigma^2\)</span>)</li>
-<li>Assume correlation between any two visits are constant (say <span class="math inline">\(\rho\)</span>).</li>
-<li>Parsimonious: there are two parameters in the covariance, <span class="math inline">\(\sigma^2\)</span> and <span class="math inline">\(\rho\)</span> (computational benefit)</li>
-<li>Without any contraint on <span class="math inline">\(\sigma^2\)</span>, you will get closed form estimate.</li>
-<li>Covariance variance matrix is plugged into likelihood function to estimate 3 kinds of parameters <span class="math inline">\(\sigma^2\)</span>, <span class="math inline">\(\rho\)</span>, and <span class="math inline">\(\beta\)</span></li>
-<li>This structure is so parsimonuous that it could be unrealistic: not commonly used</li>
-</ul>
-</section>
-<section id="toeplitz-structure" class="level4" data-number="0.3.3.2">
-<h4 data-number="0.3.3.2" class="anchored" data-anchor-id="toeplitz-structure"><span class="header-section-number">0.3.3.2</span> Toeplitz Structure</h4>
+<p>Under the assumptions of the GLS model, the GLS estimator is unbiased. This means that on average, the GLS estimator will estimate the true population parameters correctly.</p>
+<p>To be specific, the GLS estimator is based on the assumption that the errors or residuals follow a multivariate normal distribution with a mean vector of zeros and a covariance matrix that is known up to a scalar factor. If this assumption holds, then the GLS estimator is the Best Linear Unbiased Estimator (BLUE) of the model parameters.</p>
+<p>Being a BLUE estimator implies that the GLS estimator has the smallest possible variance among all linear unbiased estimators. Therefore, under the GLS assumptions, the GLS estimator is not only unbiased but also efficient, meaning that it achieves the lowest possible variance of all unbiased estimators.</p>
+<p>However, it is important to note that the GLS estimator is only unbiased and efficient if the underlying assumptions are correct. If the assumptions are violated (e.g., the errors are not normally distributed or the covariance structure is misspecified), then the GLS estimator may not be unbiased or efficient.</p>
+<p><span class="math inline">\(\hat{\beta}_{GLS} = (X^T V^{-1} X)^{-1} X^T V^{-1} Y\)</span></p>
+<p>where <span class="math inline">\(V\)</span> is the known covariance matrix of the errors or residuals.</p>
+<p>To show that <span class="math inline">\(\hat{\beta}_{GLS}\)</span> is unbiased, we need to show that:</p>
+<p><span class="math inline">\(E(\hat{\beta}_{GLS}) = \beta\)</span></p>
+<p>where <span class="math inline">\(\beta\)</span> is the true population parameter.</p>
+<p>Using the linearity of expectation, we have:</p>
 <p><span class="math display">\[
-  \text{Cov}(\mathbf y_i)=
-  \sigma^2  
-  \begin{bmatrix}
-    1 &amp; \rho_1 &amp; \rho_2 &amp; \dots &amp; \rho_{n-1} \\
-    \rho_1 &amp; 1 &amp; \rho_1 &amp; \dots &amp; \rho_{n-2} \\
-    \rho_2 &amp; \rho_1 &amp; 1 &amp; \dots &amp; \rho_{n-3} \\
-    \vdots &amp; \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
-    \rho_{n-1} &amp; \rho_{n-2} &amp; \rho_{n-3} &amp; \dots &amp; 1
-  \end{bmatrix}
+\begin{align}
+E(\hat{\beta}_{GLS})
+&amp;= E((X^T W^{-1} X)^{-1} X^T W^{-1} Y)\\
+&amp;= (X^T W^{-1} X)^{-1} X^T W^{-1} E(Y)\\
+&amp;= (X^T W^{-1} X)^{-1} X^T W^{-1} X \beta\\
+&amp;= (X^T W^{-1} X)^{-1} X^T W^{-1} X (X^T X)^{-1} X^T X \beta\\
+&amp;= (X^T X)^{-1} X^T W^{-1} X (X^T X)^{-1} X^T X \beta\\
+&amp;= (X^T X)^{-1} X^T W^{-1} Y\\
+&amp;= \beta
+\end{align}
 \]</span></p>
-<ul>
-<li>Toeplitz structure is more flexible than compound symmetry</li>
-<li>Assume variance is constant across visits and <span class="math inline">\(\text{Corr}(y_{ij}, y_{i,j+k}) = \rho_k\)</span>.</li>
-<li>Assume correlation among responses at adjacent measurements is constant.</li>
-<li>Only suitable for measurements made at equal intervals of time between different measurement.</li>
-<li>Without any contraint on <span class="math inline">\(\sigma^2\)</span>, you will get closed form estimate.</li>
-<li>Toeplitz covariance has free <span class="math inline">\(n\)</span> parameters to estimate (<span class="math inline">\(1\)</span> for variance and <span class="math inline">\(n-1\)</span> correlation parameters)</li>
-<li>The larger time differences, the smaller its correlations</li>
-</ul>
-</section>
-<section id="autoregressive-structure" class="level4" data-number="0.3.3.3">
-<h4 data-number="0.3.3.3" class="anchored" data-anchor-id="autoregressive-structure"><span class="header-section-number">0.3.3.3</span> Autoregressive Structure</h4>
-<p><span class="math display">\[
-  \text{Cov}(\mathbf y_i)=
-  \sigma^2  
-  \begin{bmatrix}
-    1 &amp; \rho^1 &amp; \rho^2 &amp; \dots &amp; \rho^{n-1} \\
-    \rho^1 &amp; 1 &amp; \rho^1 &amp; \dots &amp; \rho^{n-2} \\
-    \rho^2 &amp; \rho^1 &amp; 1 &amp; \dots &amp; \rho^{n-3} \\
-    \vdots &amp; \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
-    \rho^{n-1} &amp; \rho^{n-2} &amp; \rho^{n-3} &amp; \dots &amp; 1
-  \end{bmatrix}
-\]</span></p>
-<ul>
-<li>A special case of toeplitz structure with <span class="math inline">\(\text{Corr}(y_{ij},y_{i,j+k})=\rho^k\)</span></li>
-<li>simpler than toeplitz, only 2 parameters</li>
-<li>Only suitable for measurements made at equal intervals of time between different measurement.</li>
-</ul>
-</section>
-<section id="banded-structure" class="level4" data-number="0.3.3.4">
-<h4 data-number="0.3.3.4" class="anchored" data-anchor-id="banded-structure"><span class="header-section-number">0.3.3.4</span> Banded Structure</h4>
-<p><span class="math display">\[
-  \text{Cov}(\mathbf y_i)=
-  \sigma^2  
-  \begin{bmatrix}
-    1 &amp; \rho^1 &amp; 0 &amp; \dots &amp; 0 \\
-    \rho^1 &amp; 1 &amp; \rho^1 &amp; \dots &amp; 0 \\
-    0 &amp; \rho^1 &amp; 1 &amp; \dots &amp; 0 \\
-    \vdots &amp; \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
-    0 &amp; 0 &amp; 0 &amp; \dots &amp; 1
-  \end{bmatrix}
-\]</span></p>
-<p>Look at the more general case of the banded structure in <a href="https://en.wikipedia.org/wiki/Band_matrix">Wiki</a>.</p>
-<ul>
-<li>Assume correlation is 0 beyond some specified interval.</li>
-<li>Can be combined with the previous patterns.</li>
-<li>Very strong assumption about how quickly the correlation decays to 0 with increasing time separation.</li>
-</ul>
-</section>
-<section id="exponential-structure" class="level4" data-number="0.3.3.5">
-<h4 data-number="0.3.3.5" class="anchored" data-anchor-id="exponential-structure"><span class="header-section-number">0.3.3.5</span> Exponential Structure</h4>
-<ul>
-<li>A generalization of autoregressive pattern</li>
-<li>The most general and reasonable structure</li>
-<li>Suitable for unevenly spaced measurements, take actual time points (time difference), the larger time difference the smaller correlation</li>
-<li>Assumption that the variance of different measurements over time is the same, which can be easily generalized. You can put different variance on the diagonal.</li>
-<li>Let <span class="math inline">\(\{t_{i1},\dots,t_{in_i}\}\)</span> denote the observation times for the <span class="math inline">\(i\)</span> th individual. Then, the correlation is <span class="math inline">\(\text{Corr}(Y_{ij} ,Y_{ik}) = \rho^{|t_{ij}-t_{ik}|}\)</span></li>
-<li>Correlation decreases exponentially with the time separations between them.</li>
-</ul>
-</section>
-</section>
-<section id="general-linear-model" class="level3" data-number="0.3.4">
-<h3 data-number="0.3.4" class="anchored" data-anchor-id="general-linear-model"><span class="header-section-number">0.3.4</span> General Linear Model</h3>
-<p>assume that we picked one, exponential structure. How do we estimate parameters with the corr structures?</p>
-<ol type="1">
-<li>use OLS to estimate beta-&gt;min||y-xbeta||^2 -&gt; tilde beta-&gt;(X<sup>TX)</sup>-1X^TY-&gt; tilde betea is unbiased, why?-&gt; E(tilde beta)=E((XTX)<sup>-1X</sup>TY)=(XTX)<sup>-1X</sup>TE(Y)</li>
-</ol>
-<p>To show that this formula is unbiased, we need to show that the expected value of beta equals the true value of the coefficients, that is E(beta) = (b0, b1).</p>
-<p>Let’s start by calculating the expected value of beta:</p>
-<p>E(beta) = E((X^T X)^{-1} X^T Y)</p>
-<p>Since X and Y are assumed to be random variables, we can use the properties of matrix expectations to simplify this expression:</p>
-<p>E(beta) = (X^T X)^{-1} X^T E(Y)</p>
-<p>Since Y = b0 + b1*X + e (where e is the error term), we have:</p>
-<p>E(Y) = E(b0 + b1X + e) = b0 + b1E(X) + E(e) = b0 + b1*X</p>
-<p>where we have used the fact that E(e) = 0 and E(X) is a constant.</p>
-<p>Substituting this expression for E(Y) into the previous equation, we get:</p>
-<p>E(beta) = (X^T X)^{-1} X^T (b0 + b1*X)</p>
-<p>Expanding this expression, we get:</p>
-<p>E(beta) = (X^T X)^{-1} X^T b0 + (X^T X)^{-1} X^T b1*X</p>
-<p>Using the distributive property of matrix multiplication, we can simplify this expression further:</p>
-<p>E(beta) = (X^T X)^{-1} X^T b0 + b1 (X^T X)^{-1} (X^T X)</p>
-<p>Since (X^T X)^{-1} (X^T X) = I (the identity matrix), we have:</p>
-<p>E(beta) = (X^T X)^{-1} X^T b0 + b1 I</p>
-<p>Finally, we can compare this expression with the true value of the coefficients (b0, b1):</p>
-<p>(b0, b1) = (X^T X)^{-1} X^T Y</p>
-<p>Substituting Y = b0 + b1*X + e into this expression, we get:</p>
-<p>(b0, b1) = (X^T X)^{-1} X^T (b0 + b1*X + e)</p>
-<p>Using the distributive property of matrix multiplication, we can simplify this expression to:</p>
-<p>(b0, b1) = (X^T X)^{-1} X^T b0 + b1 (X^T X)^{-1} X^T X + (X^T X)^{-1} X^T e</p>
-<p>Since E(e) = 0, the third term in this expression is zero.</p>
+<p>where the second-to-last equality follows from the fact that <span class="math inline">\(X^T W^{-1} X\)</span> is a symmetric positive definite matrix, and hence its inverse can be written as <span class="math inline">\((X^T X)^{-1}\)</span>. Therefore, we have shown that the GLS estimator is unbiased, i.e., its expected value is equal to the true population parameter.</p>
 <ol start="2" type="1">
 <li>WLS</li>
 </ol>
@@ -629,16 +414,36 @@ blkdiag(_1, _2, …, _n) =
 <p>Therefore, blkdiag()^{-1} is a block diagonal matrix where each block is the inverse of the corresponding covariance matrix, and it can be computed by taking the inverse of each block and placing them on the diagonal.</p>
 <p>REML for estimating variance covrainace matrix divides the data into twp parts: irrelevant to sigma and irrelevant to beta (REML estimate)</p>
 </section>
+<section id="gls-solution" class="level4" data-number="0.2.2.2">
+<h4 data-number="0.2.2.2" class="anchored" data-anchor-id="gls-solution"><span class="header-section-number">0.2.2.2</span> GLS Solution</h4>
+<p>The Generalized Least Squares (GLS) estimator is obtained by minimizing the weighted sum of squared residuals, where the weights are based on the estimated variance-covariance matrix of the errors.</p>
+<p>To derive the GLS estimator, we start with the linear regression model:</p>
+<p><span class="math inline">\(Y = X\beta + \epsilon\)</span></p>
+<p>where <span class="math inline">\(Y\)</span> is the response variable, <span class="math inline">\(X\)</span> is the design matrix of predictor variables, <span class="math inline">\(\beta\)</span> is a vector of unknown coefficients, and <span class="math inline">\(\epsilon\)</span> is a vector of errors or residuals.</p>
+<p>The covariance matrix of the errors is denoted by <span class="math inline">\(V = \text{Cov}(\epsilon)\)</span>, which is assumed to be known up to a scalar factor. Specifically, we assume that <span class="math inline">\(V = \sigma^2 W\)</span>, where <span class="math inline">\(\sigma^2\)</span> is an unknown scalar factor and <span class="math inline">\(W\)</span> is a known positive definite matrix.</p>
+<p>The GLS estimator of <span class="math inline">\(\beta\)</span> is obtained by minimizing the weighted sum of squared residuals:</p>
+<p><span class="math inline">\(Q(\beta) = (\textbf{Y} - \textbf{X}\beta)^T V^{-1} (\textbf{Y} - \textbf{X}\beta)\)</span></p>
+<p>where <span class="math inline">\(\textbf{Y}\)</span> and <span class="math inline">\(\textbf{X}\)</span> are the vectors of observed responses and design matrix of predictors, respectively.</p>
+<p>Taking the derivative of <span class="math inline">\(Q(\beta)\)</span> with respect to <span class="math inline">\(\beta\)</span>, and setting it to zero, we get:</p>
+<p><span class="math inline">\(\frac{\partial Q(\beta)}{\partial \beta} = -2 \textbf{X}^T V^{-1} (\textbf{Y} - \textbf{X}\beta) = 0\)</span></p>
+<p>Solving for <span class="math inline">\(\beta\)</span>, we obtain the GLS estimator:</p>
+<p><span class="math inline">\(\hat{\beta}_{GLS} = (\textbf{X}^T V^{-1} \textbf{X})^{-1} \textbf{X}^T V^{-1} \textbf{Y}\)</span></p>
+<p>where <span class="math inline">\(V^{-1} = \frac{1}{\sigma^2} W^{-1}\)</span>.</p>
+<p>Note that the GLS estimator reduces to the OLS estimator when <span class="math inline">\(V\)</span> is a scalar multiple of the identity matrix, i.e., when the errors have constant variance and are uncorrelated. In this case, <span class="math inline">\(W = I\)</span> and <span class="math inline">\(V = \sigma^2 I\)</span>, and the GLS estimator simplifies to:</p>
+<p><span class="math inline">\(\hat{\beta}_{OLS} = (\textbf{X}^T \textbf{X})^{-1} \textbf{X}^T \textbf{Y}\)</span></p>
+<p>which is the usual OLS estimator.</p>
 </section>
-<section id="if-wblkdiag-1-in-longitudinal-data-analysis-why-more-efficient-than-ols" class="level2" data-number="0.4">
-<h2 data-number="0.4" class="anchored" data-anchor-id="if-wblkdiag-1-in-longitudinal-data-analysis-why-more-efficient-than-ols"><span class="header-section-number">0.4</span> If W=blkdiag()^{-1} in longitudinal data analysis, why more efficient than OLS?</h2>
+</section>
+</section>
+<section id="if-wblkdiag-1-in-longitudinal-data-analysis-why-more-efficient-than-ols" class="level2" data-number="0.3">
+<h2 data-number="0.3" class="anchored" data-anchor-id="if-wblkdiag-1-in-longitudinal-data-analysis-why-more-efficient-than-ols"><span class="header-section-number">0.3</span> If W=blkdiag()^{-1} in longitudinal data analysis, why more efficient than OLS?</h2>
 <p>In longitudinal data analysis, it is common to use a generalized linear mixed model (GLMM) to account for the correlated nature of the data. The GLMM framework includes random effects to capture the individual-level variation and allows for the specification of a covariance structure to model the correlation between the repeated measurements within each individual. When fitting a GLMM, the covariance matrix of the random effects, denoted by , needs to be estimated.</p>
 <p>One way to estimate is to use maximum likelihood estimation (MLE), which involves maximizing the likelihood function of the GLMM with respect to the unknown parameters, including . However, the MLE of can be inefficient when the number of repeated measurements per individual is small or the correlation between the repeated measurements is weak.</p>
 <p>To improve the efficiency of the MLE of , a weighted likelihood method can be used, where the likelihood function is multiplied by a weight matrix that depends on the estimated covariance matrix. Specifically, the weight matrix is given by W = blkdiag()^{-1}, where blkdiag() is the block diagonal matrix of the estimated covariance matrix . The inverse of blkdiag() is taken because it is a positive definite matrix and its inverse exists.</p>
 <p>By weighting the likelihood function with W, the resulting weighted likelihood estimator (WLE) of is more efficient than the MLE because it incorporates additional information about the covariance structure of the data. The WLE of is then used in the GLMM to estimate the other parameters, such as the fixed effects.</p>
 <p>In summary, using W = blkdiag()^{-1} as a weight matrix in the GLMM framework can improve the efficiency of the MLE of the covariance matrix and result in more accurate estimates of the other parameters in the model, making it more efficient than the OLS estimator, which assumes independence between the observations.</p>
-<section id="family-and-longitudinal-data" class="level3" data-number="0.4.1">
-<h3 data-number="0.4.1" class="anchored" data-anchor-id="family-and-longitudinal-data"><span class="header-section-number">0.4.1</span> Family and Longitudinal Data</h3>
+<section id="family-and-longitudinal-data" class="level3" data-number="0.3.1">
+<h3 data-number="0.3.1" class="anchored" data-anchor-id="family-and-longitudinal-data"><span class="header-section-number">0.3.1</span> Family and Longitudinal Data</h3>
 <p>In longitudinal data analysis with family data, one common approach to estimating the regression coefficients is to use a linear mixed-effects model, also known as a multilevel model or a hierarchical model. The linear mixed-effects model can handle the within-subject correlation due to repeated measurements over time and the within-family correlation due to shared genetic or environmental factors among family members.</p>
 <p>The linear mixed-effects model assumes that the outcome variable Y is a function of the fixed effects X and the random effects b, which can account for the within-subject and within-family correlation. The model can be written as:</p>
 <p>Y = Xβ + Zb + ε</p>
@@ -719,8 +524,8 @@ Longitudinal Study vs Cross-Sectional Study Example
 </div>
 </section>
 </section>
-<section id="advantages-of-longitudinal-data-analysis" class="level2" data-number="0.5">
-<h2 data-number="0.5" class="anchored" data-anchor-id="advantages-of-longitudinal-data-analysis"><span class="header-section-number">0.5</span> Advantages of Longitudinal Data Analysis</h2>
+<section id="advantages-of-longitudinal-data-analysis" class="level2" data-number="0.4">
+<h2 data-number="0.4" class="anchored" data-anchor-id="advantages-of-longitudinal-data-analysis"><span class="header-section-number">0.4</span> Advantages of Longitudinal Data Analysis</h2>
 <ul>
 <li>Each subject can serve as his/her own control. Influence of genetic make-up, environmental exposures, and maybe unmeasured characteristics tend to persist over time.
 <ul>
@@ -742,8 +547,8 @@ Longitudinal Study vs Cross-Sectional Study Example
 </ul></li>
 <li>Therefore, because longitudinal studies allow for a more accurate estimation of the true effect of an exposure or intervention and provide more information about disease progression, they are generally considered more powerful than cross-sectional studies.</li>
 </ul>
-<section id="specialty-of-lda" class="level3" data-number="0.5.1">
-<h3 data-number="0.5.1" class="anchored" data-anchor-id="specialty-of-lda"><span class="header-section-number">0.5.1</span> Specialty of LDA</h3>
+<section id="specialty-of-lda" class="level3" data-number="0.4.1">
+<h3 data-number="0.4.1" class="anchored" data-anchor-id="specialty-of-lda"><span class="header-section-number">0.4.1</span> Specialty of LDA</h3>
 <p>LDA requires special statistical methods because the set of observations on one subject tends to be inter-correlated.</p>
 <p><a href="./childhood readbility.PNG">Copied from Diggle et al.&nbsp;(2002, page 2).</a></p>
 <ul>

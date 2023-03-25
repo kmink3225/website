@@ -1,0 +1,301 @@
+---
+title: LDA (2) - Concept & Covariance Models
+subtitle: Overview
+description: |
+  template
+categories:
+  - Statistics
+author: Kwangmin Kim
+date: 03/24/2023
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    toc: true
+    number-sections: true
+draft: false
+---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+
+## Notations
+
+* $y_{ij}$ : the univariate response (i.e. scalar) for the $i$ th subject at the $j$ th occasion or measurement
+  * later when I use the vector case, I will re-define this notation, but focus on the scalar case for now.
+* $x_{ij}$ : the predictor at time $t_{ij}$, which is either a scalr or vector.
+  * a scalar case: $x_{ij}$ where $i$ is the $i$ th subject, and $j$ is the $j$ th measurement.
+  * a vector case: $x_{ijk}$ where $i$ is the $i$ th subject, $j$ is the $j$ th measurement, and $k \in [1,p]$ is the $k$ th predictor.
+  * sometimes, covariate for different measurements could be the same. In this case, the notation could be written in $x_{i}$ 
+    * ex) a gender does not change over time in the most cases.
+* $i=1, \dots, m$ : i is the index for the $i$ th subject
+* $j=1, \dots, n_i$ : j is the index for the $j$ th measurement of the $i$ th subject
+  * ${n_i}$ is the number of measurements of the $i$ th subject, each ${n_i}$ does not have to the same.
+  * balanced desgin: ${n_i}$ is the same.
+  * unbalanced desgin: ${n_i}$ is different.
+* $\mathbf y_i$ : a vector (not a matrix), $(y_{i1},y_{i2},\dots ,y_{in_i})$ of the $i$ th subject
+* $\mathbf Y$ : the reponse matrix 
+* $\mathbf X$ : the predictor matrix 
+* $\text{E}(y_{ij})$ : $\mu_{ij}$
+* $\text{E}(\mathbf y_i)$ : $\mathbf \mu_{i}$
+* $\text{Var}(\mathbf y_i)$ : $\text{Var}(\mathbf y_i)$ is a variance-covariance matrix of the different measurement for the $i$ th subject
+  * for now, we do not care of the variance covariance of the different subjects because we assume that the measurements of different subjects are indpendent.
+$$
+\begin{bmatrix}
+    \text{Var}(y_{i1}) & \text{Cov}( y_{i1}, y_{i2}) & \dots & \text{Cov}( y_{i1}, y_{in_i}) \\
+                               & \text{Var}( y_{i2}) & \dots & \text{Cov}( y_{i2}, y_{in_i}) \\
+                                 &                           & \ddots & \vdots \\
+                                 &&                            \dots & \text{Var}( y_{in_i}) 
+\end{bmatrix}
+$$
+
+## Assumptions
+
+* the measurements for the same subject are not independent.
+* the measurements for the different subject are independent.
+* some correlation structures of the different measurements.
+
+## For Continuous Responses
+
+* Marginal Models  
+  * $\text{E}(y_{ij}) = \mathbf x_{ij} \mathbf \beta$
+  * $\text{Var}(\mathbf y_i)= \mathbf V_i$
+  * to build a marginal model, we just need info on the 3 things
+    * the distribution : a multivariate normal distribution
+    * mean and variance-covariance
+  * $\beta$ is fixed. That's why we call this marginal models 'fixed effect'
+
+::: {.callout-tip}
+### Recall
+
+We find MLE for the linear regression with the 3 things: the normal distribution (iid), $\mu$ and $\sigma^2$
+:::
+
+* Mixed Effects Models  
+  * $\text{E}(y_{ij}|\mathbf \beta_i) = \mathbf x_{ij} \mathbf \beta_i$
+  * $\mathbf \beta_i = \mathbf \beta (\text{fixed effect}) + \mathbf u_i (\text{subject-specific random effect})$
+  * $\mathbf \beta_i$ is a random coefficient specific for the $i$ th subject, That's why we call this mixed effect models 'random effect'
+  * subject-specific random effect: differenct subjects have different $\mathbf \beta_i$ 
+* Transition Models
+  * $\text{E}(y_{ij}|y_{i,j-1},\dots,y_{i,1},\mathbf x_{ij})$
+  * Markov Process: the response variable in the previous time point will affect the measurement in the current time point.
+
+### Marginal Models
+
+Consider an example of a simple linear model (i.e., a univaiable linear model)
+$$
+y_{ij}=\beta_0+\beta_1t_{ij} + \epsilon_{ij}
+$$
+
+* mean part: $\text{E}(y_{ij})$
+* variance part: $\text{Var}(\mathbf y_{i})=\text{Var}(\mathbf \epsilon_{i})$
+  * more often, a correlation matrix is used in LDA because correlation is more interpretable.  
+
+$$
+\text{Corr}(\mathbf y_i) =
+\begin{bmatrix}
+1 & \rho_{12}& \dots & \rho_{1n_i} \\
+\rho_{21} & 1 & \dots & \rho_{2n_i} \\
+ \vdots  & \vdots  & \ddots & \vdots  \\
+\rho_{n_i1} & \rho_{n_i2}& \dots & 1 
+\end{bmatrix}
+$$
+
+* in this correlation matrix, there are $\frac{n(n-1)}{2}$ parameters to estimate
+* in the mean part, there are 2 parameters, $\mathbf \beta$ to estimate
+Likewise, the number of the estimators depends on the number of the measurements and the covriates.
+
+In LDA, since the responses are multiple, we need to look into the correlation characteristics. 
+
+### Empirical Observations
+
+In empirical observations about the nature of the correlation among repeated measures,
+
+* correlations among the repeated measures are usually positive
+* correlations tend to decrease with increasing time separation
+* correlations among repeated measures rarely approach zero
+* correlations between any pair of repeated meausres regardless of distance in time is constrained by the reliability of the measurement process.
+  *  if the measurement process is not very reliable or consistent, then even if two measurements are taken close together in time, their correlation will not be very strong. Similarly, if the measurement process is highly reliable or consistent, then two measurements taken far apart in time may still be highly correlated. Reliability refers to the degree to which a measurement process produces consistent and accurate results over time.
+
+### Modeling Covariance Structure
+
+There are 2 types of covariance structure: unbalanced design and balanced design. For now, let's focus on the balanced design.
+
+#### Unbalanced Design
+
+* observations for each subject are not made on the same grid
+* these observations can be made at different time points and different numbers of observations may be made for each subject.
+* Missing observations falls into this category.
+
+#### Balanced Design
+
+* observations for each subject are made on the same grid and there is no missing data.
+  * number and timing of the repeated measurements are the same for all individuals. 
+* Then, $t_{ij}$ can be denoted as $t_j$ where $j \in 1, \dots, n$ because the size of the measurements is the same ($n_i$ is the same) 
+* The covariance of the response variable $\mathbf Y_{m\times n}$ :
+
+$$
+\begin{aligned}
+  \text{Cov}(\mathbf Y) 
+  &=\text{Cov}(\mathbf y_1,\dots,y_m) \\
+  &=
+  \begin{bmatrix}
+    \text{Var}(\mathbf y_1) & 0 & \dots & 0 \\
+    0 & \text{Var}(\mathbf y_2) & \dots & 0 \\
+    \vdots  & \vdots  & \ddots & \vdots  \\
+    0 & 0 & \dots & \text{Var}(\mathbf y_m) 
+  \end{bmatrix}\\ 
+  &=
+  \begin{bmatrix}
+    \begin{bmatrix}
+    \text{Var}(y_{11}) & \text{Cov}( y_{11}, y_{12}) & \dots & \text{Cov}( y_{11}, y_{1n_1}) \\
+                               & \text{Var}( y_{12}) & \dots & \text{Cov}( y_{12}, y_{1n_1}) \\
+                                 &                           & \ddots & \vdots \\
+                                 &&                            \dots & \text{Var}( y_{1n_1}) 
+\end{bmatrix} & 0 & \dots & 0 \\
+    0 & \begin{bmatrix}
+    \text{Var}(y_{21}) & \text{Cov}( y_{21}, y_{22}) & \dots & \text{Cov}( y_{21}, y_{in_2}) \\
+                               & \text{Var}( y_{22}) & \dots & \text{Cov}( y_{22}, y_{in_2}) \\
+                                 &                           & \ddots & \vdots \\
+                                 &&                            \dots & \text{Var}( y_{2n_2}) 
+\end{bmatrix} & \dots & 0 \\
+    \vdots  & \vdots  & \ddots & \vdots  \\
+    0 & 0 & \dots & \begin{bmatrix}
+    \text{Var}(y_{m1}) & \text{Cov}( y_{m1}, y_{m2}) & \dots & \text{Cov}( y_{m1}, y_{mn_m}) \\
+                               & \text{Var}( y_{m2}) & \dots & \text{Cov}( y_{m2}, y_{mn_m}) \\
+                                 &                           & \ddots & \vdots \\
+                                 &&                            \dots & \text{Var}( y_{mn_m}) 
+\end{bmatrix}
+
+  \end{bmatrix} \\
+  &=
+  \begin{bmatrix}
+    \Sigma_1 & 0 & \dots & 0 \\
+    0 & \Sigma_1 & \dots & 0 \\
+    \vdots  & \vdots  & \ddots & \vdots  \\
+    0 & 0 & \dots & \Sigma_m 
+  \end{bmatrix} 
+\end{aligned}
+$$
+
+If we assume the covariance matrices for different subjects are the same, we can denote $\text{Cov}(\mathbf Y)=\Sigma$.
+
+### Covariance Structure Pattern Models
+
+#### Compound symmetry Structure
+
+$$
+  \text{Cov}(\mathbf y_i)=
+  \sigma^2  
+  \begin{bmatrix}
+    1 & \rho & \rho & \dots & \rho \\
+    \rho & 1 & \rho & \dots & \rho \\
+    \rho & \rho & 1 & \dots & \rho \\
+    \vdots & \vdots  & \vdots  & \ddots & \vdots  \\
+    \rho & \rho & \rho & \dots & 1 
+  \end{bmatrix} 
+$$
+
+* compound symmetry is a.k.a **Exchangeable**
+* Assume variance is constant across visits (say $\sigma^2$)
+* Assume correlation between any two visits are constant (say $\rho$).
+* Parsimonious: there are two parameters in the covariance, $\sigma^2$ and $\rho$ (computational benefit)
+* Without any contraint on $\sigma^2$, you will get closed form estimate.
+* Covariance variance matrix is plugged into likelihood function to estimate 3 kinds of parameters $\sigma^2$, $\rho$, and $\beta$
+* This structure is so parsimonuous that it could be unrealistic: not commonly used
+
+#### Toeplitz Structure
+
+$$
+  \text{Cov}(\mathbf y_i)=
+  \sigma^2  
+  \begin{bmatrix}
+    1 & \rho_1 & \rho_2 & \dots & \rho_{n-1} \\
+    \rho_1 & 1 & \rho_1 & \dots & \rho_{n-2} \\
+    \rho_2 & \rho_1 & 1 & \dots & \rho_{n-3} \\
+    \vdots & \vdots  & \vdots  & \ddots & \vdots  \\
+    \rho_{n-1} & \rho_{n-2} & \rho_{n-3} & \dots & 1 
+  \end{bmatrix} 
+$$
+
+* Toeplitz structure is more flexible than compound symmetry
+* Assume variance is constant across visits and $\text{Corr}(y_{ij}, y_{i,j+k}) = \rho_k$.
+* Assume correlation among responses at adjacent measurements is constant.
+* Only suitable for measurements made at equal intervals of time between different measurement.
+* Without any contraint on $\sigma^2$, you will get closed form estimate.
+* Toeplitz covariance has free $n$ parameters to estimate ($1$ for variance and $n-1$ correlation parameters)
+* The larger time differences, the smaller its correlations
+
+#### Autoregressive Structure
+
+$$
+  \text{Cov}(\mathbf y_i)=
+  \sigma^2  
+  \begin{bmatrix}
+    1 & \rho^1 & \rho^2 & \dots & \rho^{n-1} \\
+    \rho^1 & 1 & \rho^1 & \dots & \rho^{n-2} \\
+    \rho^2 & \rho^1 & 1 & \dots & \rho^{n-3} \\
+    \vdots & \vdots  & \vdots  & \ddots & \vdots  \\
+    \rho^{n-1} & \rho^{n-2} & \rho^{n-3} & \dots & 1 
+  \end{bmatrix} 
+$$
+
+* A special case of toeplitz structure with $\text{Corr}(y_{ij},y_{i,j+k})=\rho^k$
+* simpler than toeplitz, only 2 parameters
+* Only suitable for measurements made at equal intervals of time between different measurement.
+
+#### Banded Structure
+
+$$
+  \text{Cov}(\mathbf y_i)=
+  \sigma^2  
+  \begin{bmatrix}
+    1 & \rho^1 & 0 & \dots & 0 \\
+    \rho^1 & 1 & \rho^1 & \dots & 0 \\
+    0 & \rho^1 & 1 & \dots & 0 \\
+    \vdots & \vdots  & \vdots  & \ddots & \vdots  \\
+    0 & 0 & 0 & \dots & 1 
+  \end{bmatrix} 
+$$
+
+Look at the more general case of the banded structure in [Wiki](https://en.wikipedia.org/wiki/Band_matrix).
+
+* Assume correlation is 0 beyond some specified interval.
+* Can be combined with the previous patterns.
+* Very strong assumption about how quickly the correlation decays to 0 with increasing time separation.
+
+#### Exponential Structure
+
+* A generalization of autoregressive pattern
+* The most general and reasonable structure
+* Suitable for unevenly spaced measurements, take actual time points (time difference), the larger time difference the smaller correlation
+* Assumption that the variance of different measurements over time is the same, which can be easily generalized. You can put different variance on the diagonal.
+* Let $\{t_{i1},\dots,t_{in_i}\}$ denote the observation times for the $i$ th individual. Then, the correlation is $\text{Corr}(Y_{ij} ,Y_{ik}) = \rho^{|t_{ij}-t_{ik}|}$
+* Correlation decreases exponentially with the time separations between them.
+
+
+:::
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
+
+:::
+
+</div>
+
+## Go to Blog Content List
+
+[Blog Content List](../../content_list.qmd)

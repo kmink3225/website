@@ -1,19 +1,19 @@
 ---
-title: LDA (2) - Concept
+title: LDA (3) - Weight Least Square & REML
 subtitle: Overview
 description: |
   template
 categories:
   - Statistics
 author: Kwangmin Kim
-date: 03/24/2023
+date: 03/25/2023
 format: 
   html:
     page-layout: full
     code-fold: true
     toc: true
     number-sections: true
-draft: True
+draft: true
 ---
 
 <ul class="nav nav-pills" id="language-tab" role="tablist">
@@ -60,238 +60,76 @@ $$
 \end{bmatrix}
 $$
 
-## Assumptions
+## OLS vs GLS
 
-* the measurements for the same subject are not independent.
-* the measurements for the different subject are independent.
-* some correlation structures of the different measurements.
+OLS (Ordinary Least Squares) and GLS (Generalized Least Squares) are both methods of regression analysis used to model the relationship between a dependent variable and one or more independent variables. The main difference between OLS and GLS is in the assumptions about the errors in the model. 
 
-## For Continuous Responses
+### OLS 
 
-* Marginal Models
-  * $\text{E}(y_{ij}) = \mathbf x_{ij} \mathbf \beta $
-  * $\text{Var}(\mathbf y_i)= \mathbf V_i$
-  * to build a marginal model, we just need info on the 3 things
-    * the distribution : a multivariate normal distribution
-    * mean and variance-covariance
-  * $\beta$ is fixed. That's why we call this marginal models 'fixed effect'
+It assumes that the errors are homoscedastic and independent of each other. OLS is a simpler and more commonly used method, but it may not be appropriate for datasets with non-constant variances or autocorrelation in the errors.
 
-::: {.callout-tip}
-### Recall
+#### OLS Solutions
 
-We find MLE for the linear regression with the 3 things: the normal distribution (iid), $\mu$ and $\sigma^2$
-:::
-
-* Mixed Effects Models
-  * $\text{E}(y_{ij}|\mathbf \beta_i) = \mathbf x_{ij} \mathbf \beta_i $
-  * $\mathbf \beta_i = \mathbf \beta (\text{fixed effect}) + \mathbf u_i (\text{subject-specific random effect})$
-  * $\mathbf \beta_i$ is a random coefficient specific for the $i$ th subject, That's why we call this mixed effect models 'random effect'
-  * subject-specific random effect: differenct subjects have different $\mathbf \beta_i$ s 
-* Transition Models
-  * $\text{E}(y_{ij}|y_{i,j-1},\dots,y_{i,1},\mathbf x_{ij})$
-  * Markov Process: the response variable in the previous time point will affect the measurement in the current time point.
-
-### Marginal Models
-
-Consider an example of a simple linear model (i.e., a univaiable linear model)
-$$
-y_{ij}=\beta_0+\beta_1t_{ij} + \epsilon_{ij}
-$$
-
-* mean part: $\text{E}(y_{ij})$
-* variance part: $\text{Var}(\mathbf y_{i})=\text{Var}(\mathbf \epsilon_{i})$
-  * more often, a correlation matrix is used in LDA because correlation is more interpretable.
-$$
-\text{Corr}(\mathbf y_i) =
-\begin{bmatrix}
-1 & \rho_{12}& \dots & \rho_{1n_i} \\
-\rho_{21} & 1 & \dots & \rho_{2n_i} \\
- \vdots  & \vdots  & \ddots & \vdots  \\
-\rho_{n_i1} & \rho_{n_i2}& \dots & 1 \\
-
-\end{bmatrix}
-$$
-* in this correlation matrix, there are $\frac{n(n-1)}{2}$ parameters to estimate
-* in the mean part, there are 2 parameters, $\mathbf \beta$ to estimate
-Likewise, the number of the estimators depends on the number of the measurements and the covriates.
-
-In LDA, since the responses are multiple, we need to look into the correlation characteristics. In empirical observations about the nature of the correlation among
-repeated measures,
-
-* correlations are usually positive
-* decrease with increasing time separation
-* rarely approach zero
-* approach one if a pair of repeated measures are taken very closely in time
-
-### Modeling Covariance Structure
-
-There are 2 types of covariance structure: unbalanced design and balanced design. For now, let's focus on the balanced design.
-
-#### balanced design
-
-* number and timing of the repeated measurements are the same for all individuals. 
-* Then, $t_{ij}$ can be denoted as $t_j$ where $j \in 1, \dots, n$ because the size of the measurements is the same ($n_i$ is the same) 
-* The covariance of the response variable $\mathbf Y_{m\times n}$ :
 $$
 \begin{aligned}
-  \text{Cov}(\mathbf Y) 
-  &=\text{Cov}(\mathbf y_1,\dots,y_m) \\
-   &=
-  \begin{bmatrix}
-    \text{Var}(\mathbf y_1) & 0 & \dots & 0 \\
-    0 & \text{Var}(\mathbf y_2) & \dots & 0 \\
-    \vdots  & \vdots  & \ddots & \vdots  \\
-    0 & 0 & \dots & \text{Var}(\mathbf y_m) \\
-
-  \end{bmatrix} \\
-  &=
-  \begin{bmatrix}
-    \begin{bmatrix}
-    \text{Var}(y_{11}) & \text{Cov}( y_{11}, y_{12}) & \dots & \text{Cov}( y_{11}, y_{1n_1}) \\
-                               & \text{Var}( y_{12}) & \dots & \text{Cov}( y_{12}, y_{1n_1}) \\
-                                 &                           & \ddots & \vdots \\
-                                 &&                            \dots & \text{Var}( y_{1n_1}) 
-\end{bmatrix} & 0 & \dots & 0 \\
-    0 & \begin{bmatrix}
-    \text{Var}(y_{21}) & \text{Cov}( y_{21}, y_{22}) & \dots & \text{Cov}( y_{21}, y_{in_2}) \\
-                               & \text{Var}( y_{22}) & \dots & \text{Cov}( y_{22}, y_{in_2}) \\
-                                 &                           & \ddots & \vdots \\
-                                 &&                            \dots & \text{Var}( y_{2n_2}) 
-\end{bmatrix} & \dots & 0 \\
-    \vdots  & \vdots  & \ddots & \vdots  \\
-    0 & 0 & \dots & \begin{bmatrix}
-    \text{Var}(y_{m1}) & \text{Cov}( y_{m1}, y_{m2}) & \dots & \text{Cov}( y_{m1}, y_{mn_m}) \\
-                               & \text{Var}( y_{m2}) & \dots & \text{Cov}( y_{m2}, y_{mn_m}) \\
-                                 &                           & \ddots & \vdots \\
-                                 &&                            \dots & \text{Var}( y_{mn_m}) 
-\end{bmatrix} \\
-
-  \end{bmatrix} \\
-  &=
-  \begin{bmatrix}
-    \Sigma_1 & 0 & \dots & 0 \\
-    0 & \Sigma_1 & \dots & 0 \\
-    \vdots  & \vdots  & \ddots & \vdots  \\
-    0 & 0 & \dots & \Sigma_m \\
-
-  \end{bmatrix} 
-
+  \hat{\beta}&=\min_\beta||Y-X\beta||^2 \\ 
+  &=(X^TX)^{-1}X^TY
 \end{aligned}
 $$
 
-If we assume the covariance matrices for different subjects are the same, we can denote $\text{Cov}(\mathbf Y)=\Sigma$
+$\hat \beta$ is unbiased because if we assume that the errors $\epsilon \sim N(0,\simga^2I)$, 
+$E(\hat \beta)=\text{E}((X^TX)^{-1}X^TY)=(X^TX)^{-1}X^T\text{E}(Y)=(X^TX)^{-1}X^TX\beta=\beta$
 
-### Covariance Structure Pattern Models
+### GLS 
 
-#### Compound symmetry Structure
+It relaxes the assumptions of OLS and allows for heteroscedasticity and autocorrelation in the data. GLS is a more flexible method that can handle heteroscedasticity and autocorrelation in the data, but it requires more complex computations and may be computationally expensive for large datasets.
 
-$$
-  \text{Cov}(\mathbf y_i)=\sigma^2
-  \begin{bmatrix}
-    1 & \rho & \rho & \dots & \rho \\
-    \rho & 1 & \rho & \dots & \rho \\
-    \rho & \rho & 1 & \dots & \rho \\
-    \vdots & \vdots  & \vdots  & \ddots & \vdots  \\
-    \rho & \rho & \rho & \dots & 1 \\
+#### Generalized Least Squares
 
-  \end{bmatrix} 
-$$
-
-* compound symmetry is a.k.a **Exchangeable**
-* Assume variance is constant across visits (say $\sigma^2$)
-* Assume correlation between any two visits are constant (say $\rho$).
-* Parsimonious: there are two parameters in the covariance, $\sigma^2$ and $\rho$ (computational benefit)
-* Without any contraint on $\sigma^2$, you will get closed form estimate.
-* Covariance variance matrix is plugged into likelihood function to estimate 3 kinds of parameters $\sigma^2$, $\rho$, and $\beta$
-* This structure is so parsimonuous that it could be unrealistic: not commonly used
-
-#### Toeplitz Structure
+The estimator $\hat{\beta}$, which is also known as the generalized least squares estimator, is given by $\hat{\beta}=(X^TWX)^{-1}X^TWY$, where $W$ is a positive definite weighting matrix.
 
 $$
-  \text{Cov}(\mathbf y_i)=\sigma^2
-  \begin{bmatrix}
-    1 & \rho_1 & \rho_2 & \dots & \rho_{n-1} \\
-    \rho_1 & 1 & \rho_1 & \dots & \rho_{n-2} \\
-    \rho_2 & \rho_1 & 1 & \dots & \rho_{n-3} \\
-    \vdots & \vdots  & \vdots  & \ddots & \vdots  \\
-    \rho_{n-1} & \rho_{n-2} & \rho_{n-3} & \dots & 1 \\
-
-  \end{bmatrix} 
+\begin{aligned}
+  \hat{\beta}&=\min_\beta||Y-X\beta||^2 \\ 
+  &=(X^TWX)^{-1}X^TWY
+\end{aligned}
 $$
 
-* Toeplitz Structure is more flexible than compound symmetry
-* Assume variance is constant across visits and $\text{Corr}(y_{ij}, y_{i,j+k}) = \rho_k $.
-* Assume correlation among responses at adjacent measurements is constant.
-* Only suitable for measurements made at equal intervals of time between different measurement.
-* Without any contraint on $\sigma^2$, you will get closed form estimate.
-* Toeplitz covariance has free $n$ parameters to estimate ($1$ for variance and $n-1$ correlation parameters)
-* The larger time differences, the smaller its correlations
+Under the assumptions of the GLS model, the GLS estimator is unbiased. This means that on average, the GLS estimator will estimate the true population parameters correctly.
 
-#### Autoregressive Structure
-a special case of toeplitz with corr(y_ij,y_ij+k)=rho^k
-simpler than toeplitz -> only 2 parameters
+To be specific, the GLS estimator is based on the assumption that the errors or residuals follow a multivariate normal distribution with a mean vector of zeros and a covariance matrix that is known up to a scalar factor. If this assumption holds, then the GLS estimator is the Best Linear Unbiased Estimator (BLUE) of the model parameters.
 
-#### Banded Structure
+Being a BLUE estimator implies that the GLS estimator has the smallest possible variance among all linear unbiased estimators. Therefore, under the GLS assumptions, the GLS estimator is not only unbiased but also efficient, meaning that it achieves the lowest possible variance of all unbiased estimators.
 
-#### Exponential Structure
-the most general and reasonable structure
-take acture time points (time difference), the larger time difference the smaller correlation
+However, it is important to note that the GLS estimator is only unbiased and efficient if the underlying assumptions are correct. If the assumptions are violated (e.g., the errors are not normally distributed or the covariance structure is misspecified), then the GLS estimator may not be unbiased or efficient.
 
-assuption that the variance of different measurements over time is the same, which can be easily generalized. You can put different variance on the diagonal
+$\hat{\beta}_{GLS} = (X^T V^{-1} X)^{-1} X^T V^{-1} Y$
 
-### General Linear Model
+where $V$ is the known covariance matrix of the errors or residuals.
 
-assume that we picked one, exponential structure. How do we estimate parameters with the corr structures?
+To show that $\hat{\beta}_{GLS}$ is unbiased, we need to show that:
 
+$E(\hat{\beta}_{GLS}) = \beta$
 
-1. use OLS to estimate beta->min||y-xbeta||^2 -> tilde beta->(X^TX)^-1X^TY-> tilde betea is unbiased, why?-> E(tilde beta)=E((XTX)^-1X^TY)=(XTX)^-1X^TE(Y)
+where $\beta$ is the true population parameter.
 
+Using the linearity of expectation, we have:
 
-To show that this formula is unbiased, we need to show that the expected value of beta equals the true value of the coefficients, that is E(beta) = (b0, b1).
+$$
+\begin{align}
+E(\hat{\beta}_{GLS}) 
+&= E((X^T W^{-1} X)^{-1} X^T W^{-1} Y)\\
+&= (X^T W^{-1} X)^{-1} X^T W^{-1} E(Y)\\
+&= (X^T W^{-1} X)^{-1} X^T W^{-1} X \beta\\
+&= (X^T W^{-1} X)^{-1} X^T W^{-1} X (X^T X)^{-1} X^T X \beta\\
+&= (X^T X)^{-1} X^T W^{-1} X (X^T X)^{-1} X^T X \beta\\
+&= (X^T X)^{-1} X^T W^{-1} Y\\
+&= \beta
+\end{align}
+$$
 
-Let's start by calculating the expected value of beta:
+where the second-to-last equality follows from the fact that $X^T W^{-1} X$ is a symmetric positive definite matrix, and hence its inverse can be written as $(X^T X)^{-1}$. Therefore, we have shown that the GLS estimator is unbiased, i.e., its expected value is equal to the true population parameter.
 
-E(beta) = E((X^T X)^{-1} X^T Y)
-
-Since X and Y are assumed to be random variables, we can use the properties of matrix expectations to simplify this expression:
-
-E(beta) = (X^T X)^{-1} X^T E(Y)
-
-Since Y = b0 + b1*X + e (where e is the error term), we have:
-
-E(Y) = E(b0 + b1X + e) = b0 + b1E(X) + E(e) = b0 + b1*X
-
-where we have used the fact that E(e) = 0 and E(X) is a constant.
-
-Substituting this expression for E(Y) into the previous equation, we get:
-
-E(beta) = (X^T X)^{-1} X^T (b0 + b1*X)
-
-Expanding this expression, we get:
-
-E(beta) = (X^T X)^{-1} X^T b0 + (X^T X)^{-1} X^T b1*X
-
-Using the distributive property of matrix multiplication, we can simplify this expression further:
-
-E(beta) = (X^T X)^{-1} X^T b0 + b1 (X^T X)^{-1} (X^T X)
-
-Since (X^T X)^{-1} (X^T X) = I (the identity matrix), we have:
-
-E(beta) = (X^T X)^{-1} X^T b0 + b1 I
-
-Finally, we can compare this expression with the true value of the coefficients (b0, b1):
-
-(b0, b1) = (X^T X)^{-1} X^T Y
-
-Substituting Y = b0 + b1*X + e into this expression, we get:
-
-(b0, b1) = (X^T X)^{-1} X^T (b0 + b1*X + e)
-
-Using the distributive property of matrix multiplication, we can simplify this expression to:
-
-(b0, b1) = (X^T X)^{-1} X^T b0 + b1 (X^T X)^{-1} X^T X + (X^T X)^{-1} X^T e
-
-Since E(e) = 0, the third term in this expression is zero.
 
 2. WLS
 
@@ -405,6 +243,45 @@ The inverse of this block diagonal matrix can be computed by taking the inverse 
 Therefore, blkdiag(\Sigma)^{-1} is a block diagonal matrix where each block is the inverse of the corresponding covariance matrix, and it can be computed by taking the inverse of each block and placing them on the diagonal.
 
 REML for estimating \Sigma variance covrainace matrix divides the data into twp parts: irrelevant to sigma and irrelevant to beta (REML estimate)
+
+
+#### GLS Solution
+
+The Generalized Least Squares (GLS) estimator is obtained by minimizing the weighted sum of squared residuals, where the weights are based on the estimated variance-covariance matrix of the errors.
+
+To derive the GLS estimator, we start with the linear regression model:
+
+$Y = X\beta + \epsilon$
+
+where $Y$ is the response variable, $X$ is the design matrix of predictor variables, $\beta$ is a vector of unknown coefficients, and $\epsilon$ is a vector of errors or residuals.
+
+The covariance matrix of the errors is denoted by $V = \text{Cov}(\epsilon)$, which is assumed to be known up to a scalar factor. Specifically, we assume that $V = \sigma^2 W$, where $\sigma^2$ is an unknown scalar factor and $W$ is a known positive definite matrix.
+
+The GLS estimator of $\beta$ is obtained by minimizing the weighted sum of squared residuals:
+
+$Q(\beta) = (\textbf{Y} - \textbf{X}\beta)^T V^{-1} (\textbf{Y} - \textbf{X}\beta)$
+
+where $\textbf{Y}$ and $\textbf{X}$ are the vectors of observed responses and design matrix of predictors, respectively.
+
+Taking the derivative of $Q(\beta)$ with respect to $\beta$, and setting it to zero, we get:
+
+$\frac{\partial Q(\beta)}{\partial \beta} = -2 \textbf{X}^T V^{-1} (\textbf{Y} - \textbf{X}\beta) = 0$
+
+Solving for $\beta$, we obtain the GLS estimator:
+
+$\hat{\beta}_{GLS} = (\textbf{X}^T V^{-1} \textbf{X})^{-1} \textbf{X}^T V^{-1} \textbf{Y}$
+
+where $V^{-1} = \frac{1}{\sigma^2} W^{-1}$.
+
+Note that the GLS estimator reduces to the OLS estimator when $V$ is a scalar multiple of the identity matrix, i.e., when the errors have constant variance and are uncorrelated. In this case, $W = I$ and $V = \sigma^2 I$, and the GLS estimator simplifies to:
+
+$\hat{\beta}_{OLS} = (\textbf{X}^T \textbf{X})^{-1} \textbf{X}^T \textbf{Y}$
+
+which is the usual OLS estimator.
+
+
+
+
 
 ## If  W=blkdiag(\Sigma)^{-1} in longitudinal data analysis, why more efficient than OLS?
 

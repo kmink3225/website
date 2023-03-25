@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Kwangmin Kim">
+<meta name="dcterms.date" content="2023-03-24">
+<meta name="description" content="template">
+
+<title>Kwangmin Kim - LDA (2) - Concept &amp; Covariance Models</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../../">
+<script src="../../../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../../../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="../../../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../../.././images/logo.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../../../../index.html">
+    <span class="navbar-title">Kwangmin Kim</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../index.html">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/CV/index.html">
+ <span class="menu-text">CV</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/projects/index.html">
+ <span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/blog/index.html">
+ <span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../about.html">
+ <span class="menu-text">Me</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/kmink3225"><i class="bi bi-github" role="img" aria-label="Github">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/kwangmin-kim-a5241b200/"><i class="bi bi-linkedin" role="img" aria-label="Linkedin">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/blog/index.html"><i class="bi bi-rss" role="img">
+</i> 
+ <span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link active" data-scroll-target="#go-to-blog-content-list"><span class="toc-section-number">4</span>  Go to Blog Content List</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">LDA (2) - Concept &amp; Covariance Models</h1>
+<p class="subtitle lead">Overview</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Statistics</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    <p>template</p>
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Kwangmin Kim </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 24, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+<li class="nav-item" role="presentation">
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">
+Korean
+</button>
+</li>
+<li class="nav-item" role="presentation">
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">
+English
+</button>
+</li>
+<div class="tab-content" id="language-tabcontent">
+
+<div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
+<div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
+<section id="notations" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="notations"><span class="header-section-number">1</span> Notations</h2>
+<ul>
+<li><span class="math inline">\(y_{ij}\)</span> : the univariate response (i.e.&nbsp;scalar) for the <span class="math inline">\(i\)</span> th subject at the <span class="math inline">\(j\)</span> th occasion or measurement
+<ul>
+<li>later when I use the vector case, I will re-define this notation, but focus on the scalar case for now.</li>
+</ul></li>
+<li><span class="math inline">\(x_{ij}\)</span> : the predictor at time <span class="math inline">\(t_{ij}\)</span>, which is either a scalr or vector.
+<ul>
+<li>a scalar case: <span class="math inline">\(x_{ij}\)</span> where <span class="math inline">\(i\)</span> is the <span class="math inline">\(i\)</span> th subject, and <span class="math inline">\(j\)</span> is the <span class="math inline">\(j\)</span> th measurement.</li>
+<li>a vector case: <span class="math inline">\(x_{ijk}\)</span> where <span class="math inline">\(i\)</span> is the <span class="math inline">\(i\)</span> th subject, <span class="math inline">\(j\)</span> is the <span class="math inline">\(j\)</span> th measurement, and <span class="math inline">\(k \in [1,p]\)</span> is the <span class="math inline">\(k\)</span> th predictor.</li>
+<li>sometimes, covariate for different measurements could be the same. In this case, the notation could be written in <span class="math inline">\(x_{i}\)</span>
+<ul>
+<li>ex) a gender does not change over time in the most cases.</li>
+</ul></li>
+</ul></li>
+<li><span class="math inline">\(i=1, \dots, m\)</span> : i is the index for the <span class="math inline">\(i\)</span> th subject</li>
+<li><span class="math inline">\(j=1, \dots, n_i\)</span> : j is the index for the <span class="math inline">\(j\)</span> th measurement of the <span class="math inline">\(i\)</span> th subject
+<ul>
+<li><span class="math inline">\({n_i}\)</span> is the number of measurements of the <span class="math inline">\(i\)</span> th subject, each <span class="math inline">\({n_i}\)</span> does not have to the same.</li>
+<li>balanced desgin: <span class="math inline">\({n_i}\)</span> is the same.</li>
+<li>unbalanced desgin: <span class="math inline">\({n_i}\)</span> is different.</li>
+</ul></li>
+<li><span class="math inline">\(\mathbf y_i\)</span> : a vector (not a matrix), <span class="math inline">\((y_{i1},y_{i2},\dots ,y_{in_i})\)</span> of the <span class="math inline">\(i\)</span> th subject</li>
+<li><span class="math inline">\(\mathbf Y\)</span> : the reponse matrix</li>
+<li><span class="math inline">\(\mathbf X\)</span> : the predictor matrix</li>
+<li><span class="math inline">\(\text{E}(y_{ij})\)</span> : <span class="math inline">\(\mu_{ij}\)</span></li>
+<li><span class="math inline">\(\text{E}(\mathbf y_i)\)</span> : <span class="math inline">\(\mathbf \mu_{i}\)</span></li>
+<li><span class="math inline">\(\text{Var}(\mathbf y_i)\)</span> : <span class="math inline">\(\text{Var}(\mathbf y_i)\)</span> is a variance-covariance matrix of the different measurement for the <span class="math inline">\(i\)</span> th subject
+<ul>
+<li>for now, we do not care of the variance covariance of the different subjects because we assume that the measurements of different subjects are indpendent. <span class="math display">\[
+\begin{bmatrix}
+\text{Var}(y_{i1}) &amp; \text{Cov}( y_{i1}, y_{i2}) &amp; \dots &amp; \text{Cov}( y_{i1}, y_{in_i}) \\
+                           &amp; \text{Var}( y_{i2}) &amp; \dots &amp; \text{Cov}( y_{i2}, y_{in_i}) \\
+                             &amp;                           &amp; \ddots &amp; \vdots \\
+                             &amp;&amp;                            \dots &amp; \text{Var}( y_{in_i})
+\end{bmatrix}
+\]</span></li>
+</ul></li>
+</ul>
+</section>
+<section id="assumptions" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="assumptions"><span class="header-section-number">2</span> Assumptions</h2>
+<ul>
+<li>the measurements for the same subject are not independent.</li>
+<li>the measurements for the different subject are independent.</li>
+<li>some correlation structures of the different measurements.</li>
+</ul>
+</section>
+<section id="for-continuous-responses" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="for-continuous-responses"><span class="header-section-number">3</span> For Continuous Responses</h2>
+<ul>
+<li>Marginal Models
+<ul>
+<li><span class="math inline">\(\text{E}(y_{ij}) = \mathbf x_{ij} \mathbf \beta\)</span></li>
+<li><span class="math inline">\(\text{Var}(\mathbf y_i)= \mathbf V_i\)</span></li>
+<li>to build a marginal model, we just need info on the 3 things
+<ul>
+<li>the distribution : a multivariate normal distribution</li>
+<li>mean and variance-covariance</li>
+</ul></li>
+<li><span class="math inline">\(\beta\)</span> is fixed. That’s why we call this marginal models ‘fixed effect’</li>
+</ul></li>
+</ul>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Recall
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>We find MLE for the linear regression with the 3 things: the normal distribution (iid), <span class="math inline">\(\mu\)</span> and <span class="math inline">\(\sigma^2\)</span></p>
+</div>
+</div>
+<ul>
+<li>Mixed Effects Models
+<ul>
+<li><span class="math inline">\(\text{E}(y_{ij}|\mathbf \beta_i) = \mathbf x_{ij} \mathbf \beta_i\)</span></li>
+<li><span class="math inline">\(\mathbf \beta_i = \mathbf \beta (\text{fixed effect}) + \mathbf u_i (\text{subject-specific random effect})\)</span></li>
+<li><span class="math inline">\(\mathbf \beta_i\)</span> is a random coefficient specific for the <span class="math inline">\(i\)</span> th subject, That’s why we call this mixed effect models ‘random effect’</li>
+<li>subject-specific random effect: differenct subjects have different <span class="math inline">\(\mathbf \beta_i\)</span></li>
+</ul></li>
+<li>Transition Models
+<ul>
+<li><span class="math inline">\(\text{E}(y_{ij}|y_{i,j-1},\dots,y_{i,1},\mathbf x_{ij})\)</span></li>
+<li>Markov Process: the response variable in the previous time point will affect the measurement in the current time point.</li>
+</ul></li>
+</ul>
+<section id="marginal-models" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="marginal-models"><span class="header-section-number">3.1</span> Marginal Models</h3>
+<p>Consider an example of a simple linear model (i.e., a univaiable linear model) <span class="math display">\[
+y_{ij}=\beta_0+\beta_1t_{ij} + \epsilon_{ij}
+\]</span></p>
+<ul>
+<li>mean part: <span class="math inline">\(\text{E}(y_{ij})\)</span></li>
+<li>variance part: <span class="math inline">\(\text{Var}(\mathbf y_{i})=\text{Var}(\mathbf \epsilon_{i})\)</span>
+<ul>
+<li>more often, a correlation matrix is used in LDA because correlation is more interpretable.</li>
+</ul></li>
+</ul>
+<p><span class="math display">\[
+\text{Corr}(\mathbf y_i) =
+\begin{bmatrix}
+1 &amp; \rho_{12}&amp; \dots &amp; \rho_{1n_i} \\
+\rho_{21} &amp; 1 &amp; \dots &amp; \rho_{2n_i} \\
+\vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
+\rho_{n_i1} &amp; \rho_{n_i2}&amp; \dots &amp; 1
+\end{bmatrix}
+\]</span></p>
+<ul>
+<li>in this correlation matrix, there are <span class="math inline">\(\frac{n(n-1)}{2}\)</span> parameters to estimate</li>
+<li>in the mean part, there are 2 parameters, <span class="math inline">\(\mathbf \beta\)</span> to estimate Likewise, the number of the estimators depends on the number of the measurements and the covriates.</li>
+</ul>
+<p>In LDA, since the responses are multiple, we need to look into the correlation characteristics.</p>
+</section>
+<section id="empirical-observations" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="empirical-observations"><span class="header-section-number">3.2</span> Empirical Observations</h3>
+<p>In empirical observations about the nature of the correlation among repeated measures,</p>
+<ul>
+<li>correlations among the repeated measures are usually positive</li>
+<li>correlations tend to decrease with increasing time separation</li>
+<li>correlations among repeated measures rarely approach zero</li>
+<li>correlations between any pair of repeated meausres regardless of distance in time is constrained by the reliability of the measurement process.
+<ul>
+<li>if the measurement process is not very reliable or consistent, then even if two measurements are taken close together in time, their correlation will not be very strong. Similarly, if the measurement process is highly reliable or consistent, then two measurements taken far apart in time may still be highly correlated. Reliability refers to the degree to which a measurement process produces consistent and accurate results over time.</li>
+</ul></li>
+</ul>
+</section>
+<section id="modeling-covariance-structure" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="modeling-covariance-structure"><span class="header-section-number">3.3</span> Modeling Covariance Structure</h3>
+<p>There are 2 types of covariance structure: unbalanced design and balanced design. For now, let’s focus on the balanced design.</p>
+<section id="unbalanced-design" class="level4" data-number="3.3.1">
+<h4 data-number="3.3.1" class="anchored" data-anchor-id="unbalanced-design"><span class="header-section-number">3.3.1</span> Unbalanced Design</h4>
+<ul>
+<li>observations for each subject are not made on the same grid</li>
+<li>these observations can be made at different time points and different numbers of observations may be made for each subject.</li>
+<li>Missing observations falls into this category.</li>
+</ul>
+</section>
+<section id="balanced-design" class="level4" data-number="3.3.2">
+<h4 data-number="3.3.2" class="anchored" data-anchor-id="balanced-design"><span class="header-section-number">3.3.2</span> Balanced Design</h4>
+<ul>
+<li>observations for each subject are made on the same grid and there is no missing data.
+<ul>
+<li>number and timing of the repeated measurements are the same for all individuals.</li>
+</ul></li>
+<li>Then, <span class="math inline">\(t_{ij}\)</span> can be denoted as <span class="math inline">\(t_j\)</span> where <span class="math inline">\(j \in 1, \dots, n\)</span> because the size of the measurements is the same (<span class="math inline">\(n_i\)</span> is the same)</li>
+<li>The covariance of the response variable <span class="math inline">\(\mathbf Y_{m\times n}\)</span> :</li>
+</ul>
+$$
+<span class="math display">\[\begin{aligned}
+  \text{Cov}(\mathbf Y)
+  &amp;=\text{Cov}(\mathbf y_1,\dots,y_m) \\
+  &amp;=
+  \begin{bmatrix}
+    \text{Var}(\mathbf y_1) &amp; 0 &amp; \dots &amp; 0 \\
+    0 &amp; \text{Var}(\mathbf y_2) &amp; \dots &amp; 0 \\
+    \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
+    0 &amp; 0 &amp; \dots &amp; \text{Var}(\mathbf y_m)
+  \end{bmatrix}\\
+  &amp;=
+  \begin{bmatrix}
+    \begin{bmatrix}
+    \text{Var}(y_{11}) &amp; \text{Cov}( y_{11}, y_{12}) &amp; \dots &amp; \text{Cov}( y_{11}, y_{1n_1}) \\
+                               &amp; \text{Var}( y_{12}) &amp; \dots &amp; \text{Cov}( y_{12}, y_{1n_1}) \\
+                                 &amp;                           &amp; \ddots &amp; \vdots \\
+                                 &amp;&amp;                            \dots &amp; \text{Var}( y_{1n_1})
+\end{bmatrix} &amp; 0 &amp; \dots &amp; 0 \\
+    0 &amp; \begin{bmatrix}
+    \text{Var}(y_{21}) &amp; \text{Cov}( y_{21}, y_{22}) &amp; \dots &amp; \text{Cov}( y_{21}, y_{in_2}) \\
+                               &amp; \text{Var}( y_{22}) &amp; \dots &amp; \text{Cov}( y_{22}, y_{in_2}) \\
+                                 &amp;                           &amp; \ddots &amp; \vdots \\
+                                 &amp;&amp;                            \dots &amp; \text{Var}( y_{2n_2})
+\end{bmatrix} &amp; \dots &amp; 0 \\
+    \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
+    0 &amp; 0 &amp; \dots &amp; \begin{bmatrix}
+    \text{Var}(y_{m1}) &amp; \text{Cov}( y_{m1}, y_{m2}) &amp; \dots &amp; \text{Cov}( y_{m1}, y_{mn_m}) \\
+                               &amp; \text{Var}( y_{m2}) &amp; \dots &amp; \text{Cov}( y_{m2}, y_{mn_m}) \\
+                                 &amp;                           &amp; \ddots &amp; \vdots \\
+                                 &amp;&amp;                            \dots &amp; \text{Var}( y_{mn_m})
+\end{bmatrix}
+
+  \end{bmatrix} \\
+  &amp;=
+  \begin{bmatrix}
+    \Sigma_1 &amp; 0 &amp; \dots &amp; 0 \\
+    0 &amp; \Sigma_1 &amp; \dots &amp; 0 \\
+    \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
+    0 &amp; 0 &amp; \dots &amp; \Sigma_m
+  \end{bmatrix}
+\end{aligned}\]</span>
+<p>$$</p>
+<p>If we assume the covariance matrices for different subjects are the same, we can denote <span class="math inline">\(\text{Cov}(\mathbf Y)=\Sigma\)</span>.</p>
+</section>
+</section>
+<section id="covariance-structure-pattern-models" class="level3" data-number="3.4">
+<h3 data-number="3.4" class="anchored" data-anchor-id="covariance-structure-pattern-models"><span class="header-section-number">3.4</span> Covariance Structure Pattern Models</h3>
+<section id="compound-symmetry-structure" class="level4" data-number="3.4.1">
+<h4 data-number="3.4.1" class="anchored" data-anchor-id="compound-symmetry-structure"><span class="header-section-number">3.4.1</span> Compound symmetry Structure</h4>
+<p><span class="math display">\[
+  \text{Cov}(\mathbf y_i)=
+  \sigma^2  
+  \begin{bmatrix}
+    1 &amp; \rho &amp; \rho &amp; \dots &amp; \rho \\
+    \rho &amp; 1 &amp; \rho &amp; \dots &amp; \rho \\
+    \rho &amp; \rho &amp; 1 &amp; \dots &amp; \rho \\
+    \vdots &amp; \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
+    \rho &amp; \rho &amp; \rho &amp; \dots &amp; 1
+  \end{bmatrix}
+\]</span></p>
+<ul>
+<li>compound symmetry is a.k.a <strong>Exchangeable</strong></li>
+<li>Assume variance is constant across visits (say <span class="math inline">\(\sigma^2\)</span>)</li>
+<li>Assume correlation between any two visits are constant (say <span class="math inline">\(\rho\)</span>).</li>
+<li>Parsimonious: there are two parameters in the covariance, <span class="math inline">\(\sigma^2\)</span> and <span class="math inline">\(\rho\)</span> (computational benefit)</li>
+<li>Without any contraint on <span class="math inline">\(\sigma^2\)</span>, you will get closed form estimate.</li>
+<li>Covariance variance matrix is plugged into likelihood function to estimate 3 kinds of parameters <span class="math inline">\(\sigma^2\)</span>, <span class="math inline">\(\rho\)</span>, and <span class="math inline">\(\beta\)</span></li>
+<li>This structure is so parsimonuous that it could be unrealistic: not commonly used</li>
+</ul>
+</section>
+<section id="toeplitz-structure" class="level4" data-number="3.4.2">
+<h4 data-number="3.4.2" class="anchored" data-anchor-id="toeplitz-structure"><span class="header-section-number">3.4.2</span> Toeplitz Structure</h4>
+<p><span class="math display">\[
+  \text{Cov}(\mathbf y_i)=
+  \sigma^2  
+  \begin{bmatrix}
+    1 &amp; \rho_1 &amp; \rho_2 &amp; \dots &amp; \rho_{n-1} \\
+    \rho_1 &amp; 1 &amp; \rho_1 &amp; \dots &amp; \rho_{n-2} \\
+    \rho_2 &amp; \rho_1 &amp; 1 &amp; \dots &amp; \rho_{n-3} \\
+    \vdots &amp; \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
+    \rho_{n-1} &amp; \rho_{n-2} &amp; \rho_{n-3} &amp; \dots &amp; 1
+  \end{bmatrix}
+\]</span></p>
+<ul>
+<li>Toeplitz structure is more flexible than compound symmetry</li>
+<li>Assume variance is constant across visits and <span class="math inline">\(\text{Corr}(y_{ij}, y_{i,j+k}) = \rho_k\)</span>.</li>
+<li>Assume correlation among responses at adjacent measurements is constant.</li>
+<li>Only suitable for measurements made at equal intervals of time between different measurement.</li>
+<li>Without any contraint on <span class="math inline">\(\sigma^2\)</span>, you will get closed form estimate.</li>
+<li>Toeplitz covariance has free <span class="math inline">\(n\)</span> parameters to estimate (<span class="math inline">\(1\)</span> for variance and <span class="math inline">\(n-1\)</span> correlation parameters)</li>
+<li>The larger time differences, the smaller its correlations</li>
+</ul>
+</section>
+<section id="autoregressive-structure" class="level4" data-number="3.4.3">
+<h4 data-number="3.4.3" class="anchored" data-anchor-id="autoregressive-structure"><span class="header-section-number">3.4.3</span> Autoregressive Structure</h4>
+<p><span class="math display">\[
+  \text{Cov}(\mathbf y_i)=
+  \sigma^2  
+  \begin{bmatrix}
+    1 &amp; \rho^1 &amp; \rho^2 &amp; \dots &amp; \rho^{n-1} \\
+    \rho^1 &amp; 1 &amp; \rho^1 &amp; \dots &amp; \rho^{n-2} \\
+    \rho^2 &amp; \rho^1 &amp; 1 &amp; \dots &amp; \rho^{n-3} \\
+    \vdots &amp; \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
+    \rho^{n-1} &amp; \rho^{n-2} &amp; \rho^{n-3} &amp; \dots &amp; 1
+  \end{bmatrix}
+\]</span></p>
+<ul>
+<li>A special case of toeplitz structure with <span class="math inline">\(\text{Corr}(y_{ij},y_{i,j+k})=\rho^k\)</span></li>
+<li>simpler than toeplitz, only 2 parameters</li>
+<li>Only suitable for measurements made at equal intervals of time between different measurement.</li>
+</ul>
+</section>
+<section id="banded-structure" class="level4" data-number="3.4.4">
+<h4 data-number="3.4.4" class="anchored" data-anchor-id="banded-structure"><span class="header-section-number">3.4.4</span> Banded Structure</h4>
+<p><span class="math display">\[
+  \text{Cov}(\mathbf y_i)=
+  \sigma^2  
+  \begin{bmatrix}
+    1 &amp; \rho^1 &amp; 0 &amp; \dots &amp; 0 \\
+    \rho^1 &amp; 1 &amp; \rho^1 &amp; \dots &amp; 0 \\
+    0 &amp; \rho^1 &amp; 1 &amp; \dots &amp; 0 \\
+    \vdots &amp; \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots  \\
+    0 &amp; 0 &amp; 0 &amp; \dots &amp; 1
+  \end{bmatrix}
+\]</span></p>
+<p>Look at the more general case of the banded structure in <a href="https://en.wikipedia.org/wiki/Band_matrix">Wiki</a>.</p>
+<ul>
+<li>Assume correlation is 0 beyond some specified interval.</li>
+<li>Can be combined with the previous patterns.</li>
+<li>Very strong assumption about how quickly the correlation decays to 0 with increasing time separation.</li>
+</ul>
+</section>
+<section id="exponential-structure" class="level4" data-number="3.4.5">
+<h4 data-number="3.4.5" class="anchored" data-anchor-id="exponential-structure"><span class="header-section-number">3.4.5</span> Exponential Structure</h4>
+<ul>
+<li>A generalization of autoregressive pattern</li>
+<li>The most general and reasonable structure</li>
+<li>Suitable for unevenly spaced measurements, take actual time points (time difference), the larger time difference the smaller correlation</li>
+<li>Assumption that the variance of different measurements over time is the same, which can be easily generalized. You can put different variance on the diagonal.</li>
+<li>Let <span class="math inline">\(\{t_{i1},\dots,t_{in_i}\}\)</span> denote the observation times for the <span class="math inline">\(i\)</span> th individual. Then, the correlation is <span class="math inline">\(\text{Corr}(Y_{ij} ,Y_{ik}) = \rho^{|t_{ij}-t_{ik}|}\)</span></li>
+<li>Correlation decreases exponentially with the time separations between them.</li>
+</ul>
+</section>
+</section>
+</section>
+</div>
+</div>
+<div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
+<div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
+
+</div>
+</div>
+<section id="go-to-blog-content-list" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="go-to-blog-content-list"><span class="header-section-number">4</span> Go to Blog Content List</h2>
+<p><a href="../../../../../docs/blog/posts/content_list.html">Blog Content List</a></p>
+
+
+</section>
+
+</div></ul></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

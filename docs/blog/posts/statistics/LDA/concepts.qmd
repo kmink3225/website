@@ -32,16 +32,25 @@ draft: False
 
 ## Notations
 
-* $y_{ij}$ : the response for the $i$ th subject at the $j$ th occasion or measurement
-* $x_{ij}$ : the predictor at time $t_{ij}$
-* $i=1, \dots, m$ : the $i$ th subject
-* $j=1, \dots, n_i$ : the $j$ th measurement of the $i$ th subject
-* $\mathbf y_i$ : $(y_{i1},y_{i2},\dots ,y_{in_i})$ of the $i$ th subject
-* $\mathbf Y$ : the reponse matrix including $i$ th subject at the $j$ th occasion
-* $\mathbf X$ : the predictor matrix including $i$ th subject at the $j$ th occasion
+* $y_{ij}$ : the univariate response (i.e. scalar) for the $i$ th subject at the $j$ th occasion or measurement
+  * later when I use the vector case, I will re-define this notation, but focus on the scalar case for now.
+* $x_{ij}$ : the predictor at time $t_{ij}$, which is either a scalr or vector.
+  * a scalar case: $x_{ij}$ where $i$ is the $i$ th subject, and $j$ is the $j$ th measurement.
+  * a vector case: $x_{ijk}$ where $i$ is the $i$ th subject, $j$ is the $j$ th measurement, and $k \in [1,p]$ is the $k$ th predictor.
+  * sometimes, covariate for different measurements could be the same. In this case, the notation could be written in $x_{i}$ 
+    * ex) a gender does not change over time in the most cases.
+* $i=1, \dots, m$ : i is the index for the $i$ th subject
+* $j=1, \dots, n_i$ : j is the index for the $j$ th measurement of the $i$ th subject
+  * ${n_i}$ is the number of measurements of the $i$ th subject, each ${n_i}$ does not have to the same.
+  * balanced desgin: ${n_i}$ is the same.
+  * unbalanced desgin: ${n_i}$ is different.
+* $\mathbf y_i$ : a vector (not a matrix), $(y_{i1},y_{i2},\dots ,y_{in_i})$ of the $i$ th subject
+* $\mathbf Y$ : the reponse matrix 
+* $\mathbf X$ : the predictor matrix 
 * $\text{E}(y_{ij})$ : $\mu_{ij}$
 * $\text{E}(\mathbf y_i)$ : $\mathbf \mu_{i}$
-* $\text{Var}(\mathbf y_i)$ : 
+* $\text{Var}(\mathbf y_i)$ : $\text{Var}(\mathbf y_i)$ is a variance-covariance matrix of the different measurement for the $i$ th subject
+  * for now, we do not care of the variance covariance of the different subjects because we assume that the measurements of different subjects are indpendent.
 $$
 \begin{bmatrix}
     \text{Var}(\mathbf y_{i1}) & \text{Cov}(\mathbf y_{i1},\mathbf y_{i2}) & \dots & \text{Cov}(\mathbf y_{i1},\mathbf y_{in_i}) \\
@@ -51,15 +60,35 @@ $$
 \end{bmatrix}
 $$
 
+## Assumptions
+
+* the measurements for the same subject are not independent.
+* the measurements for the different subject are independent.
+
 ## For Continuous Responses
 
 * Marginal Models
-    * $\text{E}(y_{ij}) = \beta x_{ij}$
-    * $\text{Var}(\mathbf y_i)=V_i$
+  * $\text{E}(y_{ij}) = \mathbf x_{ij} \mathbf \beta $
+  * $\text{Var}(\mathbf y_i)= \mathbf V_i$
+  * to build a marginal model, we just need info on the 3 things
+    * the distribution : a multivariate normal distribution
+    * mean and variance-covariance
+  * $\beta$ is fixed. That's why we call this marginal models 'fixed effect'
+
+::: {.callout-tip}
+### Recall
+
+We find MLE for the linear regression with the 3 things: the normal distribution (iid), $\mu$ and $\sigma^2$
+:::
+
 * Mixed Effects Models
-    * $\text{E}(y_{ij}|\beta_i) = \beta x_{ij}$
-    * Panel studies (sociology and economics)
-    * Prospective studies (clinical trials)
+  * $\text{E}(y_{ij}|\mathbf \beta_i) = \mathbf x_{ij} \mathbf \beta_i $
+  * $\mathbf \beta_i = \mathbf \beta (\text{fixed effect}) + \mathbf u_i (\text{subject-specific random effect})$
+  * $\mathbf \beta_i$ is a random coefficient specific for the $i$ th subject, That's why we call this mixed effect models 'random effect'
+  * subject-specific random effect: differenct subjects have different $\mathbf \beta_i$ s 
+* Transition Models
+  * $\text{E}(y_{ij}|y_{i,j-1},\dots,y_{i,1},\mathbf x_{ij})$
+  * Markov Process: the response variable in the previous time point will affect the measurement in the current time point.
 
 ::: {.callout-tip}
 

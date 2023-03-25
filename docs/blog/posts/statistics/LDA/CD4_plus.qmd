@@ -75,8 +75,10 @@ print(p)
 
 # Fit different cov model with REML
 ###################################################
-# unstructured covariance
+# unstructured covariance for marginal model
 unstruct <- gls(opp~time*ccog,opposites, correlation=corSymm(form = ~ 1 |id),  weights=varIdent(form = ~ 1| wave),method="REML")
+
+# corSymm(form = ~ 1 |id) : the same covariance across different measurement, same correlation matrix for different subjects
 # check ?gls ?corClasses ?corSymm
 summary(unstruct) # focus on corr, var, (weight)
 unstruct$modelStruct$corStruct # corr

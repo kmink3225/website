@@ -16,54 +16,82 @@ format:
 draft: True
 ---
 
+Maximum likelihood estimation (MLE) and restricted maximum likelihood estimation (REML) are both methods used to estimate the parameters of a statistical model. The main difference between MLE and REML lies in the way they estimate the variance-covariance matrix of the random effects in mixed-effects models.
 
-Maximum likelihood estimation (MLE) is a statistical method used to estimate the parameters of a probability distribution based on observed data. The basic idea is to find the values of the parameters that maximize the likelihood function, which is a function of the observed data and the unknown parameters.
+In MLE, the variance-covariance matrix of the random effects is estimated using the full likelihood, which includes both the fixed and random effects. However, the maximum likelihood estimate of the variance-covariance matrix can be biased downward due to the inclusion of the fixed effects in the likelihood function. This bias is referred to as the "degrees of freedom" problem, and it can lead to an overestimation of the significance of the fixed effects.
 
-In other words, the MLE is the set of parameter values that make the observed data most probable, given the assumed probability distribution. The likelihood function is typically the product or the sum (depending on whether the observations are assumed to be independent or not) of the probabilities or probability densities of the observations, evaluated at the values of the parameters.
+In REML, the variance-covariance matrix of the random effects is estimated using a likelihood function that is based only on the random effects. The fixed effects are eliminated from the likelihood function by taking conditional distributions of the data given the random effects. By eliminating the fixed effects from the likelihood function, REML avoids the degrees of freedom problem and produces an unbiased estimate of the variance-covariance matrix of the random effects.
 
-The MLE has many desirable properties, such as efficiency and consistency under certain conditions. It is widely used in statistical inference and hypothesis testing, as well as in various fields of science and engineering where data analysis is required. However, it is important to note that the MLE is not always the best estimator for a given problem, and other estimation methods may be more appropriate depending on the specific characteristics of the data and the model.
+In summary, MLE estimates both the fixed and random effects using the full likelihood function, while REML estimates only the variance-covariance matrix of the random effects using a likelihood function that eliminates the fixed effects. REML is preferred over MLE when the goal is to estimate the variance-covariance matrix of the random effects without bias. However, MLE is sometimes preferred when the goal is to estimate the fixed effects as well as the variance-covariance matrix of the random effects.
+
+One famous example of using REML is in the analysis of variance (ANOVA) of a mixed-effects model. In this case, the goal is to estimate the variance components of the random effects, which can be used to make inferences about the variability among the different levels of the grouping factor.
+
+For example, consider a study where the effect of a treatment is being tested on a response variable measured in different subjects over time. The subjects are considered as random effects, and the time and treatment effects are considered fixed effects. A mixed-effects model can be used to model this data, where the response variable is modeled as a function of time, treatment, and subject:
+
+Y = Xβ + Zb + ε
+
+where Y is the response variable, X and Z are design matrices for the fixed and random effects, β and b are the corresponding parameter vectors, and ε is the residual error.
+
+In this case, the REML method can be used to estimate the variance components of the random effects, which represent the variability among the different subjects. The fixed effects, including the treatment and time effects, can be estimated using either REML or MLE.
+
+REML is preferred over MLE in this case because the goal is to estimate the variability among the subjects without bias. By using REML, the degrees of freedom problem associated with MLE is avoided, which can lead to biased estimates of the variance components. The estimates obtained using REML can then be used to test the significance of the treatment effect and to make inferences about the variability among the different subjects.
 
 
+The likelihood function for a mixed-effects model can be written as:
 
-To find the maximum likelihood estimate (MLE) of some data, we need to specify a parametric model that describes the distribution of the data, and then estimate the parameters that maximize the likelihood function for the observed data.
+L(θ|y) = (2π)-n/2|V(θ)|^-1/2 exp[-1/2(y-μ(θ))'V(θ)^-1(y-μ(θ))]
 
-In other words, the MLE is the set of parameter values that maximize the probability of observing the data that we have. The likelihood function is the joint probability density (or mass) function of the data, viewed as a function of the parameters, and we find the maximum of this function by differentiating it with respect to the parameters and setting the derivative to zero.
+where θ is the vector of unknown parameters, y is the vector of observed data, V(θ) is the variance-covariance matrix of the random effects, and μ(θ) is the vector of expected values for the response variable.
 
-The MLE is a commonly used method for estimating the parameters of a statistical model, and it has desirable properties such as efficiency and consistency under certain conditions. However, it is important to note that the MLE may not always be the best estimator for a given problem, and other estimation methods may be more appropriate depending on the specific characteristics of the data and the model.
+The REML estimator is obtained by maximizing the likelihood function with respect to the parameters after integrating out the random effects. This involves maximizing a modified likelihood function:
+
+L'(θ|y) = (2π)-n/2|W(θ)|^-1/2 exp[-1/2(y-Xβ(θ))'W(θ)^-1(y-Xβ(θ)))]
+
+where W(θ) = V(θ) - V(θ)X(X'V(θ)^-1X)^-1X'V(θ) is a matrix that depends on both the variance-covariance matrix of the random effects and the design matrix X.
+
+To show that the REML estimator is unbiased, we need to show that the expected value of the estimator equals the true value of the parameter:
+
+E(θREML) = θ
+
+We can do this by taking the derivative of the log-likelihood function with respect to the parameters and evaluating it at the true value of the parameter:
+
+d/dθ log L'(θ|y)|θ=θtrue = 0
+
+This gives us the score equations, which can be used to solve for the maximum likelihood estimates of the parameters.
+
+We can then take the expected value of the score equations and evaluate them at the true value of the parameter:
+
+E[d/dθ log L'(θ|y)|θ=θtrue] = 0
+
+This shows that the expected value of the score equations equals zero, which implies that the REML estimator is unbiased.
 
 
-### MLE of OLS
+Sure, here is an example of how REML can be used to estimate the coefficients of a mixed-effects model:
 
-In linear regression with normally distributed errors, the maximum likelihood estimate (MLE) of the ordinary least squares (OLS) coefficients is equivalent to the least squares estimate.
+Suppose we have a dataset of 100 patients who are measured for their blood pressure (BP) at four different time points (t=0, 1, 2, 3) before and after receiving a treatment. We want to estimate the effect of the treatment on BP while taking into account the correlation among the repeated measurements within each patient.
 
-To derive this, we start by assuming that the error terms follow a normal distribution with mean 0 and variance σ^2, and that the observations are independent. Then, the likelihood function for the data Y = (Y1, Y2, ..., Yn) is:
+We can model this data using a mixed-effects model with patient-specific intercepts and slopes over time:
 
-L(Y|β,σ^2) = (2πσ^2)^(-n/2) exp{-1/(2σ^2) Σi=1^n (Yi - Xiβ)^2}
+BPij = β0i + β1itij + β2Txij + εij
 
-where Xi is the ith row of the design matrix X and β is the vector of regression coefficients.
+where BPij is the blood pressure measurement for patient i at time j, β0i and β1i are the patient-specific intercept and slope for time, β2 is the treatment effect, Txij is the treatment indicator variable (1 if patient i received the treatment at time j, 0 otherwise), and εij is the residual error.
 
-To find the maximum likelihood estimates of β and σ^2, we maximize the likelihood function with respect to these parameters. Taking the log of the likelihood function and simplifying, we obtain:
+To estimate the coefficients of this model using REML, we need to first estimate the variance-covariance matrix of the random effects (patient-specific intercepts and slopes). This can be done using the lme() function in R with the method argument set to "REML":
 
-log L(Y|β,σ^2) = -n/2 log(2π) - n/2 log(σ^2) - 1/(2σ^2) Σi=1^n (Yi - Xiβ)^2
+```{r}
+library(nlme)
 
-To maximize this function with respect to β, we differentiate with respect to β and set the derivative to zero:
+# Fit mixed-effects model using REML
+model <- lme(BP ~ t*Tx, random = ~t|patient, data = data, method = "REML")
 
-∂ log L(Y|β,σ^2) / ∂β = -1/(2σ^2) Σi=1^n 2Xi(Yi - Xiβ) = 0
+# Extract coefficient estimates
+summary(model)$tTable
 
-Solving for β, we obtain:
 
-β = (X^T X)^(-1) X^T Y
+```
 
-which is the OLS estimate of β.
+This code fits the mixed-effects model to the data using the lme() function from the nlme package in R. The random argument specifies that the intercept and slope for time are patient-specific random effects. The method argument is set to "REML" to use the REML method to estimate the variance-covariance matrix of the random effects.
 
-To maximize the likelihood function with respect to σ^2, we differentiate with respect to σ^2 and set the derivative to zero:
+The output of this code gives us the estimated coefficients for the fixed effects, including the treatment effect (β2), as well as the estimated variance-covariance matrix of the random effects. The estimated coefficient for the treatment effect tells us the expected change in blood pressure associated with receiving the treatment, while controlling for the effect of time and the correlation among the repeated measurements within each patient.
 
-∂ log L(Y|β,σ^2) / ∂σ^2 = -n/(2σ^2) + 1/(2σ^4) Σi=1^n (Yi - Xiβ)^2 = 0
-
-Solving for σ^2, we obtain:
-
-σ^2 = Σi=1^n (Yi - Xiβ)^2 / n
-
-which is the OLS estimate of σ^2.
-
-Therefore, we see that the maximum likelihood estimates of β and σ^2 in linear regression with normally distributed errors are equivalent to the OLS estimates of these parameters.
+Note that the variance-covariance matrix of the random effects estimated using REML can be used to test the significance of the patient-level variability, as well as to make inferences about the correlation among the repeated measurements within each patient.

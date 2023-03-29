@@ -1,69 +1,345 @@
 ---
-title: MLE
+title: Maximum Likelihood Estimation, Statistical Bias, and Point Estimation
 subtitle: Overview
 description: |
   template
 categories:
   - Statistics
 author: Kwangmin Kim
-date: 03/24/2023
+date: 03/29/2023
 format: 
   html:
     page-layout: full
     code-fold: true
     toc: true
     number-sections: true
-draft: True
+execute:
+  warning: false
+draft: false
 ---
 
+### Definition
 
-Maximum likelihood estimation (MLE) is a statistical method used to estimate the parameters of a probability distribution based on observed data. The basic idea is to find the values of the parameters that maximize the likelihood function, which is a function of the observed data and the unknown parameters.
+To talk about MLE (Maximum Likelihood Estimation), we need to recap the concepts and definitions of probability and likelihood. They are related but distinct concepts.
 
-In other words, the MLE is the set of parameter values that make the observed data most probable, given the assumed probability distribution. The likelihood function is typically the product or the sum (depending on whether the observations are assumed to be independent or not) of the probabilities or probability densities of the observations, evaluated at the values of the parameters.
+* probability is a measure of the chance that an event will occur, given some prior knowledge or assumptions.
+* likelihood is a measure of the plausibility or compatibility of a particular set of model parameters, given the observed data.
 
-The MLE has many desirable properties, such as efficiency and consistency under certain conditions. It is widely used in statistical inference and hypothesis testing, as well as in various fields of science and engineering where data analysis is required. However, it is important to note that the MLE is not always the best estimator for a given problem, and other estimation methods may be more appropriate depending on the specific characteristics of the data and the model.
+::: {.callout-tip}
+#### Chance vs Plausibility (personal opinion)
+  * chance is a general term but closer term to statistics, which is used in the situation of the probability or likelihood of an event occurring based on randomness or uncertainty.  
+  * plausibility chance is a term more often used in everyday life, which refers to the degree to which something is believable based on the available evidence or information.
+:::
+
+:::{#def-likelihood}
+
+ Let $X_1, X_2, ..., X_n$ be a set of iid random variables with pdf or pmf $f(x_i | \theta)$, where $\theta$ is a vector of unknown parameters. Then, 
+ **the likelihood function is defined as the joint pdf or pmf of the observed data, given the values of the parameters**:
+
+$$
+L(\theta | x_1, x_2, ..., x_n) = L(\theta | \mathbf x) = \prod_{i=1}^n f(x_i | \theta)
+$$
+:::
+
+The likelihood function is a function of the parameters $\theta$. The function measures the probability of observing a set of data, given the values of the parameters of a statistical model in order to estimate the values of the parameters by finding the values that maximize the likelihood function. The likelihood function is often used in the maximum likelihood estimation (MLE) method, where the MLE estimator is the set of parameter values that maximize the likelihood function.
+
+The likelihood function is related to the concept of conditional probability. Given a set of observed data $x_1, x_2, ..., x_n$, the likelihood function measures the probability of observing these data, assuming a particular set of parameter values. The likelihood function is not a probability distribution, but it can be used to derive a probability distribution for the parameters, known as the posterior distribution, using Bayes' theorem.
+
+::: {.callout-tip}
+
+#### Probability
+
+Probability is a measure of the likelihood or chance that an event will occur, which is used to quantify uncertainty and randomness.  
+probability is a function that maps a real number mapped from a random variable into $[0,1]$. The probability function, denoted by $P$, satisfies the following axioms:
+
+* Non-negativity: For any event $A \in \Omega$, $P(A) \geq 0$.
+* Normalization: The probability of the entire sample space is 1, i.e., $P(\Omega) = 1$.
+* Additivity: For any two disjoint events $A, B \in \Omega$, or $A \cap B = \emptyset$, the probability of their union is equal to the sum of their individual probabilities, i.e., $P(A \cup B) = P(A) + P(B)$.
+:::
+
+#### Probability vs Likelihood
+
+Probability and likelihood are related but distinct concepts in statistics.
+
+* Probability refers to the measure of the likelihood that a particular event will occur, scaled on $[0,1]$. It is calculated based on a known probability distribution (= some prior knowledge or assumptions) before the data is observed. 
+* On the other hand, likelihood refers to the probability of observing a set of data given a particular set of parameter values in a statistical model. It is calculated based on the unknown parameters after the data is observed. 
+
+The likelihood function is used to estimate the values of the parameters by finding the parameter values that maximize the likelihood function.
+
+For instance of a coin flip, the **probability** of getting heads on a coin flip is 0.5, regardless of whether the coin has been flipped or not (i.e., without data). In contrast, the **likelihood** of observing heads after a coin has been flipped depends on the parameter of interest. We need to find the parameter given data, the results of multiple coin flips. 
+
+If we want to estimate the probability of heads, we can use the maximum likelihood estimation (MLE) approach, which involves finding the value of the coin bias that maximizes the likelihood of observing the observed sequence of heads and tails. The likelihood of the data is calculated using the binomial distribution, which gives the probability of observing a certain number of heads, given the number of tosses and the coin bias. In this case, the likelihood function is a function of the coin bias, and the probability of heads is the value of the coin bias that maximizes the likelihood function.
+
+#### Relation between Likelihood and PMF or PDF
+
+The likelihood function is closely related to pmf or pdf of the data, which is a function that describes the probability of observing a particular value or range of values for the data, given the model parameters. The pmf or pdf is a function of the data, not the parameters, and is often written as $f(x|\theta)$. The likelihood function is proportional to the pdf because is a product of pdfs when $X_i$ is independent, but with the data fixed and the parameter values treated as variables.
+
+```{r}
+library(tidyverse)
+
+# Probability of getting heads on a fair coin flip
+prob <- 0.5
+
+# likelihood
+## Simulate a coin flip with a biased coin
+set.seed(123) # Set random seed for reproducibility
+n <- 100 # flipping numbers
+p <- 0.2 # Probability of getting heads
+x <- rbinom(n, size = 1, prob = p) # Simulate n coin flips
+x%>%head(10)
+
+## Calculate the likelihood of observing the data given the parameter value p
+likelihood <- prod(dbinom(x, size = 1, prob = p))
+likelihood%>%round()
+
+```
+
+In this example, `prob` is the assumed probability of getting heads on a fair coin flip. The probability of getting heads on a fair coin flip is 0.5, which is a fixed value that does not depend on any specific data. On the other hand, `p` is the probability of getting heads for the biased coin that we are simulating. The likelihood of observing a set of coin flips depends on the parameter value, which is unknown (actually, we know that it was $p=0.2$), and the observed data. We simulate a set of 100 coin flips with a biased coin that has a probability of 0.2 of getting heads. We then calculate the likelihood of observing this data given the parameter value of 0.2, which is the product of the probability mass function for each flip. 
+
+However, in a real-world scenario, we would not know the true value of `p` and we would need to estimate it based on the observed data. By finding the Maximum Likelihood Estimation (MLE) of p, we are estimating the value of p that is most likely to have generated the observed data. To find MLE of `p` that maximizes the likelihood function, we can use numerical optimization methods.
+
+As n increases, the product term in the likelihood function $\prod_{i=1}^{n} f(x_i; \theta)$, where $f$ is the pdf or pmf of the distribution being used, can become very small (since it is a product of values less than 1) and may result in numerical underflow (i.e., the product becomes so small that it rounds down to 0 in computer calculations). In practice, we typically take the logarithm of the likelihood function, called the log-likelihood, to avoid this issue:
+
+$$
+\log L(\theta|x_1, x_2, ..., x_n) = \sum_{i=1}^{n} \log f(x_i; \theta)
+$$
+
+Using the logarithm allows us to convert the product of small probabilities into a sum of log-probabilities, which are typically easier to work with numerically and mathematically. In this case, as n increases, the sum term in the log-likelihood can decrease (since it is a sum of negative values), but the decrease may not be as severe as in the product term of the likelihood function because of the log scale converting very small or large values into larger or smaller values .
+
+:::{#def-MLE}
+The MLE estimator $\hat{\theta}$ is the value of the parameter vector that maximizes the likelihood function:
+
+$$
+\hat{\theta}_{MLE} = \underset{\theta}{\operatorname{argmax}} L(\theta | x_1, x_2, ..., x_n)
+$$
+
+or equivalently, maximizes the log-likelihood function:
+
+$$
+\hat{\theta}_{MLE} = \underset{\theta}{\operatorname{argmax}} \log L(\theta | x_1, x_2, ..., x_n)
+$$
+
+
+:::
+
+
+The Maximum Likelihood Estimation (MLE) is a method of estimating the parameters of a statistical model by finding the values of the parameters that maximize the likelihood function. The likelihood function is the probability of observing the data, given the parameters of the model. The MLE estimator is the set of parameter values that maximize the likelihood function. In other words, the MLE is the set of parameter values that make the observed data most probable, given the assumed probability distribution. The likelihood function is typically the product or the sum (depending on whether the observations are assumed to be independent or not) of the probabilities or probability densities of the observations, evaluated at the values of the parameters.
+
+The MLE estimator has desirable statistical properties, such as consistency, efficiency, and asymptotic normality, under certain regularity conditions on the likelihood function and the parameter space. However, it is important to note that the MLE is not always the best estimator for a given problem, and other estimation methods may be more appropriate depending on the specific characteristics of the data and the model.
+
+The likelihood function is the joint probability density (or mass) function of the data, viewed as a function of the parameters, and we find the maximum of this function **by differentiating** it with respect to the parameters and setting the derivative to zero.
 
 
 
-To find the maximum likelihood estimate (MLE) of some data, we need to specify a parametric model that describes the distribution of the data, and then estimate the parameters that maximize the likelihood function for the observed data.
+### MLE of OLS{#sec-mle_ols}
 
-In other words, the MLE is the set of parameter values that maximize the probability of observing the data that we have. The likelihood function is the joint probability density (or mass) function of the data, viewed as a function of the parameters, and we find the maximum of this function by differentiating it with respect to the parameters and setting the derivative to zero.
+In a linear regression, the maximum likelihood estimate of the ordinary least squares (OLS) coefficients is equivalent to the least squares estimate. To derive this, we assume that $\epsilon_i \sim N(0,\sigma^2)$ and that the observations are independent. Then, the likelihood function for the data $Y = (Y_1, Y_2, \dots, Y_n)$ is:
 
-The MLE is a commonly used method for estimating the parameters of a statistical model, and it has desirable properties such as efficiency and consistency under certain conditions. However, it is important to note that the MLE may not always be the best estimator for a given problem, and other estimation methods may be more appropriate depending on the specific characteristics of the data and the model.
+$$
+L(Y|\theta) =L(Y|\beta,\sigma^2) = (2\pi\sigma^2)^{-\frac{n}{2}} e^{-\frac{1}{2\sigma^2} \sum_{i=1}^n (Y_i - X_i\beta)^2}
+$$
+
+where $X_i$ is the $i$ th row of the design matrix $X$ and $\beta$ is the vector of regression coefficients.
+
+To find the maximum likelihood estimates of $\beta$ and $\sigma^2$, we maximize the likelihood function with respect to these parameters. Taking the log of the likelihood function and simplifying, we obtain:
+
+$$
+\log L(Y|\theta) = \log L(Y|\beta,\sigma^2) = -\frac{n}{2} \log (2\pi) - \frac{n}{2} \log(\sigma^2) - \frac{1}{2\sigma^2} \sum_{i=1}^n (Y_i - X_i\beta)^2
+$$
+
+To maximize this function with respect to $\beta$, we differentiate with respect to $\beta$ and set the derivative to zero, $\frac{\partial}{\partial \theta} \log L(Y|\theta) = 0$:
+
+Solving for $\beta$, we obtain:
+
+$$
+ \frac{\partial}{\partial \theta} \log L(Y|\beta,\sigma^2) = -\frac{1}{2\sigma^2} \sum_{i=1}^n 2X_i(Y_i - X_i\beta) = 0 
+$$
+
+$$
+\hat{\beta} = (X^T X)^{-1} X^T Y
+$$
+, which is the OLS estimate of $\beta$.
+
+Solving for $\sigma^2$, we differentiate with respect to $sigma^2$ and set the derivative to zero:
+
+$$
+\frac{\partial}{\partial \sigma^2} log L(Y|\beta,\sigma^2) = -\frac{n}{2\sigma^2} + \frac{1}{2\sigma^4} \sum_{i=1}^n (Y_i - X_i\beta)^2 = 0
+$$
+$$
+\hat{\sigma}^2 = \frac{\sum_{i=1}^n (Y_i - X_i\beta)^2}{n}
+$$
 
 
-### MLE of OLS
+which is the OLS estimate of $\sigma^2$.
 
-In linear regression with normally distributed errors, the maximum likelihood estimate (MLE) of the ordinary least squares (OLS) coefficients is equivalent to the least squares estimate.
+Therefore, we see that the maximum likelihood estimates of $\beta$ and $\sigma^2$ in linear regression with normally distributed errors are equivalent to the OLS estimates of these parameters.
 
-To derive this, we start by assuming that the error terms follow a normal distribution with mean 0 and variance σ^2, and that the observations are independent. Then, the likelihood function for the data Y = (Y1, Y2, ..., Yn) is:
+### Statistical Bias
 
-L(Y|β,σ^2) = (2πσ^2)^(-n/2) exp{-1/(2σ^2) Σi=1^n (Yi - Xiβ)^2}
+Statistical bias refers to a systematic error or deviation in the results of a statistical analysis that is caused by factors other than chance. A biased estimator is one that consistently produces estimates that are systematically different from the true value of the parameter being estimated.
 
-where Xi is the ith row of the design matrix X and β is the vector of regression coefficients.
+::: {.callout-tip}
 
-To find the maximum likelihood estimates of β and σ^2, we maximize the likelihood function with respect to these parameters. Taking the log of the likelihood function and simplifying, we obtain:
+#### There are 5 Types of bias 
 
-log L(Y|β,σ^2) = -n/2 log(2π) - n/2 log(σ^2) - 1/(2σ^2) Σi=1^n (Yi - Xiβ)^2
+The above article discusses five types of statistical bias that analysts, data scientists, and other business professionals should be aware of to minimize their effects on the final results. 
 
-To maximize this function with respect to β, we differentiate with respect to β and set the derivative to zero:
+1. selection bias: data selection methods are not truly random, leading to unequal representation of the population.
+2. bias in assignment: pre-existing differences between groups in an experiment can affect the outcome, a.k.a  allocation bias, treatment assignment bias, or exposure assignment bias. 
+3. confounders: additional variables not accounted for in the experimental design can impact the results. 
+4. self-serving bias: individuals tend to downplay undesirable qualities and overemphasize desirable ones a.k.a cognitive bias. In other words, people tend to take credit for their successes and blame outside factors for their failures.
+5. experimenter expectations: researchers can unconsciously influence the data through verbal or non-verbal cues. 
 
-∂ log L(Y|β,σ^2) / ∂β = -1/(2σ^2) Σi=1^n 2Xi(Yi - Xiβ) = 0
+Being aware of these biases can lead to better models and more reliable insights for data-backed business decisions.
 
-Solving for β, we obtain:
+[Source: Article Written by Jenny Gutbezahl](https://online.hbs.edu/blog/post/types-of-statistical-bias)
+:::
 
-β = (X^T X)^(-1) X^T Y
+It is important to detect and correct for bias in statistical analyses, as biased estimates can lead to incorrect conclusions and decisions. One way to correct for bias is to use an unbiased estimator, which is one that has a zero bias, i.e., its expected value is equal to the true value of the parameter being estimated.
 
-which is the OLS estimate of β.
 
-To maximize the likelihood function with respect to σ^2, we differentiate with respect to σ^2 and set the derivative to zero:
+:::{#def-bias}
+An estimator $\hat{\theta}$ is said to be biased if
 
-∂ log L(Y|β,σ^2) / ∂σ^2 = -n/(2σ^2) + 1/(2σ^4) Σi=1^n (Yi - Xiβ)^2 = 0
+$$
+\operatorname{E}(\hat{\theta})\ne \theta
+$$
 
-Solving for σ^2, we obtain:
+where $\operatorname{E}(\hat{\theta})$ is the expected value of the estimator $\hat{\theta}$, and $\theta$ is the true value of the parameter being estimated.
+:::
 
-σ^2 = Σi=1^n (Yi - Xiβ)^2 / n
+An estimator is said to be unbiased if **its expected value is equal to the true value of the parameter being estimated**. In other words, an estimator is unbiased if, on average, it gives an estimate that is equal to the true value of the parameter.
 
-which is the OLS estimate of σ^2.
 
-Therefore, we see that the maximum likelihood estimates of β and σ^2 in linear regression with normally distributed errors are equivalent to the OLS estimates of these parameters.
+
+
+```{markdown}
+#| echo: false
+#| evale: false
+
+For example, suppose we want to estimate the mean $\mu$ of a normal distribution with unknown variance $\sigma^2$.
+We can use the sample mean $\bar{X}$ as an estimator of $\mu$. It can be shown that the expected value of the sample mean is equal to the true value of the population mean,
+
+
+To show that the sample mean $\bar{X}$ is an unbiased estimator of the population mean $\mu$, we need to show that the expected value of $\bar{X}$ is equal to $\mu$.
+
+Recall that the sample mean is defined as:
+
+$$
+\begin{align*}
+ \bar{X}&=\frac{1}{n} \sum_{i=1}^{n} X_i \\
+\operatorname{E}(\bar{X}) 
+&= \operatorname{E} \left( \frac{1}{n} \sum_{i=1}^{n} X_i \right) \\
+&= \frac{1}{n} \sum_{i=1}^{n} \operatorname{E}(X_i) & \text{(linearity of expectation)} \\
+&= \frac{1}{n} \sum_{i=1}^{n} \mu & \text{(since } X_i \text{ has mean } \mu) \\
+&= \frac{n\mu}{n} \\
+&= \mu
+\end{align*}
+$$
+
+where $X_1, X_2, \dots, X_n$ are independent and identically distributed (i.i.d.) random variables from a normal distribution with mean $\mu$ and variance $\sigma^2$.
+
+Therefore, the sample mean is an unbiased estimator of the population mean.
+
+$$
+\begin{align*}
+\operatorname{E}[\hat{\sigma}^2] 
+&= \operatorname{E}\left[\frac{1}{n}\sum_{i=1}^{n}(X_i - \bar{X})^2\right] \\
+&= \frac{1}{n}\sum_{i=1}^{n}\operatorname{E}[(X_i - \bar{X})^2] \\
+&= \frac{1}{n}\sum_{i=1}^{n}\operatorname{E}[X_i^2 - 2X_i\bar{X} + \bar{X}^2]\\
+&=\frac{1}{n}\sum_{i=1}^{n}\operatorname{E}[X_i^2 - 2X_i\frac{1}{n}\sum_{j=1}^{n}X_j + \frac{1}{n^2}\sum_{j=1}^{n}\sum_{k=1}^{n}X_jX_k]\\
+&=\frac{1}{n}\sum_{i=1}^{n}\left(\operatorname{E}[X_i^2] - 2\operatorname{E}[X_i]\frac{1}{n}\sum_{j=1}^{n}\operatorname{E}[X_j] + \frac{1}{n^2}\sum_{j=1}^{n}\sum_{k=1}^{n}\operatorname{E}[X_jX_k]\right)\\
+&=\frac{1}{n}\sum_{i=1}^{n}\left(\mu^2 + \sigma^2 - 2\mu\frac{1}{n}\sum_{j=1}^{n}\mu + \frac{1}{n^2}\sum_{j=1}^{n}\sum_{k=1}^{n}\mu^2\right)\\
+&=\frac{1}{n}\sum_{i=1}^{n}\left(\sigma^2 - \frac{\sigma^2}{n}\right)\\
+&= \frac{n-1}{n}\sigma^2
+\end{align*}
+$$
+
+where   
+$\operatorname{E}[\bar{X}] = \mu$,  
+$\operatorname{E}[X_i] = \mu$ for all $i$,   
+$\operatorname{Var}(\bar{X}) = \frac{\sigma^2}{n}$,  
+$\operatorname{E}[X_iX_j] = \mu^2 + \sigma^2$ for $i=j$, and  
+$\operatorname{E}[X_iX_j] = \mu^2$ for $i \neq j$
+
+
+$\operatorname{E}(\hat{\sigma}^2) = \frac{1}{n}\sum_{i=1}^{n}\left(\operatorname{E}[X_i^2] - 2\operatorname{E}[X_i]\frac{1}{n}\sum_{j=1}^{n}\operatorname{E}[X_j] + \frac{1}{n^2}\sum_{j=1}^{n}\sum_{k=1}^{n}\operatorname{E}[X_jX_k]\right)$
+
+Since $X_i$ are independent and identically distributed, we have:
+
+$\operatorname{E}[X_i] = \mu$ for all $i$
+
+$\operatorname{E}[X_iX_j] = \mu^2 + \sigma^2$ for $i=j$
+
+$\operatorname{E}[X_iX_j] = \mu^2$ for $i \neq j$
+
+Substituting these in the equation above:
+
+$\operatorname{E}(\hat{\sigma}^2) = \frac{1}{n}\sum_{i=1}^{n}\left(\mu^2 + \sigma^2 - 2\mu\frac{1}{n}\sum_{j=1}^{n}\mu + \frac{1}{n^2}\sum_{j=1}^{n}\sum_{k=1}^{n}\mu^2\right)$
+
+
+
+Therefore, we can see that the expected value of the MLE for $\sigma^2$ is $\frac{n-1}{n}\sigma^2$, which is not equal to the true value $\sigma^2$ unless $n=1$. This shows that the MLE for $\sigma^2$ is a biased estimator.
+
+### $\sigma^2$
+
+The sample variance $S^2$ can be used as an estimator of the population variance $\sigma^2$. It can be shown that the expected value of the sample variance is equal to the true value of the population variance $\mathbb{E}(S^2)\sigma^2$
+
+To show that $S^2$ is an unbiased estimator of $\sigma^2$, we can use the definition of expected value:
+$$
+\operatorname{E}(S^2)=\int_{-\infty}^{\infty}s^2f_S(s)ds
+$$
+where $f_S(s)$ is the probability density function of the sample variance $S^2$. Since $S^2$ follows a chi-squared distribution with $n-1$ degrees of freedom, we have:
+
+$$
+f_S(s)=\frac{1}{\Gamma(\frac{n-1}{2}) 2^{\frac{n-1}{2}}},s^{\frac{n-1}{2}-1} e^{-\frac{s}{2}} \text{ for } s\ge 0
+$$
+
+where $\Gamma$ is the gamma function. Substituting this into the integral, we get:
+
+$$
+\begin{align*}
+\operatorname{E}(S^2) 
+&= \int_{0}^{\infty} s \frac{1}{\Gamma(\frac{n-1}{2}) 2^{\frac{n-1}{2}}},s^{\frac{n-1}{2}-1} e^{-\frac{s}{2}} ds \\
+&= \frac{2}{n-1} \int_{0}^{\infty} \frac{(u/2)^{\frac{n}{2}-1}}{\Gamma(\frac{n}{2})} e^{-u/2} du \quad \text{(substituting } u = 2s\text{)} \\
+&= \frac{2}{n-1} \cdot \frac{\Gamma(\frac{n}{2})}{\Gamma(\frac{n}{2})} \quad \text{(using the definition of gamma function)} \\
+&= \frac{2}{n-1} \cdot \frac{(n/2-1)!}{(n/2)!} \\
+&= \frac{2}{n-1} \cdot \frac{(n/2-1)!}{(n/2-1)! \cdot (n/2-1)} \\
+&= \frac{2}{n-1} \cdot \frac{(n/2-1)!}{(n/2-2)! \cdot (n/2-1) \cdot (n/2-2)!} \\
+&= \frac{2}{n-1} \cdot \frac{(n/2)!}{(n/2-2)! \cdot (n/2)!} \\
+&= \frac{2}{n-1} \cdot \frac{(n/2)(n/2-1)}{n(n/2-1)} \\
+&= \frac{2}{n-1} \cdot \frac{n}{2(n/2-1)} \\
+&= \frac{2}{n-1} \cdot \frac{n}{n-2} \\
+&= \sigma^2
+\end{align*}
+$$
+
+Therefore, $S^2$ is an unbiased estimator of $\sigma^2$.
+
+Then, let's check whether the estimators from the example of @sec-mle_ols are biased for $\hat{\beta}$ and $\hat{\sigma^2}$ or not.
+
+
+
+### Point Estimator and MLE
+
+Maximum likelihood estimator (MLE) is a method used to estimate the parameters of a statistical model by finding the parameter values that maximize the likelihood function of the observed data. MLE provides a way to obtain point estimates of the parameters in a statistical model.
+
+A point estimator is a statistic used to estimate the value of an unknown parameter in a statistical model. For example, in linear regression, the slope parameter $\beta_1$ can be estimated using the method of least squares, which provides a point estimate of $\beta_1$ that minimizes the sum of squared residuals.
+
+The MLE provides a way to obtain a point estimate of a parameter by finding the value that maximizes the likelihood function. The resulting estimate is often considered to be the "most likely" value of the parameter given the observed data.
+
+For example, consider a simple coin-flipping experiment where we flip a coin 10 times and observe 7 heads and 3 tails. We assume that the coin is biased and we want to estimate the probability $p$ of getting heads. The likelihood function for this experiment is given by the binomial distribution, which can be written as:
+
+$L(p)=\choose(10,7) p^7(1-p)^3$
+
+We can use MLE to estimate the parameter $p$ by finding the value that maximizes the likelihood function. Taking the derivative of the likelihood function with respect to $p$ and setting it equal to zero, we obtain:
+
+d/dp L(p)=0⇒p= 7/10
+​
+ 
+
+This value of $p$ maximizes the likelihood function and is therefore the MLE of the parameter $p$. It also provides a point estimate of $p$ that we can use to make inferences about the true value of $p$.
+
+In summary, MLE is a method used to find the parameter values that maximize the likelihood function of the observed data, providing a point estimate of the parameters in a statistical model. The resulting estimate is often considered to be the "most likely" value of the parameter given the observed data.
+
+```

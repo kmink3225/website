@@ -154,7 +154,7 @@
 <h3 class="anchored" data-anchor-id="point-estimation">Point Estimation</h3>
 <ul>
 <li>1111-11-11, Estimation Methods - Method of Moments</li>
-<li>1111-11-11, Estimation Methods - Maximum Likelihood Estimation (MLE)</li>
+<li>2023-03-29, Estimation Methods - <a href="../../../../../docs/blog/posts/statistics/2023-03-25_MLE/index.html">Maximum Likelihood Estimation &amp; Statistical Bias</a></li>
 <li>1111-11-11, Estimation Methods - Bayesian Estimation</li>
 <li>1111-11-11, Estimation Methods - The EM Algorithm</li>
 <li>1111-11-11, Evaluation Methods of Estimators - Mean Squared Error</li>
@@ -826,6 +826,184 @@
   <category>Surveilance</category>
   <guid>kmink3225.netlify.app/docs/blog/posts/Surveilance/guide_map/index.html</guid>
   <pubDate>Sat, 31 Dec 2089 15:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Maximum Likelihood Estimation, Statistical Bias, and Point Estimation</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/statistics/2023-03-25_MLE/index.html</link>
+  <description><![CDATA[ 
+
+
+
+<section id="definition" class="level3" data-number="0.1">
+<h3 data-number="0.1" class="anchored" data-anchor-id="definition"><span class="header-section-number">0.1</span> Definition</h3>
+<p>To talk about MLE (Maximum Likelihood Estimation), we need to recap the concepts and definitions of probability and likelihood. They are related but distinct concepts.</p>
+<ul>
+<li>probability is a measure of the chance that an event will occur, given some prior knowledge or assumptions.</li>
+<li>likelihood is a measure of the plausibility or compatibility of a particular set of model parameters, given the observed data.</li>
+</ul>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Chance vs Plausibility (personal opinion)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>chance is a general term but closer term to statistics, which is used in the situation of the probability or likelihood of an event occurring based on randomness or uncertainty.<br>
+</li>
+<li>plausibility chance is a term more often used in everyday life, which refers to the degree to which something is believable based on the available evidence or information.</li>
+</ul>
+</div>
+</div>
+<div id="def-likelihood" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 1 </strong></span>Let <img src="https://latex.codecogs.com/png.latex?X_1,%20X_2,%20...,%20X_n"> be a set of iid random variables with pdf or pmf <img src="https://latex.codecogs.com/png.latex?f(x_i%20%7C%20%5Ctheta)">, where <img src="https://latex.codecogs.com/png.latex?%5Ctheta"> is a vector of unknown parameters. Then, <strong>the likelihood function is defined as the joint pdf or pmf of the observed data, given the values of the parameters</strong>:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AL(%5Ctheta%20%7C%20x_1,%20x_2,%20...,%20x_n)%20=%20L(%5Ctheta%20%7C%20%5Cmathbf%20x)%20=%20%5Cprod_%7Bi=1%7D%5En%20f(x_i%20%7C%20%5Ctheta)%0A"></p>
+</div>
+<p>The likelihood function is a function of the parameters <img src="https://latex.codecogs.com/png.latex?%5Ctheta">. The function measures the probability of observing a set of data, given the values of the parameters of a statistical model in order to estimate the values of the parameters by finding the values that maximize the likelihood function. The likelihood function is often used in the maximum likelihood estimation (MLE) method, where the MLE estimator is the set of parameter values that maximize the likelihood function.</p>
+<p>The likelihood function is related to the concept of conditional probability. Given a set of observed data <img src="https://latex.codecogs.com/png.latex?x_1,%20x_2,%20...,%20x_n">, the likelihood function measures the probability of observing these data, assuming a particular set of parameter values. The likelihood function is not a probability distribution, but it can be used to derive a probability distribution for the parameters, known as the posterior distribution, using Bayes’ theorem.</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Probability
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Probability is a measure of the likelihood or chance that an event will occur, which is used to quantify uncertainty and randomness.<br>
+probability is a function that maps a real number mapped from a random variable into <img src="https://latex.codecogs.com/png.latex?%5B0,1%5D">. The probability function, denoted by <img src="https://latex.codecogs.com/png.latex?P">, satisfies the following axioms:</p>
+<ul>
+<li>Non-negativity: For any event <img src="https://latex.codecogs.com/png.latex?A%20%5Cin%20%5COmega">, <img src="https://latex.codecogs.com/png.latex?P(A)%20%5Cgeq%200">.</li>
+<li>Normalization: The probability of the entire sample space is 1, i.e., <img src="https://latex.codecogs.com/png.latex?P(%5COmega)%20=%201">.</li>
+<li>Additivity: For any two disjoint events <img src="https://latex.codecogs.com/png.latex?A,%20B%20%5Cin%20%5COmega">, or <img src="https://latex.codecogs.com/png.latex?A%20%5Ccap%20B%20=%20%5Cemptyset">, the probability of their union is equal to the sum of their individual probabilities, i.e., <img src="https://latex.codecogs.com/png.latex?P(A%20%5Ccup%20B)%20=%20P(A)%20+%20P(B)">.</li>
+</ul>
+</div>
+</div>
+<section id="probability-vs-likelihood" class="level4" data-number="0.1.1">
+<h4 data-number="0.1.1" class="anchored" data-anchor-id="probability-vs-likelihood"><span class="header-section-number">0.1.1</span> Probability vs Likelihood</h4>
+<p>Probability and likelihood are related but distinct concepts in statistics.</p>
+<ul>
+<li>Probability refers to the measure of the likelihood that a particular event will occur, scaled on <img src="https://latex.codecogs.com/png.latex?%5B0,1%5D">. It is calculated based on a known probability distribution (= some prior knowledge or assumptions) before the data is observed.</li>
+<li>On the other hand, likelihood refers to the probability of observing a set of data given a particular set of parameter values in a statistical model. It is calculated based on the unknown parameters after the data is observed.</li>
+</ul>
+<p>The likelihood function is used to estimate the values of the parameters by finding the parameter values that maximize the likelihood function.</p>
+<p>For instance of a coin flip, the <strong>probability</strong> of getting heads on a coin flip is 0.5, regardless of whether the coin has been flipped or not (i.e., without data). In contrast, the <strong>likelihood</strong> of observing heads after a coin has been flipped depends on the parameter of interest. We need to find the parameter given data, the results of multiple coin flips.</p>
+<p>If we want to estimate the probability of heads, we can use the maximum likelihood estimation (MLE) approach, which involves finding the value of the coin bias that maximizes the likelihood of observing the observed sequence of heads and tails. The likelihood of the data is calculated using the binomial distribution, which gives the probability of observing a certain number of heads, given the number of tosses and the coin bias. In this case, the likelihood function is a function of the coin bias, and the probability of heads is the value of the coin bias that maximizes the likelihood function.</p>
+</section>
+<section id="relation-between-likelihood-and-pmf-or-pdf" class="level4" data-number="0.1.2">
+<h4 data-number="0.1.2" class="anchored" data-anchor-id="relation-between-likelihood-and-pmf-or-pdf"><span class="header-section-number">0.1.2</span> Relation between Likelihood and PMF or PDF</h4>
+<p>The likelihood function is closely related to pmf or pdf of the data, which is a function that describes the probability of observing a particular value or range of values for the data, given the model parameters. The pmf or pdf is a function of the data, not the parameters, and is often written as <img src="https://latex.codecogs.com/png.latex?f(x%7C%5Ctheta)">. The likelihood function is proportional to the pdf because is a product of pdfs when <img src="https://latex.codecogs.com/png.latex?X_i"> is independent, but with the data fixed and the parameter values treated as variables.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;">library</span>(tidyverse)</span>
+<span id="cb1-2"></span>
+<span id="cb1-3"><span class="co" style="color: #5E5E5E;"># Probability of getting heads on a fair coin flip</span></span>
+<span id="cb1-4">prob <span class="ot" style="color: #003B4F;">&lt;-</span> <span class="fl" style="color: #AD0000;">0.5</span></span>
+<span id="cb1-5"></span>
+<span id="cb1-6"><span class="co" style="color: #5E5E5E;"># likelihood</span></span>
+<span id="cb1-7"><span class="do" style="color: #5E5E5E;
+font-style: italic;">## Simulate a coin flip with a biased coin</span></span>
+<span id="cb1-8"><span class="fu" style="color: #4758AB;">set.seed</span>(<span class="dv" style="color: #AD0000;">123</span>) <span class="co" style="color: #5E5E5E;"># Set random seed for reproducibility</span></span>
+<span id="cb1-9">n <span class="ot" style="color: #003B4F;">&lt;-</span> <span class="dv" style="color: #AD0000;">100</span> <span class="co" style="color: #5E5E5E;"># flipping numbers</span></span>
+<span id="cb1-10">p <span class="ot" style="color: #003B4F;">&lt;-</span> <span class="fl" style="color: #AD0000;">0.2</span> <span class="co" style="color: #5E5E5E;"># Probability of getting heads</span></span>
+<span id="cb1-11">x <span class="ot" style="color: #003B4F;">&lt;-</span> <span class="fu" style="color: #4758AB;">rbinom</span>(n, <span class="at" style="color: #657422;">size =</span> <span class="dv" style="color: #AD0000;">1</span>, <span class="at" style="color: #657422;">prob =</span> p) <span class="co" style="color: #5E5E5E;"># Simulate n coin flips</span></span>
+<span id="cb1-12">x<span class="sc" style="color: #5E5E5E;">%&gt;%</span><span class="fu" style="color: #4758AB;">head</span>(<span class="dv" style="color: #AD0000;">10</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 0 0 0 1 1 0 0 1 0 0</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="do" style="color: #5E5E5E;
+font-style: italic;">## Calculate the likelihood of observing the data given the parameter value p</span></span>
+<span id="cb3-2">likelihood <span class="ot" style="color: #003B4F;">&lt;-</span> <span class="fu" style="color: #4758AB;">prod</span>(<span class="fu" style="color: #4758AB;">dbinom</span>(x, <span class="at" style="color: #657422;">size =</span> <span class="dv" style="color: #AD0000;">1</span>, <span class="at" style="color: #657422;">prob =</span> p))</span>
+<span id="cb3-3">likelihood<span class="sc" style="color: #5E5E5E;">%&gt;%</span><span class="fu" style="color: #4758AB;">round</span>()</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<p>In this example, <code>prob</code> is the assumed probability of getting heads on a fair coin flip. The probability of getting heads on a fair coin flip is 0.5, which is a fixed value that does not depend on any specific data. On the other hand, <code>p</code> is the probability of getting heads for the biased coin that we are simulating. The likelihood of observing a set of coin flips depends on the parameter value, which is unknown (actually, we know that it was <img src="https://latex.codecogs.com/png.latex?p=0.2">), and the observed data. We simulate a set of 100 coin flips with a biased coin that has a probability of 0.2 of getting heads. We then calculate the likelihood of observing this data given the parameter value of 0.2, which is the product of the probability mass function for each flip.</p>
+<p>However, in a real-world scenario, we would not know the true value of <code>p</code> and we would need to estimate it based on the observed data. By finding the Maximum Likelihood Estimation (MLE) of p, we are estimating the value of p that is most likely to have generated the observed data. To find MLE of <code>p</code> that maximizes the likelihood function, we can use numerical optimization methods.</p>
+<p>As n increases, the product term in the likelihood function <img src="https://latex.codecogs.com/png.latex?%5Cprod_%7Bi=1%7D%5E%7Bn%7D%20f(x_i;%20%5Ctheta)">, where <img src="https://latex.codecogs.com/png.latex?f"> is the pdf or pmf of the distribution being used, can become very small (since it is a product of values less than 1) and may result in numerical underflow (i.e., the product becomes so small that it rounds down to 0 in computer calculations). In practice, we typically take the logarithm of the likelihood function, called the log-likelihood, to avoid this issue:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Clog%20L(%5Ctheta%7Cx_1,%20x_2,%20...,%20x_n)%20=%20%5Csum_%7Bi=1%7D%5E%7Bn%7D%20%5Clog%20f(x_i;%20%5Ctheta)%0A"></p>
+<p>Using the logarithm allows us to convert the product of small probabilities into a sum of log-probabilities, which are typically easier to work with numerically and mathematically. In this case, as n increases, the sum term in the log-likelihood can decrease (since it is a sum of negative values), but the decrease may not be as severe as in the product term of the likelihood function because of the log scale converting very small or large values into larger or smaller values .</p>
+<div id="def-MLE" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 2 </strong></span>The MLE estimator <img src="https://latex.codecogs.com/png.latex?%5Chat%7B%5Ctheta%7D"> is the value of the parameter vector that maximizes the likelihood function:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Chat%7B%5Ctheta%7D_%7BMLE%7D%20=%20%5Cunderset%7B%5Ctheta%7D%7B%5Coperatorname%7Bargmax%7D%7D%20L(%5Ctheta%20%7C%20x_1,%20x_2,%20...,%20x_n)%0A"></p>
+<p>or equivalently, maximizes the log-likelihood function:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Chat%7B%5Ctheta%7D_%7BMLE%7D%20=%20%5Cunderset%7B%5Ctheta%7D%7B%5Coperatorname%7Bargmax%7D%7D%20%5Clog%20L(%5Ctheta%20%7C%20x_1,%20x_2,%20...,%20x_n)%0A"></p>
+</div>
+<p>The Maximum Likelihood Estimation (MLE) is a method of estimating the parameters of a statistical model by finding the values of the parameters that maximize the likelihood function. The likelihood function is the probability of observing the data, given the parameters of the model. The MLE estimator is the set of parameter values that maximize the likelihood function. In other words, the MLE is the set of parameter values that make the observed data most probable, given the assumed probability distribution. The likelihood function is typically the product or the sum (depending on whether the observations are assumed to be independent or not) of the probabilities or probability densities of the observations, evaluated at the values of the parameters.</p>
+<p>The MLE estimator has desirable statistical properties, such as consistency, efficiency, and asymptotic normality, under certain regularity conditions on the likelihood function and the parameter space. However, it is important to note that the MLE is not always the best estimator for a given problem, and other estimation methods may be more appropriate depending on the specific characteristics of the data and the model.</p>
+<p>The likelihood function is the joint probability density (or mass) function of the data, viewed as a function of the parameters, and we find the maximum of this function <strong>by differentiating</strong> it with respect to the parameters and setting the derivative to zero.</p>
+</section>
+</section>
+<section id="sec-mle_ols" class="level3" data-number="0.2">
+<h3 data-number="0.2" class="anchored" data-anchor-id="sec-mle_ols"><span class="header-section-number">0.2</span> MLE of OLS</h3>
+<p>In a linear regression, the maximum likelihood estimate of the ordinary least squares (OLS) coefficients is equivalent to the least squares estimate. To derive this, we assume that <img src="https://latex.codecogs.com/png.latex?%5Cepsilon_i%20%5Csim%20N(0,%5Csigma%5E2)"> and that the observations are independent. Then, the likelihood function for the data <img src="https://latex.codecogs.com/png.latex?Y%20=%20(Y_1,%20Y_2,%20%5Cdots,%20Y_n)"> is:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AL(Y%7C%5Ctheta)%20=L(Y%7C%5Cbeta,%5Csigma%5E2)%20=%20(2%5Cpi%5Csigma%5E2)%5E%7B-%5Cfrac%7Bn%7D%7B2%7D%7D%20e%5E%7B-%5Cfrac%7B1%7D%7B2%5Csigma%5E2%7D%20%5Csum_%7Bi=1%7D%5En%20(Y_i%20-%20X_i%5Cbeta)%5E2%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?X_i"> is the <img src="https://latex.codecogs.com/png.latex?i"> th row of the design matrix <img src="https://latex.codecogs.com/png.latex?X"> and <img src="https://latex.codecogs.com/png.latex?%5Cbeta"> is the vector of regression coefficients.</p>
+<p>To find the maximum likelihood estimates of <img src="https://latex.codecogs.com/png.latex?%5Cbeta"> and <img src="https://latex.codecogs.com/png.latex?%5Csigma%5E2">, we maximize the likelihood function with respect to these parameters. Taking the log of the likelihood function and simplifying, we obtain:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Clog%20L(Y%7C%5Ctheta)%20=%20%5Clog%20L(Y%7C%5Cbeta,%5Csigma%5E2)%20=%20-%5Cfrac%7Bn%7D%7B2%7D%20%5Clog%20(2%5Cpi)%20-%20%5Cfrac%7Bn%7D%7B2%7D%20%5Clog(%5Csigma%5E2)%20-%20%5Cfrac%7B1%7D%7B2%5Csigma%5E2%7D%20%5Csum_%7Bi=1%7D%5En%20(Y_i%20-%20X_i%5Cbeta)%5E2%0A"></p>
+<p>To maximize this function with respect to <img src="https://latex.codecogs.com/png.latex?%5Cbeta">, we differentiate with respect to <img src="https://latex.codecogs.com/png.latex?%5Cbeta"> and set the derivative to zero, <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20%5Ctheta%7D%20%5Clog%20L(Y%7C%5Ctheta)%20=%200">:</p>
+<p>Solving for <img src="https://latex.codecogs.com/png.latex?%5Cbeta">, we obtain:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20%5Ctheta%7D%20%5Clog%20L(Y%7C%5Cbeta,%5Csigma%5E2)%20=%20-%5Cfrac%7B1%7D%7B2%5Csigma%5E2%7D%20%5Csum_%7Bi=1%7D%5En%202X_i(Y_i%20-%20X_i%5Cbeta)%20=%200%0A"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Chat%7B%5Cbeta%7D%20=%20(X%5ET%20X)%5E%7B-1%7D%20X%5ET%20Y%0A"> , which is the OLS estimate of <img src="https://latex.codecogs.com/png.latex?%5Cbeta">.</p>
+<p>Solving for <img src="https://latex.codecogs.com/png.latex?%5Csigma%5E2">, we differentiate with respect to <img src="https://latex.codecogs.com/png.latex?sigma%5E2"> and set the derivative to zero:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20%5Csigma%5E2%7D%20log%20L(Y%7C%5Cbeta,%5Csigma%5E2)%20=%20-%5Cfrac%7Bn%7D%7B2%5Csigma%5E2%7D%20+%20%5Cfrac%7B1%7D%7B2%5Csigma%5E4%7D%20%5Csum_%7Bi=1%7D%5En%20(Y_i%20-%20X_i%5Cbeta)%5E2%20=%200%0A"> <img src="https://latex.codecogs.com/png.latex?%0A%5Chat%7B%5Csigma%7D%5E2%20=%20%5Cfrac%7B%5Csum_%7Bi=1%7D%5En%20(Y_i%20-%20X_i%5Cbeta)%5E2%7D%7Bn%7D%0A"></p>
+<p>which is the OLS estimate of <img src="https://latex.codecogs.com/png.latex?%5Csigma%5E2">.</p>
+<p>Therefore, we see that the maximum likelihood estimates of <img src="https://latex.codecogs.com/png.latex?%5Cbeta"> and <img src="https://latex.codecogs.com/png.latex?%5Csigma%5E2"> in linear regression with normally distributed errors are equivalent to the OLS estimates of these parameters.</p>
+</section>
+<section id="statistical-bias" class="level3" data-number="0.3">
+<h3 data-number="0.3" class="anchored" data-anchor-id="statistical-bias"><span class="header-section-number">0.3</span> Statistical Bias</h3>
+<p>Statistical bias refers to a systematic error or deviation in the results of a statistical analysis that is caused by factors other than chance. A biased estimator is one that consistently produces estimates that are systematically different from the true value of the parameter being estimated.</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+There are 5 Types of bias
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The above article discusses five types of statistical bias that analysts, data scientists, and other business professionals should be aware of to minimize their effects on the final results.</p>
+<ol type="1">
+<li>selection bias: data selection methods are not truly random, leading to unequal representation of the population.</li>
+<li>bias in assignment: pre-existing differences between groups in an experiment can affect the outcome, a.k.a allocation bias, treatment assignment bias, or exposure assignment bias.</li>
+<li>confounders: additional variables not accounted for in the experimental design can impact the results.</li>
+<li>self-serving bias: individuals tend to downplay undesirable qualities and overemphasize desirable ones a.k.a cognitive bias. In other words, people tend to take credit for their successes and blame outside factors for their failures.</li>
+<li>experimenter expectations: researchers can unconsciously influence the data through verbal or non-verbal cues.</li>
+</ol>
+<p>Being aware of these biases can lead to better models and more reliable insights for data-backed business decisions.</p>
+<p><a href="https://online.hbs.edu/blog/post/types-of-statistical-bias">Source: Article Written by Jenny Gutbezahl</a></p>
+</div>
+</div>
+<p>It is important to detect and correct for bias in statistical analyses, as biased estimates can lead to incorrect conclusions and decisions. One way to correct for bias is to use an unbiased estimator, which is one that has a zero bias, i.e., its expected value is equal to the true value of the parameter being estimated.</p>
+<div id="def-bias" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 3 </strong></span>An estimator <img src="https://latex.codecogs.com/png.latex?%5Chat%7B%5Ctheta%7D"> is said to be biased if</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Coperatorname%7BE%7D(%5Chat%7B%5Ctheta%7D)%5Cne%20%5Ctheta%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BE%7D(%5Chat%7B%5Ctheta%7D)"> is the expected value of the estimator <img src="https://latex.codecogs.com/png.latex?%5Chat%7B%5Ctheta%7D">, and <img src="https://latex.codecogs.com/png.latex?%5Ctheta"> is the true value of the parameter being estimated.</p>
+</div>
+<p>An estimator is said to be unbiased if <strong>its expected value is equal to the true value of the parameter being estimated</strong>. In other words, an estimator is unbiased if, on average, it gives an estimate that is equal to the true value of the parameter.</p>
+<div class="cell" data-evale="false">
+
+</div>
+
+
+</section>
+
+ ]]></description>
+  <category>Statistics</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/statistics/2023-03-25_MLE/index.html</guid>
+  <pubDate>Tue, 28 Mar 2023 15:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Tensorflow - Data Input Pipeline</title>
@@ -2878,378 +3056,6 @@ English
   <guid>kmink3225.netlify.app/docs/blog/posts/DL/2023-03-10_cnn/index.html</guid>
   <pubDate>Thu, 09 Mar 2023 15:00:00 GMT</pubDate>
   <media:content url="kmink3225.netlify.app/docs/blog/posts/DL/2023-03-10_cnn/output_featuremap.png" medium="image" type="image/png" height="95" width="144"/>
-</item>
-<item>
-  <title>Computing and Networking</title>
-  <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-03-02_aws/computing_networking.html</link>
-  <description><![CDATA[ 
-
-
-
-<ul class="nav nav-pills" id="language-tab">
-<li class="nav-item">
-<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
-Korean
-</button>
-</li>
-<li class="nav-item">
-<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
-English
-</button>
-</li>
-<div class="tab-content" id="language-tabcontent">
-
-<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
-<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
-<section id="some-basics" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="some-basics"><span class="header-section-number">1</span> Some Basics</h2>
-<ul>
-<li>AWS global infrastructure – Region / Availability zone (AZ) / Data Center</li>
-<li>AWS region consideration : Compliance – Latency – Pricing – Service availability</li>
-<li>Interacting with AWS
-<ul>
-<li>AWS Management console</li>
-<li>AWS Command Line Interface (CLI) - unified tool to manage AWS services,<br>
-</li>
-<li>AWS Software Development Kits (SDKs) - executing code with programming languages.</li>
-</ul></li>
-<li>Security in the AWS Cloud
-<ul>
-<li>Responsibility - Customer &amp; AWS
-<ul>
-<li>AWS – security of the cloud, responsible for protecting and securing the infrastructure that runs all the services</li>
-<li>Customer – security in the cloud, responsible for properly configuring the service and your applications, as well as ensuring your data is secure.</li>
-</ul></li>
-<li>Root user (unristricted access)</li>
-<li>Multi-Factor Authentication</li>
-</ul></li>
-<li>AWS Identity and Access Management
-<ul>
-<li>Introduction to AWS IAM (Identity and Access Management)</li>
-<li>AWS account나 resource에 대한 권한을 관리하게 해주는 서비스</li>
-<li>Authentication (인증)</li>
-<li>Authorization (인가): resource에 대한 권한
-<ul>
-<li>Ex) 회사의 AWS account가 존재한다면, 회사 구성원들은 account 에 접근하기 위해 모두 IAM user가 되고 (authentication), account 내부의 각 AWS resource에 대한 접근 권한을 부여받아야 한다. (authorization)</li>
-</ul></li>
-<li>IAM policy: Effect (Allow/Deny), Action, Resource, Condition</li>
-<li>IAM Group</li>
-<li>IAM roles : IAM user나 AWS resource에 권한을 부여하기 위한 권한 세부 조정</li>
-<li><a href="https://aws-tc-largeobjects.s3-us-west-2.amazonaws.com/DEV-AWS-MO-GCNv2/exercise-2-iam.html">reference</a></li>
-</ul></li>
-</ul>
-</section>
-<section id="computing-and-networking" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="computing-and-networking"><span class="header-section-number">2</span> Computing and Networking</h2>
-<section id="introduction" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">2.1</span> Introduction</h3>
-<ul>
-<li>Computing
-<ul>
-<li>it gives our application power in the form of CPU, memory, and networking capacity so that we can process our users’ requests.</li>
-<li>Compute Solution Examples
-<ul>
-<li>EC2</li>
-<li>container services: Amazon ECS(Elastic Container Service) and Amazon ECS (Elastic Container Service)</li>
-<li>serverless options AWS Lambda</li>
-</ul></li>
-<li>compare them to one another.
-<ul>
-<li>when and how to apply each service, to different use cases.</li>
-</ul></li>
-</ul></li>
-<li>Networking
-<ul>
-<li>needed for being hands-on with Amazon EC2</li>
-<li>launch an EC2 instance to host the employee directory application.</li>
-<li>How to Launch? → put an EC2 instance in a network, VPCs on AWS</li>
-</ul></li>
-</ul>
-</section>
-<section id="computing" class="level3" data-number="2.2">
-<h3 data-number="2.2" class="anchored" data-anchor-id="computing"><span class="header-section-number">2.2</span> Computing</h3>
-<ul>
-<li>Apps requiring computing capacity for running such as
-<ul>
-<li>web servers, batch jobs, databases, HR software, machine learning, or something else</li>
-<li>on-premises computing resources are costly and have many things to deal with</li>
-<li>AWS already is ready to be used
-<ul>
-<li>built the infrastructure</li>
-<li>secured the data centers.</li>
-<li>bought the servers,</li>
-<li>racked and stacked them</li>
-<li>are already online,</li>
-</ul></li>
-<li>3 computing services for different use cases.
-<ul>
-<li>EC2 (Elastsic Compute Cloud)</li>
-<li>container services</li>
-<li>serverless compute.</li>
-</ul></li>
-<li>EC2 (Flexible and scalable)
-<ul>
-<li><strong>EC2 instances Characteristics</strong>
-<ul>
-<li>a lot of flexibility&nbsp;and control in the cloud</li>
-<li>configure them to meet your needs.</li>
-<li>Payment
-<ul>
-<li>at the end of the billing cycle,&nbsp;you only pay for what you use,&nbsp;either per second or per hour,&nbsp;depending on the type of instance.</li>
-<li>terminate (stop) the instance&nbsp;and you will stop incurring charges.</li>
-</ul></li>
-<li>a range of operating systems&nbsp;including
-<ul>
-<li>Linux, Mac OS, Ubuntu, Windows, and more</li>
-<li>To select the OS for your server,&nbsp;you must choose
-<ul>
-<li><strong>AMI</strong> (Amazon Machine Image)
-<ul>
-<li>can set several configurations according to users’ use case</li>
-</ul></li>
-<li>You can launch one or many instances from a single AMI,&nbsp;which would create multiple instances&nbsp;that all have the same configurations.</li>
-</ul></li>
-</ul></li>
-<li>The instance types are grouped for use cases&nbsp;like
-<ul>
-<li>compute optimized</li>
-<li>memory optimized</li>
-<li>storage optimized, and more.</li>
-<li>read AWS documentation</li>
-<li>For example,
-<ul>
-<li>the G instance family&nbsp;(graphics-intensive applications)</li>
-<li>the M5 general purpose EC2 instance family&nbsp;(balance of resources)</li>
-<li>The T3 or A1 is the instance family&nbsp;(the blend of the hardware capabilities)</li>
-<li>Then there’s the size like small, medium, large.&nbsp;It goes down to nano and up to many, many extra large sizes,&nbsp;depending on the instance type.</li>
-</ul></li>
-<li>this type of selection: you are no longer locked&nbsp;into hardware decisions up front.
-<ul>
-<li>choose an initial EC2 instance type→&nbsp;evaluate its performance for your specific use case,&nbsp;→ change to a different type</li>
-</ul></li>
-<li>EC2 is also resizable with
-<ul>
-<li>a few clicks in the console or</li>
-<li>can be done programmatically through an API call</li>
-</ul></li>
-</ul></li>
-<li>EC2 Instance Lifecycle
-<ul>
-<li>you <strong>launch</strong> an EC2 instance from an AMI
-<ul>
-<li>it enters a <strong>pending state</strong> (booting up).</li>
-<li>it enters <strong>the running state</strong> (start being charged for the EC2 instance)
-<ul>
-<li>running options
-<ul>
-<li>reboot the instance</li>
-<li>stop your instance (stopping phase like powering down your laptop)</li>
-<li>stop hibernate (the stopping phase&nbsp;- no boot sequence required)</li>
-<li>the terminate (the shutting down phase - get rid of an instance)</li>
-<li>termination protection&nbsp;(back up in persistent storage in EC2)</li>
-</ul></li>
-<li>charged if you are in the running state&nbsp;or if you are in the stopping state, preparing to hibernate.</li>
-</ul></li>
-</ul></li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li>Container Services
-<ul>
-<li>efficiency and portability: container orchestration tools in AWS
-<ul>
-<li>Container orchestration
-<ul>
-<li>processes to start, stop, restart&nbsp;and monitor containers running across&nbsp;not just one EC2 instance,&nbsp;but a number of them together that we call a cluster&nbsp;of EC2 instances.</li>
-<li>hundreds or thousands of containers&nbsp;- hard to manage them</li>
-<li>Orchestration tools : run and manage containers.</li>
-<li>Amazon ECS (Elastic Container Service)
-<ul>
-<li>ECS is designed&nbsp;to help you manage your own container orchestration software.</li>
-</ul></li>
-<li>Amazon EKS (Elastic Kubernetes Service)</li>
-</ul></li>
-<li>The way you interact with these container services
-<ul>
-<li>the orchestration tool’s API</li>
-<li>the orchestration tool carries out&nbsp;the management tasks.</li>
-<li>automate scaling of your cluster</li>
-<li>automate hosting your containers</li>
-<li>automate the scaling&nbsp;of the containers themselves.</li>
-</ul></li>
-<li>super fast response to increasing demand&nbsp;when compared to virtual machines.</li>
-<li>hosting options : either ECS or EKS.</li>
-</ul></li>
-</ul></li>
-<li>Serverless Compute Platform
-<ul>
-<li>an alternative to hosting containers
-<ul>
-<li>When using Amazon EC2 or Container Services&nbsp;running on top of EC2 as a compute platform,&nbsp;you are required to set up&nbsp;and manage your fleet of instances.&nbsp;This means that you are responsible&nbsp;for patching your instances&nbsp;when new software packages come out&nbsp;or when new security updates come out.</li>
-</ul></li>
-<li>Serverless meaning
-<ul>
-<li>can not see&nbsp;or access the underlying infrastructure or instances&nbsp;that are hosting your solution.</li>
-<li>Instead, the management of the underlying environment&nbsp;from a provisioning, scaling, fault-tolerance&nbsp;and maintenance perspective is taken care of for a user.</li>
-<li>All you need to do is focus on your application.</li>
-<li>serverless offerings&nbsp;are very convenient to use.</li>
-</ul></li>
-<li>AWS Fargate (the container hosting platform)
-<ul>
-<li>serverless compute platform for ECS or EKS.</li>
-<li>The scaling or fault-tolerance, OS or environments are built in</li>
-<li>For user to do just
-<ul>
-<li>define your container</li>
-<li>how you want your container to be run</li>
-<li>it scales on-demand.</li>
-</ul></li>
-</ul></li>
-<li>AWS Lambda (the serverless compute platform)
-<ul>
-<li>package&nbsp;and upload your code to the Lambda service,&nbsp;creating what’s called a Lambda function.</li>
-<li>Lambda functions run in response to triggers.</li>
-<li>You configure a trigger</li>
-<li>common examples of triggers&nbsp;for Lambda functions
-<ul>
-<li>an HTTP request</li>
-<li>an upload of a file to the storage service, Amazon S3</li>
-<li>events originating from other AWS services&nbsp;or</li>
-<li>even in-app activity from mobile devices</li>
-</ul></li>
-<li>When the trigger is detected, the code is automatically run&nbsp;in a managed environment.</li>
-<li>Lambda is currently designed to run code&nbsp;that has a runtime of under 15 minutes.
-<ul>
-<li>So, this isn’t for long running processes like deep learning&nbsp;or batch jobs,&nbsp;you wouldn’t host something like a WordPress site&nbsp;on AWS Lambda.</li>
-<li>It’s more suited for quick processing,&nbsp;like a web backend for handling requests&nbsp;or a backend report processing service.</li>
-</ul></li>
-<li>not billed for code that isn’t running,&nbsp;you only get billed for the resources that you use,&nbsp;down to 100 millisecond intervals.</li>
-</ul></li>
-</ul></li>
-</ul></li>
-</ul>
-</section>
-<section id="networking" class="level3" data-number="2.3">
-<h3 data-number="2.3" class="anchored" data-anchor-id="networking"><span class="header-section-number">2.3</span> Networking</h3>
-<ul>
-<li>the network, or VPC
-<ul>
-<li>to launch instances, you needed to select a network. Building a custom VPC&nbsp;for our application that is more secure and provides&nbsp;more granular access to the Internet&nbsp;than the default option we originally chose.</li>
-<li>Networking on AWS is the basis of most architectures. In this section, geared&nbsp;towards EC2-related services.</li>
-<li>a Lambda function
-<ul>
-<li>might not need a network at all</li>
-</ul></li>
-</ul></li>
-<li>Creation and Concept of VPC
-<ul>
-<li>Creation and Concept of VPC
-<ul>
-<li>Concept
-<ul>
-<li>It creates a boundary where your applications&nbsp;and resources are isolated from any outside movement.</li>
-<li>nothing comes into and comes out of the VPC&nbsp;without your explicit permission.</li>
-</ul></li>
-<li>Creation
-<ul>
-<li>To create a VPC, two specific settings to declare
-<ol type="1">
-<li>the region you’re selecting (In this example, the Oregon region)</li>
-<li>the IP range&nbsp;in the form of CIDR notation. (In this example, 10.1.0.0/16)</li>
-</ol></li>
-<li>the VPC name: app-vpc</li>
-</ul></li>
-<li>Divide VPC space into subnets
-<ul>
-<li>put your resources such as your EC2 Instances&nbsp;inside of these subnets.</li>
-<li>The goal of these subnets&nbsp;is to provide more granular controls over access&nbsp;to your resources.</li>
-<li>With public resources,&nbsp;put those resources inside a subnet&nbsp;with internet connectivity.</li>
-<li>With private resources like a database,&nbsp;create another subnet&nbsp;and have different controls&nbsp;to keep those resources private.</li>
-<li>To create a subnet, you need three main things,
-<ul>
-<li>the VPC your subnet to live in which is this one,</li>
-<li>the AZ (example. AZ-A = US-West-2a) your subnet to live in,</li>
-<li>IP range for your subnet&nbsp;which must be a subset of the VPC IP range</li>
-</ul></li>
-</ul></li>
-<li>internet gateway for public resource
-<ul>
-<li>enable internet connectivity</li>
-<li>When you create an internet gateway,&nbsp;you then need to attach it to your VPC.</li>
-</ul></li>
-<li>VGW (Virtual Private Gateway) for private resource
-<ul>
-<li>create a VPN connection&nbsp;between a private network like an On-premise data center&nbsp;or internal corporate network to your VPC.</li>
-<li>establish an encrypted VPN connection&nbsp;to your private internal AWS resources.</li>
-</ul></li>
-<li>having high availability: one option to make VPC better
-<ul>
-<li>What that means is if this AZ goes down for whatever reason,&nbsp;what happens to our resources in that AZ?&nbsp;They go down too.&nbsp;So ideally, we would have resources in another easy&nbsp;to take on the traffic coming to our application.</li>
-<li>To do this, we’d need to duplicate the resources&nbsp;in this AZ into the second AZ.&nbsp;So that means we need to create two additional subnets&nbsp;each within another AZ, say AZ b.&nbsp;All right</li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li>Amazon VPC Routing
-<ul>
-<li>The example has two additional subnets,&nbsp;one public, one private in a different AZ&nbsp;for a total of four subnets including an EC2 instance&nbsp;hosting our employee directory&nbsp;inside of the public subnet in AZ A.</li>
-<li>route tables
-<ul>
-<li>provide a path&nbsp;for the internet traffic to enter the internet gateway&nbsp;and find the right subnet.</li>
-<li>A route table contains a set of rules, called routes
-<ul>
-<li>determine&nbsp;where network traffic is directed</li>
-<li>These route tables can be applied&nbsp;on either the subnet level or at the VPC level.</li>
-<li>When creating a brand new VPC,&nbsp;AWS creates a route table called the main route table&nbsp;and applies it to the entire VPC.</li>
-<li>AWS assumes that when you create a new VPC with subnets,&nbsp;you want traffic to flow between those subnets.</li>
-<li>The default configuration of the main route table&nbsp;is to allow traffic between all subnets local to the VPC.</li>
-<li>the main route table of the VPC&nbsp;can be created in console
-<ul>
-<li>click on route tables on the side panel</li>
-<li>create route table.</li>
-<li>give it a name such as app-route-table-public</li>
-<li>choose the app-vpc and then click create.</li>
-</ul></li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li>Secure Network with Amazone VPC Security
-<ul>
-<li>at the base level,&nbsp;any new VPC is isolated from internet traffic to prevent risk.</li>
-<li>when allowing internet traffic&nbsp;by opening up routes,&nbsp;you need two options to keep your network secure,&nbsp;network access control lists
-<ol type="1">
-<li>network ACLs
-<ul>
-<li>a firewall at the subnet level</li>
-<li>control what kind of traffic&nbsp;is allowed to enter, and leave, your subnet</li>
-<li>The default network ACL allows all traffic&nbsp;in and out of your subnet.</li>
-<li>Using this default configuration&nbsp;is a good starting place but if needed,&nbsp;you can change the configuration of your network ACLs&nbsp;to further lock down your subnets.</li>
-<li>For example, if you only wanted to allow HTTPS traffic&nbsp;into my subnet, you can do that by creating an inbound rule and outbound rule in my ACL,&nbsp;that allows HTTPS traffic from anywhere on port 443&nbsp;and denies everything else.</li>
-</ul></li>
-<li>security groups
-<ul>
-<li>firewalls that exist at the EC2 instance level.</li>
-<li>Any time you create an EC2 instance,&nbsp;you’ll need to place that EC2 instance&nbsp;inside a security group&nbsp;that allows the appropriate kinds of traffic&nbsp;to flow to your application.</li>
-</ul></li>
-</ol></li>
-</ul></li>
-</ul>
-</section>
-</section>
-</div>
-</div>
-<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
-<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
-
-</div>
-</div>
-
-
-
-</div></ul> ]]></description>
-  <category>Engineering</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/Engineering/2023-03-02_aws/computing_networking.html</guid>
-  <pubDate>Wed, 08 Mar 2023 15:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>

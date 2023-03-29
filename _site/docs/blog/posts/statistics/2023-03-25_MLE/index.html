@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kwangmin Kim">
-<meta name="dcterms.date" content="2023-03-24">
+<meta name="dcterms.date" content="2023-03-29">
 <meta name="description" content="template">
 
-<title>Kwangmin Kim - MLE</title>
+<title>Kwangmin Kim - Maximum Likelihood Estimation, Statistical Bias, and Point Estimation</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,6 +23,69 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -62,6 +125,7 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="../../../../../styles.css">
 </head>
@@ -137,7 +201,9 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#mle-of-ols" id="toc-mle-of-ols" class="nav-link active" data-scroll-target="#mle-of-ols"><span class="toc-section-number">0.1</span>  MLE of OLS</a></li>
+  <li><a href="#definition" id="toc-definition" class="nav-link active" data-scroll-target="#definition"><span class="toc-section-number">0.1</span>  Definition</a></li>
+  <li><a href="#sec-mle_ols" id="toc-sec-mle_ols" class="nav-link" data-scroll-target="#sec-mle_ols"><span class="toc-section-number">0.2</span>  MLE of OLS</a></li>
+  <li><a href="#statistical-bias" id="toc-statistical-bias" class="nav-link" data-scroll-target="#statistical-bias"><span class="toc-section-number">0.3</span>  Statistical Bias</a></li>
   </ul>
 </nav>
     </div>
@@ -146,7 +212,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">MLE</h1>
+<h1 class="title">Maximum Likelihood Estimation, Statistical Bias, and Point Estimation</h1>
 <p class="subtitle lead">Overview</p>
   <div class="quarto-categories">
     <div class="quarto-category">Statistics</div>
@@ -172,7 +238,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 24, 2023</p>
+      <p class="date">March 29, 2023</p>
     </div>
   </div>
   
@@ -182,31 +248,187 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>Maximum likelihood estimation (MLE) is a statistical method used to estimate the parameters of a probability distribution based on observed data. The basic idea is to find the values of the parameters that maximize the likelihood function, which is a function of the observed data and the unknown parameters.</p>
-<p>In other words, the MLE is the set of parameter values that make the observed data most probable, given the assumed probability distribution. The likelihood function is typically the product or the sum (depending on whether the observations are assumed to be independent or not) of the probabilities or probability densities of the observations, evaluated at the values of the parameters.</p>
-<p>The MLE has many desirable properties, such as efficiency and consistency under certain conditions. It is widely used in statistical inference and hypothesis testing, as well as in various fields of science and engineering where data analysis is required. However, it is important to note that the MLE is not always the best estimator for a given problem, and other estimation methods may be more appropriate depending on the specific characteristics of the data and the model.</p>
-<p>To find the maximum likelihood estimate (MLE) of some data, we need to specify a parametric model that describes the distribution of the data, and then estimate the parameters that maximize the likelihood function for the observed data.</p>
-<p>In other words, the MLE is the set of parameter values that maximize the probability of observing the data that we have. The likelihood function is the joint probability density (or mass) function of the data, viewed as a function of the parameters, and we find the maximum of this function by differentiating it with respect to the parameters and setting the derivative to zero.</p>
-<p>The MLE is a commonly used method for estimating the parameters of a statistical model, and it has desirable properties such as efficiency and consistency under certain conditions. However, it is important to note that the MLE may not always be the best estimator for a given problem, and other estimation methods may be more appropriate depending on the specific characteristics of the data and the model.</p>
-<section id="mle-of-ols" class="level3" data-number="0.1">
-<h3 data-number="0.1" class="anchored" data-anchor-id="mle-of-ols"><span class="header-section-number">0.1</span> MLE of OLS</h3>
-<p>In linear regression with normally distributed errors, the maximum likelihood estimate (MLE) of the ordinary least squares (OLS) coefficients is equivalent to the least squares estimate.</p>
-<p>To derive this, we start by assuming that the error terms follow a normal distribution with mean 0 and variance σ^2, and that the observations are independent. Then, the likelihood function for the data Y = (Y1, Y2, …, Yn) is:</p>
-<p>L(Y|β,σ^2) = (2πσ<sup>2)</sup>(-n/2) exp{-1/(2σ^2) Σi=1^n (Yi - Xiβ)^2}</p>
-<p>where Xi is the ith row of the design matrix X and β is the vector of regression coefficients.</p>
-<p>To find the maximum likelihood estimates of β and σ^2, we maximize the likelihood function with respect to these parameters. Taking the log of the likelihood function and simplifying, we obtain:</p>
-<p>log L(Y|β,σ^2) = -n/2 log(2π) - n/2 log(σ^2) - 1/(2σ^2) Σi=1^n (Yi - Xiβ)^2</p>
-<p>To maximize this function with respect to β, we differentiate with respect to β and set the derivative to zero:</p>
-<p>∂ log L(Y|β,σ^2) / ∂β = -1/(2σ^2) Σi=1^n 2Xi(Yi - Xiβ) = 0</p>
-<p>Solving for β, we obtain:</p>
-<p>β = (X^T X)^(-1) X^T Y</p>
-<p>which is the OLS estimate of β.</p>
-<p>To maximize the likelihood function with respect to σ^2, we differentiate with respect to σ^2 and set the derivative to zero:</p>
-<p>∂ log L(Y|β,σ^2) / ∂σ^2 = -n/(2σ^2) + 1/(2σ^4) Σi=1^n (Yi - Xiβ)^2 = 0</p>
-<p>Solving for σ^2, we obtain:</p>
-<p>σ^2 = Σi=1^n (Yi - Xiβ)^2 / n</p>
-<p>which is the OLS estimate of σ^2.</p>
-<p>Therefore, we see that the maximum likelihood estimates of β and σ^2 in linear regression with normally distributed errors are equivalent to the OLS estimates of these parameters.</p>
+<section id="definition" class="level3" data-number="0.1">
+<h3 data-number="0.1" class="anchored" data-anchor-id="definition"><span class="header-section-number">0.1</span> Definition</h3>
+<p>To talk about MLE (Maximum Likelihood Estimation), we need to recap the concepts and definitions of probability and likelihood. They are related but distinct concepts.</p>
+<ul>
+<li>probability is a measure of the chance that an event will occur, given some prior knowledge or assumptions.</li>
+<li>likelihood is a measure of the plausibility or compatibility of a particular set of model parameters, given the observed data.</li>
+</ul>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Chance vs Plausibility (personal opinion)
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>chance is a general term but closer term to statistics, which is used in the situation of the probability or likelihood of an event occurring based on randomness or uncertainty.<br>
+</li>
+<li>plausibility chance is a term more often used in everyday life, which refers to the degree to which something is believable based on the available evidence or information.</li>
+</ul>
+</div>
+</div>
+<div id="def-likelihood" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 1 </strong></span>Let <span class="math inline">\(X_1, X_2, ..., X_n\)</span> be a set of iid random variables with pdf or pmf <span class="math inline">\(f(x_i | \theta)\)</span>, where <span class="math inline">\(\theta\)</span> is a vector of unknown parameters. Then, <strong>the likelihood function is defined as the joint pdf or pmf of the observed data, given the values of the parameters</strong>:</p>
+<p><span class="math display">\[
+L(\theta | x_1, x_2, ..., x_n) = L(\theta | \mathbf x) = \prod_{i=1}^n f(x_i | \theta)
+\]</span></p>
+</div>
+<p>The likelihood function is a function of the parameters <span class="math inline">\(\theta\)</span>. The function measures the probability of observing a set of data, given the values of the parameters of a statistical model in order to estimate the values of the parameters by finding the values that maximize the likelihood function. The likelihood function is often used in the maximum likelihood estimation (MLE) method, where the MLE estimator is the set of parameter values that maximize the likelihood function.</p>
+<p>The likelihood function is related to the concept of conditional probability. Given a set of observed data <span class="math inline">\(x_1, x_2, ..., x_n\)</span>, the likelihood function measures the probability of observing these data, assuming a particular set of parameter values. The likelihood function is not a probability distribution, but it can be used to derive a probability distribution for the parameters, known as the posterior distribution, using Bayes’ theorem.</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Probability
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Probability is a measure of the likelihood or chance that an event will occur, which is used to quantify uncertainty and randomness.<br>
+probability is a function that maps a real number mapped from a random variable into <span class="math inline">\([0,1]\)</span>. The probability function, denoted by <span class="math inline">\(P\)</span>, satisfies the following axioms:</p>
+<ul>
+<li>Non-negativity: For any event <span class="math inline">\(A \in \Omega\)</span>, <span class="math inline">\(P(A) \geq 0\)</span>.</li>
+<li>Normalization: The probability of the entire sample space is 1, i.e., <span class="math inline">\(P(\Omega) = 1\)</span>.</li>
+<li>Additivity: For any two disjoint events <span class="math inline">\(A, B \in \Omega\)</span>, or <span class="math inline">\(A \cap B = \emptyset\)</span>, the probability of their union is equal to the sum of their individual probabilities, i.e., <span class="math inline">\(P(A \cup B) = P(A) + P(B)\)</span>.</li>
+</ul>
+</div>
+</div>
+<section id="probability-vs-likelihood" class="level4" data-number="0.1.1">
+<h4 data-number="0.1.1" class="anchored" data-anchor-id="probability-vs-likelihood"><span class="header-section-number">0.1.1</span> Probability vs Likelihood</h4>
+<p>Probability and likelihood are related but distinct concepts in statistics.</p>
+<ul>
+<li>Probability refers to the measure of the likelihood that a particular event will occur, scaled on <span class="math inline">\([0,1]\)</span>. It is calculated based on a known probability distribution (= some prior knowledge or assumptions) before the data is observed.</li>
+<li>On the other hand, likelihood refers to the probability of observing a set of data given a particular set of parameter values in a statistical model. It is calculated based on the unknown parameters after the data is observed.</li>
+</ul>
+<p>The likelihood function is used to estimate the values of the parameters by finding the parameter values that maximize the likelihood function.</p>
+<p>For instance of a coin flip, the <strong>probability</strong> of getting heads on a coin flip is 0.5, regardless of whether the coin has been flipped or not (i.e., without data). In contrast, the <strong>likelihood</strong> of observing heads after a coin has been flipped depends on the parameter of interest. We need to find the parameter given data, the results of multiple coin flips.</p>
+<p>If we want to estimate the probability of heads, we can use the maximum likelihood estimation (MLE) approach, which involves finding the value of the coin bias that maximizes the likelihood of observing the observed sequence of heads and tails. The likelihood of the data is calculated using the binomial distribution, which gives the probability of observing a certain number of heads, given the number of tosses and the coin bias. In this case, the likelihood function is a function of the coin bias, and the probability of heads is the value of the coin bias that maximizes the likelihood function.</p>
+</section>
+<section id="relation-between-likelihood-and-pmf-or-pdf" class="level4" data-number="0.1.2">
+<h4 data-number="0.1.2" class="anchored" data-anchor-id="relation-between-likelihood-and-pmf-or-pdf"><span class="header-section-number">0.1.2</span> Relation between Likelihood and PMF or PDF</h4>
+<p>The likelihood function is closely related to pmf or pdf of the data, which is a function that describes the probability of observing a particular value or range of values for the data, given the model parameters. The pmf or pdf is a function of the data, not the parameters, and is often written as <span class="math inline">\(f(x|\theta)\)</span>. The likelihood function is proportional to the pdf because is a product of pdfs when <span class="math inline">\(X_i\)</span> is independent, but with the data fixed and the parameter values treated as variables.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Probability of getting heads on a fair coin flip</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>prob <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># likelihood</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="do">## Simulate a coin flip with a biased coin</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">123</span>) <span class="co"># Set random seed for reproducibility</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">100</span> <span class="co"># flipping numbers</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>p <span class="ot">&lt;-</span> <span class="fl">0.2</span> <span class="co"># Probability of getting heads</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">rbinom</span>(n, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> p) <span class="co"># Simulate n coin flips</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>x<span class="sc">%&gt;%</span><span class="fu">head</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 0 0 0 1 1 0 0 1 0 0</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">## Calculate the likelihood of observing the data given the parameter value p</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>likelihood <span class="ot">&lt;-</span> <span class="fu">prod</span>(<span class="fu">dbinom</span>(x, <span class="at">size =</span> <span class="dv">1</span>, <span class="at">prob =</span> p))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>likelihood<span class="sc">%&gt;%</span><span class="fu">round</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
+<p>In this example, <code>prob</code> is the assumed probability of getting heads on a fair coin flip. The probability of getting heads on a fair coin flip is 0.5, which is a fixed value that does not depend on any specific data. On the other hand, <code>p</code> is the probability of getting heads for the biased coin that we are simulating. The likelihood of observing a set of coin flips depends on the parameter value, which is unknown (actually, we know that it was <span class="math inline">\(p=0.2\)</span>), and the observed data. We simulate a set of 100 coin flips with a biased coin that has a probability of 0.2 of getting heads. We then calculate the likelihood of observing this data given the parameter value of 0.2, which is the product of the probability mass function for each flip.</p>
+<p>However, in a real-world scenario, we would not know the true value of <code>p</code> and we would need to estimate it based on the observed data. By finding the Maximum Likelihood Estimation (MLE) of p, we are estimating the value of p that is most likely to have generated the observed data. To find MLE of <code>p</code> that maximizes the likelihood function, we can use numerical optimization methods.</p>
+<p>As n increases, the product term in the likelihood function <span class="math inline">\(\prod_{i=1}^{n} f(x_i; \theta)\)</span>, where <span class="math inline">\(f\)</span> is the pdf or pmf of the distribution being used, can become very small (since it is a product of values less than 1) and may result in numerical underflow (i.e., the product becomes so small that it rounds down to 0 in computer calculations). In practice, we typically take the logarithm of the likelihood function, called the log-likelihood, to avoid this issue:</p>
+<p><span class="math display">\[
+\log L(\theta|x_1, x_2, ..., x_n) = \sum_{i=1}^{n} \log f(x_i; \theta)
+\]</span></p>
+<p>Using the logarithm allows us to convert the product of small probabilities into a sum of log-probabilities, which are typically easier to work with numerically and mathematically. In this case, as n increases, the sum term in the log-likelihood can decrease (since it is a sum of negative values), but the decrease may not be as severe as in the product term of the likelihood function because of the log scale converting very small or large values into larger or smaller values .</p>
+<div id="def-MLE" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 2 </strong></span>The MLE estimator <span class="math inline">\(\hat{\theta}\)</span> is the value of the parameter vector that maximizes the likelihood function:</p>
+<p><span class="math display">\[
+\hat{\theta}_{MLE} = \underset{\theta}{\operatorname{argmax}} L(\theta | x_1, x_2, ..., x_n)
+\]</span></p>
+<p>or equivalently, maximizes the log-likelihood function:</p>
+<p><span class="math display">\[
+\hat{\theta}_{MLE} = \underset{\theta}{\operatorname{argmax}} \log L(\theta | x_1, x_2, ..., x_n)
+\]</span></p>
+</div>
+<p>The Maximum Likelihood Estimation (MLE) is a method of estimating the parameters of a statistical model by finding the values of the parameters that maximize the likelihood function. The likelihood function is the probability of observing the data, given the parameters of the model. The MLE estimator is the set of parameter values that maximize the likelihood function. In other words, the MLE is the set of parameter values that make the observed data most probable, given the assumed probability distribution. The likelihood function is typically the product or the sum (depending on whether the observations are assumed to be independent or not) of the probabilities or probability densities of the observations, evaluated at the values of the parameters.</p>
+<p>The MLE estimator has desirable statistical properties, such as consistency, efficiency, and asymptotic normality, under certain regularity conditions on the likelihood function and the parameter space. However, it is important to note that the MLE is not always the best estimator for a given problem, and other estimation methods may be more appropriate depending on the specific characteristics of the data and the model.</p>
+<p>The likelihood function is the joint probability density (or mass) function of the data, viewed as a function of the parameters, and we find the maximum of this function <strong>by differentiating</strong> it with respect to the parameters and setting the derivative to zero.</p>
+</section>
+</section>
+<section id="sec-mle_ols" class="level3" data-number="0.2">
+<h3 data-number="0.2" class="anchored" data-anchor-id="sec-mle_ols"><span class="header-section-number">0.2</span> MLE of OLS</h3>
+<p>In a linear regression, the maximum likelihood estimate of the ordinary least squares (OLS) coefficients is equivalent to the least squares estimate. To derive this, we assume that <span class="math inline">\(\epsilon_i \sim N(0,\sigma^2)\)</span> and that the observations are independent. Then, the likelihood function for the data <span class="math inline">\(Y = (Y_1, Y_2, \dots, Y_n)\)</span> is:</p>
+<p><span class="math display">\[
+L(Y|\theta) =L(Y|\beta,\sigma^2) = (2\pi\sigma^2)^{-\frac{n}{2}} e^{-\frac{1}{2\sigma^2} \sum_{i=1}^n (Y_i - X_i\beta)^2}
+\]</span></p>
+<p>where <span class="math inline">\(X_i\)</span> is the <span class="math inline">\(i\)</span> th row of the design matrix <span class="math inline">\(X\)</span> and <span class="math inline">\(\beta\)</span> is the vector of regression coefficients.</p>
+<p>To find the maximum likelihood estimates of <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\sigma^2\)</span>, we maximize the likelihood function with respect to these parameters. Taking the log of the likelihood function and simplifying, we obtain:</p>
+<p><span class="math display">\[
+\log L(Y|\theta) = \log L(Y|\beta,\sigma^2) = -\frac{n}{2} \log (2\pi) - \frac{n}{2} \log(\sigma^2) - \frac{1}{2\sigma^2} \sum_{i=1}^n (Y_i - X_i\beta)^2
+\]</span></p>
+<p>To maximize this function with respect to <span class="math inline">\(\beta\)</span>, we differentiate with respect to <span class="math inline">\(\beta\)</span> and set the derivative to zero, <span class="math inline">\(\frac{\partial}{\partial \theta} \log L(Y|\theta) = 0\)</span>:</p>
+<p>Solving for <span class="math inline">\(\beta\)</span>, we obtain:</p>
+<p><span class="math display">\[
+\frac{\partial}{\partial \theta} \log L(Y|\beta,\sigma^2) = -\frac{1}{2\sigma^2} \sum_{i=1}^n 2X_i(Y_i - X_i\beta) = 0
+\]</span></p>
+<p><span class="math display">\[
+\hat{\beta} = (X^T X)^{-1} X^T Y
+\]</span> , which is the OLS estimate of <span class="math inline">\(\beta\)</span>.</p>
+<p>Solving for <span class="math inline">\(\sigma^2\)</span>, we differentiate with respect to <span class="math inline">\(sigma^2\)</span> and set the derivative to zero:</p>
+<p><span class="math display">\[
+\frac{\partial}{\partial \sigma^2} log L(Y|\beta,\sigma^2) = -\frac{n}{2\sigma^2} + \frac{1}{2\sigma^4} \sum_{i=1}^n (Y_i - X_i\beta)^2 = 0
+\]</span> <span class="math display">\[
+\hat{\sigma}^2 = \frac{\sum_{i=1}^n (Y_i - X_i\beta)^2}{n}
+\]</span></p>
+<p>which is the OLS estimate of <span class="math inline">\(\sigma^2\)</span>.</p>
+<p>Therefore, we see that the maximum likelihood estimates of <span class="math inline">\(\beta\)</span> and <span class="math inline">\(\sigma^2\)</span> in linear regression with normally distributed errors are equivalent to the OLS estimates of these parameters.</p>
+</section>
+<section id="statistical-bias" class="level3" data-number="0.3">
+<h3 data-number="0.3" class="anchored" data-anchor-id="statistical-bias"><span class="header-section-number">0.3</span> Statistical Bias</h3>
+<p>Statistical bias refers to a systematic error or deviation in the results of a statistical analysis that is caused by factors other than chance. A biased estimator is one that consistently produces estimates that are systematically different from the true value of the parameter being estimated.</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+There are 5 Types of bias
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The above article discusses five types of statistical bias that analysts, data scientists, and other business professionals should be aware of to minimize their effects on the final results.</p>
+<ol type="1">
+<li>selection bias: data selection methods are not truly random, leading to unequal representation of the population.</li>
+<li>bias in assignment: pre-existing differences between groups in an experiment can affect the outcome, a.k.a allocation bias, treatment assignment bias, or exposure assignment bias.</li>
+<li>confounders: additional variables not accounted for in the experimental design can impact the results.</li>
+<li>self-serving bias: individuals tend to downplay undesirable qualities and overemphasize desirable ones a.k.a cognitive bias. In other words, people tend to take credit for their successes and blame outside factors for their failures.</li>
+<li>experimenter expectations: researchers can unconsciously influence the data through verbal or non-verbal cues.</li>
+</ol>
+<p>Being aware of these biases can lead to better models and more reliable insights for data-backed business decisions.</p>
+<p><a href="https://online.hbs.edu/blog/post/types-of-statistical-bias">Source: Article Written by Jenny Gutbezahl</a></p>
+</div>
+</div>
+<p>It is important to detect and correct for bias in statistical analyses, as biased estimates can lead to incorrect conclusions and decisions. One way to correct for bias is to use an unbiased estimator, which is one that has a zero bias, i.e., its expected value is equal to the true value of the parameter being estimated.</p>
+<div id="def-bias" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 3 </strong></span>An estimator <span class="math inline">\(\hat{\theta}\)</span> is said to be biased if</p>
+<p><span class="math display">\[
+\operatorname{E}(\hat{\theta})\ne \theta
+\]</span></p>
+<p>where <span class="math inline">\(\operatorname{E}(\hat{\theta})\)</span> is the expected value of the estimator <span class="math inline">\(\hat{\theta}\)</span>, and <span class="math inline">\(\theta\)</span> is the true value of the parameter being estimated.</p>
+</div>
+<p>An estimator is said to be unbiased if <strong>its expected value is equal to the true value of the parameter being estimated</strong>. In other words, an estimator is unbiased if, on average, it gives an estimate that is equal to the true value of the parameter.</p>
+<div class="cell" data-evale="false">
+
+</div>
 
 
 </section>

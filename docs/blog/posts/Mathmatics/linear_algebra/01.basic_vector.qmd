@@ -1,0 +1,320 @@
+---
+title: "Basics (1) - Vector Operations"
+subtitle: Motivation, Scalr, Vector, Addition, Scalar Multiplication, Dot Product, Norm, Projection, Cross Product, Column Vector, and Row Vector
+description: |
+  template
+categories:
+  - Mathematics
+author: Kwangmin Kim
+date: 03/30/2023
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    toc: true
+    number-sections: true
+draft: False
+---
+
+# Introduction Linear Algebra to Deep Learning
+
+Deep learning is a pile of neural networks that are made up of layers of interconnected nodes or neurons, and the weights of the connections between them are learned through a process called backpropagation.
+
+Linear algebra is fundamental to deep learning because many of the computations involved in training neural networks can be expressed as linear algebra operations. For example, matrix multiplication is used to compute the output of each layer in a neural network, and the gradients of the loss function with respect to the weights are computed using the chain rule of calculus, which involves matrix multiplication and vector operations.
+
+In addition to matrix multiplication, other linear algebra concepts such as eigenvectors, eigenvalues, and singular value decomposition (SVD) are also important in deep learning. For example, SVD can be used to reduce the dimensionality of a dataset or to compute principal components, which are useful for data visualization and feature extraction.
+
+Linear algebra libraries such as Numpy, Scipy, and PyTorch provide efficient implementations of these operations, which are essential for training large-scale neural networks on GPUs. Without these libraries, implementing deep learning algorithms would be much more difficult and time-consuming.
+
+[Reference: Motivation to Learn Linear Algebra](https://nbviewer.org/github/fastai/numerical-linear-algebra/blob/master/nbs/1.%20Why%20are%20we%20here.ipynb)
+
+## Scalar
+
+A scalar is a single mathematical quantity, usually a real number, which can be represented by a single value. Scalars are typically denoted by lowercase letters, such as $a, b, c,$ and so on.
+
+## Vector
+
+A vector $\textbf{v}$ is a mathematical object that represents a quantity with both a magnitude and a direction. In $n$-dimensional Euclidean space $\mathbb{R}^n$, a vector $\textbf{v}$ is typically represented as an ordered list of $n$ real numbers:
+
+* the magnitude of $\mathbf{v} =\begin{bmatrix} x\\  y \end{bmatrix}$ is $||\mathbf{v}|| = \sqrt{x^{2} + y^{2}}$
+* the direction of it is the angle with the x axis, $tan^{-1}(\frac{y}{x})$
+* If magnitude and vector are equal, then they are equal vectors
+
+$$
+\textbf{v}=
+\begin{bmatrix}
+  v_1 \\
+  v_2 \\
+  \vdots \\
+  v_n
+\end{bmatrix}
+$$
+
+where $v_1, v_2, \ldots, v_n$ are the components of the vector $\textbf{v}$.
+
+### Plotting Vectors on the Coordinate Plane
+
+Example 
+
+Map $\begin{bmatrix} 3\\  2 \end{bmatrix}$ into $x=3$, $y=2$ on the Coordinate Plane
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+plt.quiver(0, 0, 3, 2, color='b', angles='xy', scale_units='xy', scale=1)
+plt.xlim(-0.5, 3.5)
+plt.ylim(-0.5, 2.5)
+plt.grid()
+plt.show()
+
+```
+
+[Reference: Read This Article with Interactive Visualization - Points and Vectors](http://immersivemath.com/ila/ch02_vectors/ch02.html#auto_label_33)
+
+## Basic Vector Operations
+
+### Addition of Vectors
+
+The addition of two vectors is the process of adding their corresponding components. If $\textbf{A}$ and $\textbf{B}$ are two vectors of the same dimension, then their sum $\textbf{C} = \textbf{A} + \textbf{B}$ is a vector whose $i$-th component is the sum of the $i$-th components of $\textbf{A}$ and $\textbf{B}$. 
+
+$$
+\begin{align*}
+  \textbf{C}&=\textbf{A}+\textbf{B}\\
+  C_i &= A_i + B_i
+\end{align*}
+$$
+
+For example, if $\textbf{A} = [1, 2, 3]$ and $\textbf{B} = [4, 5, 6]$, then their sum $\textbf{C} = [5, 7, 9]$.
+
+::: {layout-ncol=3}
+![](images/chap02_01.PNG)
+
+![](images/chap02_02.PNG)
+
+![](images/chap02_03.PNG)
+:::
+
+### Subtraction of Vectors
+
+The subtraction of two vectors is the process of subtracting their corresponding components. If $\textbf{A}$ and $\textbf{B}$ are two vectors of the same dimension, then their difference $\textbf{C} = \textbf{A} - \textbf{B}$ is a vector whose $i$-th component is the difference between the $i$-th components of $\textbf{A}$ and $\textbf{B}$. The formal definition is:
+
+$$
+\begin{align*}
+  \textbf{C}&=\textbf{A} - \textbf{B}\\
+  C_i &= A_i - B_i
+\end{align*}
+$$
+
+For example, if $\textbf{A} = [1, 2, 3]$ and $\textbf{B} = [4, 5, 6]$, then their difference $\textbf{C} = [-3, -3, -3]$.
+
+### Scalar Multiplication of Vectors
+
+The scalar multiplication of a vector is the process of multiplying each component of the vector by a scalar. If $\textbf{A}$ is a vector and $k$ is a scalar, then the scalar multiple $\textbf{C} = k\textbf{A}$ is a vector whose $i$-th component is $k$ times the $i$-th component of $\textbf{A}$. The formal definition is:
+
+$$
+\begin{align*}
+  \textbf{C}&=k\textbf{A}\\
+  C_i &= kA_i
+\end{align*}
+$$
+
+For example, if $\textbf{A} = [1, 2, 3]$ and $k = 2$, then their scalar multiple $\textbf{C} = [2, 4, 6]$.
+
+[Reference: Read This Article with Interactive Visualization - Properties of Vector Arithmetic](http://immersivemath.com/ila/ch02_vectors/ch02.html#sec_vec_arithmetic)
+
+### Dot Product of Vectors
+
+The dot product of two vectors is the sum of the products of their corresponding components (a.k.a dot product & scalar product). If $\textbf{A}$ and $\textbf{B}$ are two vectors of the same dimension, then their dot product $\textbf{C} = \textbf{A} \cdot \textbf{B}$ is a scalar given by the formula:
+
+$$
+\begin{align*}
+  \textbf{C}&=\textbf{A}\textbf{B}\\
+  &= \sum_{i=1}^{n}a_ib_i
+\end{align*}
+$$
+
+* Dot product can be used to measure the similarity between two vectors.
+* For the two vectors, $\mathbf{a} = [a_1, a_2, \cdots a_n]$ , $\mathbf{b} = [b_1, b_2, \cdots b_n]$, dot product can be defined as
+$$
+\mathbf{a} \cdot \mathbf{b} = \mathbf{a}^{T} \mathbf{b} = ||\mathbf{a}|| ||\mathbf{b}|| \cos \theta 
+$$
+* When two vectors are orthogonal, $\cos 90^{\circ} = 0$, the similarity of the two vectors is 0.
+* In the Euclidean space, doct product is often called inner product (inner product is a generalization of dot product)
+
+:::{.callout-note}
+
+#### Inner Product vs Dot Product
+
+In general, an inner product is a mathematical operation that takes two vectors and produces a scalar. It satisfies certain properties, such as being linear in the first argument, conjugate linear in the second argument, and positive-definite.
+
+* "Linear in the first argument" means that for any fixed vector $\mathbf u$, the function $f$ defined by $f(\mathbf v) = <\mathbf u, \mathbf v>$ is a linear function of $\mathbf v$, i.e., $f(a\mathbf x + b\mathbf y) = af(\mathbf x) + bf(\mathbf y)$ for any scalars $a$, $b$, and vectors $x$, $y$.
+* "Conjugate linear in the second argument" means that for any fixed vector $\mathbf v$, the function $g$ defined by $g(\mathbf u) = <\mathbf u,\mathbf v>$ is a conjugate linear function of $\mathbf u$, i.e., $g(a \mathbf x + b \mathbf y) = \bar{a} g(\mathbf x) + \bar{b} * g(\mathbf y)$ for any scalars $a$, $b$, and vectors $\mathbf x$, $\mathbf y$, where $\bar{a}$ denotes the complex conjugate of $a$.
+* "Positive-definite" means that for any nonzero vector v, the inner product $<\mathbf v,\mathbf v>$ is a positive real number. In other words, the inner product of a vector with itself is always positive, except when the vector is the zero vector.
+
+A dot product is a specific type of inner product that is defined for Euclidean spaces, which are spaces with a notion of distance or length. The dot product of two vectors is defined as the sum of the products of their corresponding components. In other words, if $\mathbf a = [a_1, a_2, ..., a_n]$ and $\mathbf b = [b_1, b_2, ..., b_n]$ are two vectors in $\mathbb R^n$, then their dot product is given by:
+
+$$
+\mathbf a \cdot \mathbf b = a_1b_1 + a_2b_2 + ... + a_nb_n
+$$
+
+The dot product satisfies some of the properties of an inner product, such as being linear in the first argument and symmetric. However, it is not conjugate linear in the second argument, and it is not positive-definite in general.
+
+So, while a dot product is a specific type of inner product, not all inner products are dot products.
+:::
+
+For example, if $\textbf{A} = [1, 2, 3]$ and $\textbf{B} = [4, 5, 6]$, then their dot product $\textbf{C} = 1\cdot 4 + 2\cdot 5 + 3\cdot 6 = 32$.
+
+
+:::{.callout-note}
+#### Norm
+
+The norm of a vector $\mathbf{x}$ is a non-negative scalar value that represents the size or length of the vector. The norm is denoted by $|\mathbf{x}|$ and satisfies the following properties:
+
+* Non-negativity: $|\mathbf{x}|\geq 0$, with equality if and only if $\mathbf{x}=\mathbf{0}$.
+* Homogeneity: $|\alpha\mathbf{x}|=|\alpha||\mathbf{x}|$ for any scalar $\alpha$.
+* Triangle Inequality: $|\mathbf{x}+\mathbf{y}|\leq |\mathbf{x}|+|\mathbf{y}|$.
+
+Here is an example of finding the Euclidean norm of a vector:
+Suppose we have a vector $\mathbf{x}=\begin{bmatrix}1 \\ -2 \\ 2\end{bmatrix}$. We can find its norm as follows:
+
+$$
+||\mathbf x||=\sqrt{1^2+(-2)^2+2^2}=\sqrt{9}=3
+$$
+
+Therefore, the norm of $\mathbf{x}$ is 3.
+
+There are several types of norms:
+
+* Manhattan Norm or Absolute Norm or $l_1$-norm
+$$
+\begin{equation*}
+|\mathbf{x}|_{l_1} = \sum_{i=1}^{n} |x_i|
+\end{equation*}
+$$
+where $\mathbf{x}$ is a vector of length $n$.
+Example: For $\mathbf{x} = [1, -2, 3]$, $|\mathbf{x}|_{l_1} = |1| + |-2| + |3| = 6$.
+
+
+* Euclidean Norm or $l_2$-norm
+$$
+\begin{equation*}
+||\mathbf{x}||_{l_2} = \sqrt{\sum_{i=1}^{n} x_i^2}
+\end{equation*}
+$$
+where $\mathbf{x}$ is a vector of length $n$.
+Example: For $\mathbf{x} = [1, 2, 3]$, $|\mathbf{x}|_{l_2} = \sqrt{1^2 + 2^2 + 3^2} = \sqrt{14}$.
+
+![$l_2$-norm](images/chap02_05.PNG)
+
+* p-norm($l_2$-norm) 
+
+For $p \geq 1$, 
+$$
+\begin{equation*}
+||\mathbf{x}||_p = (\sum_{i=1}^n |x_i|^p)^{\frac{1}{p}}
+\end{equation*}
+$$
+where $\mathbf{x}$ is a vector of length $n$.
+Example: For $\mathbf{x} = [1, 2, 3]$, $|\mathbf{x}|_{l_p} = \sqrt{1^p + 2^p + 3^p}$.
+
+* Maximum Norm
+$$
+\begin{equation*}
+|\mathbf{x}|_{\infty} = \max_{1 \leq i \leq n} |x_i|
+\end{equation*}
+$$
+where $\mathbf{x}$ is a vector of length $n$.
+Example: For $\mathbf{x} = [1, -2, 3]$, $|\mathbf{x}|_{l_\infty} = \max{1, |-2|, 3} = 3$.
+
+![$l_1$-norm vs $l_1$-norm vs $\max$-norm](images/chap02_06.PNG)
+
+* Frobenius Norm:
+$$
+\begin{equation*}
+|\mathbf{A}|_{F} = \sqrt{\sum_{i=1}^{m} \sum_{j=1}^{n} |a_{ij}|^2}
+\end{equation*}
+$$
+where $\mathbf{A}$ is an $m \times n$ matrix.
+Example: For $\mathbf{A} = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}$, $|\mathbf{A}|_{F} = \sqrt{1^2 + 2^2 + 3^2 + 4^2} = \sqrt{30}$.
+
+:::
+
+:::{.callout-note}
+
+#### Projection
+
+Let $\mathbf{u}$ and $\mathbf{v}$ be two vectors. The projection of $\mathbf{u}$ onto $\mathbf{v}$ is defined as the vector:
+
+This vector is the closest vector to $\mathbf{u}$ that lies on the line spanned by $\mathbf{v}$.
+$$
+\text{proj}_{\mathbf v}\mathbf u =\frac{\mathbf u \mathbf v}{||\mathbf v||^2} \mathbf v
+$$
+![Projection](images/chap02_04.PNG)
+
+* $\mathbf{w} = ||\mathbf{w}||\mathbf{v} = ||\mathbf{u}|| \cos \theta \mathbf{v}$
+* $\mathbf{u}^T \mathbf{u} = ||\mathbf{u}|| ||\mathbf{u}|| = ||\mathbf{u}||^2$
+* the magnitude of $\mathbf{u}$  = $||\mathbf{u}|| = \sqrt{\mathbf{u}^T \mathbf{u}}$ 
+* unit vector: a normalized vector by dividing it by its magnitude, so the magnitude of a unit vector is 1
+$$
+  \hat{\mathbf{u}} = \frac{\mathbf{u}}{||\mathbf{u}||} = \frac{\mathbf{u}}{\sqrt{\mathbf{u}^T \mathbf{u}}}
+$$
+* Projected vector, $\mathbf{w}$
+  * the product of $\frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||}$ and a unit vector of $\mathbf{v}$
+$$
+\frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||} \frac{\mathbf{v}}{||\mathbf{v}||} = \frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||^2}\mathbf{v}
+$$
+
+For example, let $\mathbf{u} = \begin{bmatrix}2 \ 3\end{bmatrix}$ and $\mathbf{v} = \begin{bmatrix}1 \\ 1\end{bmatrix}$. Then, the projection of $\mathbf{u}$ onto $\mathbf{v}$ is:
+
+$$
+\text{proj}_{\mathbf v}\mathbf u =\frac{\mathbf u \mathbf v}{||\mathbf v||^2} \mathbf v =\frac{\begin{bmatrix}2 \\ 3\end{bmatrix}\begin{bmatrix}1 \\ 1\end{bmatrix}}{\bigg{|}\bigg{|}\begin{bmatrix}1 \\ 1\end{bmatrix}\bigg{|}\bigg{|}^2}=\frac{5}{2}\begin{bmatrix}1 \\ 1\end{bmatrix}=\begin{bmatrix}5 \\ 2\end{bmatrix}
+$$
+
+This vector is the closest vector to $\mathbf{u}$ that lies on the line spanned by $\mathbf{v} = \begin{bmatrix}1 \\ 1\end{bmatrix}$.
+
+[Reference: Read This Article with Interactive Visualization - Projection](http://immersivemath.com/ila/ch03_dotproduct/ch03.html#auto_label_107)
+:::
+
+
+### Cross Product of Vectors
+
+The cross product of two vectors is a vector that is perpendicular to both of them. If $\textbf{A}$ and $\textbf{B}$ are two vectors in $\mathbb{R}^3$, then their cross product $\textbf{C} = \textbf{A} \times \textbf{B}$ is a vector given by the formula
+
+$$
+$\textbf{C} = \textbf{A} \times \textbf{B}$ = [A_2B_3 - A_3B_2, A_3B_1 - A_1B_3, A_1B_2 - A_2B_1]
+$$
+
+For example, if $\textbf{A} = [1, 2, 3]$ and $\textbf{B} = [4, 5, 6]$, then their cross product $\textbf{C} = [-3, 6, -3]$.
+
+## Column Vector & Row Vector
+
+$$
+\begin{bmatrix} 
+  a_{11} & a_{12} & \cdots & a_{1n} \\
+  a_{21} & a_{22} & \cdots & a_{2n} \\
+  \vdots & \vdots & \ddots & \vdots \\
+  a_{m1} & a_{m2} & \cdots & a_{mn}
+\end{bmatrix} 
+$$
+
+A column vector $\mathbf{x}$ with $n$ elements is an $m \times 1$ matrix, which can be represented as:
+$$
+\mathbf{x} =
+\begin{bmatrix}
+x_{1} \\
+x_{2} \\
+\vdots \\
+x_{m}
+\end{bmatrix}
+$$
+
+where $x_i$ is the $i$-th element of the column vector $\mathbf{x}$ and $m$ is the number of rows in the matrix.
+A row vector $\mathbf{y}$ with $m$ elements is a $1 \times n$ matrix, which can be represented as:
+$$
+\mathbf{y} = 
+\begin{bmatrix}
+y_{1} & y_{2} & \cdots & y_{n}
+\end{bmatrix}
+$$
+
+where $y_i$ is the $i$-th element of the row vector $\mathbf{y}$ and $n$ is the number of columns in the matrix.

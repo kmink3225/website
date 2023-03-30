@@ -1,12 +1,20 @@
 ---
 title: "Basics (1) - Vector Operations"
-author: "Kwangmin Kim"
+subtitle: template
+description: |
+  template
 categories:
-- Mathematics 
-toc: true
+  - Mathematics
+author: Kwangmin Kim
+date: 03/30/2023
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    toc: true
+    number-sections: true
+draft: False
 ---
-
-
 
 # Introduction Linear Algebra to Deep Learning
 
@@ -125,20 +133,161 @@ $$
 
 For example, if $\textbf{A} = [1, 2, 3]$ and $k = 2$, then their scalar multiple $\textbf{C} = [2, 4, 6]$.
 
-[Reference: Read This Article with Interactive Visualization -Properties of Vector Arithmetic](http://immersivemath.com/ila/ch02_vectors/ch02.html#sec_vec_arithmetic)
+[Reference: Read This Article with Interactive Visualization - Properties of Vector Arithmetic](http://immersivemath.com/ila/ch02_vectors/ch02.html#sec_vec_arithmetic)
 
 ### Dot Product of Vectors
 
-The dot product of two vectors is the sum of the products of their corresponding components. If $\textbf{A}$ and $\textbf{B}$ are two vectors of the same dimension, then their dot product $\textbf{C} = \textbf{A} \cdot \textbf{B}$ is a scalar given by the formula:
+The dot product of two vectors is the sum of the products of their corresponding components (a.k.a dot product & scalar product). If $\textbf{A}$ and $\textbf{B}$ are two vectors of the same dimension, then their dot product $\textbf{C} = \textbf{A} \cdot \textbf{B}$ is a scalar given by the formula:
 
 $$
 \begin{align*}
   \textbf{C}&=\textbf{A}\textbf{B}\\
-  &= \sum_{i=1}^{n}A_iB_i
+  &= \sum_{i=1}^{n}a_ib_i
 \end{align*}
 $$
 
-For example, if $\textbf{A} = [1, 2, 3]$ and $\textbf{B} = [4, 5, 6]$, then their dot product $\textbf{C} = 1\cdot4 + 2\cdot5 + 3\cdot6 = 32$.
+* Dot product can be used to measure the similarity between two vectors.
+* For the two vectors, $\mathbf{a} = [a_1, a_2, \cdots a_n]$ , $\mathbf{b} = [b_1, b_2, \cdots b_n]$, dot product can be defined as
+$$
+\mathbf{a} \cdot \mathbf{b} = \mathbf{a}^{T} \mathbf{b} = ||\mathbf{a}|| ||\mathbf{b}|| \cos \theta 
+$$
+* When two vectors are orthogonal, $\cos 90^{\circ} = 0$, the similarity of the two vectors is 0.
+* In the Euclidean space, doct product is often called inner product (inner product is a generalization of dot product)
+
+:::{.callout-note}
+
+#### Inner Product vs Dot Product
+
+In general, an inner product is a mathematical operation that takes two vectors and produces a scalar. It satisfies certain properties, such as being linear in the first argument, conjugate linear in the second argument, and positive-definite.
+
+* "Linear in the first argument" means that for any fixed vector $\mathbf u$, the function $f$ defined by $f(\mathbf v) = <\mathbf u, \mathbf v>$ is a linear function of $\mathbf v$, i.e., $f(a\mathbf x + b\mathbf y) = af(\mathbf x) + bf(\mathbf y)$ for any scalars $a$, $b$, and vectors $x$, $y$.
+* "Conjugate linear in the second argument" means that for any fixed vector $\mathbf v$, the function $g$ defined by $g(\mathbf u) = <\mathbf u,\mathbf v>$ is a conjugate linear function of $\mathbf u$, i.e., $g(a \mathbf x + b \mathbf y) = \bar{a} g(\mathbf x) + \bar{b} * g(\mathbf y)$ for any scalars $a$, $b$, and vectors $\mathbf x$, $\mathbf y$, where $\bar{a}$ denotes the complex conjugate of $a$.
+* "Positive-definite" means that for any nonzero vector v, the inner product $<\mathbf v,\mathbf v>$ is a positive real number. In other words, the inner product of a vector with itself is always positive, except when the vector is the zero vector.
+
+A dot product is a specific type of inner product that is defined for Euclidean spaces, which are spaces with a notion of distance or length. The dot product of two vectors is defined as the sum of the products of their corresponding components. In other words, if $\mathbf a = [a_1, a_2, ..., a_n]$ and $\mathbf b = [b_1, b_2, ..., b_n]$ are two vectors in $\mathbb R^n$, then their dot product is given by:
+
+$$
+\mathbf a \cdot \mathbf b = a_1b_1 + a_2b_2 + ... + a_nb_n
+$$
+
+The dot product satisfies some of the properties of an inner product, such as being linear in the first argument and symmetric. However, it is not conjugate linear in the second argument, and it is not positive-definite in general.
+
+So, while a dot product is a specific type of inner product, not all inner products are dot products.
+:::
+
+For example, if $\textbf{A} = [1, 2, 3]$ and $\textbf{B} = [4, 5, 6]$, then their dot product $\textbf{C} = 1\cdot 4 + 2\cdot 5 + 3\cdot 6 = 32$.
+
+
+:::{.callout-note}
+#### Norm
+
+The norm of a vector $\mathbf{x}$ is a non-negative scalar value that represents the size or length of the vector. The norm is denoted by $|\mathbf{x}|$ and satisfies the following properties:
+
+* Non-negativity: $|\mathbf{x}|\geq 0$, with equality if and only if $\mathbf{x}=\mathbf{0}$.
+* Homogeneity: $|\alpha\mathbf{x}|=|\alpha||\mathbf{x}|$ for any scalar $\alpha$.
+* Triangle Inequality: $|\mathbf{x}+\mathbf{y}|\leq |\mathbf{x}|+|\mathbf{y}|$.
+
+Here is an example of finding the Euclidean norm of a vector:
+Suppose we have a vector $\mathbf{x}=\begin{bmatrix}1 \\ -2 \\ 2\end{bmatrix}$. We can find its norm as follows:
+
+$$
+||\mathbf x||=\sqrt{1^2+(-2)^2+2^2}=\sqrt{9}=3
+$$
+
+Therefore, the norm of $\mathbf{x}$ is 3.
+
+There are several types of norms:
+
+* Manhattan Norm or Absolute Norm or $l_1$-norm
+$$
+\begin{equation*}
+|\mathbf{x}|_{l_1} = \sum_{i=1}^{n} |x_i|
+\end{equation*}
+$$
+where $\mathbf{x}$ is a vector of length $n$.
+Example: For $\mathbf{x} = [1, -2, 3]$, $|\mathbf{x}|_{l_1} = |1| + |-2| + |3| = 6$.
+
+
+* Euclidean Norm or $l_2$-norm
+$$
+\begin{equation*}
+||\mathbf{x}||_{l_2} = \sqrt{\sum_{i=1}^{n} x_i^2}
+\end{equation*}
+$$
+where $\mathbf{x}$ is a vector of length $n$.
+Example: For $\mathbf{x} = [1, 2, 3]$, $|\mathbf{x}|_{l_2} = \sqrt{1^2 + 2^2 + 3^2} = \sqrt{14}$.
+
+![$l_2$-norm](images/chap02_05.PNG)
+
+* p-norm($l_2$-norm) 
+
+For $p \geq 1$, 
+$$
+\begin{equation*}
+||\mathbf{x}||_p = (\sum_{i=1}^n |x_i|^p)^{\frac{1}{p}}
+\end{equation*}
+$$
+where $\mathbf{x}$ is a vector of length $n$.
+Example: For $\mathbf{x} = [1, 2, 3]$, $|\mathbf{x}|_{l_p} = \sqrt{1^p + 2^p + 3^p}$.
+
+* Maximum Norm
+$$
+\begin{equation*}
+|\mathbf{x}|_{\infty} = \max_{1 \leq i \leq n} |x_i|
+\end{equation*}
+$$
+where $\mathbf{x}$ is a vector of length $n$.
+Example: For $\mathbf{x} = [1, -2, 3]$, $|\mathbf{x}|_{l_\infty} = \max{1, |-2|, 3} = 3$.
+
+![$l_1$-norm vs $l_1$-norm vs $\max$-norm](images/chap02_06.PNG)
+
+* Frobenius Norm:
+$$
+\begin{equation*}
+|\mathbf{A}|_{F} = \sqrt{\sum_{i=1}^{m} \sum_{j=1}^{n} |a_{ij}|^2}
+\end{equation*}
+$$
+where $\mathbf{A}$ is an $m \times n$ matrix.
+Example: For $\mathbf{A} = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}$, $|\mathbf{A}|_{F} = \sqrt{1^2 + 2^2 + 3^2 + 4^2} = \sqrt{30}$.
+
+:::
+
+:::{.callout-note}
+
+#### Projection
+
+Let $\mathbf{u}$ and $\mathbf{v}$ be two vectors. The projection of $\mathbf{u}$ onto $\mathbf{v}$ is defined as the vector:
+
+This vector is the closest vector to $\mathbf{u}$ that lies on the line spanned by $\mathbf{v}$.
+$$
+\text{proj}_{\mathbf v}\mathbf u =\frac{\mathbf u \mathbf v}{||\mathbf v||^2} \mathbf v
+$$
+![Projection](images/chap02_04.PNG)
+
+* $\mathbf{w} = ||\mathbf{w}||\mathbf{v} = ||\mathbf{u}|| \cos \theta \mathbf{v}$
+* $\mathbf{u}^T \mathbf{u} = ||\mathbf{u}|| ||\mathbf{u}|| = ||\mathbf{u}||^2$
+* the magnitude of $\mathbf{u}$  = $||\mathbf{u}|| = \sqrt{\mathbf{u}^T \mathbf{u}}$ 
+* unit vector: a normalized vector by dividing it by its magnitude, so the magnitude of a unit vector is 1
+$$
+  \hat{\mathbf{u}} = \frac{\mathbf{u}}{||\mathbf{u}||} = \frac{\mathbf{u}}{\sqrt{\mathbf{u}^T \mathbf{u}}}
+$$
+* Projected vector, $\mathbf{w}$
+  * the product of $\frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||}$ and a unit vector of $\mathbf{v}$
+$$
+\frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||} \frac{\mathbf{v}}{||\mathbf{v}||} = \frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||^2}\mathbf{v}
+$$
+
+For example, let $\mathbf{u} = \begin{bmatrix}2 \ 3\end{bmatrix}$ and $\mathbf{v} = \begin{bmatrix}1 \\ 1\end{bmatrix}$. Then, the projection of $\mathbf{u}$ onto $\mathbf{v}$ is:
+
+$$
+\text{proj}_{\mathbf v}\mathbf u =\frac{\mathbf u \mathbf v}{||\mathbf v||^2} \mathbf v =\frac{\begin{bmatrix}2 \\ 3\end{bmatrix}\begin{bmatrix}1 \\ 1\end{bmatrix}}{\bigg{|}\bigg{|}\begin{bmatrix}1 \\ 1\end{bmatrix}\bigg{|}\bigg{|}^2}=\frac{5}{2}\begin{bmatrix}1 \\ 1\end{bmatrix}=\begin{bmatrix}5 \\ 2\end{bmatrix}
+$$
+
+This vector is the closest vector to $\mathbf{u}$ that lies on the line spanned by $\mathbf{v} = \begin{bmatrix}1 \\ 1\end{bmatrix}$.
+
+[Reference: Read This Article with Interactive Visualization - Projection](http://immersivemath.com/ila/ch03_dotproduct/ch03.html#auto_label_107)
+:::
+
 
 ### Cross Product of Vectors
 
@@ -271,9 +420,13 @@ The transpose of an $m x n$ matrix A, denoted by $A^T$, is the $n x m$ matrix ob
 
 Given an $m \times n$ matrix $\mathbf{A}$, its transpose $\mathbf{A}^T$ is an $n \times m$ matrix defined by:
 $$
-(A^T){i,j} = A{j,i}
+\mathbf{A}_{i,j}^T = \mathbf{A}_{j,i}
 
 $$
+
+* When $\mathbf{A}$ is transposed, diagnoal entries($a_{ii}$) do not change but off-diagnoal elements($a_{ij} \; i \neq j$) change.
+* A column vector is tranposed into a row vector, and vice versa.
+* symmetric matrix: $\mathbf{A} = \mathbf{A}^T$
 
 Example:
 
@@ -292,6 +445,8 @@ $$
 3 & 6
 \end{bmatrix}
 $$
+
+
 
 ### Determinant
 
@@ -473,6 +628,7 @@ $$
 There are several formulas for finding the inverse of a matrix such as Gauss-Jordan Elimination, Adjoint method, Cramer's rule, Inverse formula, etc. This topic is going to be handled in the other blogs.
 
 ### Rank
+
 The rank of a matrix is the dimension of the vector space spanned by its columns (or rows). It is denoted by $\text{rank}(\mathbf{A})$.
 
 For example, consider the following matrix:
@@ -603,93 +759,6 @@ $$
 
 where the left singular vectors of $\mathbf{A}$ are the columns of $\mathbf{U}$, the right singular vectors of $\mathbf{A}$ are the columns of $\mathbf{V}$, and the singular values of $\mathbf{A}$ are the diagonal entries of $\boldsymbol{\Sigma}$.
 
-
- 
-
-
-
-* 좌표평면의 모든 점을 다 벡터로 나타낼 수 있음
-  $$ a \times \begin{bmatrix} 1 \\ 0 \end{bmatrix} + b \times \begin{bmatrix} 0 \\ 1 \end{bmatrix} \; for \; a,b \in \mathbb{R} $$
-
-## 전치(Transpose)
-
-{{< video https://youtu.be/xlpXSqcy960 >}}
-
-* $A = \{ a_{ij} \}$ 의 전치는 $A^T = \{ a_{ji} \}$
-
-  $$ A = \begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{bmatrix} \Rightarrow A = \begin{bmatrix} a_{11} & a_{21} \\ a_{12} & a_{22} \end{bmatrix} $$
-
-* diagnoal elements($a_{11},a_{22}, \cdots$)는 전치시 변화가 없고, off-diagnoal elements($a_{ij} \; i \neq j$)만 변함
-* column vector의 tranpose는 row vector, row vector의 transpose는 column vector
-* symmetric matrix(대칭행렬): $A = A^T$
-
-  > (YL's comments) 2:09 이후 갑자기 설명 안된 개념을 활용한 부분이 너무 많아서...이 부분은 스킵하고 일단 여기서 끊음
-
-## 내적과 정사영
-{{< video https://youtu.be/47axVfuf-Q0 >}}
-
-* 내적 (dot product, scalar product)
-   * 두 벡터의 닮은 정도 (한 벡터가 다른 벡터를 얼마나 닮았는가)를 알아내는 데 쓸 수 있음
-   * 두 개의 벡터 ($\mathbf{u} = [u_1, u_2, \cdots u_n]$ , $\mathbf{v} = [v_1, v_2, \cdots v_n]$) 에 대해, 아래와 같은 곱의 연산으로 나타남
-  $$ \mathbf{u} \cdot \mathbf{v} = \sum_{i=1}^{n} u_i v_i = u_1 v_1 + u_2 v_2 + \cdots u_n v_n $$
-     * 아래와 같은 표현도 가능
-     $$ \mathbf{u} \cdot \mathbf{v} = \mathbf{u}^{T} \mathbf{v} = ||\mathbf{u}|| ||\mathbf{v}|| cos \theta $$
-       * 90도일때 $cos90^{\circ} = 0$, 즉 내적이 0이 됨 &rarr; 두 벡터가 수직하면 가장 닮지 않음
-   * 일반적인 Euclidean space 에서는 inner product 라고도 많이 불림 (dot product의 generalization이 inner product여서, 엄밀히는 올바른 표현은 아니라고 하지만 일반적으로 통용됨)
-   * [이 페이지](http://immersivemath.com/ila/ch03_dotproduct/ch03.html#auto_label_107)도 참고!
-
-* 정사영(orthogonal projection)
-
-::: {layout-ncol=1}
-![](images/chap02_04.PNG)
-:::
-
-  * $\mathbf{w} = ||\mathbf{w}||\mathbf{v} = ||\mathbf{u}|| cos \theta \mathbf{v}$
-
-  * $\mathbf{u}^T \mathbf{u} = ||\mathbf{u}|| ||\mathbf{u}|| = ||\mathbf{u}||^2$
-    * $\mathbf{u}$의 크기 = $||\mathbf{u}|| = \sqrt{\mathbf{u}^T \mathbf{u}}$ 로도 많이 표현함
-
-* 단위 벡터(unit vector)
-  * 크기가 1인 벡터 &rarr; normalized된 vector
-  $$\hat{\mathbf{u}} = \frac{\mathbf{u}}{||\mathbf{u}||} = \frac{\mathbf{u}}{\sqrt{\mathbf{u}^T \mathbf{u}}}$$
-
-* 정사영된 벡터($\mathbf{w}$)
-  * 크기($\frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||}$) 와 $\mathbf{v}$의 단위 벡터의 곱: $\frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||} \frac{\mathbf{v}}{||\mathbf{v}||} = \frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||^2}\mathbf{v}$
-
-
-## vector
-## matrix
-## dot product
-## transpose
-## projection
-## norm
-## multiplication
-## vector space
-## identity matrix
-## inverse matrix
-## diagnoal matrix
-## orthogonal matrix
-## rank
-## null space
-
-
-
-## Norm
-{{< video https://youtu.be/6B1dj6L0Xiw >}}
-
-* 벡터의 크기/길이를 측정하는 방법 - 여러가지 Norm이 존재
-  * 2-norm(l2-norm): 우리가 흔히 아는 벡터의 물리적인 길이 $$||\mathbf{u}||_2 = \sqrt{\mathbf{u}^T \mathbf{u}} = \sqrt{u_1^2 + u_2^2 + \cdots + u_n^2} = (|u_1|^2 + |u_2|^2 + \cdots + |u_n|^2)^{\frac{1}{2}}$$
-    * 두 점 사이의 거리: 두 벡터의 차이의 2-Norm 계산!
-    * 2-norm이 1인 벡터들을 좌표 평면에 나타내면 반지름이 1인 원이 됨!
-      $$ \sqrt{x^2 + y^2} = 1 \to x^2 + y^2 = 1$$
-      ![](images/chap02_05.PNG)
-  * 1-norm(l1-norm): $$||\mathbf{u}||_1 = |u_1| + |u_2| + \cdots + |u_n| = (|u_1|^1 + |u_2|^1 + \cdots + |u_n|^1)^{\frac{1}{1}}$$
-    * 1-norm이 1인 벡터들을 좌표 평면에 나타내면 $(1,0),(0,1),(-1,0),(0,-1)을 잇는 정사각형이 됨!
-  * p-norm(lp-norm): for $p \geq 1$, $$||\mathbf{u}||_p = (\sum_{i=1}^n |u_i|^p)^{\frac{1}{p}} =  (|u_1|^p + |u_2|^p + \cdots + |u_n|^p)^{\frac{1}{p}}$$
-  * Infinite norm: $$||\mathbf{u}||_\infty \simeq max_i|u_i|$$
-    * Infinite norm이 1인 벡터들을 좌표 평면에 나타내면 $(1,1),(1,-1),(-1,1),(-1,-1)을 잇는 정사각형이 됨!
-  * 같은 벡터의 Norm 크기: 1-norm > 2-norm > $\cdots$ > Infinity norm (norm이 1인 벡터들 비교: 아래그림에서 주황색은 1-norm, 파란색은 2-norm, 노란색은 infinity norm이 1인 벡터들)
-    ![](images/chap02_06.PNG)
 
 ## 행렬의 곱셈 (Matrix Multiplication) {#sec-matmul}
 {{< video https://youtu.be/Lo8FsB1anzQ >}}

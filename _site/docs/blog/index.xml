@@ -48,19 +48,18 @@
 </ul></li>
 <li>Mathematics
 <ul>
-<li>James Stewart - Calculus Early Transcedentals, 7th Eidition</li>
-<li>any James Stewart series</li>
+<li>James Stewart - Calculus Early Transcedentals, 7th Eidition &amp; any James Stewart series</li>
+<li>GILBERT STRANG - Introduction to Linear Algebra, 4th Edition.</li>
 <li>임장환 - 머신러닝, 인공지능, 컴퓨터 비전 전공자를 위한 최적화 이론</li>
 <li>Fast Campus, Coursera, Inflearn</li>
-<li>다수의 Youtube, and Documents from Googling</li>
+<li>그 외 다수의 Youtube, and Documents from Googling</li>
 </ul></li>
 <li>Machine Learning
 <ul>
 <li>Gareth M. James, Daniela Witten, Trevor Hastie, Robert Tibshirani - An Introduction to Statistical Learning: With Applications in R 2nd Edition</li>
 <li>Trevor Hastie, Robert Tibshirani, Jerome H. Friedman - The Elements of Statistical Learning 2nd Edition</li>
 <li>Fast Campus, Coursera, Inflearn</li>
-<li>다수의 Youtube, and Documents from Googling<br>
-</li>
+<li>그 외 다수의 Youtube, and Documents from Googling</li>
 </ul></li>
 <li>Deep Learning
 <ul>
@@ -75,6 +74,7 @@
 <li>Engineering
 <ul>
 <li>Fast Campus, Coursera, Inflearn</li>
+<li>그 외 다수의 Youtube, and Documents from Googling</li>
 </ul></li>
 </ul>
 
@@ -826,6 +826,586 @@
   <category>Surveilance</category>
   <guid>kmink3225.netlify.app/docs/blog/posts/Surveilance/guide_map/index.html</guid>
   <pubDate>Sat, 31 Dec 2089 15:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Basics (1) - Vector Operations</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/intro/1.basic.html</link>
+  <description><![CDATA[ 
+
+
+
+<section id="introduction-linear-algebra-to-deep-learning" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduction Linear Algebra to Deep Learning</h1>
+<p>Deep learning is a pile of neural networks that are made up of layers of interconnected nodes or neurons, and the weights of the connections between them are learned through a process called backpropagation.</p>
+<p>Linear algebra is fundamental to deep learning because many of the computations involved in training neural networks can be expressed as linear algebra operations. For example, matrix multiplication is used to compute the output of each layer in a neural network, and the gradients of the loss function with respect to the weights are computed using the chain rule of calculus, which involves matrix multiplication and vector operations.</p>
+<p>In addition to matrix multiplication, other linear algebra concepts such as eigenvectors, eigenvalues, and singular value decomposition (SVD) are also important in deep learning. For example, SVD can be used to reduce the dimensionality of a dataset or to compute principal components, which are useful for data visualization and feature extraction.</p>
+<p>Linear algebra libraries such as Numpy, Scipy, and PyTorch provide efficient implementations of these operations, which are essential for training large-scale neural networks on GPUs. Without these libraries, implementing deep learning algorithms would be much more difficult and time-consuming.</p>
+<p><a href="https://nbviewer.org/github/fastai/numerical-linear-algebra/blob/master/nbs/1.%20Why%20are%20we%20here.ipynb">Reference: Motivation to Learn Linear Algebra</a></p>
+<section id="scalar" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="scalar"><span class="header-section-number">1.1</span> Scalar</h2>
+<p>A scalar is a single mathematical quantity, usually a real number, which can be represented by a single value. Scalars are typically denoted by lowercase letters, such as <img src="https://latex.codecogs.com/png.latex?a,%20b,%20c,"> and so on.</p>
+</section>
+<section id="vector" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="vector"><span class="header-section-number">1.2</span> Vector</h2>
+<p>A vector <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7Bv%7D"> is a mathematical object that represents a quantity with both a magnitude and a direction. In <img src="https://latex.codecogs.com/png.latex?n">-dimensional Euclidean space <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5En">, a vector <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7Bv%7D"> is typically represented as an ordered list of <img src="https://latex.codecogs.com/png.latex?n"> real numbers:</p>
+<ul>
+<li>the magnitude of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20=%5Cbegin%7Bbmatrix%7D%20x%5C%5C%20y%20%5Cend%7Bbmatrix%7D"> is <img src="https://latex.codecogs.com/png.latex?%7C%7C%5Cmathbf%7Bv%7D%7C%7C%20=%20%5Csqrt%7Bx%5E%7B2%7D%20+%20y%5E%7B2%7D%7D"></li>
+<li>the direction of it is the angle with the x axis, <img src="https://latex.codecogs.com/png.latex?tan%5E%7B-1%7D(%5Cfrac%7By%7D%7Bx%7D)"></li>
+<li>If magnitude and vector are equal, then they are equal vectors</li>
+</ul>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Ctextbf%7Bv%7D=%0A%5Cbegin%7Bbmatrix%7D%0A%20%20v_1%20%5C%5C%0A%20%20v_2%20%5C%5C%0A%20%20%5Cvdots%20%5C%5C%0A%20%20v_n%0A%5Cend%7Bbmatrix%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?v_1,%20v_2,%20%5Cldots,%20v_n"> are the components of the vector <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7Bv%7D">.</p>
+<section id="plotting-vectors-on-the-coordinate-plane" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="plotting-vectors-on-the-coordinate-plane"><span class="header-section-number">1.2.1</span> Plotting Vectors on the Coordinate Plane</h3>
+<p>Example</p>
+<p>Map <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%203%5C%5C%202%20%5Cend%7Bbmatrix%7D"> into <img src="https://latex.codecogs.com/png.latex?x=3">, <img src="https://latex.codecogs.com/png.latex?y=2"> on the Coordinate Plane</p>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;">import</span> numpy <span class="im" style="color: #00769E;">as</span> np</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;">as</span> plt</span>
+<span id="cb1-3"></span>
+<span id="cb1-4">plt.quiver(<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">2</span>, color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'b'</span>, angles<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'xy'</span>, scale_units<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'xy'</span>, scale<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>)</span>
+<span id="cb1-5">plt.xlim(<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">0.5</span>, <span class="fl" style="color: #AD0000;">3.5</span>)</span>
+<span id="cb1-6">plt.ylim(<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">0.5</span>, <span class="fl" style="color: #AD0000;">2.5</span>)</span>
+<span id="cb1-7">plt.grid()</span>
+<span id="cb1-8">plt.show()</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/intro/1.basic_files/figure-html/cell-2-output-1.png" width="592" height="416"></p>
+</div>
+</div>
+<p><a href="http://immersivemath.com/ila/ch02_vectors/ch02.html#auto_label_33">Reference: Read This Article with Interactive Visualization - Points and Vectors</a></p>
+</section>
+</section>
+<section id="matrix" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="matrix"><span class="header-section-number">1.3</span> Matrix</h2>
+<p>A matrix is a rectangular array of elements, usually real numbers, arranged in rows and columns. If <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> matrix, it can be represented as: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bbmatrix%7D%0A%20%20a_%7B11%7D%20&amp;%20a_%7B12%7D%20&amp;%20%5Ccdots%20&amp;%20a_%7B1n%7D%20%5C%5C%0A%20%20a_%7B21%7D%20&amp;%20a_%7B22%7D%20&amp;%20%5Ccdots%20&amp;%20a_%7B2n%7D%20%5C%5C%0A%20%20%5Cvdots%20&amp;%20%5Cvdots%20&amp;%20%5Cddots%20&amp;%20%5Cvdots%20%5C%5C%0A%20%20a_%7Bm1%7D%20&amp;%20a_%7Bm2%7D%20&amp;%20%5Ccdots%20&amp;%20a_%7Bmn%7D%0A%5Cend%7Bbmatrix%7D%0A"> where <img src="https://latex.codecogs.com/png.latex?a_%7Bij%7D"> is the element in the <img src="https://latex.codecogs.com/png.latex?i">-th row and <img src="https://latex.codecogs.com/png.latex?j">-th column of the matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</p>
+</section>
+<section id="basic-vector-operations" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="basic-vector-operations"><span class="header-section-number">1.4</span> Basic Vector Operations</h2>
+<section id="addition-of-vectors" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="addition-of-vectors"><span class="header-section-number">1.4.1</span> Addition of Vectors</h3>
+<p>The addition of two vectors is the process of adding their corresponding components. If <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BA%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BB%7D"> are two vectors of the same dimension, then their sum <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BC%7D%20=%20%5Ctextbf%7BA%7D%20+%20%5Ctextbf%7BB%7D"> is a vector whose <img src="https://latex.codecogs.com/png.latex?i">-th component is the sum of the <img src="https://latex.codecogs.com/png.latex?i">-th components of <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BA%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BB%7D">.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A%20%20%5Ctextbf%7BC%7D&amp;=%5Ctextbf%7BA%7D+%5Ctextbf%7BB%7D%5C%5C%0A%20%20C_i%20&amp;=%20A_i%20+%20B_i%0A%5Cend%7Balign*%7D%0A"></p>
+<p>For example, if <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BA%7D%20=%20%5B1,%202,%203%5D"> and <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BB%7D%20=%20%5B4,%205,%206%5D">, then their sum <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BC%7D%20=%20%5B5,%207,%209%5D">.</p>
+<div class="quarto-layout-panel">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/intro/images/chap02_01.PNG" class="img-fluid"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/intro/images/chap02_02.PNG" class="img-fluid"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 33.3%;justify-content: center;">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/intro/images/chap02_03.PNG" class="img-fluid"></p>
+</div>
+</div>
+</div>
+</section>
+<section id="subtraction-of-vectors" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="subtraction-of-vectors"><span class="header-section-number">1.4.2</span> Subtraction of Vectors</h3>
+<p>The subtraction of two vectors is the process of subtracting their corresponding components. If <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BA%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BB%7D"> are two vectors of the same dimension, then their difference <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BC%7D%20=%20%5Ctextbf%7BA%7D%20-%20%5Ctextbf%7BB%7D"> is a vector whose <img src="https://latex.codecogs.com/png.latex?i">-th component is the difference between the <img src="https://latex.codecogs.com/png.latex?i">-th components of <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BA%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BB%7D">. The formal definition is:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A%20%20%5Ctextbf%7BC%7D&amp;=%5Ctextbf%7BA%7D%20-%20%5Ctextbf%7BB%7D%5C%5C%0A%20%20C_i%20&amp;=%20A_i%20-%20B_i%0A%5Cend%7Balign*%7D%0A"></p>
+<p>For example, if <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BA%7D%20=%20%5B1,%202,%203%5D"> and <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BB%7D%20=%20%5B4,%205,%206%5D">, then their difference <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BC%7D%20=%20%5B-3,%20-3,%20-3%5D">.</p>
+</section>
+<section id="scalar-multiplication-of-vectors" class="level3" data-number="1.4.3">
+<h3 data-number="1.4.3" class="anchored" data-anchor-id="scalar-multiplication-of-vectors"><span class="header-section-number">1.4.3</span> Scalar Multiplication of Vectors</h3>
+<p>The scalar multiplication of a vector is the process of multiplying each component of the vector by a scalar. If <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BA%7D"> is a vector and <img src="https://latex.codecogs.com/png.latex?k"> is a scalar, then the scalar multiple <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BC%7D%20=%20k%5Ctextbf%7BA%7D"> is a vector whose <img src="https://latex.codecogs.com/png.latex?i">-th component is <img src="https://latex.codecogs.com/png.latex?k"> times the <img src="https://latex.codecogs.com/png.latex?i">-th component of <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BA%7D">. The formal definition is:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A%20%20%5Ctextbf%7BC%7D&amp;=k%5Ctextbf%7BA%7D%5C%5C%0A%20%20C_i%20&amp;=%20kA_i%0A%5Cend%7Balign*%7D%0A"></p>
+<p>For example, if <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BA%7D%20=%20%5B1,%202,%203%5D"> and <img src="https://latex.codecogs.com/png.latex?k%20=%202">, then their scalar multiple <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BC%7D%20=%20%5B2,%204,%206%5D">.</p>
+<p><a href="http://immersivemath.com/ila/ch02_vectors/ch02.html#sec_vec_arithmetic">Reference: Read This Article with Interactive Visualization - Properties of Vector Arithmetic</a></p>
+</section>
+<section id="dot-product-of-vectors" class="level3" data-number="1.4.4">
+<h3 data-number="1.4.4" class="anchored" data-anchor-id="dot-product-of-vectors"><span class="header-section-number">1.4.4</span> Dot Product of Vectors</h3>
+<p>The dot product of two vectors is the sum of the products of their corresponding components (a.k.a dot product &amp; scalar product). If <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BA%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BB%7D"> are two vectors of the same dimension, then their dot product <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BC%7D%20=%20%5Ctextbf%7BA%7D%20%5Ccdot%20%5Ctextbf%7BB%7D"> is a scalar given by the formula:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A%20%20%5Ctextbf%7BC%7D&amp;=%5Ctextbf%7BA%7D%5Ctextbf%7BB%7D%5C%5C%0A%20%20&amp;=%20%5Csum_%7Bi=1%7D%5E%7Bn%7Da_ib_i%0A%5Cend%7Balign*%7D%0A"></p>
+<ul>
+<li>Dot product can be used to measure the similarity between two vectors.</li>
+<li>For the two vectors, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Ba%7D%20=%20%5Ba_1,%20a_2,%20%5Ccdots%20a_n%5D"> , <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D%20=%20%5Bb_1,%20b_2,%20%5Ccdots%20b_n%5D">, dot product can be defined as <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7Ba%7D%20%5Ccdot%20%5Cmathbf%7Bb%7D%20=%20%5Cmathbf%7Ba%7D%5E%7BT%7D%20%5Cmathbf%7Bb%7D%20=%20%7C%7C%5Cmathbf%7Ba%7D%7C%7C%20%7C%7C%5Cmathbf%7Bb%7D%7C%7C%20%5Ccos%20%5Ctheta%0A"></li>
+<li>When two vectors are orthogonal, <img src="https://latex.codecogs.com/png.latex?%5Ccos%2090%5E%7B%5Ccirc%7D%20=%200">, the similarity of the two vectors is 0.</li>
+<li>In the Euclidean space, doct product is often called inner product (inner product is a generalization of dot product)</li>
+</ul>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Inner Product vs Dot Product
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In general, an inner product is a mathematical operation that takes two vectors and produces a scalar. It satisfies certain properties, such as being linear in the first argument, conjugate linear in the second argument, and positive-definite.</p>
+<ul>
+<li>“Linear in the first argument” means that for any fixed vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20u">, the function <img src="https://latex.codecogs.com/png.latex?f"> defined by <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%20v)%20=%20%3C%5Cmathbf%20u,%20%5Cmathbf%20v%3E"> is a linear function of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20v">, i.e., <img src="https://latex.codecogs.com/png.latex?f(a%5Cmathbf%20x%20+%20b%5Cmathbf%20y)%20=%20af(%5Cmathbf%20x)%20+%20bf(%5Cmathbf%20y)"> for any scalars <img src="https://latex.codecogs.com/png.latex?a">, <img src="https://latex.codecogs.com/png.latex?b">, and vectors <img src="https://latex.codecogs.com/png.latex?x">, <img src="https://latex.codecogs.com/png.latex?y">.</li>
+<li>“Conjugate linear in the second argument” means that for any fixed vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20v">, the function <img src="https://latex.codecogs.com/png.latex?g"> defined by <img src="https://latex.codecogs.com/png.latex?g(%5Cmathbf%20u)%20=%20%3C%5Cmathbf%20u,%5Cmathbf%20v%3E"> is a conjugate linear function of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20u">, i.e., <img src="https://latex.codecogs.com/png.latex?g(a%20%5Cmathbf%20x%20+%20b%20%5Cmathbf%20y)%20=%20%5Cbar%7Ba%7D%20g(%5Cmathbf%20x)%20+%20%5Cbar%7Bb%7D%20*%20g(%5Cmathbf%20y)"> for any scalars <img src="https://latex.codecogs.com/png.latex?a">, <img src="https://latex.codecogs.com/png.latex?b">, and vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x">, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20y">, where <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Ba%7D"> denotes the complex conjugate of <img src="https://latex.codecogs.com/png.latex?a">.</li>
+<li>“Positive-definite” means that for any nonzero vector v, the inner product <img src="https://latex.codecogs.com/png.latex?%3C%5Cmathbf%20v,%5Cmathbf%20v%3E"> is a positive real number. In other words, the inner product of a vector with itself is always positive, except when the vector is the zero vector.</li>
+</ul>
+<p>A dot product is a specific type of inner product that is defined for Euclidean spaces, which are spaces with a notion of distance or length. The dot product of two vectors is defined as the sum of the products of their corresponding components. In other words, if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20a%20=%20%5Ba_1,%20a_2,%20...,%20a_n%5D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20b%20=%20%5Bb_1,%20b_2,%20...,%20b_n%5D"> are two vectors in <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%20R%5En">, then their dot product is given by:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20a%20%5Ccdot%20%5Cmathbf%20b%20=%20a_1b_1%20+%20a_2b_2%20+%20...%20+%20a_nb_n%0A"></p>
+<p>The dot product satisfies some of the properties of an inner product, such as being linear in the first argument and symmetric. However, it is not conjugate linear in the second argument, and it is not positive-definite in general.</p>
+<p>So, while a dot product is a specific type of inner product, not all inner products are dot products.</p>
+</div>
+</div>
+<p>For example, if <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BA%7D%20=%20%5B1,%202,%203%5D"> and <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BB%7D%20=%20%5B4,%205,%206%5D">, then their dot product <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BC%7D%20=%201%5Ccdot%204%20+%202%5Ccdot%205%20+%203%5Ccdot%206%20=%2032">.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Norm
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The norm of a vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is a non-negative scalar value that represents the size or length of the vector. The norm is denoted by <img src="https://latex.codecogs.com/png.latex?%7C%5Cmathbf%7Bx%7D%7C"> and satisfies the following properties:</p>
+<ul>
+<li>Non-negativity: <img src="https://latex.codecogs.com/png.latex?%7C%5Cmathbf%7Bx%7D%7C%5Cgeq%200">, with equality if and only if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D=%5Cmathbf%7B0%7D">.</li>
+<li>Homogeneity: <img src="https://latex.codecogs.com/png.latex?%7C%5Calpha%5Cmathbf%7Bx%7D%7C=%7C%5Calpha%7C%7C%5Cmathbf%7Bx%7D%7C"> for any scalar <img src="https://latex.codecogs.com/png.latex?%5Calpha">.</li>
+<li>Triangle Inequality: <img src="https://latex.codecogs.com/png.latex?%7C%5Cmathbf%7Bx%7D+%5Cmathbf%7By%7D%7C%5Cleq%20%7C%5Cmathbf%7Bx%7D%7C+%7C%5Cmathbf%7By%7D%7C">.</li>
+</ul>
+<p>Here is an example of finding the Euclidean norm of a vector: Suppose we have a vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D=%5Cbegin%7Bbmatrix%7D1%20%5C%5C%20-2%20%5C%5C%202%5Cend%7Bbmatrix%7D">. We can find its norm as follows:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%7C%7C%5Cmathbf%20x%7C%7C=%5Csqrt%7B1%5E2+(-2)%5E2+2%5E2%7D=%5Csqrt%7B9%7D=3%0A"></p>
+<p>Therefore, the norm of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is 3.</p>
+<p>There are several types of norms:</p>
+<ul>
+<li><p>Manhattan Norm or Absolute Norm or <img src="https://latex.codecogs.com/png.latex?l_1">-norm <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0A%7C%5Cmathbf%7Bx%7D%7C_%7Bl_1%7D%20=%20%5Csum_%7Bi=1%7D%5E%7Bn%7D%20%7Cx_i%7C%0A%5Cend%7Bequation*%7D%0A"> where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is a vector of length <img src="https://latex.codecogs.com/png.latex?n">. Example: For <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20%5B1,%20-2,%203%5D">, <img src="https://latex.codecogs.com/png.latex?%7C%5Cmathbf%7Bx%7D%7C_%7Bl_1%7D%20=%20%7C1%7C%20+%20%7C-2%7C%20+%20%7C3%7C%20=%206">.</p></li>
+<li><p>Euclidean Norm or <img src="https://latex.codecogs.com/png.latex?l_2">-norm <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0A%7C%7C%5Cmathbf%7Bx%7D%7C%7C_%7Bl_2%7D%20=%20%5Csqrt%7B%5Csum_%7Bi=1%7D%5E%7Bn%7D%20x_i%5E2%7D%0A%5Cend%7Bequation*%7D%0A"> where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is a vector of length <img src="https://latex.codecogs.com/png.latex?n">. Example: For <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20%5B1,%202,%203%5D">, <img src="https://latex.codecogs.com/png.latex?%7C%5Cmathbf%7Bx%7D%7C_%7Bl_2%7D%20=%20%5Csqrt%7B1%5E2%20+%202%5E2%20+%203%5E2%7D%20=%20%5Csqrt%7B14%7D">.</p></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/intro/images/chap02_05.PNG" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption"><img src="https://latex.codecogs.com/png.latex?l_2">-norm</figcaption><p></p>
+</figure>
+</div>
+<ul>
+<li>p-norm(<img src="https://latex.codecogs.com/png.latex?l_2">-norm)</li>
+</ul>
+<p>For <img src="https://latex.codecogs.com/png.latex?p%20%5Cgeq%201">, <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0A%7C%7C%5Cmathbf%7Bx%7D%7C%7C_p%20=%20(%5Csum_%7Bi=1%7D%5En%20%7Cx_i%7C%5Ep)%5E%7B%5Cfrac%7B1%7D%7Bp%7D%7D%0A%5Cend%7Bequation*%7D%0A"> where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is a vector of length <img src="https://latex.codecogs.com/png.latex?n">. Example: For <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20%5B1,%202,%203%5D">, <img src="https://latex.codecogs.com/png.latex?%7C%5Cmathbf%7Bx%7D%7C_%7Bl_p%7D%20=%20%5Csqrt%7B1%5Ep%20+%202%5Ep%20+%203%5Ep%7D">.</p>
+<ul>
+<li>Maximum Norm <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0A%7C%5Cmathbf%7Bx%7D%7C_%7B%5Cinfty%7D%20=%20%5Cmax_%7B1%20%5Cleq%20i%20%5Cleq%20n%7D%20%7Cx_i%7C%0A%5Cend%7Bequation*%7D%0A"> where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is a vector of length <img src="https://latex.codecogs.com/png.latex?n">. Example: For <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20%5B1,%20-2,%203%5D">, <img src="https://latex.codecogs.com/png.latex?%7C%5Cmathbf%7Bx%7D%7C_%7Bl_%5Cinfty%7D%20=%20%5Cmax%7B1,%20%7C-2%7C,%203%7D%20=%203">.</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/intro/images/chap02_06.PNG" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption"><img src="https://latex.codecogs.com/png.latex?l_1">-norm vs <img src="https://latex.codecogs.com/png.latex?l_1">-norm vs <img src="https://latex.codecogs.com/png.latex?%5Cmax">-norm</figcaption><p></p>
+</figure>
+</div>
+<ul>
+<li>Frobenius Norm: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0A%7C%5Cmathbf%7BA%7D%7C_%7BF%7D%20=%20%5Csqrt%7B%5Csum_%7Bi=1%7D%5E%7Bm%7D%20%5Csum_%7Bj=1%7D%5E%7Bn%7D%20%7Ca_%7Bij%7D%7C%5E2%7D%0A%5Cend%7Bequation*%7D%0A"> where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> matrix. Example: For <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20%5C%5C%203%20&amp;%204%20%5Cend%7Bbmatrix%7D">, <img src="https://latex.codecogs.com/png.latex?%7C%5Cmathbf%7BA%7D%7C_%7BF%7D%20=%20%5Csqrt%7B1%5E2%20+%202%5E2%20+%203%5E2%20+%204%5E2%7D%20=%20%5Csqrt%7B30%7D">.</li>
+</ul>
+</div>
+</div>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Projection
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bu%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> be two vectors. The projection of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bu%7D"> onto <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> is defined as the vector:</p>
+<p>This vector is the closest vector to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bu%7D"> that lies on the line spanned by <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D">. <img src="https://latex.codecogs.com/png.latex?%0A%5Ctext%7Bproj%7D_%7B%5Cmathbf%20v%7D%5Cmathbf%20u%20=%5Cfrac%7B%5Cmathbf%20u%20%5Cmathbf%20v%7D%7B%7C%7C%5Cmathbf%20v%7C%7C%5E2%7D%20%5Cmathbf%20v%0A"> <img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/intro/images/chap02_04.PNG" class="img-fluid" alt="Projection"></p>
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D%20=%20%7C%7C%5Cmathbf%7Bw%7D%7C%7C%5Cmathbf%7Bv%7D%20=%20%7C%7C%5Cmathbf%7Bu%7D%7C%7C%20%5Ccos%20%5Ctheta%20%5Cmathbf%7Bv%7D"></li>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bu%7D%5ET%20%5Cmathbf%7Bu%7D%20=%20%7C%7C%5Cmathbf%7Bu%7D%7C%7C%20%7C%7C%5Cmathbf%7Bu%7D%7C%7C%20=%20%7C%7C%5Cmathbf%7Bu%7D%7C%7C%5E2"></li>
+<li>the magnitude of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bu%7D"> = <img src="https://latex.codecogs.com/png.latex?%7C%7C%5Cmathbf%7Bu%7D%7C%7C%20=%20%5Csqrt%7B%5Cmathbf%7Bu%7D%5ET%20%5Cmathbf%7Bu%7D%7D"></li>
+<li>unit vector: a normalized vector by dividing it by its magnitude, so the magnitude of a unit vector is 1 <img src="https://latex.codecogs.com/png.latex?%0A%5Chat%7B%5Cmathbf%7Bu%7D%7D%20=%20%5Cfrac%7B%5Cmathbf%7Bu%7D%7D%7B%7C%7C%5Cmathbf%7Bu%7D%7C%7C%7D%20=%20%5Cfrac%7B%5Cmathbf%7Bu%7D%7D%7B%5Csqrt%7B%5Cmathbf%7Bu%7D%5ET%20%5Cmathbf%7Bu%7D%7D%7D%0A"></li>
+<li>Projected vector, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D">
+<ul>
+<li>the product of <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Cmathbf%7Bu%7D%5ET%20%5Cmathbf%7Bv%7D%7D%7B%7C%7C%5Cmathbf%7Bv%7D%7C%7C%7D"> and a unit vector of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> <img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cmathbf%7Bu%7D%5ET%20%5Cmathbf%7Bv%7D%7D%7B%7C%7C%5Cmathbf%7Bv%7D%7C%7C%7D%20%5Cfrac%7B%5Cmathbf%7Bv%7D%7D%7B%7C%7C%5Cmathbf%7Bv%7D%7C%7C%7D%20=%20%5Cfrac%7B%5Cmathbf%7Bu%7D%5ET%20%5Cmathbf%7Bv%7D%7D%7B%7C%7C%5Cmathbf%7Bv%7D%7C%7C%5E2%7D%5Cmathbf%7Bv%7D%0A"></li>
+</ul></li>
+</ul>
+<p>For example, let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bu%7D%20=%20%5Cbegin%7Bbmatrix%7D2%20%5C%203%5Cend%7Bbmatrix%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20=%20%5Cbegin%7Bbmatrix%7D1%20%5C%5C%201%5Cend%7Bbmatrix%7D">. Then, the projection of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bu%7D"> onto <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> is:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Ctext%7Bproj%7D_%7B%5Cmathbf%20v%7D%5Cmathbf%20u%20=%5Cfrac%7B%5Cmathbf%20u%20%5Cmathbf%20v%7D%7B%7C%7C%5Cmathbf%20v%7C%7C%5E2%7D%20%5Cmathbf%20v%20=%5Cfrac%7B%5Cbegin%7Bbmatrix%7D2%20%5C%5C%203%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7D1%20%5C%5C%201%5Cend%7Bbmatrix%7D%7D%7B%5Cbigg%7B%7C%7D%5Cbigg%7B%7C%7D%5Cbegin%7Bbmatrix%7D1%20%5C%5C%201%5Cend%7Bbmatrix%7D%5Cbigg%7B%7C%7D%5Cbigg%7B%7C%7D%5E2%7D=%5Cfrac%7B5%7D%7B2%7D%5Cbegin%7Bbmatrix%7D1%20%5C%5C%201%5Cend%7Bbmatrix%7D=%5Cbegin%7Bbmatrix%7D5%20%5C%5C%202%5Cend%7Bbmatrix%7D%0A"></p>
+<p>This vector is the closest vector to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bu%7D"> that lies on the line spanned by <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20=%20%5Cbegin%7Bbmatrix%7D1%20%5C%5C%201%5Cend%7Bbmatrix%7D">.</p>
+<p><a href="http://immersivemath.com/ila/ch03_dotproduct/ch03.html#auto_label_107">Reference: Read This Article with Interactive Visualization - Projection</a></p>
+</div>
+</div>
+</section>
+<section id="cross-product-of-vectors" class="level3" data-number="1.4.5">
+<h3 data-number="1.4.5" class="anchored" data-anchor-id="cross-product-of-vectors"><span class="header-section-number">1.4.5</span> Cross Product of Vectors</h3>
+<p>The cross product of two vectors is a vector that is perpendicular to both of them. If <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BA%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BB%7D"> are two vectors in <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E3">, then their cross product <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BC%7D%20=%20%5Ctextbf%7BA%7D%20%5Ctimes%20%5Ctextbf%7BB%7D"> is a vector given by the formula</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A$%5Ctextbf%7BC%7D%20=%20%5Ctextbf%7BA%7D%20%5Ctimes%20%5Ctextbf%7BB%7D$%20=%20%5BA_2B_3%20-%20A_3B_2,%20A_3B_1%20-%20A_1B_3,%20A_1B_2%20-%20A_2B_1%5D%0A"></p>
+<p>For example, if <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BA%7D%20=%20%5B1,%202,%203%5D"> and <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BB%7D%20=%20%5B4,%205,%206%5D">, then their cross product <img src="https://latex.codecogs.com/png.latex?%5Ctextbf%7BC%7D%20=%20%5B-3,%206,%20-3%5D">.</p>
+</section>
+</section>
+<section id="column-vector-row-vector" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="column-vector-row-vector"><span class="header-section-number">1.5</span> Column Vector &amp; Row Vector</h2>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bbmatrix%7D%0A%20%20a_%7B11%7D%20&amp;%20a_%7B12%7D%20&amp;%20%5Ccdots%20&amp;%20a_%7B1n%7D%20%5C%5C%0A%20%20a_%7B21%7D%20&amp;%20a_%7B22%7D%20&amp;%20%5Ccdots%20&amp;%20a_%7B2n%7D%20%5C%5C%0A%20%20%5Cvdots%20&amp;%20%5Cvdots%20&amp;%20%5Cddots%20&amp;%20%5Cvdots%20%5C%5C%0A%20%20a_%7Bm1%7D%20&amp;%20a_%7Bm2%7D%20&amp;%20%5Ccdots%20&amp;%20a_%7Bmn%7D%0A%5Cend%7Bbmatrix%7D%0A"></p>
+<p>A column vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> with <img src="https://latex.codecogs.com/png.latex?n"> elements is an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%201"> matrix, which can be represented as: <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7Bx%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0Ax_%7B1%7D%20%5C%5C%0Ax_%7B2%7D%20%5C%5C%0A%5Cvdots%20%5C%5C%0Ax_%7Bm%7D%0A%5Cend%7Bbmatrix%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?x_i"> is the <img src="https://latex.codecogs.com/png.latex?i">-th element of the column vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> and <img src="https://latex.codecogs.com/png.latex?m"> is the number of rows in the matrix. A row vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D"> with <img src="https://latex.codecogs.com/png.latex?m"> elements is a <img src="https://latex.codecogs.com/png.latex?1%20%5Ctimes%20n"> matrix, which can be represented as: <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7By%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0Ay_%7B1%7D%20&amp;%20y_%7B2%7D%20&amp;%20%5Ccdots%20&amp;%20y_%7Bn%7D%0A%5Cend%7Bbmatrix%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?y_i"> is the <img src="https://latex.codecogs.com/png.latex?i">-th element of the row vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D"> and <img src="https://latex.codecogs.com/png.latex?n"> is the number of columns in the matrix.</p>
+</section>
+<section id="basic-matrix-operations" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="basic-matrix-operations"><span class="header-section-number">1.6</span> Basic Matrix Operations</h2>
+<section id="matrix-addition" class="level3" data-number="1.6.1">
+<h3 data-number="1.6.1" class="anchored" data-anchor-id="matrix-addition"><span class="header-section-number">1.6.1</span> Matrix addition</h3>
+<p>The sum of two matrices of the same size is a matrix of the same size obtained by adding corresponding entries.</p>
+<p>Given two <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> matrices <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BB%7D">, their sum <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BC%7D%20=%20%5Cmathbf%7BA%7D%20+%20%5Cmathbf%7BB%7D"> is defined by:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Ac_%7Bi,j%7D=a_%7Bi,j%7D+b_%7Bi,j%7D%E2%80%8B%0A"> for <img src="https://latex.codecogs.com/png.latex?1%20%5Cleq%20i%20%5Cleq%20m"> and <img src="https://latex.codecogs.com/png.latex?1%20%5Cleq%20j%20%5Cleq%20n">.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bbmatrix%7D%0A%20%201%20&amp;%202%20%5C%5C%0A%20%203%20&amp;%204%20%5C%5C%0A%20%205%20&amp;%206%0A%5Cend%7Bbmatrix%7D%20+%0A%5Cbegin%7Bbmatrix%7D%0A%20%20-1%20&amp;%200%20%5C%5C%0A%20%202%20&amp;%20-3%20%5C%5C%0A%20%20-5%20&amp;%204%0A%5Cend%7Bbmatrix%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0A%20%200%20&amp;%202%20%5C%5C%0A%20%205%20&amp;%201%20%5C%5C%0A%20%200%20&amp;%2010%0A%5Cend%7Bbmatrix%7D%0A"></p>
+</section>
+<section id="scalar-multiplication" class="level3" data-number="1.6.2">
+<h3 data-number="1.6.2" class="anchored" data-anchor-id="scalar-multiplication"><span class="header-section-number">1.6.2</span> Scalar multiplication</h3>
+<p>The product of a scalar and a matrix is a matrix obtained by multiplying each entry of the matrix by the scalar.</p>
+<p>Given a scalar <img src="https://latex.codecogs.com/png.latex?k"> and an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">, their product <img src="https://latex.codecogs.com/png.latex?k%5Cmathbf%7BA%7D"> is defined by: <img src="https://latex.codecogs.com/png.latex?%0A(k%5Cmathbf%7BA%7D)_%7Bi,j%7D%20=%20k(a_%7Bi,j%7D)%0A"> for <img src="https://latex.codecogs.com/png.latex?1%20%5Cleq%20i%20%5Cleq%20m"> and <img src="https://latex.codecogs.com/png.latex?1%20%5Cleq%20j%20%5Cleq%20n">.</p>
+<p>Example: <img src="https://latex.codecogs.com/png.latex?%0A2%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%202%20%5C%5C%0A3%20&amp;%204%20%5C%5C%0A5%20&amp;%206%0A%5Cend%7Bbmatrix%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0A2%20&amp;%204%20%5C%5C%0A6%20&amp;%208%20%5C%5C%0A10%20&amp;%2012%0A%5Cend%7Bbmatrix%7D%0A"></p>
+</section>
+<section id="matrix-multiplication" class="level3" data-number="1.6.3">
+<h3 data-number="1.6.3" class="anchored" data-anchor-id="matrix-multiplication"><span class="header-section-number">1.6.3</span> Matrix multiplication</h3>
+<p>The product of two matrices <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BB%7D"> is a matrix obtained by multiplying the rows of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> by the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BB%7D">.</p>
+<p>Given two matrices <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BB%7D"> with dimensions <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> and <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20p">, respectively, their product <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BC%7D%20=%20%5Cmathbf%7BAB%7D"> is an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20p"> matrix defined by: <img src="https://latex.codecogs.com/png.latex?%0Ac_%7Bi,j%7D%20=%20%5Csum_%7Bk=1%7D%5En%20a_%7Bi,k%7Db_%7Bk,j%7D%0A"> for <img src="https://latex.codecogs.com/png.latex?1%20%5Cleq%20i%20%5Cleq%20m"> and <img src="https://latex.codecogs.com/png.latex?1%20%5Cleq%20j%20%5Cleq%20p">.</p>
+<p>Example: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%202%20%5C%5C%0A3%20&amp;%204%20%5C%5C%0A5%20&amp;%206%0A%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%0A-1%20&amp;%200%20&amp;%202%20%5C%5C%0A2%20&amp;%20-3%20&amp;%201%0A%5Cend%7Bbmatrix%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0A3%20&amp;%20-6%20&amp;%204%20%5C%5C%0A5%20&amp;%20-12%20&amp;%2010%20%5C%5C%0A7%20&amp;%20-18%20&amp;%2016%0A%5Cend%7Bbmatrix%7D%0A"></p>
+</section>
+<section id="transpose" class="level3" data-number="1.6.4">
+<h3 data-number="1.6.4" class="anchored" data-anchor-id="transpose"><span class="header-section-number">1.6.4</span> Transpose</h3>
+<p>The transpose of an <img src="https://latex.codecogs.com/png.latex?m%20x%20n"> matrix A, denoted by <img src="https://latex.codecogs.com/png.latex?A%5ET">, is the <img src="https://latex.codecogs.com/png.latex?n%20x%20m"> matrix obtained by interchanging the rows and columns of A. Formally, if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Ba_%7Bij%7D%5D"> is an m x n matrix, then its transpose <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET%20=%20%5Bb_%7Bij%7D%5D"> is an <img src="https://latex.codecogs.com/png.latex?n%20x%20m"> matrix where <img src="https://latex.codecogs.com/png.latex?b_%7Bij%7D"> = <img src="https://latex.codecogs.com/png.latex?a_%7Bji%7D"> for all <img src="https://latex.codecogs.com/png.latex?i"> and <img src="https://latex.codecogs.com/png.latex?j">. In other words, the element in the <img src="https://latex.codecogs.com/png.latex?i"> th row and <img src="https://latex.codecogs.com/png.latex?j"> th column of <img src="https://latex.codecogs.com/png.latex?A%5ET"> is equal to the element in the <img src="https://latex.codecogs.com/png.latex?j"> th row and ith column of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</p>
+<p>Given an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">, its transpose <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET"> is an <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20m"> matrix defined by: $$ <em>{i,j}^T = </em>{j,i}</p>
+<p>$$</p>
+<ul>
+<li>When <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is transposed, diagnoal entries(<img src="https://latex.codecogs.com/png.latex?a_%7Bii%7D">) do not change but off-diagnoal elements(<img src="https://latex.codecogs.com/png.latex?a_%7Bij%7D%20%5C;%20i%20%5Cneq%20j">) change.</li>
+<li>A column vector is tranposed into a row vector, and vice versa.</li>
+<li>symmetric matrix: <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cmathbf%7BA%7D%5ET"></li>
+</ul>
+<p>Example:</p>
+<p>Let A be the matrix <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D%20=%20%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%202%20&amp;%203%5C%5C%0A4%20&amp;%205%20&amp;%206%0A%5Cend%7Bbmatrix%7D%0A"> The transpose of A, denoted by A^T, is the matrix <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D%5ET%20=%20%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%204%5C%5C%0A2%20&amp;%205%5C%5C%0A3%20&amp;%206%0A%5Cend%7Bbmatrix%7D%0A"></p>
+</section>
+<section id="determinant" class="level3" data-number="1.6.5">
+<h3 data-number="1.6.5" class="anchored" data-anchor-id="determinant"><span class="header-section-number">1.6.5</span> Determinant</h3>
+<p>Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> be an <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> square matrix. The determinant of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">, denoted by <img src="https://latex.codecogs.com/png.latex?%7C%5Cmathbf%7BA%7D%7C"> or <img src="https://latex.codecogs.com/png.latex?%5Cdet(%5Cmathbf%7BA%7D)">, is a scalar value calculated as the sum of the products of the elements in any row or column of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> with their corresponding cofactors, that is,</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%7C%5Cmathbf%7BA%7D%7C=%5Csum_%7Bi=1%7D%5E%7Bn%7Da_%7Bij%7DC_%7Bij%7D=%5Csum_%7Bj=1%7D%5E%7Bn%7Da_%7Bij%7DC_%7Bij%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?a_%7Bij%7D"> is the element of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> in the <img src="https://latex.codecogs.com/png.latex?i">-th row and <img src="https://latex.codecogs.com/png.latex?j">-th column, and <img src="https://latex.codecogs.com/png.latex?C_%7Bij%7D"> is the cofactor of <img src="https://latex.codecogs.com/png.latex?a_%7Bij%7D">. The cofactor of <img src="https://latex.codecogs.com/png.latex?a_%7Bij%7D">, denoted by <img src="https://latex.codecogs.com/png.latex?C_%7Bij%7D">, is given by <img src="https://latex.codecogs.com/png.latex?(-1)%5E%7Bi+j%7D"> times the determinant of the <img src="https://latex.codecogs.com/png.latex?(n-1)%20%5Ctimes%20(n-1)"> matrix obtained by deleting the <img src="https://latex.codecogs.com/png.latex?i">-th row and <img src="https://latex.codecogs.com/png.latex?j">-th column of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</p>
+<p>The determinant of an <img src="https://latex.codecogs.com/png.latex?n%20x%20n"> matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is a scalar value denoted as <img src="https://latex.codecogs.com/png.latex?%7C%5Cmathbf%7BA%7D%7C">. It is defined as the sum of all possible products of n elements taken one from each row and one from each column, where the sign of each product alternates according to the position of the element in the matrix. For example, the determinant of a <img src="https://latex.codecogs.com/png.latex?3%20x%203"> matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20="> <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bbmatrix%7D%0Aa_%7B11%7D%20&amp;%20a_%7B12%7D%20&amp;%20a_%7B13%7D%20%5C%5C%0Aa_%7B21%7D%20&amp;%20a_%7B22%7D%20&amp;%20a_%7B23%7D%20%5C%5C%0Aa_%7B31%7D%20&amp;%20a_%7B32%7D%20&amp;%20a_%7B33%7D%20%5C%5C%0A%5Cend%7Bbmatrix%7D%0A"></p>
+<p>is given by:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%7C%5Cmathbf%7BA%7D%7C%20=%20a_%7B11%7D%0A%5Cbegin%7Bvmatrix%7D%0Aa_%7B22%7D%20&amp;%20a_%7B23%7D%20%5C%5C%0Aa_%7B32%7D%20&amp;%20a_%7B33%7D%0A%5Cend%7Bvmatrix%7D%0A-%20a_%7B12%7D%0A%5Cbegin%7Bvmatrix%7D%0Aa_%7B21%7D%20&amp;%20a_%7B23%7D%20%5C%5C%0Aa_%7B31%7D%20&amp;%20a_%7B33%7D%0A%5Cend%7Bvmatrix%7D%0A+%20a_%7B13%7D%0A%5Cbegin%7Bvmatrix%7D%0Aa_%7B21%7D%20&amp;%20a_%7B22%7D%20%5C%5C%0Aa_%7B31%7D%20&amp;%20a_%7B32%7D%0A%5Cend%7Bvmatrix%7D%0A"></p>
+<p>For example, consider the <img src="https://latex.codecogs.com/png.latex?3%20%5Ctimes%203"> matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20&amp;%203%20%5C%5C%204%20&amp;%205%20&amp;%206%20%5C%5C%207%20&amp;%208%20&amp;%209%20%5Cend%7Bbmatrix%7D">. We can calculate the determinant of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> using any row or column. Let’s use the first column:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%7C%5Cmathbf%7BA%7D%7C%20=%201%0A%5Cbegin%7Bvmatrix%7D%0A5%20&amp;%206%20%5C%5C%0A8%20&amp;%209%0A%5Cend%7Bvmatrix%7D%0A-%204%0A%5Cbegin%7Bvmatrix%7D%0A2%20&amp;%203%5C%5C%0A8%20&amp;%209%0A%5Cend%7Bvmatrix%7D%0A+%207%0A%5Cbegin%7Bvmatrix%7D%0A2%20&amp;%205%20%5C%5C%0A3%20&amp;%206%0A%5Cend%7Bvmatrix%7D%20=%200%0A"></p>
+<p>Therefore, the determinant of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is zero.</p>
+</section>
+<section id="inverse" class="level3" data-number="1.6.6">
+<h3 data-number="1.6.6" class="anchored" data-anchor-id="inverse"><span class="header-section-number">1.6.6</span> Inverse</h3>
+<p>The inverse of a square matrix <img src="https://latex.codecogs.com/png.latex?A"> of size <img src="https://latex.codecogs.com/png.latex?n"> is a matrix <img src="https://latex.codecogs.com/png.latex?A%5E%7B-1%7D"> such that the product of <img src="https://latex.codecogs.com/png.latex?A"> and <img src="https://latex.codecogs.com/png.latex?A%5E%7B-1%7D"> is the identity matrix <img src="https://latex.codecogs.com/png.latex?I_n">, i.e.&nbsp;<img src="https://latex.codecogs.com/png.latex?A%20%5Ctimes%20A%5E%7B-1%7D%20=%20I_n">. If such a matrix exists, then <img src="https://latex.codecogs.com/png.latex?A"> is said to be invertible or non-singular.</p>
+<p>The inverse of a square matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is denoted by <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5E%7B-1%7D"> and is defined as the unique matrix that satisfies the following equation: <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D%5E%7B-1%7D%5Cmathbf%7BA%7D%20=%20%5Cmathbf%7BA%7D%5Cmathbf%7BA%7D%5E%7B-1%7D%20=%20%5Cmathbf%7BI%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BI%7D"> is the identity matrix. Not all matrices have an inverse, and a matrix that has an inverse is called invertible or nonsingular. A matrix that does not have an inverse is called singular.</p>
+<p>For example, consider the <img src="https://latex.codecogs.com/png.latex?2%5Ctimes%202"> matrix <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%202%20%5C%5C%0A3%20&amp;%204%0A%5Cend%7Bbmatrix%7D.%0A"> The inverse of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is given by:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D%5E%7B-1%7D%20=%0A%5Cfrac%7B1%7D%7B-2%7D%0A%5Cbegin%7Bbmatrix%7D%0A4%20&amp;%20-2%20%5C%5C%0A-3%20&amp;%201%0A%5Cend%7Bbmatrix%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0A-2%20&amp;%201%20%5C%5C%0A%5Cfrac%7B3%7D%7B2%7D%20&amp;%20-%5Cfrac%7B1%7D%7B2%7D%0A%5Cend%7Bbmatrix%7D%0A"></p>
+<p>We can verify that <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5Cmathbf%7BA%7D%5E%7B-1%7D%20=%20%5Cmathbf%7BA%7D%5E%7B-1%7D%5Cmathbf%7BA%7D%20=%20%5Cmathbf%7BI%7D"> by computing:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D%5Cmathbf%7BA%7D%5E%7B-1%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%202%20%5C%5C%0A3%20&amp;%204%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7Bbmatrix%7D%0A-2%20&amp;%201%20%5C%5C%0A%5Cfrac%7B3%7D%7B2%7D%20&amp;%20-%5Cfrac%7B1%7D%7B2%7D%0A%5Cend%7Bbmatrix%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%200%20%5C%5C%0A0%20&amp;%201%0A%5Cend%7Bbmatrix%7D%20=%20%5Cmathbf%7BI%7D%0A"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D%5E%7B-1%7D%5Cmathbf%7BA%7D%20=%0A%5Cbegin%7Bbmatrix%7D%20-2%20&amp;%201%20%5C%5C%0A%5Cfrac%7B3%7D%7B2%7D%20&amp;%20-%5Cfrac%7B1%7D%7B2%7D%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%202%20%5C%5C%0A3%20&amp;%204%0A%5Cend%7Bbmatrix%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%200%20%5C%5C%0A0%20&amp;%201%0A%5Cend%7Bbmatrix%7D%20=%20%5Cmathbf%7BI%7D%0A"></p>
+<p>Let me give another example and A be a <img src="https://latex.codecogs.com/png.latex?3x3"> square matrix:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0A%5Cmathbf%7BA%7D%20=%20%5Cbegin%7Bbmatrix%7D%0Aa_%7B11%7D%20&amp;%20a_%7B12%7D%20&amp;%20a_%7B13%7D%20%5C%5C%0Aa_%7B21%7D%20&amp;%20a_%7B22%7D%20&amp;%20a_%7B23%7D%20%5C%5C%0Aa_%7B31%7D%20&amp;%20a_%7B32%7D%20&amp;%20a_%7B33%7D%20%5C%5C%0A%5Cend%7Bbmatrix%7D%0A%5Cend%7Bequation*%7D%0A"> Then, the inverse of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">, denoted as <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5E%7B-1%7D">, is given by:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0A%5Cmathbf%7BA%7D%5E%7B-1%7D%20=%20%5Cfrac%7B1%7D%7B%5Ctext%7Bdet%7D(%5Cmathbf%7BA%7D)%7D%5Cbegin%7Bbmatrix%7D%0Aa_%7B22%7Da_%7B33%7D-a_%7B23%7Da_%7B32%7D%20&amp;%20a_%7B13%7Da_%7B32%7D-a_%7B12%7Da_%7B33%7D%20&amp;%20a_%7B12%7Da_%7B23%7D-a_%7B13%7Da_%7B22%7D%20%5C%5C%0Aa_%7B23%7Da_%7B31%7D-a_%7B21%7Da_%7B33%7D%20&amp;%20a_%7B11%7Da_%7B33%7D-a_%7B13%7Da_%7B31%7D%20&amp;%20a_%7B13%7Da_%7B21%7D-a_%7B11%7Da_%7B23%7D%20%5C%5C%0Aa_%7B21%7Da_%7B32%7D-a_%7B22%7Da_%7B31%7D%20&amp;%20a_%7B12%7Da_%7B31%7D-a_%7B11%7Da_%7B32%7D%20&amp;%20a_%7B11%7Da_%7B22%7D-a_%7B12%7Da_%7B21%7D%20%5C%5C%0A%5Cend%7Bbmatrix%7D%0A%5Cend%7Bequation*%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?det(%5Cmathbf%7BA%7D)"> is the determinant of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</p>
+<p>For example, let:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0A%5Cmathbf%7BA%7D%20=%20%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%202%20&amp;%203%20%5C%5C%0A0%20&amp;%201%20&amp;%204%20%5C%5C%0A5%20&amp;%206%20&amp;%200%20%5C%5C%0A%5Cend%7Bbmatrix%7D%0A%5Cend%7Bequation*%7D%0A"> Then, <img src="https://latex.codecogs.com/png.latex?det(A)"> = -57, and the inverse of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0A%5Cmathbf%7BA%7D%5E%7B-1%7D%20=%20%5Cfrac%7B1%7D%7B-57%7D%5Cbegin%7Bbmatrix%7D%0A-24%20&amp;%2018%20&amp;%205%20%5C%5C%0A20%20&amp;%20-15%20&amp;%20-4%20%5C%5C%0A-3%20&amp;%202%20&amp;%201%20%5C%5C%0A%5Cend%7Bbmatrix%7D%0A%5Cend%7Bequation*%7D%0A"></p>
+<p>There are several formulas for finding the inverse of a matrix such as Gauss-Jordan Elimination, Adjoint method, Cramer’s rule, Inverse formula, etc. This topic is going to be handled in the other blogs.</p>
+</section>
+<section id="rank" class="level3" data-number="1.6.7">
+<h3 data-number="1.6.7" class="anchored" data-anchor-id="rank"><span class="header-section-number">1.6.7</span> Rank</h3>
+<p>The rank of a matrix is the dimension of the vector space spanned by its columns (or rows). It is denoted by <img src="https://latex.codecogs.com/png.latex?%5Ctext%7Brank%7D(%5Cmathbf%7BA%7D)">.</p>
+<p>For example, consider the following matrix:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0A%5Cmathbf%7BA%7D%20=%20%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%202%20&amp;%203%5C%5C%0A4%20&amp;%205%20&amp;%206%20%5C%5C%0A7%20&amp;%208%20&amp;%209%5C%5C%0A%5Cend%7Bbmatrix%7D%0A%5Cend%7Bequation*%7D%0A"></p>
+<p>The columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> are linearly dependent since the third column is equal to the sum of the first two columns. Therefore, the dimension of the vector space spanned by the columns is 2, so the rank of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is 2.</p>
+</section>
+<section id="trace" class="level3" data-number="1.6.8">
+<h3 data-number="1.6.8" class="anchored" data-anchor-id="trace"><span class="header-section-number">1.6.8</span> Trace</h3>
+<p>The trace of a square matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">, denoted by <img src="https://latex.codecogs.com/png.latex?%5Cmathrm%7Btr%7D(%5Cmathbf%7BA%7D)">, is defined as the sum of the diagonal elements of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">. In other words, if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is an <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> matrix, then its trace is given by:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathrm%7Btr%7D(%5Cmathbf%7BA%7D)=%5Csum_%7Bi=1%7D%5E%7Bn%7Da_%7Bij%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?a_%7Bii%7D"> denotes the <img src="https://latex.codecogs.com/png.latex?i"> th diagonal element of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</p>
+<p>For example, let <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bbmatrix%7D%0A2%20&amp;%203%20&amp;%201%20%5C%5C%0A0%20&amp;%205%20&amp;%202%20%5C%5C%0A1%20&amp;%201%20&amp;%204%0A%5Cend%7Bbmatrix%7D%0A"> Then, the trace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is <img src="https://latex.codecogs.com/png.latex?%5Cmathrm%7Btr%7D(%5Cmathbf%7BA%7D)%20=%202%20+%205%20+%204%20=%2011"></p>
+</section>
+<section id="eigenvalues-and-eigenvectors" class="level3" data-number="1.6.9">
+<h3 data-number="1.6.9" class="anchored" data-anchor-id="eigenvalues-and-eigenvectors"><span class="header-section-number">1.6.9</span> Eigenvalues and Eigenvectors</h3>
+<p>Let A be an <img src="https://latex.codecogs.com/png.latex?n%20%C3%97%20n"> square matrix. A scalar <img src="https://latex.codecogs.com/png.latex?%5Clambda"> is called an eigenvalue of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> if there exists a non-zero vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> such that <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BAv%7D=%5Clambda%5Cmathbf%7Bv%7D%0A"></p>
+<p>Such a vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> is called an eigenvector corresponding to <img src="https://latex.codecogs.com/png.latex?%5Clambda">.</p>
+<p>Example:</p>
+<p>Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> be the matrix</p>
+<p>To find the eigenvalues of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, we solve the characteristic equation <img src="https://latex.codecogs.com/png.latex?%5Ctext%7Bdet%7D(%5Cmathbf%20A%20-%20%5Clambda%20%5Cmathbf%20I%20)%20=%200">, where I is the n × n identity matrix.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A%5Ctext%7Bdet%7D(%5Cmathbf%20A%20-%20%5Clambda%20%5Cmathbf%20I%20)%0A&amp;=%0A%5Cbegin%7Bvmatrix%7D%0A3%20-%20%5Clambda%20&amp;%201%20%5C%5C%0A1%20&amp;%203%20-%20%5Clambda%0A%5Cend%7Bvmatrix%7D%20%5C%5C%0A&amp;=%0A(3%20-%20%5Clambda)(3%20-%20%5Clambda)%20-%201%20%5C%5C%0A&amp;=%20%5Clambda%5E2%20-%206%5Clambda%20+%208%20=%200%0A%5Cend%7Balign*%7D%0A"></p>
+<p>Solving this quadratic equation gives us the eigenvalues of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">: <img src="https://latex.codecogs.com/png.latex?%5Clambda_1%20=%202"> and <img src="https://latex.codecogs.com/png.latex?%5Clambda_2%20=%204">.</p>
+<p>To find the eigenvectors corresponding to <img src="https://latex.codecogs.com/png.latex?%5Clambda_1%20=%202">, we solve the equation <img src="https://latex.codecogs.com/png.latex?(%5Cmathbf%20A%20-%202%20%5Cmathbf%20I)%5Cmathbf%7Bv%7D%20=%20%5Cmathbf%7B0%7D">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20I"> is the <img src="https://latex.codecogs.com/png.latex?2%20%5Ctimes%202"> identity matrix.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A(%5Cmathbf%20A%20-%202%20%5Cmathbf%20I)%5Cmathbf%7Bv%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%201%20%5C%5C%201%20&amp;%201%20%5Cend%7Bbmatrix%7D%0A%5Cbegin%7Bbmatrix%7D%20x%20%5C%20y%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%200%20%5C%200%20%5Cend%7Bbmatrix%7D%0A%5Cend%7Balign*%7D%0A"></p>
+<p>Solving this system of equations gives us the eigenvectors corresponding to <img src="https://latex.codecogs.com/png.latex?%5Clambda_1%20=%202">: <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv_1%7D%20=%20%5Cbegin%7Bbmatrix%7D%20-1%20%5C%5C%201%20%5Cend%7Bbmatrix%7D"></p>
+<p>Similarly, for <img src="https://latex.codecogs.com/png.latex?%5Clambda_2%20=%204">, we solve the equation <img src="https://latex.codecogs.com/png.latex?(%5Cmathbf%20A%20-%204%5Cmathbf%20I)%5Cmathbf%7Bv%7D"> = <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B0%7D"> to get the eigenvectors corresponding to <img src="https://latex.codecogs.com/png.latex?%5Clambda_2%20=%204">: <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv_2%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%201%20%5Cend%7Bbmatrix%7D"></p>
+</section>
+<section id="singular-value-and-singluar-vectors" class="level3" data-number="1.6.10">
+<h3 data-number="1.6.10" class="anchored" data-anchor-id="singular-value-and-singluar-vectors"><span class="header-section-number">1.6.10</span> Singular value and Singluar Vectors</h3>
+<p>The singular value decomposition (SVD) of a matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is a factorization of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> into the product of three matrices as follows:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D%20=%20%5Cmathbf%7BU%7D%20%5Cmathbf%7B%5CSigma%7D%20%5Cmathbf%7BV%7D%5ET%0A"> where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BU%7D"> is an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20m"> orthogonal matrix, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5CSigma%7D"> is an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> rectangular diagonal matrix with non-negative real numbers on the diagonal, and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BV%7D"> is an <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> orthogonal matrix.</p>
+<p>The diagonal entries of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5CSigma%7D"> are called the singular values of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">, denoted as <img src="https://latex.codecogs.com/png.latex?%5Csigma_1,%20%5Csigma_2,%20%5Cldots,%20%5Csigma_r"> (where <img src="https://latex.codecogs.com/png.latex?r"> is the rank of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">), and are arranged in descending order. The columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BU%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BV%7D"> are called the left and right singular vectors of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">, respectively, and are orthonormal vectors.</p>
+<p>For example, let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> be a 3 by 2 matrix given by:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0A%5Cmathbf%7BA%7D%20=%20%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%202%5C%5C%0A3%20&amp;%204%5C%5C%0A5%20&amp;%206%0A%5Cend%7Bbmatrix%7D%0A%5Cend%7Bequation*%7D%0A"></p>
+<p>The SVD of A is given by:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0A%5Cmathbf%7BA%7D%20=%20%5Cmathbf%7BU%7D%20%5Cmathbf%7B%5CSigma%7D%20%5Cmathbf%7BV%7D%5ET%20=%0A%5Cbegin%7Bbmatrix%7D%0A-0.23%20&amp;%20-0.53%20&amp;%20-0.81%5C%5C%0A-0.53%20&amp;%20-0.72%20&amp;%200.45%5C%5C%0A-0.81%20&amp;%200.45%20&amp;%20-0.38%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7Bbmatrix%7D%0A9.53%20&amp;%200%5C%5C%0A0%20&amp;%200.90%5C%5C%0A0%20&amp;%200%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7Bbmatrix%7D%0A-0.62%20&amp;%20-0.78%5C%5C%0A-0.78%20&amp;%200.62%0A%5Cend%7Bbmatrix%7D%5ET%0A%5Cend%7Bequation*%7D%0A"></p>
+<p>where the left singular vectors of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> are the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BU%7D">, the right singular vectors of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> are the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BV%7D">, and the singular values of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> are the diagonal entries of <img src="https://latex.codecogs.com/png.latex?%5Cboldsymbol%7B%5CSigma%7D">.</p>
+</section>
+</section>
+<section id="sec-matmul" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="sec-matmul"><span class="header-section-number">1.7</span> 행렬의 곱셈 (Matrix Multiplication)</h2>
+<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/Lo8FsB1anzQ" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<ul>
+<li>두 개의 연립 방정식을 행렬의 곱으로 나타내보기 <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bmatrix%7Dx_1+2y_1=4%5C%5C2x_1+5y_1=9%5Cend%7Bmatrix%7D%20%5Cquad%20%5Cquad%20%5Cquad%20%5Cbegin%7Bmatrix%7Dx_2+2y_2=3%5C%5C2x_2+5y_2=7%5Cend%7Bmatrix%7D"> <img src="https://latex.codecogs.com/png.latex?%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20%5C%5C%202%20&amp;%205%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20x_1%20&amp;%20x_2%20%5C%5C%20y_1%20&amp;%20y_2%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%204%20&amp;%209%20%5C%5C%203%20&amp;%207%20%5Cend%7Bbmatrix%7D"></li>
+<li>중요한 사실(….당연한 사실?)
+<ul>
+<li>곱셈의 왼쪽 행렬의 열 수와, 오른쪽 행렬의 행 수가 같아야 가능함
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?A_%7Bm%20%5Ctimes%20n%7D%20%5Ctimes%20B_%7Bo%20%5Ctimes%20p%7D"> 에서 <img src="https://latex.codecogs.com/png.latex?n%20=%20o"> 여야 곱셈 성립</li>
+</ul></li>
+<li>곱셈의 결과 행렬의 크기 = 곱셈의 왼쪽 행렬의 행 수 <img src="https://latex.codecogs.com/png.latex?%5Ctimes"> 곱셈의 오른쪽 행렬의 열 수
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?A_%7Bm%20%5Ctimes%20n%7D%20%5Ctimes%20B_%7Bo%20%5Ctimes%20p%7D%20=%20C_%7Bm%20%5Ctimes%20p%7D"></li>
+</ul></li>
+<li>교환법칙(Commutative property)이 성립하지 않음
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?AB%20%5Cneq%20BA"></li>
+</ul></li>
+</ul></li>
+<li>행렬 곱셈의 여러가지 관점
+<ul>
+<li>내적으로 바라보기 <img src="https://latex.codecogs.com/png.latex?%20A%20=%20%5Cbegin%7Bbmatrix%7D%20%5Cmathbf%7Ba_1%5ET%7D%20%5C%5C%20%5Cmathbf%7Ba_2%5ET%7D%20%5C%5C%20%5Cvdots%20%5C%5C%20%5Cmathbf%7Ba_m%5ET%7D%20%5Cend%7Bbmatrix%7D%20"> <img src="https://latex.codecogs.com/png.latex?%20AB%20=%20%5Cbegin%7Bbmatrix%7D%20%5Cmathbf%7Ba_1%5ET%7D%20%5C%5C%20%5Cmathbf%7Ba_2%5ET%7D%20%5C%5C%20%5Cvdots%20%5C%5C%20%5Cmathbf%7Ba_m%5ET%7D%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20%5Cmathbf%7Bb_1%7D%20&amp;%20%5Cmathbf%7Bb_2%7D%20&amp;%20%5Ccdots%20&amp;%20%5Cmathbf%7Bb_m%7D%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%20%5Cmathbf%7Ba_1%5ET%20b_1%7D%20&amp;%20%5Cmathbf%7Ba_1%5ET%20b_2%7D%20&amp;%20%5Ccdots%20&amp;%20%5Cmathbf%7Ba_1%5ET%20b_m%7D%20%5C%5C%20%5Cmathbf%7Ba_2%5ET%20b_1%7D%20&amp;%20%5Cmathbf%7Ba_2%5ET%20b_2%7D%20&amp;%20%5Ccdots%20&amp;%20%5Cmathbf%7Ba_2%5ET%20b_m%7D%20%5C%5C%20%5Cvdots%20%20&amp;%20%5Cvdots%20%20&amp;%20%5Cddots%20&amp;%20%5Cvdots%20%5C%5C%20%5Cmathbf%7Ba_m%5ET%20b_1%7D%20&amp;%20%5Cmathbf%7Ba_m%5ET%20b_2%7D%20&amp;%20%5Ccdots%20&amp;%20%5Cmathbf%7Ba_m%5ET%20b_m%7D%20%5Cend%7Bbmatrix%7D"></li>
+<li>rank-1 matrix의 합 (또 안가르쳐준 개념 먼저 사용중…..-_-) <img src="https://latex.codecogs.com/png.latex?AB%20=%20%5Cbegin%7Bbmatrix%7D%20%5Cmathbf%7Ba_1%7D%20&amp;%20%5Cmathbf%7Ba_2%7D%20&amp;%20%5Ccdots%20&amp;%20%5Cmathbf%7Ba_m%7D%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20%5Cmathbf%7Bb_1%5ET%7D%20%5C%5C%20%5Cmathbf%7Bb_2%5ET%7D%20%5C%5C%20%5Cvdots%20%5C%5C%20%5Cmathbf%7Bb_m%5ET%7D%20%5Cend%7Bbmatrix%7D%20=%20%5Cmathbf%7Ba_1%20b_1%5ET%7D%20+%20%5Cmathbf%7Ba_2%20b_2%5ET%7D%20+%20%5Ccdots%20+%20%5Cmathbf%7Ba_m%20b_m%5ET%7D"></li>
+<li>column space로 바라보기 <img src="https://latex.codecogs.com/png.latex?A%5Cmathbf%7Bx%7D%20=%20%5Cbegin%7Bbmatrix%7D%20%5Cmathbf%7Ba_1%7D%20&amp;%20%5Cmathbf%7Ba_2%7D%20&amp;%20%5Ccdots%20&amp;%20%5Cmathbf%7Ba_m%7D%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%5C%20x_2%20%5C%5C%20%5Cvdots%20%5C%5C%20x_m%20%5Cend%7Bbmatrix%7D%20=%20%5Cmathbf%7Ba_1%7D%20x_1%20+%20%5Cmathbf%7Ba_2%7D%20x_2%20+%20%5Ccdots%20+%20%5Cmathbf%7Ba_m%7D%20x_m%20"> (스칼라배의 합)
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?A%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%200%20%5C%5C%200%20&amp;%201%20%5Cend%7Bbmatrix%7D"> 는 2차원 좌표평면의 모든 점을, <img src="https://latex.codecogs.com/png.latex?A=%5Cbegin%7Bbmatrix%7D%201%20&amp;%200%20&amp;%200%20%5C%5C%200%20&amp;%201%20&amp;%200%20%5C%5C%200%20&amp;%200%20&amp;%201%20%5Cend%7Bbmatrix%7D">은 3차원 좌표평면의 모든 점 표현 가능</li>
+<li><img src="https://latex.codecogs.com/png.latex?AB%20=%20A%20%5Cbegin%7Bbmatrix%7D%20%5Cmathbf%7Bb_1%7D%20&amp;%20%5Cmathbf%7Bb_2%7D%20&amp;%20%5Ccdots%20&amp;%20%5Cmathbf%7Bb_m%7D%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%20A%20%5Cmathbf%7Bb_1%7D%20&amp;%20A%20%5Cmathbf%7Bb_2%7D%20&amp;%20%5Ccdots%20&amp;%20A%20%5Cmathbf%7Bb_m%7D%20%5Cend%7Bbmatrix%7D"></li>
+<li>column space: A의 column vector로 만들 수 있는 부분 공간</li>
+</ul></li>
+<li>row space로 바라보기 <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%5ET%7DA%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20&amp;%20x_2%20&amp;%20%5Ccdots%20&amp;%20x_m%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20%5Cmathbf%7Ba_1%5ET%7D%20%5C%5C%20%5Cmathbf%7Ba_2%5ET%7D%20%5C%5C%20%5Cvdots%20%5C%5C%20%5Cmathbf%7Ba_m%5ET%7D%20%5Cend%7Bbmatrix%7D%20=%20x_1%20%5Cmathbf%7Ba_1%5ET%7D%20+%20x_2%20%5Cmathbf%7Ba_2%5ET%7D%20+%20%5Ccdots%20+%20x_m%20%5Cmathbf%7Ba_m%5ET%7D%20"></li>
+</ul></li>
+</ul>
+</section>
+<section id="열공간column-space" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="열공간column-space"><span class="header-section-number">1.8</span> 열공간(Column Space)</h2>
+<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/g0eaDeVRdZk" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<ul>
+<li>column space: column vector 들이 span 하는 space
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?A">의 column space = <img src="https://latex.codecogs.com/png.latex?C(A)"> 또는 <img src="https://latex.codecogs.com/png.latex?range(A)"></li>
+</ul></li>
+<li>span: vector들의 linear combination 으로 나타낼 수 있는 모든 vector를 모은 집합
+<ul>
+<li>vector에 따라, 점일수도 선일수도 평면일 수도 있음</li>
+<li>vector space를 이 vector들이 span하는 space → column space는 행렬의 열들이 span하는 space</li>
+</ul></li>
+<li>vector의 선형 결합(linear combination): vector에 스칼라배를 해서 더하는 것
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv_1%7D"> 과 <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv_2%7D">의 linear combination으로 2차원 좌표평면 나타내기 <img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/intro/images/chap02_09.PNG" class="img-fluid"></li>
+</ul></li>
+</ul>
+</section>
+<section id="선형-독립linear-independent" class="level2" data-number="1.9">
+<h2 data-number="1.9" class="anchored" data-anchor-id="선형-독립linear-independent"><span class="header-section-number">1.9</span> 선형 독립(Linear Independent)</h2>
+<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/mOOI4-BfjGQ" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<p>…and also see</p>
+<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/9F4PZ_1orF0" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<ul>
+<li>선형 독립(linearly independent)인 vectors: (선형 결합을 통해) 더 고차원을 span할 수 있게 해줌</li>
+<li>orthogonal 하면 independent
+<ul>
+<li>but independent해도 항상 orthogonal하지는 않음 (Independent &gt; Orthogonal)</li>
+</ul></li>
+<li>definition: <img src="https://latex.codecogs.com/png.latex?a_1%20%5Cmathbf%7Bv_1%7D%20+%20a_2%20%5Cmathbf%7Bv_2%7D%20+%20a_3%20%5Cmathbf%7Bv_3%7D%20%5Ccdots%20a_n%20%5Cmathbf%7Bv_n%7D%20=%20%5Cmathbf%7B0%7D"> 를 만족하는 <img src="https://latex.codecogs.com/png.latex?a_1,%20a_2,%20a_3,%20%5Ccdots%20a_n"> 이 <img src="https://latex.codecogs.com/png.latex?a_1%20=%20a_2%20=%20a_3%20=%20%5Ccdots%20=%20a_n%20=%200"> 밖에 없을때
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B0%7D">는 모든 elements가 <img src="https://latex.codecogs.com/png.latex?0">인 벡터</li>
+<li>예: <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%201%20%5Cend%7Bbmatrix%7D">, <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%202%20%5C%5C%202%20%5Cend%7Bbmatrix%7D"> 는 <img src="https://latex.codecogs.com/png.latex?-2%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%201%20%5Cend%7Bbmatrix%7D%20+%201%20%5Cbegin%7Bbmatrix%7D%202%20%5C%5C%202%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%200%20%5C%5C%200%20%5Cend%7Bbmatrix%7D"> 이 되므로, linearly independent 하지 않음</li>
+<li>independent한 vector 들의 수 = 표현할 수 있는 차원의 dimension</li>
+</ul></li>
+</ul>
+</section>
+<section id="기저basis" class="level2" data-number="1.10">
+<h2 data-number="1.10" class="anchored" data-anchor-id="기저basis"><span class="header-section-number">1.10</span> 기저(basis)</h2>
+<ul>
+<li>주어진 vector space를 span하는 linearly independent한 vectors</li>
+<li>어떤 공간을 이루는 필수적인 구성요소</li>
+<li>orthogonal 하면 orthogonal basis</li>
+<li>예: 2차원 좌표평면에 대해
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5Cend%7Bbmatrix%7D">, <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%200%20%5C%5C%201%20%5Cend%7Bbmatrix%7D"> : orthogonal basis</li>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5Cend%7Bbmatrix%7D">, <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%201%20%5Cend%7Bbmatrix%7D"> : orthogonal 하지 않은 basis</li>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5Cend%7Bbmatrix%7D">, <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%202%20%5C%5C%200%20%5Cend%7Bbmatrix%7D"> : linearly independent 하지 않으므로 basis 아님</li>
+</ul></li>
+</ul>
+</section>
+<section id="항등행렬identity-matrix-역행렬inverse-matrix-대각행렬diagonal-matrix-직교행렬orthogonal-matrix" class="level2" data-number="1.11">
+<h2 data-number="1.11" class="anchored" data-anchor-id="항등행렬identity-matrix-역행렬inverse-matrix-대각행렬diagonal-matrix-직교행렬orthogonal-matrix"><span class="header-section-number">1.11</span> 항등행렬(identity matrix), 역행렬(inverse matrix), 대각행렬(Diagonal Matrix), 직교행렬(orthogonal matrix)</h2>
+<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/XqOvyfMUAwA" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<section id="identity-matrix항등행렬" class="level3" data-number="1.11.1">
+<h3 data-number="1.11.1" class="anchored" data-anchor-id="identity-matrix항등행렬"><span class="header-section-number">1.11.1</span> Identity matrix(항등행렬)</h3>
+<ul>
+<li>항등원: 임의의 원소에 대해 연산하면 자기 자신이 나오게 하는 원소 (by namu.wiki)
+<ul>
+<li>실수에서 곱셈의 항등원은 1</li>
+</ul></li>
+<li>행렬의 항등원: 항등행렬(<img src="https://latex.codecogs.com/png.latex?I">) <img src="https://latex.codecogs.com/png.latex?I%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%200%20&amp;%20%5Ccdots%20&amp;%200%20%5C%5C%200%20&amp;%201%20&amp;%20%5Ccdots%20&amp;%200%20%5C%5C%20%5Cvdots%20%20&amp;%20%5Cvdots%20%20&amp;%20%5Cddots%20&amp;%20%5Cvdots%20%5C%5C%200%20&amp;%200%20&amp;%20%5Ccdots%20&amp;%201%20%5Cend%7Bbmatrix%7D">
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?A_%7Bm%20%5Ctimes%20n%7D%20%5Ctimes%20I_%7Bn%20%5Ctimes%20n%20=%20n%7D%20=%20A_%7Bm%20%5Ctimes%20n%7D"></li>
+<li><img src="https://latex.codecogs.com/png.latex?I_%7Bm%20%5Ctimes%20m%20=%20m%7D%20%5Ctimes%20A_%7Bm%20%5Ctimes%20n%7D%20=%20A_%7Bm%20%5Ctimes%20n%7D"></li>
+</ul></li>
+</ul>
+</section>
+<section id="sec-inv" class="level3" data-number="1.11.2">
+<h3 data-number="1.11.2" class="anchored" data-anchor-id="sec-inv"><span class="header-section-number">1.11.2</span> Inverse matrix(역행렬)</h3>
+<ul>
+<li>역원: 연산 결과 항등원이 나오게 하는 연소
+<ul>
+<li>실수에서 곱셈의 역원은 지수의 부호가 반대인 역수 (by namu.wiki): <img src="https://latex.codecogs.com/png.latex?a%20%5Ctimes%20a%5E%7B-1%7D%20=%201"></li>
+</ul></li>
+<li>행렬의 역원: 역행렬(<img src="https://latex.codecogs.com/png.latex?A%5E%7B-1%7D">) <img src="https://latex.codecogs.com/png.latex?A%20%5Ctimes%20A%5E%7B-1%7D%20=%20I%20,%20A%5E%7B-1%7D%20%5Ctimes%20A%20=%20I">
+<ul>
+<li>존재하지 않는 경우도 있음</li>
+<li>존재하면 Invertible(nonsingular, nondegenerate) matrix라고 불림
+<ul>
+<li>존재하지 않으면 singular, degenerate라고 불림</li>
+</ul></li>
+<li>square matrix(정사각행렬, <img src="https://latex.codecogs.com/png.latex?m%20=%20n">)은 특수한 경우를 제외하면 역행렬이 항상 존재
+<ul>
+<li>역행렬이 존재하지 않는특수한 경우: (나중에 배울) determinant가 0인 경우</li>
+</ul></li>
+<li><img src="https://latex.codecogs.com/png.latex?m%20%5Cneq%20n">인 행렬의 경우에는 역행렬이 존재하지 않음
+<ul>
+<li>다만, 경우에 따라 <img src="https://latex.codecogs.com/png.latex?A%20%5Ctimes%20A%5E%7B-1%7D%20=%20I"> 를 만족하거나(right inverse), <img src="https://latex.codecogs.com/png.latex?A%5E%7B-1%7D%20%5Ctimes%20A%20=%20I">를 만족하는(left inverse)는 <img src="https://latex.codecogs.com/png.latex?A%5E%7B-1%7D">이 존재함</li>
+</ul></li>
+<li>연립 방정식을 matrix로 나타냈을 때, 역행렬을 이용해서 해를 찾을 수 있음 <img src="https://latex.codecogs.com/png.latex?A%5Cmathbf%7Bx%7D%20=%20%5Cmathbf%7Bb%7D%20%5CRightarrow%20A%5E%7B-1%7DA%5Cmathbf%7Bx%7D%20=%20A%5E%7B-1%7D%5Cmathbf%7Bb%7D%20%5CRightarrow%20I%5Cmathbf%7Bx%7D%20=%20A%5E%7B-1%7D%5Cmathbf%7Bb%7D%20%5CRightarrow%20%5Cmathbf%7Bx%7D%20=%20A%5E%7B-1%7D%5Cmathbf%7Bb%7D"></li>
+</ul></li>
+</ul>
+</section>
+<section id="diagonal-matrix대각행렬" class="level3" data-number="1.11.3">
+<h3 data-number="1.11.3" class="anchored" data-anchor-id="diagonal-matrix대각행렬"><span class="header-section-number">1.11.3</span> Diagonal Matrix(대각행렬)</h3>
+<ul>
+<li>diagonal element(대각 원소)외의 모든 elements(off-diagonal elements)가 0인 matrix <img src="https://latex.codecogs.com/png.latex?%20D%20=%20Diag(%5Cmathbf%7Ba%7D)%20=%20%5Cbegin%7Bbmatrix%7D%20a_%7B1,1%7D%20&amp;%200%20&amp;%20%5Ccdots%20&amp;%200%20%5C%5C%200%20&amp;%20a_%7B2,2%7D%20&amp;%20%5Ccdots%20&amp;%200%20%5C%5C%20%5Cvdots%20%20&amp;%20%5Cvdots%20%20&amp;%20%5Cddots%20&amp;%20%5Cvdots%20%5C%5C%200%20&amp;%200%20&amp;%20%5Ccdots%20&amp;%20a_%7Bn,n%7D%20%5Cend%7Bbmatrix%7D">
+<ul>
+<li>identity matrix는 diagonal matrix</li>
+<li>diagnomal matrix는 symmetric matrix 이기도 함</li>
+<li>보통은 square matrix에서 주로 사용됨
+<ul>
+<li>square matrix가 아니면서 diagonal matrix인 경우: rectangular diagonal matrix</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="orthogonal-matrix직교행렬-orthonomal-matrix" class="level3" data-number="1.11.4">
+<h3 data-number="1.11.4" class="anchored" data-anchor-id="orthogonal-matrix직교행렬-orthonomal-matrix"><span class="header-section-number">1.11.4</span> Orthogonal matrix(직교행렬, orthonomal matrix)</h3>
+<ul>
+<li>행렬의 각 columns들이 orthonomal vectors (서로 수직하면서 unit vectors) <img src="https://latex.codecogs.com/png.latex?A%20A%5ET%20=%20A%5ET%20A%20=%20I"></li>
+<li>identity matrix는 orthogonal matrix</li>
+<li>square matrix에서만 정의됨</li>
+<li>Orthogonal matrix인 <img src="https://latex.codecogs.com/png.latex?A">이면 <img src="https://latex.codecogs.com/png.latex?A%5E%7B-1%7D%20=%20A%5E%7BT%7D">
+<ul>
+<li>각 columns에서 자기 자신과의 내적 = 1, 다른 column과의 내적 = 0임</li>
+</ul></li>
+<li>complex matrix(복소수 행렬)에서는 unitary matrix라고 부름</li>
+</ul>
+</section>
+</section>
+<section id="계수rank" class="level2" data-number="1.12">
+<h2 data-number="1.12" class="anchored" data-anchor-id="계수rank"><span class="header-section-number">1.12</span> 계수(Rank)</h2>
+<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/HMST0Yc7EXE" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<ul>
+<li>rank: 행렬이 가지는 independent한 columns의 수 = column space의 dimension = row space의 dimension</li>
+<li>independent한 column의 수 = independent한 행의 수: <img src="https://latex.codecogs.com/png.latex?rank(A)%20=%20rank(A%5ET)">
+<ul>
+<li>proof: <a href="https://en.wikipedia.org/wiki/Rank_%28linear_algebra%29#Proofs_that_column_rank_=_row_rank">Wikipedia</a></li>
+</ul></li>
+<li>예: <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20&amp;%203%20%5C%5C%200%20&amp;%200%20&amp;%200%20%5Cend%7Bbmatrix%7D%20%5CRightarrow%20rank=1"> <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%201%20&amp;%200%20&amp;%201%20%5C%5C%200%20&amp;%201%20&amp;%201%20%5Cend%7Bbmatrix%7D%20%5CRightarrow%20rank=2"></li>
+<li><img src="https://latex.codecogs.com/png.latex?A_%7Bm%20%5Ctimes%20n%7D"> 의 최대 랭크는 <img src="https://latex.codecogs.com/png.latex?min%5C%7Bm,n%5C%7D">
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?rank(A)%20%3C%20min%5C%7Bm,n%5C%7D"> 면 rank-deficient, <img src="https://latex.codecogs.com/png.latex?rank(A)%20=%20min%5C%7Bm,n%5C%7D">면 full (row/column) rank</li>
+</ul></li>
+</ul>
+</section>
+<section id="영공간null-space" class="level2" data-number="1.13">
+<h2 data-number="1.13" class="anchored" data-anchor-id="영공간null-space"><span class="header-section-number">1.13</span> 영공간(Null space)</h2>
+<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/Eizc9TSRYMQ" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?A%5Cmathbf%7Bx%7D=%20%5Cmathbf%7B0%7D"> 을 만족하는 <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">의 집합
+<ul>
+<li>column space 관점에서 보기: <img src="https://latex.codecogs.com/png.latex?A%5Cmathbf%7Bx%7D%20=%20x_1%20%5Cmathbf%7Ba_1%7D%20+%20x_2%20%5Cmathbf%7Ba_2%7D%20+%20%5Ccdots%20+%20x_n%20%5Cmathbf%7Ba_n%7D%20=%20%5Cmathbf%7B0%7D"></li>
+<li>null space에 항상 들어가는 <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20%5Cbegin%7Bbmatrix%7D%200%20%5C%5C%200%20%5C%5C%20%5Cvdots%20%5C%5C%200%20%5Cend%7Bbmatrix%7D"> : trivial solution
+<ul>
+<li>모든 columns이 다 lienarly independent 하면, null space에는 위의 벡터 <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D=%5Cmathbf%7B0%7D">하나 밖에 없음</li>
+</ul></li>
+</ul></li>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D=%5Cmathbf%7B0%7D"> 가 아닌 vector가 null space에 있으면, 스칼라배(constant <img src="https://latex.codecogs.com/png.latex?c">에 대해 <img src="https://latex.codecogs.com/png.latex?c%20%5Cmathbf%7Bx%7D">) 역시 null space에 포함됨</li>
+<li>혼동 주의! null space는 column space의 일부가 아님
+<ul>
+<li>row vector의 차원이 null space가 존재하는 공간</li>
+</ul></li>
+<li>rank와 null space의 dimension의 합은 항상 matrix의 column의 수
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?A_%7Bm%20%5Ctimes%20n%7D">에 대해, <img src="https://latex.codecogs.com/png.latex?dim(N(A))%20=%20n%20-%20r">
+<ul>
+<li>모든 columns이 다 lienarly independent 하면 null space는 0차원(점)</li>
+</ul></li>
+<li>null space는 row space와 수직한 space
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?A%5Cmathbf%7Bx%7D=%20%5Cmathbf%7B0%7D"> : 각각 모든 행과 내적해서 0, → 행들의 linear combination과 내적해도 0</li>
+<li>rank는 row space의 dimension → row space의 dimension(<img src="https://latex.codecogs.com/png.latex?dim(R(A))">)과 null space의 dimension(<img src="https://latex.codecogs.com/png.latex?dim(N(A))">)의 합이 <img src="https://latex.codecogs.com/png.latex?n"></li>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%5En%7D"> 공간에 표현: <img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/intro/images/chap02_10.PNG" class="img-fluid">
+<ul>
+<li>겹친 점: 영벡터</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>left null space: <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%5ET%7D%20A%20=%20%5Cmathbf%7B0%5ET%7D"> 인 <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">
+<ul>
+<li>위의 성질을 row에 대해 적용
+<ul>
+<li>m 차원에 놓인 벡터</li>
+<li>dimension: <img src="https://latex.codecogs.com/png.latex?dim(N_L(A))%20=%20m%20-%20r"></li>
+<li>column space와 수직: <img src="https://latex.codecogs.com/png.latex?dim(N_L(A))%20+dim(C(A))%20=%20m"></li>
+</ul></li>
+</ul></li>
+<li><img src="https://latex.codecogs.com/png.latex?R(A)">에 있는 vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx_r%7D"> 와 <img src="https://latex.codecogs.com/png.latex?N(A)">에 있는 vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx_n%7D">에 대해:
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx_r%7D">에 <img src="https://latex.codecogs.com/png.latex?A">를 곱하면 column space로 감</li>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx_n%7D">에 <img src="https://latex.codecogs.com/png.latex?A">를 곱하면 $</li>
+<li><img src="https://latex.codecogs.com/png.latex?A(%5Cmathbf%7Bx_r%7D%20+%5Cmathbf%7Bx_n%7D)%20=%20A%5Cmathbf%7Bx_r%7D%20+%20A%5Cmathbf%7Bx_n%7D%20=%20A%5Cmathbf%7Bx_r%7D%20=%20%5Cmathbf%7Bb%7D"></li>
+</ul></li>
+</ul>
+</section>
+<section id="ax-b의-해의-수" class="level2" data-number="1.14">
+<h2 data-number="1.14" class="anchored" data-anchor-id="ax-b의-해의-수"><span class="header-section-number">1.14</span> Ax = b의 해의 수</h2>
+<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/nNI2TlD598c" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<ul>
+<li><p>full column rank 일때</p>
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D">가 column space(<img src="https://latex.codecogs.com/png.latex?C(A)">)안에 있으면 해가 하나</li>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D">가 column space(<img src="https://latex.codecogs.com/png.latex?C(A)">)안에 없으면 해가 없음 <img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/intro/images/chap02_11.PNG" class="img-fluid"></li>
+</ul></li>
+<li><p>full row rank 일때</p>
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D">는 항상 column space 안에 있음: 무한의 해를 가짐</li>
+<li>임의의 특정한 해(particular solution) <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx_p%7D">와 null space의 vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx_n%7D">에 대해, <img src="https://latex.codecogs.com/png.latex?A(%5Cmathbf%7Bx_p%7D%20+%5Cmathbf%7Bx_n%7D)=%5Cmathbf%7Bb%7D">
+<ul>
+<li>즉, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx_p%7D%20+%5Cmathbf%7Bx_n%7D"> 도 해가 됨: complete solution
+<ul>
+<li>null space는 무한하므로, 해도 무한함</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>full rank 일때(square matrix): 해가 하나 존재 (<img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20A%5E%7B-1%7D">$)</p></li>
+<li><p>rank-deficient 일때</p>
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D">가 column space(<img src="https://latex.codecogs.com/png.latex?C(A)">)안에 있으면 무한한 해를 가짐</li>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D">가 column space(<img src="https://latex.codecogs.com/png.latex?C(A)">)안에 없으면 해가 없음</li>
+</ul></li>
+</ul>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>Mathematics</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/intro/1.basic.html</guid>
+  <pubDate>Wed, 29 Mar 2023 15:00:00 GMT</pubDate>
+  <media:content url="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/intro/images/chap02_01.PNG" medium="image"/>
 </item>
 <item>
   <title>Maximum Likelihood Estimation, Statistical Bias, and Point Estimation</title>
@@ -2917,145 +3497,6 @@ English
   <category>Mathematics</category>
   <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/epsilon_delta/index.html</guid>
   <pubDate>Mon, 13 Mar 2023 15:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>CNN</title>
-  <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/DL/2023-03-10_cnn/index.html</link>
-  <description><![CDATA[ 
-
-
-
-<section id="introduction" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
-<section id="fully-connected-layer-mlp의-문제점" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="fully-connected-layer-mlp의-문제점"><span class="header-section-number">1.1</span> Fully Connected Layer (MLP)의 문제점</h2>
-<p>Affine Layer는 인접하는 Layers의 nodes가 모두 연결되고 출력의 수가 임의로 정해지는 특징을 갖는데 이 때 data shape가 무시가 되는 단점이 있다. 이미지 데이터는 보통 (weight, height, color channel) 형태의 shape를 갖지만 MLP에서 이 3차원 구조가 1차원으로 flatten된다. 다시 말해서, 3차원의 이미지 pixels이라는 여러 독립 변수의 위치적 상관성이 1차원화 되면서 무시가 된다.</p>
-<p>많은 일반 머신러닝 모델이나 통계 분석 모델은 독립 변수가 독립이라는 가정이 고려되어야 하지만 이미지의 독립 변수들이 서로 독립이 아니다. 픽셀값은 그 위치에 따라서 서로 상관성이 존재한다. 초기엔 독립 변수인 픽셀을 일렬로 늘어뜨려 input으로 사용했지만 위치 기반 픽셀의 상관성 정도를 자세히 반영하진 못했다. 이를 보완하기 위해 CNN에서는 <strong>region feature</strong>가 고안됐다. 이처럼, CNN은 이미지 인식 분야에서 독보적인 영역을 갖고 있다.</p>
-</section>
-<section id="region-feature" class="level2" data-number="1.2">
-<h2 data-number="1.2" class="anchored" data-anchor-id="region-feature"><span class="header-section-number">1.2</span> Region Feature</h2>
-<p>Region Feature 또는 Graphic Feature라고도 한다. 픽셀의 지역 정보를 학습할 수 있는 신경망 구조가 CNN이다.</p>
-</section>
-</section>
-<section id="cnn" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> CNN</h1>
-<div id="fig-CNN_structure" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="kmink3225.netlify.app/images/cnn/figure1.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;1: CNN Structure Example</figcaption><p></p>
-</figure>
-</div>
-<p><strong>Convolutional Neural Network</strong> (CNN)은 합성곱(convolution)으로 이루어진 인공신경망으로 Region Feature를 학습하기 위한 모형이다. CNN은</p>
-<ul>
-<li>region feature를 추출하기 위한 convolution layer,</li>
-<li>activation function,</li>
-<li>feature dimension을 위한 pooling layer</li>
-<li>fully connected layer (Multi Layer Perceptron (MLP) or Affine Transformation)</li>
-<li>Softmax function</li>
-</ul>
-<p>로 구성되어 있다 (See Figure&nbsp;1).</p>
-<section id="convolution-layer-conv" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="convolution-layer-conv"><span class="header-section-number">2.1</span> Convolution Layer (Conv)</h2>
-<p>kernel 또는 filter라고 불리는 특징 추출기(Feature detector)를 사용하여 데이터의 특징을 추출하는 CNN 모델의 핵심 부분이다. kernel 를 정의해 입력 층의 이미지의 feature를 추출한다. kernel는 region feature의 크기와 weight을 정의하게 된다. 예를 들어, kernel을 (3x3)으로 정하면 9칸에 가중치를 설정하여 이미지 픽셀값 (a part of input feature map)과 kernel의 weight의 선형결합으로 conv layer를 구성하는 하나의 값을 얻어낸다 (See Figure&nbsp;1 의 노란색 사각형).</p>
-<p>convolution layer의 input/output은 보통 feature map이라고 부르며 input data를 input feature map, output data를 output feature map로 부르기도 한다. 즉, feature map 과 input/output data는 같은 의미로 사용되고 feature map = input data + kernel (= receptive field = filter)로 구성된다.</p>
-<section id="convolution-operation" class="level3" data-number="2.1.1">
-<h3 data-number="2.1.1" class="anchored" data-anchor-id="convolution-operation"><span class="header-section-number">2.1.1</span> Convolution Operation</h3>
-<p>Convolution Operation (합성곱 연산)은 filter operation (filter 연산)이라고도 불린다. Figure&nbsp;2 을 보면 입력 데이터 (이미지의 pixels)와 filter의 가중치가 element-wise 별로 곱해져 더해진다. 이 연산을 fused-multiply-add (FMA) or multiply-accumulate operation 라고도 부른다. 예를 들어, input data의 4, 5, 2, 9, 6, 4, 2, 2, 5와 filter1 의 1, 1, 1, 0, 0, 0, -1, -1, -1 가 곱해지고 더해져 4, 5, 2, 0, 0, 0, -2, -2, -5의 결과가 Conv Layer의 output data의 한 칸을 구성하게 된다.</p>
-<div id="fig-conv_operation" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="kmink3225.netlify.app/images/cnn/figure2.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;2: Convolution Operation Example</figcaption><p></p>
-</figure>
-</div>
-<p>이렇게, 2차원 입력에 대한 convolution (conv) operation은 Figure&nbsp;3 과 같이 동작한다. Sharpen filter라고 쓰여진 3x3 행렬은 kernel로서 입력 데이터의 특징을 추출하는데, 입력 데이터의 전체를 보는 것이 아닌 kernel size 만큼의 일부분만을 보며 특징을 추출한다. feature map은 kernel의 개수만큼 생성되는데 일반적으로 다양한 특징을 추출하기 위해 하나의 conv layer에서 여러개의 kernel을 사용한다. kernel size에 정해진 규칙은 없으나 주로 3*3 많이 사용하며 대게 conv layer마다 다른 kernel size를 적용한다. Fully connected layer에서의 weight는 CNN에서 filter의 weight과 대응되고 CNN에서의 bias는 항상 scalar로 주어진다.</p>
-<div id="fig-conv-operation-process" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="kmink3225.netlify.app/images/cnn/figure3.gif" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;3: Convolution Operation Process Example</figcaption><p></p>
-</figure>
-</div>
-</section>
-<section id="합성곱-연산을-위한-설정-사항" class="level3" data-number="2.1.2">
-<h3 data-number="2.1.2" class="anchored" data-anchor-id="합성곱-연산을-위한-설정-사항"><span class="header-section-number">2.1.2</span> 합성곱 연산을 위한 설정 사항</h3>
-<ul>
-<li>padding : 입력 데이터의 테두리를 0으로 채워 데이터의 크기를 늘려준다
-<ul>
-<li><strong>왜 padding을 사용하는가?</strong> padding이 없을 경우 합성곱은 입력 데이터의 1행 1열부터 시작된다. 그런데 합성곱은 입력 데이터에서 kernel size만큼의 영역을 하나로 축소하여 특징을 추출하기 때문에 이 경우 입력 데이터의 가장자리, edge 부분의 특징을 추출하기 어렵다. edge의 특징까지 추출하고자 하면 적어도 0행 0열부터 kernel을 적용해야 하는데 허공에서 element-wise 계산을 할 수 없으니 0을 추가해준다. 다시 말해서, padding은 output data size를 조정할 목적으로 사용된다. <img src="kmink3225.netlify.app/docs/blog/posts/DL/2023-03-10_cnn/output_featuremap.png" id="fig-output_featuremap" class="img-fluid" alt="Output Feature Map"></li>
-</ul></li>
-<li>stride : kernel이 얼만큼씩 이동하면서 합성곱 계산을 할 것인지를 의미한다.
-<ul>
-<li>stride를 키우게 되면 output data size가 작아지기 때문에 일반적으로 한 칸씩 이동한다. <img src="kmink3225.netlify.app/images/cnn/stride.PNG" id="fig-stride" class="img-fluid" alt="Stride Example"></li>
-</ul></li>
-<li>weight sharing:<br>
-</li>
-<li>kernel size : kernel의 행과 열 개수
-<ul>
-<li>사이즈가 작을수록 국소 단위의 특징을 추출한다.</li>
-</ul></li>
-<li>kernel 개수 또는 channel 개수 : 몇 개의 feature map을 추출하고 싶은지에 따라 kernel 개수를 정한다. <img src="kmink3225.netlify.app/images/cnn/channel number.PNG" id="fig-channel_number" class="img-fluid" alt="Channel Number"></li>
-<li>이미지 데이터에서의 channel 예시
-<ul>
-<li>고양이 이미지와 같이 컬러 이미지 데이터는 하나의 이미지에 대해 Red, Green, Blue (RGB) 3개의 색상으로 이루어져 있다 <img src="kmink3225.netlify.app/images/cnn/image_featuremap.png" id="fig-img_featuremap" class="img-fluid" alt="RGB 이미지를 red, green, blue channel 별 분리하여 표시"> <img src="kmink3225.netlify.app/images/cnn/image_featuremap_convolution.png" id="fig-img_featuremap_conv" class="img-fluid" alt="이미지 데이터의 RGB channel에 대한 convolution 계산 예시"></li>
-</ul></li>
-</ul>
-</section>
-<section id="feature-map의-shape-계산-방법" class="level3" data-number="2.1.3">
-<h3 data-number="2.1.3" class="anchored" data-anchor-id="feature-map의-shape-계산-방법"><span class="header-section-number">2.1.3</span> feature map의 shape 계산 방법</h3>
-<p>feature map은 다음 레이어의 입력 데이터가 되기 때문에 feature map의 shape을 계산할 수 있어야한다.</p>
-<section id="dimension-input-data-size" class="level4" data-number="2.1.3.1">
-<h4 data-number="2.1.3.1" class="anchored" data-anchor-id="dimension-input-data-size"><span class="header-section-number">2.1.3.1</span> 2 Dimension Input Data Size</h4>
-<p>다음과 같이 output data size계산을 위한 notation을 정의할 때,</p>
-<ul>
-<li>input data size : <img src="https://latex.codecogs.com/png.latex?(H,W)"></li>
-<li>filter size : <img src="https://latex.codecogs.com/png.latex?(FH,%20FW)"></li>
-<li>output data size : <img src="https://latex.codecogs.com/png.latex?(OH,%20OW)"></li>
-<li>padding : <img src="https://latex.codecogs.com/png.latex?P"> (width number)</li>
-<li>stride : <img src="https://latex.codecogs.com/png.latex?S"></li>
-<li>a function to make the calculation result an integer
-<ul>
-<li>floor function : <img src="https://latex.codecogs.com/png.latex?%5Clfloor%20%5Ctext%7B%20%7D%20%5Crfloor"></li>
-<li>ceiling : <img src="https://latex.codecogs.com/png.latex?%5Clceil%20%5Ctext%7B%20%7D%20%5Crceil"></li>
-<li>rounding to the nearest integer: <img src="https://latex.codecogs.com/png.latex?%5Clfloor%20%5Ctext%7B%20%7D%20%5Crceil"></li>
-</ul></li>
-</ul>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20OH=&amp;%5Clfloor%5Cfrac%7BH+2P-FH%7D%7BS%7D+1%5Crfloor%5C%5C%0A%20%20OW=&amp;%5Clfloor%5Cfrac%7BW+2P-FW%7D%7BS%7D+1%5Crfloor%0A%5Cend%7Baligned%7D%0A"></p>
-<p>의 관계식을 따르게 된다.</p>
-<ul>
-<li>예시1- input size: (4x4), P:1, S:1, filter size : (3x3)일 때, <img src="https://latex.codecogs.com/png.latex?(OH,OW)=(4,4)"></li>
-<li>예시2- input size: (7x7), P:0, S:2, filter size : (3x3)일 때, <img src="https://latex.codecogs.com/png.latex?(OH,OW)=(3,3)"></li>
-<li>예시3- input size: (28x31), P:2, S:3, filter size : (5x5)일 때, <img src="https://latex.codecogs.com/png.latex?(OH,OW)=(10,11)"></li>
-</ul>
-</section>
-<section id="dimension-input-data-size-1" class="level4" data-number="2.1.3.2">
-<h4 data-number="2.1.3.2" class="anchored" data-anchor-id="dimension-input-data-size-1"><span class="header-section-number">2.1.3.2</span> 3 Dimension Input Data Size</h4>
-<p>길이 또는 채널 방향으로 feature map이 늘어나기 때문에 그 결과는 Figure&nbsp;2 과 같이 나온다. 반드시 input data의 channel 수와 output data channel수가 같아야한다. 채널이 3개면 filter 당 3장의 feature map이 나오게 된다. filter의 종류의 수 weight의 종류의 수로 output data의 길이를 늘리려면 (즉, 다수의 채널로 만드려면) filter의 수 (=weight의 종류)를 늘리면 된다. FN: Flter Number일 때 filter의 가중치 데이터 크기는 (output data channel, input data channel, height, width)로 표현한다. Bias는 <img src="https://latex.codecogs.com/png.latex?(FN,1,1)"> 로 표현하여 채널 하나에 값 하나씩 할당되게 디자인한다. Output data size는 <img src="https://latex.codecogs.com/png.latex?(FN,OH,OW)"> 로 표현된다.</p>
-<p>참고) <img src="https://latex.codecogs.com/png.latex?%0A(FN,1,1)%20+%20(FN,OH,OW)%20%5Coverset%7B%5Ctext%7Bbroadcasting%7D%7D%20%5Crightarrow%20(FN,OH,OW)%0A"></p>
-<ul>
-<li>예시- 채널=3, (FH,FW)=(4,4), <img src="https://latex.codecogs.com/png.latex?FN=20"> 이면 <img src="https://latex.codecogs.com/png.latex?(20,3,4,4)"> 로 표현</li>
-</ul>
-</section>
-</section>
-</section>
-<section id="batch-processing" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="batch-processing"><span class="header-section-number">2.2</span> Batch Processing</h2>
-<p>데이터를 (데이터수, 채널 수, 높이, 너비) <img src="https://latex.codecogs.com/png.latex?=%20(N,C,H,W)"> 순으로 저장하여 처리하여 NN에 4차원 데이터가 하나가 흐를 때마다 데이터 N개의 합성곱 연산이 발생한다. N번의 처리를 한번에 수행한다.</p>
-</section>
-<section id="pooling-layer" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="pooling-layer"><span class="header-section-number">2.3</span> Pooling Layer</h2>
-</section>
-<section id="fully-connected-layer" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="fully-connected-layer"><span class="header-section-number">2.4</span> Fully Connected Layer</h2>
-
-
-</section>
-</section>
-
- ]]></description>
-  <category>DL</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/DL/2023-03-10_cnn/index.html</guid>
-  <pubDate>Thu, 09 Mar 2023 15:00:00 GMT</pubDate>
-  <media:content url="kmink3225.netlify.app/docs/blog/posts/DL/2023-03-10_cnn/output_featuremap.png" medium="image" type="image/png" height="95" width="144"/>
 </item>
 </channel>
 </rss>

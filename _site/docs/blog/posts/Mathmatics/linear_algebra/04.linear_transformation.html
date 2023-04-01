@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Kwangmin Kim">
+<meta name="dcterms.date" content="2023-03-31">
+<meta name="description" content="template">
+
+<title>Kwangmin Kim - Basics (3) - Special Matrices</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../../">
+<script src="../../../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../../../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="../../../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../../.././images/logo.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../../../../index.html">
+    <span class="navbar-title">Kwangmin Kim</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../index.html">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/CV/index.html">
+ <span class="menu-text">CV</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/projects/index.html">
+ <span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/blog/index.html">
+ <span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../about.html">
+ <span class="menu-text">Me</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/kmink3225"><i class="bi bi-github" role="img" aria-label="Github">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/kwangmin-kim-a5241b200/"><i class="bi bi-linkedin" role="img" aria-label="Linkedin">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/blog/index.html"><i class="bi bi-rss" role="img">
+</i> 
+ <span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#matrix" id="toc-matrix" class="nav-link active" data-scroll-target="#matrix"><span class="toc-section-number">1</span>  Matrix</a></li>
+  <li><a href="#basic-matrix-operations" id="toc-basic-matrix-operations" class="nav-link" data-scroll-target="#basic-matrix-operations"><span class="toc-section-number">2</span>  Basic Matrix Operations</a>
+  <ul class="collapse">
+  <li><a href="#matrix-addition" id="toc-matrix-addition" class="nav-link" data-scroll-target="#matrix-addition"><span class="toc-section-number">2.1</span>  Matrix addition</a></li>
+  <li><a href="#scalar-multiplication" id="toc-scalar-multiplication" class="nav-link" data-scroll-target="#scalar-multiplication"><span class="toc-section-number">2.2</span>  Scalar multiplication</a></li>
+  <li><a href="#matrix-multiplication" id="toc-matrix-multiplication" class="nav-link" data-scroll-target="#matrix-multiplication"><span class="toc-section-number">2.3</span>  Matrix multiplication</a></li>
+  <li><a href="#transpose" id="toc-transpose" class="nav-link" data-scroll-target="#transpose"><span class="toc-section-number">2.4</span>  Transpose</a></li>
+  <li><a href="#determinant" id="toc-determinant" class="nav-link" data-scroll-target="#determinant"><span class="toc-section-number">2.5</span>  Determinant</a></li>
+  <li><a href="#inverse" id="toc-inverse" class="nav-link" data-scroll-target="#inverse"><span class="toc-section-number">2.6</span>  Inverse</a></li>
+  <li><a href="#rank" id="toc-rank" class="nav-link" data-scroll-target="#rank"><span class="toc-section-number">2.7</span>  Rank</a></li>
+  <li><a href="#trace" id="toc-trace" class="nav-link" data-scroll-target="#trace"><span class="toc-section-number">2.8</span>  Trace</a></li>
+  <li><a href="#eigenvalues-and-eigenvectors" id="toc-eigenvalues-and-eigenvectors" class="nav-link" data-scroll-target="#eigenvalues-and-eigenvectors"><span class="toc-section-number">2.9</span>  Eigenvalues and Eigenvectors</a></li>
+  <li><a href="#singular-value-and-singluar-vectors" id="toc-singular-value-and-singluar-vectors" class="nav-link" data-scroll-target="#singular-value-and-singluar-vectors"><span class="toc-section-number">2.10</span>  Singular value and Singluar Vectors</a></li>
+  </ul></li>
+  <li><a href="#열공간column-space" id="toc-열공간column-space" class="nav-link" data-scroll-target="#열공간column-space"><span class="toc-section-number">3</span>  열공간(Column Space)</a></li>
+  <li><a href="#선형-독립linear-independent" id="toc-선형-독립linear-independent" class="nav-link" data-scroll-target="#선형-독립linear-independent"><span class="toc-section-number">4</span>  선형 독립(Linear Independent)</a></li>
+  <li><a href="#기저basis" id="toc-기저basis" class="nav-link" data-scroll-target="#기저basis"><span class="toc-section-number">5</span>  기저(basis)</a></li>
+  <li><a href="#항등행렬identity-matrix-역행렬inverse-matrix-대각행렬diagonal-matrix-직교행렬orthogonal-matrix" id="toc-항등행렬identity-matrix-역행렬inverse-matrix-대각행렬diagonal-matrix-직교행렬orthogonal-matrix" class="nav-link" data-scroll-target="#항등행렬identity-matrix-역행렬inverse-matrix-대각행렬diagonal-matrix-직교행렬orthogonal-matrix"><span class="toc-section-number">6</span>  항등행렬(identity matrix), 역행렬(inverse matrix), 대각행렬(Diagonal Matrix), 직교행렬(orthogonal matrix)</a>
+  <ul class="collapse">
+  <li><a href="#identity-matrix항등행렬" id="toc-identity-matrix항등행렬" class="nav-link" data-scroll-target="#identity-matrix항등행렬"><span class="toc-section-number">6.1</span>  Identity matrix(항등행렬)</a></li>
+  <li><a href="#sec-inv" id="toc-sec-inv" class="nav-link" data-scroll-target="#sec-inv"><span class="toc-section-number">6.2</span>  Inverse matrix(역행렬)</a></li>
+  <li><a href="#diagonal-matrix대각행렬" id="toc-diagonal-matrix대각행렬" class="nav-link" data-scroll-target="#diagonal-matrix대각행렬"><span class="toc-section-number">6.3</span>  Diagonal Matrix(대각행렬)</a></li>
+  <li><a href="#orthogonal-matrix직교행렬-orthonomal-matrix" id="toc-orthogonal-matrix직교행렬-orthonomal-matrix" class="nav-link" data-scroll-target="#orthogonal-matrix직교행렬-orthonomal-matrix"><span class="toc-section-number">6.4</span>  Orthogonal matrix(직교행렬, orthonomal matrix)</a></li>
+  </ul></li>
+  <li><a href="#계수rank" id="toc-계수rank" class="nav-link" data-scroll-target="#계수rank"><span class="toc-section-number">7</span>  계수(Rank)</a></li>
+  <li><a href="#영공간null-space" id="toc-영공간null-space" class="nav-link" data-scroll-target="#영공간null-space"><span class="toc-section-number">8</span>  영공간(Null space)</a></li>
+  <li><a href="#ax-b의-해의-수" id="toc-ax-b의-해의-수" class="nav-link" data-scroll-target="#ax-b의-해의-수"><span class="toc-section-number">9</span>  Ax = b의 해의 수</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Basics (3) - Special Matrices</h1>
+<p class="subtitle lead">template</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Mathematics</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    <p>template</p>
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Kwangmin Kim </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 31, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<section id="matrix" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="matrix"><span class="header-section-number">1</span> Matrix</h2>
+<p>A matrix is a rectangular array of elements, usually real numbers, arranged in rows and columns. If <span class="math inline">\(\mathbf{A}\)</span> is an <span class="math inline">\(m \times n\)</span> matrix, it can be represented as: <span class="math display">\[
+\begin{bmatrix}
+  a_{11} &amp; a_{12} &amp; \cdots &amp; a_{1n} \\
+  a_{21} &amp; a_{22} &amp; \cdots &amp; a_{2n} \\
+  \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+  a_{m1} &amp; a_{m2} &amp; \cdots &amp; a_{mn}
+\end{bmatrix}
+\]</span> where <span class="math inline">\(a_{ij}\)</span> is the element in the <span class="math inline">\(i\)</span>-th row and <span class="math inline">\(j\)</span>-th column of the matrix <span class="math inline">\(\mathbf{A}\)</span>.</p>
+</section>
+<section id="basic-matrix-operations" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="basic-matrix-operations"><span class="header-section-number">2</span> Basic Matrix Operations</h2>
+<section id="matrix-addition" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="matrix-addition"><span class="header-section-number">2.1</span> Matrix addition</h3>
+<p>The sum of two matrices of the same size is a matrix of the same size obtained by adding corresponding entries.</p>
+<p>Given two <span class="math inline">\(m \times n\)</span> matrices <span class="math inline">\(\mathbf{A}\)</span> and <span class="math inline">\(\mathbf{B}\)</span>, their sum <span class="math inline">\(\mathbf{C} = \mathbf{A} + \mathbf{B}\)</span> is defined by:</p>
+<p><span class="math display">\[
+c_{i,j}=a_{i,j}+b_{i,j}​
+\]</span> for <span class="math inline">\(1 \leq i \leq m\)</span> and <span class="math inline">\(1 \leq j \leq n\)</span>.</p>
+<p><span class="math display">\[
+\begin{bmatrix}
+  1 &amp; 2 \\
+  3 &amp; 4 \\
+  5 &amp; 6
+\end{bmatrix} +
+\begin{bmatrix}
+  -1 &amp; 0 \\
+  2 &amp; -3 \\
+  -5 &amp; 4
+\end{bmatrix} =
+\begin{bmatrix}
+  0 &amp; 2 \\
+  5 &amp; 1 \\
+  0 &amp; 10
+\end{bmatrix}
+\]</span></p>
+</section>
+<section id="scalar-multiplication" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="scalar-multiplication"><span class="header-section-number">2.2</span> Scalar multiplication</h3>
+<p>The product of a scalar and a matrix is a matrix obtained by multiplying each entry of the matrix by the scalar.</p>
+<p>Given a scalar <span class="math inline">\(k\)</span> and an <span class="math inline">\(m \times n\)</span> matrix <span class="math inline">\(\mathbf{A}\)</span>, their product <span class="math inline">\(k\mathbf{A}\)</span> is defined by: <span class="math display">\[
+(k\mathbf{A})_{i,j} = k(a_{i,j})
+\]</span> for <span class="math inline">\(1 \leq i \leq m\)</span> and <span class="math inline">\(1 \leq j \leq n\)</span>.</p>
+<p>Example: <span class="math display">\[
+2\begin{bmatrix}
+1 &amp; 2 \\
+3 &amp; 4 \\
+5 &amp; 6
+\end{bmatrix} =
+\begin{bmatrix}
+2 &amp; 4 \\
+6 &amp; 8 \\
+10 &amp; 12
+\end{bmatrix}
+\]</span></p>
+</section>
+<section id="matrix-multiplication" class="level3" data-number="2.3">
+<h3 data-number="2.3" class="anchored" data-anchor-id="matrix-multiplication"><span class="header-section-number">2.3</span> Matrix multiplication</h3>
+<p>The product of two matrices <span class="math inline">\(\mathbf{A}\)</span> and <span class="math inline">\(\mathbf{B}\)</span> is a matrix obtained by multiplying the rows of <span class="math inline">\(\mathbf{A}\)</span> by the columns of <span class="math inline">\(\mathbf{B}\)</span>.</p>
+<p>Given two matrices <span class="math inline">\(\mathbf{A}\)</span> and <span class="math inline">\(\mathbf{B}\)</span> with dimensions <span class="math inline">\(m \times n\)</span> and <span class="math inline">\(n \times p\)</span>, respectively, their product <span class="math inline">\(\mathbf{C} = \mathbf{AB}\)</span> is an <span class="math inline">\(m \times p\)</span> matrix defined by: <span class="math display">\[
+c_{i,j} = \sum_{k=1}^n a_{i,k}b_{k,j}
+\]</span> for <span class="math inline">\(1 \leq i \leq m\)</span> and <span class="math inline">\(1 \leq j \leq p\)</span>.</p>
+<p>Example: <span class="math display">\[
+\begin{bmatrix}
+1 &amp; 2 \\
+3 &amp; 4 \\
+5 &amp; 6
+\end{bmatrix} \begin{bmatrix}
+-1 &amp; 0 &amp; 2 \\
+2 &amp; -3 &amp; 1
+\end{bmatrix} =
+\begin{bmatrix}
+3 &amp; -6 &amp; 4 \\
+5 &amp; -12 &amp; 10 \\
+7 &amp; -18 &amp; 16
+\end{bmatrix}
+\]</span></p>
+</section>
+<section id="transpose" class="level3" data-number="2.4">
+<h3 data-number="2.4" class="anchored" data-anchor-id="transpose"><span class="header-section-number">2.4</span> Transpose</h3>
+<p>The transpose of an <span class="math inline">\(m x n\)</span> matrix A, denoted by <span class="math inline">\(A^T\)</span>, is the <span class="math inline">\(n x m\)</span> matrix obtained by interchanging the rows and columns of A. Formally, if <span class="math inline">\(\mathbf{A} = [a_{ij}]\)</span> is an m x n matrix, then its transpose <span class="math inline">\(\mathbf{A}^T = [b_{ij}]\)</span> is an <span class="math inline">\(n x m\)</span> matrix where <span class="math inline">\(b_{ij}\)</span> = <span class="math inline">\(a_{ji}\)</span> for all <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>. In other words, the element in the <span class="math inline">\(i\)</span> th row and <span class="math inline">\(j\)</span> th column of <span class="math inline">\(A^T\)</span> is equal to the element in the <span class="math inline">\(j\)</span> th row and ith column of <span class="math inline">\(\mathbf{A}\)</span>.</p>
+<p>Given an <span class="math inline">\(m \times n\)</span> matrix <span class="math inline">\(\mathbf{A}\)</span>, its transpose <span class="math inline">\(\mathbf{A}^T\)</span> is an <span class="math inline">\(n \times m\)</span> matrix defined by: $$ <em>{i,j}^T = </em>{j,i}</p>
+<p>$$</p>
+<ul>
+<li>When <span class="math inline">\(\mathbf{A}\)</span> is transposed, diagnoal entries(<span class="math inline">\(a_{ii}\)</span>) do not change but off-diagnoal elements(<span class="math inline">\(a_{ij} \; i \neq j\)</span>) change.</li>
+<li>A column vector is tranposed into a row vector, and vice versa.</li>
+<li>symmetric matrix: <span class="math inline">\(\mathbf{A} = \mathbf{A}^T\)</span></li>
+</ul>
+<p>Example:</p>
+<p>Let A be the matrix <span class="math display">\[
+\mathbf{A} = \begin{bmatrix}
+1 &amp; 2 &amp; 3\\
+4 &amp; 5 &amp; 6
+\end{bmatrix}
+\]</span> The transpose of A, denoted by A^T, is the matrix <span class="math display">\[
+\mathbf{A}^T = \begin{bmatrix}
+1 &amp; 4\\
+2 &amp; 5\\
+3 &amp; 6
+\end{bmatrix}
+\]</span></p>
+</section>
+<section id="determinant" class="level3" data-number="2.5">
+<h3 data-number="2.5" class="anchored" data-anchor-id="determinant"><span class="header-section-number">2.5</span> Determinant</h3>
+<p>Let <span class="math inline">\(\mathbf{A}\)</span> be an <span class="math inline">\(n \times n\)</span> square matrix. The determinant of <span class="math inline">\(\mathbf{A}\)</span>, denoted by <span class="math inline">\(|\mathbf{A}|\)</span> or <span class="math inline">\(\det(\mathbf{A})\)</span>, is a scalar value calculated as the sum of the products of the elements in any row or column of <span class="math inline">\(\mathbf{A}\)</span> with their corresponding cofactors, that is,</p>
+<p><span class="math display">\[
+|\mathbf{A}|=\sum_{i=1}^{n}a_{ij}C_{ij}=\sum_{j=1}^{n}a_{ij}C_{ij}
+\]</span></p>
+<p>where <span class="math inline">\(a_{ij}\)</span> is the element of <span class="math inline">\(\mathbf{A}\)</span> in the <span class="math inline">\(i\)</span>-th row and <span class="math inline">\(j\)</span>-th column, and <span class="math inline">\(C_{ij}\)</span> is the cofactor of <span class="math inline">\(a_{ij}\)</span>. The cofactor of <span class="math inline">\(a_{ij}\)</span>, denoted by <span class="math inline">\(C_{ij}\)</span>, is given by <span class="math inline">\((-1)^{i+j}\)</span> times the determinant of the <span class="math inline">\((n-1) \times (n-1)\)</span> matrix obtained by deleting the <span class="math inline">\(i\)</span>-th row and <span class="math inline">\(j\)</span>-th column of <span class="math inline">\(\mathbf{A}\)</span>.</p>
+<p>The determinant of an <span class="math inline">\(n x n\)</span> matrix <span class="math inline">\(\mathbf{A}\)</span> is a scalar value denoted as <span class="math inline">\(|\mathbf{A}|\)</span>. It is defined as the sum of all possible products of n elements taken one from each row and one from each column, where the sign of each product alternates according to the position of the element in the matrix. For example, the determinant of a <span class="math inline">\(3 x 3\)</span> matrix <span class="math inline">\(\mathbf{A} =\)</span> <span class="math display">\[
+\begin{bmatrix}
+a_{11} &amp; a_{12} &amp; a_{13} \\
+a_{21} &amp; a_{22} &amp; a_{23} \\
+a_{31} &amp; a_{32} &amp; a_{33} \\
+\end{bmatrix}
+\]</span></p>
+<p>is given by:</p>
+<p><span class="math display">\[
+|\mathbf{A}| = a_{11}
+\begin{vmatrix}
+a_{22} &amp; a_{23} \\
+a_{32} &amp; a_{33}
+\end{vmatrix}
+- a_{12}
+\begin{vmatrix}
+a_{21} &amp; a_{23} \\
+a_{31} &amp; a_{33}
+\end{vmatrix}
++ a_{13}
+\begin{vmatrix}
+a_{21} &amp; a_{22} \\
+a_{31} &amp; a_{32}
+\end{vmatrix}
+\]</span></p>
+<p>For example, consider the <span class="math inline">\(3 \times 3\)</span> matrix <span class="math inline">\(\mathbf{A} = \begin{bmatrix} 1 &amp; 2 &amp; 3 \\ 4 &amp; 5 &amp; 6 \\ 7 &amp; 8 &amp; 9 \end{bmatrix}\)</span>. We can calculate the determinant of <span class="math inline">\(\mathbf{A}\)</span> using any row or column. Let’s use the first column:</p>
+<p><span class="math display">\[
+|\mathbf{A}| = 1
+\begin{vmatrix}
+5 &amp; 6 \\
+8 &amp; 9
+\end{vmatrix}
+- 4
+\begin{vmatrix}
+2 &amp; 3\\
+8 &amp; 9
+\end{vmatrix}
++ 7
+\begin{vmatrix}
+2 &amp; 5 \\
+3 &amp; 6
+\end{vmatrix} = 0
+\]</span></p>
+<p>Therefore, the determinant of <span class="math inline">\(\mathbf{A}\)</span> is zero.</p>
+</section>
+<section id="inverse" class="level3" data-number="2.6">
+<h3 data-number="2.6" class="anchored" data-anchor-id="inverse"><span class="header-section-number">2.6</span> Inverse</h3>
+<p>The inverse of a square matrix <span class="math inline">\(A\)</span> of size <span class="math inline">\(n\)</span> is a matrix <span class="math inline">\(A^{-1}\)</span> such that the product of <span class="math inline">\(A\)</span> and <span class="math inline">\(A^{-1}\)</span> is the identity matrix <span class="math inline">\(I_n\)</span>, i.e.&nbsp;<span class="math inline">\(A \times A^{-1} = I_n\)</span>. If such a matrix exists, then <span class="math inline">\(A\)</span> is said to be invertible or non-singular.</p>
+<p>The inverse of a square matrix <span class="math inline">\(\mathbf{A}\)</span> is denoted by <span class="math inline">\(\mathbf{A}^{-1}\)</span> and is defined as the unique matrix that satisfies the following equation: <span class="math display">\[
+\mathbf{A}^{-1}\mathbf{A} = \mathbf{A}\mathbf{A}^{-1} = \mathbf{I}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{I}\)</span> is the identity matrix. Not all matrices have an inverse, and a matrix that has an inverse is called invertible or nonsingular. A matrix that does not have an inverse is called singular.</p>
+<p>For example, consider the <span class="math inline">\(2\times 2\)</span> matrix <span class="math display">\[
+\mathbf{A} =
+\begin{bmatrix}
+1 &amp; 2 \\
+3 &amp; 4
+\end{bmatrix}.
+\]</span> The inverse of <span class="math inline">\(\mathbf{A}\)</span> is given by:</p>
+<p><span class="math display">\[
+\mathbf{A}^{-1} =
+\frac{1}{-2}
+\begin{bmatrix}
+4 &amp; -2 \\
+-3 &amp; 1
+\end{bmatrix} =
+\begin{bmatrix}
+-2 &amp; 1 \\
+\frac{3}{2} &amp; -\frac{1}{2}
+\end{bmatrix}
+\]</span></p>
+<p>We can verify that <span class="math inline">\(\mathbf{A}\mathbf{A}^{-1} = \mathbf{A}^{-1}\mathbf{A} = \mathbf{I}\)</span> by computing:</p>
+<p><span class="math display">\[
+\mathbf{A}\mathbf{A}^{-1} =
+\begin{bmatrix}
+1 &amp; 2 \\
+3 &amp; 4
+\end{bmatrix}
+\begin{bmatrix}
+-2 &amp; 1 \\
+\frac{3}{2} &amp; -\frac{1}{2}
+\end{bmatrix} =
+\begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1
+\end{bmatrix} = \mathbf{I}
+\]</span></p>
+<p><span class="math display">\[
+\mathbf{A}^{-1}\mathbf{A} =
+\begin{bmatrix} -2 &amp; 1 \\
+\frac{3}{2} &amp; -\frac{1}{2}
+\end{bmatrix}
+\begin{bmatrix}
+1 &amp; 2 \\
+3 &amp; 4
+\end{bmatrix} =
+\begin{bmatrix}
+1 &amp; 0 \\
+0 &amp; 1
+\end{bmatrix} = \mathbf{I}
+\]</span></p>
+<p>Let me give another example and A be a <span class="math inline">\(3x3\)</span> square matrix:</p>
+<p><span class="math display">\[
+\begin{equation*}
+\mathbf{A} = \begin{bmatrix}
+a_{11} &amp; a_{12} &amp; a_{13} \\
+a_{21} &amp; a_{22} &amp; a_{23} \\
+a_{31} &amp; a_{32} &amp; a_{33} \\
+\end{bmatrix}
+\end{equation*}
+\]</span> Then, the inverse of <span class="math inline">\(\mathbf{A}\)</span>, denoted as <span class="math inline">\(\mathbf{A}^{-1}\)</span>, is given by:</p>
+<p><span class="math display">\[
+\begin{equation*}
+\mathbf{A}^{-1} = \frac{1}{\text{det}(\mathbf{A})}\begin{bmatrix}
+a_{22}a_{33}-a_{23}a_{32} &amp; a_{13}a_{32}-a_{12}a_{33} &amp; a_{12}a_{23}-a_{13}a_{22} \\
+a_{23}a_{31}-a_{21}a_{33} &amp; a_{11}a_{33}-a_{13}a_{31} &amp; a_{13}a_{21}-a_{11}a_{23} \\
+a_{21}a_{32}-a_{22}a_{31} &amp; a_{12}a_{31}-a_{11}a_{32} &amp; a_{11}a_{22}-a_{12}a_{21} \\
+\end{bmatrix}
+\end{equation*}
+\]</span></p>
+<p>where <span class="math inline">\(det(\mathbf{A})\)</span> is the determinant of <span class="math inline">\(\mathbf{A}\)</span>.</p>
+<p>For example, let:</p>
+<p><span class="math display">\[
+\begin{equation*}
+\mathbf{A} = \begin{bmatrix}
+1 &amp; 2 &amp; 3 \\
+0 &amp; 1 &amp; 4 \\
+5 &amp; 6 &amp; 0 \\
+\end{bmatrix}
+\end{equation*}
+\]</span> Then, <span class="math inline">\(det(A)\)</span> = -57, and the inverse of <span class="math inline">\(\mathbf{A}\)</span> is:</p>
+<p><span class="math display">\[
+\begin{equation*}
+\mathbf{A}^{-1} = \frac{1}{-57}\begin{bmatrix}
+-24 &amp; 18 &amp; 5 \\
+20 &amp; -15 &amp; -4 \\
+-3 &amp; 2 &amp; 1 \\
+\end{bmatrix}
+\end{equation*}
+\]</span></p>
+<p>There are several formulas for finding the inverse of a matrix such as Gauss-Jordan Elimination, Adjoint method, Cramer’s rule, Inverse formula, etc. This topic is going to be handled in the other blogs.</p>
+</section>
+<section id="rank" class="level3" data-number="2.7">
+<h3 data-number="2.7" class="anchored" data-anchor-id="rank"><span class="header-section-number">2.7</span> Rank</h3>
+<p>The rank of a matrix is the dimension of the vector space spanned by its columns (or rows). It is denoted by <span class="math inline">\(\text{rank}(\mathbf{A})\)</span>.</p>
+<p>For example, consider the following matrix:</p>
+<p><span class="math display">\[
+\begin{equation*}
+  \mathbf{A} = \begin{bmatrix}
+    1 &amp; 2 &amp; 3\\
+    4 &amp; 5 &amp; 6 \\
+    7 &amp; 8 &amp; 9\\
+  \end{bmatrix}
+\end{equation*}
+\]</span></p>
+<p>The columns of <span class="math inline">\(\mathbf{A}\)</span> are linearly dependent since the third column is equal to the sum of the first two columns. Therefore, the dimension of the vector space spanned by the columns is 2, so the rank of <span class="math inline">\(\mathbf{A}\)</span> is 2.</p>
+</section>
+<section id="trace" class="level3" data-number="2.8">
+<h3 data-number="2.8" class="anchored" data-anchor-id="trace"><span class="header-section-number">2.8</span> Trace</h3>
+<p>The trace of a square matrix <span class="math inline">\(\mathbf{A}\)</span>, denoted by <span class="math inline">\(\mathrm{tr}(\mathbf{A})\)</span>, is defined as the sum of the diagonal elements of <span class="math inline">\(\mathbf{A}\)</span>. In other words, if <span class="math inline">\(\mathbf{A}\)</span> is an <span class="math inline">\(n \times n\)</span> matrix, then its trace is given by:</p>
+<p><span class="math display">\[
+\mathrm{tr}(\mathbf{A})=\sum_{i=1}^{n}a_{ij}
+\]</span></p>
+<p>where <span class="math inline">\(a_{ii}\)</span> denotes the <span class="math inline">\(i\)</span> th diagonal element of <span class="math inline">\(\mathbf{A}\)</span>.</p>
+<p>For example, let <span class="math display">\[
+\begin{bmatrix}
+  2 &amp; 3 &amp; 1 \\
+  0 &amp; 5 &amp; 2 \\
+  1 &amp; 1 &amp; 4
+\end{bmatrix}
+\]</span></p>
+<p>Then, the trace of <span class="math inline">\(\mathbf{A}\)</span> is <span class="math inline">\(\mathrm{tr}(\mathbf{A}) = 2 + 5 + 4 = 11\)</span></p>
+</section>
+<section id="eigenvalues-and-eigenvectors" class="level3" data-number="2.9">
+<h3 data-number="2.9" class="anchored" data-anchor-id="eigenvalues-and-eigenvectors"><span class="header-section-number">2.9</span> Eigenvalues and Eigenvectors</h3>
+<p>Let A be an <span class="math inline">\(n × n\)</span> square matrix. A scalar <span class="math inline">\(\lambda\)</span> is called an eigenvalue of <span class="math inline">\(\mathbf A\)</span> if there exists a non-zero vector <span class="math inline">\(\mathbf{v}\)</span> such that <span class="math display">\[
+\mathbf{Av}=\lambda\mathbf{v}
+\]</span></p>
+<p>Such a vector <span class="math inline">\(\mathbf{v}\)</span> is called an eigenvector corresponding to <span class="math inline">\(\lambda\)</span>.</p>
+<p>Example:</p>
+<p>Let <span class="math inline">\(\mathbf A\)</span> be the matrix</p>
+<p>To find the eigenvalues of <span class="math inline">\(\mathbf A\)</span>, we solve the characteristic equation <span class="math inline">\(\text{det}(\mathbf A - \lambda \mathbf I ) = 0\)</span>, where I is the n × n identity matrix.</p>
+<p><span class="math display">\[
+\begin{align*}
+  \text{det}(\mathbf A - \lambda \mathbf I )
+  &amp;=
+    \begin{vmatrix}
+    3 - \lambda &amp; 1 \\
+    1 &amp; 3 - \lambda
+    \end{vmatrix} \\
+  &amp;=
+  (3 - \lambda)(3 - \lambda) - 1 \\
+  &amp;= \lambda^2 - 6\lambda + 8 = 0
+\end{align*}
+\]</span></p>
+<p>Solving this quadratic equation gives us the eigenvalues of <span class="math inline">\(\mathbf A\)</span>: <span class="math inline">\(\lambda_1 = 2\)</span> and <span class="math inline">\(\lambda_2 = 4\)</span>.</p>
+<p>To find the eigenvectors corresponding to <span class="math inline">\(\lambda_1 = 2\)</span>, we solve the equation <span class="math inline">\((\mathbf A - 2 \mathbf I)\mathbf{v} = \mathbf{0}\)</span>, where <span class="math inline">\(\mathbf I\)</span> is the <span class="math inline">\(2 \times 2\)</span> identity matrix.</p>
+<p><span class="math display">\[
+\begin{align*}
+  (\mathbf A - 2 \mathbf I)\mathbf{v} =
+    \begin{bmatrix}
+      1 &amp; 1 \\
+      1 &amp; 1
+    \end{bmatrix}
+  \begin{bmatrix}
+    x \\
+    y
+  \end{bmatrix} =
+  \begin{bmatrix}
+    0 \\
+    0
+  \end{bmatrix}
+\end{align*}
+\]</span></p>
+<p>Solving this system of equations gives us the eigenvectors corresponding to <span class="math inline">\(\lambda_1 = 2\)</span>: <span class="math inline">\(\mathbf{v_1} = \begin{bmatrix} -1 \\ 1 \end{bmatrix}\)</span></p>
+<p>Similarly, for <span class="math inline">\(\lambda_2 = 4\)</span>, we solve the equation <span class="math inline">\((\mathbf A - 4\mathbf I)\mathbf{v}\)</span> = <span class="math inline">\(\mathbf{0}\)</span> to get the eigenvectors corresponding to <span class="math inline">\(\lambda_2 = 4\)</span>: <span class="math inline">\(\mathbf{v_2} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}\)</span></p>
+</section>
+<section id="singular-value-and-singluar-vectors" class="level3" data-number="2.10">
+<h3 data-number="2.10" class="anchored" data-anchor-id="singular-value-and-singluar-vectors"><span class="header-section-number">2.10</span> Singular value and Singluar Vectors</h3>
+<p>The singular value decomposition (SVD) of a matrix <span class="math inline">\(\mathbf A\)</span> is a factorization of <span class="math inline">\(\mathbf A\)</span> into the product of three matrices as follows:</p>
+<p><span class="math display">\[
+\mathbf{A} = \mathbf{U} \mathbf{\Sigma} \mathbf{V}^T
+\]</span> where <span class="math inline">\(\mathbf{U}\)</span> is an <span class="math inline">\(m \times m\)</span> orthogonal matrix, <span class="math inline">\(\mathbf{\Sigma}\)</span> is an <span class="math inline">\(m \times n\)</span> rectangular diagonal matrix with non-negative real numbers on the diagonal, and <span class="math inline">\(\mathbf{V}\)</span> is an <span class="math inline">\(n \times n\)</span> orthogonal matrix.</p>
+<p>The diagonal entries of <span class="math inline">\(\mathbf{\Sigma}\)</span> are called the singular values of <span class="math inline">\(\mathbf{A}\)</span>, denoted as <span class="math inline">\(\sigma_1, \sigma_2, \ldots, \sigma_r\)</span> (where <span class="math inline">\(r\)</span> is the rank of <span class="math inline">\(\mathbf{A}\)</span>), and are arranged in descending order. The columns of <span class="math inline">\(\mathbf{U}\)</span> and <span class="math inline">\(\mathbf{V}\)</span> are called the left and right singular vectors of <span class="math inline">\(\mathbf{A}\)</span>, respectively, and are orthonormal vectors.</p>
+<p>For example, let <span class="math inline">\(\mathbf{A}\)</span> be a 3 by 2 matrix given by:</p>
+<p><span class="math display">\[
+\begin{equation*}
+\mathbf{A} =
+  \begin{bmatrix}
+    1 &amp; 2\\
+    3 &amp; 4\\
+    5 &amp; 6
+  \end{bmatrix}
+\end{equation*}
+\]</span></p>
+<p>The SVD of <span class="math inline">\(\mathbf{A}\)</span> is given by:</p>
+<p><span class="math display">\[
+\begin{equation*}
+\mathbf{A} = \mathbf{U} \mathbf{\Sigma} \mathbf{V}^T =
+\begin{bmatrix}
+  -0.23 &amp; -0.53 &amp; -0.81\\
+  -0.53 &amp; -0.72 &amp; 0.45\\
+  -0.81 &amp; 0.45 &amp; -0.38
+\end{bmatrix}
+\begin{bmatrix}
+  9.53 &amp; 0\\
+  0 &amp; 0.90\\
+  0 &amp; 0
+\end{bmatrix}
+\begin{bmatrix}
+  -0.62 &amp; -0.78\\
+  -0.78 &amp; 0.62
+\end{bmatrix}^T
+\end{equation*}
+\]</span></p>
+<p>where the left singular vectors of <span class="math inline">\(\mathbf{A}\)</span> are the columns of <span class="math inline">\(\mathbf{U}\)</span>, the right singular vectors of <span class="math inline">\(\mathbf{A}\)</span> are the columns of <span class="math inline">\(\mathbf{V}\)</span>, and the singular values of <span class="math inline">\(\mathbf{A}\)</span> are the diagonal entries of <span class="math inline">\(\boldsymbol{\Sigma}\)</span>.</p>
+<ul>
+<li>연립 방정식을 행렬의 곱으로 나타내보기 <span class="math display">\[\begin{matrix}x_1+2y_1=4\\2x_1+5y_1=9\end{matrix} \quad \quad \quad \begin{matrix}x_2+2y_2=3\\2x_2+5y_2=7\end{matrix}\]</span> <span class="math display">\[ \begin{bmatrix} 1 &amp; 2 \\ 2 &amp; 5 \end{bmatrix} \begin{bmatrix} x_1 &amp; x_2 \\ y_1 &amp; y_2 \end{bmatrix} = \begin{bmatrix} 4 &amp; 9 \\ 3 &amp; 7 \end{bmatrix}\]</span></li>
+<li>중요한 사실(….당연한 사실?)
+<ul>
+<li>곱셈의 왼쪽 행렬의 열 수와, 오른쪽 행렬의 행 수가 같아야 가능함
+<ul>
+<li><span class="math inline">\(A_{m \times n} \times B_{o \times p}\)</span> 에서 <span class="math inline">\(n = o\)</span> 여야 곱셈 성립</li>
+</ul></li>
+<li>곱셈의 결과 행렬의 크기 = 곱셈의 왼쪽 행렬의 행 수 <span class="math inline">\(\times\)</span> 곱셈의 오른쪽 행렬의 열 수
+<ul>
+<li><span class="math inline">\(A_{m \times n} \times B_{o \times p} = C_{m \times p}\)</span></li>
+</ul></li>
+<li>교환법칙(Commutative property)이 성립하지 않음
+<ul>
+<li><span class="math inline">\(AB \neq BA\)</span></li>
+</ul></li>
+</ul></li>
+<li>행렬 곱셈의 여러가지 관점
+<ul>
+<li>내적으로 바라보기 <span class="math display">\[ A = \begin{bmatrix} \mathbf{a_1^T} \\ \mathbf{a_2^T} \\ \vdots \\ \mathbf{a_m^T} \end{bmatrix} \]</span> <span class="math display">\[ AB = \begin{bmatrix} \mathbf{a_1^T} \\ \mathbf{a_2^T} \\ \vdots \\ \mathbf{a_m^T} \end{bmatrix} \begin{bmatrix} \mathbf{b_1} &amp; \mathbf{b_2} &amp; \cdots &amp; \mathbf{b_m} \end{bmatrix} = \begin{bmatrix} \mathbf{a_1^T b_1} &amp; \mathbf{a_1^T b_2} &amp; \cdots &amp; \mathbf{a_1^T b_m} \\ \mathbf{a_2^T b_1} &amp; \mathbf{a_2^T b_2} &amp; \cdots &amp; \mathbf{a_2^T b_m} \\ \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots \\ \mathbf{a_m^T b_1} &amp; \mathbf{a_m^T b_2} &amp; \cdots &amp; \mathbf{a_m^T b_m} \end{bmatrix}\]</span></li>
+<li>rank-1 matrix의 합 (또 안가르쳐준 개념 먼저 사용중…..-_-) <span class="math display">\[AB = \begin{bmatrix} \mathbf{a_1} &amp; \mathbf{a_2} &amp; \cdots &amp; \mathbf{a_m} \end{bmatrix} \begin{bmatrix} \mathbf{b_1^T} \\ \mathbf{b_2^T} \\ \vdots \\ \mathbf{b_m^T} \end{bmatrix} = \mathbf{a_1 b_1^T} + \mathbf{a_2 b_2^T} + \cdots + \mathbf{a_m b_m^T}\]</span></li>
+<li>column space로 바라보기 <span class="math display">\[A\mathbf{x} = \begin{bmatrix} \mathbf{a_1} &amp; \mathbf{a_2} &amp; \cdots &amp; \mathbf{a_m} \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_m \end{bmatrix} = \mathbf{a_1} x_1 + \mathbf{a_2} x_2 + \cdots + \mathbf{a_m} x_m \]</span> (스칼라배의 합)
+<ul>
+<li><span class="math inline">\(A = \begin{bmatrix} 1 &amp; 0 \\ 0 &amp; 1 \end{bmatrix}\)</span> 는 2차원 좌표평면의 모든 점을, <span class="math inline">\(A=\begin{bmatrix} 1 &amp; 0 &amp; 0 \\ 0 &amp; 1 &amp; 0 \\ 0 &amp; 0 &amp; 1 \end{bmatrix}\)</span>은 3차원 좌표평면의 모든 점 표현 가능</li>
+<li><span class="math inline">\(AB = A \begin{bmatrix} \mathbf{b_1} &amp; \mathbf{b_2} &amp; \cdots &amp; \mathbf{b_m} \end{bmatrix} = \begin{bmatrix} A \mathbf{b_1} &amp; A \mathbf{b_2} &amp; \cdots &amp; A \mathbf{b_m} \end{bmatrix}\)</span></li>
+<li>column space: A의 column vector로 만들 수 있는 부분 공간</li>
+</ul></li>
+<li>row space로 바라보기 <span class="math display">\[\mathbf{x^T}A = \begin{bmatrix} x_1 &amp; x_2 &amp; \cdots &amp; x_m \end{bmatrix} \begin{bmatrix} \mathbf{a_1^T} \\ \mathbf{a_2^T} \\ \vdots \\ \mathbf{a_m^T} \end{bmatrix} = x_1 \mathbf{a_1^T} + x_2 \mathbf{a_2^T} + \cdots + x_m \mathbf{a_m^T} \]</span></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="열공간column-space" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="열공간column-space"><span class="header-section-number">3</span> 열공간(Column Space)</h2>
+<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/g0eaDeVRdZk" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<ul>
+<li>column space: column vector 들이 span 하는 space
+<ul>
+<li><span class="math inline">\(A\)</span>의 column space = <span class="math inline">\(C(A)\)</span> 또는 <span class="math inline">\(range(A)\)</span></li>
+</ul></li>
+<li>span: vector들의 linear combination 으로 나타낼 수 있는 모든 vector를 모은 집합
+<ul>
+<li>vector에 따라, 점일수도 선일수도 평면일 수도 있음</li>
+<li>vector space를 이 vector들이 span하는 space → column space는 행렬의 열들이 span하는 space</li>
+</ul></li>
+<li>vector의 선형 결합(linear combination): vector에 스칼라배를 해서 더하는 것
+<ul>
+<li><span class="math inline">\(\mathbf{v_1}\)</span> 과 <span class="math inline">\(\mathbf{v_2}\)</span>의 linear combination으로 2차원 좌표평면 나타내기 <img src="images/chap02_09.PNG" class="img-fluid"></li>
+</ul></li>
+</ul>
+</section>
+<section id="선형-독립linear-independent" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="선형-독립linear-independent"><span class="header-section-number">4</span> 선형 독립(Linear Independent)</h2>
+<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/mOOI4-BfjGQ" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<p>…and also see</p>
+<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/9F4PZ_1orF0" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<ul>
+<li>선형 독립(linearly independent)인 vectors: (선형 결합을 통해) 더 고차원을 span할 수 있게 해줌</li>
+<li>orthogonal 하면 independent
+<ul>
+<li>but independent해도 항상 orthogonal하지는 않음 (Independent &gt; Orthogonal)</li>
+</ul></li>
+<li>definition: <span class="math inline">\(a_1 \mathbf{v_1} + a_2 \mathbf{v_2} + a_3 \mathbf{v_3} \cdots a_n \mathbf{v_n} = \mathbf{0}\)</span> 를 만족하는 <span class="math inline">\(a_1, a_2, a_3, \cdots a_n\)</span> 이 <span class="math inline">\(a_1 = a_2 = a_3 = \cdots = a_n = 0\)</span> 밖에 없을때
+<ul>
+<li><span class="math inline">\(\mathbf{0}\)</span>는 모든 elements가 <span class="math inline">\(0\)</span>인 벡터</li>
+<li>예: <span class="math inline">\(\begin{bmatrix} 1 \\ 1 \end{bmatrix}\)</span>, <span class="math inline">\(\begin{bmatrix} 2 \\ 2 \end{bmatrix}\)</span> 는 <span class="math inline">\(-2 \begin{bmatrix} 1 \\ 1 \end{bmatrix} + 1 \begin{bmatrix} 2 \\ 2 \end{bmatrix} = \begin{bmatrix} 0 \\ 0 \end{bmatrix}\)</span> 이 되므로, linearly independent 하지 않음</li>
+<li>independent한 vector 들의 수 = 표현할 수 있는 차원의 dimension</li>
+</ul></li>
+</ul>
+</section>
+<section id="기저basis" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="기저basis"><span class="header-section-number">5</span> 기저(basis)</h2>
+<ul>
+<li>주어진 vector space를 span하는 linearly independent한 vectors</li>
+<li>어떤 공간을 이루는 필수적인 구성요소</li>
+<li>orthogonal 하면 orthogonal basis</li>
+<li>예: 2차원 좌표평면에 대해
+<ul>
+<li><span class="math inline">\(\begin{bmatrix} 1 \\ 0 \end{bmatrix}\)</span>, <span class="math inline">\(\begin{bmatrix} 0 \\ 1 \end{bmatrix}\)</span> : orthogonal basis</li>
+<li><span class="math inline">\(\begin{bmatrix} 1 \\ 0 \end{bmatrix}\)</span>, <span class="math inline">\(\begin{bmatrix} 1 \\ 1 \end{bmatrix}\)</span> : orthogonal 하지 않은 basis</li>
+<li><span class="math inline">\(\begin{bmatrix} 1 \\ 0 \end{bmatrix}\)</span>, <span class="math inline">\(\begin{bmatrix} 2 \\ 0 \end{bmatrix}\)</span> : linearly independent 하지 않으므로 basis 아님</li>
+</ul></li>
+</ul>
+</section>
+<section id="항등행렬identity-matrix-역행렬inverse-matrix-대각행렬diagonal-matrix-직교행렬orthogonal-matrix" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="항등행렬identity-matrix-역행렬inverse-matrix-대각행렬diagonal-matrix-직교행렬orthogonal-matrix"><span class="header-section-number">6</span> 항등행렬(identity matrix), 역행렬(inverse matrix), 대각행렬(Diagonal Matrix), 직교행렬(orthogonal matrix)</h2>
+<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/XqOvyfMUAwA" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<section id="identity-matrix항등행렬" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="identity-matrix항등행렬"><span class="header-section-number">6.1</span> Identity matrix(항등행렬)</h3>
+<ul>
+<li>항등원: 임의의 원소에 대해 연산하면 자기 자신이 나오게 하는 원소 (by namu.wiki)
+<ul>
+<li>실수에서 곱셈의 항등원은 1</li>
+</ul></li>
+<li>행렬의 항등원: 항등행렬(<span class="math inline">\(I\)</span>) <span class="math display">\[I = \begin{bmatrix} 1 &amp; 0 &amp; \cdots &amp; 0 \\ 0 &amp; 1 &amp; \cdots &amp; 0 \\ \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots \\ 0 &amp; 0 &amp; \cdots &amp; 1 \end{bmatrix}\]</span>
+<ul>
+<li><span class="math inline">\(A_{m \times n} \times I_{n \times n = n} = A_{m \times n}\)</span></li>
+<li><span class="math inline">\(I_{m \times m = m} \times A_{m \times n} = A_{m \times n}\)</span></li>
+</ul></li>
+</ul>
+</section>
+<section id="sec-inv" class="level3" data-number="6.2">
+<h3 data-number="6.2" class="anchored" data-anchor-id="sec-inv"><span class="header-section-number">6.2</span> Inverse matrix(역행렬)</h3>
+<ul>
+<li>역원: 연산 결과 항등원이 나오게 하는 연소
+<ul>
+<li>실수에서 곱셈의 역원은 지수의 부호가 반대인 역수 (by namu.wiki): <span class="math inline">\(a \times a^{-1} = 1\)</span></li>
+</ul></li>
+<li>행렬의 역원: 역행렬(<span class="math inline">\(A^{-1}\)</span>) <span class="math display">\[A \times A^{-1} = I , A^{-1} \times A = I\]</span>
+<ul>
+<li>존재하지 않는 경우도 있음</li>
+<li>존재하면 Invertible(nonsingular, nondegenerate) matrix라고 불림
+<ul>
+<li>존재하지 않으면 singular, degenerate라고 불림</li>
+</ul></li>
+<li>square matrix(정사각행렬, <span class="math inline">\(m = n\)</span>)은 특수한 경우를 제외하면 역행렬이 항상 존재
+<ul>
+<li>역행렬이 존재하지 않는특수한 경우: (나중에 배울) determinant가 0인 경우</li>
+</ul></li>
+<li><span class="math inline">\(m \neq n\)</span>인 행렬의 경우에는 역행렬이 존재하지 않음
+<ul>
+<li>다만, 경우에 따라 <span class="math inline">\(A \times A^{-1} = I\)</span> 를 만족하거나(right inverse), <span class="math inline">\(A^{-1} \times A = I\)</span>를 만족하는(left inverse)는 <span class="math inline">\(A^{-1}\)</span>이 존재함</li>
+</ul></li>
+<li>연립 방정식을 matrix로 나타냈을 때, 역행렬을 이용해서 해를 찾을 수 있음 <span class="math display">\[A\mathbf{x} = \mathbf{b} \Rightarrow A^{-1}A\mathbf{x} = A^{-1}\mathbf{b} \Rightarrow I\mathbf{x} = A^{-1}\mathbf{b} \Rightarrow \mathbf{x} = A^{-1}\mathbf{b}\]</span></li>
+</ul></li>
+</ul>
+</section>
+<section id="diagonal-matrix대각행렬" class="level3" data-number="6.3">
+<h3 data-number="6.3" class="anchored" data-anchor-id="diagonal-matrix대각행렬"><span class="header-section-number">6.3</span> Diagonal Matrix(대각행렬)</h3>
+<ul>
+<li>diagonal element(대각 원소)외의 모든 elements(off-diagonal elements)가 0인 matrix <span class="math display">\[ D = Diag(\mathbf{a}) = \begin{bmatrix} a_{1,1} &amp; 0 &amp; \cdots &amp; 0 \\ 0 &amp; a_{2,2} &amp; \cdots &amp; 0 \\ \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots \\ 0 &amp; 0 &amp; \cdots &amp; a_{n,n} \end{bmatrix}\]</span>
+<ul>
+<li>identity matrix는 diagonal matrix</li>
+<li>diagnomal matrix는 symmetric matrix 이기도 함</li>
+<li>보통은 square matrix에서 주로 사용됨
+<ul>
+<li>square matrix가 아니면서 diagonal matrix인 경우: rectangular diagonal matrix</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="orthogonal-matrix직교행렬-orthonomal-matrix" class="level3" data-number="6.4">
+<h3 data-number="6.4" class="anchored" data-anchor-id="orthogonal-matrix직교행렬-orthonomal-matrix"><span class="header-section-number">6.4</span> Orthogonal matrix(직교행렬, orthonomal matrix)</h3>
+<ul>
+<li>행렬의 각 columns들이 orthonomal vectors (서로 수직하면서 unit vectors) <span class="math display">\[A A^T = A^T A = I\]</span></li>
+<li>identity matrix는 orthogonal matrix</li>
+<li>square matrix에서만 정의됨</li>
+<li>Orthogonal matrix인 <span class="math inline">\(A\)</span>이면 <span class="math inline">\(A^{-1} = A^{T}\)</span>
+<ul>
+<li>각 columns에서 자기 자신과의 내적 = 1, 다른 column과의 내적 = 0임</li>
+</ul></li>
+<li>complex matrix(복소수 행렬)에서는 unitary matrix라고 부름</li>
+</ul>
+</section>
+</section>
+<section id="계수rank" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="계수rank"><span class="header-section-number">7</span> 계수(Rank)</h2>
+<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/HMST0Yc7EXE" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<ul>
+<li>rank: 행렬이 가지는 independent한 columns의 수 = column space의 dimension = row space의 dimension</li>
+<li>independent한 column의 수 = independent한 행의 수: <span class="math inline">\(rank(A) = rank(A^T)\)</span>
+<ul>
+<li>proof: <a href="https://en.wikipedia.org/wiki/Rank_%28linear_algebra%29#Proofs_that_column_rank_=_row_rank">Wikipedia</a></li>
+</ul></li>
+<li>예: <span class="math display">\[\begin{bmatrix} 1 &amp; 2 &amp; 3 \\ 0 &amp; 0 &amp; 0 \end{bmatrix} \Rightarrow rank=1\]</span> <span class="math display">\[\begin{bmatrix} 1 &amp; 0 &amp; 1 \\ 0 &amp; 1 &amp; 1 \end{bmatrix} \Rightarrow rank=2\]</span></li>
+<li><span class="math inline">\(A_{m \times n}\)</span> 의 최대 랭크는 <span class="math inline">\(min\{m,n\}\)</span>
+<ul>
+<li><span class="math inline">\(rank(A) &lt; min\{m,n\}\)</span> 면 rank-deficient, <span class="math inline">\(rank(A) = min\{m,n\}\)</span>면 full (row/column) rank</li>
+</ul></li>
+</ul>
+</section>
+<section id="영공간null-space" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="영공간null-space"><span class="header-section-number">8</span> 영공간(Null space)</h2>
+<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/Eizc9TSRYMQ" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<ul>
+<li><span class="math inline">\(A\mathbf{x}= \mathbf{0}\)</span> 을 만족하는 <span class="math inline">\(\mathbf{x}\)</span>의 집합
+<ul>
+<li>column space 관점에서 보기: <span class="math inline">\(A\mathbf{x} = x_1 \mathbf{a_1} + x_2 \mathbf{a_2} + \cdots + x_n \mathbf{a_n} = \mathbf{0}\)</span></li>
+<li>null space에 항상 들어가는 <span class="math inline">\(\mathbf{x} = \begin{bmatrix} 0 \\ 0 \\ \vdots \\ 0 \end{bmatrix}\)</span> : trivial solution
+<ul>
+<li>모든 columns이 다 lienarly independent 하면, null space에는 위의 벡터 <span class="math inline">\(\mathbf{x}=\mathbf{0}\)</span>하나 밖에 없음</li>
+</ul></li>
+</ul></li>
+<li><span class="math inline">\(\mathbf{x}=\mathbf{0}\)</span> 가 아닌 vector가 null space에 있으면, 스칼라배(constant <span class="math inline">\(c\)</span>에 대해 <span class="math inline">\(c \mathbf{x}\)</span>) 역시 null space에 포함됨</li>
+<li>혼동 주의! null space는 column space의 일부가 아님
+<ul>
+<li>row vector의 차원이 null space가 존재하는 공간</li>
+</ul></li>
+<li>rank와 null space의 dimension의 합은 항상 matrix의 column의 수
+<ul>
+<li><span class="math inline">\(A_{m \times n}\)</span>에 대해, <span class="math inline">\(dim(N(A)) = n - r\)</span>
+<ul>
+<li>모든 columns이 다 lienarly independent 하면 null space는 0차원(점)</li>
+</ul></li>
+<li>null space는 row space와 수직한 space
+<ul>
+<li><span class="math inline">\(A\mathbf{x}= \mathbf{0}\)</span> : 각각 모든 행과 내적해서 0, → 행들의 linear combination과 내적해도 0</li>
+<li>rank는 row space의 dimension → row space의 dimension(<span class="math inline">\(dim(R(A))\)</span>)과 null space의 dimension(<span class="math inline">\(dim(N(A))\)</span>)의 합이 <span class="math inline">\(n\)</span></li>
+<li><span class="math inline">\(\mathbb{R^n}\)</span> 공간에 표현: <img src="images/chap02_10.PNG" class="img-fluid">
+<ul>
+<li>겹친 점: 영벡터</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li>left null space: <span class="math inline">\(\mathbf{x^T} A = \mathbf{0^T}\)</span> 인 <span class="math inline">\(\mathbf{x}\)</span>
+<ul>
+<li>위의 성질을 row에 대해 적용
+<ul>
+<li>m 차원에 놓인 벡터</li>
+<li>dimension: <span class="math inline">\(dim(N_L(A)) = m - r\)</span></li>
+<li>column space와 수직: <span class="math inline">\(dim(N_L(A)) +dim(C(A)) = m\)</span></li>
+</ul></li>
+</ul></li>
+<li><span class="math inline">\(R(A)\)</span>에 있는 vector <span class="math inline">\(\mathbf{x_r}\)</span> 와 <span class="math inline">\(N(A)\)</span>에 있는 vector <span class="math inline">\(\mathbf{x_n}\)</span>에 대해:
+<ul>
+<li><span class="math inline">\(\mathbf{x_r}\)</span>에 <span class="math inline">\(A\)</span>를 곱하면 column space로 감</li>
+<li><span class="math inline">\(\mathbf{x_n}\)</span>에 <span class="math inline">\(A\)</span>를 곱하면 $</li>
+<li><span class="math inline">\(A(\mathbf{x_r} +\mathbf{x_n}) = A\mathbf{x_r} + A\mathbf{x_n} = A\mathbf{x_r} = \mathbf{b}\)</span></li>
+</ul></li>
+</ul>
+</section>
+<section id="ax-b의-해의-수" class="level2" data-number="9">
+<h2 data-number="9" class="anchored" data-anchor-id="ax-b의-해의-수"><span class="header-section-number">9</span> Ax = b의 해의 수</h2>
+<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/nNI2TlD598c" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<ul>
+<li><p>full column rank 일때</p>
+<ul>
+<li><span class="math inline">\(\mathbf{b}\)</span>가 column space(<span class="math inline">\(C(A)\)</span>)안에 있으면 해가 하나</li>
+<li><span class="math inline">\(\mathbf{b}\)</span>가 column space(<span class="math inline">\(C(A)\)</span>)안에 없으면 해가 없음 <img src="images/chap02_11.PNG" class="img-fluid"></li>
+</ul></li>
+<li><p>full row rank 일때</p>
+<ul>
+<li><span class="math inline">\(\mathbf{b}\)</span>는 항상 column space 안에 있음: 무한의 해를 가짐</li>
+<li>임의의 특정한 해(particular solution) <span class="math inline">\(\mathbf{x_p}\)</span>와 null space의 vector <span class="math inline">\(\mathbf{x_n}\)</span>에 대해, <span class="math inline">\(A(\mathbf{x_p} +\mathbf{x_n})=\mathbf{b}\)</span>
+<ul>
+<li>즉, <span class="math inline">\(\mathbf{x_p} +\mathbf{x_n}\)</span> 도 해가 됨: complete solution
+<ul>
+<li>null space는 무한하므로, 해도 무한함</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>full rank 일때(square matrix): 해가 하나 존재 (<span class="math inline">\(\mathbf{x} = A^{-1}\)</span>$)</p></li>
+<li><p>rank-deficient 일때</p>
+<ul>
+<li><span class="math inline">\(\mathbf{b}\)</span>가 column space(<span class="math inline">\(C(A)\)</span>)안에 있으면 무한한 해를 가짐</li>
+<li><span class="math inline">\(\mathbf{b}\)</span>가 column space(<span class="math inline">\(C(A)\)</span>)안에 없으면 해가 없음</li>
+</ul></li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

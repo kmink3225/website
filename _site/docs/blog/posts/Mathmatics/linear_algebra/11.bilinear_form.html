@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2023-04-02">
 <meta name="description" content="template">
 
-<title>Kwangmin Kim - Matrix Transformation (5) - Quadratic Form</title>
+<title>Kwangmin Kim - Matrix Transformation (4) - Biinear Form</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -138,7 +138,7 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#quadratic-form" id="toc-quadratic-form" class="nav-link active" data-scroll-target="#quadratic-form"><span class="toc-section-number">1</span>  Quadratic Form</a></li>
+  <li><a href="#binear-form" id="toc-binear-form" class="nav-link active" data-scroll-target="#binear-form"><span class="toc-section-number">1</span>  Binear Form</a></li>
   </ul>
 </nav>
     </div>
@@ -147,8 +147,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Matrix Transformation (5) - Quadratic Form</h1>
-<p class="subtitle lead">the sum of squares, covariance matrix, and correlation matrix</p>
+<h1 class="title">Matrix Transformation (4) - Biinear Form</h1>
+<p class="subtitle lead">Linear Regression, Fully Connected layers, Neural Networks, Linear Classifiers</p>
   <div class="quarto-categories">
     <div class="quarto-category">Mathematics</div>
   </div>
@@ -183,21 +183,31 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<section id="quadratic-form" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="quadratic-form"><span class="header-section-number">1</span> Quadratic Form</h2>
-<p>For a vector <span class="math inline">\(\mathbf{x} = [x_1,x_2,\ldots,x_n]^T\)</span>, the quadratic form is defined as</p>
-<p><span class="math inline">\(Q(\mathbf{x}) = \mathbf{x}^T \mathbf{A} \mathbf{x}\)</span></p>
-<p>where <span class="math inline">\(\mathbf{A}\)</span> is an <span class="math inline">\(n \times n\)</span> symmetric matrix.</p>
-<p>Here, <span class="math inline">\(\mathbf{x}^T\)</span> represents the transpose of the vector <span class="math inline">\(\mathbf{x}\)</span> and <span class="math inline">\(\mathbf{x}^T \mathbf{A} \mathbf{x}\)</span> represents the dot product of the vector <span class="math inline">\(\mathbf{x}\)</span> with itself after the transformation by the matrix <span class="math inline">\(\mathbf{A}\)</span>.</p>
-<p>For example, let <span class="math inline">\(\mathbf{x} = [x_1,x_2]^T\)</span> and <span class="math inline">\(\mathbf{A}\)</span> be a <span class="math inline">\(2 \times 2\)</span> symmetric matrix given by:</p>
+<section id="binear-form" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="binear-form"><span class="header-section-number">1</span> Binear Form</h2>
+<p>A bilinear form of a matrix is a function that extends the linear form and takes two vectors as inputs and produces a scalar as output. It is linear in both of its arguments, meaning that it satisfies the following properties:</p>
 <p><span class="math display">\[
-\mathbf A = \begin{bmatrix} 2&amp;1 \\ 1&amp;3 \end{bmatrix}
+\begin{aligned}
+B(\mathbf u+\mathbf v)&amp;=B(\mathbf u+\mathbf w)+B(\mathbf v+\mathbf w)\\
+B(\mathbf u,\alpha \mathbf v)&amp;=\alpha B(\mathbf u,\mathbf v)\\
+B(\alpha\mathbf u,\mathbf v)&amp;=\alpha B(\mathbf u,\mathbf v)
+\end{aligned}
 \]</span></p>
-<p>Then, the quadratic form <span class="math inline">\(Q(\mathbf{x})\)</span> can be written as:</p>
+<p>for all vectors <span class="math inline">\(u\)</span>, <span class="math inline">\(v\)</span>, <span class="math inline">\(w\)</span> and scalars <span class="math inline">\(\alpha\)</span>.</p>
+<p>A bilinear form can be represented by a matrix <span class="math inline">\(B\)</span> such that <span class="math inline">\(B_{i,j}\)</span> is the coefficient of the product <span class="math inline">\(u_i v_j\)</span> in the expansion of <span class="math inline">\(B(u,v)\)</span>. The bilinear form can then be written as:</p>
 <p><span class="math display">\[
-\mathbf Q(\mathbf x) = \begin{bmatrix} x_1 &amp; x_2 \end{bmatrix}\begin{bmatrix} 2&amp;1 \\ 1&amp;3 \end{bmatrix}\begin{bmatrix} x_1 \\ x_2 \end{bmatrix}=2x_1^2+4x_1x_2+3x_2^2
+B(\mathbf u,\mathbf v)=\mathbf u^T B \mathbf v
 \]</span></p>
-<p>Here, we can see that the quadratic form can be represented as a polynomial function of degree 2 in the variables <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> with the coefficients given by the entries of the symmetric matrix <span class="math inline">\(\mathbf{A}\)</span>.</p>
+<p>where <span class="math inline">\(\mathbf u\)</span> and <span class="math inline">\(\mathbf v\)</span> are column vectors and <span class="math inline">\(B\)</span> is a matrix.</p>
+<p>For example, consider the bilinear form <span class="math inline">\(B(\mathbf u,\mathbf v) = u_1 v_1 + u_2 v_2\)</span>. This bilinear form can be represented by the matrix:</p>
+<p><span class="math display">\[
+B=\begin{bmatrix}1&amp;0\\0&amp;1\end{bmatrix}
+\]</span></p>
+<p>and written as:</p>
+<p><span class="math display">\[
+B(\mathbf u,\mathbf v)=\begin{bmatrix}u_1&amp; u_2\end{bmatrix}\begin{bmatrix}1&amp;0\\0&amp;1\end{bmatrix}\begin{bmatrix}v_1\\v_2\end{bmatrix}=u_1v_1+u_2v_2
+\]</span></p>
+<p>This bilinear form computes the dot product of <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span>, which measures the similarity between the two vectors. Bilinear forms are commonly used in applications such as optimization, geometry, and physics, where they capture the interaction between two quantities or variables.</p>
 <p>The covariance matrix can be represented as a bilinear form using matrix multiplication. Let’s say we have a random vector <span class="math inline">\(\mathbf{x} = [x_1, x_2, \ldots, x_n]^T\)</span> with mean vector <span class="math inline">\(\mathbf{\mu} = [\mu_1, \mu_2, \ldots, \mu_n]^T\)</span> and covariance matrix <span class="math inline">\(\mathbf{\Sigma}\)</span>. Then, we can represent the covariance matrix as a bilinear form in the following way:</p>
 <p><span class="math display">\[
 \begin{aligned}
@@ -220,24 +230,20 @@ ul.task-list li input[type="checkbox"] {
 \]</span></p>
 <p>where <span class="math inline">\([\mathbf{x}-\mathbf{\mu}]\)</span> is the deviation of the random vector <span class="math inline">\(\mathbf{x}\)</span> from its mean vector <span class="math inline">\(\mathbf{\mu}\)</span>.</p>
 <p>covariance matrix, and correlation matrix</p>
-<p>PCA is a technique used to reduce the dimensionality of a dataset by projecting it onto a lower-dimensional subspace. This is accomplished by finding the eigenvectors of the sample covariance matrix, which is a quadratic form. The sample covariance matrix is defined as:</p>
+<p>One of the most famous examples is the use of bilinear forms in convolutional neural networks (CNNs), which are a type of deep learning model used for image and video recognition tasks.</p>
+<p>In a CNN, a bilinear form is used to compute the similarity between a filter and a local region of an input image. This similarity measure is used to determine how much the filter “matches” the local region of the image, and is used to produce an output feature map.</p>
+<p>More specifically, the bilinear form used in a CNN takes the form:</p>
 <p><span class="math display">\[
-\Sigma=\frac{1}{n-1}\sum_{i=1}^{n}(x_i-\bar{x})(x_i-\bar{x})^T
+z_{i,j} = \sum_{m=1}^{M}\sum_{n=1}^{N} w_{m,n}x_{i+m-1,j+n-1}
 \]</span></p>
-<p>where <span class="math inline">\(x_i\)</span> is a <span class="math inline">\(p\)</span>-dimensional vector representing the <span class="math inline">\(i\)</span>-th observation, <span class="math inline">\(\bar{x}\)</span> is the sample mean, and <span class="math inline">\(n\)</span> is the number of observations. The quadratic form arises from the term <span class="math inline">\((x_i-\bar{x})(x_i-\bar{x})^T\)</span>, which is a matrix multiplied by its transpose.</p>
-<p>The eigenvectors of the sample covariance matrix correspond to the principal components of the data, which are the directions of maximum variance. By projecting the data onto these directions, we can obtain a lower-dimensional representation of the data while preserving most of the variance.</p>
-<p>In machine learning, quadratic forms are used in the computation of the loss function. For example, in a linear regression model, the loss function can be expressed as:</p>
+<p>where <span class="math inline">\(z_{i,j}\)</span> is the output feature map at location <span class="math inline">\((i,j)\)</span>, <span class="math inline">\(x_{i+m-1,j+n-1}\)</span> is the input image pixel at location <span class="math inline">\((i+m-1,j+n-1)\)</span>, and <span class="math inline">\(w_{m,n}\)</span> is the weight of the filter at position <span class="math inline">\((m,n)\)</span>. This computation is performed for each location <span class="math inline">\((i,j)\)</span> in the output feature map.</p>
+<p>The bilinear form used in CNNs is a type of convolution operation, and is used to learn features such as edges, corners, and other patterns in the input image. CNNs with bilinear forms have achieved state-of-the-art performance on many image recognition tasks, including object detection, face recognition, and scene classification.</p>
+<p>Bilinear forms also have applications in other areas of machine learning, such as natural language processing (NLP). In NLP, bilinear forms can be used to compute the similarity between two word embeddings, which are vector representations of words. This similarity measure can be used for tasks such as sentiment analysis, text classification, and machine translation.</p>
 <p><span class="math display">\[
-L(\theta)=\frac{1}{2}\sum_{i=1}^{n}(y_i-x_i^T\theta)^2
+B(\mathbf{u},\mathbf{v})=\mathbf{u}^T \mathbf{W}\mathbf{v}
 \]</span></p>
-<p>where <span class="math inline">\(\theta\)</span> is a <span class="math inline">\(p\)</span>-dimensional vector of model parameters, <span class="math inline">\(x_i\)</span> is a <span class="math inline">\(p\)</span>-dimensional vector representing the <span class="math inline">\(i\)</span>-th input, <span class="math inline">\(y_i\)</span> is the corresponding output, and <span class="math inline">\(n\)</span> is the number of observations. The term <span class="math inline">\((y_i-x_i^T\theta)^2\)</span> is a quadratic form, which measures the discrepancy between the predicted output <span class="math inline">\(x_i^T\theta\)</span> and the true output <span class="math inline">\(y_i\)</span>. By minimizing this loss function, we can obtain the optimal values of the model parameters <span class="math inline">\(\theta\)</span>.</p>
-<p>A positive definite matrix <span class="math inline">\(\mathbf{A}\)</span> can be represented as a bilinear form <span class="math inline">\(Q(\mathbf{x}, \mathbf{y})\)</span> as follows:</p>
-<p><span class="math display">\[
-\mathbf x^T \mathbf A \mathbf y =Q(\mathbf x, \mathbf y)=\sum_{i=1}^{n}\sum_{j=1}^{n}a_{ij}x_iy_j
-\]</span></p>
-<p>where <span class="math inline">\(\mathbf{x}\)</span> and <span class="math inline">\(\mathbf{y}\)</span> are <span class="math inline">\(n\)</span>-dimensional column vectors and <span class="math inline">\(\mathbf{A}\)</span> is an <span class="math inline">\(n \times n\)</span> positive definite matrix.</p>
-<p>In this case, the bilinear form <span class="math inline">\(Q(\mathbf{x}, \mathbf{y})\)</span> is positive definite, which means that <span class="math inline">\(Q(\mathbf{x}, \mathbf{y}) &gt; 0\)</span> for all nonzero vectors <span class="math inline">\(\mathbf{x}\)</span> and <span class="math inline">\(\mathbf{y}\)</span>. This property makes the positive definite matrix useful in many areas of mathematics and applications, such as optimization, numerical analysis, and machine learning.</p>
-<p>One example of the use of positive definite matrices in machine learning is in the context of kernel methods, where a positive definite matrix is used to define a positive definite kernel function that measures the similarity between two input data points. This kernel function can be used in various machine learning algorithms, such as support vector machines and kernel ridge regression, to make nonlinear predictions based on linear models.</p>
+<p>where <span class="math inline">\(\mathbf{u}\)</span> and <span class="math inline">\(\mathbf{v}\)</span> are word embeddings, <span class="math inline">\(\mathbf{W}\)</span> is a weight matrix, and <span class="math inline">\(B(\mathbf{u},\mathbf{v})\)</span> represents the bilinear form used to compute the similarity between the two embeddings.</p>
+<p>Overall, bilinear forms are a powerful tool for learning features from complex data such as images and text, and have many applications in deep learning and machine learning.</p>
 
 
 </section>

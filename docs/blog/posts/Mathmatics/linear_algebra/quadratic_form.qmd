@@ -1,0 +1,268 @@
+---
+title: "Matrix Transformation (5) - Quadratic Form"
+subtitle: the sum of squares, covariance matrix, and correlation matrix
+description: |
+  template
+categories:
+  - Mathematics
+author: Kwangmin Kim
+date: 04/02/2023
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    toc: true
+    number-sections: true
+draft: false
+execute:
+  echo: false
+---
+
+## Quadratic Form
+
+For a vector $\mathbf{x} = [x_1,x_2,\ldots,x_n]^T$, the quadratic form is defined as
+
+$Q(\mathbf{x}) = \mathbf{x}^T \mathbf{A} \mathbf{x}$
+
+where $\mathbf{A}$ is an $n \times n$ symmetric matrix.
+
+Here, $\mathbf{x}^T$ represents the transpose of the vector $\mathbf{x}$ and $\mathbf{x}^T \mathbf{A} \mathbf{x}$ represents the dot product of the vector $\mathbf{x}$ with itself after the transformation by the matrix $\mathbf{A}$.
+
+For example, let $\mathbf{x} = [x_1,x_2]^T$ and $\mathbf{A}$ be a $2 \times 2$ symmetric matrix given by:
+
+$$
+\mathbf A = \begin{bmatrix} 2&1 \\ 1&3 \end{bmatrix}
+$$
+
+Then, the quadratic form $Q(\mathbf{x})$ can be written as:
+
+
+$$
+\mathbf Q(\mathbf x) = \begin{bmatrix} x_1 & x_2 \end{bmatrix}\begin{bmatrix} 2&1 \\ 1&3 \end{bmatrix}\begin{bmatrix} x_1 \\ x_2 \end{bmatrix}=2x_1^2+4x_1x_2+3x_2^2
+$$
+
+
+Here, we can see that the quadratic form can be represented as a polynomial function of degree 2 in the variables $x_1$ and $x_2$ with the coefficients given by the entries of the symmetric matrix $\mathbf{A}$.
+
+a quadratic form can be expressed as a bilinear form. In other words, a quadratic form can be written in terms of a bilinear form by defining a new matrix that is the sum of the matrix representing the quadratic form and its transpose.
+
+More formally, suppose we have a quadratic form defined as:
+
+$q(\mathbf{x}) = \mathbf{x}^T \mathbf{A} \mathbf{x}$
+
+where $\mathbf{A}$ is a symmetric matrix. Then, we can define a bilinear form as:
+
+$b(\mathbf{x}, \mathbf{y}) = \frac{1}{2}(\mathbf{x}^T \mathbf{A} \mathbf{y} + \mathbf{y}^T \mathbf{A} \mathbf{x})$
+
+Note that the factor of $\frac{1}{2}$ is introduced to avoid double-counting. It can be shown that the two forms are equivalent, in the sense that for any $\mathbf{x}$, $q(\mathbf{x}) = b(\mathbf{x}, \mathbf{x})$.
+
+In other words, every quadratic form can be expressed as a bilinear form, and every symmetric bilinear form can be expressed as a quadratic form.
+
+## Examples
+
+### Sum of Squares
+
+The sum of squares of a vector $\mathbf{x} = [x_1, x_2, \ldots, x_n]^T$ can be represented as a quadratic form $\mathbf{x}^T\mathbf{x}$. To see this, consider the sum of squares:
+
+$$
+\sum_{i=1}^{n} x_i^2 = x_1^2 + x_2^2 + \dots +x_n^2
+$$
+
+Now, we can write this in vector form as:
+
+$$
+\mathbf x^T \mathbf x = \begin{bmatrix} x_1 & x_2 & \dots & x_n \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{bmatrix}
+$$
+
+Therefore, the sum of squares can be represented as a quadratic form $\mathbf{x}^T\mathbf{x}$.
+
+### Covariance Matrix
+
+The covariance matrix of a random vector $\mathbf{x}$ can be represented as a quadratic form in terms of the vector $\mathbf{x}$ and the matrix $\mathbf{C}$ as follows:
+
+$$
+\mathbf x^T \mathbf C \mathbf x
+$$
+
+where $\mathbf{C}$ is the covariance matrix. This expression is a quadratic form because it involves a quadratic polynomial in the elements of $\mathbf{x}$.
+
+In this representation, the diagonal elements of $\mathbf{C}$ correspond to the variances of the individual components of $\mathbf{x}$, and the off-diagonal elements correspond to the covariances between the components. The expression $\mathbf{x}^T \mathbf{C} \mathbf{x}$ measures the variability of the random vector $\mathbf{x}$ in all possible directions, weighted by the covariances between the components.
+
+:::{.callout-note}
+The covariance matrix $\mathbf{C}$ measures the covariance between each pair of components of the random vector $\mathbf{x}$. It is a matrix that summarizes the **pairwise covariances** between the components of $\mathbf{x}$.
+
+On the other hand, the quadratic form $\mathbf{x}^T \mathbf{C} \mathbf{x}$ measures the total variability of $\mathbf{x}$, taking into account the covariances between **all possible pairs of components**. 
+
+It does this by weighting the contribution of each component to the overall variability by its covariance with every other component. So, while the covariance matrix $\mathbf{C}$ captures the pairwise covariances between the components of $\mathbf{x}$, the quadratic form $\mathbf{x}^T \mathbf{C} \mathbf{x}$ captures the total variability of $\mathbf{x}$ in all directions.
+
+:::
+
+Let's take a simple example with a 2-dimensional random vector $\mathbf{x}=[x_1, x_2]^T$. We can think of this random vector as representing data points in a 2D space. The covariance matrix $\mathbf{C}$ will capture the covariances between $x_1$ and $x_2$. Let's say that the covariance matrix is given by:
+
+$$
+\mathbf C =\begin{bmatrix} \sigma_{x_1} & \operatorname{Cov}(x_1,x_2) \\ \operatorname{Cov}(x_2,x_1) & \sigma_{x_2} \end{bmatrix}
+$$
+
+where $\sigma_{x_1}^2$ and $\sigma_{x_2}^2$ are the variances of $x_1$ and $x_2$, respectively, and $\text{Cov}(x_1,x_2)$ is their covariance.
+
+Now, let's consider the quadratic form $\mathbf{x}^T \mathbf{C} \mathbf{x}$. This expression gives us a scalar value that measures the variability of the random vector $\mathbf{x}$ in all possible directions, weighted by the covariances between the components. We can see this geometrically by plotting the data points in the 2D space and drawing an ellipse that captures the variability of the data. The shape of the ellipse is determined by the eigenvalues and eigenvectors of the covariance matrix $\mathbf{C}$.
+
+To see this, let's first rewrite the quadratic form as:
+$$
+\mathbf x^T \mathbf C \mathbf x = \sigma_{x_1}^2x_1^2 +2\operatorname{Cov}(x_1,x_2)x_1x_2+\sigma_{x_2}^2
+$$
+
+This is a quadratic equation in $x_1$ and $x_2$ and can be thought of as the equation of an ellipse centered at the origin by the determinant of the conic equation. The shape of the ellipse is determined by the coefficients of the quadratic terms, which are the variances and covariances in the covariance matrix $\mathbf{C}$.
+
+Now, let's find the eigenvectors and eigenvalues of the covariance matrix $\mathbf{C}$. The eigenvectors are the directions along which the data has the most variance, and the corresponding eigenvalues are the variances of the data along those directions.
+
+Let's assume that the eigenvalues of $\mathbf{C}$ are ordered such that $\lambda_1 \geq \lambda_2$. Then, the eigenvectors $\mathbf{v}_1$ and $\mathbf{v}_2$ satisfy:
+
+$$
+\mathbf C \mathbf v_1 =\lambda_1\mathbf v_1 \text{  }
+\mathbf C \mathbf v_2 =\lambda_2\mathbf v_2
+$$
+
+These equations can be rewritten as:
+
+$$
+\begin{equation}
+\begin{bmatrix}
+  \sigma_{x_1}^2 & \text{Cov}(x_1,x_2)\\
+  \text{Cov}(x_1,x_2) & \sigma_{x_2}^2
+\end{bmatrix}
+\begin{bmatrix}
+  v_{11}\\
+  v_{21}
+\end{bmatrix}
+= \lambda_1 
+\begin{bmatrix}
+v_{11}\\
+v_{21}
+\end{bmatrix}
+\end{equation}
+$$
+
+This equation can be expanded as:
+
+
+$\sigma_{x_1}^2 v_{11} + \text{Cov}(x_1,x_2) v_{21} = \lambda_1 v_{11}$
+
+$\text{Cov}(x_1,x_2) v_{11} + \sigma_{x_2}^2 v_{21} = \lambda_1 v_{21}$
+
+Now, let's multiply the first equation by $v_{11}$ and the second equation by $v_{21}$, and then subtract the second equation from the first:
+
+$(\sigma_{x_1}^2 - \lambda_1)v_{11}v_{21} + \text{Cov}(x_1,x_2)(v_{21}^2 - v_{11}^2) = 0$
+
+This can be rewritten as:
+
+$\frac{v_{21}}{v_{11}} = \frac{\sigma_{x_1}^2 - \lambda_1}{\text{Cov}(x_1,x_2)} - \frac{v_{11}}{v_{21}}$
+
+Let $t = \frac{v_{21}}{v_{11}}$. Then, we have:
+
+$t^2 - \left(\frac{\sigma_{x_1}^2 + \sigma_{x_2}^2}{\text{Cov}(x_1,x_2)}\right)t + \frac{\lambda_1}{\text{Cov}(x_1,x_2)} = 0$
+
+This is a quadratic equation in $t$, and its roots can be solved using the quadratic formula. The roots are:
+
+$t_1 = \frac{\sigma_{x_1}^2 - \sigma_{x_2}^2 + \sqrt{(\sigma_{x_1}^2 - \sigma_{x_2}^2)^2 + 4\text{Cov}(x_1,x_2)^2}}{2\text{Cov}(x_1,x_2)}$
+
+$t_2 = \frac{\sigma_{x_1}^2 - \sigma_{x_2}^2 - \sqrt{(\sigma_{x_1}^2 - \sigma_{x_2}^2)^2 + 4\text{Cov}(x_1,x_2)^2}}{2\text{Cov}(x_1,x_2)}$
+
+Finally, the eigenvectors $\mathbf{v}_1$ and $\mathbf{v}_2$ are given by:
+
+$$
+\mathbf{v}_1 = \begin{bmatrix}1 \\ t_1 \end{bmatrix} \text{  }
+\mathbf{v}_2 = \begin{bmatrix} 1 \\ t_2 \end{bmatrix}
+$$
+
+These eigenvectors define the principal components of the data, which are the orthogonal directions in the feature space along which the data varies the most.
+
+
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+from sklearn.preprocessing import StandardScaler
+
+# Load the iris dataset
+iris = load_iris()
+X = iris.data
+
+# Standardize the data
+scaler = StandardScaler()
+X_std = scaler.fit_transform(X)
+
+# Calculate the covariance matrix
+cov_matrix = np.cov(X_std.T)
+print(f'Cov(X) =\n{cov_matrix}')
+# Calculate the eigenvalues and eigenvectors of the covariance matrix
+eigenvalues, eigenvectors = np.linalg.eig(cov_matrix)
+
+# Sort the eigenvalues in descending order
+sorted_indexes = eigenvalues.argsort()[::-1]
+sorted_eigenvalues = eigenvalues[sorted_indexes]
+sorted_eigenvectors = eigenvectors[:, sorted_indexes]
+
+# Project the data onto the principal components
+transformed_data = X_std.dot(sorted_eigenvectors)
+
+# Visualize the PCA
+fig, ax = plt.subplots()
+ax.scatter(transformed_data[:, 0], transformed_data[:, 1], c=iris.target)
+ax.set_xlabel('PC1')
+ax.set_ylabel('PC2')
+ax.set_title('PCA, Part of the Total Variance of Iris Data Explained by 2 PCs')
+plt.show()
+
+
+```
+
+
+
+
+This representation is useful in many statistical and machine learning applications, where the covariance matrix provides information about the variability and dependencies between different features or variables. For example, in principal component analysis (PCA), the covariance matrix is used to identify the directions of maximum variability in a dataset, which can be used to reduce the dimensionality of the data while retaining as much information as possible.
+
+
+### PCA
+
+The principal components of a dataset can be obtained by finding the eigenvectors of the covariance matrix. In other words, we can express the covariance matrix as a quadratic form:
+
+$$
+\mathbf C = \mathbf x^T \mathbf A \mathbf x
+$$
+
+where $\mathbf{x}$ is a column vector of centered data, and $\mathbf{A}$ is a symmetric positive semi-definite matrix (the covariance matrix). Diagonalizing $\mathbf{A}$ gives us the eigenvalues and eigenvectors, which are used to transform the original data into a new coordinate system, where the first axis (the first principal component) corresponds to the direction of greatest variance, the second axis (the second principal component) corresponds to the direction of second greatest variance, and so on. This new coordinate system is called the principal component space.
+
+In summary, PCA can be seen as a method for finding the principal components of a dataset by diagonalizing the covariance matrix, which can be expressed as a quadratic form.
+
+### Positive Definit Matrix
+
+a symmetric matrix $A$ is positive definite if and only if the quadratic form $f(\mathbf{x})=\mathbf{x}^T A \mathbf{x}$ is positive for all nonzero vectors $\mathbf{x}$.
+
+To see why this is true, consider the eigenvalue decomposition of $A$, which can be written as $A = Q \Lambda Q^T$, where $Q$ is an orthogonal matrix and $\Lambda$ is a diagonal matrix containing the eigenvalues of $A$. Then, for any nonzero vector $\mathbf{x}$, 
+
+:::{.callout-tip}
+
+#### Diagonalization 
+
+Diagonalization is a process of finding a diagonal matrix $\mathbf D$ and an invertible matrix $\mathbf P$ such that $P^{-1}AP = D$, where $\mathbf A$ is a square matrix. In other words, diagonalization is a way of representing a matrix as a diagonal matrix, which is a matrix with non-zero values only on its main diagonal.
+:::
+
+we have
+
+
+$$
+\begin{aligned}
+\mathbf x^T \mathbf A \mathbf x&=\mathbf x^T \mathbf Q \mathbf \Lambda \mathbf Q^T \mathbf x\\
+&=(\mathbf x^T \mathbf Q)\mathbf \Lambda ( \mathbf Q^T\mathbf x)\\
+&=\sum_{i=1}^{n} \lambda_iy_i^2
+\end{aligned}
+$$
+
+where $y_i = (\mathbf{x}^T Q)_i$ is the $i$th coordinate (i.e., a scalar value that represents the position of a point or a vector relative to a chosen basis) of $\mathbf{x}^T Q$ and $n$ is the dimension of $\mathbf{x}$ and $A$. Note that since $Q$ is orthogonal, we have $Q^T Q = I$, so $y_i = \mathbf{q}_i^T \mathbf{x}$, where $\mathbf{q}_i$ is the $i$th column of $Q$. Therefore, the quadratic form $f(\mathbf{x}) = \mathbf{x}^T A \mathbf{x}$ can be written in terms of the eigenvalues of $A$ and the coordinates of $\mathbf{x}$ with respect to the eigenvectors of $A$.
+
+Since $A$ is positive definite, we have $\lambda_i > 0$ for all $i$, and so $\sum_{i=1}^n \lambda_i y_i^2 > 0$ for all nonzero vectors $\mathbf{x}$. Therefore, the quadratic form $f(\mathbf{x})=\mathbf{x}^T A \mathbf{x}$ is positive for all nonzero vectors $\mathbf{x}$, which implies that $A$ is positive definite.
+
+In other words, the positive definiteness of a symmetric matrix $A$ is equivalent to the positivity of the associated quadratic form $f(\mathbf{x})=\mathbf{x}^T A \mathbf{x}$ for all nonzero vectors $\mathbf{x}$.
+
+Therefore, a symmetric matrix, $\mathbf A$ is said to be positive definite if all of its eigenvalues are positive or equivalently, a symmetric matrix, $\mathbf A$ is positive definite if left-multiplying and right-multiplying it by the same vector, $\mathbf x$ always gives a positive number if $\mathbf x^T \mathbf A \mathbf x$

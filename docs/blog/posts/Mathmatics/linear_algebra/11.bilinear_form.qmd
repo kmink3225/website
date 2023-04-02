@@ -1,0 +1,107 @@
+---
+title: "Matrix Transformation (4) - Biinear Form"
+subtitle: Linear Regression, Fully Connected layers, Neural Networks, Linear Classifiers
+description: |
+  template
+categories:
+  - Mathematics
+author: Kwangmin Kim
+date: 04/02/2023
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    toc: true
+    number-sections: true
+draft: False
+---
+
+## Binear Form
+
+A bilinear form of a matrix is a function that extends the linear form and takes two vectors as inputs and produces a scalar as output. It is linear in both of its arguments, meaning that it satisfies the following properties:
+
+$$
+\begin{aligned}
+B(\mathbf u+\mathbf v)&=B(\mathbf u+\mathbf w)+B(\mathbf v+\mathbf w)\\
+B(\mathbf u,\alpha \mathbf v)&=\alpha B(\mathbf u,\mathbf v)\\
+B(\alpha\mathbf u,\mathbf v)&=\alpha B(\mathbf u,\mathbf v)
+\end{aligned}
+$$
+
+for all vectors $u$, $v$, $w$ and scalars $\alpha$.
+
+A bilinear form can be represented by a matrix $B$ such that $B_{i,j}$ is the coefficient of the product $u_i v_j$ in the expansion of $B(u,v)$. The bilinear form can then be written as:
+
+$$
+B(\mathbf u,\mathbf v)=\mathbf u^T B \mathbf v
+$$
+
+where $\mathbf u$ and $\mathbf v$ are column vectors and $B$ is a matrix.
+
+For example, consider the bilinear form $B(\mathbf u,\mathbf v) = u_1 v_1 + u_2 v_2$. This bilinear form can be represented by the matrix:
+
+$$
+B=\begin{bmatrix}1&0\\0&1\end{bmatrix}
+$$
+
+and written as:
+
+$$
+B(\mathbf u,\mathbf v)=\begin{bmatrix}u_1& u_2\end{bmatrix}\begin{bmatrix}1&0\\0&1\end{bmatrix}\begin{bmatrix}v_1\\v_2\end{bmatrix}=u_1v_1+u_2v_2
+$$
+
+This bilinear form computes the dot product of $u$ and $v$, which measures the similarity between the two vectors. Bilinear forms are commonly used in applications such as optimization, geometry, and physics, where they capture the interaction between two quantities or variables.
+
+The covariance matrix can be represented as a bilinear form using matrix multiplication. Let's say we have a random vector $\mathbf{x} = [x_1, x_2, \ldots, x_n]^T$ with mean vector $\mathbf{\mu} = [\mu_1, \mu_2, \ldots, \mu_n]^T$ and covariance matrix $\mathbf{\Sigma}$. Then, we can represent the covariance matrix as a bilinear form in the following way:
+
+$$
+\begin{aligned}
+\Sigma&=\operatorname{E}[(\mathbf x-\mathbf \mu)(\mathbf x-\mathbf \mu)^T]\\
+&=\frac{1}{n-1}\sum_{i=1}^{n}(x_i-\bar{x})(x_i-\bar{x})^T
+\end{aligned}
+$$
+
+where $\mathbf{E}$ denotes the expectation operator. We can expand this expression as:
+
+$$
+\begin{aligned}
+\Sigma&=\operatorname{E}[\mathbf x\mathbf x^T]-\mathbf \mu\mathbf \mu^T
+\end{aligned}
+$$
+
+Now, we can represent the covariance matrix as a bilinear form using matrix multiplication as:
+
+$$
+\begin{aligned}
+\Sigma&=\operatorname{E}[(\mathbf x-\mathbf \mu)(\mathbf x-\mathbf \mu)^T]\\
+&=\sum_{i=1}^{n}\sum_{j=1}^{n}(\mathbf x_i-\mathbf\mu_i)(\mathbf x_i-\mathbf \mu_j)
+\end{aligned}
+$$
+
+where $[\mathbf{x}-\mathbf{\mu}]$ is the deviation of the random vector $\mathbf{x}$ from its mean vector $\mathbf{\mu}$.
+
+covariance matrix, and correlation matrix
+
+One of the most famous examples is the use of bilinear forms in convolutional neural networks (CNNs), which are a type of deep learning model used for image and video recognition tasks.
+
+In a CNN, a bilinear form is used to compute the similarity between a filter and a local region of an input image. This similarity measure is used to determine how much the filter "matches" the local region of the image, and is used to produce an output feature map.
+
+More specifically, the bilinear form used in a CNN takes the form:
+
+$$
+z_{i,j} = \sum_{m=1}^{M}\sum_{n=1}^{N} w_{m,n}x_{i+m-1,j+n-1}
+$$
+
+where $z_{i,j}$ is the output feature map at location $(i,j)$, $x_{i+m-1,j+n-1}$ is the input image pixel at location $(i+m-1,j+n-1)$, and $w_{m,n}$ is the weight of the filter at position $(m,n)$. This computation is performed for each location $(i,j)$ in the output feature map.
+
+The bilinear form used in CNNs is a type of convolution operation, and is used to learn features such as edges, corners, and other patterns in the input image. CNNs with bilinear forms have achieved state-of-the-art performance on many image recognition tasks, including object detection, face recognition, and scene classification.
+
+Bilinear forms also have applications in other areas of machine learning, such as natural language processing (NLP). In NLP, bilinear forms can be used to compute the similarity between two word embeddings, which are vector representations of words. This similarity measure can be used for tasks such as sentiment analysis, text classification, and machine translation.
+
+$$
+B(\mathbf{u},\mathbf{v})=\mathbf{u}^T \mathbf{W}\mathbf{v}
+$$
+
+where $\mathbf{u}$ and $\mathbf{v}$ are word embeddings, $\mathbf{W}$ is a weight matrix, and $B(\mathbf{u},\mathbf{v})$ represents the bilinear form used to compute the similarity between the two embeddings.
+
+Overall, bilinear forms are a powerful tool for learning features from complex data such as images and text, and have many applications in deep learning and machine learning.

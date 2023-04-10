@@ -1,646 +1,332 @@
 ---
-title: "Basics (3) - Special Matrices"
-subtitle: template
+title: "Vector Space"
+subtitle: vector space, basis vector, susbspace, dimension, rank, column space, row space, null space
 description: |
   template
 categories:
   - Mathematics
 author: Kwangmin Kim
-date: 03/31/2023
+date: 04/10/2023
 format: 
   html:
     page-layout: full
     code-fold: true
     toc: true
     number-sections: true
-draft: False
+draft: false
 ---
 
-## Matrix
+## Vector Space
 
-A matrix is a rectangular array of elements, usually real numbers, arranged in rows and columns. If $\mathbf{A}$ is an $m \times n$ matrix, it can be represented as:
+### Definition
+
+A vector space is a set $\mathbf{V}$ equipped with two operations: 
+
+* vector addition and 
+* scalar multiplication, 
+
+which satisfy the following properties for all vectors $\mathbf{u}, \mathbf{v}, \mathbf{w}$ in $V$ and all scalars $c, d$:
+
+1. Closure under vector addition: $\mathbf{u} + \mathbf{v} \in V$
+2. Associativity of vector addition: $(\mathbf{u} + \mathbf{v}) + \mathbf{w} = \mathbf{u} + (\mathbf{v} + \mathbf{w})$
+3. Identity element of vector addition: There exists a vector $\mathbf{0}$ in $V$ such that $\mathbf{u} + \mathbf{0} = \mathbf{u}$ for all $\mathbf{u}$ in $V$
+4. Existence of additive inverse: For each $\mathbf{u}$ in $V$, there exists a vector $-\mathbf{u}$ in $\mathbf{V}$ such that $\mathbf{u} + (-\mathbf{u}) = \mathbf{0}$
+5. Closure under scalar multiplication: $c\mathbf{u} \in V$
+6. Distributive law of scalar multiplication with respect to scalar addition: $(c + d)\mathbf{u} = c\mathbf{u} + d\mathbf{u}$
+7. Distributive law of scalar multiplication with respect to vector addition: $c(\mathbf{u} + \mathbf{v}) = c\mathbf{u} + c\mathbf{v}$
+8. Associativity of scalar multiplication: $(cd)\mathbf{u} = c(d\mathbf{u})$
+9. Identity element of scalar multiplication: $1\mathbf{u} = \mathbf{u}$
+
+### Example
+
+Let $V = \mathbb{R}^3$, the set of all 3-dimensional real vectors. The vector space $V$ is equipped with vector addition and scalar multiplication defined as usual component-wise. Vector addition and scalar multiplication satisfy all the properties listed in the definition of a vector space.
+
+## Basis Vector
+
+A basis for a vector space $V$ is a set of vectors ${v_1, v_2, \ldots, v_n}$ that spans $V$ and is linearly independent. In other words, every vector in $V$ can be expressed as a linear combination of the basis vectors, and the basis vectors are linearly independent, meaning that no basis vector can be written as a linear combination of the other basis vectors.
+
+Mathematically, a set of vectors ${v_1, v_2, \ldots, v_n}$ is a basis for a vector space $V$ if it satisfies the following conditions:
+
+The vectors ${v_1, v_2, \ldots, v_n}$ span $V$, which means that for any vector $v$ in $V$, there exist scalars $c_1, c_2, \ldots, c_n$ such that $v = c_1 v_1 + c_2 v_2 + \ldots + c_n v_n$.
+
+The vectors ${v_1, v_2, \ldots, v_n}$ are linearly independent, which means that the only solution to the equation $c_1 v_1 + c_2 v_2 + \ldots + c_n v_n = 0$ is $c_1 = c_2 = \ldots = c_n = 0$.
+
+### Example
+
+Consider the vector space $V = \mathbb{R}^3$, the set of all real-valued vectors with three components. A basis for $V$ can be given by the following set of vectors:
+
 $$
-\begin{bmatrix} 
-  a_{11} & a_{12} & \cdots & a_{1n} \\
-  a_{21} & a_{22} & \cdots & a_{2n} \\
-  \vdots & \vdots & \ddots & \vdots \\
-  a_{m1} & a_{m2} & \cdots & a_{mn}
-\end{bmatrix} 
-$$
-where $a_{ij}$ is the element in the $i$-th row and $j$-th column of the matrix $\mathbf{A}$.
-
-## Basic Matrix Operations
-
-### Matrix addition 
-
-The sum of two matrices of the same size is a matrix of the same size obtained by adding corresponding entries.
-
-Given two $m \times n$ matrices $\mathbf{A}$ and $\mathbf{B}$, their sum $\mathbf{C} = \mathbf{A} + \mathbf{B}$ is defined by:
-
-$$
-c_{i,j}=a_{i,j}+b_{i,j}​
-$$
-for $1 \leq i \leq m$ and $1 \leq j \leq n$.
-
-$$
-\begin{bmatrix}
-  1 & 2 \\
-  3 & 4 \\
-  5 & 6
-\end{bmatrix} +
-\begin{bmatrix}
-  -1 & 0 \\
-  2 & -3 \\
-  -5 & 4
-\end{bmatrix} =
-\begin{bmatrix}
-  0 & 2 \\
-  5 & 1 \\
-  0 & 10
+v_1 = \begin{bmatrix}
+1 \\ 0 \\ 0
+\end{bmatrix}, \quad
+v_2 = \begin{bmatrix}
+0 \\ 1 \\ 0
+\end{bmatrix}, \quad
+v_3 = \begin{bmatrix}
+0 \\ 0 \\ 1
 \end{bmatrix}
 $$
 
-### Scalar multiplication 
+These three vectors form a basis for $\mathbb{R}^3$, as they span $\mathbb{R}^3$ (any vector in $\mathbb{R}^3$ can be expressed as a linear combination of these vectors) and they are linearly independent (the only solution to the equation $c_1 v_1 + c_2 v_2 + c_3 v_3 = 0$ is $c_1 = c_2 = c_3 = 0$).
 
-The product of a scalar and a matrix is a matrix obtained by multiplying each entry of the matrix by the scalar.
+Basis vectors are fundamental in defining and understanding vector spaces because they provide a way to express any vector in the vector space as a linear combination of basis vectors. The properties of basis vectors, such as linear independence, spanning set, minimal set, and unique representation, are essential in establishing the foundational concepts of vector spaces and their properties. By using basis vectors, we can represent vectors in a vector space in a concise and systematic way, and they provide a basis for studying and analyzing vector spaces in various mathematical and practical applications.
 
-Given a scalar $k$ and an $m \times n$ matrix $\mathbf{A}$, their product $k\mathbf{A}$ is defined by:
+### Properties
+
+* Linear independence: A set of basis vectors is linearly independent, meaning that no vector in the set can be expressed as a linear combination of the others. In other words, the coefficients of the basis vectors in any linear combination that equals the zero vector are all zero.
+* Spanning set: The set of basis vectors spans the entire vector space, meaning that any vector in the vector space can be expressed as a linear combination of the basis vectors. In other words, the basis vectors "span" the vector space by forming a basis for it.
+* Minimal set: The set of basis vectors is minimal, meaning that no vector can be removed from the set without changing the span of the vector space. In other words, the basis vectors form the smallest possible set that can generate the entire vector space.
+* Unique representation: Any vector in the vector space can be uniquely represented as a linear combination of the basis vectors. This means that there is only one way to express a vector as a linear combination of the basis vectors, ensuring that the representation is unique.
+
+## Subspace
+
+### Definition of a subspace
+
+A subset $W$ of $V$ is called a subspace of $V$ if it satisfies the following three conditions:
+1. $W$ contains the zero vector $\mathbf{0}$ of $V$.
+2. $W$ is closed under vector addition, i.e., for any vectors $\mathbf{u}, \mathbf{v} \in W$, their sum $\mathbf{u} + \mathbf{v}$ is also in $W$.
+3. $W$ is closed under scalar multiplication, i.e., for any vector $\mathbf{u} \in W$ and any scalar $c$, their product $c\mathbf{u}$ is also in $W$.
+
+### Example
+
+Consider the vector space $V = \mathbb{R}^3$ with standard vector addition and scalar multiplication. Let $W$ be the subset of $V$ consisting of all vectors of the form $\begin{bmatrix} x \\ y \\ 0 \end{bmatrix}$, where $x, y$ are real numbers. We can express $W$ as:
+$W = \left\{ \begin{bmatrix} x \\ y \\ 0 \end{bmatrix} \, \middle| \, x, y \in \mathbb{R} \right\}$
+Then $W$ is a subspace of $V$ because it satisfies the three conditions mentioned above.
+
+### Properties
+
+A subspace is a subset of a vector space that retains the structure of a vector space. Here are some properties of a subspace in relation to a vector space:
+
+1. Contains the zero vector: A subspace must contain the zero vector (denoted as $\mathbf{0}$) of the vector space it is a subset of. This is because the zero vector is required for closure under vector addition and scalar multiplication.
+2. Closed under vector addition: If $\mathbf{u}, \mathbf{v} \in W$, then $\mathbf{u} + \mathbf{v} \in W$.
+3. Closed under scalar multiplication: If $\mathbf{u} \in W$ and $c$ is a scalar, then $c\mathbf{u} \in W$.
+
+
+These properties provide a way to describe subsets of vector spaces that inherit certain properties from the parent vector space. Subspaces are useful for understanding the structure, properties, and behavior of vector spaces in a more focused and simplified manner. Some reasons why we need subspaces are:
+
+* Simplification and abstraction: Subspaces allow us to simplify the study of vector spaces by focusing on smaller, more manageable subsets that share similar properties. This abstraction can help us understand the fundamental structure and behavior of vector spaces without getting bogged down by the complexity of the entire vector space.
+* Study of special cases: Subspaces can represent special cases or special structures within a vector space that are of particular interest. 
+  * For example, subspaces can represent sub-spaces of solutions to linear systems of equations, eigenspaces associated with eigenvalues of matrices, or orthogonal subspaces related to orthogonality and projections.
+* Applications in various fields: Subspaces have numerous applications in various fields, such as physics, computer graphics, data analysis, signal processing, and optimization, among others. Subspaces provide a mathematical framework for modeling, analyzing, and solving problems in these fields.
+* Computational efficiency: Subspaces can be used in algorithms and techniques for solving problems involving vector spaces in a computationally efficient manner. Techniques such as subspace methods, subspace approximation, and subspace projection can be employed to reduce the computational complexity of certain problems by working within lower-dimensional subspaces.
+
+### Span
+
+### Definition
+
+The span of a set of vectors ${v_1, v_2, \ldots, v_n}$ in a vector space $V$, denoted by $\text{span}{v_1, v_2, \ldots, v_n}$, is the set of all possible linear combinations of these vectors. Mathematically, it is defined as:
+
 $$
-(k\mathbf{A})_{i,j} = k(a_{i,j})
+\text{span}\{\mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_n\} = \left\{ c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \ldots + c_n\mathbf{v}_n | c_1, c_2, \ldots, c_n \in \mathbb{R} \right\}
 $$
-for $1 \leq i \leq m$ and $1 \leq j \leq n$.
+
+
+where $c_1, c_2, \ldots, c_n$ are scalar coefficients and $\mathbb{R}$ represents the set of real numbers.
 
 Example:
+Let's consider the set of vectors $v_1$, $v_2$, and $v_3$ defined as:
+
+$\mathbf{v}_1 = \begin{bmatrix} 1 \ 0 \ 0 \end{bmatrix}, \quad \mathbf{v}_2 = \begin{bmatrix} 0 \ 1 \ 0 \end{bmatrix}, \quad \mathbf{v}_3 = \begin{bmatrix} 0 \ 0 \ 1 \end{bmatrix}$
+
+The span of these vectors, denoted by $\text{span}{\mathbf{v}_1, \mathbf{v}_2, \mathbf{v}_3}$, is the set of all possible linear combinations of these vectors, which in this case is the entire three-dimensional vector space $\mathbb{R}^3$, since any vector in $\mathbb{R}^3$ can be expressed as a linear combination of $\mathbf{v}_1$, $\mathbf{v}_2$, and $\mathbf{v}_3$.
+
+### Proporties
+
+* Span is a subspace: The span of a set of vectors is always a subspace of the vector space in which the vectors belong. This means that it satisfies all the properties of a vector space, including closure under vector addition and scalar multiplication.
+* Span is the smallest subspace: The span of a set of vectors is the smallest subspace that contains all the vectors in the set. It is the intersection of all subspaces that contain the vectors, and thus it forms the smallest subspace that spans the set of vectors.
+* Span is closed under linear combinations: The span of a set of vectors is closed under linear combinations of the vectors. This means that any linear combination of the vectors in the set will also be in the span.
+* Span generates the entire vector space: The span of a set of vectors is capable of generating the entire vector space to which the vectors belong. This means that any vector in the vector space can be expressed as a linear combination of the vectors in the span.
+* Span is unique: The span of a set of vectors is unique, meaning that it is uniquely determined by the set of vectors being spanned. However, the span may be different for different sets of vectors.
+
+These properties make the concept of span important in linear algebra, as it allows us to understand the space spanned by a set of vectors and the relationships between vectors within a vector space.
+
+The concept of span is important in linear algebra because of:
+
+* Understanding vector space: The span of a set of vectors helps us understand the space that can be generated by those vectors within a vector space. It provides insight into the range of possible values and combinations that can be obtained using the given set of vectors.
+* Solving systems of linear equations: Span is closely related to solving systems of linear equations. The solutions to a system of linear equations can be expressed as linear combinations of the vectors in the span of the coefficient matrix. By finding the span of a set of vectors, we can determine the possible solutions to a system of linear equations and understand the relationship between different solutions.
+* Basis for vector spaces: The span of a set of vectors can form a basis for a vector space. A basis is a set of linearly independent vectors that span the entire vector space. By finding the span of a set of vectors, we can determine if they form a basis for a vector space, and if so, use them as a foundation for understanding and manipulating vectors within that space.
+* Vector space operations: Span is closed under vector space operations, such as vector addition and scalar multiplication. This property allows us to perform operations on vectors within the span and obtain new vectors that are still within the span. It also allows us to express any vector in the vector space as a linear combination of vectors in the span.
+* Dimensionality and rank: The span of a set of vectors is closely related to the dimensionality and rank of a vector space. The dimension of a vector space is the number of linearly independent vectors in a basis for that space, and the rank of a matrix is the dimension of the span of its column vectors. Understanding the span of vectors can help us determine the dimensionality and rank of a vector space, which has applications in areas such as data analysis, machine learning, and signal processing.
+
+Span provides insights into the space spanned by a set of vectors, the relationships between vectors within a vector space, and the possible solutions to systems of linear equations. It also serves as a basis for vector spaces and facilitates vector space operations, and is closely related to the dimensionality and rank of a vector space.
+
+## Dimensionality and Rank
+
+### Definition
+
+* The dimensionality of a vector space is defined as the number of linearly independent vectors in its basis.
+* The rank of a matrix is defined as the maximum number of linearly independent rows or columns in the matrix.
+
+### Example 
+
+Let $V$ be a vector space with a basis ${ \mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_n }$. The dimensionality of $V$, denoted as $\text{dim}(V)$, is the number of linearly independent vectors in its basis, which is equal to $n$.
+Let $\mathbf A$ be an $m \times n$ matrix. The rank of $\mathbf A$, denoted as $\text{rank}(\mathbf A)$, is the maximum number of linearly independent rows or columns in $\mathbf A$. It can also be defined as the dimensionality of the column space or row space of $\mathbf A$.
+
+### Properties
+
+#### Dimensionality
+
+* Dimensionality refers to the number of elements or components in a vector or the size of a vector space.
+* The dimensionality of a vector space is always a positive integer.
+* Dimensionality is additive, meaning that the dimensionality of the direct sum of vector spaces is equal to the sum of their individual dimensionality.
+* A set of vectors is linearly independent if and only if the dimensionality of the vector space they span is equal to the number of vectors in the set.
+
+#### Rank
+
+* The rank of a matrix is the maximum number of linearly independent rows or columns in the matrix.
+* The rank of a matrix is always a non-negative integer.
+* The rank of a matrix is equal to the dimensionality of its column space and row space.
+* The rank of a matrix is invariant under elementary row and column operations.
+* The rank of a matrix is less than or equal to the minimum of the number of rows and columns in the matrix.
+
+:::{.callout-note}
+In some contexts, the term "dimensionality" may also refer to the dimensionality of the column space or row space of a matrix, which is equivalent to the rank of the matrix.
+:::
+
+
+## Column Space
+
+### Definition
+
+The column space of a matrix is the subspace spanned by its column vectors. It is denoted by $\text{Col}(\mathbf A)$ or $\text{span}{\mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_n}$, where $\mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_n$ are the column vectors of the matrix $\mathbf A$.
+
+### Example
+
 $$
-2\begin{bmatrix}
-1 & 2 \\
-3 & 4 \\
-5 & 6
-\end{bmatrix} =
+\mathbf A=
 \begin{bmatrix}
-2 & 4 \\
-6 & 8 \\
-10 & 12
-\end{bmatrix}
-$$
-
-### Matrix multiplication
-
-The product of two matrices $\mathbf{A}$ and $\mathbf{B}$ is a matrix obtained by multiplying the rows of $\mathbf{A}$ by the columns of $\mathbf{B}$.
-
-Given two matrices $\mathbf{A}$ and $\mathbf{B}$ with dimensions $m \times n$ and $n \times p$, respectively, their product $\mathbf{C} = \mathbf{AB}$ is an $m \times p$ matrix defined by:
-$$
-c_{i,j} = \sum_{k=1}^n a_{i,k}b_{k,j}
-$$
-for $1 \leq i \leq m$ and $1 \leq j \leq p$.
-
-Example:
-$$
-\begin{bmatrix}
-1 & 2 \\
-3 & 4 \\
-5 & 6
-\end{bmatrix} \begin{bmatrix}
--1 & 0 & 2 \\
-2 & -3 & 1
-\end{bmatrix} =
-\begin{bmatrix}
-3 & -6 & 4 \\
-5 & -12 & 10 \\
-7 & -18 & 16
-\end{bmatrix}
-$$
-
-### Transpose
-
-The transpose of an $m x n$ matrix A, denoted by $A^T$, is the $n x m$ matrix obtained by interchanging the rows and columns of A. Formally, if $\mathbf{A} = [a_{ij}]$ is an m x n matrix, then its transpose $\mathbf{A}^T = [b_{ij}]$ is an $n x m$ matrix where $b_{ij}$ = $a_{ji}$ for all $i$ and $j$. In other words, the element in the $i$ th row and $j$ th column of $A^T$ is equal to the element in the $j$ th row and ith column of $\mathbf{A}$.
-
-Given an $m \times n$ matrix $\mathbf{A}$, its transpose $\mathbf{A}^T$ is an $n \times m$ matrix defined by:
-$$
-\mathbf{A}_{i,j}^T = \mathbf{A}_{j,i}
-
-$$
-
-* When $\mathbf{A}$ is transposed, diagnoal entries($a_{ii}$) do not change but off-diagnoal elements($a_{ij} \; i \neq j$) change.
-* A column vector is tranposed into a row vector, and vice versa.
-* symmetric matrix: $\mathbf{A} = \mathbf{A}^T$
-
-Example:
-
-Let A be the matrix
-$$
-\mathbf{A} = \begin{bmatrix}
-1 & 2 & 3\\
-4 & 5 & 6
-\end{bmatrix}
-$$
-The transpose of A, denoted by A^T, is the matrix
-$$
-\mathbf{A}^T = \begin{bmatrix}
-1 & 4\\
-2 & 5\\
-3 & 6
-\end{bmatrix}
-$$
-
-### Determinant
-
-Let $\mathbf{A}$ be an $n \times n$ square matrix. The determinant of $\mathbf{A}$, denoted by $|\mathbf{A}|$ or $\det(\mathbf{A})$, is a scalar value calculated as the sum of the products of the elements in any row or column of $\mathbf{A}$ with their corresponding cofactors, that is,
-
-$$
-|\mathbf{A}|=\sum_{i=1}^{n}a_{ij}C_{ij}=\sum_{j=1}^{n}a_{ij}C_{ij}
-$$
-
-where $a_{ij}$ is the element of $\mathbf{A}$ in the $i$-th row and $j$-th column, and $C_{ij}$ is the cofactor of $a_{ij}$. The cofactor of $a_{ij}$, denoted by $C_{ij}$, is given by $(-1)^{i+j}$ times the determinant of the $(n-1) \times (n-1)$ matrix obtained by deleting the $i$-th row and $j$-th column of $\mathbf{A}$.
-
-The determinant of an $n x n$ matrix $\mathbf{A}$ is a scalar value denoted as $|\mathbf{A}|$. It is defined as the sum of all possible products of n elements taken one from each row and one from each column, where the sign of each product alternates according to the position of the element in the matrix. For example, the determinant of a $3 x 3$ matrix $\mathbf{A} =$ 
-$$
-\begin{bmatrix}
-a_{11} & a_{12} & a_{13} \\
-a_{21} & a_{22} & a_{23} \\
-a_{31} & a_{32} & a_{33} \\
-\end{bmatrix}
-$$
-
-is given by:
-
-$$
-|\mathbf{A}| = a_{11} 
-\begin{vmatrix} 
-a_{22} & a_{23} \\ 
-a_{32} & a_{33} 
-\end{vmatrix} 
-- a_{12} 
-\begin{vmatrix} 
-a_{21} & a_{23} \\ 
-a_{31} & a_{33} 
-\end{vmatrix} 
-+ a_{13} 
-\begin{vmatrix} 
-a_{21} & a_{22} \\ 
-a_{31} & a_{32} 
-\end{vmatrix}
-$$
-
-For example, consider the $3 \times 3$ matrix $\mathbf{A} = \begin{bmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \\ 7 & 8 & 9 \end{bmatrix}$. We can calculate the determinant of $\mathbf{A}$ using any row or column. Let's use the first column:
-
-$$
-|\mathbf{A}| = 1 
-\begin{vmatrix} 
-5 & 6 \\ 
-8 & 9 
-\end{vmatrix} 
-- 4 
-\begin{vmatrix} 
-2 & 3\\ 
-8 & 9
-\end{vmatrix} 
-+ 7 
-\begin{vmatrix} 
-2 & 5 \\ 
-3 & 6 
-\end{vmatrix} = 0
-$$
-
-Therefore, the determinant of $\mathbf{A}$ is zero.
-
-### Inverse
-
-The inverse of a square matrix $A$ of size $n$ is a matrix $A^{-1}$ such that the product of $A$ and $A^{-1}$ is the identity matrix $I_n$, i.e. $A \times A^{-1} = I_n$. If such a matrix exists, then $A$ is said to be invertible or non-singular.
-
-The inverse of a square matrix $\mathbf{A}$ is denoted by $\mathbf{A}^{-1}$ and is defined as the unique matrix that satisfies the following equation:
-$$
-\mathbf{A}^{-1}\mathbf{A} = \mathbf{A}\mathbf{A}^{-1} = \mathbf{I}
-$$
-
-where $\mathbf{I}$ is the identity matrix. Not all matrices have an inverse, and a matrix that has an inverse is called invertible or nonsingular. A matrix that does not have an inverse is called singular.
-
-
-For example, consider the $2\times 2$ matrix 
-$$
-\mathbf{A} = 
-\begin{bmatrix} 
-1 & 2 \\ 
-3 & 4 
-\end{bmatrix}.
-$$
-The inverse of $\mathbf{A}$ is given by:
-
-$$
-\mathbf{A}^{-1} = 
-\frac{1}{-2}
-\begin{bmatrix} 
-4 & -2 \\ 
--3 & 1 
-\end{bmatrix} = 
-\begin{bmatrix} 
--2 & 1 \\ 
-\frac{3}{2} & -\frac{1}{2} 
-\end{bmatrix}
-$$
-
-We can verify that $\mathbf{A}\mathbf{A}^{-1} = \mathbf{A}^{-1}\mathbf{A} = \mathbf{I}$ by computing:
-
-$$
-\mathbf{A}\mathbf{A}^{-1} = 
-\begin{bmatrix} 
-1 & 2 \\ 
-3 & 4 
-\end{bmatrix}
-\begin{bmatrix} 
--2 & 1 \\ 
-\frac{3}{2} & -\frac{1}{2} 
-\end{bmatrix} = 
-\begin{bmatrix} 
-1 & 0 \\ 
-0 & 1 
-\end{bmatrix} = \mathbf{I}
-$$
-
-$$
-\mathbf{A}^{-1}\mathbf{A} = 
-\begin{bmatrix} -2 & 1 \\ 
-\frac{3}{2} & -\frac{1}{2} 
-\end{bmatrix}
-\begin{bmatrix} 
-1 & 2 \\ 
-3 & 4 
-\end{bmatrix} = 
-\begin{bmatrix} 
-1 & 0 \\ 
-0 & 1 
-\end{bmatrix} = \mathbf{I}
-$$
-
-Let me give another example and A be a $3x3$ square matrix:
-
-$$
-\begin{equation*}
-\mathbf{A} = \begin{bmatrix}
-a_{11} & a_{12} & a_{13} \\
-a_{21} & a_{22} & a_{23} \\
-a_{31} & a_{32} & a_{33} \\
-\end{bmatrix}
-\end{equation*}
-$$
-Then, the inverse of $\mathbf{A}$, denoted as $\mathbf{A}^{-1}$, is given by:
-
-$$
-\begin{equation*}
-\mathbf{A}^{-1} = \frac{1}{\text{det}(\mathbf{A})}\begin{bmatrix}
-a_{22}a_{33}-a_{23}a_{32} & a_{13}a_{32}-a_{12}a_{33} & a_{12}a_{23}-a_{13}a_{22} \\
-a_{23}a_{31}-a_{21}a_{33} & a_{11}a_{33}-a_{13}a_{31} & a_{13}a_{21}-a_{11}a_{23} \\
-a_{21}a_{32}-a_{22}a_{31} & a_{12}a_{31}-a_{11}a_{32} & a_{11}a_{22}-a_{12}a_{21} \\
-\end{bmatrix}
-\end{equation*}
-$$
-
-where $det(\mathbf{A})$ is the determinant of $\mathbf{A}$.
-
-For example, let:
-
-$$
-\begin{equation*}
-\mathbf{A} = \begin{bmatrix}
 1 & 2 & 3 \\
-0 & 1 & 4 \\
-5 & 6 & 0 \\
+4 & 5 & 6 \\
+7 & 8 & 9 
 \end{bmatrix}
-\end{equation*}
-$$
-Then, $det(A)$ = -57, and the inverse of $\mathbf{A}$ is:
-
-$$
-\begin{equation*}
-\mathbf{A}^{-1} = \frac{1}{-57}\begin{bmatrix}
--24 & 18 & 5 \\
-20 & -15 & -4 \\
--3 & 2 & 1 \\
-\end{bmatrix}
-\end{equation*}
 $$
 
-There are several formulas for finding the inverse of a matrix such as Gauss-Jordan Elimination, Adjoint method, Cramer's rule, Inverse formula, etc. This topic is going to be handled in the other blogs.
-
-### Rank
-
-The rank of a matrix is the dimension of the vector space spanned by its columns (or rows). It is denoted by $\text{rank}(\mathbf{A})$.
-
-For example, consider the following matrix:
+The column space of matrix $\mathbf A$, denoted by $\text{Col}(\mathbf A)$ or $\text{span}\{\mathbf{v}_1, \mathbf{v}_2, \mathbf{v}_3\}$, is the subspace spanned by its column vectors $\mathbf{v}_1 = [1, 4, 7]^T$, $\mathbf{v}_2 = [2, 5, 8]^T$, and $\mathbf{v}_3 = [3, 6, 9]^T$.
 
 $$
-\begin{equation*}
-  \mathbf{A} = \begin{bmatrix}
-    1 & 2 & 3\\
-    4 & 5 & 6 \\
-    7 & 8 & 9\\
-  \end{bmatrix}
-\end{equation*}
-$$
-
-The columns of $\mathbf{A}$ are linearly dependent since the third column is equal to the sum of the first two columns. Therefore, the dimension of the vector space spanned by the columns is 2, so the rank of $\mathbf{A}$ is 2.
-
-### Trace
-
-The trace of a square matrix $\mathbf{A}$, denoted by $\mathrm{tr}(\mathbf{A})$, is defined as the sum of the diagonal elements of $\mathbf{A}$. In other words, if $\mathbf{A}$ is an $n \times n$ matrix, then its trace is given by:
-
-$$
-\mathrm{tr}(\mathbf{A})=\sum_{i=1}^{n}a_{ij}
-$$
-
-where $a_{ii}$ denotes the $i$ th diagonal element of $\mathbf{A}$.
-
-For example, let
-$$
+\text{Col}(\mathbf{A}) = \text{span}\left\{
 \begin{bmatrix}
-  2 & 3 & 1 \\
-  0 & 5 & 2 \\
-  1 & 1 & 4
+1 \\ 4 \\ 7 \\
+\end{bmatrix},
+\begin{bmatrix}
+2 \\ 5 \\ 8 \\
+\end{bmatrix},
+\begin{bmatrix}
+3 \\ 6 \\ 9 \\
+\end{bmatrix}
+\right\}
+$$
+
+
+### Properties
+
+* It is a subspace: The column space of a matrix is a subspace of the vector space in which the matrix's columns reside. This means it is closed under vector addition and scalar multiplication, and contains the zero vector.
+* It is spanned by the columns of the matrix: The column space of a matrix is the span of its column vectors. In other words, it is the smallest subspace that contains all the column vectors of the matrix.
+* It is the range of the corresponding linear transformation: The column space of a matrix is the range of the linear transformation associated with that matrix. This means it contains all possible output vectors that can be obtained by applying the linear transformation to input vectors.
+* It has the same dimension as the rank of the matrix: The dimension of the column space of a matrix is equal to the rank of the matrix. This is known as the column space's dimensionality property.
+* It provides a basis for the row space and null space: The column space of a matrix provides a basis for both the row space and the null space of the matrix. The row space is the orthogonal complement of the null space, and the column space is the orthogonal complement of the left null space.
+* It determines the solvability of linear systems: The column space of a coefficient matrix in a system of linear equations determines whether the system has a unique solution, infinitely many solutions, or no solution at all. If the column space spans the entire vector space, the system has a unique solution. If the column space does not span the entire vector space, the system has either infinitely many solutions (if the rank of the matrix is less than the number of variables) or no solution (if the rank of the matrix is less than the number of equations).
+
+## Row Space
+
+### Definition
+
+The row space of a matrix $\mathbf{A}$, denoted as $\text{Row}(\mathbf{A})$, is the subspace spanned by the rows of $\mathbf{A}$.
+
+$$
+\text{Row}(\mathbf{A}) = \text{span}\{\mathbf{r}_1, \mathbf{r}_2, \ldots, \mathbf{r}_m\}
+$$
+
+where $\mathbf{r}_1, \mathbf{r}_2, \ldots, \mathbf{r}_m$ are the rows of $\mathbf{A}$.
+
+### Example
+
+The row space of $\mathbf{A}$ is the subspace spanned by the rows of $\mathbf{A}$, which can be expressed as:
+
+$$
+\text{Row}(\mathbf{A}) = \text{span}\left\{
+\begin{bmatrix}
+1 \\ 2 \\ 3 \\
+\end{bmatrix},
+\begin{bmatrix}
+4 \\ 5 \\ 6 \\
+\end{bmatrix},
+\begin{bmatrix}
+7 \\ 8 \\ 9 \\
+\end{bmatrix}
+\right\}
+$$
+
+### Properties
+
+* It is a subspace: The row space of a matrix is a subspace of the vector space in which the matrix's rows reside. This means it is closed under vector addition and scalar multiplication, and contains the zero vector.
+* It is spanned by the rows of the matrix: The row space of a matrix is the span of its row vectors. In other words, it is the smallest subspace that contains all the row vectors of the matrix.
+* It is the range of the corresponding linear transformation: The row space of a matrix is the range of the linear transformation associated with the transpose of that matrix. This means it contains all possible output vectors that can be obtained by applying the transpose of the linear transformation to input vectors.
+* It has the same dimension as the rank of the matrix: The dimension of the row space of a matrix is equal to the rank of the matrix. This is known as the row space's dimensionality property.
+* It provides a basis for the null space and left null space: The row space of a matrix provides a basis for both the null space (kernel) and the left null space (cokernel) of the matrix. The null space is the orthogonal complement of the row space, and the left null space is the orthogonal complement of the column space.
+* It determines the row-rank and column-rank equality: The row space of a matrix determines the row-rank and column-rank equality property, which states that the number of linearly independent rows (the row-rank) is equal to the number of linearly independent columns (the column-rank) of the matrix.
+* It determines the solvability of linear systems: The row space of a coefficient matrix in a system of linear equations determines whether the system has a unique solution, infinitely many solutions, or no solution at all. If the row space spans the entire vector space, the system has a unique solution. If the row space does not span the entire vector space, the system has either infinitely many solutions (if the rank of the matrix is less than the number of variables) or no solution (if the rank of the matrix is less than the number of equations).
+
+
+## Null Space
+
+$$
+\text{Null}(\mathbf{A}) = \left\{ \mathbf{x} \in \mathbb{R}^n \, \middle| \, \mathbf{A}\mathbf{x} = \mathbf{0} \right\}
+$$
+
+where:
+
+* $\text{Null}$ represents the null space of a matrix,
+* $\mathbf{A}$ represents the given matrix,
+* $\mathbf{x}$ represents a vector in the null space of \mathbf{A},
+* $\mathbb{R}^n$ represents the n-dimensional real vector space, and
+* $\mathbf{0}$ represents the zero vector.
+
+### Example
+
+$$
+\mathbf A=
+\begin{bmatrix}
+1 & 2 & 3 \\
+4 & 5 & 6 \\
+7 & 8 & 9 
 \end{bmatrix}
 $$
 
-Then, the trace of $\mathbf{A}$ is $\mathrm{tr}(\mathbf{A}) = 2 + 5 + 4 = 11$
+The null space of $\mathbf{A}$ is the set of all vectors $\mathbf{x} \in \mathbb{R}^3$ that satisfy $\mathbf{A}\mathbf{x} = \mathbf{0}$.
+
+### Properties
+
+The null space of a matrix, also known as the kernel space, is the set of all vectors that are mapped to the zero vector by the linear transformation associated with the matrix.
+
+* Contains the zero vector: The null space always contains the zero vector, as any matrix multiplied by the zero vector results in the zero vector.
+* Subspace property: The null space is a subspace of the vector space from which the vectors are drawn. This means that it is closed under vector addition and scalar multiplication. In other words, if two vectors are in the null space, their sum and any scalar multiple of them will also be in the null space.
+* Dimensionality: The dimension of the null space is equal to the number of linearly independent solutions to the homogeneous linear system associated with the matrix. This is known as the nullity of the matrix.
+* Basis: The null space has a basis consisting of linearly independent vectors that span the entire null space. This basis is used to represent all vectors in the null space as linear combinations of the basis vectors.
+* Relationship to solvability: The null space is directly related to the solvability of a system of linear equations. If the null space contains only the zero vector, the system has a unique solution. If the null space contains non-zero vectors, the system has infinitely many solutions, and the null space vectors represent the general solutions.
+* Orthogonal complement of row space: The null space is orthogonal to the row space of the matrix. This means that any vector in the null space is orthogonal to every vector in the row space, and vice versa.
+* Relationship to matrix rank: The dimension of the null space, also known as the nullity, is related to the rank of the matrix through the rank-nullity theorem. The rank of the matrix plus the nullity of the matrix is equal to the number of columns in the matrix.
+* Computation: The null space can be computed by finding the solutions to the homogeneous linear system $\mathbf{Ax} = \mathbf{0}$, where $\mathbf{A}$ is the coefficient matrix of the system of linear equations.
 
 
-### Eigenvalues and Eigenvectors
+## Column Space vs Row Space vs Null Space
 
-Let A be an $n × n$ square matrix. A scalar $\lambda$ is called an eigenvalue of $\mathbf A$ if there exists a non-zero vector $\mathbf{v}$ such that
-$$
-\mathbf{Av}=\lambda\mathbf{v}
-$$
+While both column space and row space are subspaces associated with a matrix, they serve different roles in linear algebra.
 
-Such a vector $\mathbf{v}$ is called an eigenvector corresponding to $\lambda$.
+### Column Space vs Row Space
 
-Example:
+* Dimensionality: The dimensionality of the column space and row space can differ. The dimension of the column space is determined by the number of linearly independent columns, which is also known as the rank of the matrix. On the other hand, the dimension of the row space is determined by the number of linearly independent rows of the matrix, which may not necessarily be the same as the rank of the matrix.
+* Basis and Span: The column space is typically used to find a basis for the range (output space) of a linear transformation associated with the matrix, while the row space is used to find a basis for the null space (kernel) and left null space (cokernel) of the matrix. The column space spans the range of the linear transformation, while the row space spans the orthogonal complement of the null space and left null space.
+* Solvability of linear systems: The row space of the coefficient matrix in a system of linear equations determines the solvability of the system, while the column space is not directly related to the solvability. Specifically, if the row space spans the entire vector space, the system has a unique solution. If the row space does not span the entire vector space, the system may have infinitely many solutions or no solution. The column space, on the other hand, does not directly determine the solvability of the system.
+* Transpose relationship: The row space of a matrix is related to the range of the linear transformation associated with the transpose of the matrix, while the column space is directly related to the range of the original matrix. This means that the row space and column space are related through the transpose operation, but they are not identical.
 
-Let $\mathbf A$ be the matrix
+### Null Space
 
+Null space: The null space of a matrix is the set of all vectors that are mapped to the zero vector by the linear transformation associated with the matrix. It represents the subspace of the vector space that consists of solutions to the homogeneous linear system  $\mathbf{Ax} = \mathbf{0}$, where $\mathbf{A}$ is the coefficient matrix of the system of linear equations.
 
-To find the eigenvalues of $\mathbf A$, we solve the characteristic equation $\text{det}(\mathbf A - \lambda \mathbf I ) = 0$, where I is the n × n identity matrix.
+### The relationships between these spaces
 
-$$
-\begin{align*}
-  \text{det}(\mathbf A - \lambda \mathbf I ) 
-  &= 
-    \begin{vmatrix} 
-    3 - \lambda & 1 \\ 
-    1 & 3 - \lambda 
-    \end{vmatrix} \\
-  &= 
-  (3 - \lambda)(3 - \lambda) - 1 \\
-  &= \lambda^2 - 6\lambda + 8 = 0
-\end{align*}
-$$
-
-Solving this quadratic equation gives us the eigenvalues of $\mathbf A$: $\lambda_1 = 2$ and $\lambda_2 = 4$.
-
-To find the eigenvectors corresponding to $\lambda_1 = 2$, we solve the equation $(\mathbf A - 2 \mathbf I)\mathbf{v} = \mathbf{0}$, where $\mathbf I$ is the $2 \times 2$ identity matrix.
-
-$$
-\begin{align*}
-  (\mathbf A - 2 \mathbf I)\mathbf{v} = 
-    \begin{bmatrix} 
-      1 & 1 \\ 
-      1 & 1 
-    \end{bmatrix}
-  \begin{bmatrix} 
-    x \\ 
-    y 
-  \end{bmatrix} = 
-  \begin{bmatrix} 
-    0 \\ 
-    0 
-  \end{bmatrix}
-\end{align*}
-$$
-
-Solving this system of equations gives us the eigenvectors corresponding to $\lambda_1 = 2$: $\mathbf{v_1} = \begin{bmatrix} -1 \\ 1 \end{bmatrix}$
-
-Similarly, for $\lambda_2 = 4$, we solve the equation $(\mathbf A - 4\mathbf I)\mathbf{v}$ = $\mathbf{0}$ to get the eigenvectors corresponding to $\lambda_2 = 4$: $\mathbf{v_2} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}$
-
-
-### Singular value and Singluar Vectors
-
-The singular value decomposition (SVD) of a matrix $\mathbf A$ is a factorization of $\mathbf A$ into the product of three matrices as follows:
-
-$$
-\mathbf{A} = \mathbf{U} \mathbf{\Sigma} \mathbf{V}^T
-$$
-where $\mathbf{U}$ is an $m \times m$ orthogonal matrix, $\mathbf{\Sigma}$ is an $m \times n$ rectangular diagonal matrix with non-negative real numbers on the diagonal, and $\mathbf{V}$ is an $n \times n$ orthogonal matrix.
-
-The diagonal entries of $\mathbf{\Sigma}$ are called the singular values of $\mathbf{A}$, denoted as $\sigma_1, \sigma_2, \ldots, \sigma_r$ (where $r$ is the rank of $\mathbf{A}$), and are arranged in descending order. The columns of $\mathbf{U}$ and $\mathbf{V}$ are called the left and right singular vectors of $\mathbf{A}$, respectively, and are orthonormal vectors.
-
-For example, let $\mathbf{A}$ be a 3 by 2 matrix given by:
-
-$$
-\begin{equation*}
-\mathbf{A} = 
-  \begin{bmatrix}
-    1 & 2\\
-    3 & 4\\
-    5 & 6
-  \end{bmatrix}
-\end{equation*}
-$$
-
-The SVD of $\mathbf{A}$ is given by:
-
-$$
-\begin{equation*}
-\mathbf{A} = \mathbf{U} \mathbf{\Sigma} \mathbf{V}^T =
-\begin{bmatrix}
-  -0.23 & -0.53 & -0.81\\
-  -0.53 & -0.72 & 0.45\\
-  -0.81 & 0.45 & -0.38
-\end{bmatrix}
-\begin{bmatrix}
-  9.53 & 0\\
-  0 & 0.90\\
-  0 & 0
-\end{bmatrix}
-\begin{bmatrix}
-  -0.62 & -0.78\\
-  -0.78 & 0.62
-\end{bmatrix}^T
-\end{equation*}
-$$
-
-where the left singular vectors of $\mathbf{A}$ are the columns of $\mathbf{U}$, the right singular vectors of $\mathbf{A}$ are the columns of $\mathbf{V}$, and the singular values of $\mathbf{A}$ are the diagonal entries of $\boldsymbol{\Sigma}$.
-
-* 연립 방정식을 행렬의 곱으로 나타내보기
-  $$\begin{matrix}x_1+2y_1=4\\2x_1+5y_1=9\end{matrix} \quad \quad \quad \begin{matrix}x_2+2y_2=3\\2x_2+5y_2=7\end{matrix}$$ 
-  $$ \begin{bmatrix} 1 & 2 \\ 2 & 5 \end{bmatrix} \begin{bmatrix} x_1 & x_2 \\ y_1 & y_2 \end{bmatrix} = \begin{bmatrix} 4 & 9 \\ 3 & 7 \end{bmatrix}$$
-* 중요한 사실(....당연한 사실?)
-  * 곱셈의 왼쪽 행렬의 열 수와, 오른쪽 행렬의 행 수가 같아야 가능함
-    * $A_{m \times n} \times B_{o \times p}$ 에서 $n = o$ 여야 곱셈 성립
-  * 곱셈의 결과 행렬의 크기 = 곱셈의 왼쪽 행렬의 행 수 $\times$ 곱셈의 오른쪽 행렬의 열 수
-    * $A_{m \times n} \times B_{o \times p} = C_{m \times p}$
-  * 교환법칙(Commutative property)이 성립하지 않음
-    * $AB \neq BA$
-* 행렬 곱셈의 여러가지 관점
-  * 내적으로 바라보기
-    $$ A = \begin{bmatrix} \mathbf{a_1^T} \\ \mathbf{a_2^T} \\ \vdots \\ \mathbf{a_m^T} \end{bmatrix} $$
-    $$ AB = \begin{bmatrix} \mathbf{a_1^T} \\ \mathbf{a_2^T} \\ \vdots \\ \mathbf{a_m^T} \end{bmatrix} \begin{bmatrix} \mathbf{b_1} & \mathbf{b_2} & \cdots & \mathbf{b_m} \end{bmatrix} = \begin{bmatrix} \mathbf{a_1^T b_1} & \mathbf{a_1^T b_2} & \cdots & \mathbf{a_1^T b_m} \\ \mathbf{a_2^T b_1} & \mathbf{a_2^T b_2} & \cdots & \mathbf{a_2^T b_m} \\ \vdots  & \vdots  & \ddots & \vdots \\ \mathbf{a_m^T b_1} & \mathbf{a_m^T b_2} & \cdots & \mathbf{a_m^T b_m} \end{bmatrix}$$
-  * rank-1 matrix의 합 (또 안가르쳐준 개념 먼저 사용중.....-_-)
-    $$AB = \begin{bmatrix} \mathbf{a_1} & \mathbf{a_2} & \cdots & \mathbf{a_m} \end{bmatrix} \begin{bmatrix} \mathbf{b_1^T} \\ \mathbf{b_2^T} \\ \vdots \\ \mathbf{b_m^T} \end{bmatrix} = \mathbf{a_1 b_1^T} + \mathbf{a_2 b_2^T} + \cdots + \mathbf{a_m b_m^T}$$
-  * column space로 바라보기
-    $$A\mathbf{x} = \begin{bmatrix} \mathbf{a_1} & \mathbf{a_2} & \cdots & \mathbf{a_m} \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_m \end{bmatrix} = \mathbf{a_1} x_1 + \mathbf{a_2} x_2 + \cdots + \mathbf{a_m} x_m $$ (스칼라배의 합)
-    * $A = \begin{bmatrix} 1 & 0 \\ 0 & 1 \end{bmatrix}$ 는 2차원 좌표평면의 모든 점을, $A=\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}$은 3차원 좌표평면의 모든 점 표현 가능
-    * $AB = A \begin{bmatrix} \mathbf{b_1} & \mathbf{b_2} & \cdots & \mathbf{b_m} \end{bmatrix} = \begin{bmatrix} A \mathbf{b_1} & A \mathbf{b_2} & \cdots & A \mathbf{b_m} \end{bmatrix}$
-    * column space: A의 column vector로 만들 수 있는 부분 공간
-  * row space로 바라보기
-    $$\mathbf{x^T}A = \begin{bmatrix} x_1 & x_2 & \cdots & x_m \end{bmatrix} \begin{bmatrix} \mathbf{a_1^T} \\ \mathbf{a_2^T} \\ \vdots \\ \mathbf{a_m^T} \end{bmatrix} = x_1 \mathbf{a_1^T} + x_2 \mathbf{a_2^T} + \cdots + x_m \mathbf{a_m^T} $$
-
-
-## 열공간(Column Space)
-{{< video https://youtu.be/g0eaDeVRdZk >}}
-* column space: column vector 들이 span 하는 space
-  * $A$의 column space = $C(A)$ 또는 $range(A)$
-* span: vector들의 linear combination 으로 나타낼 수 있는 모든 vector를 모은 집합
-  * vector에 따라, 점일수도 선일수도 평면일 수도 있음
-  * vector space를 이 vector들이 span하는 space &rarr; column space는 행렬의 열들이 span하는 space
-* vector의 선형 결합(linear combination): vector에 스칼라배를 해서 더하는 것
-  * $\mathbf{v_1}$ 과 $\mathbf{v_2}$의 linear combination으로 2차원 좌표평면 나타내기
-  ![](images/chap02_09.PNG)
-
-
-
-## 선형 독립(Linear Independent)
-{{< video https://youtu.be/mOOI4-BfjGQ >}}
-
-...and also see
-{{< video https://youtu.be/9F4PZ_1orF0 >}}
-
-* 선형 독립(linearly independent)인 vectors: (선형 결합을 통해) 더 고차원을 span할 수 있게 해줌
-* orthogonal 하면 independent
-  * but independent해도 항상 orthogonal하지는 않음 (Independent > Orthogonal)
-* definition: $a_1 \mathbf{v_1} + a_2 \mathbf{v_2} + a_3 \mathbf{v_3} \cdots a_n \mathbf{v_n} = \mathbf{0}$ 를 만족하는 $a_1, a_2, a_3, \cdots a_n$ 이 $a_1 = a_2 = a_3 = \cdots = a_n = 0$ 밖에 없을때
-  * $\mathbf{0}$는 모든 elements가 $0$인 벡터
-  * 예: $\begin{bmatrix} 1 \\ 1 \end{bmatrix}$, $\begin{bmatrix} 2 \\ 2 \end{bmatrix}$ 는 $-2 \begin{bmatrix} 1 \\ 1 \end{bmatrix} + 1 \begin{bmatrix} 2 \\ 2 \end{bmatrix} = \begin{bmatrix} 0 \\ 0 \end{bmatrix}$ 이 되므로, linearly independent 하지 않음
-  * independent한 vector 들의 수 = 표현할 수 있는 차원의 dimension
-
-## 기저(basis)
-* 주어진 vector space를 span하는 linearly independent한 vectors
-* 어떤 공간을 이루는 필수적인 구성요소
-* orthogonal 하면 orthogonal basis
-* 예: 2차원 좌표평면에 대해
-  * $\begin{bmatrix} 1 \\ 0 \end{bmatrix}$, $\begin{bmatrix} 0 \\ 1 \end{bmatrix}$ : orthogonal basis
-  * $\begin{bmatrix} 1 \\ 0 \end{bmatrix}$, $\begin{bmatrix} 1 \\ 1 \end{bmatrix}$ : orthogonal 하지 않은 basis
-  * $\begin{bmatrix} 1 \\ 0 \end{bmatrix}$, $\begin{bmatrix} 2 \\ 0 \end{bmatrix}$ : linearly independent 하지 않으므로 basis 아님
-
-## 항등행렬(identity matrix), 역행렬(inverse matrix), 대각행렬(Diagonal Matrix), 직교행렬(orthogonal matrix)
-
-{{< video https://youtu.be/XqOvyfMUAwA >}}
-
-### Identity matrix(항등행렬)
-* 항등원: 임의의 원소에 대해 연산하면 자기 자신이 나오게 하는 원소 (by namu.wiki)
-  * 실수에서 곱셈의 항등원은 1
-* 행렬의 항등원: 항등행렬($I$)
-  $$I = \begin{bmatrix} 1 & 0 & \cdots & 0 \\ 0 & 1 & \cdots & 0 \\ \vdots  & \vdots  & \ddots & \vdots \\ 0 & 0 & \cdots & 1 \end{bmatrix}$$
-  * $A_{m \times n} \times I_{n \times n = n} = A_{m \times n}$
-  * $I_{m \times m = m} \times A_{m \times n} = A_{m \times n}$ 
-
-### Inverse matrix(역행렬) {#sec-inv}
-* 역원: 연산 결과 항등원이 나오게 하는 연소
-  * 실수에서 곱셈의 역원은 지수의 부호가 반대인 역수 (by namu.wiki): $a \times a^{-1} = 1$
-* 행렬의 역원: 역행렬($A^{-1}$)
-  $$A \times A^{-1} = I , A^{-1} \times A = I$$
-  * 존재하지 않는 경우도 있음
-  * 존재하면 Invertible(nonsingular, nondegenerate) matrix라고 불림
-    * 존재하지 않으면 singular, degenerate라고 불림
-  * square matrix(정사각행렬, $m = n$)은 특수한 경우를 제외하면 역행렬이 항상 존재
-    * 역행렬이 존재하지 않는특수한 경우: (나중에 배울) determinant가 0인 경우
-  * $m \neq n$인 행렬의 경우에는 역행렬이 존재하지 않음
-    * 다만, 경우에 따라 $A \times A^{-1} = I$ 를 만족하거나(right inverse), $A^{-1} \times A = I$를 만족하는(left inverse)는 $A^{-1}$이 존재함
-  * 연립 방정식을 matrix로 나타냈을 때, 역행렬을 이용해서 해를 찾을 수 있음
-    $$A\mathbf{x} = \mathbf{b} \Rightarrow A^{-1}A\mathbf{x} = A^{-1}\mathbf{b} \Rightarrow I\mathbf{x} = A^{-1}\mathbf{b} \Rightarrow \mathbf{x} = A^{-1}\mathbf{b}$$ 
-
-### Diagonal Matrix(대각행렬)
-* diagonal element(대각 원소)외의 모든 elements(off-diagonal elements)가 0인 matrix
-  $$ D = Diag(\mathbf{a}) = \begin{bmatrix} a_{1,1} & 0 & \cdots & 0 \\ 0 & a_{2,2} & \cdots & 0 \\ \vdots  & \vdots  & \ddots & \vdots \\ 0 & 0 & \cdots & a_{n,n} \end{bmatrix}$$
-  * identity matrix는 diagonal matrix
-  * diagnomal matrix는 symmetric matrix 이기도 함
-  * 보통은 square matrix에서 주로 사용됨
-    * square matrix가 아니면서 diagonal matrix인 경우: rectangular diagonal matrix
-  
-
-### Orthogonal matrix(직교행렬, orthonomal matrix)
-* 행렬의 각 columns들이 orthonomal vectors (서로 수직하면서 unit vectors)
-  $$A A^T = A^T A = I$$
-* identity matrix는 orthogonal matrix
-* square matrix에서만 정의됨
-* Orthogonal matrix인 $A$이면 $A^{-1} = A^{T}$
-  * 각 columns에서 자기 자신과의 내적 = 1, 다른 column과의 내적 = 0임
-* complex matrix(복소수 행렬)에서는 unitary matrix라고 부름
-
-## 계수(Rank)
-
-{{< video https://youtu.be/HMST0Yc7EXE >}}
-
-* rank: 행렬이 가지는 independent한 columns의 수 = column space의 dimension = row space의 dimension
-* independent한 column의 수 = independent한 행의 수: $rank(A) = rank(A^T)$
-  * proof: [Wikipedia](https://en.wikipedia.org/wiki/Rank_%28linear_algebra%29#Proofs_that_column_rank_=_row_rank)
-* 예:
-  $$\begin{bmatrix} 1 & 2 & 3 \\ 0 & 0 & 0 \end{bmatrix} \Rightarrow rank=1$$
-  $$\begin{bmatrix} 1 & 0 & 1 \\ 0 & 1 & 1 \end{bmatrix} \Rightarrow rank=2$$
-* $A_{m \times n}$ 의 최대 랭크는 $min\{m,n\}$
-  * $rank(A) < min\{m,n\}$ 면 rank-deficient, $rank(A) = min\{m,n\}$면 full (row/column) rank
-
-## 영공간(Null space)
-
-{{< video https://youtu.be/Eizc9TSRYMQ >}}
-
-* $A\mathbf{x}= \mathbf{0}$ 을 만족하는 $\mathbf{x}$의 집합
-  * column space 관점에서 보기: $A\mathbf{x} = x_1 \mathbf{a_1} + x_2 \mathbf{a_2} + \cdots + x_n \mathbf{a_n} = \mathbf{0}$
-  * null space에 항상 들어가는 $\mathbf{x} = \begin{bmatrix} 0 \\ 0 \\ \vdots \\ 0 \end{bmatrix}$ : trivial solution
-    * 모든 columns이 다 lienarly independent 하면, null space에는 위의 벡터 $\mathbf{x}=\mathbf{0}$하나 밖에 없음
-* $\mathbf{x}=\mathbf{0}$ 가 아닌 vector가 null space에 있으면, 스칼라배(constant $c$에 대해 $c \mathbf{x}$) 역시 null space에 포함됨
-* 혼동 주의! null space는 column space의 일부가 아님
-    * row vector의 차원이 null space가 존재하는 공간
-* rank와 null space의 dimension의 합은 항상 matrix의 column의 수
-    * $A_{m \times n}$에 대해, $dim(N(A)) = n - r$
-      * 모든 columns이 다 lienarly independent 하면 null space는 0차원(점)
-  * null space는 row space와 수직한 space
-    * $A\mathbf{x}= \mathbf{0}$ : 각각 모든 행과 내적해서 0, &rarr; 행들의 linear combination과 내적해도 0
-    * rank는 row space의 dimension &rarr; row space의 dimension($dim(R(A))$)과 null space의 dimension($dim(N(A))$)의 합이 $n$
-    * $\mathbb{R^n}$ 공간에 표현: 
-      ![](images/chap02_10.PNG)
-      * 겹친 점: 영벡터
-* left null space: $\mathbf{x^T} A = \mathbf{0^T}$ 인 $\mathbf{x}$
-  * 위의 성질을 row에 대해 적용
-    * m 차원에 놓인 벡터
-    * dimension:  $dim(N_L(A)) = m - r$
-    * column space와 수직: $dim(N_L(A)) +dim(C(A)) = m$
-* $R(A)$에 있는 vector $\mathbf{x_r}$ 와 $N(A)$에 있는 vector $\mathbf{x_n}$에 대해:
-  * $\mathbf{x_r}$에 $A$를 곱하면 column space로 감
-  * $\mathbf{x_n}$에 $A$를 곱하면 \mathbf{x_0}$
-  * $A(\mathbf{x_r} +\mathbf{x_n}) = A\mathbf{x_r} +  A\mathbf{x_n} =  A\mathbf{x_r} = \mathbf{b}$
-
-## Ax = b의 해의 수
-
-{{< video https://youtu.be/nNI2TlD598c >}}
-
-* full column rank 일때
-  * $\mathbf{b}$가 column space($C(A)$)안에 있으면 해가 하나
-  * $\mathbf{b}$가 column space($C(A)$)안에 없으면 해가 없음
-  ![](images/chap02_11.PNG)
-
-* full row rank 일때
-  * $\mathbf{b}$는 항상 column space 안에 있음: 무한의 해를 가짐
-  * 임의의 특정한 해(particular solution) $\mathbf{x_p}$와 null space의 vector $\mathbf{x_n}$에 대해, $A(\mathbf{x_p} +\mathbf{x_n})=\mathbf{b}$
-    * 즉, $\mathbf{x_p} +\mathbf{x_n}$ 도 해가 됨: complete solution
-      * null space는 무한하므로, 해도 무한함
-
-* full rank 일때(square matrix): 해가 하나 존재 ($\mathbf{x} = A^{-1}$\mathbf{b}$)
-
-* rank-deficient 일때
-  * $\mathbf{b}$가 column space($C(A)$)안에 있으면 무한한 해를 가짐
-  * $\mathbf{b}$가 column space($C(A)$)안에 없으면 해가 없음
-
-
-
-
-
-
-
-
+* The column space and row space are related, as they are orthogonal complements of each other. This means that any vector in the row space is orthogonal to any vector in the null space, and vice versa. This relationship is known as the row-space-null-space decomposition.
+* The dimension of the column space is equal to the rank of the matrix, which is the maximum number of linearly independent columns or rows. Similarly, the dimension of the row space is also equal to the rank of the matrix.
+* The null space is orthogonal to both the column space and the row space. This means that any vector in the null space is orthogonal to any vector in the column space and the row space.
+* The null space is useful in determining the solvability of a system of linear equations. If the null space contains only the zero vector, the system has a unique solution. If the null space contains non-zero vectors, the system has infinitely many solutions.

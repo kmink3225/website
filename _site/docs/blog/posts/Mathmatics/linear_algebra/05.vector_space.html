@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kwangmin Kim">
-<meta name="dcterms.date" content="2023-03-31">
+<meta name="dcterms.date" content="2023-04-10">
 <meta name="description" content="template">
 
-<title>Kwangmin Kim - Basics (3) - Special Matrices</title>
+<title>Kwangmin Kim - Vector Space</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -138,33 +138,54 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#matrix" id="toc-matrix" class="nav-link active" data-scroll-target="#matrix"><span class="toc-section-number">1</span>  Matrix</a></li>
-  <li><a href="#basic-matrix-operations" id="toc-basic-matrix-operations" class="nav-link" data-scroll-target="#basic-matrix-operations"><span class="toc-section-number">2</span>  Basic Matrix Operations</a>
+  <li><a href="#vector-space" id="toc-vector-space" class="nav-link active" data-scroll-target="#vector-space"><span class="toc-section-number">1</span>  Vector Space</a>
   <ul class="collapse">
-  <li><a href="#matrix-addition" id="toc-matrix-addition" class="nav-link" data-scroll-target="#matrix-addition"><span class="toc-section-number">2.1</span>  Matrix addition</a></li>
-  <li><a href="#scalar-multiplication" id="toc-scalar-multiplication" class="nav-link" data-scroll-target="#scalar-multiplication"><span class="toc-section-number">2.2</span>  Scalar multiplication</a></li>
-  <li><a href="#matrix-multiplication" id="toc-matrix-multiplication" class="nav-link" data-scroll-target="#matrix-multiplication"><span class="toc-section-number">2.3</span>  Matrix multiplication</a></li>
-  <li><a href="#transpose" id="toc-transpose" class="nav-link" data-scroll-target="#transpose"><span class="toc-section-number">2.4</span>  Transpose</a></li>
-  <li><a href="#determinant" id="toc-determinant" class="nav-link" data-scroll-target="#determinant"><span class="toc-section-number">2.5</span>  Determinant</a></li>
-  <li><a href="#inverse" id="toc-inverse" class="nav-link" data-scroll-target="#inverse"><span class="toc-section-number">2.6</span>  Inverse</a></li>
-  <li><a href="#rank" id="toc-rank" class="nav-link" data-scroll-target="#rank"><span class="toc-section-number">2.7</span>  Rank</a></li>
-  <li><a href="#trace" id="toc-trace" class="nav-link" data-scroll-target="#trace"><span class="toc-section-number">2.8</span>  Trace</a></li>
-  <li><a href="#eigenvalues-and-eigenvectors" id="toc-eigenvalues-and-eigenvectors" class="nav-link" data-scroll-target="#eigenvalues-and-eigenvectors"><span class="toc-section-number">2.9</span>  Eigenvalues and Eigenvectors</a></li>
-  <li><a href="#singular-value-and-singluar-vectors" id="toc-singular-value-and-singluar-vectors" class="nav-link" data-scroll-target="#singular-value-and-singluar-vectors"><span class="toc-section-number">2.10</span>  Singular value and Singluar Vectors</a></li>
+  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition"><span class="toc-section-number">1.1</span>  Definition</a></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="toc-section-number">1.2</span>  Example</a></li>
   </ul></li>
-  <li><a href="#열공간column-space" id="toc-열공간column-space" class="nav-link" data-scroll-target="#열공간column-space"><span class="toc-section-number">3</span>  열공간(Column Space)</a></li>
-  <li><a href="#선형-독립linear-independent" id="toc-선형-독립linear-independent" class="nav-link" data-scroll-target="#선형-독립linear-independent"><span class="toc-section-number">4</span>  선형 독립(Linear Independent)</a></li>
-  <li><a href="#기저basis" id="toc-기저basis" class="nav-link" data-scroll-target="#기저basis"><span class="toc-section-number">5</span>  기저(basis)</a></li>
-  <li><a href="#항등행렬identity-matrix-역행렬inverse-matrix-대각행렬diagonal-matrix-직교행렬orthogonal-matrix" id="toc-항등행렬identity-matrix-역행렬inverse-matrix-대각행렬diagonal-matrix-직교행렬orthogonal-matrix" class="nav-link" data-scroll-target="#항등행렬identity-matrix-역행렬inverse-matrix-대각행렬diagonal-matrix-직교행렬orthogonal-matrix"><span class="toc-section-number">6</span>  항등행렬(identity matrix), 역행렬(inverse matrix), 대각행렬(Diagonal Matrix), 직교행렬(orthogonal matrix)</a>
+  <li><a href="#basis-vector" id="toc-basis-vector" class="nav-link" data-scroll-target="#basis-vector"><span class="toc-section-number">2</span>  Basis Vector</a>
   <ul class="collapse">
-  <li><a href="#identity-matrix항등행렬" id="toc-identity-matrix항등행렬" class="nav-link" data-scroll-target="#identity-matrix항등행렬"><span class="toc-section-number">6.1</span>  Identity matrix(항등행렬)</a></li>
-  <li><a href="#sec-inv" id="toc-sec-inv" class="nav-link" data-scroll-target="#sec-inv"><span class="toc-section-number">6.2</span>  Inverse matrix(역행렬)</a></li>
-  <li><a href="#diagonal-matrix대각행렬" id="toc-diagonal-matrix대각행렬" class="nav-link" data-scroll-target="#diagonal-matrix대각행렬"><span class="toc-section-number">6.3</span>  Diagonal Matrix(대각행렬)</a></li>
-  <li><a href="#orthogonal-matrix직교행렬-orthonomal-matrix" id="toc-orthogonal-matrix직교행렬-orthonomal-matrix" class="nav-link" data-scroll-target="#orthogonal-matrix직교행렬-orthonomal-matrix"><span class="toc-section-number">6.4</span>  Orthogonal matrix(직교행렬, orthonomal matrix)</a></li>
+  <li><a href="#example-1" id="toc-example-1" class="nav-link" data-scroll-target="#example-1"><span class="toc-section-number">2.1</span>  Example</a></li>
+  <li><a href="#properties" id="toc-properties" class="nav-link" data-scroll-target="#properties"><span class="toc-section-number">2.2</span>  Properties</a></li>
   </ul></li>
-  <li><a href="#계수rank" id="toc-계수rank" class="nav-link" data-scroll-target="#계수rank"><span class="toc-section-number">7</span>  계수(Rank)</a></li>
-  <li><a href="#영공간null-space" id="toc-영공간null-space" class="nav-link" data-scroll-target="#영공간null-space"><span class="toc-section-number">8</span>  영공간(Null space)</a></li>
-  <li><a href="#ax-b의-해의-수" id="toc-ax-b의-해의-수" class="nav-link" data-scroll-target="#ax-b의-해의-수"><span class="toc-section-number">9</span>  Ax = b의 해의 수</a></li>
+  <li><a href="#subspace" id="toc-subspace" class="nav-link" data-scroll-target="#subspace"><span class="toc-section-number">3</span>  Subspace</a>
+  <ul class="collapse">
+  <li><a href="#definition-of-a-subspace" id="toc-definition-of-a-subspace" class="nav-link" data-scroll-target="#definition-of-a-subspace"><span class="toc-section-number">3.1</span>  Definition of a subspace</a></li>
+  <li><a href="#example-2" id="toc-example-2" class="nav-link" data-scroll-target="#example-2"><span class="toc-section-number">3.2</span>  Example</a></li>
+  <li><a href="#properties-1" id="toc-properties-1" class="nav-link" data-scroll-target="#properties-1"><span class="toc-section-number">3.3</span>  Properties</a></li>
+  <li><a href="#span" id="toc-span" class="nav-link" data-scroll-target="#span"><span class="toc-section-number">3.4</span>  Span</a></li>
+  <li><a href="#definition-1" id="toc-definition-1" class="nav-link" data-scroll-target="#definition-1"><span class="toc-section-number">3.5</span>  Definition</a></li>
+  <li><a href="#proporties" id="toc-proporties" class="nav-link" data-scroll-target="#proporties"><span class="toc-section-number">3.6</span>  Proporties</a></li>
+  </ul></li>
+  <li><a href="#dimensionality-and-rank" id="toc-dimensionality-and-rank" class="nav-link" data-scroll-target="#dimensionality-and-rank"><span class="toc-section-number">4</span>  Dimensionality and Rank</a>
+  <ul class="collapse">
+  <li><a href="#definition-2" id="toc-definition-2" class="nav-link" data-scroll-target="#definition-2"><span class="toc-section-number">4.1</span>  Definition</a></li>
+  <li><a href="#example-3" id="toc-example-3" class="nav-link" data-scroll-target="#example-3"><span class="toc-section-number">4.2</span>  Example</a></li>
+  <li><a href="#properties-2" id="toc-properties-2" class="nav-link" data-scroll-target="#properties-2"><span class="toc-section-number">4.3</span>  Properties</a></li>
+  </ul></li>
+  <li><a href="#column-space" id="toc-column-space" class="nav-link" data-scroll-target="#column-space"><span class="toc-section-number">5</span>  Column Space</a>
+  <ul class="collapse">
+  <li><a href="#definition-3" id="toc-definition-3" class="nav-link" data-scroll-target="#definition-3"><span class="toc-section-number">5.1</span>  Definition</a></li>
+  <li><a href="#example-4" id="toc-example-4" class="nav-link" data-scroll-target="#example-4"><span class="toc-section-number">5.2</span>  Example</a></li>
+  <li><a href="#properties-3" id="toc-properties-3" class="nav-link" data-scroll-target="#properties-3"><span class="toc-section-number">5.3</span>  Properties</a></li>
+  </ul></li>
+  <li><a href="#row-space" id="toc-row-space" class="nav-link" data-scroll-target="#row-space"><span class="toc-section-number">6</span>  Row Space</a>
+  <ul class="collapse">
+  <li><a href="#definition-4" id="toc-definition-4" class="nav-link" data-scroll-target="#definition-4"><span class="toc-section-number">6.1</span>  Definition</a></li>
+  <li><a href="#example-5" id="toc-example-5" class="nav-link" data-scroll-target="#example-5"><span class="toc-section-number">6.2</span>  Example</a></li>
+  <li><a href="#properties-4" id="toc-properties-4" class="nav-link" data-scroll-target="#properties-4"><span class="toc-section-number">6.3</span>  Properties</a></li>
+  </ul></li>
+  <li><a href="#null-space" id="toc-null-space" class="nav-link" data-scroll-target="#null-space"><span class="toc-section-number">7</span>  Null Space</a>
+  <ul class="collapse">
+  <li><a href="#example-6" id="toc-example-6" class="nav-link" data-scroll-target="#example-6"><span class="toc-section-number">7.1</span>  Example</a></li>
+  <li><a href="#properties-5" id="toc-properties-5" class="nav-link" data-scroll-target="#properties-5"><span class="toc-section-number">7.2</span>  Properties</a></li>
+  </ul></li>
+  <li><a href="#column-space-vs-row-space-vs-null-space" id="toc-column-space-vs-row-space-vs-null-space" class="nav-link" data-scroll-target="#column-space-vs-row-space-vs-null-space"><span class="toc-section-number">8</span>  Column Space vs Row Space vs Null Space</a>
+  <ul class="collapse">
+  <li><a href="#column-space-vs-row-space" id="toc-column-space-vs-row-space" class="nav-link" data-scroll-target="#column-space-vs-row-space"><span class="toc-section-number">8.1</span>  Column Space vs Row Space</a></li>
+  <li><a href="#null-space-1" id="toc-null-space-1" class="nav-link" data-scroll-target="#null-space-1"><span class="toc-section-number">8.2</span>  Null Space</a></li>
+  <li><a href="#the-relationships-between-these-spaces" id="toc-the-relationships-between-these-spaces" class="nav-link" data-scroll-target="#the-relationships-between-these-spaces"><span class="toc-section-number">8.3</span>  The relationships between these spaces</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -173,8 +194,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Basics (3) - Special Matrices</h1>
-<p class="subtitle lead">template</p>
+<h1 class="title">Vector Space</h1>
+<p class="subtitle lead">vector space, basis vector, susbspace, dimension, rank, column space, row space, null space</p>
   <div class="quarto-categories">
     <div class="quarto-category">Mathematics</div>
   </div>
@@ -199,7 +220,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 31, 2023</p>
+      <p class="date">April 10, 2023</p>
     </div>
   </div>
   
@@ -209,622 +230,329 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<section id="matrix" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="matrix"><span class="header-section-number">1</span> Matrix</h2>
-<p>A matrix is a rectangular array of elements, usually real numbers, arranged in rows and columns. If <span class="math inline">\(\mathbf{A}\)</span> is an <span class="math inline">\(m \times n\)</span> matrix, it can be represented as: <span class="math display">\[
-\begin{bmatrix}
-  a_{11} &amp; a_{12} &amp; \cdots &amp; a_{1n} \\
-  a_{21} &amp; a_{22} &amp; \cdots &amp; a_{2n} \\
-  \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-  a_{m1} &amp; a_{m2} &amp; \cdots &amp; a_{mn}
-\end{bmatrix}
-\]</span> where <span class="math inline">\(a_{ij}\)</span> is the element in the <span class="math inline">\(i\)</span>-th row and <span class="math inline">\(j\)</span>-th column of the matrix <span class="math inline">\(\mathbf{A}\)</span>.</p>
-</section>
-<section id="basic-matrix-operations" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="basic-matrix-operations"><span class="header-section-number">2</span> Basic Matrix Operations</h2>
-<section id="matrix-addition" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="matrix-addition"><span class="header-section-number">2.1</span> Matrix addition</h3>
-<p>The sum of two matrices of the same size is a matrix of the same size obtained by adding corresponding entries.</p>
-<p>Given two <span class="math inline">\(m \times n\)</span> matrices <span class="math inline">\(\mathbf{A}\)</span> and <span class="math inline">\(\mathbf{B}\)</span>, their sum <span class="math inline">\(\mathbf{C} = \mathbf{A} + \mathbf{B}\)</span> is defined by:</p>
-<p><span class="math display">\[
-c_{i,j}=a_{i,j}+b_{i,j}​
-\]</span> for <span class="math inline">\(1 \leq i \leq m\)</span> and <span class="math inline">\(1 \leq j \leq n\)</span>.</p>
-<p><span class="math display">\[
-\begin{bmatrix}
-  1 &amp; 2 \\
-  3 &amp; 4 \\
-  5 &amp; 6
-\end{bmatrix} +
-\begin{bmatrix}
-  -1 &amp; 0 \\
-  2 &amp; -3 \\
-  -5 &amp; 4
-\end{bmatrix} =
-\begin{bmatrix}
-  0 &amp; 2 \\
-  5 &amp; 1 \\
-  0 &amp; 10
-\end{bmatrix}
-\]</span></p>
-</section>
-<section id="scalar-multiplication" class="level3" data-number="2.2">
-<h3 data-number="2.2" class="anchored" data-anchor-id="scalar-multiplication"><span class="header-section-number">2.2</span> Scalar multiplication</h3>
-<p>The product of a scalar and a matrix is a matrix obtained by multiplying each entry of the matrix by the scalar.</p>
-<p>Given a scalar <span class="math inline">\(k\)</span> and an <span class="math inline">\(m \times n\)</span> matrix <span class="math inline">\(\mathbf{A}\)</span>, their product <span class="math inline">\(k\mathbf{A}\)</span> is defined by: <span class="math display">\[
-(k\mathbf{A})_{i,j} = k(a_{i,j})
-\]</span> for <span class="math inline">\(1 \leq i \leq m\)</span> and <span class="math inline">\(1 \leq j \leq n\)</span>.</p>
-<p>Example: <span class="math display">\[
-2\begin{bmatrix}
-1 &amp; 2 \\
-3 &amp; 4 \\
-5 &amp; 6
-\end{bmatrix} =
-\begin{bmatrix}
-2 &amp; 4 \\
-6 &amp; 8 \\
-10 &amp; 12
-\end{bmatrix}
-\]</span></p>
-</section>
-<section id="matrix-multiplication" class="level3" data-number="2.3">
-<h3 data-number="2.3" class="anchored" data-anchor-id="matrix-multiplication"><span class="header-section-number">2.3</span> Matrix multiplication</h3>
-<p>The product of two matrices <span class="math inline">\(\mathbf{A}\)</span> and <span class="math inline">\(\mathbf{B}\)</span> is a matrix obtained by multiplying the rows of <span class="math inline">\(\mathbf{A}\)</span> by the columns of <span class="math inline">\(\mathbf{B}\)</span>.</p>
-<p>Given two matrices <span class="math inline">\(\mathbf{A}\)</span> and <span class="math inline">\(\mathbf{B}\)</span> with dimensions <span class="math inline">\(m \times n\)</span> and <span class="math inline">\(n \times p\)</span>, respectively, their product <span class="math inline">\(\mathbf{C} = \mathbf{AB}\)</span> is an <span class="math inline">\(m \times p\)</span> matrix defined by: <span class="math display">\[
-c_{i,j} = \sum_{k=1}^n a_{i,k}b_{k,j}
-\]</span> for <span class="math inline">\(1 \leq i \leq m\)</span> and <span class="math inline">\(1 \leq j \leq p\)</span>.</p>
-<p>Example: <span class="math display">\[
-\begin{bmatrix}
-1 &amp; 2 \\
-3 &amp; 4 \\
-5 &amp; 6
-\end{bmatrix} \begin{bmatrix}
--1 &amp; 0 &amp; 2 \\
-2 &amp; -3 &amp; 1
-\end{bmatrix} =
-\begin{bmatrix}
-3 &amp; -6 &amp; 4 \\
-5 &amp; -12 &amp; 10 \\
-7 &amp; -18 &amp; 16
-\end{bmatrix}
-\]</span></p>
-</section>
-<section id="transpose" class="level3" data-number="2.4">
-<h3 data-number="2.4" class="anchored" data-anchor-id="transpose"><span class="header-section-number">2.4</span> Transpose</h3>
-<p>The transpose of an <span class="math inline">\(m x n\)</span> matrix A, denoted by <span class="math inline">\(A^T\)</span>, is the <span class="math inline">\(n x m\)</span> matrix obtained by interchanging the rows and columns of A. Formally, if <span class="math inline">\(\mathbf{A} = [a_{ij}]\)</span> is an m x n matrix, then its transpose <span class="math inline">\(\mathbf{A}^T = [b_{ij}]\)</span> is an <span class="math inline">\(n x m\)</span> matrix where <span class="math inline">\(b_{ij}\)</span> = <span class="math inline">\(a_{ji}\)</span> for all <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>. In other words, the element in the <span class="math inline">\(i\)</span> th row and <span class="math inline">\(j\)</span> th column of <span class="math inline">\(A^T\)</span> is equal to the element in the <span class="math inline">\(j\)</span> th row and ith column of <span class="math inline">\(\mathbf{A}\)</span>.</p>
-<p>Given an <span class="math inline">\(m \times n\)</span> matrix <span class="math inline">\(\mathbf{A}\)</span>, its transpose <span class="math inline">\(\mathbf{A}^T\)</span> is an <span class="math inline">\(n \times m\)</span> matrix defined by: $$ <em>{i,j}^T = </em>{j,i}</p>
-<p>$$</p>
+<section id="vector-space" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="vector-space"><span class="header-section-number">1</span> Vector Space</h2>
+<section id="definition" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="definition"><span class="header-section-number">1.1</span> Definition</h3>
+<p>A vector space is a set <span class="math inline">\(\mathbf{V}\)</span> equipped with two operations:</p>
 <ul>
-<li>When <span class="math inline">\(\mathbf{A}\)</span> is transposed, diagnoal entries(<span class="math inline">\(a_{ii}\)</span>) do not change but off-diagnoal elements(<span class="math inline">\(a_{ij} \; i \neq j\)</span>) change.</li>
-<li>A column vector is tranposed into a row vector, and vice versa.</li>
-<li>symmetric matrix: <span class="math inline">\(\mathbf{A} = \mathbf{A}^T\)</span></li>
+<li>vector addition and</li>
+<li>scalar multiplication,</li>
 </ul>
-<p>Example:</p>
-<p>Let A be the matrix <span class="math display">\[
-\mathbf{A} = \begin{bmatrix}
-1 &amp; 2 &amp; 3\\
-4 &amp; 5 &amp; 6
-\end{bmatrix}
-\]</span> The transpose of A, denoted by A^T, is the matrix <span class="math display">\[
-\mathbf{A}^T = \begin{bmatrix}
-1 &amp; 4\\
-2 &amp; 5\\
-3 &amp; 6
-\end{bmatrix}
-\]</span></p>
+<p>which satisfy the following properties for all vectors <span class="math inline">\(\mathbf{u}, \mathbf{v}, \mathbf{w}\)</span> in <span class="math inline">\(V\)</span> and all scalars <span class="math inline">\(c, d\)</span>:</p>
+<ol type="1">
+<li>Closure under vector addition: <span class="math inline">\(\mathbf{u} + \mathbf{v} \in V\)</span></li>
+<li>Associativity of vector addition: <span class="math inline">\((\mathbf{u} + \mathbf{v}) + \mathbf{w} = \mathbf{u} + (\mathbf{v} + \mathbf{w})\)</span></li>
+<li>Identity element of vector addition: There exists a vector <span class="math inline">\(\mathbf{0}\)</span> in <span class="math inline">\(V\)</span> such that <span class="math inline">\(\mathbf{u} + \mathbf{0} = \mathbf{u}\)</span> for all <span class="math inline">\(\mathbf{u}\)</span> in <span class="math inline">\(V\)</span></li>
+<li>Existence of additive inverse: For each <span class="math inline">\(\mathbf{u}\)</span> in <span class="math inline">\(V\)</span>, there exists a vector <span class="math inline">\(-\mathbf{u}\)</span> in <span class="math inline">\(\mathbf{V}\)</span> such that <span class="math inline">\(\mathbf{u} + (-\mathbf{u}) = \mathbf{0}\)</span></li>
+<li>Closure under scalar multiplication: <span class="math inline">\(c\mathbf{u} \in V\)</span></li>
+<li>Distributive law of scalar multiplication with respect to scalar addition: <span class="math inline">\((c + d)\mathbf{u} = c\mathbf{u} + d\mathbf{u}\)</span></li>
+<li>Distributive law of scalar multiplication with respect to vector addition: <span class="math inline">\(c(\mathbf{u} + \mathbf{v}) = c\mathbf{u} + c\mathbf{v}\)</span></li>
+<li>Associativity of scalar multiplication: <span class="math inline">\((cd)\mathbf{u} = c(d\mathbf{u})\)</span></li>
+<li>Identity element of scalar multiplication: <span class="math inline">\(1\mathbf{u} = \mathbf{u}\)</span></li>
+</ol>
 </section>
-<section id="determinant" class="level3" data-number="2.5">
-<h3 data-number="2.5" class="anchored" data-anchor-id="determinant"><span class="header-section-number">2.5</span> Determinant</h3>
-<p>Let <span class="math inline">\(\mathbf{A}\)</span> be an <span class="math inline">\(n \times n\)</span> square matrix. The determinant of <span class="math inline">\(\mathbf{A}\)</span>, denoted by <span class="math inline">\(|\mathbf{A}|\)</span> or <span class="math inline">\(\det(\mathbf{A})\)</span>, is a scalar value calculated as the sum of the products of the elements in any row or column of <span class="math inline">\(\mathbf{A}\)</span> with their corresponding cofactors, that is,</p>
-<p><span class="math display">\[
-|\mathbf{A}|=\sum_{i=1}^{n}a_{ij}C_{ij}=\sum_{j=1}^{n}a_{ij}C_{ij}
-\]</span></p>
-<p>where <span class="math inline">\(a_{ij}\)</span> is the element of <span class="math inline">\(\mathbf{A}\)</span> in the <span class="math inline">\(i\)</span>-th row and <span class="math inline">\(j\)</span>-th column, and <span class="math inline">\(C_{ij}\)</span> is the cofactor of <span class="math inline">\(a_{ij}\)</span>. The cofactor of <span class="math inline">\(a_{ij}\)</span>, denoted by <span class="math inline">\(C_{ij}\)</span>, is given by <span class="math inline">\((-1)^{i+j}\)</span> times the determinant of the <span class="math inline">\((n-1) \times (n-1)\)</span> matrix obtained by deleting the <span class="math inline">\(i\)</span>-th row and <span class="math inline">\(j\)</span>-th column of <span class="math inline">\(\mathbf{A}\)</span>.</p>
-<p>The determinant of an <span class="math inline">\(n x n\)</span> matrix <span class="math inline">\(\mathbf{A}\)</span> is a scalar value denoted as <span class="math inline">\(|\mathbf{A}|\)</span>. It is defined as the sum of all possible products of n elements taken one from each row and one from each column, where the sign of each product alternates according to the position of the element in the matrix. For example, the determinant of a <span class="math inline">\(3 x 3\)</span> matrix <span class="math inline">\(\mathbf{A} =\)</span> <span class="math display">\[
-\begin{bmatrix}
-a_{11} &amp; a_{12} &amp; a_{13} \\
-a_{21} &amp; a_{22} &amp; a_{23} \\
-a_{31} &amp; a_{32} &amp; a_{33} \\
-\end{bmatrix}
-\]</span></p>
-<p>is given by:</p>
-<p><span class="math display">\[
-|\mathbf{A}| = a_{11}
-\begin{vmatrix}
-a_{22} &amp; a_{23} \\
-a_{32} &amp; a_{33}
-\end{vmatrix}
-- a_{12}
-\begin{vmatrix}
-a_{21} &amp; a_{23} \\
-a_{31} &amp; a_{33}
-\end{vmatrix}
-+ a_{13}
-\begin{vmatrix}
-a_{21} &amp; a_{22} \\
-a_{31} &amp; a_{32}
-\end{vmatrix}
-\]</span></p>
-<p>For example, consider the <span class="math inline">\(3 \times 3\)</span> matrix <span class="math inline">\(\mathbf{A} = \begin{bmatrix} 1 &amp; 2 &amp; 3 \\ 4 &amp; 5 &amp; 6 \\ 7 &amp; 8 &amp; 9 \end{bmatrix}\)</span>. We can calculate the determinant of <span class="math inline">\(\mathbf{A}\)</span> using any row or column. Let’s use the first column:</p>
-<p><span class="math display">\[
-|\mathbf{A}| = 1
-\begin{vmatrix}
-5 &amp; 6 \\
-8 &amp; 9
-\end{vmatrix}
-- 4
-\begin{vmatrix}
-2 &amp; 3\\
-8 &amp; 9
-\end{vmatrix}
-+ 7
-\begin{vmatrix}
-2 &amp; 5 \\
-3 &amp; 6
-\end{vmatrix} = 0
-\]</span></p>
-<p>Therefore, the determinant of <span class="math inline">\(\mathbf{A}\)</span> is zero.</p>
+<section id="example" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="example"><span class="header-section-number">1.2</span> Example</h3>
+<p>Let <span class="math inline">\(V = \mathbb{R}^3\)</span>, the set of all 3-dimensional real vectors. The vector space <span class="math inline">\(V\)</span> is equipped with vector addition and scalar multiplication defined as usual component-wise. Vector addition and scalar multiplication satisfy all the properties listed in the definition of a vector space.</p>
 </section>
-<section id="inverse" class="level3" data-number="2.6">
-<h3 data-number="2.6" class="anchored" data-anchor-id="inverse"><span class="header-section-number">2.6</span> Inverse</h3>
-<p>The inverse of a square matrix <span class="math inline">\(A\)</span> of size <span class="math inline">\(n\)</span> is a matrix <span class="math inline">\(A^{-1}\)</span> such that the product of <span class="math inline">\(A\)</span> and <span class="math inline">\(A^{-1}\)</span> is the identity matrix <span class="math inline">\(I_n\)</span>, i.e.&nbsp;<span class="math inline">\(A \times A^{-1} = I_n\)</span>. If such a matrix exists, then <span class="math inline">\(A\)</span> is said to be invertible or non-singular.</p>
-<p>The inverse of a square matrix <span class="math inline">\(\mathbf{A}\)</span> is denoted by <span class="math inline">\(\mathbf{A}^{-1}\)</span> and is defined as the unique matrix that satisfies the following equation: <span class="math display">\[
-\mathbf{A}^{-1}\mathbf{A} = \mathbf{A}\mathbf{A}^{-1} = \mathbf{I}
-\]</span></p>
-<p>where <span class="math inline">\(\mathbf{I}\)</span> is the identity matrix. Not all matrices have an inverse, and a matrix that has an inverse is called invertible or nonsingular. A matrix that does not have an inverse is called singular.</p>
-<p>For example, consider the <span class="math inline">\(2\times 2\)</span> matrix <span class="math display">\[
-\mathbf{A} =
-\begin{bmatrix}
-1 &amp; 2 \\
-3 &amp; 4
-\end{bmatrix}.
-\]</span> The inverse of <span class="math inline">\(\mathbf{A}\)</span> is given by:</p>
+</section>
+<section id="basis-vector" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="basis-vector"><span class="header-section-number">2</span> Basis Vector</h2>
+<p>A basis for a vector space <span class="math inline">\(V\)</span> is a set of vectors <span class="math inline">\({v_1, v_2, \ldots, v_n}\)</span> that spans <span class="math inline">\(V\)</span> and is linearly independent. In other words, every vector in <span class="math inline">\(V\)</span> can be expressed as a linear combination of the basis vectors, and the basis vectors are linearly independent, meaning that no basis vector can be written as a linear combination of the other basis vectors.</p>
+<p>Mathematically, a set of vectors <span class="math inline">\({v_1, v_2, \ldots, v_n}\)</span> is a basis for a vector space <span class="math inline">\(V\)</span> if it satisfies the following conditions:</p>
+<p>The vectors <span class="math inline">\({v_1, v_2, \ldots, v_n}\)</span> span <span class="math inline">\(V\)</span>, which means that for any vector <span class="math inline">\(v\)</span> in <span class="math inline">\(V\)</span>, there exist scalars <span class="math inline">\(c_1, c_2, \ldots, c_n\)</span> such that <span class="math inline">\(v = c_1 v_1 + c_2 v_2 + \ldots + c_n v_n\)</span>.</p>
+<p>The vectors <span class="math inline">\({v_1, v_2, \ldots, v_n}\)</span> are linearly independent, which means that the only solution to the equation <span class="math inline">\(c_1 v_1 + c_2 v_2 + \ldots + c_n v_n = 0\)</span> is <span class="math inline">\(c_1 = c_2 = \ldots = c_n = 0\)</span>.</p>
+<section id="example-1" class="level3" data-number="2.1">
+<h3 data-number="2.1" class="anchored" data-anchor-id="example-1"><span class="header-section-number">2.1</span> Example</h3>
+<p>Consider the vector space <span class="math inline">\(V = \mathbb{R}^3\)</span>, the set of all real-valued vectors with three components. A basis for <span class="math inline">\(V\)</span> can be given by the following set of vectors:</p>
 <p><span class="math display">\[
-\mathbf{A}^{-1} =
-\frac{1}{-2}
-\begin{bmatrix}
-4 &amp; -2 \\
--3 &amp; 1
-\end{bmatrix} =
-\begin{bmatrix}
--2 &amp; 1 \\
-\frac{3}{2} &amp; -\frac{1}{2}
+v_1 = \begin{bmatrix}
+1 \\ 0 \\ 0
+\end{bmatrix}, \quad
+v_2 = \begin{bmatrix}
+0 \\ 1 \\ 0
+\end{bmatrix}, \quad
+v_3 = \begin{bmatrix}
+0 \\ 0 \\ 1
 \end{bmatrix}
 \]</span></p>
-<p>We can verify that <span class="math inline">\(\mathbf{A}\mathbf{A}^{-1} = \mathbf{A}^{-1}\mathbf{A} = \mathbf{I}\)</span> by computing:</p>
+<p>These three vectors form a basis for <span class="math inline">\(\mathbb{R}^3\)</span>, as they span <span class="math inline">\(\mathbb{R}^3\)</span> (any vector in <span class="math inline">\(\mathbb{R}^3\)</span> can be expressed as a linear combination of these vectors) and they are linearly independent (the only solution to the equation <span class="math inline">\(c_1 v_1 + c_2 v_2 + c_3 v_3 = 0\)</span> is <span class="math inline">\(c_1 = c_2 = c_3 = 0\)</span>).</p>
+<p>Basis vectors are fundamental in defining and understanding vector spaces because they provide a way to express any vector in the vector space as a linear combination of basis vectors. The properties of basis vectors, such as linear independence, spanning set, minimal set, and unique representation, are essential in establishing the foundational concepts of vector spaces and their properties. By using basis vectors, we can represent vectors in a vector space in a concise and systematic way, and they provide a basis for studying and analyzing vector spaces in various mathematical and practical applications.</p>
+</section>
+<section id="properties" class="level3" data-number="2.2">
+<h3 data-number="2.2" class="anchored" data-anchor-id="properties"><span class="header-section-number">2.2</span> Properties</h3>
+<ul>
+<li>Linear independence: A set of basis vectors is linearly independent, meaning that no vector in the set can be expressed as a linear combination of the others. In other words, the coefficients of the basis vectors in any linear combination that equals the zero vector are all zero.</li>
+<li>Spanning set: The set of basis vectors spans the entire vector space, meaning that any vector in the vector space can be expressed as a linear combination of the basis vectors. In other words, the basis vectors “span” the vector space by forming a basis for it.</li>
+<li>Minimal set: The set of basis vectors is minimal, meaning that no vector can be removed from the set without changing the span of the vector space. In other words, the basis vectors form the smallest possible set that can generate the entire vector space.</li>
+<li>Unique representation: Any vector in the vector space can be uniquely represented as a linear combination of the basis vectors. This means that there is only one way to express a vector as a linear combination of the basis vectors, ensuring that the representation is unique.</li>
+</ul>
+</section>
+</section>
+<section id="subspace" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="subspace"><span class="header-section-number">3</span> Subspace</h2>
+<section id="definition-of-a-subspace" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="definition-of-a-subspace"><span class="header-section-number">3.1</span> Definition of a subspace</h3>
+<p>A subset <span class="math inline">\(W\)</span> of <span class="math inline">\(V\)</span> is called a subspace of <span class="math inline">\(V\)</span> if it satisfies the following three conditions: 1. <span class="math inline">\(W\)</span> contains the zero vector <span class="math inline">\(\mathbf{0}\)</span> of <span class="math inline">\(V\)</span>. 2. <span class="math inline">\(W\)</span> is closed under vector addition, i.e., for any vectors <span class="math inline">\(\mathbf{u}, \mathbf{v} \in W\)</span>, their sum <span class="math inline">\(\mathbf{u} + \mathbf{v}\)</span> is also in <span class="math inline">\(W\)</span>. 3. <span class="math inline">\(W\)</span> is closed under scalar multiplication, i.e., for any vector <span class="math inline">\(\mathbf{u} \in W\)</span> and any scalar <span class="math inline">\(c\)</span>, their product <span class="math inline">\(c\mathbf{u}\)</span> is also in <span class="math inline">\(W\)</span>.</p>
+</section>
+<section id="example-2" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="example-2"><span class="header-section-number">3.2</span> Example</h3>
+<p>Consider the vector space <span class="math inline">\(V = \mathbb{R}^3\)</span> with standard vector addition and scalar multiplication. Let <span class="math inline">\(W\)</span> be the subset of <span class="math inline">\(V\)</span> consisting of all vectors of the form <span class="math inline">\(\begin{bmatrix} x \\ y \\ 0 \end{bmatrix}\)</span>, where <span class="math inline">\(x, y\)</span> are real numbers. We can express <span class="math inline">\(W\)</span> as: <span class="math inline">\(W = \left\{ \begin{bmatrix} x \\ y \\ 0 \end{bmatrix} \, \middle| \, x, y \in \mathbb{R} \right\}\)</span> Then <span class="math inline">\(W\)</span> is a subspace of <span class="math inline">\(V\)</span> because it satisfies the three conditions mentioned above.</p>
+</section>
+<section id="properties-1" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="properties-1"><span class="header-section-number">3.3</span> Properties</h3>
+<p>A subspace is a subset of a vector space that retains the structure of a vector space. Here are some properties of a subspace in relation to a vector space:</p>
+<ol type="1">
+<li>Contains the zero vector: A subspace must contain the zero vector (denoted as <span class="math inline">\(\mathbf{0}\)</span>) of the vector space it is a subset of. This is because the zero vector is required for closure under vector addition and scalar multiplication.</li>
+<li>Closed under vector addition: If <span class="math inline">\(\mathbf{u}, \mathbf{v} \in W\)</span>, then <span class="math inline">\(\mathbf{u} + \mathbf{v} \in W\)</span>.</li>
+<li>Closed under scalar multiplication: If <span class="math inline">\(\mathbf{u} \in W\)</span> and <span class="math inline">\(c\)</span> is a scalar, then <span class="math inline">\(c\mathbf{u} \in W\)</span>.</li>
+</ol>
+<p>These properties provide a way to describe subsets of vector spaces that inherit certain properties from the parent vector space. Subspaces are useful for understanding the structure, properties, and behavior of vector spaces in a more focused and simplified manner. Some reasons why we need subspaces are:</p>
+<ul>
+<li>Simplification and abstraction: Subspaces allow us to simplify the study of vector spaces by focusing on smaller, more manageable subsets that share similar properties. This abstraction can help us understand the fundamental structure and behavior of vector spaces without getting bogged down by the complexity of the entire vector space.</li>
+<li>Study of special cases: Subspaces can represent special cases or special structures within a vector space that are of particular interest.
+<ul>
+<li>For example, subspaces can represent sub-spaces of solutions to linear systems of equations, eigenspaces associated with eigenvalues of matrices, or orthogonal subspaces related to orthogonality and projections.</li>
+</ul></li>
+<li>Applications in various fields: Subspaces have numerous applications in various fields, such as physics, computer graphics, data analysis, signal processing, and optimization, among others. Subspaces provide a mathematical framework for modeling, analyzing, and solving problems in these fields.</li>
+<li>Computational efficiency: Subspaces can be used in algorithms and techniques for solving problems involving vector spaces in a computationally efficient manner. Techniques such as subspace methods, subspace approximation, and subspace projection can be employed to reduce the computational complexity of certain problems by working within lower-dimensional subspaces.</li>
+</ul>
+</section>
+<section id="span" class="level3" data-number="3.4">
+<h3 data-number="3.4" class="anchored" data-anchor-id="span"><span class="header-section-number">3.4</span> Span</h3>
+</section>
+<section id="definition-1" class="level3" data-number="3.5">
+<h3 data-number="3.5" class="anchored" data-anchor-id="definition-1"><span class="header-section-number">3.5</span> Definition</h3>
+<p>The span of a set of vectors <span class="math inline">\({v_1, v_2, \ldots, v_n}\)</span> in a vector space <span class="math inline">\(V\)</span>, denoted by <span class="math inline">\(\text{span}{v_1, v_2, \ldots, v_n}\)</span>, is the set of all possible linear combinations of these vectors. Mathematically, it is defined as:</p>
 <p><span class="math display">\[
-\mathbf{A}\mathbf{A}^{-1} =
-\begin{bmatrix}
-1 &amp; 2 \\
-3 &amp; 4
-\end{bmatrix}
-\begin{bmatrix}
--2 &amp; 1 \\
-\frac{3}{2} &amp; -\frac{1}{2}
-\end{bmatrix} =
-\begin{bmatrix}
-1 &amp; 0 \\
-0 &amp; 1
-\end{bmatrix} = \mathbf{I}
+\text{span}\{\mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_n\} = \left\{ c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \ldots + c_n\mathbf{v}_n | c_1, c_2, \ldots, c_n \in \mathbb{R} \right\}
 \]</span></p>
+<p>where <span class="math inline">\(c_1, c_2, \ldots, c_n\)</span> are scalar coefficients and <span class="math inline">\(\mathbb{R}\)</span> represents the set of real numbers.</p>
+<p>Example: Let’s consider the set of vectors <span class="math inline">\(v_1\)</span>, <span class="math inline">\(v_2\)</span>, and <span class="math inline">\(v_3\)</span> defined as:</p>
+<p><span class="math inline">\(\mathbf{v}_1 = \begin{bmatrix} 1 \ 0 \ 0 \end{bmatrix}, \quad \mathbf{v}_2 = \begin{bmatrix} 0 \ 1 \ 0 \end{bmatrix}, \quad \mathbf{v}_3 = \begin{bmatrix} 0 \ 0 \ 1 \end{bmatrix}\)</span></p>
+<p>The span of these vectors, denoted by <span class="math inline">\(\text{span}{\mathbf{v}_1, \mathbf{v}_2, \mathbf{v}_3}\)</span>, is the set of all possible linear combinations of these vectors, which in this case is the entire three-dimensional vector space <span class="math inline">\(\mathbb{R}^3\)</span>, since any vector in <span class="math inline">\(\mathbb{R}^3\)</span> can be expressed as a linear combination of <span class="math inline">\(\mathbf{v}_1\)</span>, <span class="math inline">\(\mathbf{v}_2\)</span>, and <span class="math inline">\(\mathbf{v}_3\)</span>.</p>
+</section>
+<section id="proporties" class="level3" data-number="3.6">
+<h3 data-number="3.6" class="anchored" data-anchor-id="proporties"><span class="header-section-number">3.6</span> Proporties</h3>
+<ul>
+<li>Span is a subspace: The span of a set of vectors is always a subspace of the vector space in which the vectors belong. This means that it satisfies all the properties of a vector space, including closure under vector addition and scalar multiplication.</li>
+<li>Span is the smallest subspace: The span of a set of vectors is the smallest subspace that contains all the vectors in the set. It is the intersection of all subspaces that contain the vectors, and thus it forms the smallest subspace that spans the set of vectors.</li>
+<li>Span is closed under linear combinations: The span of a set of vectors is closed under linear combinations of the vectors. This means that any linear combination of the vectors in the set will also be in the span.</li>
+<li>Span generates the entire vector space: The span of a set of vectors is capable of generating the entire vector space to which the vectors belong. This means that any vector in the vector space can be expressed as a linear combination of the vectors in the span.</li>
+<li>Span is unique: The span of a set of vectors is unique, meaning that it is uniquely determined by the set of vectors being spanned. However, the span may be different for different sets of vectors.</li>
+</ul>
+<p>These properties make the concept of span important in linear algebra, as it allows us to understand the space spanned by a set of vectors and the relationships between vectors within a vector space.</p>
+<p>The concept of span is important in linear algebra because of:</p>
+<ul>
+<li>Understanding vector space: The span of a set of vectors helps us understand the space that can be generated by those vectors within a vector space. It provides insight into the range of possible values and combinations that can be obtained using the given set of vectors.</li>
+<li>Solving systems of linear equations: Span is closely related to solving systems of linear equations. The solutions to a system of linear equations can be expressed as linear combinations of the vectors in the span of the coefficient matrix. By finding the span of a set of vectors, we can determine the possible solutions to a system of linear equations and understand the relationship between different solutions.</li>
+<li>Basis for vector spaces: The span of a set of vectors can form a basis for a vector space. A basis is a set of linearly independent vectors that span the entire vector space. By finding the span of a set of vectors, we can determine if they form a basis for a vector space, and if so, use them as a foundation for understanding and manipulating vectors within that space.</li>
+<li>Vector space operations: Span is closed under vector space operations, such as vector addition and scalar multiplication. This property allows us to perform operations on vectors within the span and obtain new vectors that are still within the span. It also allows us to express any vector in the vector space as a linear combination of vectors in the span.</li>
+<li>Dimensionality and rank: The span of a set of vectors is closely related to the dimensionality and rank of a vector space. The dimension of a vector space is the number of linearly independent vectors in a basis for that space, and the rank of a matrix is the dimension of the span of its column vectors. Understanding the span of vectors can help us determine the dimensionality and rank of a vector space, which has applications in areas such as data analysis, machine learning, and signal processing.</li>
+</ul>
+<p>Span provides insights into the space spanned by a set of vectors, the relationships between vectors within a vector space, and the possible solutions to systems of linear equations. It also serves as a basis for vector spaces and facilitates vector space operations, and is closely related to the dimensionality and rank of a vector space.</p>
+</section>
+</section>
+<section id="dimensionality-and-rank" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="dimensionality-and-rank"><span class="header-section-number">4</span> Dimensionality and Rank</h2>
+<section id="definition-2" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="definition-2"><span class="header-section-number">4.1</span> Definition</h3>
+<ul>
+<li>The dimensionality of a vector space is defined as the number of linearly independent vectors in its basis.</li>
+<li>The rank of a matrix is defined as the maximum number of linearly independent rows or columns in the matrix.</li>
+</ul>
+</section>
+<section id="example-3" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="example-3"><span class="header-section-number">4.2</span> Example</h3>
+<p>Let <span class="math inline">\(V\)</span> be a vector space with a basis <span class="math inline">\({ \mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_n }\)</span>. The dimensionality of <span class="math inline">\(V\)</span>, denoted as <span class="math inline">\(\text{dim}(V)\)</span>, is the number of linearly independent vectors in its basis, which is equal to <span class="math inline">\(n\)</span>. Let <span class="math inline">\(\mathbf A\)</span> be an <span class="math inline">\(m \times n\)</span> matrix. The rank of <span class="math inline">\(\mathbf A\)</span>, denoted as <span class="math inline">\(\text{rank}(\mathbf A)\)</span>, is the maximum number of linearly independent rows or columns in <span class="math inline">\(\mathbf A\)</span>. It can also be defined as the dimensionality of the column space or row space of <span class="math inline">\(\mathbf A\)</span>.</p>
+</section>
+<section id="properties-2" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="properties-2"><span class="header-section-number">4.3</span> Properties</h3>
+<section id="dimensionality" class="level4" data-number="4.3.1">
+<h4 data-number="4.3.1" class="anchored" data-anchor-id="dimensionality"><span class="header-section-number">4.3.1</span> Dimensionality</h4>
+<ul>
+<li>Dimensionality refers to the number of elements or components in a vector or the size of a vector space.</li>
+<li>The dimensionality of a vector space is always a positive integer.</li>
+<li>Dimensionality is additive, meaning that the dimensionality of the direct sum of vector spaces is equal to the sum of their individual dimensionality.</li>
+<li>A set of vectors is linearly independent if and only if the dimensionality of the vector space they span is equal to the number of vectors in the set.</li>
+</ul>
+</section>
+<section id="rank" class="level4" data-number="4.3.2">
+<h4 data-number="4.3.2" class="anchored" data-anchor-id="rank"><span class="header-section-number">4.3.2</span> Rank</h4>
+<ul>
+<li>The rank of a matrix is the maximum number of linearly independent rows or columns in the matrix.</li>
+<li>The rank of a matrix is always a non-negative integer.</li>
+<li>The rank of a matrix is equal to the dimensionality of its column space and row space.</li>
+<li>The rank of a matrix is invariant under elementary row and column operations.</li>
+<li>The rank of a matrix is less than or equal to the minimum of the number of rows and columns in the matrix.</li>
+</ul>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In some contexts, the term “dimensionality” may also refer to the dimensionality of the column space or row space of a matrix, which is equivalent to the rank of the matrix.</p>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="column-space" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="column-space"><span class="header-section-number">5</span> Column Space</h2>
+<section id="definition-3" class="level3" data-number="5.1">
+<h3 data-number="5.1" class="anchored" data-anchor-id="definition-3"><span class="header-section-number">5.1</span> Definition</h3>
+<p>The column space of a matrix is the subspace spanned by its column vectors. It is denoted by <span class="math inline">\(\text{Col}(\mathbf A)\)</span> or <span class="math inline">\(\text{span}{\mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_n}\)</span>, where <span class="math inline">\(\mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_n\)</span> are the column vectors of the matrix <span class="math inline">\(\mathbf A\)</span>.</p>
+</section>
+<section id="example-4" class="level3" data-number="5.2">
+<h3 data-number="5.2" class="anchored" data-anchor-id="example-4"><span class="header-section-number">5.2</span> Example</h3>
 <p><span class="math display">\[
-\mathbf{A}^{-1}\mathbf{A} =
-\begin{bmatrix} -2 &amp; 1 \\
-\frac{3}{2} &amp; -\frac{1}{2}
-\end{bmatrix}
+\mathbf A=
 \begin{bmatrix}
-1 &amp; 2 \\
-3 &amp; 4
-\end{bmatrix} =
-\begin{bmatrix}
-1 &amp; 0 \\
-0 &amp; 1
-\end{bmatrix} = \mathbf{I}
-\]</span></p>
-<p>Let me give another example and A be a <span class="math inline">\(3x3\)</span> square matrix:</p>
-<p><span class="math display">\[
-\begin{equation*}
-\mathbf{A} = \begin{bmatrix}
-a_{11} &amp; a_{12} &amp; a_{13} \\
-a_{21} &amp; a_{22} &amp; a_{23} \\
-a_{31} &amp; a_{32} &amp; a_{33} \\
-\end{bmatrix}
-\end{equation*}
-\]</span> Then, the inverse of <span class="math inline">\(\mathbf{A}\)</span>, denoted as <span class="math inline">\(\mathbf{A}^{-1}\)</span>, is given by:</p>
-<p><span class="math display">\[
-\begin{equation*}
-\mathbf{A}^{-1} = \frac{1}{\text{det}(\mathbf{A})}\begin{bmatrix}
-a_{22}a_{33}-a_{23}a_{32} &amp; a_{13}a_{32}-a_{12}a_{33} &amp; a_{12}a_{23}-a_{13}a_{22} \\
-a_{23}a_{31}-a_{21}a_{33} &amp; a_{11}a_{33}-a_{13}a_{31} &amp; a_{13}a_{21}-a_{11}a_{23} \\
-a_{21}a_{32}-a_{22}a_{31} &amp; a_{12}a_{31}-a_{11}a_{32} &amp; a_{11}a_{22}-a_{12}a_{21} \\
-\end{bmatrix}
-\end{equation*}
-\]</span></p>
-<p>where <span class="math inline">\(det(\mathbf{A})\)</span> is the determinant of <span class="math inline">\(\mathbf{A}\)</span>.</p>
-<p>For example, let:</p>
-<p><span class="math display">\[
-\begin{equation*}
-\mathbf{A} = \begin{bmatrix}
 1 &amp; 2 &amp; 3 \\
-0 &amp; 1 &amp; 4 \\
-5 &amp; 6 &amp; 0 \\
+4 &amp; 5 &amp; 6 \\
+7 &amp; 8 &amp; 9
 \end{bmatrix}
-\end{equation*}
-\]</span> Then, <span class="math inline">\(det(A)\)</span> = -57, and the inverse of <span class="math inline">\(\mathbf{A}\)</span> is:</p>
-<p><span class="math display">\[
-\begin{equation*}
-\mathbf{A}^{-1} = \frac{1}{-57}\begin{bmatrix}
--24 &amp; 18 &amp; 5 \\
-20 &amp; -15 &amp; -4 \\
--3 &amp; 2 &amp; 1 \\
-\end{bmatrix}
-\end{equation*}
 \]</span></p>
-<p>There are several formulas for finding the inverse of a matrix such as Gauss-Jordan Elimination, Adjoint method, Cramer’s rule, Inverse formula, etc. This topic is going to be handled in the other blogs.</p>
-</section>
-<section id="rank" class="level3" data-number="2.7">
-<h3 data-number="2.7" class="anchored" data-anchor-id="rank"><span class="header-section-number">2.7</span> Rank</h3>
-<p>The rank of a matrix is the dimension of the vector space spanned by its columns (or rows). It is denoted by <span class="math inline">\(\text{rank}(\mathbf{A})\)</span>.</p>
-<p>For example, consider the following matrix:</p>
+<p>The column space of matrix <span class="math inline">\(\mathbf A\)</span>, denoted by <span class="math inline">\(\text{Col}(\mathbf A)\)</span> or <span class="math inline">\(\text{span}\{\mathbf{v}_1, \mathbf{v}_2, \mathbf{v}_3\}\)</span>, is the subspace spanned by its column vectors <span class="math inline">\(\mathbf{v}_1 = [1, 4, 7]^T\)</span>, <span class="math inline">\(\mathbf{v}_2 = [2, 5, 8]^T\)</span>, and <span class="math inline">\(\mathbf{v}_3 = [3, 6, 9]^T\)</span>.</p>
 <p><span class="math display">\[
-\begin{equation*}
-  \mathbf{A} = \begin{bmatrix}
-    1 &amp; 2 &amp; 3\\
-    4 &amp; 5 &amp; 6 \\
-    7 &amp; 8 &amp; 9\\
-  \end{bmatrix}
-\end{equation*}
-\]</span></p>
-<p>The columns of <span class="math inline">\(\mathbf{A}\)</span> are linearly dependent since the third column is equal to the sum of the first two columns. Therefore, the dimension of the vector space spanned by the columns is 2, so the rank of <span class="math inline">\(\mathbf{A}\)</span> is 2.</p>
-</section>
-<section id="trace" class="level3" data-number="2.8">
-<h3 data-number="2.8" class="anchored" data-anchor-id="trace"><span class="header-section-number">2.8</span> Trace</h3>
-<p>The trace of a square matrix <span class="math inline">\(\mathbf{A}\)</span>, denoted by <span class="math inline">\(\mathrm{tr}(\mathbf{A})\)</span>, is defined as the sum of the diagonal elements of <span class="math inline">\(\mathbf{A}\)</span>. In other words, if <span class="math inline">\(\mathbf{A}\)</span> is an <span class="math inline">\(n \times n\)</span> matrix, then its trace is given by:</p>
-<p><span class="math display">\[
-\mathrm{tr}(\mathbf{A})=\sum_{i=1}^{n}a_{ij}
-\]</span></p>
-<p>where <span class="math inline">\(a_{ii}\)</span> denotes the <span class="math inline">\(i\)</span> th diagonal element of <span class="math inline">\(\mathbf{A}\)</span>.</p>
-<p>For example, let <span class="math display">\[
+\text{Col}(\mathbf{A}) = \text{span}\left\{
 \begin{bmatrix}
-  2 &amp; 3 &amp; 1 \\
-  0 &amp; 5 &amp; 2 \\
-  1 &amp; 1 &amp; 4
+1 \\ 4 \\ 7 \\
+\end{bmatrix},
+\begin{bmatrix}
+2 \\ 5 \\ 8 \\
+\end{bmatrix},
+\begin{bmatrix}
+3 \\ 6 \\ 9 \\
+\end{bmatrix}
+\right\}
+\]</span></p>
+</section>
+<section id="properties-3" class="level3" data-number="5.3">
+<h3 data-number="5.3" class="anchored" data-anchor-id="properties-3"><span class="header-section-number">5.3</span> Properties</h3>
+<ul>
+<li>It is a subspace: The column space of a matrix is a subspace of the vector space in which the matrix’s columns reside. This means it is closed under vector addition and scalar multiplication, and contains the zero vector.</li>
+<li>It is spanned by the columns of the matrix: The column space of a matrix is the span of its column vectors. In other words, it is the smallest subspace that contains all the column vectors of the matrix.</li>
+<li>It is the range of the corresponding linear transformation: The column space of a matrix is the range of the linear transformation associated with that matrix. This means it contains all possible output vectors that can be obtained by applying the linear transformation to input vectors.</li>
+<li>It has the same dimension as the rank of the matrix: The dimension of the column space of a matrix is equal to the rank of the matrix. This is known as the column space’s dimensionality property.</li>
+<li>It provides a basis for the row space and null space: The column space of a matrix provides a basis for both the row space and the null space of the matrix. The row space is the orthogonal complement of the null space, and the column space is the orthogonal complement of the left null space.</li>
+<li>It determines the solvability of linear systems: The column space of a coefficient matrix in a system of linear equations determines whether the system has a unique solution, infinitely many solutions, or no solution at all. If the column space spans the entire vector space, the system has a unique solution. If the column space does not span the entire vector space, the system has either infinitely many solutions (if the rank of the matrix is less than the number of variables) or no solution (if the rank of the matrix is less than the number of equations).</li>
+</ul>
+</section>
+</section>
+<section id="row-space" class="level2" data-number="6">
+<h2 data-number="6" class="anchored" data-anchor-id="row-space"><span class="header-section-number">6</span> Row Space</h2>
+<section id="definition-4" class="level3" data-number="6.1">
+<h3 data-number="6.1" class="anchored" data-anchor-id="definition-4"><span class="header-section-number">6.1</span> Definition</h3>
+<p>The row space of a matrix <span class="math inline">\(\mathbf{A}\)</span>, denoted as <span class="math inline">\(\text{Row}(\mathbf{A})\)</span>, is the subspace spanned by the rows of <span class="math inline">\(\mathbf{A}\)</span>.</p>
+<p><span class="math display">\[
+\text{Row}(\mathbf{A}) = \text{span}\{\mathbf{r}_1, \mathbf{r}_2, \ldots, \mathbf{r}_m\}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{r}_1, \mathbf{r}_2, \ldots, \mathbf{r}_m\)</span> are the rows of <span class="math inline">\(\mathbf{A}\)</span>.</p>
+</section>
+<section id="example-5" class="level3" data-number="6.2">
+<h3 data-number="6.2" class="anchored" data-anchor-id="example-5"><span class="header-section-number">6.2</span> Example</h3>
+<p>The row space of <span class="math inline">\(\mathbf{A}\)</span> is the subspace spanned by the rows of <span class="math inline">\(\mathbf{A}\)</span>, which can be expressed as:</p>
+<p><span class="math display">\[
+\text{Row}(\mathbf{A}) = \text{span}\left\{
+\begin{bmatrix}
+1 \\ 2 \\ 3 \\
+\end{bmatrix},
+\begin{bmatrix}
+4 \\ 5 \\ 6 \\
+\end{bmatrix},
+\begin{bmatrix}
+7 \\ 8 \\ 9 \\
+\end{bmatrix}
+\right\}
+\]</span></p>
+</section>
+<section id="properties-4" class="level3" data-number="6.3">
+<h3 data-number="6.3" class="anchored" data-anchor-id="properties-4"><span class="header-section-number">6.3</span> Properties</h3>
+<ul>
+<li>It is a subspace: The row space of a matrix is a subspace of the vector space in which the matrix’s rows reside. This means it is closed under vector addition and scalar multiplication, and contains the zero vector.</li>
+<li>It is spanned by the rows of the matrix: The row space of a matrix is the span of its row vectors. In other words, it is the smallest subspace that contains all the row vectors of the matrix.</li>
+<li>It is the range of the corresponding linear transformation: The row space of a matrix is the range of the linear transformation associated with the transpose of that matrix. This means it contains all possible output vectors that can be obtained by applying the transpose of the linear transformation to input vectors.</li>
+<li>It has the same dimension as the rank of the matrix: The dimension of the row space of a matrix is equal to the rank of the matrix. This is known as the row space’s dimensionality property.</li>
+<li>It provides a basis for the null space and left null space: The row space of a matrix provides a basis for both the null space (kernel) and the left null space (cokernel) of the matrix. The null space is the orthogonal complement of the row space, and the left null space is the orthogonal complement of the column space.</li>
+<li>It determines the row-rank and column-rank equality: The row space of a matrix determines the row-rank and column-rank equality property, which states that the number of linearly independent rows (the row-rank) is equal to the number of linearly independent columns (the column-rank) of the matrix.</li>
+<li>It determines the solvability of linear systems: The row space of a coefficient matrix in a system of linear equations determines whether the system has a unique solution, infinitely many solutions, or no solution at all. If the row space spans the entire vector space, the system has a unique solution. If the row space does not span the entire vector space, the system has either infinitely many solutions (if the rank of the matrix is less than the number of variables) or no solution (if the rank of the matrix is less than the number of equations).</li>
+</ul>
+</section>
+</section>
+<section id="null-space" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="null-space"><span class="header-section-number">7</span> Null Space</h2>
+<p><span class="math display">\[
+\text{Null}(\mathbf{A}) = \left\{ \mathbf{x} \in \mathbb{R}^n \, \middle| \, \mathbf{A}\mathbf{x} = \mathbf{0} \right\}
+\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(\text{Null}\)</span> represents the null space of a matrix,</li>
+<li><span class="math inline">\(\mathbf{A}\)</span> represents the given matrix,</li>
+<li><span class="math inline">\(\mathbf{x}\)</span> represents a vector in the null space of ,</li>
+<li><span class="math inline">\(\mathbb{R}^n\)</span> represents the n-dimensional real vector space, and</li>
+<li><span class="math inline">\(\mathbf{0}\)</span> represents the zero vector.</li>
+</ul>
+<section id="example-6" class="level3" data-number="7.1">
+<h3 data-number="7.1" class="anchored" data-anchor-id="example-6"><span class="header-section-number">7.1</span> Example</h3>
+<p><span class="math display">\[
+\mathbf A=
+\begin{bmatrix}
+1 &amp; 2 &amp; 3 \\
+4 &amp; 5 &amp; 6 \\
+7 &amp; 8 &amp; 9
 \end{bmatrix}
 \]</span></p>
-<p>Then, the trace of <span class="math inline">\(\mathbf{A}\)</span> is <span class="math inline">\(\mathrm{tr}(\mathbf{A}) = 2 + 5 + 4 = 11\)</span></p>
+<p>The null space of <span class="math inline">\(\mathbf{A}\)</span> is the set of all vectors <span class="math inline">\(\mathbf{x} \in \mathbb{R}^3\)</span> that satisfy <span class="math inline">\(\mathbf{A}\mathbf{x} = \mathbf{0}\)</span>.</p>
 </section>
-<section id="eigenvalues-and-eigenvectors" class="level3" data-number="2.9">
-<h3 data-number="2.9" class="anchored" data-anchor-id="eigenvalues-and-eigenvectors"><span class="header-section-number">2.9</span> Eigenvalues and Eigenvectors</h3>
-<p>Let A be an <span class="math inline">\(n × n\)</span> square matrix. A scalar <span class="math inline">\(\lambda\)</span> is called an eigenvalue of <span class="math inline">\(\mathbf A\)</span> if there exists a non-zero vector <span class="math inline">\(\mathbf{v}\)</span> such that <span class="math display">\[
-\mathbf{Av}=\lambda\mathbf{v}
-\]</span></p>
-<p>Such a vector <span class="math inline">\(\mathbf{v}\)</span> is called an eigenvector corresponding to <span class="math inline">\(\lambda\)</span>.</p>
-<p>Example:</p>
-<p>Let <span class="math inline">\(\mathbf A\)</span> be the matrix</p>
-<p>To find the eigenvalues of <span class="math inline">\(\mathbf A\)</span>, we solve the characteristic equation <span class="math inline">\(\text{det}(\mathbf A - \lambda \mathbf I ) = 0\)</span>, where I is the n × n identity matrix.</p>
-<p><span class="math display">\[
-\begin{align*}
-  \text{det}(\mathbf A - \lambda \mathbf I )
-  &amp;=
-    \begin{vmatrix}
-    3 - \lambda &amp; 1 \\
-    1 &amp; 3 - \lambda
-    \end{vmatrix} \\
-  &amp;=
-  (3 - \lambda)(3 - \lambda) - 1 \\
-  &amp;= \lambda^2 - 6\lambda + 8 = 0
-\end{align*}
-\]</span></p>
-<p>Solving this quadratic equation gives us the eigenvalues of <span class="math inline">\(\mathbf A\)</span>: <span class="math inline">\(\lambda_1 = 2\)</span> and <span class="math inline">\(\lambda_2 = 4\)</span>.</p>
-<p>To find the eigenvectors corresponding to <span class="math inline">\(\lambda_1 = 2\)</span>, we solve the equation <span class="math inline">\((\mathbf A - 2 \mathbf I)\mathbf{v} = \mathbf{0}\)</span>, where <span class="math inline">\(\mathbf I\)</span> is the <span class="math inline">\(2 \times 2\)</span> identity matrix.</p>
-<p><span class="math display">\[
-\begin{align*}
-  (\mathbf A - 2 \mathbf I)\mathbf{v} =
-    \begin{bmatrix}
-      1 &amp; 1 \\
-      1 &amp; 1
-    \end{bmatrix}
-  \begin{bmatrix}
-    x \\
-    y
-  \end{bmatrix} =
-  \begin{bmatrix}
-    0 \\
-    0
-  \end{bmatrix}
-\end{align*}
-\]</span></p>
-<p>Solving this system of equations gives us the eigenvectors corresponding to <span class="math inline">\(\lambda_1 = 2\)</span>: <span class="math inline">\(\mathbf{v_1} = \begin{bmatrix} -1 \\ 1 \end{bmatrix}\)</span></p>
-<p>Similarly, for <span class="math inline">\(\lambda_2 = 4\)</span>, we solve the equation <span class="math inline">\((\mathbf A - 4\mathbf I)\mathbf{v}\)</span> = <span class="math inline">\(\mathbf{0}\)</span> to get the eigenvectors corresponding to <span class="math inline">\(\lambda_2 = 4\)</span>: <span class="math inline">\(\mathbf{v_2} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}\)</span></p>
-</section>
-<section id="singular-value-and-singluar-vectors" class="level3" data-number="2.10">
-<h3 data-number="2.10" class="anchored" data-anchor-id="singular-value-and-singluar-vectors"><span class="header-section-number">2.10</span> Singular value and Singluar Vectors</h3>
-<p>The singular value decomposition (SVD) of a matrix <span class="math inline">\(\mathbf A\)</span> is a factorization of <span class="math inline">\(\mathbf A\)</span> into the product of three matrices as follows:</p>
-<p><span class="math display">\[
-\mathbf{A} = \mathbf{U} \mathbf{\Sigma} \mathbf{V}^T
-\]</span> where <span class="math inline">\(\mathbf{U}\)</span> is an <span class="math inline">\(m \times m\)</span> orthogonal matrix, <span class="math inline">\(\mathbf{\Sigma}\)</span> is an <span class="math inline">\(m \times n\)</span> rectangular diagonal matrix with non-negative real numbers on the diagonal, and <span class="math inline">\(\mathbf{V}\)</span> is an <span class="math inline">\(n \times n\)</span> orthogonal matrix.</p>
-<p>The diagonal entries of <span class="math inline">\(\mathbf{\Sigma}\)</span> are called the singular values of <span class="math inline">\(\mathbf{A}\)</span>, denoted as <span class="math inline">\(\sigma_1, \sigma_2, \ldots, \sigma_r\)</span> (where <span class="math inline">\(r\)</span> is the rank of <span class="math inline">\(\mathbf{A}\)</span>), and are arranged in descending order. The columns of <span class="math inline">\(\mathbf{U}\)</span> and <span class="math inline">\(\mathbf{V}\)</span> are called the left and right singular vectors of <span class="math inline">\(\mathbf{A}\)</span>, respectively, and are orthonormal vectors.</p>
-<p>For example, let <span class="math inline">\(\mathbf{A}\)</span> be a 3 by 2 matrix given by:</p>
-<p><span class="math display">\[
-\begin{equation*}
-\mathbf{A} =
-  \begin{bmatrix}
-    1 &amp; 2\\
-    3 &amp; 4\\
-    5 &amp; 6
-  \end{bmatrix}
-\end{equation*}
-\]</span></p>
-<p>The SVD of <span class="math inline">\(\mathbf{A}\)</span> is given by:</p>
-<p><span class="math display">\[
-\begin{equation*}
-\mathbf{A} = \mathbf{U} \mathbf{\Sigma} \mathbf{V}^T =
-\begin{bmatrix}
-  -0.23 &amp; -0.53 &amp; -0.81\\
-  -0.53 &amp; -0.72 &amp; 0.45\\
-  -0.81 &amp; 0.45 &amp; -0.38
-\end{bmatrix}
-\begin{bmatrix}
-  9.53 &amp; 0\\
-  0 &amp; 0.90\\
-  0 &amp; 0
-\end{bmatrix}
-\begin{bmatrix}
-  -0.62 &amp; -0.78\\
-  -0.78 &amp; 0.62
-\end{bmatrix}^T
-\end{equation*}
-\]</span></p>
-<p>where the left singular vectors of <span class="math inline">\(\mathbf{A}\)</span> are the columns of <span class="math inline">\(\mathbf{U}\)</span>, the right singular vectors of <span class="math inline">\(\mathbf{A}\)</span> are the columns of <span class="math inline">\(\mathbf{V}\)</span>, and the singular values of <span class="math inline">\(\mathbf{A}\)</span> are the diagonal entries of <span class="math inline">\(\boldsymbol{\Sigma}\)</span>.</p>
+<section id="properties-5" class="level3" data-number="7.2">
+<h3 data-number="7.2" class="anchored" data-anchor-id="properties-5"><span class="header-section-number">7.2</span> Properties</h3>
+<p>The null space of a matrix, also known as the kernel space, is the set of all vectors that are mapped to the zero vector by the linear transformation associated with the matrix.</p>
 <ul>
-<li>연립 방정식을 행렬의 곱으로 나타내보기 <span class="math display">\[\begin{matrix}x_1+2y_1=4\\2x_1+5y_1=9\end{matrix} \quad \quad \quad \begin{matrix}x_2+2y_2=3\\2x_2+5y_2=7\end{matrix}\]</span> <span class="math display">\[ \begin{bmatrix} 1 &amp; 2 \\ 2 &amp; 5 \end{bmatrix} \begin{bmatrix} x_1 &amp; x_2 \\ y_1 &amp; y_2 \end{bmatrix} = \begin{bmatrix} 4 &amp; 9 \\ 3 &amp; 7 \end{bmatrix}\]</span></li>
-<li>중요한 사실(….당연한 사실?)
-<ul>
-<li>곱셈의 왼쪽 행렬의 열 수와, 오른쪽 행렬의 행 수가 같아야 가능함
-<ul>
-<li><span class="math inline">\(A_{m \times n} \times B_{o \times p}\)</span> 에서 <span class="math inline">\(n = o\)</span> 여야 곱셈 성립</li>
-</ul></li>
-<li>곱셈의 결과 행렬의 크기 = 곱셈의 왼쪽 행렬의 행 수 <span class="math inline">\(\times\)</span> 곱셈의 오른쪽 행렬의 열 수
-<ul>
-<li><span class="math inline">\(A_{m \times n} \times B_{o \times p} = C_{m \times p}\)</span></li>
-</ul></li>
-<li>교환법칙(Commutative property)이 성립하지 않음
-<ul>
-<li><span class="math inline">\(AB \neq BA\)</span></li>
-</ul></li>
-</ul></li>
-<li>행렬 곱셈의 여러가지 관점
-<ul>
-<li>내적으로 바라보기 <span class="math display">\[ A = \begin{bmatrix} \mathbf{a_1^T} \\ \mathbf{a_2^T} \\ \vdots \\ \mathbf{a_m^T} \end{bmatrix} \]</span> <span class="math display">\[ AB = \begin{bmatrix} \mathbf{a_1^T} \\ \mathbf{a_2^T} \\ \vdots \\ \mathbf{a_m^T} \end{bmatrix} \begin{bmatrix} \mathbf{b_1} &amp; \mathbf{b_2} &amp; \cdots &amp; \mathbf{b_m} \end{bmatrix} = \begin{bmatrix} \mathbf{a_1^T b_1} &amp; \mathbf{a_1^T b_2} &amp; \cdots &amp; \mathbf{a_1^T b_m} \\ \mathbf{a_2^T b_1} &amp; \mathbf{a_2^T b_2} &amp; \cdots &amp; \mathbf{a_2^T b_m} \\ \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots \\ \mathbf{a_m^T b_1} &amp; \mathbf{a_m^T b_2} &amp; \cdots &amp; \mathbf{a_m^T b_m} \end{bmatrix}\]</span></li>
-<li>rank-1 matrix의 합 (또 안가르쳐준 개념 먼저 사용중…..-_-) <span class="math display">\[AB = \begin{bmatrix} \mathbf{a_1} &amp; \mathbf{a_2} &amp; \cdots &amp; \mathbf{a_m} \end{bmatrix} \begin{bmatrix} \mathbf{b_1^T} \\ \mathbf{b_2^T} \\ \vdots \\ \mathbf{b_m^T} \end{bmatrix} = \mathbf{a_1 b_1^T} + \mathbf{a_2 b_2^T} + \cdots + \mathbf{a_m b_m^T}\]</span></li>
-<li>column space로 바라보기 <span class="math display">\[A\mathbf{x} = \begin{bmatrix} \mathbf{a_1} &amp; \mathbf{a_2} &amp; \cdots &amp; \mathbf{a_m} \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_m \end{bmatrix} = \mathbf{a_1} x_1 + \mathbf{a_2} x_2 + \cdots + \mathbf{a_m} x_m \]</span> (스칼라배의 합)
-<ul>
-<li><span class="math inline">\(A = \begin{bmatrix} 1 &amp; 0 \\ 0 &amp; 1 \end{bmatrix}\)</span> 는 2차원 좌표평면의 모든 점을, <span class="math inline">\(A=\begin{bmatrix} 1 &amp; 0 &amp; 0 \\ 0 &amp; 1 &amp; 0 \\ 0 &amp; 0 &amp; 1 \end{bmatrix}\)</span>은 3차원 좌표평면의 모든 점 표현 가능</li>
-<li><span class="math inline">\(AB = A \begin{bmatrix} \mathbf{b_1} &amp; \mathbf{b_2} &amp; \cdots &amp; \mathbf{b_m} \end{bmatrix} = \begin{bmatrix} A \mathbf{b_1} &amp; A \mathbf{b_2} &amp; \cdots &amp; A \mathbf{b_m} \end{bmatrix}\)</span></li>
-<li>column space: A의 column vector로 만들 수 있는 부분 공간</li>
-</ul></li>
-<li>row space로 바라보기 <span class="math display">\[\mathbf{x^T}A = \begin{bmatrix} x_1 &amp; x_2 &amp; \cdots &amp; x_m \end{bmatrix} \begin{bmatrix} \mathbf{a_1^T} \\ \mathbf{a_2^T} \\ \vdots \\ \mathbf{a_m^T} \end{bmatrix} = x_1 \mathbf{a_1^T} + x_2 \mathbf{a_2^T} + \cdots + x_m \mathbf{a_m^T} \]</span></li>
-</ul></li>
+<li>Contains the zero vector: The null space always contains the zero vector, as any matrix multiplied by the zero vector results in the zero vector.</li>
+<li>Subspace property: The null space is a subspace of the vector space from which the vectors are drawn. This means that it is closed under vector addition and scalar multiplication. In other words, if two vectors are in the null space, their sum and any scalar multiple of them will also be in the null space.</li>
+<li>Dimensionality: The dimension of the null space is equal to the number of linearly independent solutions to the homogeneous linear system associated with the matrix. This is known as the nullity of the matrix.</li>
+<li>Basis: The null space has a basis consisting of linearly independent vectors that span the entire null space. This basis is used to represent all vectors in the null space as linear combinations of the basis vectors.</li>
+<li>Relationship to solvability: The null space is directly related to the solvability of a system of linear equations. If the null space contains only the zero vector, the system has a unique solution. If the null space contains non-zero vectors, the system has infinitely many solutions, and the null space vectors represent the general solutions.</li>
+<li>Orthogonal complement of row space: The null space is orthogonal to the row space of the matrix. This means that any vector in the null space is orthogonal to every vector in the row space, and vice versa.</li>
+<li>Relationship to matrix rank: The dimension of the null space, also known as the nullity, is related to the rank of the matrix through the rank-nullity theorem. The rank of the matrix plus the nullity of the matrix is equal to the number of columns in the matrix.</li>
+<li>Computation: The null space can be computed by finding the solutions to the homogeneous linear system <span class="math inline">\(\mathbf{Ax} = \mathbf{0}\)</span>, where <span class="math inline">\(\mathbf{A}\)</span> is the coefficient matrix of the system of linear equations.</li>
 </ul>
 </section>
 </section>
-<section id="열공간column-space" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="열공간column-space"><span class="header-section-number">3</span> 열공간(Column Space)</h2>
-<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/g0eaDeVRdZk" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
+<section id="column-space-vs-row-space-vs-null-space" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="column-space-vs-row-space-vs-null-space"><span class="header-section-number">8</span> Column Space vs Row Space vs Null Space</h2>
+<p>While both column space and row space are subspaces associated with a matrix, they serve different roles in linear algebra.</p>
+<section id="column-space-vs-row-space" class="level3" data-number="8.1">
+<h3 data-number="8.1" class="anchored" data-anchor-id="column-space-vs-row-space"><span class="header-section-number">8.1</span> Column Space vs Row Space</h3>
 <ul>
-<li>column space: column vector 들이 span 하는 space
-<ul>
-<li><span class="math inline">\(A\)</span>의 column space = <span class="math inline">\(C(A)\)</span> 또는 <span class="math inline">\(range(A)\)</span></li>
-</ul></li>
-<li>span: vector들의 linear combination 으로 나타낼 수 있는 모든 vector를 모은 집합
-<ul>
-<li>vector에 따라, 점일수도 선일수도 평면일 수도 있음</li>
-<li>vector space를 이 vector들이 span하는 space → column space는 행렬의 열들이 span하는 space</li>
-</ul></li>
-<li>vector의 선형 결합(linear combination): vector에 스칼라배를 해서 더하는 것
-<ul>
-<li><span class="math inline">\(\mathbf{v_1}\)</span> 과 <span class="math inline">\(\mathbf{v_2}\)</span>의 linear combination으로 2차원 좌표평면 나타내기 <img src="images/chap02_09.PNG" class="img-fluid"></li>
-</ul></li>
+<li>Dimensionality: The dimensionality of the column space and row space can differ. The dimension of the column space is determined by the number of linearly independent columns, which is also known as the rank of the matrix. On the other hand, the dimension of the row space is determined by the number of linearly independent rows of the matrix, which may not necessarily be the same as the rank of the matrix.</li>
+<li>Basis and Span: The column space is typically used to find a basis for the range (output space) of a linear transformation associated with the matrix, while the row space is used to find a basis for the null space (kernel) and left null space (cokernel) of the matrix. The column space spans the range of the linear transformation, while the row space spans the orthogonal complement of the null space and left null space.</li>
+<li>Solvability of linear systems: The row space of the coefficient matrix in a system of linear equations determines the solvability of the system, while the column space is not directly related to the solvability. Specifically, if the row space spans the entire vector space, the system has a unique solution. If the row space does not span the entire vector space, the system may have infinitely many solutions or no solution. The column space, on the other hand, does not directly determine the solvability of the system.</li>
+<li>Transpose relationship: The row space of a matrix is related to the range of the linear transformation associated with the transpose of the matrix, while the column space is directly related to the range of the original matrix. This means that the row space and column space are related through the transpose operation, but they are not identical.</li>
 </ul>
 </section>
-<section id="선형-독립linear-independent" class="level2" data-number="4">
-<h2 data-number="4" class="anchored" data-anchor-id="선형-독립linear-independent"><span class="header-section-number">4</span> 선형 독립(Linear Independent)</h2>
-<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/mOOI4-BfjGQ" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-<p>…and also see</p>
-<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/9F4PZ_1orF0" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-<ul>
-<li>선형 독립(linearly independent)인 vectors: (선형 결합을 통해) 더 고차원을 span할 수 있게 해줌</li>
-<li>orthogonal 하면 independent
-<ul>
-<li>but independent해도 항상 orthogonal하지는 않음 (Independent &gt; Orthogonal)</li>
-</ul></li>
-<li>definition: <span class="math inline">\(a_1 \mathbf{v_1} + a_2 \mathbf{v_2} + a_3 \mathbf{v_3} \cdots a_n \mathbf{v_n} = \mathbf{0}\)</span> 를 만족하는 <span class="math inline">\(a_1, a_2, a_3, \cdots a_n\)</span> 이 <span class="math inline">\(a_1 = a_2 = a_3 = \cdots = a_n = 0\)</span> 밖에 없을때
-<ul>
-<li><span class="math inline">\(\mathbf{0}\)</span>는 모든 elements가 <span class="math inline">\(0\)</span>인 벡터</li>
-<li>예: <span class="math inline">\(\begin{bmatrix} 1 \\ 1 \end{bmatrix}\)</span>, <span class="math inline">\(\begin{bmatrix} 2 \\ 2 \end{bmatrix}\)</span> 는 <span class="math inline">\(-2 \begin{bmatrix} 1 \\ 1 \end{bmatrix} + 1 \begin{bmatrix} 2 \\ 2 \end{bmatrix} = \begin{bmatrix} 0 \\ 0 \end{bmatrix}\)</span> 이 되므로, linearly independent 하지 않음</li>
-<li>independent한 vector 들의 수 = 표현할 수 있는 차원의 dimension</li>
-</ul></li>
-</ul>
+<section id="null-space-1" class="level3" data-number="8.2">
+<h3 data-number="8.2" class="anchored" data-anchor-id="null-space-1"><span class="header-section-number">8.2</span> Null Space</h3>
+<p>Null space: The null space of a matrix is the set of all vectors that are mapped to the zero vector by the linear transformation associated with the matrix. It represents the subspace of the vector space that consists of solutions to the homogeneous linear system <span class="math inline">\(\mathbf{Ax} = \mathbf{0}\)</span>, where <span class="math inline">\(\mathbf{A}\)</span> is the coefficient matrix of the system of linear equations.</p>
 </section>
-<section id="기저basis" class="level2" data-number="5">
-<h2 data-number="5" class="anchored" data-anchor-id="기저basis"><span class="header-section-number">5</span> 기저(basis)</h2>
+<section id="the-relationships-between-these-spaces" class="level3" data-number="8.3">
+<h3 data-number="8.3" class="anchored" data-anchor-id="the-relationships-between-these-spaces"><span class="header-section-number">8.3</span> The relationships between these spaces</h3>
 <ul>
-<li>주어진 vector space를 span하는 linearly independent한 vectors</li>
-<li>어떤 공간을 이루는 필수적인 구성요소</li>
-<li>orthogonal 하면 orthogonal basis</li>
-<li>예: 2차원 좌표평면에 대해
-<ul>
-<li><span class="math inline">\(\begin{bmatrix} 1 \\ 0 \end{bmatrix}\)</span>, <span class="math inline">\(\begin{bmatrix} 0 \\ 1 \end{bmatrix}\)</span> : orthogonal basis</li>
-<li><span class="math inline">\(\begin{bmatrix} 1 \\ 0 \end{bmatrix}\)</span>, <span class="math inline">\(\begin{bmatrix} 1 \\ 1 \end{bmatrix}\)</span> : orthogonal 하지 않은 basis</li>
-<li><span class="math inline">\(\begin{bmatrix} 1 \\ 0 \end{bmatrix}\)</span>, <span class="math inline">\(\begin{bmatrix} 2 \\ 0 \end{bmatrix}\)</span> : linearly independent 하지 않으므로 basis 아님</li>
-</ul></li>
-</ul>
-</section>
-<section id="항등행렬identity-matrix-역행렬inverse-matrix-대각행렬diagonal-matrix-직교행렬orthogonal-matrix" class="level2" data-number="6">
-<h2 data-number="6" class="anchored" data-anchor-id="항등행렬identity-matrix-역행렬inverse-matrix-대각행렬diagonal-matrix-직교행렬orthogonal-matrix"><span class="header-section-number">6</span> 항등행렬(identity matrix), 역행렬(inverse matrix), 대각행렬(Diagonal Matrix), 직교행렬(orthogonal matrix)</h2>
-<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/XqOvyfMUAwA" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-<section id="identity-matrix항등행렬" class="level3" data-number="6.1">
-<h3 data-number="6.1" class="anchored" data-anchor-id="identity-matrix항등행렬"><span class="header-section-number">6.1</span> Identity matrix(항등행렬)</h3>
-<ul>
-<li>항등원: 임의의 원소에 대해 연산하면 자기 자신이 나오게 하는 원소 (by namu.wiki)
-<ul>
-<li>실수에서 곱셈의 항등원은 1</li>
-</ul></li>
-<li>행렬의 항등원: 항등행렬(<span class="math inline">\(I\)</span>) <span class="math display">\[I = \begin{bmatrix} 1 &amp; 0 &amp; \cdots &amp; 0 \\ 0 &amp; 1 &amp; \cdots &amp; 0 \\ \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots \\ 0 &amp; 0 &amp; \cdots &amp; 1 \end{bmatrix}\]</span>
-<ul>
-<li><span class="math inline">\(A_{m \times n} \times I_{n \times n = n} = A_{m \times n}\)</span></li>
-<li><span class="math inline">\(I_{m \times m = m} \times A_{m \times n} = A_{m \times n}\)</span></li>
-</ul></li>
-</ul>
-</section>
-<section id="sec-inv" class="level3" data-number="6.2">
-<h3 data-number="6.2" class="anchored" data-anchor-id="sec-inv"><span class="header-section-number">6.2</span> Inverse matrix(역행렬)</h3>
-<ul>
-<li>역원: 연산 결과 항등원이 나오게 하는 연소
-<ul>
-<li>실수에서 곱셈의 역원은 지수의 부호가 반대인 역수 (by namu.wiki): <span class="math inline">\(a \times a^{-1} = 1\)</span></li>
-</ul></li>
-<li>행렬의 역원: 역행렬(<span class="math inline">\(A^{-1}\)</span>) <span class="math display">\[A \times A^{-1} = I , A^{-1} \times A = I\]</span>
-<ul>
-<li>존재하지 않는 경우도 있음</li>
-<li>존재하면 Invertible(nonsingular, nondegenerate) matrix라고 불림
-<ul>
-<li>존재하지 않으면 singular, degenerate라고 불림</li>
-</ul></li>
-<li>square matrix(정사각행렬, <span class="math inline">\(m = n\)</span>)은 특수한 경우를 제외하면 역행렬이 항상 존재
-<ul>
-<li>역행렬이 존재하지 않는특수한 경우: (나중에 배울) determinant가 0인 경우</li>
-</ul></li>
-<li><span class="math inline">\(m \neq n\)</span>인 행렬의 경우에는 역행렬이 존재하지 않음
-<ul>
-<li>다만, 경우에 따라 <span class="math inline">\(A \times A^{-1} = I\)</span> 를 만족하거나(right inverse), <span class="math inline">\(A^{-1} \times A = I\)</span>를 만족하는(left inverse)는 <span class="math inline">\(A^{-1}\)</span>이 존재함</li>
-</ul></li>
-<li>연립 방정식을 matrix로 나타냈을 때, 역행렬을 이용해서 해를 찾을 수 있음 <span class="math display">\[A\mathbf{x} = \mathbf{b} \Rightarrow A^{-1}A\mathbf{x} = A^{-1}\mathbf{b} \Rightarrow I\mathbf{x} = A^{-1}\mathbf{b} \Rightarrow \mathbf{x} = A^{-1}\mathbf{b}\]</span></li>
-</ul></li>
-</ul>
-</section>
-<section id="diagonal-matrix대각행렬" class="level3" data-number="6.3">
-<h3 data-number="6.3" class="anchored" data-anchor-id="diagonal-matrix대각행렬"><span class="header-section-number">6.3</span> Diagonal Matrix(대각행렬)</h3>
-<ul>
-<li>diagonal element(대각 원소)외의 모든 elements(off-diagonal elements)가 0인 matrix <span class="math display">\[ D = Diag(\mathbf{a}) = \begin{bmatrix} a_{1,1} &amp; 0 &amp; \cdots &amp; 0 \\ 0 &amp; a_{2,2} &amp; \cdots &amp; 0 \\ \vdots  &amp; \vdots  &amp; \ddots &amp; \vdots \\ 0 &amp; 0 &amp; \cdots &amp; a_{n,n} \end{bmatrix}\]</span>
-<ul>
-<li>identity matrix는 diagonal matrix</li>
-<li>diagnomal matrix는 symmetric matrix 이기도 함</li>
-<li>보통은 square matrix에서 주로 사용됨
-<ul>
-<li>square matrix가 아니면서 diagonal matrix인 경우: rectangular diagonal matrix</li>
-</ul></li>
-</ul></li>
-</ul>
-</section>
-<section id="orthogonal-matrix직교행렬-orthonomal-matrix" class="level3" data-number="6.4">
-<h3 data-number="6.4" class="anchored" data-anchor-id="orthogonal-matrix직교행렬-orthonomal-matrix"><span class="header-section-number">6.4</span> Orthogonal matrix(직교행렬, orthonomal matrix)</h3>
-<ul>
-<li>행렬의 각 columns들이 orthonomal vectors (서로 수직하면서 unit vectors) <span class="math display">\[A A^T = A^T A = I\]</span></li>
-<li>identity matrix는 orthogonal matrix</li>
-<li>square matrix에서만 정의됨</li>
-<li>Orthogonal matrix인 <span class="math inline">\(A\)</span>이면 <span class="math inline">\(A^{-1} = A^{T}\)</span>
-<ul>
-<li>각 columns에서 자기 자신과의 내적 = 1, 다른 column과의 내적 = 0임</li>
-</ul></li>
-<li>complex matrix(복소수 행렬)에서는 unitary matrix라고 부름</li>
-</ul>
-</section>
-</section>
-<section id="계수rank" class="level2" data-number="7">
-<h2 data-number="7" class="anchored" data-anchor-id="계수rank"><span class="header-section-number">7</span> 계수(Rank)</h2>
-<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/HMST0Yc7EXE" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-<ul>
-<li>rank: 행렬이 가지는 independent한 columns의 수 = column space의 dimension = row space의 dimension</li>
-<li>independent한 column의 수 = independent한 행의 수: <span class="math inline">\(rank(A) = rank(A^T)\)</span>
-<ul>
-<li>proof: <a href="https://en.wikipedia.org/wiki/Rank_%28linear_algebra%29#Proofs_that_column_rank_=_row_rank">Wikipedia</a></li>
-</ul></li>
-<li>예: <span class="math display">\[\begin{bmatrix} 1 &amp; 2 &amp; 3 \\ 0 &amp; 0 &amp; 0 \end{bmatrix} \Rightarrow rank=1\]</span> <span class="math display">\[\begin{bmatrix} 1 &amp; 0 &amp; 1 \\ 0 &amp; 1 &amp; 1 \end{bmatrix} \Rightarrow rank=2\]</span></li>
-<li><span class="math inline">\(A_{m \times n}\)</span> 의 최대 랭크는 <span class="math inline">\(min\{m,n\}\)</span>
-<ul>
-<li><span class="math inline">\(rank(A) &lt; min\{m,n\}\)</span> 면 rank-deficient, <span class="math inline">\(rank(A) = min\{m,n\}\)</span>면 full (row/column) rank</li>
-</ul></li>
-</ul>
-</section>
-<section id="영공간null-space" class="level2" data-number="8">
-<h2 data-number="8" class="anchored" data-anchor-id="영공간null-space"><span class="header-section-number">8</span> 영공간(Null space)</h2>
-<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/Eizc9TSRYMQ" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-<ul>
-<li><span class="math inline">\(A\mathbf{x}= \mathbf{0}\)</span> 을 만족하는 <span class="math inline">\(\mathbf{x}\)</span>의 집합
-<ul>
-<li>column space 관점에서 보기: <span class="math inline">\(A\mathbf{x} = x_1 \mathbf{a_1} + x_2 \mathbf{a_2} + \cdots + x_n \mathbf{a_n} = \mathbf{0}\)</span></li>
-<li>null space에 항상 들어가는 <span class="math inline">\(\mathbf{x} = \begin{bmatrix} 0 \\ 0 \\ \vdots \\ 0 \end{bmatrix}\)</span> : trivial solution
-<ul>
-<li>모든 columns이 다 lienarly independent 하면, null space에는 위의 벡터 <span class="math inline">\(\mathbf{x}=\mathbf{0}\)</span>하나 밖에 없음</li>
-</ul></li>
-</ul></li>
-<li><span class="math inline">\(\mathbf{x}=\mathbf{0}\)</span> 가 아닌 vector가 null space에 있으면, 스칼라배(constant <span class="math inline">\(c\)</span>에 대해 <span class="math inline">\(c \mathbf{x}\)</span>) 역시 null space에 포함됨</li>
-<li>혼동 주의! null space는 column space의 일부가 아님
-<ul>
-<li>row vector의 차원이 null space가 존재하는 공간</li>
-</ul></li>
-<li>rank와 null space의 dimension의 합은 항상 matrix의 column의 수
-<ul>
-<li><span class="math inline">\(A_{m \times n}\)</span>에 대해, <span class="math inline">\(dim(N(A)) = n - r\)</span>
-<ul>
-<li>모든 columns이 다 lienarly independent 하면 null space는 0차원(점)</li>
-</ul></li>
-<li>null space는 row space와 수직한 space
-<ul>
-<li><span class="math inline">\(A\mathbf{x}= \mathbf{0}\)</span> : 각각 모든 행과 내적해서 0, → 행들의 linear combination과 내적해도 0</li>
-<li>rank는 row space의 dimension → row space의 dimension(<span class="math inline">\(dim(R(A))\)</span>)과 null space의 dimension(<span class="math inline">\(dim(N(A))\)</span>)의 합이 <span class="math inline">\(n\)</span></li>
-<li><span class="math inline">\(\mathbb{R^n}\)</span> 공간에 표현: <img src="images/chap02_10.PNG" class="img-fluid">
-<ul>
-<li>겹친 점: 영벡터</li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li>left null space: <span class="math inline">\(\mathbf{x^T} A = \mathbf{0^T}\)</span> 인 <span class="math inline">\(\mathbf{x}\)</span>
-<ul>
-<li>위의 성질을 row에 대해 적용
-<ul>
-<li>m 차원에 놓인 벡터</li>
-<li>dimension: <span class="math inline">\(dim(N_L(A)) = m - r\)</span></li>
-<li>column space와 수직: <span class="math inline">\(dim(N_L(A)) +dim(C(A)) = m\)</span></li>
-</ul></li>
-</ul></li>
-<li><span class="math inline">\(R(A)\)</span>에 있는 vector <span class="math inline">\(\mathbf{x_r}\)</span> 와 <span class="math inline">\(N(A)\)</span>에 있는 vector <span class="math inline">\(\mathbf{x_n}\)</span>에 대해:
-<ul>
-<li><span class="math inline">\(\mathbf{x_r}\)</span>에 <span class="math inline">\(A\)</span>를 곱하면 column space로 감</li>
-<li><span class="math inline">\(\mathbf{x_n}\)</span>에 <span class="math inline">\(A\)</span>를 곱하면 $</li>
-<li><span class="math inline">\(A(\mathbf{x_r} +\mathbf{x_n}) = A\mathbf{x_r} + A\mathbf{x_n} = A\mathbf{x_r} = \mathbf{b}\)</span></li>
-</ul></li>
-</ul>
-</section>
-<section id="ax-b의-해의-수" class="level2" data-number="9">
-<h2 data-number="9" class="anchored" data-anchor-id="ax-b의-해의-수"><span class="header-section-number">9</span> Ax = b의 해의 수</h2>
-<div class="quarto-video ratio ratio-16x9"><iframe src="https://www.youtube.com/embed/nNI2TlD598c" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen=""></iframe></div>
-<ul>
-<li><p>full column rank 일때</p>
-<ul>
-<li><span class="math inline">\(\mathbf{b}\)</span>가 column space(<span class="math inline">\(C(A)\)</span>)안에 있으면 해가 하나</li>
-<li><span class="math inline">\(\mathbf{b}\)</span>가 column space(<span class="math inline">\(C(A)\)</span>)안에 없으면 해가 없음 <img src="images/chap02_11.PNG" class="img-fluid"></li>
-</ul></li>
-<li><p>full row rank 일때</p>
-<ul>
-<li><span class="math inline">\(\mathbf{b}\)</span>는 항상 column space 안에 있음: 무한의 해를 가짐</li>
-<li>임의의 특정한 해(particular solution) <span class="math inline">\(\mathbf{x_p}\)</span>와 null space의 vector <span class="math inline">\(\mathbf{x_n}\)</span>에 대해, <span class="math inline">\(A(\mathbf{x_p} +\mathbf{x_n})=\mathbf{b}\)</span>
-<ul>
-<li>즉, <span class="math inline">\(\mathbf{x_p} +\mathbf{x_n}\)</span> 도 해가 됨: complete solution
-<ul>
-<li>null space는 무한하므로, 해도 무한함</li>
-</ul></li>
-</ul></li>
-</ul></li>
-<li><p>full rank 일때(square matrix): 해가 하나 존재 (<span class="math inline">\(\mathbf{x} = A^{-1}\)</span>$)</p></li>
-<li><p>rank-deficient 일때</p>
-<ul>
-<li><span class="math inline">\(\mathbf{b}\)</span>가 column space(<span class="math inline">\(C(A)\)</span>)안에 있으면 무한한 해를 가짐</li>
-<li><span class="math inline">\(\mathbf{b}\)</span>가 column space(<span class="math inline">\(C(A)\)</span>)안에 없으면 해가 없음</li>
-</ul></li>
+<li>The column space and row space are related, as they are orthogonal complements of each other. This means that any vector in the row space is orthogonal to any vector in the null space, and vice versa. This relationship is known as the row-space-null-space decomposition.</li>
+<li>The dimension of the column space is equal to the rank of the matrix, which is the maximum number of linearly independent columns or rows. Similarly, the dimension of the row space is also equal to the rank of the matrix.</li>
+<li>The null space is orthogonal to both the column space and the row space. This means that any vector in the null space is orthogonal to any vector in the column space and the row space.</li>
+<li>The null space is useful in determining the solvability of a system of linear equations. If the null space contains only the zero vector, the system has a unique solution. If the null space contains non-zero vectors, the system has infinitely many solutions.</li>
 </ul>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

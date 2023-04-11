@@ -474,12 +474,12 @@ Let's say we have a dataset with three variables, $\mathbf{x}_1, \mathbf{x}_2, \
 
 $$
 \begin{aligned}
-\operatorname{Cov}(\mathbf{X}) &= \frac{1}{m-1}(\mathbf{X} - \bar{\mathbf{X}})^T(\mathbf{X} - \bar{\mathbf{X}})\\
+\operatorname{Cov}(\mathbf{X}) &= \frac{1}{m-1}\sum_{i=1}^{m}(\mathbf x_i - \bar{\mathbf x}_i)^T(\mathbf x_i - \bar{\mathbf x}_i)\\
 &=\frac{\tilde{\mathbf X}^T\tilde{\mathbf X}}{m-1}
 \end{aligned}
 $$
 
-where $\mathbf{X}$ is the dataset matrix, $\bar{x}$ is the mean of each variable computed along the rows, and $(\mathbf{X} - \bar{\mathbf{X}})^T$ is the transpose of the centered dataset matrix. The covariance matrix $\operatorname{Cov}(\mathbf{X})$ will be a $3 \times 3$ matrix, with the $(i, j)$ th entry representing the covariance between the $i$ th and $j$ th variables in the dataset.
+where $\mathbf{X}$ is the dataset matrix, $\bar{x}$ is the mean of each variable computed along the rows, and $(\mathbf{x_i} - \bar{\mathbf{x_i}})^T$ is the transpose of the centered dataset matrix. The covariance matrix $\operatorname{Cov}(\mathbf{X})$ will be a $3 \times 3$ matrix, with the $(i, j)$ th entry representing the covariance between the $i$ th and $j$ th variables in the dataset.
 
 ```{r}
 #| echo: true
@@ -519,9 +519,9 @@ var(X) #=cov(X)
 
 ### Positive Definite Matrix
 
-A symmetric matrix $A$ is positive definite if and only if the quadratic form $f(\mathbf{x})=\mathbf{x}^T A \mathbf{x}$ is positive for all nonzero vectors $\mathbf{x}$.
+A symmetric matrix $\mathbf{A}$ is positive definite if and only if the quadratic form $f(\mathbf{x})=\mathbf{x}^T \mathbf{A} \mathbf{x}$ is positive for all nonzero vectors $\mathbf{x}$.
 
-To see why this is true, consider the eigenvalue decomposition of $A$, which can be written as $A = Q \Lambda Q^T$, where $Q$ is an orthogonal matrix and $\Lambda$ is a diagonal matrix containing the eigenvalues of $A$. Then, for any nonzero vector $\mathbf{x}$, 
+To see why this is true, consider the eigenvalue decomposition of $\mathbf{A}$, which can be written as $\mathbf{A} = \mathbf{Q} \Lambda \mathbf{Q}^T$, where $\mathbf{Q}$ is an orthogonal matrix and $\Lambda$ is a diagonal matrix containing the eigenvalues of $\mathbf{A}$. Then, for any nonzero vector $\mathbf{x}$, 
 
 $$
 \begin{aligned}
@@ -531,11 +531,11 @@ $$
 \end{aligned}
 $$
 
-where $y_i = (\mathbf{x}^T Q)_i$ is the $i$th coordinate (i.e., a scalar value that represents the position of a point or a vector relative to a chosen basis) of $\mathbf{x}^T Q$ and $n$ is the dimension of $\mathbf{x}$ and $A$. Note that since $Q$ is orthogonal, we have $Q^T Q = I$, so $y_i = \mathbf{q}_i^T \mathbf{x}$, where $\mathbf{q}_i$ is the $i$th column of $Q$. Therefore, the quadratic form $f(\mathbf{x}) = \mathbf{x}^T A \mathbf{x}$ can be written in terms of the eigenvalues of $A$ and the coordinates of $\mathbf{x}$ with respect to the eigenvectors of $A$.
+where $y_i = (\mathbf{x}^T \mathbf{Q})_i$ is the $i$ th coordinate (i.e., a scalar value that represents the position of a point or a vector relative to a chosen basis) of $\mathbf{x}^T \mathbf{Q}$ and $n$ is the dimension of $\mathbf{x}$ and $\mathbf{A}$. Note that since $\mathbf{Q}$ is orthogonal, we have $\mathbf{Q}^T \mathbf{Q} = I$, so $y_i = \mathbf{q}_i^T \mathbf{x}$, where $\mathbf{q}_i$ is the $i$ th column of $Q$. Therefore, the quadratic form $f(\mathbf{x}) = \mathbf{x}^T A \mathbf{x}$ can be written in terms of the eigenvalues of $\mathbf{A}$ and the coordinates of $\mathbf{x}$ with respect to the eigenvectors of $\mathbf{A}$.
 
-Since $A$ is positive definite, we have $\lambda_i > 0$ for all $i$, and so $\sum_{i=1}^n \lambda_i y_i^2 > 0$ for all nonzero vectors $\mathbf{x}$. Therefore, the quadratic form $f(\mathbf{x})=\mathbf{x}^T A \mathbf{x}$ is positive for all nonzero vectors $\mathbf{x}$, which implies that $A$ is positive definite.
+Since $\mathbf{A}$ is positive definite, we have $\lambda_i > 0$ for all $i$, and so $\sum_{i=1}^n \lambda_i y_i^2 > 0$ for all nonzero vectors $\mathbf{x}$. Therefore, the quadratic form $f(\mathbf{x})=\mathbf{x}^T \mathbf{A} \mathbf{x}$ is positive for all nonzero vectors $\mathbf{x}$, which implies that $\mathbf{A}$ is positive definite.
 
-In other words, the positive definiteness of a symmetric matrix $A$ is equivalent to the positivity of the associated quadratic form $f(\mathbf{x})=\mathbf{x}^T A \mathbf{x}$ for all nonzero vectors $\mathbf{x}$.
+In other words, the positive definiteness of a symmetric matrix $\mathbf{A}$ is equivalent to the positivity of the associated quadratic form $f(\mathbf{x})=\mathbf{x}^T \mathbf{A} \mathbf{x}$ for all nonzero vectors $\mathbf{x}$.
 
 Therefore, a symmetric matrix, $\mathbf A$ is said to be positive definite if all of its eigenvalues are positive or equivalently, a symmetric matrix, $\mathbf A$ is positive definite if left-multiplying and right-multiplying it by the same vector, $\mathbf x$ always gives a positive number if $\mathbf x^T \mathbf A \mathbf x$
 
@@ -551,10 +551,10 @@ Example of a positive definite matrix:
 
 $$
 \begin{equation}
-\mathbf{A} = \begin{pmatrix}
+\mathbf{A} = \begin{bmatrix}
 4 & -1 & 0 \\
 -1 & 5 & -1 \\
 0 & -1 & 2
-\end{pmatrix}
+\end{bmatrix}
 \end{equation}
 $$

@@ -691,11 +691,11 @@ x_{m1}&amp;x_{m2}&amp;\dots&amp;x_{mn}
 <p>Let’s say we have a dataset with three variables, <span class="math inline">\(\mathbf{x}_1, \mathbf{x}_2, \text{ and } \mathbf{x}_3,\)</span> with <span class="math inline">\(m\)</span> observations. The dataset can be represented as a matrix <span class="math inline">\(\mathbf{X}\)</span> with dimensions <span class="math inline">\(m \times 3\)</span>, where each row represents an observation and each column represents a variable. The covariance matrix, <span class="math inline">\(\operatorname{Cov}(\mathbf{X})\)</span>, of the dataset can be computed as follows:</p>
 <p><span class="math display">\[
 \begin{aligned}
-\operatorname{Cov}(\mathbf{X}) &amp;= \frac{1}{m-1}(\mathbf{X} - \bar{\mathbf{X}})^T(\mathbf{X} - \bar{\mathbf{X}})\\
+\operatorname{Cov}(\mathbf{X}) &amp;= \frac{1}{m-1}\sum_{i=1}^{m}(\mathbf x_i - \bar{\mathbf x}_i)^T(\mathbf x_i - \bar{\mathbf x}_i)\\
 &amp;=\frac{\tilde{\mathbf X}^T\tilde{\mathbf X}}{m-1}
 \end{aligned}
 \]</span></p>
-<p>where <span class="math inline">\(\mathbf{X}\)</span> is the dataset matrix, <span class="math inline">\(\bar{x}\)</span> is the mean of each variable computed along the rows, and <span class="math inline">\((\mathbf{X} - \bar{\mathbf{X}})^T\)</span> is the transpose of the centered dataset matrix. The covariance matrix <span class="math inline">\(\operatorname{Cov}(\mathbf{X})\)</span> will be a <span class="math inline">\(3 \times 3\)</span> matrix, with the <span class="math inline">\((i, j)\)</span> th entry representing the covariance between the <span class="math inline">\(i\)</span> th and <span class="math inline">\(j\)</span> th variables in the dataset.</p>
+<p>where <span class="math inline">\(\mathbf{X}\)</span> is the dataset matrix, <span class="math inline">\(\bar{x}\)</span> is the mean of each variable computed along the rows, and <span class="math inline">\((\mathbf{x_i} - \bar{\mathbf{x_i}})^T\)</span> is the transpose of the centered dataset matrix. The covariance matrix <span class="math inline">\(\operatorname{Cov}(\mathbf{X})\)</span> will be a <span class="math inline">\(3 \times 3\)</span> matrix, with the <span class="math inline">\((i, j)\)</span> th entry representing the covariance between the <span class="math inline">\(i\)</span> th and <span class="math inline">\(j\)</span> th variables in the dataset.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -841,8 +841,8 @@ carb  -1.89411290  -0.46370968   0.04637097   0.3266129  2.60887097</code></pre>
 </section>
 <section id="positive-definite-matrix" class="level3" data-number="1.9">
 <h3 data-number="1.9" class="anchored" data-anchor-id="positive-definite-matrix"><span class="header-section-number">1.9</span> Positive Definite Matrix</h3>
-<p>A symmetric matrix <span class="math inline">\(A\)</span> is positive definite if and only if the quadratic form <span class="math inline">\(f(\mathbf{x})=\mathbf{x}^T A \mathbf{x}\)</span> is positive for all nonzero vectors <span class="math inline">\(\mathbf{x}\)</span>.</p>
-<p>To see why this is true, consider the eigenvalue decomposition of <span class="math inline">\(A\)</span>, which can be written as <span class="math inline">\(A = Q \Lambda Q^T\)</span>, where <span class="math inline">\(Q\)</span> is an orthogonal matrix and <span class="math inline">\(\Lambda\)</span> is a diagonal matrix containing the eigenvalues of <span class="math inline">\(A\)</span>. Then, for any nonzero vector <span class="math inline">\(\mathbf{x}\)</span>,</p>
+<p>A symmetric matrix <span class="math inline">\(\mathbf{A}\)</span> is positive definite if and only if the quadratic form <span class="math inline">\(f(\mathbf{x})=\mathbf{x}^T \mathbf{A} \mathbf{x}\)</span> is positive for all nonzero vectors <span class="math inline">\(\mathbf{x}\)</span>.</p>
+<p>To see why this is true, consider the eigenvalue decomposition of <span class="math inline">\(\mathbf{A}\)</span>, which can be written as <span class="math inline">\(\mathbf{A} = \mathbf{Q} \Lambda \mathbf{Q}^T\)</span>, where <span class="math inline">\(\mathbf{Q}\)</span> is an orthogonal matrix and <span class="math inline">\(\Lambda\)</span> is a diagonal matrix containing the eigenvalues of <span class="math inline">\(\mathbf{A}\)</span>. Then, for any nonzero vector <span class="math inline">\(\mathbf{x}\)</span>,</p>
 <p><span class="math display">\[
 \begin{aligned}
 \mathbf x^T \mathbf A \mathbf x&amp;=\mathbf x^T \mathbf Q \mathbf \Lambda \mathbf Q^T \mathbf x\\
@@ -850,9 +850,9 @@ carb  -1.89411290  -0.46370968   0.04637097   0.3266129  2.60887097</code></pre>
 &amp;=\sum_{i=1}^{n} \lambda_iy_i^2
 \end{aligned}
 \]</span></p>
-<p>where <span class="math inline">\(y_i = (\mathbf{x}^T Q)_i\)</span> is the <span class="math inline">\(i\)</span>th coordinate (i.e., a scalar value that represents the position of a point or a vector relative to a chosen basis) of <span class="math inline">\(\mathbf{x}^T Q\)</span> and <span class="math inline">\(n\)</span> is the dimension of <span class="math inline">\(\mathbf{x}\)</span> and <span class="math inline">\(A\)</span>. Note that since <span class="math inline">\(Q\)</span> is orthogonal, we have <span class="math inline">\(Q^T Q = I\)</span>, so <span class="math inline">\(y_i = \mathbf{q}_i^T \mathbf{x}\)</span>, where <span class="math inline">\(\mathbf{q}_i\)</span> is the <span class="math inline">\(i\)</span>th column of <span class="math inline">\(Q\)</span>. Therefore, the quadratic form <span class="math inline">\(f(\mathbf{x}) = \mathbf{x}^T A \mathbf{x}\)</span> can be written in terms of the eigenvalues of <span class="math inline">\(A\)</span> and the coordinates of <span class="math inline">\(\mathbf{x}\)</span> with respect to the eigenvectors of <span class="math inline">\(A\)</span>.</p>
-<p>Since <span class="math inline">\(A\)</span> is positive definite, we have <span class="math inline">\(\lambda_i &gt; 0\)</span> for all <span class="math inline">\(i\)</span>, and so <span class="math inline">\(\sum_{i=1}^n \lambda_i y_i^2 &gt; 0\)</span> for all nonzero vectors <span class="math inline">\(\mathbf{x}\)</span>. Therefore, the quadratic form <span class="math inline">\(f(\mathbf{x})=\mathbf{x}^T A \mathbf{x}\)</span> is positive for all nonzero vectors <span class="math inline">\(\mathbf{x}\)</span>, which implies that <span class="math inline">\(A\)</span> is positive definite.</p>
-<p>In other words, the positive definiteness of a symmetric matrix <span class="math inline">\(A\)</span> is equivalent to the positivity of the associated quadratic form <span class="math inline">\(f(\mathbf{x})=\mathbf{x}^T A \mathbf{x}\)</span> for all nonzero vectors <span class="math inline">\(\mathbf{x}\)</span>.</p>
+<p>where <span class="math inline">\(y_i = (\mathbf{x}^T \mathbf{Q})_i\)</span> is the <span class="math inline">\(i\)</span> th coordinate (i.e., a scalar value that represents the position of a point or a vector relative to a chosen basis) of <span class="math inline">\(\mathbf{x}^T \mathbf{Q}\)</span> and <span class="math inline">\(n\)</span> is the dimension of <span class="math inline">\(\mathbf{x}\)</span> and <span class="math inline">\(\mathbf{A}\)</span>. Note that since <span class="math inline">\(\mathbf{Q}\)</span> is orthogonal, we have <span class="math inline">\(\mathbf{Q}^T \mathbf{Q} = I\)</span>, so <span class="math inline">\(y_i = \mathbf{q}_i^T \mathbf{x}\)</span>, where <span class="math inline">\(\mathbf{q}_i\)</span> is the <span class="math inline">\(i\)</span> th column of <span class="math inline">\(Q\)</span>. Therefore, the quadratic form <span class="math inline">\(f(\mathbf{x}) = \mathbf{x}^T A \mathbf{x}\)</span> can be written in terms of the eigenvalues of <span class="math inline">\(\mathbf{A}\)</span> and the coordinates of <span class="math inline">\(\mathbf{x}\)</span> with respect to the eigenvectors of <span class="math inline">\(\mathbf{A}\)</span>.</p>
+<p>Since <span class="math inline">\(\mathbf{A}\)</span> is positive definite, we have <span class="math inline">\(\lambda_i &gt; 0\)</span> for all <span class="math inline">\(i\)</span>, and so <span class="math inline">\(\sum_{i=1}^n \lambda_i y_i^2 &gt; 0\)</span> for all nonzero vectors <span class="math inline">\(\mathbf{x}\)</span>. Therefore, the quadratic form <span class="math inline">\(f(\mathbf{x})=\mathbf{x}^T \mathbf{A} \mathbf{x}\)</span> is positive for all nonzero vectors <span class="math inline">\(\mathbf{x}\)</span>, which implies that <span class="math inline">\(\mathbf{A}\)</span> is positive definite.</p>
+<p>In other words, the positive definiteness of a symmetric matrix <span class="math inline">\(\mathbf{A}\)</span> is equivalent to the positivity of the associated quadratic form <span class="math inline">\(f(\mathbf{x})=\mathbf{x}^T \mathbf{A} \mathbf{x}\)</span> for all nonzero vectors <span class="math inline">\(\mathbf{x}\)</span>.</p>
 <p>Therefore, a symmetric matrix, <span class="math inline">\(\mathbf A\)</span> is said to be positive definite if all of its eigenvalues are positive or equivalently, a symmetric matrix, <span class="math inline">\(\mathbf A\)</span> is positive definite if left-multiplying and right-multiplying it by the same vector, <span class="math inline">\(\mathbf x\)</span> always gives a positive number if <span class="math inline">\(\mathbf x^T \mathbf A \mathbf x\)</span></p>
 <section id="properties-8" class="level4" data-number="1.9.1">
 <h4 data-number="1.9.1" class="anchored" data-anchor-id="properties-8"><span class="header-section-number">1.9.1</span> Properties</h4>
@@ -865,11 +865,11 @@ carb  -1.89411290  -0.46370968   0.04637097   0.3266129  2.60887097</code></pre>
 <p>Example of a positive definite matrix:</p>
 <p><span class="math display">\[
 \begin{equation}
-\mathbf{A} = \begin{pmatrix}
+\mathbf{A} = \begin{bmatrix}
 4 &amp; -1 &amp; 0 \\
 -1 &amp; 5 &amp; -1 \\
 0 &amp; -1 &amp; 2
-\end{pmatrix}
+\end{bmatrix}
 \end{equation}
 \]</span></p>
 

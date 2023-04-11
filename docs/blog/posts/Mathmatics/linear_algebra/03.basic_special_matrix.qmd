@@ -40,7 +40,7 @@ Let $\mathbf{A}$ be an $n\times n$ square matrix. Then, the following properties
 * The trace of $\mathbf{A}$ is defined as $\text{tr}(\mathbf{A}) = \sum_{i=1}^n a_{ii}$, where $a_{ii}$ is the $i$th diagonal element of $\mathbf{A}$.
 * If $\mathbf{A}$ is symmetric, then it has $n$ real eigenvalues and an orthonormal set of eigenvectors.
 * If $\mathbf{A}$ is diagonalizable, then $\mathbf{A}$ can be written as $\mathbf{A} = \mathbf{PDP}^{-1}$, where $\mathbf{P}$ is the matrix whose columns are the eigenvectors of $\mathbf{A}$, and $\mathbf{D}$ is the diagonal matrix whose diagonal elements are the corresponding eigenvalues.
-* The transpose of $\mathbf{A}$, denoted $\mathbf{A}^\top$, is obtained by reflecting $\mathbf{A}$ across its main diagonal. That is, $(\mathbf{A}^\top){ij} = a{ji}$.
+* The transpose of $\mathbf{A}$, denoted $\mathbf{A}^\top$, is obtained by reflecting $\mathbf{A}$ across its main diagonal. That is, $(\mathbf{A}^\top)_{ij} = a_{ji}$.
 
 Here's an example of a $3 \times 3$ matrix:
 
@@ -396,6 +396,152 @@ $$
 \end{aligned}
 $$
 
+### Covariance Matrix
+
+The covariance matrix of a dataset matrix $\mathbf{X}$ with $m$ observations and $n$ variables is a symmetric $n \times n$ matrix given by:
+
+#### Algebraic Expression
+
+For two random variables, $X_1,X_2$, if there are $m$ of the observed samples or realized values, we can represent the sample data as:
+
+$$
+(x_{11},x_{12}),(x_{21},x_{22}),\dots,(x_{m1},x_{m2})
+$$
+
+Then, the sample variance between the two random variables are represented as:
+
+$$
+s_{x_1x_2} = \frac{\sum_{i=1}^{m}(x_{i1}-\bar{x_1})(x_{i2}-\bar{x_2})}{m-1}
+$$
+
+:::{.callout-note}
+#### Sample Variance
+
+For each variate, $X_j$, $j=1,\dots, n$
+
+$$
+s^2_{x}=s_{xx} = \frac{\sum_{i=1}^{m}(x_{ij}-\bar{x})^2}{m-1}
+$$
+
+
+Often for the notation of sample variance, the squared power is added for the sample variance with one random variable, but it is not for the covariance between two random variables.
+
+:::
+
+For two random variables ,$X_1,X_2$,
+
+$$
+\begin{aligned}
+  \mathbf{S}
+  &=\begin{bmatrix} 
+    s_{x_1x_2}&s_{x_1x_2}\\
+    s_{x_2x_1}&s_{x_2x_2}
+  \end{bmatrix}\\
+  &=\frac{1}{n-1}
+  \begin{bmatrix} 
+    \sum_{i=1}^{m}(x_{i1}-\bar{x_1})(x_{i1}-\bar{x_1})&\sum_{i=1}^{m}(x_{i1}-\bar{x_1})(x_{i2}-\bar{x_2})\\
+    \sum_{i=1}^{m}(x_{i1}-\bar{x_1})(x_{i2}-\bar{x_2})&\sum_{i=1}^{m}(x_{i2}-\bar{x_2})(x_{i2}-\bar{x_2})
+  \end{bmatrix}
+\end{aligned}
+$$
+
+
+For $n$ of random variables, $X_1,\dots,X_n$, if we observed the sample vectors with $m$ observations, the sample covariance matrix can be represented as:
+
+$$
+\mathbf{S}=\begin{bmatrix} 
+s_{11}&s_{12}&\dots&s_{1n}\\
+s_{21}&s_{22}&\dots&s_{2n}\\
+\vdots&\vdots&\ddots&\vdots\\
+s_{n1}&s_{n2}&\dots&s_{nn} 
+\end{bmatrix}
+$$
+
+where $s_{jk} = \frac{\sum_{i=1}^{m}(x_{ij}-\bar{x_j})(x_{ik}-\bar{x_k})}{m-1}$. The diagonal entries are the sample variances of each random variable, and the off-diagonal entires are the sample covariance between two different random variables.
+
+
+#### Vector Form of Sample Variance in Linear Algebra
+
+The complicating algebraic notion can be represented as the simpler form in linear algebra. To do so, let a sample vector $\mathbf x =\begin{bmatrix}x_{1}\\x_{2}\\ \vdots\\x_{n}\end{bmatrix}$. In othe words, a record, a row, or the observations across $n$ variables in a dataset:
+
+$$
+\mathbf{X}=
+\begin{bmatrix} 
+\mathbf{x}_{1}^T\\
+\mathbf{x}_{2}^T\\
+\vdots\\
+\mathbf{x}_{m}^T 
+\end{bmatrix}
+=\begin{bmatrix} 
+x_{11}&x_{12}&\dots&x_{1n}\\
+x_{21}&x_{22}&\dots&x_{2n}\\
+\vdots&\vdots&\ddots&\vdots\\
+x_{m1}&x_{m2}&\dots&x_{mn} 
+\end{bmatrix}
+$$
+
+
+$$
+\begin{aligned}
+\mathbf S 
+&= \operatorname{Cov}(\mathbf{X}) \\
+&= \frac{1}{m-1}\sum_{i=1}^{m}(\mathbf x_i - \bar{\mathbf x}_i)^T(\mathbf x_i - \bar{\mathbf x}_i)\\
+&= \frac{1}{m-1}\tilde{\mathbf{X}}^T\tilde{\mathbf{X}}\\
+&= \frac{1}{m-1}(\mathbf{CX})^T(\mathbf{CX})\\
+&= \frac{1}{m-1}\mathbf{X}^T\mathbf{C}^T\mathbf{CX}\\
+&= \frac{1}{m-1}\mathbf{X}^T\mathbf{C}\mathbf{C}\mathbf{X}\quad (\because \mathbf{C}\text{ is symmetric})\\
+&= \frac{1}{m-1}\mathbf{X}^T\mathbf{C}\mathbf{X}\quad (\because \mathbf{C}\text{ is an idempotent matrix})
+\end{aligned}
+$$
+
+where $\mathbf{X}$ is the dataset matrix, $\mathbf{x_i}=\begin{bmatrix}x_{i1}\\x_{i2}\\ \vdots\\x_{in}\end{bmatrix}$ is the observations of each variable along the columns, $\bar{\mathbf{x}}_i=\begin{bmatrix}\bar{x}_{1}\\\bar{x}_{2}\\ \vdots\\\bar{x}_{n}\end{bmatrix}$ and $(\mathbf{x}_i - \bar{\mathbf{x}}_i)^T=\tilde{\mathbf{X}}$ is the transpose of the centered dataset matrix.
+
+The size of $\mathbf S$ is $(1 \times n)^T(1 \times n)=(n \times 1)(1 \times n)=(n \times n)$
+#### Example
+
+Let's say we have a dataset with three variables, $\mathbf{x}_1, \mathbf{x}_2, \text{and} \mathbf{x}_3,$ with $m$ observations. The dataset can be represented as a matrix $\mathbf{X}$ with dimensions $m \times 3$, where each row represents an observation and each column represents a variable. The covariance matrix, $\operatorname{Cov}(\mathbf{X})$, of the dataset can be computed as follows:
+
+$$
+\operatorname{Cov}(\mathbf{X}) = \frac{1}{m-1}(\mathbf{X} - \bar{\mathbf{X}})^T(\mathbf{X} - \bar{\mathbf{X}})
+$$
+
+where $\mathbf{X}$ is the dataset matrix, $\bar{x}$ is the mean of each variable computed along the rows, and $(\mathbf{X} - \bar{\mathbf{X}})^T$ is the transpose of the centered dataset matrix. The covariance matrix $\operatorname{Cov}(\mathbf{X})$ will be a $3 \times 3$ matrix, with the $(i, j)$ th entry representing the covariance between the $i$ th and $j$ th variables in the dataset.
+
+```{r}
+#| echo: true
+
+X<-as.matrix(mtcars)
+x_bar_vec<-colMeans(mtcars)
+
+as.numeric(mtcars[1,1:5]-x_bar_vec)%*%t(as.numeric(mtcars[1,1:5]-x_bar_vec)) # for 1th row
+as.numeric(mtcars[2,1:5]-x_bar_vec)%*%t(as.numeric(mtcars[2,1:5]-x_bar_vec)) # for 2nd row
+
+X_sweeped<-sweep(X,MARGIN=2,STAT=x_bar_vec,FUN='-')
+result<-matrix(0,ncol=ncol(mtcars),nrow=ncol(mtcars))
+for (i in 1:nrow(mtcars)){
+  result<-result+X_sweeped[i,]%*%t(X_sweeped[i,])
+}
+result/(nrow(mtcars)-1)
+
+# J matrix
+m<-nrow(mtcars)
+J<-(1/m)*matrix(1,ncol=m,nrow=m)
+# Centering matrix
+C<-diag(m)-J
+# Covariance
+(1/(m-1))*t(X)%*%C%*%X
+var(X) #=cov(X)
+```
+
+
+#### Properties
+
+* Symmetry
+* Diagonal Entries: The diagonal entries of the covariance matrix represent the variances of the individual variables.
+* Linearity: The covariance matrix exhibits linearity in the sense that the covariance of a linear combination of variables can be expressed as a linear combination of their covariances. Mathematically, if $a$ and $b$ are constants and $X$, $Y$, and $Z$ are random variables, then $\operatorname{Cov}(aX + bY, Z) = a\operatorname{Cov}(X, Z) + b\operatorname{Cov}(Y, Z)$.
+* Scale Invariance: The covariance between variables is invariant to changes in scale or units of measurement. For example, if variables are measured in different units or are on different scales, the covariance matrix will still be valid and informative for measuring the linear relationship between the variables.
+* Independence: If two variables $X_i$ and $X_j$ are independent, their covariance $\operatorname{Cov}(X_j, X_k)$ is zero.
+* Positive Semidefiniteness: The covariance matrix is positive semidefinite, which means that all of its eigenvalues are non-negative. This property ensures that the covariance matrix is a valid variance-covariance matrix. 
 
 ### Positive Definite Matrix
 

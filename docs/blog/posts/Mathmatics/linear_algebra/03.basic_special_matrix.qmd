@@ -358,21 +358,11 @@ x_{m1} & x_{m2} & \cdots & x_{mn}
 \bar{x}_{1} & \bar{x}_{2} & \dots & \bar{x}_{n}
 \end{bmatrix}\\
 \\
-\tilde{\mathbf X}&=\mathbf X -{1}_{m}\bar{\mathbf x}^T\\
+\tilde{\mathbf X}&=\mathbf X -{\mathbf{1}}_{m}\bar{\mathbf x}^T\\
 &=\mathbf X -\mathbf{1}_{m}(\frac{1}{m}\mathbf X^T \mathbf{1}_m)^T\\
 &=\mathbf X -\mathbf{1}_{m}\mathbf{1}_m^T\frac{1}{m}\mathbf X\\
 &=(\mathbf I -\frac{1}{m}\mathbf J)\mathbf X\\
 &=\mathbf C \mathbf X\\
-\end{aligned}
-$$
-
-* represent a covariance matrix as a centered matrix form:
-$$
-\begin{aligned}
-  \operatorname{Cov}(\mathbf X)&=\operatorname{E}(\mathbf X-\operatorname{E}(\mathbf X))^2\\
-  &=\operatorname{E}(\mathbf X-\operatorname{E}(\mathbf X))\operatorname{E}(\mathbf X-\operatorname{E}(\mathbf X))\\
-  &=\frac{\sum_{}^{}(x_i-\bar{x_i})(x_j-\bar{x_j})}{m-1}\\
-  &=\frac{\tilde{\mathbf{X}}^T\tilde{\mathbf{X}}}{m-1}
 \end{aligned}
 $$
 
@@ -477,12 +467,16 @@ $$
 where $\mathbf{X}$ is the dataset matrix, $\mathbf{x_i}=\begin{bmatrix}x_{i1}\\x_{i2}\\ \vdots\\x_{in}\end{bmatrix}$ is the observations of each variable along the columns, $\bar{\mathbf{x}}_i=\begin{bmatrix}\bar{x}_{1}\\\bar{x}_{2}\\ \vdots\\\bar{x}_{n}\end{bmatrix}$ and $(\mathbf{x}_i - \bar{\mathbf{x}}_i)^T=\tilde{\mathbf{X}}$ is the transpose of the centered dataset matrix.
 
 The size of $\mathbf S$ is $(1 \times n)^T(1 \times n)=(n \times 1)(1 \times n)=(n \times n)$
+
 #### Example
 
-Let's say we have a dataset with three variables, $\mathbf{x}_1, \mathbf{x}_2, \text{and} \mathbf{x}_3,$ with $m$ observations. The dataset can be represented as a matrix $\mathbf{X}$ with dimensions $m \times 3$, where each row represents an observation and each column represents a variable. The covariance matrix, $\operatorname{Cov}(\mathbf{X})$, of the dataset can be computed as follows:
+Let's say we have a dataset with three variables, $\mathbf{x}_1, \mathbf{x}_2, \text{ and } \mathbf{x}_3,$ with $m$ observations. The dataset can be represented as a matrix $\mathbf{X}$ with dimensions $m \times 3$, where each row represents an observation and each column represents a variable. The covariance matrix, $\operatorname{Cov}(\mathbf{X})$, of the dataset can be computed as follows:
 
 $$
-\operatorname{Cov}(\mathbf{X}) = \frac{1}{m-1}(\mathbf{X} - \bar{\mathbf{X}})^T(\mathbf{X} - \bar{\mathbf{X}})
+\begin{aligned}
+\operatorname{Cov}(\mathbf{X}) &= \frac{1}{m-1}(\mathbf{X} - \bar{\mathbf{X}})^T(\mathbf{X} - \bar{\mathbf{X}})\\
+&=\frac{\tilde{\mathbf X}^T\tilde{\mathbf X}}{m-1}
+\end{aligned}
 $$
 
 where $\mathbf{X}$ is the dataset matrix, $\bar{x}$ is the mean of each variable computed along the rows, and $(\mathbf{X} - \bar{\mathbf{X}})^T$ is the transpose of the centered dataset matrix. The covariance matrix $\operatorname{Cov}(\mathbf{X})$ will be a $3 \times 3$ matrix, with the $(i, j)$ th entry representing the covariance between the $i$ th and $j$ th variables in the dataset.
@@ -557,7 +551,7 @@ Example of a positive definite matrix:
 
 $$
 \begin{equation}
-A = \begin{pmatrix}
+\mathbf{A} = \begin{pmatrix}
 4 & -1 & 0 \\
 -1 & 5 & -1 \\
 0 & -1 & 2

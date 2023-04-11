@@ -559,7 +559,7 @@ x_{1n} + x_{2n} + \cdots + x_{mn}
 <section id="applications-1" class="level4" data-number="1.7.2">
 <h4 data-number="1.7.2" class="anchored" data-anchor-id="applications-1"><span class="header-section-number">1.7.2</span> Applications</h4>
 <ul>
-<li><p>find a centered matrix, <span class="math inline">\(\tilde{\mathbf X}\)</span> using a <span class="math inline">\(\mathbf 1_m\)</span> vector for <span class="math inline">\(\mathbf X_{m\times n}\)</span>: <span class="math display">\[
+<li>find a centered matrix, <span class="math inline">\(\tilde{\mathbf X}\)</span> using a <span class="math inline">\(\mathbf 1_m\)</span> vector for <span class="math inline">\(\mathbf X_{m\times n}\)</span>: <span class="math display">\[
 \mathbf C = \mathbf I - \frac{1}{m}\mathbf J
 \]</span> <span class="math display">\[
 \begin{aligned}
@@ -587,21 +587,13 @@ x_{m1} &amp; x_{m2} &amp; \cdots &amp; x_{mn}
 \bar{x}_{1} &amp; \bar{x}_{2} &amp; \dots &amp; \bar{x}_{n}
 \end{bmatrix}\\
 \\
-\tilde{\mathbf X}&amp;=\mathbf X -{1}_{m}\bar{\mathbf x}^T\\
+\tilde{\mathbf X}&amp;=\mathbf X -{\mathbf{1}}_{m}\bar{\mathbf x}^T\\
 &amp;=\mathbf X -\mathbf{1}_{m}(\frac{1}{m}\mathbf X^T \mathbf{1}_m)^T\\
 &amp;=\mathbf X -\mathbf{1}_{m}\mathbf{1}_m^T\frac{1}{m}\mathbf X\\
 &amp;=(\mathbf I -\frac{1}{m}\mathbf J)\mathbf X\\
 &amp;=\mathbf C \mathbf X\\
 \end{aligned}
-\]</span></p></li>
-<li><p>represent a covariance matrix as a centered matrix form: <span class="math display">\[
-\begin{aligned}
-\operatorname{Cov}(\mathbf X)&amp;=\operatorname{E}(\mathbf X-\operatorname{E}(\mathbf X))^2\\
-&amp;=\operatorname{E}(\mathbf X-\operatorname{E}(\mathbf X))\operatorname{E}(\mathbf X-\operatorname{E}(\mathbf X))\\
-&amp;=\frac{\sum_{}^{}(x_i-\bar{x_i})(x_j-\bar{x_j})}{m-1}\\
-&amp;=\frac{\tilde{\mathbf{X}}^T\tilde{\mathbf{X}}}{m-1}
-\end{aligned}
-\]</span></p></li>
+\]</span></li>
 </ul>
 </section>
 </section>
@@ -692,10 +684,16 @@ x_{m1}&amp;x_{m2}&amp;\dots&amp;x_{mn}
 \end{aligned}
 \]</span></p>
 <p>where <span class="math inline">\(\mathbf{X}\)</span> is the dataset matrix, <span class="math inline">\(\mathbf{x_i}=\begin{bmatrix}x_{i1}\\x_{i2}\\ \vdots\\x_{in}\end{bmatrix}\)</span> is the observations of each variable along the columns, <span class="math inline">\(\bar{\mathbf{x}}_i=\begin{bmatrix}\bar{x}_{1}\\\bar{x}_{2}\\ \vdots\\\bar{x}_{n}\end{bmatrix}\)</span> and <span class="math inline">\((\mathbf{x}_i - \bar{\mathbf{x}}_i)^T=\tilde{\mathbf{X}}\)</span> is the transpose of the centered dataset matrix.</p>
-<p>The size of <span class="math inline">\(\mathbf S\)</span> is <span class="math inline">\((1 \times n)^T(1 \times n)=(n \times 1)(1 \times n)=(n \times n)\)</span> #### Example</p>
-<p>Let’s say we have a dataset with three variables, <span class="math inline">\(\mathbf{x}_1, \mathbf{x}_2, \text{and} \mathbf{x}_3,\)</span> with <span class="math inline">\(m\)</span> observations. The dataset can be represented as a matrix <span class="math inline">\(\mathbf{X}\)</span> with dimensions <span class="math inline">\(m \times 3\)</span>, where each row represents an observation and each column represents a variable. The covariance matrix, <span class="math inline">\(\operatorname{Cov}(\mathbf{X})\)</span>, of the dataset can be computed as follows:</p>
+<p>The size of <span class="math inline">\(\mathbf S\)</span> is <span class="math inline">\((1 \times n)^T(1 \times n)=(n \times 1)(1 \times n)=(n \times n)\)</span></p>
+</section>
+<section id="example-1" class="level4" data-number="1.8.3">
+<h4 data-number="1.8.3" class="anchored" data-anchor-id="example-1"><span class="header-section-number">1.8.3</span> Example</h4>
+<p>Let’s say we have a dataset with three variables, <span class="math inline">\(\mathbf{x}_1, \mathbf{x}_2, \text{ and } \mathbf{x}_3,\)</span> with <span class="math inline">\(m\)</span> observations. The dataset can be represented as a matrix <span class="math inline">\(\mathbf{X}\)</span> with dimensions <span class="math inline">\(m \times 3\)</span>, where each row represents an observation and each column represents a variable. The covariance matrix, <span class="math inline">\(\operatorname{Cov}(\mathbf{X})\)</span>, of the dataset can be computed as follows:</p>
 <p><span class="math display">\[
-\operatorname{Cov}(\mathbf{X}) = \frac{1}{m-1}(\mathbf{X} - \bar{\mathbf{X}})^T(\mathbf{X} - \bar{\mathbf{X}})
+\begin{aligned}
+\operatorname{Cov}(\mathbf{X}) &amp;= \frac{1}{m-1}(\mathbf{X} - \bar{\mathbf{X}})^T(\mathbf{X} - \bar{\mathbf{X}})\\
+&amp;=\frac{\tilde{\mathbf X}^T\tilde{\mathbf X}}{m-1}
+\end{aligned}
 \]</span></p>
 <p>where <span class="math inline">\(\mathbf{X}\)</span> is the dataset matrix, <span class="math inline">\(\bar{x}\)</span> is the mean of each variable computed along the rows, and <span class="math inline">\((\mathbf{X} - \bar{\mathbf{X}})^T\)</span> is the transpose of the centered dataset matrix. The covariance matrix <span class="math inline">\(\operatorname{Cov}(\mathbf{X})\)</span> will be a <span class="math inline">\(3 \times 3\)</span> matrix, with the <span class="math inline">\((i, j)\)</span> th entry representing the covariance between the <span class="math inline">\(i\)</span> th and <span class="math inline">\(j\)</span> th variables in the dataset.</p>
 <div class="cell">
@@ -829,8 +827,8 @@ carb  -1.89411290  -0.46370968   0.04637097   0.3266129  2.60887097</code></pre>
 </div>
 </div>
 </section>
-<section id="properties-7" class="level4" data-number="1.8.3">
-<h4 data-number="1.8.3" class="anchored" data-anchor-id="properties-7"><span class="header-section-number">1.8.3</span> Properties</h4>
+<section id="properties-7" class="level4" data-number="1.8.4">
+<h4 data-number="1.8.4" class="anchored" data-anchor-id="properties-7"><span class="header-section-number">1.8.4</span> Properties</h4>
 <ul>
 <li>Symmetry</li>
 <li>Diagonal Entries: The diagonal entries of the covariance matrix represent the variances of the individual variables.</li>
@@ -867,7 +865,7 @@ carb  -1.89411290  -0.46370968   0.04637097   0.3266129  2.60887097</code></pre>
 <p>Example of a positive definite matrix:</p>
 <p><span class="math display">\[
 \begin{equation}
-A = \begin{pmatrix}
+\mathbf{A} = \begin{pmatrix}
 4 &amp; -1 &amp; 0 \\
 -1 &amp; 5 &amp; -1 \\
 0 &amp; -1 &amp; 2

@@ -31,46 +31,6 @@ where $a_{ij}$ is the element in the $i$-th row and $j$-th column of the matrix 
 
 ## Basic Matrix Operations
 
-### Matrix with Combinations of Vectors
-
-A matrix with combinations of vectors is a matrix that can be written as a linear combination of column vectors. Given column vectors $\mathbf{v}_1, \mathbf{v}_2, \dots, \mathbf{v}_n \in \mathbb{R}^m$ and scalars $a_1, a_2, \dots, a_n \in \mathbb{R}$, the matrix $\mathbf{A}$ can be written as:
-$$
-\mathbf A =\begin{bmatrix} \mathbf{v_1}&\mathbf{v_2}& \dots &\mathbf{v_n} \end{bmatrix} \begin{bmatrix} a_1 \\ a_2 \\ \vdots \\ a_n \end{bmatrix} =a_1\mathbf v_1 +a_2\mathbf v_2 +\dots+a_n \mathbf v_n
-$$
-
-In other words, the columns of the matrix $\mathbf{A}$ are linear combinations of the column vectors $\mathbf{v}_1, \mathbf{v}_2, \dots, \mathbf{v}_n$. This can be written more compactly as:
-$$
-\mathbf A =\begin{bmatrix} \mathbf{v_1}&\mathbf{v_2}& \dots &\mathbf{v_n} \end{bmatrix} \mathbf a
-$$
-
-where $\mathbf{a} = \begin{bmatrix} a_1 & a_2 & \dots & a_n \end{bmatrix}^T$ is a column vector of scalars.
-
-An example of a matrix with combinations of vectors is:
-$$
-\mathbf A =
-\begin{bmatrix} 
-1&4&7\\
-2&5&8\\
-3&6&9\\
-\end{bmatrix} =
-\begin{bmatrix} 
-1\\
-2\\
-3\\
-\end{bmatrix}\mathbf{e}_1^\text{T}+
-\begin{bmatrix} 
-4\\
-5\\
-6\\
-\end{bmatrix}\mathbf{e}_2^\text{T}+
-\begin{bmatrix} 
-7\\
-8\\
-9\\
-\end{bmatrix}\mathbf{e}_3^\text{T}
-$$
-where $\mathbf{e}_1, \mathbf{e}_2, \mathbf{e}_3$ are the standard basis vectors of $\mathbb{R}^3$.
-
 ### Matrix addition 
 
 The sum of two matrices of the same size is a matrix of the same size obtained by adding corresponding entries.
@@ -151,32 +111,99 @@ $$
 \end{bmatrix}
 $$
 
+### Matrix with Combinations of Vectors
+
+A matrix can be written as combinations of vectors. 
+
+Let's see a linear combination of vectors. Given vectors $\mathbf{a}_1, \mathbf{a}_2, \dots, \mathbf{a}_n \in \mathbb{R}^m$ and the vector $\mathbf x$ whose entries are scalars $x_1, x_2, \dots, x_n \in \mathbb{R}$, a linear combination of the vectors and scalars is written as:
+
+$$
+x_1\mathbf a_1 +x_2\mathbf a_2 +\dots+x_n \mathbf a_n
+$$
+
+The combinations of the $\mathbf{a}$ vectors is represented as a matrix that can be written as combinations of column vectors with the $\mathbf{a}$ vectors 
+
+$$
+\begin{aligned}
+\mathbf{A}_{m\times n} &=\begin{bmatrix} \mathbf{a_1}&\mathbf{a_2}& \dots &\mathbf{a_n} \end{bmatrix} \quad \mathbf{x}=\begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{bmatrix}
+\end{aligned}
+$$
+
+Thus, the linear combination is simply written as:
+
+$$
+\begin{aligned}
+&x_1\mathbf a_1 +x_2\mathbf a_2 +\dots+x_n \mathbf a_n \\
+&=\begin{bmatrix} \mathbf{a_1}&\mathbf{a_2}& \dots &\mathbf{a_n} \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{bmatrix} \\
+&=\begin{bmatrix} \mathbf{a_1}&\mathbf{a_2}& \dots &\mathbf{a_n} \end{bmatrix} \mathbf x \\
+&=\mathbf{Ax} 
+\end{aligned}
+$$
+
+where $\mathbf{x} = \begin{bmatrix} x_1 & x_2 & \dots & x_n \end{bmatrix}^T$ is a column vector of scalars.
+
+An example of a matrix with combinations of vectors is:
+$$
+\mathbf A =
+\begin{bmatrix} 
+1&4&7\\
+2&5&8\\
+3&6&9\\
+\end{bmatrix} =
+\begin{bmatrix} 
+1\\
+2\\
+3\\
+\end{bmatrix}\mathbf{e}_1^\text{T}+
+\begin{bmatrix} 
+4\\
+5\\
+6\\
+\end{bmatrix}\mathbf{e}_2^\text{T}+
+\begin{bmatrix} 
+7\\
+8\\
+9\\
+\end{bmatrix}\mathbf{e}_3^\text{T}
+$$
+where $\mathbf{e}_1, \mathbf{e}_2, \mathbf{e}_3$ are the standard basis vectors of $\mathbb{R}^3$.
+
+
 ### Matrix Multiplication with a Vector
 
 Let $\mathbf{A}$ be an $m \times n$ matrix and $\mathbf{x}$ be a $n \times 1$ column vector. The matrix-vector product $\mathbf{Ax}$ is defined as:
 
 $$
-\begin{equation}
-\mathbf{Ax}=
+\begin{aligned}
+\mathbf{Ax}&=\mathbf{b}\\
+\mathbf{Ax}&=
 \begin{bmatrix}
 a_{11} & a_{12} & \dots & a_{1n} \\
 a_{21} & a_{22} & \dots & a_{2n} \\
 \vdots & \vdots & \ddots & \vdots \\
 a_{m1} & a_{m2} & \dots & a_{mn} \\
-\end{bmatrix} \begin{bmatrix}
-x_1 \\ x_2 \\ \vdots \\ x_n 
-\end{bmatrix} =
+\end{bmatrix} 
 \begin{bmatrix}
-a_{11}x_1 & a_{12}x_2 & \dots & a_{1n}x_n \\
-a_{21}x_1 & a_{22}x_2 & \dots & a_{2n}x_n \\
-\vdots & \vdots & \vdots & \vdots \\
-a_{m1}x_1 & a_{m2}x_2 & \dots & a_{mn}x_n 
-
-\end{bmatrix}
-\end{equation}
+x_1 \\ x_2 \\ \vdots \\ x_n 
+\end{bmatrix} \\
+&=
+\begin{bmatrix}
+a_{11}x_1 + a_{12}x_2 + \dots + a_{1n}x_n \\
+a_{21}x_1 + a_{22}x_2 + \dots + a_{2n}x_n \\
+\vdots  \\
+a_{m1}x_1 + a_{m2}x_2 + \dots + a_{mn}x_n 
+\end{bmatrix} \\
+&=
+\begin{bmatrix}
+b_1 \\ b_2 \\ \vdots \\ b_n 
+\end{bmatrix}\\
+&=\mathbf{b}
+\end{aligned}
 $$
 
 In other words, each entry of the resulting column vector is the dot product of the corresponding row of the matrix $\mathbf{A}$ and the column vector $\mathbf{x}$.
+
+The matrix $\mathbf{A}$ acts on the vector $\mathbf{x}$. The result $\mathbf{Ax}$ is a combination $\mathbf{b}$ of the columns of $\mathbf{A}$. The input is $\mathbf{x}$ and the output is $\mathbf{b}=\mathbf{Ax}$
 
 For example, let
 
@@ -186,74 +213,61 @@ $$
 2 & 1 \\
 3 & 4 \\
 1 & 2
-\end{bmatrix} \text{  } 
+\end{bmatrix} \quad
 \mathbf x=
 \begin{bmatrix}
-  1\\-1
+  x_1\\x_2
+\end{bmatrix} \quad
+\mathbf b=
+\begin{bmatrix}
+  1\\-5\\-1
 \end{bmatrix} 
 $$
 
 Then we have
 
 $$
-\mathbf{Ax} =
+\begin{aligned}
+\mathbf{Ax} &= \mathbf{b} \\
 \begin{bmatrix}
 2 & 1 \\
-3 & 4 \\
 1 & 2
 \end{bmatrix} 
 \begin{bmatrix}
+  x_1\\x_2
+\end{bmatrix} 
+&=
+\begin{bmatrix}
+  1\\-1
+\end{bmatrix} \\
+\begin{bmatrix}
+2x_1 + x_2 \\
+x_1 + 2x_2
+\end{bmatrix} 
+&=
+\begin{bmatrix}
   1\\-1
 \end{bmatrix} 
-=
-\begin{bmatrix}
-  1\\-5\\-1
-\end{bmatrix} 
+\end{aligned}
 $$
 
-
-### Transpose
-
-The transpose of an $m x n$ matrix A, denoted by $A^T$, is the $n x m$ matrix obtained by interchanging the rows and columns of A. Formally, if $\mathbf{A} = [a_{ij}]$ is an m x n matrix, then its transpose $\mathbf{A}^T = [b_{ij}]$ is an $n x m$ matrix where $b_{ij}$ = $a_{ji}$ for all $i$ and $j$. In other words, the element in the $i$ th row and $j$ th column of $A^T$ is equal to the element in the $j$ th row and ith column of $\mathbf{A}$.
-
-Given an $m \times n$ matrix $\mathbf{A}$, its transpose $\mathbf{A}^T$ is an $n \times m$ matrix defined by:
-$$
-\mathbf{A}_{i,j}^T = \mathbf{A}_{j,i}
-$$
-
-* When $\mathbf{A}$ is transposed, diagnoal entries($a_{ii}$) do not change but off-diagnoal elements($a_{ij} \; i \neq j$) change.
-* A column vector is tranposed into a row vector, and vice versa.
-* symmetric matrix: $\mathbf{A} = \mathbf{A}^T$
-
-Example:
-
-Let $\mathbf A$ be the matrix
-$$
-\mathbf{A} = \begin{bmatrix}
-1 & 2 & 3\\
-4 & 5 & 6
-\end{bmatrix}
-$$
-The transpose of $\mathbf A$, denoted by $\mathbf A^T$, is the matrix
-$$
-\mathbf{A}^T = \begin{bmatrix}
-1 & 4\\
-2 & 5\\
-3 & 6
-\end{bmatrix}
-$$
-
-#### Properties
-
-Let $\mathbf A$ be an $m \times n$ matrix and $\mathbf B$ be an $n \times p$ matrix, and let $c$ be a scalar. Then:
-
-* $(\mathbf{A}^T)^T = \mathbf{A}$
-* $(\mathbf{A} + \mathbf{B})^T = \mathbf{A}^T + \mathbf{B}^T$
-* $(c\mathbf{A})^T = c\mathbf{A}^T$
-* $(\mathbf{AB})^T = \mathbf{B}^T \mathbf{A}^T$
-* $(\mathbf{ABC})^T = \mathbf{C}^T\mathbf{B}^T \mathbf{A}^T$ , (cyclic properties)
+The solution to the above system of equation is $x_1=1, x_2=-1$.
 
 ### Linear Equations of a Matrix
+
+Before the introduction of a matrix to the solution to $x_1\mathbf a_1 +x_2\mathbf a_2 +\dots+x_n \mathbf a_n=\mathbf b$, we used the concept of a linear combination of $\mathbf a$ vectors to find $\mathbf{x}$ for $\mathbf{b}$.
+
+But after the introduction of a matrix, the viewpoint can changes:
+
+* **As-Is**: Compute the linear combination $x_1\mathbf a_1 +x_2\mathbf a_2 +\dots+x_n \mathbf a_n$ to find $\mathbf b$.
+* **To-Be**: Which combination of $\mathbf a$ vectors produces a particular vector $\mathbf b$?
+
+Anwering the two questions means looking for $\mathbf{x}$ for $\mathbf{b}$. To do so, we have two ways:
+
+* to solve a system of linear equations and
+* to find an inverse of $\mathbf{A}$
+
+#### Solving a System of Linear Equations
 
 Given an $m \times n$ matrix $\mathbf A$ and an $n \times 1$ vector $\mathbf{x}$, the matrix-vector product $\mathbf A\mathbf{x}$ is a linear combination of the columns of $\mathbf A$ with coefficients given by the entries of $\mathbf{x}$. The system of linear equations represented by $\mathbf A\mathbf{x}=\mathbf{b}$ has a unique solution if and only if the columns of $\mathbf A$ are linearly independent.
 
@@ -314,24 +328,6 @@ $$
 \end{equation}
 $$
 
-
-The solution to this system can be found by computing the inverse of $\mathbf A$ (if it exists) and multiplying both sides of the equation by it:
-
-$$
-\mathbf{x} = \mathbf{A}^{-1}\mathbf{b} 
-$$
-
-If $\mathbf A$ does not have an inverse, then the system of equations may have either no solutions or infinitely many solutions.
-
-Consider the following system of equations:
-
-$$
-\begin{aligned}
-2x_1 + 3x_2 &= 5 \\
-4x_1 - x_2 &= 2
-\end{aligned}
-$$
-
 This can be written in matrix form as:
 $$
 \begin{equation}
@@ -349,8 +345,25 @@ x_2
 \end{bmatrix}
 \end{equation}
 $$
-where $a_{11} = 2, a_{12} = 3, a_{21} = 4, a_{22} = -1, x_1$ and $x_2$ are the variables, and $b_1 = 5, b_2 = 2$ are the constants.
 
+Consider the following system of equations:
+
+$$
+\begin{aligned}
+2x_1 + 3x_2 &= 5 \\
+4x_1 - x_2 &= 2
+\end{aligned}
+$$
+
+#### Finding $\mathbf{A}^{-1}$
+
+The solution to this system can be found by computing the inverse of $\mathbf A$ (if it exists) and multiplying both sides of the equation by it:
+
+$$
+\mathbf{x} = \mathbf{A}^{-1}\mathbf{b} 
+$$
+
+If $\mathbf A$ does not have an inverse, then the system of equations may have either no solutions or infinitely many solutions.
 
 
 ### Determinant
@@ -531,6 +544,49 @@ $$
 $$
 
 There are several formulas for finding the inverse of a matrix such as Gauss-Jordan Elimination, Adjoint method, Cramer's rule, Inverse formula, etc. This topic is going to be handled in the other blogs.
+
+
+### Transpose
+
+The transpose of an $m x n$ matrix A, denoted by $A^T$, is the $n x m$ matrix obtained by interchanging the rows and columns of A. Formally, if $\mathbf{A} = [a_{ij}]$ is an m x n matrix, then its transpose $\mathbf{A}^T = [b_{ij}]$ is an $n x m$ matrix where $b_{ij}$ = $a_{ji}$ for all $i$ and $j$. In other words, the element in the $i$ th row and $j$ th column of $A^T$ is equal to the element in the $j$ th row and ith column of $\mathbf{A}$.
+
+Given an $m \times n$ matrix $\mathbf{A}$, its transpose $\mathbf{A}^T$ is an $n \times m$ matrix defined by:
+$$
+\mathbf{A}_{i,j}^T = \mathbf{A}_{j,i}
+$$
+
+* When $\mathbf{A}$ is transposed, diagnoal entries($a_{ii}$) do not change but off-diagnoal elements($a_{ij} \; i \neq j$) change.
+* A column vector is tranposed into a row vector, and vice versa.
+* symmetric matrix: $\mathbf{A} = \mathbf{A}^T$
+
+Example:
+
+Let $\mathbf A$ be the matrix
+$$
+\mathbf{A} = \begin{bmatrix}
+1 & 2 & 3\\
+4 & 5 & 6
+\end{bmatrix}
+$$
+The transpose of $\mathbf A$, denoted by $\mathbf A^T$, is the matrix
+$$
+\mathbf{A}^T = \begin{bmatrix}
+1 & 4\\
+2 & 5\\
+3 & 6
+\end{bmatrix}
+$$
+
+#### Properties
+
+Let $\mathbf A$ be an $m \times n$ matrix and $\mathbf B$ be an $n \times p$ matrix, and let $c$ be a scalar. Then:
+
+* $(\mathbf{A}^T)^T = \mathbf{A}$
+* $(\mathbf{A} + \mathbf{B})^T = \mathbf{A}^T + \mathbf{B}^T$
+* $(c\mathbf{A})^T = c\mathbf{A}^T$
+* $(\mathbf{AB})^T = \mathbf{B}^T \mathbf{A}^T$
+* $(\mathbf{ABC})^T = \mathbf{C}^T\mathbf{B}^T \mathbf{A}^T$ , (cyclic properties)
+
 
 ### Rank
 

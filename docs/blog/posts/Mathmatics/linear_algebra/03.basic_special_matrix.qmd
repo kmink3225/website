@@ -194,8 +194,9 @@ $$
 $$
 \begin{aligned}
 (\mathbf{I_n}-\mathbf{A})^2&=(\mathbf{I_n}-\mathbf{A})(\mathbf{I_n}-\mathbf{A})\\
-&=\mathbf{I_n}\mathbf{I_n}-\mathbf{I_n}\mathbf{A}-\mathbf{A}\mathbf{I_n}-\mathbf{A}\mathbf{A}\\
-&=\mathbf{I_n}\mathbf{I_n}-\mathbf{A}\mathbf{A}\\
+&=\mathbf{I_n}\mathbf{I_n}-\mathbf{I_n}\mathbf{A}-\mathbf{A}\mathbf{I_n}+\mathbf{A}\mathbf{A}\\
+&=\mathbf{I_n}\mathbf{I_n}-\mathbf{A}-\mathbf{A}+\mathbf{A} \quad \because \text{A is idempotent}\\
+&=\mathbf{I_n}\mathbf{I_n}-\mathbf{A}\\
 &=\mathbf{I_n}-\mathbf{A}
 \end{aligned}
 $$
@@ -232,7 +233,7 @@ $$
 * Matrix multiplication: When multiplied by any matrix $\mathbf{A}$, the $\mathbf{J}$ matrix results in a matrix where each row (or column, depending on the multiplication order) is the sum of the elements of the corresponding row (or column) of $\mathbf{A}$. 
   * In other words, $\mathbf{J}$ multiplied by a matrix $\mathbf{A}$ performs a row (or column) summation operation on $\mathbf{A}$. 
   * If A is any $n \times n$ matrix, then $\mathbf{AJ} = \mathbf{JA} = \operatorname{trace}(\mathbf{A})\mathbf{J}$, where $\operatorname{trace}(\mathbf{A})$ is the sum of the diagonal elements of $\mathbf{A}$.
-* $\mathbf J_{m\times n}$ can be represented as the product of two vectors, $\mathbf 1_{m}$, $\mathbf 1_{n}$, i.e., $\mathbf J_{m\times n} = \mathbf 1_{m} \mathbf 1_{n}^T$ 
+* $\mathbf J_{m\times n}$ can be represented as the product of two vectors, $\mathbf 1_{m}$, $\mathbf 1_{n}$, i.e., $\mathbf J_{m\times n} = \mathbf 1_{m} \mathbf 1_{n}^T$ where $m=n$
 * Eigenvalues and eigenvectors: The $\mathbf J$ matrix has one eigenvalue equal to the dimension of the matrix, with the corresponding eigenvector being a vector of all 1's.
 * Inverse: The $\mathbf J$ matrix is a special case where it does not have an inverse, as all its rows (or columns) are linearly dependent.
 
@@ -251,7 +252,7 @@ $$
 
 * calculate $n$ column sums of a dataset using a $\mathbf 1_m$ vector for $\mathbf X_{m\times n}$:
 $$
-\bar{\mathbf x}=\frac{1}{m}\mathbf X^T\mathbf 1
+\bar{\mathbf x}=\frac{1}{m}\mathbf X^T\mathbf 1_m
 $$
 $$
 \begin{aligned}
@@ -294,41 +295,46 @@ $$
 
 ### Centering Matrix
 
-A centering matrix is a square matrix that is used in multivariate statistical analysis to center data by subtracting the mean of each variable from each observation. 
-The centering matrix is a **symmetric** and **idempotent** matrix, meaning that it is equal to its own transpose and that multiplying it by itself results in the same matrix. The centering matrix is defined as:
+A centering matrix is a square matrix that is used in multivariate statistical analysis to center data by subtracting the mean of each variable from each observation. The resulting matrix is called the centered data matrix with the mean equal to $0$. The centering matrix is defined as:
 
 $$
 \begin{equation}
   \mathbf C = \mathbf I - \frac{1}{m}\mathbf J
 \end{equation}
 $$
+
 where $\mathbf I$ is the identity matrix, $\mathbf J$ is a matrix of ones, and $m$ is the number of observations. 
 
-#### Properties
-
-The centering matrix has the property that when it is multiplied by a data matrix $\mathbf X$, it centers the data by subtracting the mean of each column of $\mathbf X$ from each element of $\mathbf X$. The resulting matrix is called the centered data matrix with the mean equal to $0$. The centering matrix is often used in multivariate statistical analysis, such as principal component analysis, to transform the data into a new coordinate system where the variance of each variable is equal to its eigenvalue.
-
-* A centering matrix is a square matrix.
-* The diagonal elements of a centering matrix are all equal and are given by $m^{-1}$, where $n$ is the size of the matrix.
-* The off-diagonal elements of a centering matrix are all equal and are given by $-m^{-1}$.
-* Multiplying a matrix $\mathbf A$ on the left by a centering matrix $\mathbf C$ is equivalent to subtracting the mean of the columns of $\mathbf A$ from each column of $\mathbf A$.
-* Multiplying a matrix $\mathbf A$ on the right by a centering matrix $\mathbf C$ is equivalent to subtracting the mean of the rows of $\mathbf A$ from each row of $\mathbf A$.
+#### Example
 
 Here is an example of a centering matrix of size $3 \times 3$:
 
 $$
 \begin{equation*}
-\mathbf C = \frac{1}{3} \begin{pmatrix}
+\mathbf C = \frac{1}{3} \begin{bmatrix}
 2 & -1 & -1 \\
 -1 & 2 & -1 \\
 -1 & -1 & 2
-\end{pmatrix}
+\end{bmatrix}
 \end{equation*}
 $$
+
+#### Properties
+
+The centering matrix is often used in multivariate statistical analysis, such as principal component analysis, to transform the data into a new coordinate system where the variance of each variable is equal to its eigenvalue.
+
+* A centering matrix is a square matrix.
+* A centering matrix is a symmetric matrix.
+* A centering matrix is a idempotent matrix.
+* The diagonal elements of a centering matrix are all equal and are given by $\frac{1}{m}$, where $n$ is the size of the matrix.
+* The off-diagonal elements of a centering matrix are all equal and are given by $-\frac{1}{m}$.
+* Multiplying a matrix $\mathbf A$ on the left by a centering matrix $\mathbf C$, $\mathbf{CA}$ is equivalent to subtracting the mean of the columns of $\mathbf A$ from each column of $\mathbf A$.
+* Multiplying a matrix $\mathbf A$ on the right by a centering matrix $\mathbf C$, $\mathbf{AC}$ is equivalent to subtracting the mean of the rows of $\mathbf A$ from each row of $\mathbf A$.
 
 #### Applications
 
 * find a centered matrix, $\tilde{\mathbf X}$ using a $\mathbf 1_m$ vector for $\mathbf X_{m\times n}$:
+
 $$
 \mathbf C = \mathbf I - \frac{1}{m}\mathbf J
 $$
@@ -341,7 +347,7 @@ x_{21} & x_{22} & \cdots & x_{2n} \\
 \vdots & \vdots & \ddots & \vdots \\
 x_{m1} & x_{m2} & \cdots & x_{mn}
 \end{bmatrix} \text{ } \\
-\mathbf {1\bar{x}^T}&= 
+\mathbf {1_m\bar{x}^T}&= 
 \begin{bmatrix}
 1 \\
 1 \\
@@ -356,7 +362,7 @@ x_{m1} & x_{m2} & \cdots & x_{mn}
 \bar{x}_{1} & \bar{x}_{2} & \dots & \bar{x}_{n}\\
 \vdots & \vdots & \ddots & \vdots\\
 \bar{x}_{1} & \bar{x}_{2} & \dots & \bar{x}_{n}
-\end{bmatrix}\\
+\end{bmatrix}_{m\times n}\\
 \\
 \tilde{\mathbf X}&=\mathbf X -{\mathbf{1}}_{m}\bar{\mathbf x}^T\\
 &=\mathbf X -\mathbf{1}_{m}(\frac{1}{m}\mathbf X^T \mathbf{1}_m)^T\\
@@ -393,6 +399,10 @@ $$
 s^2_{x}=s_{xx} = \frac{\sum_{i=1}^{m}(x_{ij}-\bar{x})^2}{m-1}
 $$
 
+For two random variables, $X_1$, $X_2$,
+$$
+s_{x_1x_2} = \frac{\sum_{i=1}^{m}(x_{i1}-\bar{x_1})(x_{i2}-\bar{x_2})}{m-1}
+$$
 
 Often for the notation of sample variance, the squared power is added for the sample variance with one random variable, but it is not for the covariance between two random variables.
 
@@ -404,13 +414,17 @@ $$
 \begin{aligned}
   \mathbf{S}
   &=\begin{bmatrix} 
-    s_{x_1x_2}&s_{x_1x_2}\\
+    s_{11}&s_{12}\\
+    s_{21}&s_{22}
+  \end{bmatrix}\\
+  &=\begin{bmatrix} 
+    s_{x_1x_1}&s_{x_1x_2}\\
     s_{x_2x_1}&s_{x_2x_2}
   \end{bmatrix}\\
   &=\frac{1}{n-1}
   \begin{bmatrix} 
-    \sum_{i=1}^{m}(x_{i1}-\bar{x_1})(x_{i1}-\bar{x_1})&\sum_{i=1}^{m}(x_{i1}-\bar{x_1})(x_{i2}-\bar{x_2})\\
-    \sum_{i=1}^{m}(x_{i1}-\bar{x_1})(x_{i2}-\bar{x_2})&\sum_{i=1}^{m}(x_{i2}-\bar{x_2})(x_{i2}-\bar{x_2})
+    \sum_{i=1}^{m}(x_{i1}-\bar{x}_1)(x_{i1}-\bar{x}_1)&\sum_{i=1}^{m}(x_{i1}-\bar{x}_1)(x_{i2}-\bar{x}_2)\\
+    \sum_{i=1}^{m}(x_{i2}-\bar{x}_2)(x_{i1}-\bar{x}_1)&\sum_{i=1}^{m}(x_{i2}-\bar{x}_2)(x_{i2}-\bar{x}_2)
   \end{bmatrix}
 \end{aligned}
 $$
@@ -432,7 +446,7 @@ where $s_{jk} = \frac{\sum_{i=1}^{m}(x_{ij}-\bar{x_j})(x_{ik}-\bar{x_k})}{m-1}$.
 
 #### Vector Form of Sample Variance in Linear Algebra
 
-The complicating algebraic notion can be represented as the simpler form in linear algebra. To do so, let a sample vector $\mathbf x =\begin{bmatrix}x_{1}\\x_{2}\\ \vdots\\x_{n}\end{bmatrix}$. In othe words, a record, a row, or the observations across $n$ variables in a dataset:
+The complicating algebraic notation can be represented as the simpler form in linear algebra. To do so, let a sample vector $\mathbf x =\begin{bmatrix}x_{1}\\x_{2}\\ \vdots\\x_{n}\end{bmatrix}$. In othe words, a record, a row, or the observations across $n$ variables in a dataset:
 
 $$
 \mathbf{X}=
@@ -450,12 +464,11 @@ x_{m1}&x_{m2}&\dots&x_{mn}
 \end{bmatrix}
 $$
 
-
 $$
 \begin{aligned}
 \mathbf S 
 &= \operatorname{Cov}(\mathbf{X}) \\
-&= \frac{1}{m-1}\sum_{i=1}^{m}(\mathbf x_i - \bar{\mathbf x}_i)^T(\mathbf x_i - \bar{\mathbf x}_i)\\
+&= \frac{1}{m-1}\sum_{i=1}^{m}(\mathbf x_i - \bar{\mathbf x}_i)(\mathbf x_i - \bar{\mathbf x}_i)^T\\
 &= \frac{1}{m-1}\tilde{\mathbf{X}}^T\tilde{\mathbf{X}}\\
 &= \frac{1}{m-1}(\mathbf{CX})^T(\mathbf{CX})\\
 &= \frac{1}{m-1}\mathbf{X}^T\mathbf{C}^T\mathbf{CX}\\
@@ -468,7 +481,35 @@ where $\mathbf{X}$ is the dataset matrix, $\mathbf{x_i}=\begin{bmatrix}x_{i1}\\x
 
 The size of $\mathbf S$ is $(1 \times n)^T(1 \times n)=(n \times 1)(1 \times n)=(n \times n)$
 
+:::{.callout-tip}
+
+For the $i$ th observation, the outer product of $(\mathbf x_i - \bar{\mathbf x}_i)(\mathbf x_i - \bar{\mathbf x}_i)^T$ generates the following $n \times n$ matrix.
+
+$$
+\begin{aligned}
+(\mathbf x_i - \bar{\mathbf x}_i)(\mathbf x_i - \bar{\mathbf x}_i)^T
+&= \begin{bmatrix} 
+x_{i1} -\bar{x}_{i1}\\ x_{i2} -\bar{x}_{i2}\\ \vdots \\ x_{in} -\bar{x}_{in} 
+\end{bmatrix}\begin{bmatrix} 
+x_{i1} -\bar{x}_{i1}&x_{i2} -\bar{x}_{i2}&\dots&x_{in} -\bar{x}_{in}
+\end{bmatrix} \\
+&=\begin{bmatrix} 
+(x_{i1}-\bar{x}_{i1})(x_{i1}-\bar{x}_{i1}) & (x_{i1}-\bar{x}_{i1})(x_{i2}-\bar{x}_{i2}) & \dots & (x_{i1}-\bar{x}_{i1})(x_{in}-\bar{x}_{in})\\
+(x_{i2}-\bar{x}_{i2})(x_{i1}-\bar{x}_{i1}) & (x_{i2}-\bar{x}_{i2})(x_{i2}-\bar{x}_{i2}) & \dots & (x_{i2}-\bar{x}_{i2})(x_{in}-\bar{x}_{in})\\
+\vdots&\vdots&\ddots&\vdots\\
+(x_{in}-\bar{x}_{in})(x_{i1}-\bar{x}_{i1})&(x_{in}-\bar{x}_{in})(x_{i2}-\bar{x}_{i2})()&\dots&(x_{in}-\bar{x}_{in})(x_{in}-\bar{x}_{in}) 
+\end{bmatrix}_{n\times n}
+\end{aligned}
+$$
+
+The $n \times n$ matrix right above is gnerated by $m$ times for the $m$ observations of $\mathbf{X}_{m \times n}$, the $\operatorname{Cov}(\mathbf X)$ is the sum of the $m$ of $n \times n$ matrices divided by $\frac{1}{m-1}$.
+
+:::
+
+
 #### Example
+
+**Example 1**
 
 Let's say we have a dataset with three variables, $\mathbf{x}_1, \mathbf{x}_2, \text{ and } \mathbf{x}_3,$ with $m$ observations. The dataset can be represented as a matrix $\mathbf{X}$ with dimensions $m \times 3$, where each row represents an observation and each column represents a variable. The covariance matrix, $\operatorname{Cov}(\mathbf{X})$, of the dataset can be computed as follows:
 
@@ -481,6 +522,9 @@ $$
 
 where $\mathbf{X}$ is the dataset matrix, $\bar{x}$ is the mean of each variable computed along the rows, and $(\mathbf{x_i} - \bar{\mathbf{x_i}})^T$ is the transpose of the centered dataset matrix. The covariance matrix $\operatorname{Cov}(\mathbf{X})$ will be a $3 \times 3$ matrix, with the $(i, j)$ th entry representing the covariance between the $i$ th and $j$ th variables in the dataset.
 
+**Example 2**
+
+The second example is to find $\operatorname{Cov}(\mathbf{X})$ where $\mathbf{X}$ is the `mtcars` dataset.
 ```{r}
 #| echo: true
 

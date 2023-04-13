@@ -420,8 +420,9 @@ d_{1}e_{1} &amp; 0 &amp; 0 &amp; \cdots &amp; 0 \\
 <li>If <span class="math inline">\(\mathbf{A}\)</span> is an idempotent matrix, <span class="math inline">\(\mathbf{I_n}-\mathbf{A}\)</span> is also an idempotent matrix. <span class="math display">\[
 \begin{aligned}
 (\mathbf{I_n}-\mathbf{A})^2&amp;=(\mathbf{I_n}-\mathbf{A})(\mathbf{I_n}-\mathbf{A})\\
-&amp;=\mathbf{I_n}\mathbf{I_n}-\mathbf{I_n}\mathbf{A}-\mathbf{A}\mathbf{I_n}-\mathbf{A}\mathbf{A}\\
-&amp;=\mathbf{I_n}\mathbf{I_n}-\mathbf{A}\mathbf{A}\\
+&amp;=\mathbf{I_n}\mathbf{I_n}-\mathbf{I_n}\mathbf{A}-\mathbf{A}\mathbf{I_n}+\mathbf{A}\mathbf{A}\\
+&amp;=\mathbf{I_n}\mathbf{I_n}-\mathbf{A}-\mathbf{A}+\mathbf{A} \quad \because \text{A is idempotent}\\
+&amp;=\mathbf{I_n}\mathbf{I_n}-\mathbf{A}\\
 &amp;=\mathbf{I_n}-\mathbf{A}
 \end{aligned}
 \]</span></li>
@@ -468,7 +469,7 @@ Warning
 <li>In other words, <span class="math inline">\(\mathbf{J}\)</span> multiplied by a matrix <span class="math inline">\(\mathbf{A}\)</span> performs a row (or column) summation operation on <span class="math inline">\(\mathbf{A}\)</span>.</li>
 <li>If A is any <span class="math inline">\(n \times n\)</span> matrix, then <span class="math inline">\(\mathbf{AJ} = \mathbf{JA} = \operatorname{trace}(\mathbf{A})\mathbf{J}\)</span>, where <span class="math inline">\(\operatorname{trace}(\mathbf{A})\)</span> is the sum of the diagonal elements of <span class="math inline">\(\mathbf{A}\)</span>.</li>
 </ul></li>
-<li><span class="math inline">\(\mathbf J_{m\times n}\)</span> can be represented as the product of two vectors, <span class="math inline">\(\mathbf 1_{m}\)</span>, <span class="math inline">\(\mathbf 1_{n}\)</span>, i.e., <span class="math inline">\(\mathbf J_{m\times n} = \mathbf 1_{m} \mathbf 1_{n}^T\)</span></li>
+<li><span class="math inline">\(\mathbf J_{m\times n}\)</span> can be represented as the product of two vectors, <span class="math inline">\(\mathbf 1_{m}\)</span>, <span class="math inline">\(\mathbf 1_{n}\)</span>, i.e., <span class="math inline">\(\mathbf J_{m\times n} = \mathbf 1_{m} \mathbf 1_{n}^T\)</span> where <span class="math inline">\(m=n\)</span></li>
 <li>Eigenvalues and eigenvectors: The <span class="math inline">\(\mathbf J\)</span> matrix has one eigenvalue equal to the dimension of the matrix, with the corresponding eigenvector being a vector of all 1’s.</li>
 <li>Inverse: The <span class="math inline">\(\mathbf J\)</span> matrix is a special case where it does not have an inverse, as all its rows (or columns) are linearly dependent.</li>
 </ul>
@@ -486,7 +487,7 @@ Warning
 \]</span></p>
 <ul>
 <li>calculate <span class="math inline">\(n\)</span> column sums of a dataset using a <span class="math inline">\(\mathbf 1_m\)</span> vector for <span class="math inline">\(\mathbf X_{m\times n}\)</span>: <span class="math display">\[
-\bar{\mathbf x}=\frac{1}{m}\mathbf X^T\mathbf 1
+\bar{\mathbf x}=\frac{1}{m}\mathbf X^T\mathbf 1_m
 \]</span> <span class="math display">\[
 \begin{aligned}
 \bar{\mathbf x}&amp;=\frac{1}{m}\mathbf X^T\mathbf 1 \\
@@ -529,37 +530,45 @@ x_{1n} + x_{2n} + \cdots + x_{mn}
 </section>
 <section id="centering-matrix" class="level3" data-number="1.7">
 <h3 data-number="1.7" class="anchored" data-anchor-id="centering-matrix"><span class="header-section-number">1.7</span> Centering Matrix</h3>
-<p>A centering matrix is a square matrix that is used in multivariate statistical analysis to center data by subtracting the mean of each variable from each observation. The centering matrix is a <strong>symmetric</strong> and <strong>idempotent</strong> matrix, meaning that it is equal to its own transpose and that multiplying it by itself results in the same matrix. The centering matrix is defined as:</p>
+<p>A centering matrix is a square matrix that is used in multivariate statistical analysis to center data by subtracting the mean of each variable from each observation. The resulting matrix is called the centered data matrix with the mean equal to <span class="math inline">\(0\)</span>. The centering matrix is defined as:</p>
 <p><span class="math display">\[
 \begin{equation}
   \mathbf C = \mathbf I - \frac{1}{m}\mathbf J
 \end{equation}
-\]</span> where <span class="math inline">\(\mathbf I\)</span> is the identity matrix, <span class="math inline">\(\mathbf J\)</span> is a matrix of ones, and <span class="math inline">\(m\)</span> is the number of observations.</p>
-<section id="properties-6" class="level4" data-number="1.7.1">
-<h4 data-number="1.7.1" class="anchored" data-anchor-id="properties-6"><span class="header-section-number">1.7.1</span> Properties</h4>
-<p>The centering matrix has the property that when it is multiplied by a data matrix <span class="math inline">\(\mathbf X\)</span>, it centers the data by subtracting the mean of each column of <span class="math inline">\(\mathbf X\)</span> from each element of <span class="math inline">\(\mathbf X\)</span>. The resulting matrix is called the centered data matrix with the mean equal to <span class="math inline">\(0\)</span>. The centering matrix is often used in multivariate statistical analysis, such as principal component analysis, to transform the data into a new coordinate system where the variance of each variable is equal to its eigenvalue.</p>
-<ul>
-<li>A centering matrix is a square matrix.</li>
-<li>The diagonal elements of a centering matrix are all equal and are given by <span class="math inline">\(m^{-1}\)</span>, where <span class="math inline">\(n\)</span> is the size of the matrix.</li>
-<li>The off-diagonal elements of a centering matrix are all equal and are given by <span class="math inline">\(-m^{-1}\)</span>.</li>
-<li>Multiplying a matrix <span class="math inline">\(\mathbf A\)</span> on the left by a centering matrix <span class="math inline">\(\mathbf C\)</span> is equivalent to subtracting the mean of the columns of <span class="math inline">\(\mathbf A\)</span> from each column of <span class="math inline">\(\mathbf A\)</span>.</li>
-<li>Multiplying a matrix <span class="math inline">\(\mathbf A\)</span> on the right by a centering matrix <span class="math inline">\(\mathbf C\)</span> is equivalent to subtracting the mean of the rows of <span class="math inline">\(\mathbf A\)</span> from each row of <span class="math inline">\(\mathbf A\)</span>.</li>
-</ul>
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf I\)</span> is the identity matrix, <span class="math inline">\(\mathbf J\)</span> is a matrix of ones, and <span class="math inline">\(m\)</span> is the number of observations.</p>
+<section id="example-1" class="level4" data-number="1.7.1">
+<h4 data-number="1.7.1" class="anchored" data-anchor-id="example-1"><span class="header-section-number">1.7.1</span> Example</h4>
 <p>Here is an example of a centering matrix of size <span class="math inline">\(3 \times 3\)</span>:</p>
 <p><span class="math display">\[
 \begin{equation*}
-\mathbf C = \frac{1}{3} \begin{pmatrix}
+\mathbf C = \frac{1}{3} \begin{bmatrix}
 2 &amp; -1 &amp; -1 \\
 -1 &amp; 2 &amp; -1 \\
 -1 &amp; -1 &amp; 2
-\end{pmatrix}
+\end{bmatrix}
 \end{equation*}
 \]</span></p>
 </section>
-<section id="applications-1" class="level4" data-number="1.7.2">
-<h4 data-number="1.7.2" class="anchored" data-anchor-id="applications-1"><span class="header-section-number">1.7.2</span> Applications</h4>
+<section id="properties-6" class="level4" data-number="1.7.2">
+<h4 data-number="1.7.2" class="anchored" data-anchor-id="properties-6"><span class="header-section-number">1.7.2</span> Properties</h4>
+<p>The centering matrix is often used in multivariate statistical analysis, such as principal component analysis, to transform the data into a new coordinate system where the variance of each variable is equal to its eigenvalue.</p>
 <ul>
-<li>find a centered matrix, <span class="math inline">\(\tilde{\mathbf X}\)</span> using a <span class="math inline">\(\mathbf 1_m\)</span> vector for <span class="math inline">\(\mathbf X_{m\times n}\)</span>: <span class="math display">\[
+<li>A centering matrix is a square matrix.</li>
+<li>A centering matrix is a symmetric matrix.</li>
+<li>A centering matrix is a idempotent matrix.</li>
+<li>The diagonal elements of a centering matrix are all equal and are given by <span class="math inline">\(\frac{1}{m}\)</span>, where <span class="math inline">\(n\)</span> is the size of the matrix.</li>
+<li>The off-diagonal elements of a centering matrix are all equal and are given by <span class="math inline">\(-\frac{1}{m}\)</span>.</li>
+<li>Multiplying a matrix <span class="math inline">\(\mathbf A\)</span> on the left by a centering matrix <span class="math inline">\(\mathbf C\)</span>, <span class="math inline">\(\mathbf{CA}\)</span> is equivalent to subtracting the mean of the columns of <span class="math inline">\(\mathbf A\)</span> from each column of <span class="math inline">\(\mathbf A\)</span>.</li>
+<li>Multiplying a matrix <span class="math inline">\(\mathbf A\)</span> on the right by a centering matrix <span class="math inline">\(\mathbf C\)</span>, <span class="math inline">\(\mathbf{AC}\)</span> is equivalent to subtracting the mean of the rows of <span class="math inline">\(\mathbf A\)</span> from each row of <span class="math inline">\(\mathbf A\)</span>.</li>
+</ul>
+</section>
+<section id="applications-1" class="level4" data-number="1.7.3">
+<h4 data-number="1.7.3" class="anchored" data-anchor-id="applications-1"><span class="header-section-number">1.7.3</span> Applications</h4>
+<ul>
+<li>find a centered matrix, <span class="math inline">\(\tilde{\mathbf X}\)</span> using a <span class="math inline">\(\mathbf 1_m\)</span> vector for <span class="math inline">\(\mathbf X_{m\times n}\)</span>:</li>
+</ul>
+<p><span class="math display">\[
 \mathbf C = \mathbf I - \frac{1}{m}\mathbf J
 \]</span> <span class="math display">\[
 \begin{aligned}
@@ -570,7 +579,7 @@ x_{21} &amp; x_{22} &amp; \cdots &amp; x_{2n} \\
 \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
 x_{m1} &amp; x_{m2} &amp; \cdots &amp; x_{mn}
 \end{bmatrix} \text{ } \\
-\mathbf {1\bar{x}^T}&amp;=
+\mathbf {1_m\bar{x}^T}&amp;=
 \begin{bmatrix}
 1 \\
 1 \\
@@ -585,7 +594,7 @@ x_{m1} &amp; x_{m2} &amp; \cdots &amp; x_{mn}
 \bar{x}_{1} &amp; \bar{x}_{2} &amp; \dots &amp; \bar{x}_{n}\\
 \vdots &amp; \vdots &amp; \ddots &amp; \vdots\\
 \bar{x}_{1} &amp; \bar{x}_{2} &amp; \dots &amp; \bar{x}_{n}
-\end{bmatrix}\\
+\end{bmatrix}_{m\times n}\\
 \\
 \tilde{\mathbf X}&amp;=\mathbf X -{\mathbf{1}}_{m}\bar{\mathbf x}^T\\
 &amp;=\mathbf X -\mathbf{1}_{m}(\frac{1}{m}\mathbf X^T \mathbf{1}_m)^T\\
@@ -593,8 +602,7 @@ x_{m1} &amp; x_{m2} &amp; \cdots &amp; x_{mn}
 &amp;=(\mathbf I -\frac{1}{m}\mathbf J)\mathbf X\\
 &amp;=\mathbf C \mathbf X\\
 \end{aligned}
-\]</span></li>
-</ul>
+\]</span></p>
 </section>
 </section>
 <section id="covariance-matrix" class="level3" data-number="1.8">
@@ -624,6 +632,9 @@ Sample Variance
 <p><span class="math display">\[
 s^2_{x}=s_{xx} = \frac{\sum_{i=1}^{m}(x_{ij}-\bar{x})^2}{m-1}
 \]</span></p>
+<p>For two random variables, <span class="math inline">\(X_1\)</span>, <span class="math inline">\(X_2\)</span>, <span class="math display">\[
+s_{x_1x_2} = \frac{\sum_{i=1}^{m}(x_{i1}-\bar{x_1})(x_{i2}-\bar{x_2})}{m-1}
+\]</span></p>
 <p>Often for the notation of sample variance, the squared power is added for the sample variance with one random variable, but it is not for the covariance between two random variables.</p>
 </div>
 </div>
@@ -632,13 +643,17 @@ s^2_{x}=s_{xx} = \frac{\sum_{i=1}^{m}(x_{ij}-\bar{x})^2}{m-1}
 \begin{aligned}
   \mathbf{S}
   &amp;=\begin{bmatrix}
-    s_{x_1x_2}&amp;s_{x_1x_2}\\
+    s_{11}&amp;s_{12}\\
+    s_{21}&amp;s_{22}
+  \end{bmatrix}\\
+  &amp;=\begin{bmatrix}
+    s_{x_1x_1}&amp;s_{x_1x_2}\\
     s_{x_2x_1}&amp;s_{x_2x_2}
   \end{bmatrix}\\
   &amp;=\frac{1}{n-1}
   \begin{bmatrix}
-    \sum_{i=1}^{m}(x_{i1}-\bar{x_1})(x_{i1}-\bar{x_1})&amp;\sum_{i=1}^{m}(x_{i1}-\bar{x_1})(x_{i2}-\bar{x_2})\\
-    \sum_{i=1}^{m}(x_{i1}-\bar{x_1})(x_{i2}-\bar{x_2})&amp;\sum_{i=1}^{m}(x_{i2}-\bar{x_2})(x_{i2}-\bar{x_2})
+    \sum_{i=1}^{m}(x_{i1}-\bar{x}_1)(x_{i1}-\bar{x}_1)&amp;\sum_{i=1}^{m}(x_{i1}-\bar{x}_1)(x_{i2}-\bar{x}_2)\\
+    \sum_{i=1}^{m}(x_{i2}-\bar{x}_2)(x_{i1}-\bar{x}_1)&amp;\sum_{i=1}^{m}(x_{i2}-\bar{x}_2)(x_{i2}-\bar{x}_2)
   \end{bmatrix}
 \end{aligned}
 \]</span></p>
@@ -655,7 +670,7 @@ s_{n1}&amp;s_{n2}&amp;\dots&amp;s_{nn}
 </section>
 <section id="vector-form-of-sample-variance-in-linear-algebra" class="level4" data-number="1.8.2">
 <h4 data-number="1.8.2" class="anchored" data-anchor-id="vector-form-of-sample-variance-in-linear-algebra"><span class="header-section-number">1.8.2</span> Vector Form of Sample Variance in Linear Algebra</h4>
-<p>The complicating algebraic notion can be represented as the simpler form in linear algebra. To do so, let a sample vector <span class="math inline">\(\mathbf x =\begin{bmatrix}x_{1}\\x_{2}\\ \vdots\\x_{n}\end{bmatrix}\)</span>. In othe words, a record, a row, or the observations across <span class="math inline">\(n\)</span> variables in a dataset:</p>
+<p>The complicating algebraic notation can be represented as the simpler form in linear algebra. To do so, let a sample vector <span class="math inline">\(\mathbf x =\begin{bmatrix}x_{1}\\x_{2}\\ \vdots\\x_{n}\end{bmatrix}\)</span>. In othe words, a record, a row, or the observations across <span class="math inline">\(n\)</span> variables in a dataset:</p>
 <p><span class="math display">\[
 \mathbf{X}=
 \begin{bmatrix}
@@ -675,7 +690,7 @@ x_{m1}&amp;x_{m2}&amp;\dots&amp;x_{mn}
 \begin{aligned}
 \mathbf S
 &amp;= \operatorname{Cov}(\mathbf{X}) \\
-&amp;= \frac{1}{m-1}\sum_{i=1}^{m}(\mathbf x_i - \bar{\mathbf x}_i)^T(\mathbf x_i - \bar{\mathbf x}_i)\\
+&amp;= \frac{1}{m-1}\sum_{i=1}^{m}(\mathbf x_i - \bar{\mathbf x}_i)(\mathbf x_i - \bar{\mathbf x}_i)^T\\
 &amp;= \frac{1}{m-1}\tilde{\mathbf{X}}^T\tilde{\mathbf{X}}\\
 &amp;= \frac{1}{m-1}(\mathbf{CX})^T(\mathbf{CX})\\
 &amp;= \frac{1}{m-1}\mathbf{X}^T\mathbf{C}^T\mathbf{CX}\\
@@ -685,9 +700,40 @@ x_{m1}&amp;x_{m2}&amp;\dots&amp;x_{mn}
 \]</span></p>
 <p>where <span class="math inline">\(\mathbf{X}\)</span> is the dataset matrix, <span class="math inline">\(\mathbf{x_i}=\begin{bmatrix}x_{i1}\\x_{i2}\\ \vdots\\x_{in}\end{bmatrix}\)</span> is the observations of each variable along the columns, <span class="math inline">\(\bar{\mathbf{x}}_i=\begin{bmatrix}\bar{x}_{1}\\\bar{x}_{2}\\ \vdots\\\bar{x}_{n}\end{bmatrix}\)</span> and <span class="math inline">\((\mathbf{x}_i - \bar{\mathbf{x}}_i)^T=\tilde{\mathbf{X}}\)</span> is the transpose of the centered dataset matrix.</p>
 <p>The size of <span class="math inline">\(\mathbf S\)</span> is <span class="math inline">\((1 \times n)^T(1 \times n)=(n \times 1)(1 \times n)=(n \times n)\)</span></p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>For the <span class="math inline">\(i\)</span> th observation, the outer product of <span class="math inline">\((\mathbf x_i - \bar{\mathbf x}_i)(\mathbf x_i - \bar{\mathbf x}_i)^T\)</span> generates the following <span class="math inline">\(n \times n\)</span> matrix.</p>
+<p><span class="math display">\[
+\begin{aligned}
+(\mathbf x_i - \bar{\mathbf x}_i)(\mathbf x_i - \bar{\mathbf x}_i)^T
+&amp;= \begin{bmatrix}
+x_{i1} -\bar{x}_{i1}\\ x_{i2} -\bar{x}_{i2}\\ \vdots \\ x_{in} -\bar{x}_{in}
+\end{bmatrix}\begin{bmatrix}
+x_{i1} -\bar{x}_{i1}&amp;x_{i2} -\bar{x}_{i2}&amp;\dots&amp;x_{in} -\bar{x}_{in}
+\end{bmatrix} \\
+&amp;=\begin{bmatrix}
+(x_{i1}-\bar{x}_{i1})(x_{i1}-\bar{x}_{i1}) &amp; (x_{i1}-\bar{x}_{i1})(x_{i2}-\bar{x}_{i2}) &amp; \dots &amp; (x_{i1}-\bar{x}_{i1})(x_{in}-\bar{x}_{in})\\
+(x_{i2}-\bar{x}_{i2})(x_{i1}-\bar{x}_{i1}) &amp; (x_{i2}-\bar{x}_{i2})(x_{i2}-\bar{x}_{i2}) &amp; \dots &amp; (x_{i2}-\bar{x}_{i2})(x_{in}-\bar{x}_{in})\\
+\vdots&amp;\vdots&amp;\ddots&amp;\vdots\\
+(x_{in}-\bar{x}_{in})(x_{i1}-\bar{x}_{i1})&amp;(x_{in}-\bar{x}_{in})(x_{i2}-\bar{x}_{i2})()&amp;\dots&amp;(x_{in}-\bar{x}_{in})(x_{in}-\bar{x}_{in})
+\end{bmatrix}_{n\times n}
+\end{aligned}
+\]</span></p>
+<p>The <span class="math inline">\(n \times n\)</span> matrix right above is gnerated by <span class="math inline">\(m\)</span> times for the <span class="math inline">\(m\)</span> observations of <span class="math inline">\(\mathbf{X}_{m \times n}\)</span>, the <span class="math inline">\(\operatorname{Cov}(\mathbf X)\)</span> is the sum of the <span class="math inline">\(m\)</span> of <span class="math inline">\(n \times n\)</span> matrices divided by <span class="math inline">\(\frac{1}{m-1}\)</span>.</p>
+</div>
+</div>
 </section>
-<section id="example-1" class="level4" data-number="1.8.3">
-<h4 data-number="1.8.3" class="anchored" data-anchor-id="example-1"><span class="header-section-number">1.8.3</span> Example</h4>
+<section id="example-2" class="level4" data-number="1.8.3">
+<h4 data-number="1.8.3" class="anchored" data-anchor-id="example-2"><span class="header-section-number">1.8.3</span> Example</h4>
+<p><strong>Example 1</strong></p>
 <p>Let’s say we have a dataset with three variables, <span class="math inline">\(\mathbf{x}_1, \mathbf{x}_2, \text{ and } \mathbf{x}_3,\)</span> with <span class="math inline">\(m\)</span> observations. The dataset can be represented as a matrix <span class="math inline">\(\mathbf{X}\)</span> with dimensions <span class="math inline">\(m \times 3\)</span>, where each row represents an observation and each column represents a variable. The covariance matrix, <span class="math inline">\(\operatorname{Cov}(\mathbf{X})\)</span>, of the dataset can be computed as follows:</p>
 <p><span class="math display">\[
 \begin{aligned}
@@ -696,6 +742,8 @@ x_{m1}&amp;x_{m2}&amp;\dots&amp;x_{mn}
 \end{aligned}
 \]</span></p>
 <p>where <span class="math inline">\(\mathbf{X}\)</span> is the dataset matrix, <span class="math inline">\(\bar{x}\)</span> is the mean of each variable computed along the rows, and <span class="math inline">\((\mathbf{x_i} - \bar{\mathbf{x_i}})^T\)</span> is the transpose of the centered dataset matrix. The covariance matrix <span class="math inline">\(\operatorname{Cov}(\mathbf{X})\)</span> will be a <span class="math inline">\(3 \times 3\)</span> matrix, with the <span class="math inline">\((i, j)\)</span> th entry representing the covariance between the <span class="math inline">\(i\)</span> th and <span class="math inline">\(j\)</span> th variables in the dataset.</p>
+<p><strong>Example 2</strong></p>
+<p>The second example is to find <span class="math inline">\(\operatorname{Cov}(\mathbf{X})\)</span> where <span class="math inline">\(\mathbf{X}\)</span> is the <code>mtcars</code> dataset.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>

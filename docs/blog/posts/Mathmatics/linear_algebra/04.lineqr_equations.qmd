@@ -1,6 +1,6 @@
 ---
-title: "Basics (4) - Tensor"
-subtitle: template
+title: "Linear Equations"
+subtitle: Vectors and Linear Equations, Elimination, Rules for Matrix Operations, Inverse Matrices, Factorization, Transposes and Permutations
 description: |
   template
 categories:
@@ -16,24 +16,676 @@ format:
 draft: False
 ---
 
-## Tensor
+```{python}
+#| echo: false
 
-A tensor is a mathematical object that generalizes vectors and matrices to higher dimensions. A tensor of order $n$ is an object that can be represented by a multidimensional array of $n$ indices. Each index can take on a range of values, which determine the dimensionality of the tensor along that axis.
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+```
 
-For example, a rank-2 tensor (i.e., a matrix) can be represented as:
+# Solving Linear Equations
+ 
+In the previous blog, we looked at some properties of a matrix such as scalar multiplication, vector addition, linear combination, coefficient matrix, matrix equation, dot products with rows combination of columns, [see the previous blog: basic matrix operations](./02.basic_matrix.qmd).
+
+This blog is going to focus on solving $n$ equations in $n$ unknowns variables or columns (for any $n$).
+
+## Vectors and Linear Equations
+
+### 3 Equations in 3 Unknown Variables
 
 $$
-\mathbf A_{ij} \text{ , } i=1,\dots m \text{, } j=1,\dots,n
+\begin{align*}
+x + 2y - z &= 1 \\
+2x - y + 3z &= -2 \\
+x + 3y + z &= 3 \\
+\end{align*} 
 $$
-where $\mathbf A$ is the tensor, $i$ and $j$ are the indices, and $m$ and $n$ are the dimensions of the tensor along each axis. The entries of the tensor are given by $a_{ij}$.
 
-A rank-3 tensor can be represented as:
+can be written in matrix form as:
 $$
-\mathbf A_{ijk} \text{ , } i=1,\dots m \text{, } j=1,\dots,n\text{, } k=1,\dots,p
+\begin{align*}
+\begin{bmatrix}
+3 & 2 & -1 \\
+2 & -1 & 3 \\
+1 & 3 & 1 \\
+\end{bmatrix}
+\begin{bmatrix}
+x \\
+y \\
+z \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 \\
+-2 \\
+3 \\
+\end{bmatrix} 
+\end{align*} 
 $$
-where $\mathbf A$ is the tensor, $i$, $j$, and $k$ are the indices, and $m$, $n$, and $p$ are the dimensions of the tensor along each axis. The entries of the tensor are given by $A_{ijk}$.
+
+The matrix form can be represented as :
+
+$$
+\begin{align*}
+x
+\begin{bmatrix}
+3 \\
+2 \\
+1 \\
+\end{bmatrix} +
+y
+\begin{bmatrix}
+2 \\
+-1 \\
+3 \\
+\end{bmatrix} +
+z
+\begin{bmatrix}
+-1 \\
+3 \\
+1 \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 \\
+-2 \\
+3 \\
+\end{bmatrix} 
+\end{align*} 
+$$
+
+```{python}
+# Coefficient matrix of the system of equations
+A = np.array([[3, 2, -1],
+              [2, -1, 3],
+              [1, 3, 1]])
+
+# Right-hand side vector of the system of equations
+b = np.array([1, -2, 3])
+
+# Solve the system of equations
+x = np.linalg.solve(A, b)
+
+# Extract the solutions for x, y, and z
+x_val, y_val, z_val = x
+
+# Print the solution
+print("Intersection point:")
+print("x =", x_val)
+print("y =", y_val)
+print("z =", z_val)
+
+# Generate points on the planes
+x_plane1, y_plane1 = np.meshgrid(np.linspace(-2, 2, 10), np.linspace(-2, 2, 10))
+z_plane1 = (1 - 3 * x_plane1 - 2 * y_plane1) / -1
+
+x_plane2, z_plane2 = np.meshgrid(np.linspace(-2, 2, 10), np.linspace(-2, 2, 10))
+y_plane2 = (-2 - 2 * x_plane2 + 3 * z_plane2) / 1
+
+y_plane3, z_plane3 = np.meshgrid(np.linspace(-2, 2, 10), np.linspace(-2, 2, 10))
+x_plane3 = (1 - 3 * y_plane3 - z_plane3) / 2
+
+# Create 3D plot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Plot the planes
+ax.plot_surface(x_plane1, y_plane1, z_plane1, alpha=0.5)
+ax.plot_surface(x_plane2, y_plane2, z_plane2, alpha=0.5)
+ax.plot_surface(x_plane3, y_plane3, z_plane3, alpha=0.5)
+
+# Plot the intersection point
+ax.scatter(x_val, y_val, z_val, color='red', label='Intersection Point')
+
+# Set labels and title
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('z')
+ax.set_title('Intersection of Three Planes')
+
+# Show legend
+ax.legend()
+
+# Show the plot
+plt.show()
+
+```
 
 
-## Basic Tensor Operations
+```{python}
+# Define the vectors
+v1 = np.array([-3, 2, 1])
+v2 = np.array([-2, -1, 3])
+v3 = np.array([1, 3, 1])
 
-### 
+# Define the right-hand side vector
+rhs = np.array([1, -2, 3])
+
+# Create 3D plot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Plot the vectors
+ax.quiver(0, 0, 0, v1[0], v1[1], v1[2], color='red', label='v1')
+ax.quiver(0, 0, 0, v2[0], v2[1], v2[2], color='green', label='v2')
+ax.quiver(0, 0, 0, v3[0], v3[1], v3[2], color='blue', label='v3')
+
+# Plot the right-hand side vector
+ax.quiver(0, 0, 0, rhs[0], rhs[1], rhs[2], color='black', label='b')
+
+# Set equal axes scales
+ax.set_xlim([-3, 3])
+ax.set_ylim([-3, 3])
+ax.set_zlim([-3, 3])
+
+# Set labels and title
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('z')
+ax.set_title('Vectors in 3D Space')
+
+# Show legend
+ax.legend()
+
+# Set viewing angle
+ax.view_init(elev=30, azim=120)
+
+# Show the plot
+plt.show()
+```
+
+## Elimination
+
+The elimination method, also known as Gaussian elimination, is a systematic way to solve systems of linear equations by transforming the augmented matrix of the system into row-echelon form or reduced row-echelon form using a sequence of elementary row operations. 
+
+::: {#def-elimination}
+
+The elimination method (Gaussian elimination) is a systematic way to solve a system of linear equations by performing a sequence of elementary row operations on the augmented matrix of the system, with the goal of transforming the augmented matrix into row-echelon form or reduced row-echelon form.
+:::
+
+
+::: {#def-augmented_matrix}
+The augmented matrix of a system of linear equations is a rectangular matrix obtained by appending the constants (right-hand side) of the equations as an additional column to the coefficient matrix.
+:::
+
+The augmented matrix represents the system of linear equations in matrix form, where the coefficients of the variables are organized in a matrix, and the constants (right-hand side) of the equations are appended as an additional column to the coefficient matrix. 
+
+::: {#def-row_operations}
+
+Elementary row operations are specific operations that can be performed on the rows of a matrix to transform it into a different matrix with the same row space. There are three types of elementary row operations:
+
+1. Row scaling: Multiply a row of the matrix by a nonzero scalar.
+1. Row addition: Add a multiple of one row to another row.
+1. Row interchange: Swap the positions of two rows.
+:::
+
+Elementary row operations are specific operations that can be performed on the rows of a matrix to transform it into a different matrix with the same row space. 
+
+
+::: {#def-row_echelon_form}
+A matrix is said to be in row-echelon form if it satisfies the following conditions:
+
+1. All zero rows are at the bottom of the matrix.
+1. The leading coefficient (the first non-zero entry) in each row is 1.
+1. All other entries in the same column as a leading coefficient are zero.
+1. The leading coefficient of a row occurs to the right of the leading coefficient of the row above it.
+:::
+
+::: {#def-row_reduced_echelon_form}
+A matrix is said to be in the row-reduced echelon form (or RREF) if it satisfies the following conditions:
+
+1. All rows that contain a nonzero element are above any rows that contain only zeros (i.e., rows of all zeros, if any, are at the bottom of the matrix).
+1. The leading coefficient (the first nonzero entry) in each nonzero row is 1.
+1. The leading coefficient of any nonzero row is strictly to the right of the leading coefficient of the row above it.
+1. All other entries in the same column as a leading coefficient are zero.
+:::
+
+The row-echelon form (or row-reduced echelon form or RREF) is a systematic way of representing a matrix such that it has certain properties, making it easier to solve linear equations using methods like Gaussian elimination. In row-echelon form, the leading coefficient (the first non-zero entry) in each row is 1, and all other entries in the same column are zero.
+
+From the row-echolon form, it produces an **upper triangular system** and the reduced one or RREF is **the final goal to solve the system**.
+
+### Example
+
+#### Unique Solution
+
+$$
+
+\begin{align*}
+& 2x + y - z = 3 \\
+& 3x - 2y + 2z = 1 \\
+& x + 3y - z = 4 \\
+
+& \text{the augmented matrix:} \\
+& \begin{bmatrix}
+2 & 1 & -1 & | & 3 \\
+3 & -2 & 2 & | & 1 \\
+1 & 3 & -1 & | & 4 \\
+\end{bmatrix} \\
+\\
+& \text{Perform elementary row operations:} \\
+\\
+& \text{Row2 = Row2 - 3/2 * Row1} \\
+& \text{Row3 = Row3 - 1/2 * Row1} \\
+\\
+& \begin{bmatrix}
+2 & 1 & -1 &| & 3 \\
+0 & -5/2 & 7/2&| & -7/2 \\
+0 & 5/2 & -1/2&| & 5/2 \\
+\end{bmatrix} \\
+\\
+& \text{Row3 = Row3 + Row2} \\
+\\
+& \text{Row Echelon Form:} \\
+& \begin{bmatrix}
+2 & 1 & -1 &| & 3 \\
+0 & -5/2 & 7/2 &| & -7/2 \\
+0 & 0 & 3 &| & -1 \\
+\end{bmatrix} \\
+\\
+& \text{Reduced Row Echelon Form:} \\
+&\begin{bmatrix}
+1 & 0 & 0 &| & 1 \\
+0 & 1 & -1 &|& 1 \\
+0 & 0 & 1 &|& -\frac{1}{3} \\
+\end{bmatrix}
+\\
+\\
+& \text{Breakdown: Perform back substitution to obtain the solution:} \\
+& z = -1/3 \\
+& y = -2/3 \\
+& x = 4/3 \\
+\end{align*}
+
+$$
+
+#### Infinitely Many Solutions
+
+$$
+\begin{align*}
+& 3x + 2y - z = 4 \\
+& 6x + 4y - 2z = 8 \\
+& 9x + 6y - 3z = 12 \\
+& \text{the augmented matrix:} \\
+& \begin{bmatrix}
+3 & 2 & -1 & | & 4 \\
+6 & 4 & -2 & | & 8 \\
+9 & 6 & -3 & | & 12 \\
+\end{bmatrix} \\
+
+& \text{Perform elementary row operations:} \\
+\\
+& \text{Row2 = Row2 - 2 * Row1} \\
+& \text{Row3 = Row3 - 3 * Row1} \\
+\\
+& \begin{bmatrix}
+3 & 2 & -1 &| & 4 \\
+0 & 0 & 0 &| & 0 \\
+0 & 0 & 0 &| & 0 \\
+\end{bmatrix} \\
+\\
+& \text{Row Echelon Form:} \\
+& \begin{bmatrix}
+3 & 2 & -1 &| & 4 \\
+0 & 0 & 0 &| & 0 \\
+0 & 0 & 0 &| & 0 \\
+\end{bmatrix} \\
+\\
+& \text{Reduced Row Echelon Form:} \\
+& \begin{bmatrix}
+1 & \frac{2}{3} & -\frac{1}{3} &| & \frac{4}{3} \\
+0 & 0 & 0 &| & 0 \\
+0 & 0 & 0 &| & 0 \\
+\end{bmatrix} \\
+\\
+& \text{Breakdown:} \\
+& \text{Perform back substitution to obtain the solution:} \\
+& z = t \quad \text{(where t is a parameter)} \\
+& y = s \quad \text{(where s is a parameter)} \\
+& x = \frac{4}{3} - \frac{2}{3}y + \frac{1}{3}z \quad \text{(in terms of t and s)} \\
+\end{align*}
+
+$$
+
+In this example, the system of linear equations has infinitely many solutions because after performing row operations, the rows become all zeros in the second and third rows, indicating that there are infinitely many values of $x$, $y$, and $z$ that satisfy the system of equations. The parameters t and s can take any real values, and the values of $x$, $y$, and $z$ can be expressed in terms of $t$ and $s$.
+
+#### No Solution
+
+$$
+\begin{align*}
+& 2x + 3y - z = 7 \\
+& 4x + 6y - 2z = 12 \\
+& 3x + 4y - z = 8 \\
+
+& \text{the augmented matrix:} \\
+& \begin{bmatrix}
+2 & 3 & -1 & | & 7 \\
+4 & 6 & -2 & | & 12 \\
+3 & 4 & -1 & | & 8 \\
+\end{bmatrix} \\
+
+& \text{Perform elementary row operations:} \\
+\\
+& \text{Row2 = Row2 - 2 * Row1} \\
+& \text{Row3 = Row3 - 3/2 * Row1} \\
+\\
+& \begin{bmatrix}
+2 & 3 & -1 &| & 7 \\
+0 & 0 & 0&| & -2 \\
+0 & 1/2 & 1/2&| & 1 \\
+\end{bmatrix} \\
+\\
+& \text{Row3 = Row3 - 1/2 * Row2} \\
+\\
+& \text{Row Echelon Form:} \\
+& \begin{bmatrix}
+2 & 3 & -1 &| & 7 \\
+0 & 1/2 & 1/2 &| & 1 \\
+0 & 0 & 0 &| & -2 \\
+\end{bmatrix} \\
+\\
+& \text{Reduced Row Echelon Form:} \\
+&\begin{bmatrix}
+1 & 3/2 & -1/2 &| & 7/2 \\
+0 & 1 & 1 &|& 2 \\
+0 & 0 & 0 &|& -2 \\
+\end{bmatrix}
+\end{align*}
+$$
+
+The last row of the reduced row echelon form has all zeros except for the right-hand side (RHS) part, which is $-2$. This implies that $0 = -2$, which is not possible. Therefore, there is no solution to this system of linear equations.
+
+## Rules for Matrix Operations
+
+You reference some rules of matrix operations in the other blog (See [the basic matrix operation](./02.basic_matrix.qmd)).
+
+### Commutative Law of Matrix Addition
+
+Matrix addition is commutative, which means that changing the order of the matrices being added does not affect the result.
+
+$$
+\begin{align*}
+\mathbf A + \mathbf B = \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} + \begin{bmatrix}
+5 & 6 \\
+7 & 8
+\end{bmatrix} = \begin{bmatrix}
+1 + 5 & 2 + 6 \\
+3 + 7 & 4 + 8
+\end{bmatrix} = \begin{bmatrix}
+6 & 8 \\
+10 & 12
+\end{bmatrix}
+\\
+\mathbf B + \mathbf A = \begin{bmatrix}
+5 & 6 \\
+7 & 8
+\end{bmatrix} + \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} = \begin{bmatrix}
+5 + 1 & 6 + 2 \\
+7 + 3 & 8 + 4
+\end{bmatrix} = \begin{bmatrix}
+6 & 8 \\
+10 & 12
+\end{bmatrix}
+\end{align*}
+$$
+
+### Distributive Law
+
+Matrix addition distributes over matrix multiplication, which means that multiplying a matrix by the sum of two matrices is the same as multiplying the matrix by each individual matrix and then adding the results.
+
+$$
+\begin{align*}
+\mathbf A (\mathbf B + \mathbf C )
+&= \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} \cdot \left( \begin{bmatrix}
+5 & 6 \\
+7 & 8
+\end{bmatrix} + \begin{bmatrix}
+9 & 10 \\
+11 & 12
+\end{bmatrix} \right) = \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} \cdot \begin{bmatrix}
+14 & 16 \\
+18 & 20
+\end{bmatrix} = \begin{bmatrix}
+70 & 76 \\
+158 & 172
+\end{bmatrix}
+\\
+
+\mathbf A \mathbf B + \mathbf A \mathbf C 
+&= \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} \cdot \begin{bmatrix}
+5 & 6 \\
+7 & 8
+\end{bmatrix} + \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} \cdot \begin{bmatrix}
+9 & 10 \\
+11 & 12
+\end{bmatrix} = \begin{bmatrix}
+19 & 22 \\
+43 & 50
+\end{bmatrix} + \begin{bmatrix}
+23 & 26 \\
+31 & 34
+\end{bmatrix} = \begin{bmatrix}
+70 & 76 \\
+158 & 172
+\end{bmatrix}
+\end{align*}
+$$
+
+
+### Associative Law
+
+Matrix addition is associative, which means that changing the grouping of the matrices being added does not affect the result.
+
+$$
+\begin{align*}
+(\mathbf A + \mathbf B )+ \mathbf C 
+&= \left( \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} + \begin{bmatrix}
+5 & 6 \\
+7 & 8
+\end{bmatrix} \right) + \begin{bmatrix}
+9 & 10 \\
+11 & 12
+\end{bmatrix} = \begin{bmatrix}
+1 + 5 & 2 + 6 \\
+3 + 7 & 4 + 8
+\end{bmatrix} + \begin{bmatrix}
+9 & 10 \\
+11 & 12
+\end{bmatrix} = \begin{bmatrix}
+6 & 8 \\
+10 & 12
+\end{bmatrix} + \begin{bmatrix}
+9 & 10 \\
+11 & 12
+\end{bmatrix} = \begin{bmatrix}
+15 & 18 \\
+21 & 24
+\end{bmatrix}
+\\
+
+\mathbf A + (\mathbf B + \mathbf C) 
+&= \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} + \left( \begin{bmatrix}
+5 & 6 \\
+7 & 8
+\end{bmatrix} + \begin{bmatrix}
+9 & 10 \\
+11 & 12
+\end{bmatrix} \right) = \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} + \begin{bmatrix}
+14 & 16 \\
+18 & 20
+\end{bmatrix} = \begin{bmatrix}
+15 & 18 \\
+21 & 24
+\end{bmatrix}
+\end{align*}
+$$
+
+## Block Matrices
+
+A block matrix is a matrix that is partitioned into smaller matrices, or blocks, arranged in a rectangular grid. The blocks can be of any size, and the resulting matrix is used to represent a system of linear equations with multiple variables or equations.
+
+### Example
+
+Let $\mathbf A$  be a block matrix with four blocks, $\mathbf A_{11}$, $\mathbf A_{12}$, $\mathbf A_{21}$, and $\mathbf A_{22}$, as shown below:
+
+$$
+\mathbf A = \begin{bmatrix}
+\mathbf A_{11} & \mathbf A_{12} \\
+\mathbf A_{21} & \mathbf A_{22}
+\end{bmatrix}
+$$
+
+where $\mathbf A_{11}, \mathbf A_{12}, \mathbf A_{21},\text{ and }\mathbf A_{22}$ are individual matrices. This block matrix can be used to represent a system of linear equations with four variables or equations, where the blocks $\mathbf A_{11}, \mathbf A_{12}, \mathbf A_{21},\text{ and }\mathbf A_{22}$ represent the coefficients of the variables in the linear equations.
+
+### Block Multiplication
+
+Block multiplication is a matrix operation used with block matrices, where a matrix is partitioned into smaller matrices, or blocks, and the blocks are multiplied according to certain rules.
+
+#### Example
+
+$$
+\mathbf A = \begin{bmatrix}
+\mathbf A_{11} & \mathbf A_{12} \\
+\mathbf A_{21} & \mathbf A_{22}
+\end{bmatrix}
+\quad
+\mathbf B = \begin{bmatrix}
+\mathbf B_{11} & \mathbf B_{12} \\
+\mathbf B_{21} & \mathbf B_{22}
+\end{bmatrix}
+$$
+
+
+The block multiplication of $\mathbf A$ and $\mathbf B$, denoted as $\mathbf{AB}$, can be computed as:
+
+$$
+\mathbf{AB} = \begin{bmatrix}
+\mathbf A_{11} & \mathbf A_{12} \\
+\mathbf A_{21} & \mathbf A_{22}
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf B_{11} & \mathbf B_{12} \\
+\mathbf B_{21} & \mathbf B_{22}
+\end{bmatrix}
+= \begin{bmatrix}
+\mathbf A_{11}\mathbf B_{11} + \mathbf A_{12}\mathbf B_{21} & \mathbf A_{11}B_{12} + \mathbf A_{12}\mathbf B_{22} \\
+\mathbf A_{21}\mathbf B_{11} + \mathbf A_{22}\mathbf B_{21} & \mathbf A_{21}B_{12} + \mathbf A_{22}\mathbf B_{22}
+\end{bmatrix}
+$$
+
+where $\mathbf A_{11}\mathbf B_{11}, \mathbf A_{12}\mathbf B_{21}, \mathbf A_{11}\mathbf B_{12}, \mathbf A_{12}\mathbf \mathbf B_{22}, \mathbf A_{21}\mathbf B_{11}, \mathbf A_{22}\mathbf B_{21}, \mathbf A_{21}\mathbf B_{12},\text{ and }\mathbf A_{22}\mathbf B_{22}$ are block multiplications of the corresponding blocks.
+
+When matrices split into blocks, it is often simpler to see how they act. 
+
+This block unit can be reduced to the vector:
+
+$$
+\mathbf{AB} = \begin{bmatrix}
+\mathbf a_{1} & \dots & \mathbf a_{n} 
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf b_{1} \\
+\vdots\\
+\mathbf b_{n} 
+\end{bmatrix}
+= \begin{bmatrix}
+\mathbf a_{1}\mathbf b_{1} + \dots + \mathbf a_{n}\mathbf b_{n}
+\end{bmatrix}
+$$
+
+### Block Elimination
+
+An example of elimination by block to derive the Schur complement: 
+
+$$
+\begin{align*}
+\begin{bmatrix}
+\mathbf A & \mathbf B \\
+\mathbf C & \mathbf D
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf x \\
+\mathbf y
+\end{bmatrix}
+=
+\begin{bmatrix}
+\mathbf e \\
+\mathbf f
+\end{bmatrix}
+\end{align*}
+$$
+
+where $\mathbf A$, $\mathbf B$, $\mathbf C$, and $\mathbf D$ are block matrices, $\mathbf x$ and $\mathbf y$ are block vectors representing unknowns, and $\mathbf e$ and $\mathbf f$ are block vectors representing constants.
+
+We can use elimination by block to derive the Schur complement, which is a reduced matrix that represents the remaining unknowns after eliminating one set of unknowns. Here's how we can do it:
+
+$$
+\begin{align*}
+& \text{Original equation:} \\
+&\begin{bmatrix}
+\mathbf A & \mathbf B \\
+\mathbf C & \mathbf D
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf x \\
+\mathbf y
+\end{bmatrix}
+=
+\begin{bmatrix}
+\mathbf e \\
+\mathbf f
+\end{bmatrix} \\
+\\
+&\text{Step 1: Eliminate \mathbf x using block Gaussian elimination:} \\
+&\mathbf C \cdot \mathbf x + \mathbf D \cdot \mathbf y = \mathbf f - \mathbf A \cdot \mathbf x \\
+\\
+& \text{Step 2: Solve for \( \mathbf y \):}  \\
+&\mathbf y = (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot (\mathbf f - \mathbf A \cdot \mathbf x) \\
+\\
+&\text{Step 3: Substitute \( \mathbf y \) back into the original equation:}  \\
+& \mathbf A \cdot \mathbf x + \mathbf B \cdot ((\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot (\mathbf f - \mathbf A \cdot \mathbf x)) = \mathbf e \\
+\\
+&\text{Step 4: Simplify using the Schur complement:} \\
+&(\text{Schur Complement}) \quad \mathbf S = \mathbf B \cdot (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot \mathbf B^T \\
+\\
+&\text{Step 5: Solve for \(\mathbf X\)  using the Schur complement:} \\
+&\mathbf x = (\mathbf A - \mathbf B \cdot (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot \mathbf B^T)^{-1} \cdot \mathbf e \\
+\end{align*}
+$$
+
+In this example, we perform elimination by block to derive the Schur complement matrix $S$, and then use it to solve for the unknowns $\mathbf x$ and $\mathbf y$. Note that the Schur complement is obtained by inverting the submatrix $D - C \cdot A^{-1} \cdot B$, and it is used to simplify the equation for $\mathbf x$.
+
+## Inverse Matrices
+
+
+## Factorization
+## Transposes and Permutations
+
+

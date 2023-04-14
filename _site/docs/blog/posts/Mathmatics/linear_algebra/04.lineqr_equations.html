@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2023-03-31">
 <meta name="description" content="template">
 
-<title>Kwangmin Kim - Basics (4) - Tensor</title>
+<title>Kwangmin Kim - Linear Equations</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,6 +23,69 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -138,10 +201,31 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#tensor" id="toc-tensor" class="nav-link active" data-scroll-target="#tensor"><span class="toc-section-number">1</span>  Tensor</a></li>
-  <li><a href="#basic-tensor-operations" id="toc-basic-tensor-operations" class="nav-link" data-scroll-target="#basic-tensor-operations"><span class="toc-section-number">2</span>  Basic Tensor Operations</a>
+  <li><a href="#solving-linear-equations" id="toc-solving-linear-equations" class="nav-link active" data-scroll-target="#solving-linear-equations"><span class="toc-section-number">1</span>  Solving Linear Equations</a>
   <ul class="collapse">
-  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"><span class="toc-section-number">2.1</span>  </a></li>
+  <li><a href="#vectors-and-linear-equations" id="toc-vectors-and-linear-equations" class="nav-link" data-scroll-target="#vectors-and-linear-equations"><span class="toc-section-number">1.1</span>  Vectors and Linear Equations</a>
+  <ul class="collapse">
+  <li><a href="#equations-in-3-unknown-variables" id="toc-equations-in-3-unknown-variables" class="nav-link" data-scroll-target="#equations-in-3-unknown-variables"><span class="toc-section-number">1.1.1</span>  3 Equations in 3 Unknown Variables</a></li>
+  </ul></li>
+  <li><a href="#elimination" id="toc-elimination" class="nav-link" data-scroll-target="#elimination"><span class="toc-section-number">1.2</span>  Elimination</a>
+  <ul class="collapse">
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="toc-section-number">1.2.1</span>  Example</a></li>
+  </ul></li>
+  <li><a href="#rules-for-matrix-operations" id="toc-rules-for-matrix-operations" class="nav-link" data-scroll-target="#rules-for-matrix-operations"><span class="toc-section-number">1.3</span>  Rules for Matrix Operations</a>
+  <ul class="collapse">
+  <li><a href="#commutative-law-of-matrix-addition" id="toc-commutative-law-of-matrix-addition" class="nav-link" data-scroll-target="#commutative-law-of-matrix-addition"><span class="toc-section-number">1.3.1</span>  Commutative Law of Matrix Addition</a></li>
+  <li><a href="#distributive-law" id="toc-distributive-law" class="nav-link" data-scroll-target="#distributive-law"><span class="toc-section-number">1.3.2</span>  Distributive Law</a></li>
+  <li><a href="#associative-law" id="toc-associative-law" class="nav-link" data-scroll-target="#associative-law"><span class="toc-section-number">1.3.3</span>  Associative Law</a></li>
+  </ul></li>
+  <li><a href="#block-matrices" id="toc-block-matrices" class="nav-link" data-scroll-target="#block-matrices"><span class="toc-section-number">1.4</span>  Block Matrices</a>
+  <ul class="collapse">
+  <li><a href="#example-1" id="toc-example-1" class="nav-link" data-scroll-target="#example-1"><span class="toc-section-number">1.4.1</span>  Example</a></li>
+  <li><a href="#block-multiplication" id="toc-block-multiplication" class="nav-link" data-scroll-target="#block-multiplication"><span class="toc-section-number">1.4.2</span>  Block Multiplication</a></li>
+  <li><a href="#block-elimination" id="toc-block-elimination" class="nav-link" data-scroll-target="#block-elimination"><span class="toc-section-number">1.4.3</span>  Block Elimination</a></li>
+  </ul></li>
+  <li><a href="#inverse-matrices" id="toc-inverse-matrices" class="nav-link" data-scroll-target="#inverse-matrices"><span class="toc-section-number">1.5</span>  Inverse Matrices</a></li>
+  <li><a href="#factorization" id="toc-factorization" class="nav-link" data-scroll-target="#factorization"><span class="toc-section-number">1.6</span>  Factorization</a></li>
+  <li><a href="#transposes-and-permutations" id="toc-transposes-and-permutations" class="nav-link" data-scroll-target="#transposes-and-permutations"><span class="toc-section-number">1.7</span>  Transposes and Permutations</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -151,8 +235,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Basics (4) - Tensor</h1>
-<p class="subtitle lead">template</p>
+<h1 class="title">Linear Equations</h1>
+<p class="subtitle lead">Vectors and Linear Equations, Elimination, Rules for Matrix Operations, Inverse Matrices, Factorization, Transposes and Permutations</p>
   <div class="quarto-categories">
     <div class="quarto-category">Mathematics</div>
   </div>
@@ -187,21 +271,642 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<section id="tensor" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="tensor"><span class="header-section-number">1</span> Tensor</h2>
-<p>A tensor is a mathematical object that generalizes vectors and matrices to higher dimensions. A tensor of order <span class="math inline">\(n\)</span> is an object that can be represented by a multidimensional array of <span class="math inline">\(n\)</span> indices. Each index can take on a range of values, which determine the dimensionality of the tensor along that axis.</p>
-<p>For example, a rank-2 tensor (i.e., a matrix) can be represented as:</p>
+<section id="solving-linear-equations" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Solving Linear Equations</h1>
+<p>In the previous blog, we looked at some properties of a matrix such as scalar multiplication, vector addition, linear combination, coefficient matrix, matrix equation, dot products with rows combination of columns, <a href="../../../../../docs/blog/posts/Mathmatics/linear_algebra/02.basic_matrix.html">see the previous blog: basic matrix operations</a>.</p>
+<p>This blog is going to focus on solving <span class="math inline">\(n\)</span> equations in <span class="math inline">\(n\)</span> unknowns variables or columns (for any <span class="math inline">\(n\)</span>).</p>
+<section id="vectors-and-linear-equations" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="vectors-and-linear-equations"><span class="header-section-number">1.1</span> Vectors and Linear Equations</h2>
+<section id="equations-in-3-unknown-variables" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="equations-in-3-unknown-variables"><span class="header-section-number">1.1.1</span> 3 Equations in 3 Unknown Variables</h3>
 <p><span class="math display">\[
-\mathbf A_{ij} \text{ , } i=1,\dots m \text{, } j=1,\dots,n
-\]</span> where <span class="math inline">\(\mathbf A\)</span> is the tensor, <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> are the indices, and <span class="math inline">\(m\)</span> and <span class="math inline">\(n\)</span> are the dimensions of the tensor along each axis. The entries of the tensor are given by <span class="math inline">\(a_{ij}\)</span>.</p>
-<p>A rank-3 tensor can be represented as: <span class="math display">\[
-\mathbf A_{ijk} \text{ , } i=1,\dots m \text{, } j=1,\dots,n\text{, } k=1,\dots,p
-\]</span> where <span class="math inline">\(\mathbf A\)</span> is the tensor, <span class="math inline">\(i\)</span>, <span class="math inline">\(j\)</span>, and <span class="math inline">\(k\)</span> are the indices, and <span class="math inline">\(m\)</span>, <span class="math inline">\(n\)</span>, and <span class="math inline">\(p\)</span> are the dimensions of the tensor along each axis. The entries of the tensor are given by <span class="math inline">\(A_{ijk}\)</span>.</p>
+\begin{align*}
+x + 2y - z &amp;= 1 \\
+2x - y + 3z &amp;= -2 \\
+x + 3y + z &amp;= 3 \\
+\end{align*}
+\]</span></p>
+<p>can be written in matrix form as: <span class="math display">\[
+\begin{align*}
+\begin{bmatrix}
+3 &amp; 2 &amp; -1 \\
+2 &amp; -1 &amp; 3 \\
+1 &amp; 3 &amp; 1 \\
+\end{bmatrix}
+\begin{bmatrix}
+x \\
+y \\
+z \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 \\
+-2 \\
+3 \\
+\end{bmatrix}
+\end{align*}
+\]</span></p>
+<p>The matrix form can be represented as :</p>
+<p><span class="math display">\[
+\begin{align*}
+x
+\begin{bmatrix}
+3 \\
+2 \\
+1 \\
+\end{bmatrix} +
+y
+\begin{bmatrix}
+2 \\
+-1 \\
+3 \\
+\end{bmatrix} +
+z
+\begin{bmatrix}
+-1 \\
+3 \\
+1 \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 \\
+-2 \\
+3 \\
+\end{bmatrix}
+\end{align*}
+\]</span></p>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Coefficient matrix of the system of equations</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">3</span>, <span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>],</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>, <span class="dv">3</span>],</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">1</span>]])</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Right-hand side vector of the system of equations</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="op">-</span><span class="dv">2</span>, <span class="dv">3</span>])</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Solve the system of equations</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linalg.solve(A, b)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the solutions for x, y, and z</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>x_val, y_val, z_val <span class="op">=</span> x</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the solution</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Intersection point:"</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"x ="</span>, x_val)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"y ="</span>, y_val)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"z ="</span>, z_val)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate points on the planes</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>x_plane1, y_plane1 <span class="op">=</span> np.meshgrid(np.linspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">10</span>), np.linspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">10</span>))</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>z_plane1 <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> <span class="dv">3</span> <span class="op">*</span> x_plane1 <span class="op">-</span> <span class="dv">2</span> <span class="op">*</span> y_plane1) <span class="op">/</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>x_plane2, z_plane2 <span class="op">=</span> np.meshgrid(np.linspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">10</span>), np.linspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">10</span>))</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>y_plane2 <span class="op">=</span> (<span class="op">-</span><span class="dv">2</span> <span class="op">-</span> <span class="dv">2</span> <span class="op">*</span> x_plane2 <span class="op">+</span> <span class="dv">3</span> <span class="op">*</span> z_plane2) <span class="op">/</span> <span class="dv">1</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>y_plane3, z_plane3 <span class="op">=</span> np.meshgrid(np.linspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">10</span>), np.linspace(<span class="op">-</span><span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">10</span>))</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>x_plane3 <span class="op">=</span> (<span class="dv">1</span> <span class="op">-</span> <span class="dv">3</span> <span class="op">*</span> y_plane3 <span class="op">-</span> z_plane3) <span class="op">/</span> <span class="dv">2</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Create 3D plot</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure()</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>, projection<span class="op">=</span><span class="st">'3d'</span>)</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the planes</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>ax.plot_surface(x_plane1, y_plane1, z_plane1, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>ax.plot_surface(x_plane2, y_plane2, z_plane2, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>ax.plot_surface(x_plane3, y_plane3, z_plane3, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the intersection point</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>ax.scatter(x_val, y_val, z_val, color<span class="op">=</span><span class="st">'red'</span>, label<span class="op">=</span><span class="st">'Intersection Point'</span>)</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Set labels and title</span></span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'x'</span>)</span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'y'</span>)</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>ax.set_zlabel(<span class="st">'z'</span>)</span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Intersection of Three Planes'</span>)</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Show legend</span></span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the plot</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Intersection point:
+x = -0.42857142857142855
+y = 1.1428571428571428
+z = -8.881784197001253e-17</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="04.lineqr_equations_files/figure-html/cell-3-output-2.png" width="412" height="412"></p>
+</div>
+</div>
+<div class="cell" data-execution_count="3">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the vectors</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>v1 <span class="op">=</span> np.array([<span class="op">-</span><span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>])</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>v2 <span class="op">=</span> np.array([<span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>, <span class="dv">3</span>])</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>v3 <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">1</span>])</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the right-hand side vector</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>rhs <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="op">-</span><span class="dv">2</span>, <span class="dv">3</span>])</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Create 3D plot</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure()</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>, projection<span class="op">=</span><span class="st">'3d'</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the vectors</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>ax.quiver(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, v1[<span class="dv">0</span>], v1[<span class="dv">1</span>], v1[<span class="dv">2</span>], color<span class="op">=</span><span class="st">'red'</span>, label<span class="op">=</span><span class="st">'v1'</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>ax.quiver(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, v2[<span class="dv">0</span>], v2[<span class="dv">1</span>], v2[<span class="dv">2</span>], color<span class="op">=</span><span class="st">'green'</span>, label<span class="op">=</span><span class="st">'v2'</span>)</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>ax.quiver(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, v3[<span class="dv">0</span>], v3[<span class="dv">1</span>], v3[<span class="dv">2</span>], color<span class="op">=</span><span class="st">'blue'</span>, label<span class="op">=</span><span class="st">'v3'</span>)</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the right-hand side vector</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>ax.quiver(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, rhs[<span class="dv">0</span>], rhs[<span class="dv">1</span>], rhs[<span class="dv">2</span>], color<span class="op">=</span><span class="st">'black'</span>, label<span class="op">=</span><span class="st">'b'</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Set equal axes scales</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>ax.set_xlim([<span class="op">-</span><span class="dv">3</span>, <span class="dv">3</span>])</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>ax.set_ylim([<span class="op">-</span><span class="dv">3</span>, <span class="dv">3</span>])</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>ax.set_zlim([<span class="op">-</span><span class="dv">3</span>, <span class="dv">3</span>])</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co"># Set labels and title</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'x'</span>)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'y'</span>)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>ax.set_zlabel(<span class="st">'z'</span>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Vectors in 3D Space'</span>)</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Show legend</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Set viewing angle</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>ax.view_init(elev<span class="op">=</span><span class="dv">30</span>, azim<span class="op">=</span><span class="dv">120</span>)</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the plot</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="04.lineqr_equations_files/figure-html/cell-4-output-1.png" width="402" height="419"></p>
+</div>
+</div>
 </section>
-<section id="basic-tensor-operations" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="basic-tensor-operations"><span class="header-section-number">2</span> Basic Tensor Operations</h2>
-<section id="section" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="section"><span class="header-section-number">2.1</span> </h3>
+</section>
+<section id="elimination" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="elimination"><span class="header-section-number">1.2</span> Elimination</h2>
+<p>The elimination method, also known as Gaussian elimination, is a systematic way to solve systems of linear equations by transforming the augmented matrix of the system into row-echelon form or reduced row-echelon form using a sequence of elementary row operations.</p>
+<div id="def-elimination" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 1 </strong></span>The elimination method (Gaussian elimination) is a systematic way to solve a system of linear equations by performing a sequence of elementary row operations on the augmented matrix of the system, with the goal of transforming the augmented matrix into row-echelon form or reduced row-echelon form.</p>
+</div>
+<div id="def-augmented_matrix" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 2 </strong></span>The augmented matrix of a system of linear equations is a rectangular matrix obtained by appending the constants (right-hand side) of the equations as an additional column to the coefficient matrix.</p>
+</div>
+<p>The augmented matrix represents the system of linear equations in matrix form, where the coefficients of the variables are organized in a matrix, and the constants (right-hand side) of the equations are appended as an additional column to the coefficient matrix.</p>
+<div id="def-row_operations" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 3 </strong></span>Elementary row operations are specific operations that can be performed on the rows of a matrix to transform it into a different matrix with the same row space. There are three types of elementary row operations:</p>
+<ol type="1">
+<li>Row scaling: Multiply a row of the matrix by a nonzero scalar.</li>
+<li>Row addition: Add a multiple of one row to another row.</li>
+<li>Row interchange: Swap the positions of two rows.</li>
+</ol>
+</div>
+<p>Elementary row operations are specific operations that can be performed on the rows of a matrix to transform it into a different matrix with the same row space.</p>
+<div id="def-row_echelon_form" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 4 </strong></span>A matrix is said to be in row-echelon form if it satisfies the following conditions:</p>
+<ol type="1">
+<li>All zero rows are at the bottom of the matrix.</li>
+<li>The leading coefficient (the first non-zero entry) in each row is 1.</li>
+<li>All other entries in the same column as a leading coefficient are zero.</li>
+<li>The leading coefficient of a row occurs to the right of the leading coefficient of the row above it.</li>
+</ol>
+</div>
+<div id="def-row_reduced_echelon_form" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 5 </strong></span>A matrix is said to be in the row-reduced echelon form (or RREF) if it satisfies the following conditions:</p>
+<ol type="1">
+<li>All rows that contain a nonzero element are above any rows that contain only zeros (i.e., rows of all zeros, if any, are at the bottom of the matrix).</li>
+<li>The leading coefficient (the first nonzero entry) in each nonzero row is 1.</li>
+<li>The leading coefficient of any nonzero row is strictly to the right of the leading coefficient of the row above it.</li>
+<li>All other entries in the same column as a leading coefficient are zero.</li>
+</ol>
+</div>
+<p>The row-echelon form (or row-reduced echelon form or RREF) is a systematic way of representing a matrix such that it has certain properties, making it easier to solve linear equations using methods like Gaussian elimination. In row-echelon form, the leading coefficient (the first non-zero entry) in each row is 1, and all other entries in the same column are zero.</p>
+<p>From the row-echolon form, it produces an <strong>upper triangular system</strong> and the reduced one or RREF is <strong>the final goal to solve the system</strong>.</p>
+<section id="example" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="example"><span class="header-section-number">1.2.1</span> Example</h3>
+<section id="unique-solution" class="level4" data-number="1.2.1.1">
+<h4 data-number="1.2.1.1" class="anchored" data-anchor-id="unique-solution"><span class="header-section-number">1.2.1.1</span> Unique Solution</h4>
+<p>$$</p>
+<p><span class="math display">\[\begin{align*}
+&amp; 2x + y - z = 3 \\
+&amp; 3x - 2y + 2z = 1 \\
+&amp; x + 3y - z = 4 \\
+
+&amp; \text{the augmented matrix:} \\
+&amp; \begin{bmatrix}
+2 &amp; 1 &amp; -1 &amp; | &amp; 3 \\
+3 &amp; -2 &amp; 2 &amp; | &amp; 1 \\
+1 &amp; 3 &amp; -1 &amp; | &amp; 4 \\
+\end{bmatrix} \\
+\\
+&amp; \text{Perform elementary row operations:} \\
+\\
+&amp; \text{Row2 = Row2 - 3/2 * Row1} \\
+&amp; \text{Row3 = Row3 - 1/2 * Row1} \\
+\\
+&amp; \begin{bmatrix}
+2 &amp; 1 &amp; -1 &amp;| &amp; 3 \\
+0 &amp; -5/2 &amp; 7/2&amp;| &amp; -7/2 \\
+0 &amp; 5/2 &amp; -1/2&amp;| &amp; 5/2 \\
+\end{bmatrix} \\
+\\
+&amp; \text{Row3 = Row3 + Row2} \\
+\\
+&amp; \text{Row Echelon Form:} \\
+&amp; \begin{bmatrix}
+2 &amp; 1 &amp; -1 &amp;| &amp; 3 \\
+0 &amp; -5/2 &amp; 7/2 &amp;| &amp; -7/2 \\
+0 &amp; 0 &amp; 3 &amp;| &amp; -1 \\
+\end{bmatrix} \\
+\\
+&amp; \text{Reduced Row Echelon Form:} \\
+&amp;\begin{bmatrix}
+1 &amp; 0 &amp; 0 &amp;| &amp; 1 \\
+0 &amp; 1 &amp; -1 &amp;|&amp; 1 \\
+0 &amp; 0 &amp; 1 &amp;|&amp; -\frac{1}{3} \\
+\end{bmatrix}
+\\
+\\
+&amp; \text{Breakdown: Perform back substitution to obtain the solution:} \\
+&amp; z = -1/3 \\
+&amp; y = -2/3 \\
+&amp; x = 4/3 \\
+\end{align*}\]</span></p>
+<p>$$</p>
+</section>
+<section id="infinitely-many-solutions" class="level4" data-number="1.2.1.2">
+<h4 data-number="1.2.1.2" class="anchored" data-anchor-id="infinitely-many-solutions"><span class="header-section-number">1.2.1.2</span> Infinitely Many Solutions</h4>
+<p>$$ <span class="math display">\[\begin{align*}
+&amp; 3x + 2y - z = 4 \\
+&amp; 6x + 4y - 2z = 8 \\
+&amp; 9x + 6y - 3z = 12 \\
+&amp; \text{the augmented matrix:} \\
+&amp; \begin{bmatrix}
+3 &amp; 2 &amp; -1 &amp; | &amp; 4 \\
+6 &amp; 4 &amp; -2 &amp; | &amp; 8 \\
+9 &amp; 6 &amp; -3 &amp; | &amp; 12 \\
+\end{bmatrix} \\
+
+&amp; \text{Perform elementary row operations:} \\
+\\
+&amp; \text{Row2 = Row2 - 2 * Row1} \\
+&amp; \text{Row3 = Row3 - 3 * Row1} \\
+\\
+&amp; \begin{bmatrix}
+3 &amp; 2 &amp; -1 &amp;| &amp; 4 \\
+0 &amp; 0 &amp; 0 &amp;| &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp;| &amp; 0 \\
+\end{bmatrix} \\
+\\
+&amp; \text{Row Echelon Form:} \\
+&amp; \begin{bmatrix}
+3 &amp; 2 &amp; -1 &amp;| &amp; 4 \\
+0 &amp; 0 &amp; 0 &amp;| &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp;| &amp; 0 \\
+\end{bmatrix} \\
+\\
+&amp; \text{Reduced Row Echelon Form:} \\
+&amp; \begin{bmatrix}
+1 &amp; \frac{2}{3} &amp; -\frac{1}{3} &amp;| &amp; \frac{4}{3} \\
+0 &amp; 0 &amp; 0 &amp;| &amp; 0 \\
+0 &amp; 0 &amp; 0 &amp;| &amp; 0 \\
+\end{bmatrix} \\
+\\
+&amp; \text{Breakdown:} \\
+&amp; \text{Perform back substitution to obtain the solution:} \\
+&amp; z = t \quad \text{(where t is a parameter)} \\
+&amp; y = s \quad \text{(where s is a parameter)} \\
+&amp; x = \frac{4}{3} - \frac{2}{3}y + \frac{1}{3}z \quad \text{(in terms of t and s)} \\
+\end{align*}\]</span></p>
+<p>$$</p>
+<p>In this example, the system of linear equations has infinitely many solutions because after performing row operations, the rows become all zeros in the second and third rows, indicating that there are infinitely many values of <span class="math inline">\(x\)</span>, <span class="math inline">\(y\)</span>, and <span class="math inline">\(z\)</span> that satisfy the system of equations. The parameters t and s can take any real values, and the values of <span class="math inline">\(x\)</span>, <span class="math inline">\(y\)</span>, and <span class="math inline">\(z\)</span> can be expressed in terms of <span class="math inline">\(t\)</span> and <span class="math inline">\(s\)</span>.</p>
+</section>
+<section id="no-solution" class="level4" data-number="1.2.1.3">
+<h4 data-number="1.2.1.3" class="anchored" data-anchor-id="no-solution"><span class="header-section-number">1.2.1.3</span> No Solution</h4>
+<p>$$ <span class="math display">\[\begin{align*}
+&amp; 2x + 3y - z = 7 \\
+&amp; 4x + 6y - 2z = 12 \\
+&amp; 3x + 4y - z = 8 \\
+
+&amp; \text{the augmented matrix:} \\
+&amp; \begin{bmatrix}
+2 &amp; 3 &amp; -1 &amp; | &amp; 7 \\
+4 &amp; 6 &amp; -2 &amp; | &amp; 12 \\
+3 &amp; 4 &amp; -1 &amp; | &amp; 8 \\
+\end{bmatrix} \\
+
+&amp; \text{Perform elementary row operations:} \\
+\\
+&amp; \text{Row2 = Row2 - 2 * Row1} \\
+&amp; \text{Row3 = Row3 - 3/2 * Row1} \\
+\\
+&amp; \begin{bmatrix}
+2 &amp; 3 &amp; -1 &amp;| &amp; 7 \\
+0 &amp; 0 &amp; 0&amp;| &amp; -2 \\
+0 &amp; 1/2 &amp; 1/2&amp;| &amp; 1 \\
+\end{bmatrix} \\
+\\
+&amp; \text{Row3 = Row3 - 1/2 * Row2} \\
+\\
+&amp; \text{Row Echelon Form:} \\
+&amp; \begin{bmatrix}
+2 &amp; 3 &amp; -1 &amp;| &amp; 7 \\
+0 &amp; 1/2 &amp; 1/2 &amp;| &amp; 1 \\
+0 &amp; 0 &amp; 0 &amp;| &amp; -2 \\
+\end{bmatrix} \\
+\\
+&amp; \text{Reduced Row Echelon Form:} \\
+&amp;\begin{bmatrix}
+1 &amp; 3/2 &amp; -1/2 &amp;| &amp; 7/2 \\
+0 &amp; 1 &amp; 1 &amp;|&amp; 2 \\
+0 &amp; 0 &amp; 0 &amp;|&amp; -2 \\
+\end{bmatrix}
+\end{align*}\]</span> $$</p>
+<p>The last row of the reduced row echelon form has all zeros except for the right-hand side (RHS) part, which is <span class="math inline">\(-2\)</span>. This implies that <span class="math inline">\(0 = -2\)</span>, which is not possible. Therefore, there is no solution to this system of linear equations.</p>
+</section>
+</section>
+</section>
+<section id="rules-for-matrix-operations" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="rules-for-matrix-operations"><span class="header-section-number">1.3</span> Rules for Matrix Operations</h2>
+<p>You reference some rules of matrix operations in the other blog (See <a href="../../../../../docs/blog/posts/Mathmatics/linear_algebra/02.basic_matrix.html">the basic matrix operation</a>).</p>
+<section id="commutative-law-of-matrix-addition" class="level3" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="commutative-law-of-matrix-addition"><span class="header-section-number">1.3.1</span> Commutative Law of Matrix Addition</h3>
+<p>Matrix addition is commutative, which means that changing the order of the matrices being added does not affect the result.</p>
+<p><span class="math display">\[
+\begin{align*}
+\mathbf A + \mathbf B = \begin{bmatrix}
+1 &amp; 2 \\
+3 &amp; 4
+\end{bmatrix} + \begin{bmatrix}
+5 &amp; 6 \\
+7 &amp; 8
+\end{bmatrix} = \begin{bmatrix}
+1 + 5 &amp; 2 + 6 \\
+3 + 7 &amp; 4 + 8
+\end{bmatrix} = \begin{bmatrix}
+6 &amp; 8 \\
+10 &amp; 12
+\end{bmatrix}
+\\
+\mathbf B + \mathbf A = \begin{bmatrix}
+5 &amp; 6 \\
+7 &amp; 8
+\end{bmatrix} + \begin{bmatrix}
+1 &amp; 2 \\
+3 &amp; 4
+\end{bmatrix} = \begin{bmatrix}
+5 + 1 &amp; 6 + 2 \\
+7 + 3 &amp; 8 + 4
+\end{bmatrix} = \begin{bmatrix}
+6 &amp; 8 \\
+10 &amp; 12
+\end{bmatrix}
+\end{align*}
+\]</span></p>
+</section>
+<section id="distributive-law" class="level3" data-number="1.3.2">
+<h3 data-number="1.3.2" class="anchored" data-anchor-id="distributive-law"><span class="header-section-number">1.3.2</span> Distributive Law</h3>
+<p>Matrix addition distributes over matrix multiplication, which means that multiplying a matrix by the sum of two matrices is the same as multiplying the matrix by each individual matrix and then adding the results.</p>
+<p>$$ <span class="math display">\[\begin{align*}
+\mathbf A (\mathbf B + \mathbf C )
+&amp;= \begin{bmatrix}
+1 &amp; 2 \\
+3 &amp; 4
+\end{bmatrix} \cdot \left( \begin{bmatrix}
+5 &amp; 6 \\
+7 &amp; 8
+\end{bmatrix} + \begin{bmatrix}
+9 &amp; 10 \\
+11 &amp; 12
+\end{bmatrix} \right) = \begin{bmatrix}
+1 &amp; 2 \\
+3 &amp; 4
+\end{bmatrix} \cdot \begin{bmatrix}
+14 &amp; 16 \\
+18 &amp; 20
+\end{bmatrix} = \begin{bmatrix}
+70 &amp; 76 \\
+158 &amp; 172
+\end{bmatrix}
+\\
+
+\mathbf A \mathbf B + \mathbf A \mathbf C
+&amp;= \begin{bmatrix}
+1 &amp; 2 \\
+3 &amp; 4
+\end{bmatrix} \cdot \begin{bmatrix}
+5 &amp; 6 \\
+7 &amp; 8
+\end{bmatrix} + \begin{bmatrix}
+1 &amp; 2 \\
+3 &amp; 4
+\end{bmatrix} \cdot \begin{bmatrix}
+9 &amp; 10 \\
+11 &amp; 12
+\end{bmatrix} = \begin{bmatrix}
+19 &amp; 22 \\
+43 &amp; 50
+\end{bmatrix} + \begin{bmatrix}
+23 &amp; 26 \\
+31 &amp; 34
+\end{bmatrix} = \begin{bmatrix}
+70 &amp; 76 \\
+158 &amp; 172
+\end{bmatrix}
+\end{align*}\]</span> $$</p>
+</section>
+<section id="associative-law" class="level3" data-number="1.3.3">
+<h3 data-number="1.3.3" class="anchored" data-anchor-id="associative-law"><span class="header-section-number">1.3.3</span> Associative Law</h3>
+<p>Matrix addition is associative, which means that changing the grouping of the matrices being added does not affect the result.</p>
+<p>$$ <span class="math display">\[\begin{align*}
+(\mathbf A + \mathbf B )+ \mathbf C
+&amp;= \left( \begin{bmatrix}
+1 &amp; 2 \\
+3 &amp; 4
+\end{bmatrix} + \begin{bmatrix}
+5 &amp; 6 \\
+7 &amp; 8
+\end{bmatrix} \right) + \begin{bmatrix}
+9 &amp; 10 \\
+11 &amp; 12
+\end{bmatrix} = \begin{bmatrix}
+1 + 5 &amp; 2 + 6 \\
+3 + 7 &amp; 4 + 8
+\end{bmatrix} + \begin{bmatrix}
+9 &amp; 10 \\
+11 &amp; 12
+\end{bmatrix} = \begin{bmatrix}
+6 &amp; 8 \\
+10 &amp; 12
+\end{bmatrix} + \begin{bmatrix}
+9 &amp; 10 \\
+11 &amp; 12
+\end{bmatrix} = \begin{bmatrix}
+15 &amp; 18 \\
+21 &amp; 24
+\end{bmatrix}
+\\
+
+\mathbf A + (\mathbf B + \mathbf C)
+&amp;= \begin{bmatrix}
+1 &amp; 2 \\
+3 &amp; 4
+\end{bmatrix} + \left( \begin{bmatrix}
+5 &amp; 6 \\
+7 &amp; 8
+\end{bmatrix} + \begin{bmatrix}
+9 &amp; 10 \\
+11 &amp; 12
+\end{bmatrix} \right) = \begin{bmatrix}
+1 &amp; 2 \\
+3 &amp; 4
+\end{bmatrix} + \begin{bmatrix}
+14 &amp; 16 \\
+18 &amp; 20
+\end{bmatrix} = \begin{bmatrix}
+15 &amp; 18 \\
+21 &amp; 24
+\end{bmatrix}
+\end{align*}\]</span> $$</p>
+</section>
+</section>
+<section id="block-matrices" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="block-matrices"><span class="header-section-number">1.4</span> Block Matrices</h2>
+<p>A block matrix is a matrix that is partitioned into smaller matrices, or blocks, arranged in a rectangular grid. The blocks can be of any size, and the resulting matrix is used to represent a system of linear equations with multiple variables or equations.</p>
+<section id="example-1" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="example-1"><span class="header-section-number">1.4.1</span> Example</h3>
+<p>Let <span class="math inline">\(\mathbf A\)</span> be a block matrix with four blocks, <span class="math inline">\(\mathbf A_{11}\)</span>, <span class="math inline">\(\mathbf A_{12}\)</span>, <span class="math inline">\(\mathbf A_{21}\)</span>, and <span class="math inline">\(\mathbf A_{22}\)</span>, as shown below:</p>
+<p><span class="math display">\[
+\mathbf A = \begin{bmatrix}
+\mathbf A_{11} &amp; \mathbf A_{12} \\
+\mathbf A_{21} &amp; \mathbf A_{22}
+\end{bmatrix}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf A_{11}, \mathbf A_{12}, \mathbf A_{21},\text{ and }\mathbf A_{22}\)</span> are individual matrices. This block matrix can be used to represent a system of linear equations with four variables or equations, where the blocks <span class="math inline">\(\mathbf A_{11}, \mathbf A_{12}, \mathbf A_{21},\text{ and }\mathbf A_{22}\)</span> represent the coefficients of the variables in the linear equations.</p>
+</section>
+<section id="block-multiplication" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="block-multiplication"><span class="header-section-number">1.4.2</span> Block Multiplication</h3>
+<p>Block multiplication is a matrix operation used with block matrices, where a matrix is partitioned into smaller matrices, or blocks, and the blocks are multiplied according to certain rules.</p>
+<section id="example-2" class="level4" data-number="1.4.2.1">
+<h4 data-number="1.4.2.1" class="anchored" data-anchor-id="example-2"><span class="header-section-number">1.4.2.1</span> Example</h4>
+<p><span class="math display">\[
+\mathbf A = \begin{bmatrix}
+\mathbf A_{11} &amp; \mathbf A_{12} \\
+\mathbf A_{21} &amp; \mathbf A_{22}
+\end{bmatrix}
+\quad
+\mathbf B = \begin{bmatrix}
+\mathbf B_{11} &amp; \mathbf B_{12} \\
+\mathbf B_{21} &amp; \mathbf B_{22}
+\end{bmatrix}
+\]</span></p>
+<p>The block multiplication of <span class="math inline">\(\mathbf A\)</span> and <span class="math inline">\(\mathbf B\)</span>, denoted as <span class="math inline">\(\mathbf{AB}\)</span>, can be computed as:</p>
+<p><span class="math display">\[
+\mathbf{AB} = \begin{bmatrix}
+\mathbf A_{11} &amp; \mathbf A_{12} \\
+\mathbf A_{21} &amp; \mathbf A_{22}
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf B_{11} &amp; \mathbf B_{12} \\
+\mathbf B_{21} &amp; \mathbf B_{22}
+\end{bmatrix}
+= \begin{bmatrix}
+\mathbf A_{11}\mathbf B_{11} + \mathbf A_{12}\mathbf B_{21} &amp; \mathbf A_{11}B_{12} + \mathbf A_{12}\mathbf B_{22} \\
+\mathbf A_{21}\mathbf B_{11} + \mathbf A_{22}\mathbf B_{21} &amp; \mathbf A_{21}B_{12} + \mathbf A_{22}\mathbf B_{22}
+\end{bmatrix}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf A_{11}\mathbf B_{11}, \mathbf A_{12}\mathbf B_{21}, \mathbf A_{11}\mathbf B_{12}, \mathbf A_{12}\mathbf \mathbf B_{22}, \mathbf A_{21}\mathbf B_{11}, \mathbf A_{22}\mathbf B_{21}, \mathbf A_{21}\mathbf B_{12},\text{ and }\mathbf A_{22}\mathbf B_{22}\)</span> are block multiplications of the corresponding blocks.</p>
+<p>When matrices split into blocks, it is often simpler to see how they act.</p>
+<p>This block unit can be reduced to the vector:</p>
+<p><span class="math display">\[
+\mathbf{AB} = \begin{bmatrix}
+\mathbf a_{1} &amp; \dots &amp; \mathbf a_{n}
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf b_{1} \\
+\vdots\\
+\mathbf b_{n}
+\end{bmatrix}
+= \begin{bmatrix}
+\mathbf a_{1}\mathbf b_{1} + \dots + \mathbf a_{n}\mathbf b_{n}
+\end{bmatrix}
+\]</span></p>
+</section>
+</section>
+<section id="block-elimination" class="level3" data-number="1.4.3">
+<h3 data-number="1.4.3" class="anchored" data-anchor-id="block-elimination"><span class="header-section-number">1.4.3</span> Block Elimination</h3>
+<p>An example of elimination by block to derive the Schur complement:</p>
+<p><span class="math display">\[
+\begin{align*}
+\begin{bmatrix}
+\mathbf A &amp; \mathbf B \\
+\mathbf C &amp; \mathbf D
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf x \\
+\mathbf y
+\end{bmatrix}
+=
+\begin{bmatrix}
+\mathbf e \\
+\mathbf f
+\end{bmatrix}
+\end{align*}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf A\)</span>, <span class="math inline">\(\mathbf B\)</span>, <span class="math inline">\(\mathbf C\)</span>, and <span class="math inline">\(\mathbf D\)</span> are block matrices, <span class="math inline">\(\mathbf x\)</span> and <span class="math inline">\(\mathbf y\)</span> are block vectors representing unknowns, and <span class="math inline">\(\mathbf e\)</span> and <span class="math inline">\(\mathbf f\)</span> are block vectors representing constants.</p>
+<p>We can use elimination by block to derive the Schur complement, which is a reduced matrix that represents the remaining unknowns after eliminating one set of unknowns. Here’s how we can do it:</p>
+<p><span class="math display">\[
+\begin{align*}
+&amp; \text{Original equation:} \\
+&amp;\begin{bmatrix}
+\mathbf A &amp; \mathbf B \\
+\mathbf C &amp; \mathbf D
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf x \\
+\mathbf y
+\end{bmatrix}
+=
+\begin{bmatrix}
+\mathbf e \\
+\mathbf f
+\end{bmatrix} \\
+\\
+&amp;\text{Step 1: Eliminate \mathbf x using block Gaussian elimination:} \\
+&amp;\mathbf C \cdot \mathbf x + \mathbf D \cdot \mathbf y = \mathbf f - \mathbf A \cdot \mathbf x \\
+\\
+&amp; \text{Step 2: Solve for \( \mathbf y \):}  \\
+&amp;\mathbf y = (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot (\mathbf f - \mathbf A \cdot \mathbf x) \\
+\\
+&amp;\text{Step 3: Substitute \( \mathbf y \) back into the original equation:}  \\
+&amp; \mathbf A \cdot \mathbf x + \mathbf B \cdot ((\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot (\mathbf f - \mathbf A \cdot \mathbf x)) = \mathbf e \\
+\\
+&amp;\text{Step 4: Simplify using the Schur complement:} \\
+&amp;(\text{Schur Complement}) \quad \mathbf S = \mathbf B \cdot (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot \mathbf B^T \\
+\\
+&amp;\text{Step 5: Solve for \(\mathbf X\)  using the Schur complement:} \\
+&amp;\mathbf x = (\mathbf A - \mathbf B \cdot (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot \mathbf B^T)^{-1} \cdot \mathbf e \\
+\end{align*}
+\]</span></p>
+<p>In this example, we perform elimination by block to derive the Schur complement matrix <span class="math inline">\(S\)</span>, and then use it to solve for the unknowns <span class="math inline">\(\mathbf x\)</span> and <span class="math inline">\(\mathbf y\)</span>. Note that the Schur complement is obtained by inverting the submatrix <span class="math inline">\(D - C \cdot A^{-1} \cdot B\)</span>, and it is used to simplify the equation for <span class="math inline">\(\mathbf x\)</span>.</p>
+</section>
+</section>
+<section id="inverse-matrices" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="inverse-matrices"><span class="header-section-number">1.5</span> Inverse Matrices</h2>
+</section>
+<section id="factorization" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="factorization"><span class="header-section-number">1.6</span> Factorization</h2>
+</section>
+<section id="transposes-and-permutations" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="transposes-and-permutations"><span class="header-section-number">1.7</span> Transposes and Permutations</h2>
 
 
 </section>

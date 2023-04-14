@@ -1,5 +1,5 @@
 ---
-title: "Basics (2) - Matrix Operations"
+title: "Basics (3) - Special Matrices"
 subtitle: template
 description: |
   template
@@ -111,267 +111,37 @@ $$
 \end{bmatrix}
 $$
 
-### Matrix with Combinations of Vectors
+### Transpose
 
-A matrix can be written as combinations of vectors. 
+The transpose of an $m x n$ matrix A, denoted by $A^T$, is the $n x m$ matrix obtained by interchanging the rows and columns of A. Formally, if $\mathbf{A} = [a_{ij}]$ is an m x n matrix, then its transpose $\mathbf{A}^T = [b_{ij}]$ is an $n x m$ matrix where $b_{ij}$ = $a_{ji}$ for all $i$ and $j$. In other words, the element in the $i$ th row and $j$ th column of $A^T$ is equal to the element in the $j$ th row and ith column of $\mathbf{A}$.
 
-Let's see and apply the concept of **a matrix with combinations of vectors** to a linear combination of vectors. We can represent a linear combination of vectors as a matrix form with combinations of vectors. 
-
-Given vectors $\mathbf{a}_1, \mathbf{a}_2, \dots, \mathbf{a}_n \in \mathbb{R}^m$ and the vector $\mathbf x$ whose entries are scalars $x_1, x_2, \dots, x_n \in \mathbb{R}$, a linear combination of the vectors and scalars is written as:
+Given an $m \times n$ matrix $\mathbf{A}$, its transpose $\mathbf{A}^T$ is an $n \times m$ matrix defined by:
+$$
+\mathbf{A}_{i,j}^T = \mathbf{A}_{j,i}
 
 $$
-x_1\mathbf a_1 +x_2\mathbf a_2 +\dots+x_n \mathbf a_n
+
+* When $\mathbf{A}$ is transposed, diagnoal entries($a_{ii}$) do not change but off-diagnoal elements($a_{ij} \; i \neq j$) change.
+* A column vector is tranposed into a row vector, and vice versa.
+* symmetric matrix: $\mathbf{A} = \mathbf{A}^T$
+
+Example:
+
+Let A be the matrix
 $$
-
-The combinations of the $\mathbf{a}$ vectors is represented as a matrix that can be written as combinations of column vectors with the $\mathbf{a}$ vectors 
-
-$$
-\begin{aligned}
-\mathbf{A}_{m\times n} &=\begin{bmatrix} \mathbf{a_1}&\mathbf{a_2}& \dots &\mathbf{a_n} \end{bmatrix} \quad \mathbf{x}=\begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{bmatrix}
-\end{aligned}
-$$
-
-Thus, the linear combination is simply written as:
-
-$$
-\begin{aligned}
-&x_1\mathbf a_1 +x_2\mathbf a_2 +\dots+x_n \mathbf a_n \\
-&=\begin{bmatrix} \mathbf{a_1}&\mathbf{a_2}& \dots &\mathbf{a_n} \end{bmatrix} \begin{bmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{bmatrix} \\
-&=\begin{bmatrix} \mathbf{a_1}&\mathbf{a_2}& \dots &\mathbf{a_n} \end{bmatrix} \mathbf x \\
-&=\mathbf{Ax} 
-\end{aligned}
-$$
-
-where $\mathbf{x} = \begin{bmatrix} x_1 & x_2 & \dots & x_n \end{bmatrix}^T$ is a column vector of scalars.
-
-:::{.callout-tip}
-It is a different example of a matrix with combinations of the product of vectors from that of matrix combination of vectors.
-A matrix can be represented as the outer product of column vectors and standard basis vectors, and their sum like the following example:
-
-$$
-\mathbf A =
-\begin{bmatrix} 
-1&4&7\\
-2&5&8\\
-3&6&9\\
-\end{bmatrix} =
-\begin{bmatrix} 
-1\\
-2\\
-3\\
-\end{bmatrix}\mathbf{e}_1^\text{T}+
-\begin{bmatrix} 
-4\\
-5\\
-6\\
-\end{bmatrix}\mathbf{e}_2^\text{T}+
-\begin{bmatrix} 
-7\\
-8\\
-9\\
-\end{bmatrix}\mathbf{e}_3^\text{T}
-$$
-where $\mathbf{e}_1, \mathbf{e}_2, \mathbf{e}_3$ are the standard basis vectors of $\mathbb{R}^3$.
-:::
-
-### Matrix Multiplication with a Vector
-
-Let $\mathbf{A}$ be an $m \times n$ matrix and $\mathbf{x}$ be a $n \times 1$ column vector. The matrix-vector product $\mathbf{Ax}$ is defined as:
-
-$$
-\begin{aligned}
-\mathbf{Ax}&=\mathbf{b}\\
-\mathbf{Ax}&=
-\begin{bmatrix}
-a_{11} & a_{12} & \dots & a_{1n} \\
-a_{21} & a_{22} & \dots & a_{2n} \\
-\vdots & \vdots & \ddots & \vdots \\
-a_{m1} & a_{m2} & \dots & a_{mn} \\
-\end{bmatrix} 
-\begin{bmatrix}
-x_1 \\ x_2 \\ \vdots \\ x_n 
-\end{bmatrix} \\
-&=
-\begin{bmatrix}
-a_{11}x_1 + a_{12}x_2 + \dots + a_{1n}x_n \\
-a_{21}x_1 + a_{22}x_2 + \dots + a_{2n}x_n \\
-\vdots  \\
-a_{m1}x_1 + a_{m2}x_2 + \dots + a_{mn}x_n 
-\end{bmatrix} \\
-&=
-\begin{bmatrix}
-b_1 \\ b_2 \\ \vdots \\ b_n 
-\end{bmatrix}\\
-&=\mathbf{b}
-\end{aligned}
-$$
-
-In other words, each entry of the resulting column vector is the dot product of the corresponding row of the matrix $\mathbf{A}$ and the column vector $\mathbf{x}$.
-
-The matrix $\mathbf{A}$ acts on the vector $\mathbf{x}$. The result $\mathbf{Ax}$ is a combination $\mathbf{b}$ of the columns of $\mathbf{A}$. The input is $\mathbf{x}$ and the output is $\mathbf{b}=\mathbf{Ax}$
-
-For example, let
-
-$$
-\mathbf A =
-\begin{bmatrix}
-2 & 1 \\
-3 & 4 \\
-1 & 2
-\end{bmatrix} \quad
-\mathbf x=
-\begin{bmatrix}
-  x_1\\x_2
-\end{bmatrix} \quad
-\mathbf b=
-\begin{bmatrix}
-  1\\-5\\-1
-\end{bmatrix} 
-$$
-
-Then we have
-
-$$
-\begin{aligned}
-\mathbf{Ax} &= \mathbf{b} \\
-\begin{bmatrix}
-2 & 1 \\
-1 & 2
-\end{bmatrix} 
-\begin{bmatrix}
-  x_1\\x_2
-\end{bmatrix} 
-&=
-\begin{bmatrix}
-  1\\-1
-\end{bmatrix} \\
-\begin{bmatrix}
-2x_1 + x_2 \\
-x_1 + 2x_2
-\end{bmatrix} 
-&=
-\begin{bmatrix}
-  1\\-1
-\end{bmatrix} 
-\end{aligned}
-$$
-
-The solution to the above system of equation is $x_1=1, x_2=-1$.
-
-### Linear Equations of a Matrix
-
-Before the introduction of a matrix to the solution to $x_1\mathbf a_1 +x_2\mathbf a_2 +\dots+x_n \mathbf a_n=\mathbf b$, we used the concept of a linear combination of $\mathbf a$ vectors to find $\mathbf{x}$ for $\mathbf{b}$.
-
-But after the introduction of a matrix, the viewpoint can changes:
-
-* **As-Is**: Compute the linear combination $x_1\mathbf a_1 +x_2\mathbf a_2 +\dots+x_n \mathbf a_n$ to find $\mathbf b$.
-* **To-Be**: Which combination of $\mathbf a$ vectors produces a particular vector $\mathbf b$?
-
-Anwering the two questions means looking for $\mathbf{x}$ for $\mathbf{b}$. To do so, we have two ways:
-
-* to solve a system of linear equations and
-* to find an inverse of $\mathbf{A}$
-
-#### Solving a System of Linear Equations
-
-Given an $m \times n$ matrix $\mathbf A$ and an $n \times 1$ vector $\mathbf{x}$, the matrix-vector product $\mathbf A\mathbf{x}$ is a linear combination of the columns of $\mathbf A$ with coefficients given by the entries of $\mathbf{x}$. The system of linear equations represented by $\mathbf A\mathbf{x}=\mathbf{b}$ has a unique solution if and only if the columns of $\mathbf A$ are linearly independent.
-
-A system of linear equations can be written in matrix form as follows:
-
-$$
-\begin{aligned}
-\begin{bmatrix}
-a_{11} & a_{12} & \cdots & a_{1n} \\
-a_{21} & a_{22} & \cdots & a_{2n} \\
-\vdots & \vdots & \ddots & \vdots \\
-a_{m1} & a_{m2} & \cdots & a_{mn}
+\mathbf{A} = \begin{bmatrix}
+1 & 2 & 3\\
+4 & 5 & 6
 \end{bmatrix}
-\begin{bmatrix}
-x_1 \\
-x_2 \\
-\vdots \\
-x_n
-\end{bmatrix}=
-\begin{bmatrix}
-b_1 \\
-b_2 \\
-\vdots \\
-b_m
+$$
+The transpose of A, denoted by A^T, is the matrix
+$$
+\mathbf{A}^T = \begin{bmatrix}
+1 & 4\\
+2 & 5\\
+3 & 6
 \end{bmatrix}
-\end{aligned}
 $$
-
-where $a_{ij}$ are the coefficients of the system, $x_i$ are the variables, and $b_j$ are the constants.
-
-We call the above $\mathbf{A}$ matrix is a **coefficient matrix** from the point of view of a system of lineqr equations and the above $\mathbf{Ax}=\mathbf{b}$ a **matrix equation**.
-
-Here's an example of a system of linear equations represented by a matrix:
-$$
-\begin{align*}
-2x_1 + 3x_2 &= 8 \\
-4x_1 + 5x_2 &= 13
-\end{align*}
-$$
-
-This can be written as the matrix equation $A\mathbf{x}=\mathbf{b}$, where
-
-$$
-\begin{equation}
-  \mathbf{A} = 
-    \begin{bmatrix}
-    2 & 3\\
-    4 & 5
-    \end{bmatrix} \quad
-  \mathbf{x} = 
-    \begin{bmatrix}
-    x_1\\
-    x_2
-    \end{bmatrix}\quad
-  \mathbf{b} = 
-    \begin{bmatrix}
-    8\\
-    13
-    \end{bmatrix}
-\end{equation}
-$$
-
-This can be written in matrix form as:
-$$
-\begin{equation}
-\begin{bmatrix}
-2 & 3 \\
-4 & -1
-\end{bmatrix}
-\begin{bmatrix}
-x_1 \\
-x_2
-\end{bmatrix}=
-\begin{bmatrix}
-5 \\
-2
-\end{bmatrix}
-\end{equation}
-$$
-
-Consider the following system of equations:
-
-$$
-\begin{aligned}
-2x_1 + 3x_2 &= 5 \\
-4x_1 - x_2 &= 2
-\end{aligned}
-$$
-
-#### Finding $\mathbf{A}^{-1}$
-
-The solution to this system can be found by computing the inverse of $\mathbf A$ (if it exists) and multiplying both sides of the equation by it:
-
-$$
-\mathbf{x} = \mathbf{A}^{-1}\mathbf{b} 
-$$
-
-If $\mathbf A$ does not have an inverse, then the system of equations may have either no solutions or infinitely many solutions.
-
 
 ### Determinant
 
@@ -383,9 +153,8 @@ $$
 
 where $a_{ij}$ is the element of $\mathbf{A}$ in the $i$-th row and $j$-th column, and $C_{ij}$ is the cofactor of $a_{ij}$. The cofactor of $a_{ij}$, denoted by $C_{ij}$, is given by $(-1)^{i+j}$ times the determinant of the $(n-1) \times (n-1)$ matrix obtained by deleting the $i$-th row and $j$-th column of $\mathbf{A}$.
 
-The determinant of an $n \times n$ matrix $\mathbf{A}$ is a scalar value denoted as $|\mathbf{A}|$. It is defined as the sum of all possible products of n elements taken one from each row and one from each column, where the sign of each product alternates according to the position of the element in the matrix. For example, the determinant of a $3 \times 3$ matrix $\mathbf{A}$, 
+The determinant of an $n x n$ matrix $\mathbf{A}$ is a scalar value denoted as $|\mathbf{A}|$. It is defined as the sum of all possible products of n elements taken one from each row and one from each column, where the sign of each product alternates according to the position of the element in the matrix. For example, the determinant of a $3 x 3$ matrix $\mathbf{A} =$ 
 $$
-\mathbf{A}=
 \begin{bmatrix}
 a_{11} & a_{12} & a_{13} \\
 a_{21} & a_{22} & a_{23} \\
@@ -503,7 +272,7 @@ $$
 \end{bmatrix} = \mathbf{I}
 $$
 
-Let me give another example and A be a $3\times 3$ square matrix:
+Let me give another example and A be a $3x3$ square matrix:
 
 $$
 \begin{equation*}
@@ -526,7 +295,7 @@ a_{21}a_{32}-a_{22}a_{31} & a_{12}a_{31}-a_{11}a_{32} & a_{11}a_{22}-a_{12}a_{21
 \end{equation*}
 $$
 
-where $\operatorname{det}(\mathbf{A})$ is the determinant of $\mathbf{A}$.
+where $det(\mathbf{A})$ is the determinant of $\mathbf{A}$.
 
 For example, let:
 
@@ -539,7 +308,7 @@ $$
 \end{bmatrix}
 \end{equation*}
 $$
-Then, $\operatorname{det}(A)$ = -57, and the inverse of $\mathbf{A}$ is:
+Then, $det(A)$ = -57, and the inverse of $\mathbf{A}$ is:
 
 $$
 \begin{equation*}
@@ -552,205 +321,6 @@ $$
 $$
 
 There are several formulas for finding the inverse of a matrix such as Gauss-Jordan Elimination, Adjoint method, Cramer's rule, Inverse formula, etc. This topic is going to be handled in the other blogs.
-
-
-### Linear Equations
-
-#### Unique Solution
-
-A linear system of equations has a unique solution if and only if the coefficient matrix is non-singular (i.e., its determinant is nonzero).
-
-$$
-\begin{aligned}
-2x_1 + 3x_2 &= 10 \\
-4x_1 + 5x_2 &= 20 \\
-
-\mathbf{A} \mathbf{x} &= \mathbf{b} \\
-\begin{bmatrix}
-2 & 3 \\
-4 & 5 \\
-\end{bmatrix}
-\begin{bmatrix}
-x_1 \\
-x_2 \\
-\end{bmatrix}
-&=
-\begin{bmatrix}
-10 \\
-20 \\
-\end{bmatrix} \\
-\text{det}(\mathbf{A}) &= (a_{11}a_{22}) - (a_{12}a_{21}) \text{ where } a_{ij} \text{ is the element of } \mathbf{A}\\
-\text{det}(\mathbf{A}) &= (2 \cdot 5) - (3 \cdot 4) = -2\\
-\mathbf{A}^{-1} &= \frac{1}{\text{det}(\mathbf{A})} \begin{bmatrix}
-a_{22} & -a_{12} \\
--a_{21} & a_{11}
-\end{bmatrix} \\
-
-\mathbf{A}^{-1} &=
-
-\begin{bmatrix}
--5/2 & 3/2 \\
-2 & -1 \\
-\end{bmatrix} \\
-\mathbf{A}^{-1}\mathbf{A} \mathbf{x} &= \mathbf{A}^{-1}\mathbf{b}\\
-\mathbf{x} &= \mathbf{A}^{-1}\mathbf{b}\\
-\begin{bmatrix}
-x_1 \\
-x_2 \\
-\end{bmatrix}&=
-\begin{bmatrix}
--5/2 & 3/2 \\
-2 & -1 \\
-\end{bmatrix} 
-\begin{bmatrix}
-10 \\
-20 \\
-\end{bmatrix} =
-\begin{bmatrix}
-5 \\
-0 \\
-\end{bmatrix} 
-\end{aligned}
-$$
-
-The unique solution is $(x_1,x_2) = (5,0)$.
-
-#### Infinitely Many Solutions
-
-A linear system of equations has infinitely many solutions if and only if the system has at least one solution and the coefficient matrix is singular (i.e., its determinant is zero), and the system has more unknowns variables than linearly independent equations.
-
-$$
-\begin{align*}
-
-2x_1 + 3x_2 &= 10 \\
-4x_1 + 6x_2 &= 20 \\
-
-\mathbf{A} \mathbf{x} &= \mathbf{b} \\
-\begin{bmatrix}
-2 & 3 \\
-4 & 6 \\
-\end{bmatrix}
-\begin{bmatrix}
-x_1 \\
-x_2 \\
-\end{bmatrix}
-&=\begin{bmatrix}
-10 \\
-20 \\
-\end{bmatrix} \\
-\text{det}(\mathbf{A}) &= (2 \cdot 6) - (3 \cdot 4) = 0
-
-\end{align*}
-$$
-
-Since the determinant of $\mathbf{A}$ is $0$, the matrix $\mathbf{A}$ is singular and does not have an inverse.
-This implies that the system of linear equations has infinitely many solutions, as the determinant of the coefficient matrix is $0$. 
-
-#### No Solution
-
-A linear system of equations has no solution if the coefficient matrix is singular (i.e., its determinant is zero) and it has more linearly independent equations than unknowns variables.
-
-$$
-\begin{align*}
-
-3x_1 + 4x_2 &= 10 \\
-6x_1 + 8x_2 &= 20 \\
-
-\mathbf{A} \mathbf{x} &= \mathbf{b} \\
-\begin{bmatrix}
-3 & 4 \\
-6 & 8 \\
-\end{bmatrix}
-\begin{bmatrix}
-x_1 \\
-x_2 \\
-\end{bmatrix}
-&=
-\begin{bmatrix}
-10 \\
-20 \\
-\end{bmatrix} \\
-\text{det}(\mathbf{A}) &= (a_{11}a_{22}) - (a_{12}a_{21}) \text{ where } a_{ij} \text{ is the element of } \mathbf{A}\\
-\text{det}(\mathbf{A}) &= (3 \cdot 8) - (4 \cdot 6) = 0\\
-\end{align*}
-$$
-
-the determinant of $\mathbf A$ is $0$, which means that $\mathbf A$ is a singular matrix and does not have an inverse.
-
-```{r}
-#| echo: false
-#| eval: false
-https://chbe241.github.io/Module-0-Introduction/MATH-152/Unique%20Solution,%20No%20Solution,%20or%20Infinite%20Solutions.html
-
-```
-
-### Independence and Dependence
-
-#### Independence
-
-a set of vectors is said to be linearly independent if none of the vectors in the set can be written as a linear combination of the other vectors in the set. . In other words, a set of vectors ${\mathbf{v_1},\mathbf{v_2},\dots,\mathbf{v_n}}$ is linearly independent if the only solution to the linear equation $c_1\mathbf{v_1}+c_2\mathbf{v_2}+\dots+c_n\mathbf{v_n}=0$ is $c_1=c_2=\dots=c_n=0$, where $c_i$ is a scalar.
-
-#### Dependence
-
-A set of vectors is said to be linearly dependent if at least one vector in the set can be written as a linear combination of the other vectors in the set. In other words, a set of vectors $\{v_1, v_2, \ldots, v_n\}$ is linearly dependent if there exist scalars $c_1, c_2, \ldots, c_n$ (not all zero) such that $c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \ldots + c_n\mathbf{v}_n = 0$
-
-:::{.callout-important}
-* Independent columns: $\mathbf{Ax} = \mathbf{0}$ has one solution. $\mathbf{A}$ is an invertible matrix.
-* Dependent columns: $\mathbf{Ax} = \mathbf{0}$ has many solutions. $\mathbf{A}$ is a singular matrix.
-:::
-
-#### Example
-
-Let $\mathbf{v}_1=\begin{bmatrix}1\\0\end{bmatrix}, \quad \mathbf{v}_2=\begin{bmatrix}0\\1\end{bmatrix}$. These two vectors are linearly independent because no linear combination of and $\mathbf{v}_1,\quad \mathbf{v}_2$ can yield the zero vector, except when all the coefficients are zero. In other words, the only solution to the linear equation
-$$
-c_1\mathbf v_1​ + c_2\mathbf v_2 = 0
-$$  
-
-is $c_1=c_2=0$.
-
-The more generalized case like the matrix $\mathbf{A}_{m \times n}$ is going to be dealt with in another blog for understanding $\mathbf{Ax} = \mathbf{b}$. 
-
-### Transpose
-
-The transpose of an $m x n$ matrix A, denoted by $A^T$, is the $n x m$ matrix obtained by interchanging the rows and columns of A. Formally, if $\mathbf{A} = [a_{ij}]$ is an m x n matrix, then its transpose $\mathbf{A}^T = [b_{ij}]$ is an $n x m$ matrix where $b_{ij}$ = $a_{ji}$ for all $i$ and $j$. In other words, the element in the $i$ th row and $j$ th column of $A^T$ is equal to the element in the $j$ th row and ith column of $\mathbf{A}$.
-
-Given an $m \times n$ matrix $\mathbf{A}$, its transpose $\mathbf{A}^T$ is an $n \times m$ matrix defined by:
-$$
-\mathbf{A}_{i,j}^T = \mathbf{A}_{j,i}
-$$
-
-* When $\mathbf{A}$ is transposed, diagnoal entries($a_{ii}$) do not change but off-diagnoal elements($a_{ij} \; i \neq j$) change.
-* A column vector is tranposed into a row vector, and vice versa.
-* symmetric matrix: $\mathbf{A} = \mathbf{A}^T$
-
-Example:
-
-Let $\mathbf A$ be the matrix
-$$
-\mathbf{A} = \begin{bmatrix}
-1 & 2 & 3\\
-4 & 5 & 6
-\end{bmatrix}
-$$
-The transpose of $\mathbf A$, denoted by $\mathbf A^T$, is the matrix
-$$
-\mathbf{A}^T = \begin{bmatrix}
-1 & 4\\
-2 & 5\\
-3 & 6
-\end{bmatrix}
-$$
-
-#### Properties
-
-Let $\mathbf A$ be an $m \times n$ matrix and $\mathbf B$ be an $n \times p$ matrix, and let $c$ be a scalar. Then:
-
-* $(\mathbf{A}^T)^T = \mathbf{A}$
-* $(\mathbf{A} + \mathbf{B})^T = \mathbf{A}^T + \mathbf{B}^T$
-* $(c\mathbf{A})^T = c\mathbf{A}^T$
-* $(\mathbf{AB})^T = \mathbf{B}^T \mathbf{A}^T$
-* $(\mathbf{ABC})^T = \mathbf{C}^T\mathbf{B}^T \mathbf{A}^T$ , (cyclic properties)
-
 
 ### Rank
 
@@ -849,12 +419,6 @@ Solving this system of equations gives us the eigenvectors corresponding to $\la
 Similarly, for $\lambda_2 = 4$, we solve the equation $(\mathbf A - 4\mathbf I)\mathbf{v}$ = $\mathbf{0}$ to get the eigenvectors corresponding to $\lambda_2 = 4$: $\mathbf{v_2} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}$
 
 
-
-
-```{r}
-#| echo: false
-#| eval: false
-
 ### Singular value and Singluar Vectors
 
 The singular value decomposition (SVD) of a matrix $\mathbf A$ is a factorization of $\mathbf A$ into the product of three matrices as follows:
@@ -902,8 +466,6 @@ $$
 $$
 
 where the left singular vectors of $\mathbf{A}$ are the columns of $\mathbf{U}$, the right singular vectors of $\mathbf{A}$ are the columns of $\mathbf{V}$, and the singular values of $\mathbf{A}$ are the diagonal entries of $\boldsymbol{\Sigma}$.
-
-
 
 * 연립 방정식을 행렬의 곱으로 나타내보기
   $$\begin{matrix}x_1+2y_1=4\\2x_1+5y_1=9\end{matrix} \quad \quad \quad \begin{matrix}x_2+2y_2=3\\2x_2+5y_2=7\end{matrix}$$ 
@@ -1075,7 +637,7 @@ where the left singular vectors of $\mathbf{A}$ are the columns of $\mathbf{U}$,
   * $\mathbf{b}$가 column space($C(A)$)안에 있으면 무한한 해를 가짐
   * $\mathbf{b}$가 column space($C(A)$)안에 없으면 해가 없음
 
-```
+
 
 
 

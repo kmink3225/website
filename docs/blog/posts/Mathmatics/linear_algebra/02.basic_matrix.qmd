@@ -379,8 +379,9 @@ $$
 
 where $a_{ij}$ is the element of $\mathbf{A}$ in the $i$-th row and $j$-th column, and $C_{ij}$ is the cofactor of $a_{ij}$. The cofactor of $a_{ij}$, denoted by $C_{ij}$, is given by $(-1)^{i+j}$ times the determinant of the $(n-1) \times (n-1)$ matrix obtained by deleting the $i$-th row and $j$-th column of $\mathbf{A}$.
 
-The determinant of an $n x n$ matrix $\mathbf{A}$ is a scalar value denoted as $|\mathbf{A}|$. It is defined as the sum of all possible products of n elements taken one from each row and one from each column, where the sign of each product alternates according to the position of the element in the matrix. For example, the determinant of a $3 x 3$ matrix $\mathbf{A} =$ 
+The determinant of an $n \times n$ matrix $\mathbf{A}$ is a scalar value denoted as $|\mathbf{A}|$. It is defined as the sum of all possible products of n elements taken one from each row and one from each column, where the sign of each product alternates according to the position of the element in the matrix. For example, the determinant of a $3 \times 3$ matrix $\mathbf{A}$, 
 $$
+\mathbf{A}=
 \begin{bmatrix}
 a_{11} & a_{12} & a_{13} \\
 a_{21} & a_{22} & a_{23} \\
@@ -498,7 +499,7 @@ $$
 \end{bmatrix} = \mathbf{I}
 $$
 
-Let me give another example and A be a $3x3$ square matrix:
+Let me give another example and A be a $3\times 3$ square matrix:
 
 $$
 \begin{equation*}
@@ -521,7 +522,7 @@ a_{21}a_{32}-a_{22}a_{31} & a_{12}a_{31}-a_{11}a_{32} & a_{11}a_{22}-a_{12}a_{21
 \end{equation*}
 $$
 
-where $det(\mathbf{A})$ is the determinant of $\mathbf{A}$.
+where $\operatorname{det}(\mathbf{A})$ is the determinant of $\mathbf{A}$.
 
 For example, let:
 
@@ -534,7 +535,7 @@ $$
 \end{bmatrix}
 \end{equation*}
 $$
-Then, $det(A)$ = -57, and the inverse of $\mathbf{A}$ is:
+Then, $\operatorname{det}(A)$ = -57, and the inverse of $\mathbf{A}$ is:
 
 $$
 \begin{equation*}
@@ -548,6 +549,162 @@ $$
 
 There are several formulas for finding the inverse of a matrix such as Gauss-Jordan Elimination, Adjoint method, Cramer's rule, Inverse formula, etc. This topic is going to be handled in the other blogs.
 
+
+### Linear Equations
+
+#### Unique Solution
+
+A linear system of equations has a unique solution if and only if the coefficient matrix is non-singular (i.e., its determinant is nonzero).
+
+$$
+\begin{aligned}
+2x_1 + 3x_2 &= 10 \\
+4x_1 + 5x_2 &= 20 \\
+
+\mathbf{A} \mathbf{x} &= \mathbf{b} \\
+\begin{bmatrix}
+2 & 3 \\
+4 & 5 \\
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \\
+x_2 \\
+\end{bmatrix}
+&=
+\begin{bmatrix}
+10 \\
+20 \\
+\end{bmatrix} \\
+\text{det}(\mathbf{A}) &= (a_{11}a_{22}) - (a_{12}a_{21}) \text{ where } a_{ij} \text{ is the element of } \mathbf{A}\\
+\text{det}(\mathbf{A}) &= (2 \cdot 5) - (3 \cdot 4) = -2\\
+\mathbf{A}^{-1} &= \frac{1}{\text{det}(\mathbf{A})} \begin{bmatrix}
+a_{22} & -a_{12} \\
+-a_{21} & a_{11}
+\end{bmatrix} \\
+
+\mathbf{A}^{-1} &=
+
+\begin{bmatrix}
+-5/2 & 3/2 \\
+2 & -1 \\
+\end{bmatrix} \\
+\mathbf{A}^{-1}\mathbf{A} \mathbf{x} &= \mathbf{A}^{-1}\mathbf{b}\\
+\mathbf{x} &= \mathbf{A}^{-1}\mathbf{b}\\
+\begin{bmatrix}
+x_1 \\
+x_2 \\
+\end{bmatrix}&=
+\begin{bmatrix}
+-5/2 & 3/2 \\
+2 & -1 \\
+\end{bmatrix} 
+\begin{bmatrix}
+10 \\
+20 \\
+\end{bmatrix} =
+\begin{bmatrix}
+5 \\
+0 \\
+\end{bmatrix} 
+\end{aligned}
+$$
+
+The unique solution is $(x_1,x_2) = (5,0)$.
+
+#### Infinitely Many Solutions
+
+A linear system of equations has infinitely many solutions if and only if the system has at least one solution and the coefficient matrix is singular (i.e., its determinant is zero), and the system has more unknowns variables than linearly independent equations.
+
+$$
+\begin{align*}
+
+2x_1 + 3x_2 &= 10 \\
+4x_1 + 6x_2 &= 20 \\
+
+\mathbf{A} \mathbf{x} &= \mathbf{b} \\
+\begin{bmatrix}
+2 & 3 \\
+4 & 6 \\
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \\
+x_2 \\
+\end{bmatrix}
+&=\begin{bmatrix}
+10 \\
+20 \\
+\end{bmatrix} \\
+\text{det}(\mathbf{A}) &= (2 \cdot 6) - (3 \cdot 4) = 0
+
+\end{align*}
+$$
+
+Since the determinant of $\mathbf{A}$ is $0$, the matrix $\mathbf{A}$ is singular and does not have an inverse.
+This implies that the system of linear equations has infinitely many solutions, as the determinant of the coefficient matrix is $0$. 
+
+#### No Solution
+
+A linear system of equations has no solution if the coefficient matrix is singular (i.e., its determinant is zero) and it has more linearly independent equations than unknowns variables.
+
+$$
+\begin{align*}
+
+3x_1 + 4x_2 &= 10 \\
+6x_1 + 8x_2 &= 20 \\
+
+\mathbf{A} \mathbf{x} &= \mathbf{b} \\
+\begin{bmatrix}
+3 & 4 \\
+6 & 8 \\
+\end{bmatrix}
+\begin{bmatrix}
+x_1 \\
+x_2 \\
+\end{bmatrix}
+&=
+\begin{bmatrix}
+10 \\
+20 \\
+\end{bmatrix} \\
+\text{det}(\mathbf{A}) &= (a_{11}a_{22}) - (a_{12}a_{21}) \text{ where } a_{ij} \text{ is the element of } \mathbf{A}\\
+\text{det}(\mathbf{A}) &= (3 \cdot 8) - (4 \cdot 6) = 0\\
+\end{align*}
+$$
+
+the determinant of $\mathbf A$ is $0$, which means that $\mathbf A$ is a singular matrix and does not have an inverse.
+
+```{r}
+#| echo: false
+#| eval: false
+https://chbe241.github.io/Module-0-Introduction/MATH-152/Unique%20Solution,%20No%20Solution,%20or%20Infinite%20Solutions.html
+
+```
+
+### Independence and Dependence
+
+#### Independence
+
+a set of vectors is said to be linearly independent if none of the vectors in the set can be written as a linear combination of the other vectors in the set. . In other words, a set of vectors ${\mathbf{v_1},\mathbf{v_2},\dots,\mathbf{v_n}}$ is linearly independent if the only solution to the linear equation $c_1\mathbf{v_1}+c_2\mathbf{v_2}+\dots+c_n\mathbf{v_n}=0$ is $c_1=c_2=\dots=c_n=0$, where $c_i$ is a scalar.
+
+#### Dependence
+
+A set of vectors is said to be linearly dependent if at least one vector in the set can be written as a linear combination of the other vectors in the set. In other words, a set of vectors $\{v_1, v_2, \ldots, v_n\}$ is linearly dependent if there exist scalars $c_1, c_2, \ldots, c_n$ (not all zero) such that $c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \ldots + c_n\mathbf{v}_n = 0$
+
+:::{.callout-important}
+* Independent columns: $\mathbf{Ax} = \mathbf{0}$ has one solution. $\mathbf{A}$ is an invertible matrix.
+* Dependent columns: $\mathbf{Ax} = \mathbf{0}$ has many solutions. $\mathbf{A}$ is a singular matrix.
+:::
+
+#### Example
+
+Let $\mathbf{v}_1=\begin{bmatrix}1\\0\end{bmatrix}, \quad \mathbf{v}_2=\begin{bmatrix}0\\1\end{bmatrix}$. These two vectors are linearly independent because no linear combination of and $\mathbf{v}_1,\quad \mathbf{v}_2$ can yield the zero vector, except when all the coefficients are zero. In other words, the only solution to the linear equation
+$$
+c_1\mathbf v_1​ + c_2\mathbf v_2 = 0
+$$  
+
+is $c_1=c_2=0$.
+
+The more generalized case like the matrix $\mathbf{A}_{m \times n}$ is going to be dealt with in another blog for understanding $\mathbf{Ax} = \mathbf{b}$. 
 
 ### Transpose
 

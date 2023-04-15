@@ -684,8 +684,222 @@ In this example, we perform elimination by block to derive the Schur complement 
 
 ## Inverse Matrices
 
+::: {#def-inverse}
+
+The inverse of a square matrix $A$ of size $n$ is a matrix $A^{-1}$ such that the product of $A$ and $A^{-1}$ is the identity matrix $I_n$, i.e. $A \times A^{-1} = I_n$. If such a matrix exists, then $A$ is said to be **invertible or non-singular**.
+
+The inverse of a square matrix $\mathbf{A}$ is denoted by $\mathbf{A}^{-1}$ and is defined as the unique matrix that satisfies the following equation:
+$$
+\mathbf{A}^{-1}\mathbf{A} = \mathbf{A}\mathbf{A}^{-1} = \mathbf{I}
+$$
+
+where $\mathbf{I}$ is the identity matrix. Not all matrices have an inverse, and a matrix that has an inverse is called invertible or nonsingular. A matrix that does not have an inverse is called singular.
+:::
+
+### Properties about $\mathbf A^{-1}$
+
+1. Existence: The inverse of the matrix $\mathbf A$ exists if and only if elimination produces $n$ pivots, where $n$ is the number of rows (or columns) of $\mathbf A$. Elimination solves $\mathbf{Ax}=\mathbf{b}$ without explicitly using the matrix 
+  * Pivots are the non-zero elements that are selected during the elimination process and used as the basis for row operations. If $n$ pivots are obtained, then the matrix $\mathbf A$ is said to be full rank, and its inverse exists. If fewer than $n$ pivots are obtained, then the matrix $\mathbf A$ is singular, and its inverse does not exist
+1. Unique Inverse: the matrix $\mathbf A$ cannot have two different inverses
+1. If $\mathbf A$ is invertible, the one and only solution to  $\mathbf{Ax}=\mathbf{b}$ is $\mathbf{x}=\mathbf{A^{-1}b}$
+1. (Important) Suppose there is a nonzero vector $\mathbf A$ such that $\mathbf{Ax}=\mathbf{0}$. Then $\mathbf A$ cannot have an inverse. No matrix can bring  $\mathbf 0$ back to $\mathbf x$.
+  * If $\mathbf A$ is invertible, then $\mathbf{Ax}=\mathbf{0}$ can only have the zero solution $\mathbf{x}=\mathbf{A^{-1}0=0}$.
+1. A 2 by 2 matrix is invertible if and only if $ad - bc$ is not zero:
+$$
+
+A = \begin{bmatrix}
+a & b \\
+c & d \\
+\end{bmatrix}
+\quad
+A^{-1} = \frac{1}{ad - bc} \begin{bmatrix}
+d & -b \\
+-c & a \\
+\end{bmatrix}
+$$
+1. A diagonal matrix has an inverse provided no diagonal entries are zero
+1. Inverse of Inverse: $(\mathbf A^{-1})^{-1} = \mathbf A$ 
+1. Inverse of Product: If $\mathbf{AB = I}$, where $\mathbf I$ is the identity matrix, then $\mathbf{B = A^{-1}}$.
+1. Scalar Multiple: If $c$ is a scalar, then $(c\mathbf A)^{-1} = \frac{1}{c}\mathbf A^{-1}$ (if $c \neq 0$).
+1. Product of Inverses: If $\mathbf A^{-1}$ and $\mathbf B^{-1}$ both exist, then $(\mathbf{AB})^{-1} = \mathbf B^{-1}\mathbf A^{-1}$ (if $\mathbf{AB}$ is invertible).
+1. Reverse Order: $(\mathbf{ABC})^{-1}$=$\mathbf C^{-1}$ $\mathbf B^{-1}$ $\mathbf A^{-1}$
+
+### Inverse by Gauss Jordan Elimination 
+
+Given a square matrix $\mathbf A$, to find its inverse $\mathbf A^{-1}$:
+
+Step 1: Augment the matrix $\mathbf A$ with an identity matrix $\mathbf I$ of the same size:
+$[A | I]$
+
+Step 2: Perform elementary row operations to transform the left half $\mathbf A$ into the identity matrix $\mathbf I$:
+- Interchange rows
+- Multiply a row by a scalar
+- Add a multiple of one row to another row
+
+Step 3: Apply the same row operations to the right half $\mathbf I$ to obtain $\mathbf A^{-1}$.
+
+Step 4: If $\mathbf A$ is not invertible, the augmented matrix $[\mathbf A | \mathbf A]$ will not result in an identity matrix on the left half. 
+
+#### Example
+$$
+\mathbf A= \begin{bmatrix}
+1 & 2 & 3 \\
+4 & 5 & 6 \\
+7 & 8 & 9 \\
+\end{bmatrix}
+$$
+
+Step 1: Augment the matrix $\mathbf A$ with an identity matrix $\mathbf I$ of the same size:
+$$
+[\mathbf A | \mathbf I] = \begin{bmatrix}
+1 & 2 & 3 & | & 1 & 0 & 0 \\
+4 & 5 & 6 & | & 0 & 1 & 0 \\
+7 & 8 & 9 & | & 0 & 0 & 1 
+\end{bmatrix}
+$$
+
+Step 2: Perform elementary row operations to transform the left half $\mathbf A$ into the identity matrix $\mathbf I$:
+- Interchange rows
+- Multiply a row by a scalar
+- Add a multiple of one row to another row
+
+Step 3: Apply the same row operations to the right half $\mathbf I$ to obtain $\mathbf A^{-1}$.
+
+Step 4: If $\mathbf A$ is not invertible, the augmented matrix $[\mathbf A | \mathbf I]$ will not result in an identity matrix on the left half. In this case, $\mathbf A$ does not have an inverse because $\text{det}(\mathbf A) = 1(5 \cdot 9 - 6 \cdot 8) - 2(4 \cdot 9 - 6 \cdot 7) + 3(4 \cdot 8 - 5 \cdot 7) = 0$
 
 ## Factorization
+
+::: {#def-factorization}
+The LU factorization, also known as the LU decomposition, is a matrix factorization method that expresses a given matrix $\mathbf{A}$ as the product of two matrices: a lower triangular matrix $\mathbf{L}$ and an upper triangular matrix $\mathbf{U}$:
+$$
+\mathbf{A} = \mathbf{LU}
+$$
+where
+* $\mathbf{A}$ is the given matrix,
+* $\mathbf{L}$ is the lower triangular matrix with ones on the diagonal, and
+* $\mathbf{U}$ is the upper triangular matrix.
+:::
+
+It decomposes a given square matrix into the product of two matrices, a lower triangular matrix ($\mathbf{L}$) and an upper triangular matrix ($\mathbf{U}$).
+
+* Efficient Solution of Linear Systems: Once a matrix is factorized into its LU form, it can be used to efficiently solve systems of linear equations. This is because solving a system of equations involving triangular matrices (such as L and U) is computationally more efficient compared to directly solving the original system of equations involving a general matrix.
+* Matrix Inversion: LU decomposition can also be used to efficiently calculate the inverse of a matrix. Once a matrix is factorized into its LU form, the inverse can be obtained by solving two triangular systems of equations, which is computationally more efficient compared to direct methods for matrix inversion.
+* Numerical Stability: LU decomposition can be used as a more numerically stable method for solving linear systems compared to direct methods, such as Gaussian elimination, because it avoids the issues of division by small or zero pivots.
+
+### Properties
+
+* The LU decomposition of a matrix is not unique. There can be multiple factorizations of the same matrix into different combinations of L and U matrices.
+* If the original matrix has a determinant of zero, it is singular and does not have a unique LU decomposition.
+* The LU decomposition can be used for square as well as rectangular matrices, although in the case of rectangular matrices, it may not be unique and may involve additional techniques such as pivoting.
+* The LU decomposition can be calculated using various algorithms, such as Gaussian elimination, Crout's method, and Doolittle's method, among others, with different advantages and disadvantages in terms of computational complexity and numerical stability.
+
+
+### Example 
+
+$$
+\begin{align*} 
+\mathbf{A} &= \begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{1n} \\
+a_{21} & a_{22} & \cdots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{n1} & a_{n2} & \cdots & a_{nn} \\
+\end{bmatrix} \\
+&= \begin{bmatrix}
+1 & 0 & \cdots & 0 \\
+l_{21} & 1 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+l_{n1} & l_{n2} & \cdots & 1 \\
+\end{bmatrix}
+\begin{bmatrix}
+u_{11} & u_{12} & \cdots & u_{1n} \\
+0 & u_{22} & \cdots & u_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & u_{nn} \\
+\end{bmatrix}
+\end{align*} 
+$$
+
+$$
+\begin{align*}
+\mathbf{A} &= \begin{bmatrix}
+2 & 3 & 1 \\
+4 & 9 & 5 \\
+6 & 15 & 9
+\end{bmatrix} \\
+\mathbf{A} &= \mathbf{LU} \\
+\mathbf{L} &= \begin{bmatrix}
+1 & 0 & 0 \\
+2 & 1 & 0 \\
+3 & 5 & 1
+\end{bmatrix}, \quad
+\mathbf{U} = \begin{bmatrix}
+2 & 3 & 1 \\
+0 & 3 & 3 \\
+0 & 0 & 2
+\end{bmatrix}
+\end{align*}
+$$
+
+```{python}
+import scipy
+import numpy as np
+
+#def lu_factorization(A):
+#    n = A.shape[0]
+#    L = np.zeros((n, n))
+#    U = np.copy(A)
+#
+#    for k in range(n-1):
+#        if U[k][k] == 0:
+#            print("LU factorization is not possible as U[{}][{}] is zero".format(k, k))
+#            return None, None
+#        
+#        for i in range(k+1, n):
+#            L[i][k] = U[i][k] / U[k][k]
+#            U[i][k+1:n] -= L[i][k] * U[k][k+1:n]
+#            U[i][k] = 0
+#
+#    np.fill_diagonal(L, 1)
+#    return L, U
+#
+# Example
+
+A = np.array([[2, 3, 1],
+              [0, 4, -2],
+              [0, 0, 3]])
+
+#L, U = lu_factorization(A)
+#print("L:")
+#print(L)
+#print("U:")
+#print(U)
+
+
+
+
+
+# Define the right-hand side vector b
+b = np.array([7, 4, 6])
+
+# Solve the system of equations Ax = b using LU decomposition
+# First, perform LU decomposition of A
+P, L, U = scipy.linalg.lu(A)
+
+# Then, solve the lower triangular system Lc = Pb for c
+c = np.linalg.solve(L, np.dot(P, b))
+
+# Finally, solve the upper triangular system Ux = c for x
+x = np.linalg.solve(U, c)
+
+# Print the solution vector x
+print("Solution vector x:", x)
+```
+
+
+
+
+
+
 ## Transposes and Permutations
 
 

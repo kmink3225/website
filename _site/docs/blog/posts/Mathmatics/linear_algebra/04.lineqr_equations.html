@@ -223,8 +223,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#block-multiplication" id="toc-block-multiplication" class="nav-link" data-scroll-target="#block-multiplication"><span class="toc-section-number">1.4.2</span>  Block Multiplication</a></li>
   <li><a href="#block-elimination" id="toc-block-elimination" class="nav-link" data-scroll-target="#block-elimination"><span class="toc-section-number">1.4.3</span>  Block Elimination</a></li>
   </ul></li>
-  <li><a href="#inverse-matrices" id="toc-inverse-matrices" class="nav-link" data-scroll-target="#inverse-matrices"><span class="toc-section-number">1.5</span>  Inverse Matrices</a></li>
-  <li><a href="#factorization" id="toc-factorization" class="nav-link" data-scroll-target="#factorization"><span class="toc-section-number">1.6</span>  Factorization</a></li>
+  <li><a href="#inverse-matrices" id="toc-inverse-matrices" class="nav-link" data-scroll-target="#inverse-matrices"><span class="toc-section-number">1.5</span>  Inverse Matrices</a>
+  <ul class="collapse">
+  <li><a href="#properties-about-mathbf-a-1" id="toc-properties-about-mathbf-a-1" class="nav-link" data-scroll-target="#properties-about-mathbf-a-1"><span class="toc-section-number">1.5.1</span>  Properties about <span class="math inline">\(\mathbf A^{-1}\)</span></a></li>
+  <li><a href="#inverse-by-gauss-jordan-elimination" id="toc-inverse-by-gauss-jordan-elimination" class="nav-link" data-scroll-target="#inverse-by-gauss-jordan-elimination"><span class="toc-section-number">1.5.2</span>  Inverse by Gauss Jordan Elimination</a></li>
+  </ul></li>
+  <li><a href="#factorization" id="toc-factorization" class="nav-link" data-scroll-target="#factorization"><span class="toc-section-number">1.6</span>  Factorization</a>
+  <ul class="collapse">
+  <li><a href="#properties" id="toc-properties" class="nav-link" data-scroll-target="#properties"><span class="toc-section-number">1.6.1</span>  Properties</a></li>
+  <li><a href="#example-4" id="toc-example-4" class="nav-link" data-scroll-target="#example-4"><span class="toc-section-number">1.6.2</span>  Example</a></li>
+  </ul></li>
   <li><a href="#transposes-and-permutations" id="toc-transposes-and-permutations" class="nav-link" data-scroll-target="#transposes-and-permutations"><span class="toc-section-number">1.7</span>  Transposes and Permutations</a></li>
   </ul></li>
   </ul>
@@ -901,9 +909,201 @@ z = -8.881784197001253e-17</code></pre>
 </section>
 <section id="inverse-matrices" class="level2" data-number="1.5">
 <h2 data-number="1.5" class="anchored" data-anchor-id="inverse-matrices"><span class="header-section-number">1.5</span> Inverse Matrices</h2>
+<div id="def-inverse" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 6 </strong></span>The inverse of a square matrix <span class="math inline">\(A\)</span> of size <span class="math inline">\(n\)</span> is a matrix <span class="math inline">\(A^{-1}\)</span> such that the product of <span class="math inline">\(A\)</span> and <span class="math inline">\(A^{-1}\)</span> is the identity matrix <span class="math inline">\(I_n\)</span>, i.e.&nbsp;<span class="math inline">\(A \times A^{-1} = I_n\)</span>. If such a matrix exists, then <span class="math inline">\(A\)</span> is said to be <strong>invertible or non-singular</strong>.</p>
+<p>The inverse of a square matrix <span class="math inline">\(\mathbf{A}\)</span> is denoted by <span class="math inline">\(\mathbf{A}^{-1}\)</span> and is defined as the unique matrix that satisfies the following equation: <span class="math display">\[
+\mathbf{A}^{-1}\mathbf{A} = \mathbf{A}\mathbf{A}^{-1} = \mathbf{I}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{I}\)</span> is the identity matrix. Not all matrices have an inverse, and a matrix that has an inverse is called invertible or nonsingular. A matrix that does not have an inverse is called singular.</p>
+</div>
+<section id="properties-about-mathbf-a-1" class="level3" data-number="1.5.1">
+<h3 data-number="1.5.1" class="anchored" data-anchor-id="properties-about-mathbf-a-1"><span class="header-section-number">1.5.1</span> Properties about <span class="math inline">\(\mathbf A^{-1}\)</span></h3>
+<ol type="1">
+<li>Existence: The inverse of the matrix <span class="math inline">\(\mathbf A\)</span> exists if and only if elimination produces <span class="math inline">\(n\)</span> pivots, where <span class="math inline">\(n\)</span> is the number of rows (or columns) of <span class="math inline">\(\mathbf A\)</span>. Elimination solves <span class="math inline">\(\mathbf{Ax}=\mathbf{b}\)</span> without explicitly using the matrix</li>
+</ol>
+<ul>
+<li>Pivots are the non-zero elements that are selected during the elimination process and used as the basis for row operations. If <span class="math inline">\(n\)</span> pivots are obtained, then the matrix <span class="math inline">\(\mathbf A\)</span> is said to be full rank, and its inverse exists. If fewer than <span class="math inline">\(n\)</span> pivots are obtained, then the matrix <span class="math inline">\(\mathbf A\)</span> is singular, and its inverse does not exist</li>
+</ul>
+<ol type="1">
+<li>Unique Inverse: the matrix <span class="math inline">\(\mathbf A\)</span> cannot have two different inverses</li>
+<li>If <span class="math inline">\(\mathbf A\)</span> is invertible, the one and only solution to <span class="math inline">\(\mathbf{Ax}=\mathbf{b}\)</span> is <span class="math inline">\(\mathbf{x}=\mathbf{A^{-1}b}\)</span></li>
+<li>(Important) Suppose there is a nonzero vector <span class="math inline">\(\mathbf A\)</span> such that <span class="math inline">\(\mathbf{Ax}=\mathbf{0}\)</span>. Then <span class="math inline">\(\mathbf A\)</span> cannot have an inverse. No matrix can bring <span class="math inline">\(\mathbf 0\)</span> back to <span class="math inline">\(\mathbf x\)</span>.</li>
+</ol>
+<ul>
+<li>If <span class="math inline">\(\mathbf A\)</span> is invertible, then <span class="math inline">\(\mathbf{Ax}=\mathbf{0}\)</span> can only have the zero solution <span class="math inline">\(\mathbf{x}=\mathbf{A^{-1}0=0}\)</span>.</li>
+</ul>
+<ol type="1">
+<li>A 2 by 2 matrix is invertible if and only if <span class="math inline">\(ad - bc\)</span> is not zero: $$</li>
+</ol>
+A =
+<span class="math display">\[\begin{bmatrix}
+a &amp; b \\
+c &amp; d \\
+\end{bmatrix}
+\quad\]</span>
+A^{-1} =
+<span class="math display">\[\begin{bmatrix}
+d &amp; -b \\
+-c &amp; a \\
+\end{bmatrix}\]</span>
+<p>$$ 1. A diagonal matrix has an inverse provided no diagonal entries are zero 1. Inverse of Inverse: <span class="math inline">\((\mathbf A^{-1})^{-1} = \mathbf A\)</span> 1. Inverse of Product: If <span class="math inline">\(\mathbf{AB = I}\)</span>, where <span class="math inline">\(\mathbf I\)</span> is the identity matrix, then <span class="math inline">\(\mathbf{B = A^{-1}}\)</span>. 1. Scalar Multiple: If <span class="math inline">\(c\)</span> is a scalar, then <span class="math inline">\((c\mathbf A)^{-1} = \frac{1}{c}\mathbf A^{-1}\)</span> (if <span class="math inline">\(c \neq 0\)</span>). 1. Product of Inverses: If <span class="math inline">\(\mathbf A^{-1}\)</span> and <span class="math inline">\(\mathbf B^{-1}\)</span> both exist, then <span class="math inline">\((\mathbf{AB})^{-1} = \mathbf B^{-1}\mathbf A^{-1}\)</span> (if <span class="math inline">\(\mathbf{AB}\)</span> is invertible). 1. Reverse Order: <span class="math inline">\((\mathbf{ABC})^{-1}\)</span>=<span class="math inline">\(\mathbf C^{-1}\)</span> <span class="math inline">\(\mathbf B^{-1}\)</span> <span class="math inline">\(\mathbf A^{-1}\)</span></p>
+</section>
+<section id="inverse-by-gauss-jordan-elimination" class="level3" data-number="1.5.2">
+<h3 data-number="1.5.2" class="anchored" data-anchor-id="inverse-by-gauss-jordan-elimination"><span class="header-section-number">1.5.2</span> Inverse by Gauss Jordan Elimination</h3>
+<p>Given a square matrix <span class="math inline">\(\mathbf A\)</span>, to find its inverse <span class="math inline">\(\mathbf A^{-1}\)</span>:</p>
+<p>Step 1: Augment the matrix <span class="math inline">\(\mathbf A\)</span> with an identity matrix <span class="math inline">\(\mathbf I\)</span> of the same size: <span class="math inline">\([A | I]\)</span></p>
+<p>Step 2: Perform elementary row operations to transform the left half <span class="math inline">\(\mathbf A\)</span> into the identity matrix <span class="math inline">\(\mathbf I\)</span>: - Interchange rows - Multiply a row by a scalar - Add a multiple of one row to another row</p>
+<p>Step 3: Apply the same row operations to the right half <span class="math inline">\(\mathbf I\)</span> to obtain <span class="math inline">\(\mathbf A^{-1}\)</span>.</p>
+<p>Step 4: If <span class="math inline">\(\mathbf A\)</span> is not invertible, the augmented matrix <span class="math inline">\([\mathbf A | \mathbf A]\)</span> will not result in an identity matrix on the left half.</p>
+<section id="example-3" class="level4" data-number="1.5.2.1">
+<h4 data-number="1.5.2.1" class="anchored" data-anchor-id="example-3"><span class="header-section-number">1.5.2.1</span> Example</h4>
+<p><span class="math display">\[
+\mathbf A= \begin{bmatrix}
+1 &amp; 2 &amp; 3 \\
+4 &amp; 5 &amp; 6 \\
+7 &amp; 8 &amp; 9 \\
+\end{bmatrix}
+\]</span></p>
+<p>Step 1: Augment the matrix <span class="math inline">\(\mathbf A\)</span> with an identity matrix <span class="math inline">\(\mathbf I\)</span> of the same size: <span class="math display">\[
+[\mathbf A | \mathbf I] = \begin{bmatrix}
+1 &amp; 2 &amp; 3 &amp; | &amp; 1 &amp; 0 &amp; 0 \\
+4 &amp; 5 &amp; 6 &amp; | &amp; 0 &amp; 1 &amp; 0 \\
+7 &amp; 8 &amp; 9 &amp; | &amp; 0 &amp; 0 &amp; 1
+\end{bmatrix}
+\]</span></p>
+<p>Step 2: Perform elementary row operations to transform the left half <span class="math inline">\(\mathbf A\)</span> into the identity matrix <span class="math inline">\(\mathbf I\)</span>: - Interchange rows - Multiply a row by a scalar - Add a multiple of one row to another row</p>
+<p>Step 3: Apply the same row operations to the right half <span class="math inline">\(\mathbf I\)</span> to obtain <span class="math inline">\(\mathbf A^{-1}\)</span>.</p>
+<p>Step 4: If <span class="math inline">\(\mathbf A\)</span> is not invertible, the augmented matrix <span class="math inline">\([\mathbf A | \mathbf I]\)</span> will not result in an identity matrix on the left half. In this case, <span class="math inline">\(\mathbf A\)</span> does not have an inverse because <span class="math inline">\(\text{det}(\mathbf A) = 1(5 \cdot 9 - 6 \cdot 8) - 2(4 \cdot 9 - 6 \cdot 7) + 3(4 \cdot 8 - 5 \cdot 7) = 0\)</span></p>
+</section>
+</section>
 </section>
 <section id="factorization" class="level2" data-number="1.6">
 <h2 data-number="1.6" class="anchored" data-anchor-id="factorization"><span class="header-section-number">1.6</span> Factorization</h2>
+<div id="def-factorization" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 7 </strong></span>The LU factorization, also known as the LU decomposition, is a matrix factorization method that expresses a given matrix <span class="math inline">\(\mathbf{A}\)</span> as the product of two matrices: a lower triangular matrix <span class="math inline">\(\mathbf{L}\)</span> and an upper triangular matrix <span class="math inline">\(\mathbf{U}\)</span>: <span class="math display">\[
+\mathbf{A} = \mathbf{LU}
+\]</span> where * <span class="math inline">\(\mathbf{A}\)</span> is the given matrix, * <span class="math inline">\(\mathbf{L}\)</span> is the lower triangular matrix with ones on the diagonal, and * <span class="math inline">\(\mathbf{U}\)</span> is the upper triangular matrix.</p>
+</div>
+<p>It decomposes a given square matrix into the product of two matrices, a lower triangular matrix (<span class="math inline">\(\mathbf{L}\)</span>) and an upper triangular matrix (<span class="math inline">\(\mathbf{U}\)</span>).</p>
+<ul>
+<li>Efficient Solution of Linear Systems: Once a matrix is factorized into its LU form, it can be used to efficiently solve systems of linear equations. This is because solving a system of equations involving triangular matrices (such as L and U) is computationally more efficient compared to directly solving the original system of equations involving a general matrix.</li>
+<li>Matrix Inversion: LU decomposition can also be used to efficiently calculate the inverse of a matrix. Once a matrix is factorized into its LU form, the inverse can be obtained by solving two triangular systems of equations, which is computationally more efficient compared to direct methods for matrix inversion.</li>
+<li>Numerical Stability: LU decomposition can be used as a more numerically stable method for solving linear systems compared to direct methods, such as Gaussian elimination, because it avoids the issues of division by small or zero pivots.</li>
+</ul>
+<section id="properties" class="level3" data-number="1.6.1">
+<h3 data-number="1.6.1" class="anchored" data-anchor-id="properties"><span class="header-section-number">1.6.1</span> Properties</h3>
+<ul>
+<li>The LU decomposition of a matrix is not unique. There can be multiple factorizations of the same matrix into different combinations of L and U matrices.</li>
+<li>If the original matrix has a determinant of zero, it is singular and does not have a unique LU decomposition.</li>
+<li>The LU decomposition can be used for square as well as rectangular matrices, although in the case of rectangular matrices, it may not be unique and may involve additional techniques such as pivoting.</li>
+<li>The LU decomposition can be calculated using various algorithms, such as Gaussian elimination, Crout’s method, and Doolittle’s method, among others, with different advantages and disadvantages in terms of computational complexity and numerical stability.</li>
+</ul>
+</section>
+<section id="example-4" class="level3" data-number="1.6.2">
+<h3 data-number="1.6.2" class="anchored" data-anchor-id="example-4"><span class="header-section-number">1.6.2</span> Example</h3>
+<p><span class="math display">\[
+\begin{align*}
+\mathbf{A} &amp;= \begin{bmatrix}
+a_{11} &amp; a_{12} &amp; \cdots &amp; a_{1n} \\
+a_{21} &amp; a_{22} &amp; \cdots &amp; a_{2n} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+a_{n1} &amp; a_{n2} &amp; \cdots &amp; a_{nn} \\
+\end{bmatrix} \\
+&amp;= \begin{bmatrix}
+1 &amp; 0 &amp; \cdots &amp; 0 \\
+l_{21} &amp; 1 &amp; \cdots &amp; 0 \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+l_{n1} &amp; l_{n2} &amp; \cdots &amp; 1 \\
+\end{bmatrix}
+\begin{bmatrix}
+u_{11} &amp; u_{12} &amp; \cdots &amp; u_{1n} \\
+0 &amp; u_{22} &amp; \cdots &amp; u_{2n} \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+0 &amp; 0 &amp; \cdots &amp; u_{nn} \\
+\end{bmatrix}
+\end{align*}
+\]</span></p>
+<p><span class="math display">\[
+\begin{align*}
+\mathbf{A} &amp;= \begin{bmatrix}
+2 &amp; 3 &amp; 1 \\
+4 &amp; 9 &amp; 5 \\
+6 &amp; 15 &amp; 9
+\end{bmatrix} \\
+\mathbf{A} &amp;= \mathbf{LU} \\
+\mathbf{L} &amp;= \begin{bmatrix}
+1 &amp; 0 &amp; 0 \\
+2 &amp; 1 &amp; 0 \\
+3 &amp; 5 &amp; 1
+\end{bmatrix}, \quad
+\mathbf{U} = \begin{bmatrix}
+2 &amp; 3 &amp; 1 \\
+0 &amp; 3 &amp; 3 \\
+0 &amp; 0 &amp; 2
+\end{bmatrix}
+\end{align*}
+\]</span></p>
+<div class="cell" data-execution_count="4">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#def lu_factorization(A):</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#    n = A.shape[0]</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#    L = np.zeros((n, n))</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#    U = np.copy(A)</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#    for k in range(n-1):</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#        if U[k][k] == 0:</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#            print("LU factorization is not possible as U[{}][{}] is zero".format(k, k))</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#            return None, None</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#        </span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#        for i in range(k+1, n):</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#            L[i][k] = U[i][k] / U[k][k]</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#            U[i][k+1:n] -= L[i][k] * U[k][k+1:n]</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#            U[i][k] = 0</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#    np.fill_diagonal(L, 1)</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#    return L, U</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Example</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">1</span>],</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">0</span>, <span class="dv">4</span>, <span class="op">-</span><span class="dv">2</span>],</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">3</span>]])</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co">#L, U = lu_factorization(A)</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co">#print("L:")</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="co">#print(L)</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co">#print("U:")</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="co">#print(U)</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the right-hand side vector b</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> np.array([<span class="dv">7</span>, <span class="dv">4</span>, <span class="dv">6</span>])</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Solve the system of equations Ax = b using LU decomposition</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="co"># First, perform LU decomposition of A</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>P, L, U <span class="op">=</span> scipy.linalg.lu(A)</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Then, solve the lower triangular system Lc = Pb for c</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> np.linalg.solve(L, np.dot(P, b))</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Finally, solve the upper triangular system Ux = c for x</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linalg.solve(U, c)</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the solution vector x</span></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Solution vector x:"</span>, x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Solution vector x: [-0.5  2.   2. ]</code></pre>
+</div>
+</div>
+</section>
 </section>
 <section id="transposes-and-permutations" class="level2" data-number="1.7">
 <h2 data-number="1.7" class="anchored" data-anchor-id="transposes-and-permutations"><span class="header-section-number">1.7</span> Transposes and Permutations</h2>

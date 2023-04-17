@@ -155,14 +155,68 @@ $$
 ### Example
 
 1. Consider the matrix
-$\mathbf \mathbf A = \begin{bmatrix}1 & 2 & 3 \\4 & 5 & 6 \\7 & 8 & 9 \end{bmatrix}$
+$\mathbf A = \begin{bmatrix}1 & 2 & 3 \\4 & 5 & 6 \\7 & 8 & 9 \end{bmatrix}$
 
 The column space of $\mathbf A$ is the span of its columns:
 $\text{col}(\mathbf A) = \text{span}\{\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3\}$
 
+2. Describe the column spaces for the following matrices
+  * $\mathbf I = \begin{bmatrix}1 & 0 \\0 & 1 \end{bmatrix}$
+    * The column space of the identity matrix $\mathbf{I}$, denoted as $\text{Col}(\mathbf{I})$, spans the entire space $\mathbb{R}^2$, as it includes all possible linear combinations of the standard unit vectors $\mathbf{e}_1$ and $\mathbf{e}_2$. Thus, $\text{col}(\mathbf A)$ is $\mathbb R^2$
+  * $\mathbf A = \begin{bmatrix}1 & 2 \\2 & 4 \end{bmatrix}$
+    * $\text{Col}(\mathbf{A})$, is the subspace spanned by the columns of $\mathbf{A}$. Since the second column of $\mathbf{A}$ is a scalar multiple (twice) of the first column, the column space of $\mathbf{A}$ is a one-dimensional subspace, which is the line in $\mathbb{R}^2$ that lies along the direction of the first column of $\mathbf{A}$, $\text{col}(\mathbf A) = \text{span}\left\{\begin{bmatrix}1 \\ 2\end{bmatrix}\right\}$
+    * The equation $\mathbf{Ax = b}$ is only solvable when $\mathbf{b}$ is on the line.
+  * $\mathbf B = \begin{bmatrix}1 & 2 & 4\\0 & 0 & 4 \end{bmatrix}$
+    * These column vectors span the column space of $\mathbf{B}$. Since column 2 is a scalar multiple of column 1, and column 3 is a linear combination of columns 1 and 2, the column space of $\mathbf{B}$ is the span of the first two column vectors, which is a two-dimensional subspace of $\mathbb{R}^2$, $\text{col}(\mathbf B) = \text{span}\{\mathbf{b}_1, \mathbf{b}_2, \mathbf{b}_3\}$ is $\mathbb R^2$.
 
+### Properties
+
+The column space of a matrix $\mathbf{A}$, denoted as $\text{col}(\mathbf{A})$ or $\text{span}{\mathbf{a}_1, \mathbf{a}_2, \ldots, \mathbf{a}_n}$, where $\mathbf{a}_i$ represents the columns of $\mathbf{A}$, has several important properties:
+
+Consists of all possible linear combinations: The column space consists of all possible linear combinations of the columns of $\mathbf{A}$. In other words, any vector in $\text{col}(\mathbf{A})$ can be expressed as a linear combination of the columns of $\mathbf{A}$.
+
+* Is a subspace: The column space is a subspace of the vector space $\mathbb{R}^m$, meaning it is closed under vector addition and scalar multiplication. This property allows for the column space to be used in linear combinations and as a solution space for non-homogeneous linear equations.
+* Is spanned by the columns of $\mathbf{A}$: The column space is spanned by the columns of $\mathbf{A}$, meaning any vector in $\text{col}(\mathbf{A})$ can be expressed as a linear combination of the columns of $\mathbf{A}$.
+* Has the same dimensionality as the row space: The dimensionality of the column space, denoted as $\text{dim}(\text{col}(\mathbf{A}))$, is equal to the dimensionality of the row space of $\mathbf{A}$, denoted as $\text{dim}(\text{row}(\mathbf{A}))$. This property is known as the rank-nullity theorem.
+* Is orthogonal to the nullspace: The column space is orthogonal to the nullspace of $\mathbf{A}$, meaning any vector in the column space is orthogonal to any vector in the nullspace of $\mathbf{A}$. This property is known as the fundamental theorem of linear algebra.
 
 ## Nullspace of A
+
+### Definition
+
+::: {#def-nullspace}
+The nullspace of a matrix refers to the set of all vectors that, when multiplied by the matrix, result in the zero vector $\mathbf{0}$. Formally, for a matrix $\mathbf{A}$, the nullspace is denoted as $\text{null}(\mathbf{A})$ and defined as follows:
+$$
+\text{null}(\mathbf{A}) = \{\mathbf{x} \in \mathbb{R}^n \mid \mathbf{Ax} = \mathbf{0}\}
+$$
+
+The nullspace of $\mathbf{A}$ is the set of all solutions $\mathbf{x}$ to the homogeneous equation $\mathbf{Ax} = \mathbf{0}$.
+:::
+
+### Example
+
+$$
+\text{Example 1:}
+\mathbf{A} = \begin{bmatrix} 1 & 2 \\ 3 & 6 \\ 2 & 4 \end{bmatrix}
+\text{null}(\mathbf{A}) = \left\{ \begin{bmatrix} -2t \\ t \end{bmatrix} \mid t \in \mathbb{R} \right\}
+
+\text{Example 2:}
+\mathbf{B} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}
+\text{null}(\mathbf{B}) = \left\{ \begin{bmatrix} 0 \\ t \\ 0 \end{bmatrix} \mid t \in \mathbb{R} \right\}
+$$
+
+### Properties
+
+Contains the zero vector: The nullspace always contains the zero vector $\mathbf{0}$, since $\mathbf{A}\mathbf{0} = \mathbf{0}$.
+
+Is a subspace: The nullspace is a subspace of the vector space $\mathbb{R}^n$, meaning it is closed under vector addition and scalar multiplication. This property allows for the nullspace to be used in linear combinations and as a solution space for homogeneous linear equations.
+
+Is orthogonal to row space: The nullspace is orthogonal to the row space of $\mathbf{A}$, meaning any vector in the nullspace is orthogonal to all vectors in the row space of $\mathbf{A}$. This property is known as the fundamental theorem of linear algebra.
+
+Can be non-empty: The nullspace can be non-empty, meaning there can be non-trivial solutions to the homogeneous equation $\mathbf{Ax} = \mathbf{0}$.
+
+Dimensionality: The dimensionality of the nullspace, denoted as $\text{dim}(\text{null}(\mathbf{A}))$, is also known as the nullity of $\mathbf{A}$. The nullity of $\mathbf{A}$ is equal to the number of linearly independent columns or the number of free variables in the row-reduced echelon form (RREF) of $\mathbf{A}$.
+
 ## Rank and Row Reduced Form
 ## Complete Solution
 ## Independence, Basis, and Dimension

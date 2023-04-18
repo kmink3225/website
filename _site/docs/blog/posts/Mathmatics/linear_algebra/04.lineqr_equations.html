@@ -231,7 +231,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#factorization" id="toc-factorization" class="nav-link" data-scroll-target="#factorization"><span class="toc-section-number">1.6</span>  Factorization</a>
   <ul class="collapse">
   <li><a href="#properties" id="toc-properties" class="nav-link" data-scroll-target="#properties"><span class="toc-section-number">1.6.1</span>  Properties</a></li>
-  <li><a href="#example-4" id="toc-example-4" class="nav-link" data-scroll-target="#example-4"><span class="toc-section-number">1.6.2</span>  Example</a></li>
+  <li><a href="#example-3" id="toc-example-3" class="nav-link" data-scroll-target="#example-3"><span class="toc-section-number">1.6.2</span>  Example</a></li>
   </ul></li>
   <li><a href="#transposes-and-permutations" id="toc-transposes-and-permutations" class="nav-link" data-scroll-target="#transposes-and-permutations"><span class="toc-section-number">1.7</span>  Transposes and Permutations</a></li>
   </ul></li>
@@ -831,7 +831,7 @@ z = -8.881784197001253e-17</code></pre>
 \mathbf A_{21}\mathbf B_{11} + \mathbf A_{22}\mathbf B_{21} &amp; \mathbf A_{21}B_{12} + \mathbf A_{22}\mathbf B_{22}
 \end{bmatrix}
 \]</span></p>
-<p>where <span class="math inline">\(\mathbf A_{11}\mathbf B_{11}, \mathbf A_{12}\mathbf B_{21}, \mathbf A_{11}\mathbf B_{12}, \mathbf A_{12}\mathbf \mathbf B_{22}, \mathbf A_{21}\mathbf B_{11}, \mathbf A_{22}\mathbf B_{21}, \mathbf A_{21}\mathbf B_{12},\text{ and }\mathbf A_{22}\mathbf B_{22}\)</span> are block multiplications of the corresponding blocks.</p>
+<p>where <span class="math inline">\(\mathbf{A}_{11}\mathbf{B}_{11}, \mathbf{A}_{12}\mathbf{B}_{21}, \mathbf{A}_{11}\mathbf{B}_{12}, \mathbf{A}_{12}\mathbf{B}_{22}, \mathbf{A}_{21}\mathbf{B}_{11}, \mathbf{A}_{22}\mathbf{B}_{21}, \mathbf{A}_{21}\mathbf{B}_{12},\text{ and }\mathbf{A}_{22}\mathbf{B}_{22}\)</span> are block multiplications of the corresponding blocks.</p>
 <p>When matrices split into blocks, it is often simpler to see how they act.</p>
 <p>This block unit can be reduced to the vector:</p>
 <p><span class="math display">\[
@@ -871,10 +871,8 @@ z = -8.881784197001253e-17</code></pre>
 \]</span></p>
 <p>where <span class="math inline">\(\mathbf A\)</span>, <span class="math inline">\(\mathbf B\)</span>, <span class="math inline">\(\mathbf C\)</span>, and <span class="math inline">\(\mathbf D\)</span> are block matrices, <span class="math inline">\(\mathbf x\)</span> and <span class="math inline">\(\mathbf y\)</span> are block vectors representing unknowns, and <span class="math inline">\(\mathbf e\)</span> and <span class="math inline">\(\mathbf f\)</span> are block vectors representing constants.</p>
 <p>We can use elimination by block to derive the Schur complement, which is a reduced matrix that represents the remaining unknowns after eliminating one set of unknowns. Here’s how we can do it:</p>
-<p><span class="math display">\[
-\begin{align*}
-&amp; \text{Original equation:} \\
-&amp;\begin{bmatrix}
+<p><strong>Original equation</strong> <span class="math display">\[
+\begin{bmatrix}
 \mathbf A &amp; \mathbf B \\
 \mathbf C &amp; \mathbf D
 \end{bmatrix}
@@ -887,22 +885,24 @@ z = -8.881784197001253e-17</code></pre>
 \mathbf e \\
 \mathbf f
 \end{bmatrix} \\
-\\
-&amp;\text{Step 1: Eliminate \mathbf x using block Gaussian elimination:} \\
-&amp;\mathbf C \cdot \mathbf x + \mathbf D \cdot \mathbf y = \mathbf f - \mathbf A \cdot \mathbf x \\
-\\
-&amp; \text{Step 2: Solve for \( \mathbf y \):}  \\
-&amp;\mathbf y = (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot (\mathbf f - \mathbf A \cdot \mathbf x) \\
-\\
-&amp;\text{Step 3: Substitute \( \mathbf y \) back into the original equation:}  \\
-&amp; \mathbf A \cdot \mathbf x + \mathbf B \cdot ((\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot (\mathbf f - \mathbf A \cdot \mathbf x)) = \mathbf e \\
-\\
-&amp;\text{Step 4: Simplify using the Schur complement:} \\
-&amp;(\text{Schur Complement}) \quad \mathbf S = \mathbf B \cdot (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot \mathbf B^T \\
-\\
-&amp;\text{Step 5: Solve for \(\mathbf X\)  using the Schur complement:} \\
-&amp;\mathbf x = (\mathbf A - \mathbf B \cdot (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot \mathbf B^T)^{-1} \cdot \mathbf e \\
-\end{align*}
+\]</span></p>
+<p><strong>Step 1: Eliminate x using block Gaussian elimination:</strong> <span class="math display">\[
+\mathbf C \cdot \mathbf x + \mathbf D \cdot \mathbf y = \mathbf f - \mathbf A \cdot \mathbf x
+\]</span></p>
+<p><strong>Step 2: Solve for <span class="math inline">\(\mathbf y\)</span></strong> <span class="math display">\[
+\mathbf y = (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot (\mathbf f - \mathbf A \cdot \mathbf x)
+\]</span></p>
+<p><strong>Step 3: Substitute <span class="math inline">\(\mathbf y\)</span> back into the original equation:</strong></p>
+<p><span class="math display">\[
+\mathbf A \cdot \mathbf x + \mathbf B \cdot ((\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot (\mathbf f - \mathbf A \cdot \mathbf x)) = \mathbf e
+\]</span></p>
+<p><strong>Step 4: Simplify using the Schur complement:</strong></p>
+<p><span class="math display">\[
+(\text{Schur Complement}) \quad \mathbf S = \mathbf B \cdot (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot \mathbf B^T
+\]</span></p>
+<p><strong>Step 5: Solve for <span class="math inline">\(\mathbf X\)</span> using the Schur complement:</strong></p>
+<p><span class="math display">\[
+\mathbf x = (\mathbf A - \mathbf B \cdot (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot \mathbf B^T)^{-1} \cdot \mathbf e
 \]</span></p>
 <p>In this example, we perform elimination by block to derive the Schur complement matrix <span class="math inline">\(S\)</span>, and then use it to solve for the unknowns <span class="math inline">\(\mathbf x\)</span> and <span class="math inline">\(\mathbf y\)</span>. Note that the Schur complement is obtained by inverting the submatrix <span class="math inline">\(D - C \cdot A^{-1} \cdot B\)</span>, and it is used to simplify the equation for <span class="math inline">\(\mathbf x\)</span>.</p>
 </section>
@@ -932,21 +932,25 @@ z = -8.881784197001253e-17</code></pre>
 <ul>
 <li>If <span class="math inline">\(\mathbf A\)</span> is invertible, then <span class="math inline">\(\mathbf{Ax}=\mathbf{0}\)</span> can only have the zero solution <span class="math inline">\(\mathbf{x}=\mathbf{A^{-1}0=0}\)</span>.</li>
 </ul>
-<ol type="1">
-<li>A 2 by 2 matrix is invertible if and only if <span class="math inline">\(ad - bc\)</span> is not zero: $$</li>
-</ol>
-A =
-<span class="math display">\[\begin{bmatrix}
+<ol start="4" type="1">
+<li>A 2 by 2 matrix is invertible if and only if <span class="math inline">\(ad - bc\)</span> is not zero: <span class="math display">\[
+A = \begin{bmatrix}
 a &amp; b \\
 c &amp; d \\
 \end{bmatrix}
-\quad\]</span>
-A^{-1} =
-<span class="math display">\[\begin{bmatrix}
+\quad
+A^{-1} = \frac{1}{ad - bc} \begin{bmatrix}
 d &amp; -b \\
 -c &amp; a \\
-\end{bmatrix}\]</span>
-<p>$$ 1. A diagonal matrix has an inverse provided no diagonal entries are zero 1. Inverse of Inverse: <span class="math inline">\((\mathbf A^{-1})^{-1} = \mathbf A\)</span> 1. Inverse of Product: If <span class="math inline">\(\mathbf{AB = I}\)</span>, where <span class="math inline">\(\mathbf I\)</span> is the identity matrix, then <span class="math inline">\(\mathbf{B = A^{-1}}\)</span>. 1. Scalar Multiple: If <span class="math inline">\(c\)</span> is a scalar, then <span class="math inline">\((c\mathbf A)^{-1} = \frac{1}{c}\mathbf A^{-1}\)</span> (if <span class="math inline">\(c \neq 0\)</span>). 1. Product of Inverses: If <span class="math inline">\(\mathbf A^{-1}\)</span> and <span class="math inline">\(\mathbf B^{-1}\)</span> both exist, then <span class="math inline">\((\mathbf{AB})^{-1} = \mathbf B^{-1}\mathbf A^{-1}\)</span> (if <span class="math inline">\(\mathbf{AB}\)</span> is invertible). 1. Reverse Order: <span class="math inline">\((\mathbf{ABC})^{-1}\)</span>=<span class="math inline">\(\mathbf C^{-1}\)</span> <span class="math inline">\(\mathbf B^{-1}\)</span> <span class="math inline">\(\mathbf A^{-1}\)</span></p>
+\end{bmatrix}
+\]</span></li>
+<li>A diagonal matrix has an inverse provided no diagonal entries are zero</li>
+<li>Inverse of Inverse: <span class="math inline">\((\mathbf A^{-1})^{-1} = \mathbf A\)</span></li>
+<li>Inverse of Product: If <span class="math inline">\(\mathbf{AB = I}\)</span>, where <span class="math inline">\(\mathbf I\)</span> is the identity matrix, then <span class="math inline">\(\mathbf{B = A^{-1}}\)</span>.</li>
+<li>Scalar Multiple: If <span class="math inline">\(c\)</span> is a scalar, then <span class="math inline">\((c\mathbf A)^{-1} = \frac{1}{c}\mathbf A^{-1}\)</span> (if <span class="math inline">\(c \neq 0\)</span>).</li>
+<li>Product of Inverses: If <span class="math inline">\(\mathbf A^{-1}\)</span> and <span class="math inline">\(\mathbf B^{-1}\)</span> both exist, then <span class="math inline">\((\mathbf{AB})^{-1} = \mathbf B^{-1}\mathbf A^{-1}\)</span> (if <span class="math inline">\(\mathbf{AB}\)</span> is invertible).</li>
+<li>Reverse Order: <span class="math inline">\((\mathbf{ABC})^{-1}\)</span>=<span class="math inline">\(\mathbf C^{-1}\)</span> <span class="math inline">\(\mathbf B^{-1}\)</span> <span class="math inline">\(\mathbf A^{-1}\)</span></li>
+</ol>
 </section>
 <section id="inverse-by-gauss-jordan-elimination" class="level3" data-number="1.5.2">
 <h3 data-number="1.5.2" class="anchored" data-anchor-id="inverse-by-gauss-jordan-elimination"><span class="header-section-number">1.5.2</span> Inverse by Gauss Jordan Elimination</h3>
@@ -955,8 +959,6 @@ d &amp; -b \\
 <p>Step 2: Perform elementary row operations to transform the left half <span class="math inline">\(\mathbf A\)</span> into the identity matrix <span class="math inline">\(\mathbf I\)</span>: - Interchange rows - Multiply a row by a scalar - Add a multiple of one row to another row</p>
 <p>Step 3: Apply the same row operations to the right half <span class="math inline">\(\mathbf I\)</span> to obtain <span class="math inline">\(\mathbf A^{-1}\)</span>.</p>
 <p>Step 4: If <span class="math inline">\(\mathbf A\)</span> is not invertible, the augmented matrix <span class="math inline">\([\mathbf A | \mathbf A]\)</span> will not result in an identity matrix on the left half.</p>
-<section id="example-3" class="level4" data-number="1.5.2.1">
-<h4 data-number="1.5.2.1" class="anchored" data-anchor-id="example-3"><span class="header-section-number">1.5.2.1</span> Example</h4>
 <p><span class="math display">\[
 \mathbf A= \begin{bmatrix}
 1 &amp; 2 &amp; 3 \\
@@ -974,13 +976,43 @@ d &amp; -b \\
 <p>Step 2: Perform elementary row operations to transform the left half <span class="math inline">\(\mathbf A\)</span> into the identity matrix <span class="math inline">\(\mathbf I\)</span>: - Interchange rows - Multiply a row by a scalar - Add a multiple of one row to another row</p>
 <p>Step 3: Apply the same row operations to the right half <span class="math inline">\(\mathbf I\)</span> to obtain <span class="math inline">\(\mathbf A^{-1}\)</span>.</p>
 <p>Step 4: If <span class="math inline">\(\mathbf A\)</span> is not invertible, the augmented matrix <span class="math inline">\([\mathbf A | \mathbf I]\)</span> will not result in an identity matrix on the left half. In this case, <span class="math inline">\(\mathbf A\)</span> does not have an inverse because <span class="math inline">\(\text{det}(\mathbf A) = 1(5 \cdot 9 - 6 \cdot 8) - 2(4 \cdot 9 - 6 \cdot 7) + 3(4 \cdot 8 - 5 \cdot 7) = 0\)</span></p>
-</section>
+<div id="def-elementary_matrix" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 7 </strong></span>An elementary matrix is a square matrix obtained by performing a single elementary row operation on the identity matrix <span class="math inline">\(\mathbf{I}\)</span> or its transpose <span class="math inline">\(\mathbf{I}^T\)</span>.</p>
+<p>There are three types of elementary row operations:</p>
+<ul>
+<li><p>Swapping two rows: The elementary matrix obtained by swapping two rows of the identity matrix is denoted by <span class="math inline">\(\mathbf{E}_i\)</span>, where <span class="math inline">\(i\)</span> indicates the row numbers to be swapped. <span class="math inline">\(\mathbf{E}_1 = \begin{bmatrix} 0 &amp; 1 \\ 1 &amp; 0 \end{bmatrix}\)</span></p></li>
+<li><p>Scaling a row by a nonzero scalar: The elementary matrix obtained by scaling a row of the identity matrix by a nonzero scalar <span class="math inline">\(c\)</span> is denoted by <span class="math inline">\(\mathbf{E}_i(c)\)</span>, where <span class="math inline">\(i\)</span> indicates the row number to be scaled and <span class="math inline">\(c\)</span> is the scalar. <span class="math inline">\(\mathbf{E}_2(2) = \begin{bmatrix} 1 &amp; 0 \\ 0 &amp; 2 \end{bmatrix}\)</span></p></li>
+<li><p>Adding a multiple of one row to another row: The elementary matrix obtained by adding a multiple of one row of the identity matrix to another row is denoted by <span class="math inline">\(\mathbf{E}_{ij}(c)\)</span>, where <span class="math inline">\(i\)</span> indicates the row number from which a multiple is added, <span class="math inline">\(j\)</span> indicates the row number to which the multiple is added, and <span class="math inline">\(c\)</span> is the scalar multiple. <span class="math inline">\(\mathbf{E}_{12}(3) = \begin{bmatrix} 1 &amp; 3 \\ 0 &amp; 1 \end{bmatrix}\)</span></p></li>
+</ul>
+</div>
+<div id="thm-elementary_matrix" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 1 </strong></span><strong>Elementary Matrix Theorem</strong></p>
+<p>Let <span class="math inline">\(\mathbf{A}\)</span> be an invertible <span class="math inline">\(n \times n\)</span> matrix. Then <span class="math inline">\(\mathbf{A}\)</span> can be represented as the product of elementary matrices <span class="math inline">\(\mathbf{E}_1, \mathbf{E}_2, \ldots, \mathbf{E}_k\)</span>, where each <span class="math inline">\(\mathbf{E}_i\)</span> is an elementary matrix corresponding to a single elementary row operation.</p>
+</div>
+<p>Any invertible matrix can be obtained by performing a sequence of elementary row operations on the identity matrix.</p>
+<p>Let <span class="math inline">\(\mathbf{A} = \begin{bmatrix} 2 &amp; 3 \\ 4 &amp; 5 \end{bmatrix}\)</span> be an invertible matrix. We can represent <span class="math inline">\(\mathbf{A}\)</span> as the product of elementary matrices <span class="math inline">\(\mathbf{E}_1\)</span> and <span class="math inline">\(\mathbf{E}_2\)</span> as follows:</p>
+<p><span class="math display">\[
+\begin{align*}
+\mathbf{E}_1 = \begin{bmatrix} 1 &amp; 0 \\ -2 &amp; 1 \end{bmatrix}, \quad
+\mathbf{E}_2 = \begin{bmatrix} \frac{1}{2} &amp; 0 \\ 0 &amp; 1 \end{bmatrix}
+\end{align*}
+\]</span></p>
+<p>such that <span class="math inline">\(\mathbf{A} = \mathbf{E}_2 \mathbf{E}_1 \mathbf{I}\)</span>.</p>
+<p>Let <span class="math inline">\(\mathbf{B} = \begin{bmatrix} 3 &amp; 2 &amp; 1 \\ 1 &amp; 1 &amp; 1 \\ 2 &amp; 3 &amp; 4 \end{bmatrix}\)</span> be an invertible matrix. We can represent <span class="math inline">\(\mathbf{B}\)</span> as the product of elementary matrices <span class="math inline">\(\mathbf{E}_1\)</span>, <span class="math inline">\(\mathbf{E}_2\)</span>, and <span class="math inline">\(\mathbf{E}_3\)</span> as follows:</p>
+<p><span class="math display">\[
+\begin{align*}
+\mathbf{E}_1 = \begin{bmatrix} 0 &amp; 1 &amp; 0 \\ 1 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 1 \end{bmatrix}, \quad
+\mathbf{E}_2 = \begin{bmatrix} 1 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 1 \\ 0 &amp; 1 &amp; 0 \end{bmatrix}, \quad
+\mathbf{E}_3 = \begin{bmatrix} 1 &amp; 0 &amp; 0 \\ 0 &amp; 1 &amp; 0 \\ 0 &amp; 0 &amp; \frac{1}{2} \end{bmatrix}
+\end{align*}
+\]</span></p>
+<p>such that <span class="math inline">\(\mathbf{B} = \mathbf{E}_3 \mathbf{E}_2 \mathbf{E}_1 \mathbf{I}\)</span>.</p>
 </section>
 </section>
 <section id="factorization" class="level2" data-number="1.6">
 <h2 data-number="1.6" class="anchored" data-anchor-id="factorization"><span class="header-section-number">1.6</span> Factorization</h2>
 <div id="def-factorization" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 7 </strong></span>The LU factorization, also known as the LU decomposition, is a matrix factorization method that expresses a given matrix <span class="math inline">\(\mathbf{A}\)</span> as the product of two matrices: a lower triangular matrix <span class="math inline">\(\mathbf{L}\)</span> and an upper triangular matrix <span class="math inline">\(\mathbf{U}\)</span>: <span class="math display">\[
+<p><span class="theorem-title"><strong>Definition 8 </strong></span>The LU factorization, also known as the LU decomposition, is a matrix factorization method that expresses a given matrix <span class="math inline">\(\mathbf{A}\)</span> as the product of two matrices: a lower triangular matrix <span class="math inline">\(\mathbf{L}\)</span> and an upper triangular matrix <span class="math inline">\(\mathbf{U}\)</span>: <span class="math display">\[
 \mathbf{A} = \mathbf{LU}
 \]</span> where * <span class="math inline">\(\mathbf{A}\)</span> is the given matrix, * <span class="math inline">\(\mathbf{L}\)</span> is the lower triangular matrix with ones on the diagonal, and * <span class="math inline">\(\mathbf{U}\)</span> is the upper triangular matrix.</p>
 </div>
@@ -999,8 +1031,8 @@ d &amp; -b \\
 <li>The LU decomposition can be calculated using various algorithms, such as Gaussian elimination, Crout’s method, and Doolittle’s method, among others, with different advantages and disadvantages in terms of computational complexity and numerical stability.</li>
 </ul>
 </section>
-<section id="example-4" class="level3" data-number="1.6.2">
-<h3 data-number="1.6.2" class="anchored" data-anchor-id="example-4"><span class="header-section-number">1.6.2</span> Example</h3>
+<section id="example-3" class="level3" data-number="1.6.2">
+<h3 data-number="1.6.2" class="anchored" data-anchor-id="example-3"><span class="header-section-number">1.6.2</span> Example</h3>
 <p><span class="math display">\[
 \begin{align*}
 \mathbf{A} &amp;= \begin{bmatrix}

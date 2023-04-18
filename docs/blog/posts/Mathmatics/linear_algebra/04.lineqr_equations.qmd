@@ -600,7 +600,7 @@ $$
 \end{bmatrix}
 $$
 
-where $\mathbf A_{11}\mathbf B_{11}, \mathbf A_{12}\mathbf B_{21}, \mathbf A_{11}\mathbf B_{12}, \mathbf A_{12}\mathbf \mathbf B_{22}, \mathbf A_{21}\mathbf B_{11}, \mathbf A_{22}\mathbf B_{21}, \mathbf A_{21}\mathbf B_{12},\text{ and }\mathbf A_{22}\mathbf B_{22}$ are block multiplications of the corresponding blocks.
+where $\mathbf{A}_{11}\mathbf{B}_{11}, \mathbf{A}_{12}\mathbf{B}_{21}, \mathbf{A}_{11}\mathbf{B}_{12}, \mathbf{A}_{12}\mathbf{B}_{22}, \mathbf{A}_{21}\mathbf{B}_{11}, \mathbf{A}_{22}\mathbf{B}_{21}, \mathbf{A}_{21}\mathbf{B}_{12},\text{ and }\mathbf{A}_{22}\mathbf{B}_{22}$ are block multiplications of the corresponding blocks.
 
 When matrices split into blocks, it is often simpler to see how they act. 
 
@@ -646,10 +646,9 @@ where $\mathbf A$, $\mathbf B$, $\mathbf C$, and $\mathbf D$ are block matrices,
 
 We can use elimination by block to derive the Schur complement, which is a reduced matrix that represents the remaining unknowns after eliminating one set of unknowns. Here's how we can do it:
 
+**Original equation**
 $$
-\begin{align*}
-& \text{Original equation:} \\
-&\begin{bmatrix}
+\begin{bmatrix}
 \mathbf A & \mathbf B \\
 \mathbf C & \mathbf D
 \end{bmatrix}
@@ -662,22 +661,34 @@ $$
 \mathbf e \\
 \mathbf f
 \end{bmatrix} \\
-\\
-&\text{Step 1: Eliminate \mathbf x using block Gaussian elimination:} \\
-&\mathbf C \cdot \mathbf x + \mathbf D \cdot \mathbf y = \mathbf f - \mathbf A \cdot \mathbf x \\
-\\
-& \text{Step 2: Solve for \( \mathbf y \):}  \\
-&\mathbf y = (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot (\mathbf f - \mathbf A \cdot \mathbf x) \\
-\\
-&\text{Step 3: Substitute \( \mathbf y \) back into the original equation:}  \\
-& \mathbf A \cdot \mathbf x + \mathbf B \cdot ((\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot (\mathbf f - \mathbf A \cdot \mathbf x)) = \mathbf e \\
-\\
-&\text{Step 4: Simplify using the Schur complement:} \\
-&(\text{Schur Complement}) \quad \mathbf S = \mathbf B \cdot (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot \mathbf B^T \\
-\\
-&\text{Step 5: Solve for \(\mathbf X\)  using the Schur complement:} \\
-&\mathbf x = (\mathbf A - \mathbf B \cdot (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot \mathbf B^T)^{-1} \cdot \mathbf e \\
-\end{align*}
+$$
+
+**Step 1: Eliminate \mathbf x using block Gaussian elimination:**
+$$
+\mathbf C \cdot \mathbf x + \mathbf D \cdot \mathbf y = \mathbf f - \mathbf A \cdot \mathbf x 
+$$
+
+**Step 2: Solve for $\mathbf y$**
+$$
+\mathbf y = (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot (\mathbf f - \mathbf A \cdot \mathbf x) 
+$$
+
+**Step 3: Substitute $\mathbf y$ back into the original equation:**
+
+$$
+\mathbf A \cdot \mathbf x + \mathbf B \cdot ((\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot (\mathbf f - \mathbf A \cdot \mathbf x)) = \mathbf e
+$$
+
+**Step 4: Simplify using the Schur complement:**
+
+$$
+(\text{Schur Complement}) \quad \mathbf S = \mathbf B \cdot (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot \mathbf B^T 
+$$
+
+**Step 5: Solve for $\mathbf X$  using the Schur complement:**
+
+$$
+\mathbf x = (\mathbf A - \mathbf B \cdot (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot \mathbf B^T)^{-1} \cdot \mathbf e
 $$
 
 In this example, we perform elimination by block to derive the Schur complement matrix $S$, and then use it to solve for the unknowns $\mathbf x$ and $\mathbf y$. Note that the Schur complement is obtained by inverting the submatrix $D - C \cdot A^{-1} \cdot B$, and it is used to simplify the equation for $\mathbf x$.
@@ -704,9 +715,8 @@ where $\mathbf{I}$ is the identity matrix. Not all matrices have an inverse, and
 1. If $\mathbf A$ is invertible, the one and only solution to  $\mathbf{Ax}=\mathbf{b}$ is $\mathbf{x}=\mathbf{A^{-1}b}$
 1. (Important) Suppose there is a nonzero vector $\mathbf A$ such that $\mathbf{Ax}=\mathbf{0}$. Then $\mathbf A$ cannot have an inverse. No matrix can bring  $\mathbf 0$ back to $\mathbf x$.
   * If $\mathbf A$ is invertible, then $\mathbf{Ax}=\mathbf{0}$ can only have the zero solution $\mathbf{x}=\mathbf{A^{-1}0=0}$.
-1. A 2 by 2 matrix is invertible if and only if $ad - bc$ is not zero:
+4. A 2 by 2 matrix is invertible if and only if $ad - bc$ is not zero:
 $$
-
 A = \begin{bmatrix}
 a & b \\
 c & d \\
@@ -717,19 +727,19 @@ d & -b \\
 -c & a \\
 \end{bmatrix}
 $$
-1. A diagonal matrix has an inverse provided no diagonal entries are zero
-1. Inverse of Inverse: $(\mathbf A^{-1})^{-1} = \mathbf A$ 
-1. Inverse of Product: If $\mathbf{AB = I}$, where $\mathbf I$ is the identity matrix, then $\mathbf{B = A^{-1}}$.
-1. Scalar Multiple: If $c$ is a scalar, then $(c\mathbf A)^{-1} = \frac{1}{c}\mathbf A^{-1}$ (if $c \neq 0$).
-1. Product of Inverses: If $\mathbf A^{-1}$ and $\mathbf B^{-1}$ both exist, then $(\mathbf{AB})^{-1} = \mathbf B^{-1}\mathbf A^{-1}$ (if $\mathbf{AB}$ is invertible).
-1. Reverse Order: $(\mathbf{ABC})^{-1}$=$\mathbf C^{-1}$ $\mathbf B^{-1}$ $\mathbf A^{-1}$
+5. A diagonal matrix has an inverse provided no diagonal entries are zero
+6. Inverse of Inverse: $(\mathbf A^{-1})^{-1} = \mathbf A$ 
+7. Inverse of Product: If $\mathbf{AB = I}$, where $\mathbf I$ is the identity matrix, then $\mathbf{B = A^{-1}}$.
+8. Scalar Multiple: If $c$ is a scalar, then $(c\mathbf A)^{-1} = \frac{1}{c}\mathbf A^{-1}$ (if $c \neq 0$).
+9. Product of Inverses: If $\mathbf A^{-1}$ and $\mathbf B^{-1}$ both exist, then $(\mathbf{AB})^{-1} = \mathbf B^{-1}\mathbf A^{-1}$ (if $\mathbf{AB}$ is invertible).
+10. Reverse Order: $(\mathbf{ABC})^{-1}$=$\mathbf C^{-1}$ $\mathbf B^{-1}$ $\mathbf A^{-1}$
 
 ### Inverse by Gauss Jordan Elimination 
 
 Given a square matrix $\mathbf A$, to find its inverse $\mathbf A^{-1}$:
 
 Step 1: Augment the matrix $\mathbf A$ with an identity matrix $\mathbf I$ of the same size:
-$[A | I]$
+$[\mathbf A | \mathbf I]$
 
 Step 2: Perform elementary row operations to transform the left half $\mathbf A$ into the identity matrix $\mathbf I$:
 - Interchange rows
@@ -740,7 +750,6 @@ Step 3: Apply the same row operations to the right half $\mathbf I$ to obtain $\
 
 Step 4: If $\mathbf A$ is not invertible, the augmented matrix $[\mathbf A | \mathbf A]$ will not result in an identity matrix on the left half. 
 
-#### Example
 $$
 \mathbf A= \begin{bmatrix}
 1 & 2 & 3 \\
@@ -766,6 +775,50 @@ Step 2: Perform elementary row operations to transform the left half $\mathbf A$
 Step 3: Apply the same row operations to the right half $\mathbf I$ to obtain $\mathbf A^{-1}$.
 
 Step 4: If $\mathbf A$ is not invertible, the augmented matrix $[\mathbf A | \mathbf I]$ will not result in an identity matrix on the left half. In this case, $\mathbf A$ does not have an inverse because $\text{det}(\mathbf A) = 1(5 \cdot 9 - 6 \cdot 8) - 2(4 \cdot 9 - 6 \cdot 7) + 3(4 \cdot 8 - 5 \cdot 7) = 0$
+
+::: {#def-elementary_matrix}
+An elementary matrix is a square matrix obtained by performing a single elementary row operation on the identity matrix $\mathbf{I}$ or its transpose $\mathbf{I}^T$.
+
+There are three types of elementary row operations:
+
+* Swapping two rows: The elementary matrix obtained by swapping two rows of the identity matrix is denoted by $\mathbf{E}_i$, where $i$ indicates the row numbers to be swapped. $\mathbf{E}_1 = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}$ 
+* Scaling a row by a nonzero scalar: The elementary matrix obtained by scaling a row of the identity matrix by a nonzero scalar $c$ is denoted by $\mathbf{E}_i(c)$, where $i$ indicates the row number to be scaled and $c$ is the scalar. $\mathbf{E}_2(2) = \begin{bmatrix} 1 & 0 \\ 0 & 2 \end{bmatrix}$
+
+* Adding a multiple of one row to another row: The elementary matrix obtained by adding a multiple of one row of the identity matrix to another row is denoted by $\mathbf{E}_{ij}(c)$, where $i$ indicates the row number from which a multiple is added, $j$ indicates the row number to which the multiple is added, and $c$ is the scalar multiple. $\mathbf{E}_{12}(3) = \begin{bmatrix} 1 & 3 \\ 0 & 1 \end{bmatrix}$
+:::
+
+
+
+::: {#thm-elementary_matrix}
+**Elementary Matrix Theorem** 
+
+Let $\mathbf{A}$ be an invertible $n \times n$ matrix. Then $\mathbf{A}$ can be represented as the product of elementary matrices $\mathbf{E}_1, \mathbf{E}_2, \ldots, \mathbf{E}_k$, where each $\mathbf{E}_i$ is an elementary matrix corresponding to a single elementary row operation.
+:::
+
+Any invertible matrix can be obtained by performing a sequence of elementary row operations on the identity matrix.
+
+Let $\mathbf{A} = \begin{bmatrix} 2 & 3 \\ 4 & 5 \end{bmatrix}$ be an invertible matrix. We can represent $\mathbf{A}$ as the product of elementary matrices $\mathbf{E}_1$ and $\mathbf{E}_2$ as follows:
+
+$$
+\begin{align*}
+\mathbf{E}_1 = \begin{bmatrix} 1 & 0 \\ -2 & 1 \end{bmatrix}, \quad
+\mathbf{E}_2 = \begin{bmatrix} \frac{1}{2} & 0 \\ 0 & 1 \end{bmatrix}
+\end{align*}
+$$
+
+such that $\mathbf{A} = \mathbf{E}_2 \mathbf{E}_1 \mathbf{I}$.
+
+Let $\mathbf{B} = \begin{bmatrix} 3 & 2 & 1 \\ 1 & 1 & 1 \\ 2 & 3 & 4 \end{bmatrix}$ be an invertible matrix. We can represent $\mathbf{B}$ as the product of elementary matrices $\mathbf{E}_1$, $\mathbf{E}_2$, and $\mathbf{E}_3$ as follows:
+
+$$
+\begin{align*}
+\mathbf{E}_1 = \begin{bmatrix} 0 & 1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}, \quad
+\mathbf{E}_2 = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}, \quad
+\mathbf{E}_3 = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & \frac{1}{2} \end{bmatrix}
+\end{align*}
+$$
+
+such that $\mathbf{B} = \mathbf{E}_3 \mathbf{E}_2 \mathbf{E}_1 \mathbf{I}$.
 
 ## Factorization
 

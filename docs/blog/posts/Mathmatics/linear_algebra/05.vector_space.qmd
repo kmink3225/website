@@ -16,6 +16,14 @@ format:
 draft: false
 ---
 
+```{python}
+
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+```
+
 # Vector Space
 
 The perspective of looking into linear algebra change from 'numbers' to 'vector space' through 'vectors'. 
@@ -175,17 +183,29 @@ The column space of a matrix $\mathbf{A}$, denoted as $\text{col}(\mathbf{A})$ o
 
 Consists of all possible linear combinations: The column space consists of all possible linear combinations of the columns of $\mathbf{A}$. In other words, any vector in $\text{col}(\mathbf{A})$ can be expressed as a linear combination of the columns of $\mathbf{A}$.
 
-* Is a subspace: The column space is a subspace of the vector space $\mathbb{R}^m$, meaning it is closed under vector addition and scalar multiplication. This property allows for the column space to be used in linear combinations and as a solution space for non-homogeneous linear equations.
-* Is spanned by the columns of $\mathbf{A}$: The column space is spanned by the columns of $\mathbf{A}$, meaning any vector in $\text{col}(\mathbf{A})$ can be expressed as a linear combination of the columns of $\mathbf{A}$.
-* Has the same dimensionality as the row space: The dimensionality of the column space, denoted as $\text{dim}(\text{col}(\mathbf{A}))$, is equal to the dimensionality of the row space of $\mathbf{A}$, denoted as $\text{dim}(\text{row}(\mathbf{A}))$. This property is known as the rank-nullity theorem.
-* Is orthogonal to the nullspace: The column space is orthogonal to the nullspace of $\mathbf{A}$, meaning any vector in the column space is orthogonal to any vector in the nullspace of $\mathbf{A}$. This property is known as the fundamental theorem of linear algebra.
+#### Is a subspace
 
-## Nullspace of A
+The column space is a subspace of the vector space $\mathbb{R}^m$, meaning it is closed under vector addition and scalar multiplication. This property allows for the column space to be used in linear combinations and as a solution space for non-homogeneous linear equations.
+
+#### Is spanned by the columns of $\mathbf{A}$ 
+
+The column space is spanned by the columns of $\mathbf{A}$, meaning any vector in $\text{col}(\mathbf{A})$ can be expressed as a linear combination of the columns of $\mathbf{A}$.
+
+#### Has the same dimensionality as the row space
+
+The dimensionality of the column space, denoted as $\text{dim}(\text{col}(\mathbf{A}))$, is equal to the dimensionality of the row space of $\mathbf{A}$, denoted as $\text{dim}(\text{row}(\mathbf{A}))$. This property is known as the rank-nullity theorem.
+
+#### Has the same dimensionality as the row space
+
+The dimensionality of the column space, denoted as $\text{dim}(\text{col}(\mathbf{A}))$, is equal to the dimensionality of the row space of $\mathbf{A}$, denoted as $\text{dim}(\text{row}(\mathbf{A}))$. This property is known as the rank-nullity theorem.
+Is orthogonal to the nullspace: The column space is orthogonal to the nullspace of $\mathbf{A}$, meaning any vector in the column space is orthogonal to any vector in the nullspace of $\mathbf{A}$. This property is known as the fundamental theorem of linear algebra.
+
+## Nullspace of \mathbf{A}: Solving \mathbf{Ax = 0}
 
 ### Definition
 
 ::: {#def-nullspace}
-The nullspace of a matrix refers to the set of all vectors that, when multiplied by the matrix, result in the zero vector $\mathbf{0}$. Formally, for a matrix $\mathbf{A}$, the nullspace is denoted as $\text{null}(\mathbf{A})$ and defined as follows:
+The nullspace of a matrix refers to the set of all vectors that, when multiplied by the matrix, result in the zero vector $\mathbf{0}$. For a matrix $\mathbf{A}$, the nullspace is denoted as $\text{null}(\mathbf{A})$ and defined as follows:
 $$
 \text{null}(\mathbf{A}) = \{\mathbf{x} \in \mathbb{R}^n \mid \mathbf{Ax} = \mathbf{0}\}
 $$
@@ -193,29 +213,111 @@ $$
 The nullspace of $\mathbf{A}$ is the set of all solutions $\mathbf{x}$ to the homogeneous equation $\mathbf{Ax} = \mathbf{0}$.
 :::
 
+All the solutions $\mathbf{x} \in \mathbb R^n$, so the $\text{null}(\mathbf{A})$ is a subspace of $\mathbb R^n$, and $\operatorname{Col}(\mathbf A)$ is a subspace of $\mathbb R^m$ (from Gilbere Strang)
+If the right side $\mathbf{b}$ is not $\mathbf{0}$, the solutions of $\mathbf{Ax=b}$ do not form a subspace. The vector $\mathbf{x=0}$ is only a solution if $\mathbf{b=0}$. When the set of solutions does not include $\mathbf{x=0}$, it cannot be a subspace. Section 3.4 will show how the solutions to $\mathbf{Ax=b}$ (if there are any solutions) are shifted away from the origin by one particular solution.
+
 ### Example
 
 $$
-\text{Example 1:}
-\mathbf{A} = \begin{bmatrix} 1 & 2 \\ 3 & 6 \\ 2 & 4 \end{bmatrix}
-\text{null}(\mathbf{A}) = \left\{ \begin{bmatrix} -2t \\ t \end{bmatrix} \mid t \in \mathbb{R} \right\}
+\begin{align*}
+\mathbf{A} = \begin{bmatrix} 1 & 2 & 3 \end{bmatrix} \quad \mathbf{Ax=0} \\
+\text{null}(\mathbf{A}) = \{\mathbf{x} \in \mathbb{R}^n \mid \mathbf{Ax} = \mathbf{0}\} \text{ is a subspace of }\mathbb R^3
+\end{align*}
+$$
 
-\text{Example 2:}
-\mathbf{B} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}
+```{python}
+# Define the coefficients of the planes
+a1, b1, c1, d1 = 1, 2, 3, 0
+a2, b2, c2, d2 = 1, 2, 3, 6
+
+x = np.linspace(-5, 5, 100)
+y = np.linspace(-5, 5, 100)
+X, Y = np.meshgrid(x, y)
+
+# Compute the corresponding z values for each x, y pair for the first plane
+Z1 = (-a1*X - b1*Y - d1) / c1
+
+# Compute the corresponding z values for each x, y pair for the second plane
+Z2 = (-a2*X - b2*Y - d2) / c2
+
+# Check if the origin is in the blue plane
+origin_in_blue_plane = a1*0 + b1*0 + c1*0 + d1 == 0
+
+# Check if the origin is in the red plane
+origin_in_red_plane = a2*0 + b2*0 + c2*0 + d2 == 0
+
+# Create a 3D plot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Plot the first plane
+ax.plot_surface(X, Y, Z1, color='blue', alpha=0.5)
+
+# Plot the second plane
+ax.plot_surface(X, Y, Z2, color='red', alpha=0.5)
+
+# Plot the origin as a black point
+ax.scatter(0, 0, 0, color='black', s=50)
+
+
+# Highlight the origin in the blue plane
+if origin_in_blue_plane:
+    ax.scatter(0, 0, 0, color='blue', s=50, label=r'Origin in the $x+2y+3z=0$ Plane')
+
+# Highlight the origin in the red plane
+if origin_in_red_plane:
+    ax.scatter(0, 0, 0, color='red', s=50, label=r'Origin in the $x+2y+3z=6$ Plane')
+
+# Set labels and title
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_zlabel('Z')
+ax.set_title(r'Example of Nullspace:\n $x+2y+3z=0$ vs $x+2y+3z=6$')
+
+# Add a legend
+ax.legend()
+
+# Show the plot
+plt.show()
+
+```
+
+
+$$
+\begin{align*}
+\mathbf{A} = \begin{bmatrix} 1 & 2 \\ 3 & 6 \\ 2 & 4 \end{bmatrix} \quad
+\text{null}(\mathbf{A}) = \left\{ \begin{bmatrix} -2t \\ t \end{bmatrix} \mid t \in \mathbb{R} \right\}
+\end{align*}
+$$
+
+$$
+\begin{align*}
+\mathbf{B} = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix} \quad
 \text{null}(\mathbf{B}) = \left\{ \begin{bmatrix} 0 \\ t \\ 0 \end{bmatrix} \mid t \in \mathbb{R} \right\}
+\end{align*}
 $$
 
 ### Properties
 
-Contains the zero vector: The nullspace always contains the zero vector $\mathbf{0}$, since $\mathbf{A}\mathbf{0} = \mathbf{0}$.
+#### Nullspace Contains the Zero Vector
 
-Is a subspace: The nullspace is a subspace of the vector space $\mathbb{R}^n$, meaning it is closed under vector addition and scalar multiplication. This property allows for the nullspace to be used in linear combinations and as a solution space for homogeneous linear equations.
+The nullspace always contains the zero vector $\mathbf{0}$, since $\mathbf{A}\mathbf{0} = \mathbf{0}$.
 
-Is orthogonal to row space: The nullspace is orthogonal to the row space of $\mathbf{A}$, meaning any vector in the nullspace is orthogonal to all vectors in the row space of $\mathbf{A}$. This property is known as the fundamental theorem of linear algebra.
+#### Nullspace Is a Subspace
 
-Can be non-empty: The nullspace can be non-empty, meaning there can be non-trivial solutions to the homogeneous equation $\mathbf{Ax} = \mathbf{0}$.
+The nullspace is a subspace of the vector space $\mathbb{R}^n$, meaning it is closed under vector addition and scalar multiplication. This property allows for the nullspace to be used in linear combinations and as a solution space for homogeneous linear equations.
 
-Dimensionality: The dimensionality of the nullspace, denoted as $\text{dim}(\text{null}(\mathbf{A}))$, is also known as the nullity of $\mathbf{A}$. The nullity of $\mathbf{A}$ is equal to the number of linearly independent columns or the number of free variables in the row-reduced echelon form (RREF) of $\mathbf{A}$.
+#### Nullspace Is Orthogonal to Row Space
+
+The nullspace is orthogonal to the row space of $\mathbf{A}$, meaning any vector in the nullspace is orthogonal to all vectors in the row space of $\mathbf{A}$.
+
+#### Nullspace Can Be Non-mpty
+
+The nullspace can be non-empty, meaning there can be non-trivial solutions to the homogeneous equation $\mathbf{Ax} = \mathbf{0}$.
+
+#### Dimensionality
+
+The dimensionality of the nullspace, denoted as $\text{dim}(\text{null}(\mathbf{A}))$, is also known as the nullity of $\mathbf{A}$. The nullity of $\mathbf{A}$ is equal to the number of linearly independent columns or the number of free variables in the row-reduced echelon form (RREF) of $\mathbf{A}$.
 
 ## Rank and Row Reduced Form
 ## Complete Solution

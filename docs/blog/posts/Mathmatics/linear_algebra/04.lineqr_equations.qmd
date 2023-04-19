@@ -200,24 +200,41 @@ plt.show()
 
 ## Augmented Matrix
 
-::: {#thm-augmentedMatrix}
-Let $\mathbf{A}$ be an $m\times n$ matrix, $\mathbf{x}$ an $n\times 1$ column vector, and $\mathbf{b}$ an $m\times 1$ column vector. Then the system of equations $\mathbf{Ax=b}$ is equivalent to the augmented matrix $[\mathbf{A}|\mathbf{b}]$, which is obtained by appending the column vector $\mathbf{b}$ to the right of $\mathbf{A}$.
+::: {#def-augmentedMatrix}
+An augmented matrix is a matrix formed by appending the column vector $\mathbf{b}$ to the right of matrix $\mathbf{A}$ in the system of linear equations $\mathbf{Ax}=\mathbf{b}$. More formally, the augmented matrix is defined as:
+$$
+\begin{align*}
+\begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{1n} & b_1 \\
+a_{21} & a_{22} & \cdots & a_{2n} & b_2 \\
+\vdots & \vdots & \ddots & \vdots & \vdots \\
+a_{m1} & a_{m2} & \cdots & a_{mn} & b_m \\
+\end{bmatrix}
+\end{align*}
+$$
+
+where $\mathbf{A}$ is an $m\times n$ matrix, $\mathbf{b}$ is an $m\times 1$ column vector, and the augmented matrix is an $m\times (n+1)$ matrix.
 :::
 
 ### Example
 
 $$
 \begin{align*}
-x_1 + 2x_2 &= 3 \\
-2x_1 + 3x_2 &= 4.
+x_1 + 2x_2 - 3x_3 &= 4 \\
+2x_1 - x_2 + 4x_3 &= 7 \\
+x_1 + 3x_2 + 2x_3 &= 5
 \end{align*}
 $$
 
-We can write this system in the form $\mathbf{Ax=b}$ by setting
+The corresponding augmented matrix is:
 
 $$
 \begin{align*}
-\mathbf{A} = \begin{bmatrix}1 & 2 \\ 2 & 3\end{bmatrix}, \quad \mathbf{x} = \begin{bmatrix}x_1 \\ x_2\end{bmatrix}, \quad \text{and} \quad \mathbf{b} = \begin{bmatrix}3 \\ 4\end{bmatrix}.
+\left[\begin{array}{ccc|c}
+1 & 2 & -3 & 4 \\
+2 & -1 & 4 & 7 \\
+1 & 3 & 2 & 5
+\end{array}\right]
 \end{align*}
 $$
 
@@ -267,6 +284,17 @@ A matrix is said to be in row-echelon form if it satisfies the following conditi
 1. The leading coefficient of a row occurs to the right of the leading coefficient of the row above it.
 :::
 
+$$
+\begin{align*}
+[\mathbf{A}|\mathbf{b}]=
+\left[\begin{array}{ccc|c}
+3 & 0 & 5 & -3 \\
+0 & -9 & 3 & 5 \\
+0 & 0 & -1 & -4
+\end{array}\right]
+\end{align*}
+$$
+
 ::: {#def-row_reduced_echelon_form}
 A matrix is said to be in the row-reduced echelon form (or RREF) if it satisfies the following conditions:
 
@@ -275,6 +303,26 @@ A matrix is said to be in the row-reduced echelon form (or RREF) if it satisfies
 1. The leading coefficient of any nonzero row is strictly to the right of the leading coefficient of the row above it.
 1. All other entries in the same column as a leading coefficient are zero.
 :::
+
+$$
+\begin{align*}
+[\mathbf{A}|\mathbf{b}] =
+
+\left[\begin{array}{ccc|c}
+3 & 0 & 5 & -3 \\
+0 & -9 & 3 & 5 \\
+0 & 0 & -1 & -4
+\end{array}\right]_{\text{row echolon form}} \rightarrow
+[\mathbf{A}|\mathbf{b}] =
+\left[\begin{array}{ccc|c}
+1 & 0 & 0 & -\frac{47}{27} \\
+0 & 1 & 0 & \frac{23}{27} \\
+0 & 0 & 1 & 4
+\end{array}\right]_{\text{row reduced echolon form}}
+\end{align*}
+$$
+
+
 
 The row-echelon form (or row-reduced echelon form or RREF) is a systematic way of representing a matrix such that it has certain properties, making it easier to solve linear equations using methods like Gaussian elimination. In row-echelon form, the leading coefficient (the first non-zero entry) in each row is 1, and all other entries in the same column are zero.
 
@@ -285,7 +333,6 @@ From the row-echolon form, it produces an **upper triangular system** and the re
 #### Unique Solution
 
 $$
-
 \begin{align*}
 & 2x + y - z = 3 \\
 & 3x - 2y + 2z = 1 \\
@@ -329,9 +376,8 @@ $$
 & \text{Breakdown: Perform back substitution to obtain the solution:} \\
 & z = -1/3 \\
 & y = -2/3 \\
-& x = 4/3 \\
+& x = 4/3
 \end{align*}
-
 $$
 
 #### Infinitely Many Solutions
@@ -377,9 +423,8 @@ $$
 & \text{Perform back substitution to obtain the solution:} \\
 & z = t \quad \text{(where t is a parameter)} \\
 & y = s \quad \text{(where s is a parameter)} \\
-& x = \frac{4}{3} - \frac{2}{3}y + \frac{1}{3}z \quad \text{(in terms of t and s)} \\
+& x = \frac{4}{3} - \frac{2}{3}y + \frac{1}{3}z \quad \text{(in terms of t and s)}
 \end{align*}
-
 $$
 
 In this example, the system of linear equations has infinitely many solutions because after performing row operations, the rows become all zeros in the second and third rows, indicating that there are infinitely many values of $x$, $y$, and $z$ that satisfy the system of equations. The parameters t and s can take any real values, and the values of $x$, $y$, and $z$ can be expressed in terms of $t$ and $s$.
@@ -423,7 +468,7 @@ $$
 &\begin{bmatrix}
 1 & 3/2 & -1/2 &| & 7/2 \\
 0 & 1 & 1 &|& 2 \\
-0 & 0 & 0 &|& -2 \\
+0 & 0 & 0 &|& -2 
 \end{bmatrix}
 \end{align*}
 $$
@@ -496,8 +541,11 @@ $$
 70 & 76 \\
 158 & 172
 \end{bmatrix}
-\\
+\end{align*}
+$$
 
+$$
+\begin{align*}
 \mathbf A \mathbf B + \mathbf A \mathbf C 
 &= \begin{bmatrix}
 1 & 2 \\
@@ -557,8 +605,11 @@ $$
 15 & 18 \\
 21 & 24
 \end{bmatrix}
-\\
+\end{align*}
+$$
 
+$$
+\begin{align*}
 \mathbf A + (\mathbf B + \mathbf C) 
 &= \begin{bmatrix}
 1 & 2 \\
@@ -862,7 +913,9 @@ The LU factorization, also known as the LU decomposition, is a matrix factorizat
 $$
 \mathbf{A} = \mathbf{LU}
 $$
+
 where
+
 * $\mathbf{A}$ is the given matrix,
 * $\mathbf{L}$ is the lower triangular matrix with ones on the diagonal, and
 * $\mathbf{U}$ is the upper triangular matrix.
@@ -983,11 +1036,128 @@ x = np.linalg.solve(U, c)
 print("Solution vector x:", x)
 ```
 
-
-
-
-
-
 ## Transposes and Permutations
 
+### Transpose
 
+[Read the previous blog: the basic matrix operations](./02.basic_matrix.qmd)
+
+### Permutations
+
+A permutation is a reordering of a finite sequence of elements. In the context of solving $\mathbf{Ax=b}$, a permutation can be used to reorder the rows of the augmented matrix $\begin{bmatrix} \mathbf{A} & \mathbf{b} \end{bmatrix}$ to simplify the process of finding the row echelon form.
+
+::: {#def-permutation}
+
+A permutation of a set of size $n$ is a bijective function $\sigma: {1, 2, \ldots, n} \to {1, 2, \ldots, n}$, which means that every element in the set is mapped to a unique element in the set and vice versa. A common way to represent a permutation is by using a permutation matrix, which is a square matrix with a single 1 in each row and each column and 0s elsewhere. The location of the 1 in each row represents the new position of that row after the permutation.
+:::
+
+#### Example
+
+Consider the permutation $\sigma$ of the set ${1, 2, 3}$ defined by $\sigma(1) = 2$, $\sigma(2) = 3$, and $\sigma(3) = 1$. The corresponding permutation matrix is:
+
+$$
+\begin{align*}
+P = \begin{bmatrix}
+0 & 0 & 1 \\
+1 & 0 & 0 \\
+0 & 1 & 0
+\end{bmatrix}
+\end{align*}
+$$
+
+To apply this permutation to the matrix $\mathbf{A}$, we multiply $\mathbf{A}$ on the left by $P$, i.e., $P\mathbf{A}$. Similarly, to apply the permutation to the vector $\mathbf{b}$, we multiply $\mathbf{b}$ on the left by $P$, i.e., $P\mathbf{b}$. This gives us the reordered augmented matrix:
+
+$$
+\begin{align*}
+P\begin{bmatrix} \mathbf{A} & \mathbf{b} \end{bmatrix} = \begin{bmatrix} P\mathbf{A} & P\mathbf{b} \end{bmatrix}
+\end{align*}
+$$
+
+By permuting the rows of the augmented matrix, we can obtain a row echelon form that is easier to work with and may lead to simpler solutions for $\mathbf{x}$.
+
+#### Properties
+
+Permutations are used in solving linear systems of equations using Gaussian elimination, which is a common method for finding solutions to $\mathbf{Ax=b}$. Here are some formal properties of permutations:
+
+* A permutation matrix $\mathbf{P}$ is a square matrix obtained by permuting the rows of the identity matrix $\mathbf{I}$.
+* The product of two permutation matrices is also a permutation matrix.
+* The inverse of a permutation matrix is its transpose.
+* Permutation matrices can be used to interchange rows of a matrix.
+
+$$
+\begin{align*}
+x_1 + 2x_2 + 3x_3 &= 7 \\
+4x_1 + 5x_2 + 6x_3 &= 8 \\
+7x_1 + 8x_2 + 9x_3 &= 10
+\end{align*}
+$$
+
+The augmented matrix for this system is:
+
+$$
+\begin{align*}
+\left[\begin{array}{ccc|c}
+1 & 2 & 3 & 7 \\
+4 & 5 & 6 & 8 \\
+7 & 8 & 9 & 10
+\end{array}\right]
+\end{align*}
+$$
+
+To perform Gaussian elimination, we might want to interchange the first and second rows of the matrix. We can do this by multiplying the matrix by the permutation matrix:
+
+$$
+\begin{align*}
+\mathbf{P}_1 = \begin{bmatrix}
+0 & 1 & 0 \\
+1 & 0 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+\end{align*}
+$$
+
+We can verify that $\mathbf{P}_1$ is a permutation matrix, and we can apply it to the augmented matrix:
+
+$$
+\begin{align*}
+\mathbf{P}_1\left[\begin{array}{ccc|c}
+1 & 2 & 3 & 7 \\
+4 & 5 & 6 & 8 \\
+7 & 8 & 9 & 10
+\end{array}\right] &= \left[\begin{array}{ccc|c}
+4 & 5 & 6 & 8 \\
+1 & 2 & 3 & 7 \\
+7 & 8 & 9 & 10
+\end{array}\right]
+\end{align*}
+$$
+
+We can continue with the Gaussian elimination process on the new augmented matrix. If we want to interchange the second and third rows, we can use the permutation matrix:
+
+$$
+\begin{align*}
+\mathbf{P}_2 = \begin{bmatrix}
+1 & 0 & 0 \\
+0 & 0 & 1 \\
+0 & 1 & 0
+\end{bmatrix}
+\end{align*}
+$$
+
+We can verify that $\mathbf{P}_2$ is a permutation matrix, and we can apply it to the augmented matrix:
+
+$$
+\begin{align*}
+\mathbf{P}_2\left[\begin{array}{ccc|c}
+4 & 5 & 6 & 8 \\
+1 & 2 & 3 & 7 \\
+7 & 8 & 9 & 10
+\end{array}\right] &= \left[\begin{array}{ccc|c}
+4 & 5 & 6 & 8 \\
+7 & 8 & 9 & 10 \\
+1 & 2 & 3 & 7
+\end{array}\right]
+\end{align*}
+$$
+
+We can now continue with Gaussian elimination on this new augmented matrix, which is in row echelon form.

@@ -932,60 +932,65 @@ x_1 + 3x_2 + 2x_3 &amp;= 5
 </section>
 <section id="block-elimination" class="level3" data-number="1.5.3">
 <h3 data-number="1.5.3" class="anchored" data-anchor-id="block-elimination"><span class="header-section-number">1.5.3</span> Block Elimination</h3>
-<p>An example of elimination by block to derive the Schur complement:</p>
+<p>Block elimination is a technique used to solve systems of linear equations by reducing the system to a smaller set of equations. The process involves breaking the system down into smaller sub-systems or blocks, then eliminating one set of variables by expressing them in terms of the remaining variables.</p>
+<section id="schur-complement" class="level4" data-number="1.5.3.1">
+<h4 data-number="1.5.3.1" class="anchored" data-anchor-id="schur-complement"><span class="header-section-number">1.5.3.1</span> Schur Complement</h4>
+<p>The Schur complement is a matrix obtained by block elimination, where a large matrix <span class="math inline">\(\mathbf{A}\)</span> is partitioned into blocks:</p>
 <p><span class="math display">\[
 \begin{align*}
+\mathbf{A} =
 \begin{bmatrix}
-\mathbf A &amp; \mathbf B \\
-\mathbf C &amp; \mathbf D
-\end{bmatrix}
-\begin{bmatrix}
-\mathbf x \\
-\mathbf y
-\end{bmatrix}
-=
-\begin{bmatrix}
-\mathbf e \\
-\mathbf f
+\mathbf{A}_{11} &amp; \mathbf{A}_{12} \\
+\mathbf{A}_{21} &amp; \mathbf{A}_{22}
 \end{bmatrix}
 \end{align*}
 \]</span></p>
-<p>where <span class="math inline">\(\mathbf A\)</span>, <span class="math inline">\(\mathbf B\)</span>, <span class="math inline">\(\mathbf C\)</span>, and <span class="math inline">\(\mathbf D\)</span> are block matrices, <span class="math inline">\(\mathbf x\)</span> and <span class="math inline">\(\mathbf y\)</span> are block vectors representing unknowns, and <span class="math inline">\(\mathbf e\)</span> and <span class="math inline">\(\mathbf f\)</span> are block vectors representing constants.</p>
-<p>We can use elimination by block to derive the Schur complement, which is a reduced matrix that represents the remaining unknowns after eliminating one set of unknowns. Here’s how we can do it:</p>
-<p><strong>Original equation</strong> <span class="math display">\[
+<p>where <span class="math inline">\(\mathbf{A}_{11}\)</span> is a square sub-matrix of <span class="math inline">\(\mathbf{A}\)</span>. The Schur complement of <span class="math inline">\(\mathbf{A}_{22}\)</span> with respect to <span class="math inline">\(\mathbf{A}_{11}\)</span> is defined as:</p>
+<p><span class="math display">\[
+\begin{align*}
+\mathbf{S} = \mathbf{A}_{22} - \mathbf{A}_{21} \mathbf{A}_{11}^{-1} \mathbf{A}_{12}
+\end{align*}
+\]</span></p>
+<p>The Schur complement is useful in many areas of mathematics and engineering, including control theory, optimization, and signal processing.</p>
+<p>As an example, consider the following system of linear equations:</p>
+<p><span class="math display">\[
+\begin{align*}
 \begin{bmatrix}
-\mathbf A &amp; \mathbf B \\
-\mathbf C &amp; \mathbf D
+\mathbf{A}_{11} &amp; \mathbf{A}_{12} \\
+\mathbf{A}_{21} &amp; \mathbf{A}_{22}
 \end{bmatrix}
 \begin{bmatrix}
-\mathbf x \\
-\mathbf y
+\mathbf{x}_1 \\
+\mathbf{x}_2
 \end{bmatrix}
-=
 \begin{bmatrix}
-\mathbf e \\
-\mathbf f
-\end{bmatrix} \\
+\mathbf{b}_1 \\
+\mathbf{b}_2
+\end{bmatrix}
+\end{align*}
 \]</span></p>
-<p><strong>Step 1: Eliminate x using block Gaussian elimination:</strong> <span class="math display">\[
-\mathbf C \cdot \mathbf x + \mathbf D \cdot \mathbf y = \mathbf f - \mathbf A \cdot \mathbf x
-\]</span></p>
-<p><strong>Step 2: Solve for <span class="math inline">\(\mathbf y\)</span></strong> <span class="math display">\[
-\mathbf y = (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot (\mathbf f - \mathbf A \cdot \mathbf x)
-\]</span></p>
-<p><strong>Step 3: Substitute <span class="math inline">\(\mathbf y\)</span> back into the original equation:</strong></p>
+<p>We can eliminate the variables <span class="math inline">\(\mathbf{x}_2\)</span> by solving for them in terms of <span class="math inline">\(\mathbf{x}_1\)</span>:</p>
 <p><span class="math display">\[
-\mathbf A \cdot \mathbf x + \mathbf B \cdot ((\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot (\mathbf f - \mathbf A \cdot \mathbf x)) = \mathbf e
+\begin{align*}
+\mathbf{A}_{22} \mathbf{x}_2 = \mathbf{b}_2 - \mathbf{A}_{21} \mathbf{x}_1 \\
+\mathbf{x}_2 = \mathbf{A}_{22}^{-1} (\mathbf{b}_2 - \mathbf{A}_{21} \mathbf{x}_1)
+\end{align*}
 \]</span></p>
-<p><strong>Step 4: Simplify using the Schur complement:</strong></p>
+<p>Substituting this into the first equation, we obtain:</p>
 <p><span class="math display">\[
-(\text{Schur Complement}) \quad \mathbf S = \mathbf B \cdot (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot \mathbf B^T
+\begin{align*}
+\mathbf{A}_{11} \mathbf{x}_1 + \mathbf{A}_{12} \mathbf{A}_{22}^{-1} (\mathbf{b}_2 - \mathbf{A}_{21} \mathbf{x}_1) = \mathbf{b}_1
+\end{align*}
 \]</span></p>
-<p><strong>Step 5: Solve for <span class="math inline">\(\mathbf X\)</span> using the Schur complement:</strong></p>
+<p>Rearranging terms, we obtain an equation in the form <span class="math inline">\(\mathbf{B} \mathbf{x}_1 = \mathbf{c}\)</span>, where:</p>
 <p><span class="math display">\[
-\mathbf x = (\mathbf A - \mathbf B \cdot (\mathbf D - \mathbf C \cdot \mathbf A^{-1} \cdot \mathbf B)^{-1} \cdot \mathbf B^T)^{-1} \cdot \mathbf e
+\begin{align*}
+\mathbf{B} &amp;= \mathbf{A}_{11} - \mathbf{A}_{12} \mathbf{A}_{22}^{-1} \mathbf{A}_{21} \\
+\mathbf{c} &amp;= \mathbf{b}_1 - \mathbf{A}_{12} \mathbf{A}_{22}^{-1} \mathbf{b}_2
+\end{align*}
 \]</span></p>
-<p>In this example, we perform elimination by block to derive the Schur complement matrix <span class="math inline">\(S\)</span>, and then use it to solve for the unknowns <span class="math inline">\(\mathbf x\)</span> and <span class="math inline">\(\mathbf y\)</span>. Note that the Schur complement is obtained by inverting the submatrix <span class="math inline">\(D - C \cdot A^{-1} \cdot B\)</span>, and it is used to simplify the equation for <span class="math inline">\(\mathbf x\)</span>.</p>
+<p>Thus, we have obtained a smaller system.</p>
+</section>
 </section>
 </section>
 <section id="inverse-matrices" class="level2" data-number="1.6">
@@ -1241,17 +1246,17 @@ u_{11} &amp; u_{12} &amp; \cdots &amp; u_{1n} \\
 <p>Consider the permutation <span class="math inline">\(\sigma\)</span> of the set <span class="math inline">\({1, 2, 3}\)</span> defined by <span class="math inline">\(\sigma(1) = 2\)</span>, <span class="math inline">\(\sigma(2) = 3\)</span>, and <span class="math inline">\(\sigma(3) = 1\)</span>. The corresponding permutation matrix is:</p>
 <p><span class="math display">\[
 \begin{align*}
-P = \begin{bmatrix}
+\mathbf{P} = \begin{bmatrix}
 0 &amp; 0 &amp; 1 \\
 1 &amp; 0 &amp; 0 \\
 0 &amp; 1 &amp; 0
 \end{bmatrix}
 \end{align*}
 \]</span></p>
-<p>To apply this permutation to the matrix <span class="math inline">\(\mathbf{A}\)</span>, we multiply <span class="math inline">\(\mathbf{A}\)</span> on the left by <span class="math inline">\(P\)</span>, i.e., <span class="math inline">\(P\mathbf{A}\)</span>. Similarly, to apply the permutation to the vector <span class="math inline">\(\mathbf{b}\)</span>, we multiply <span class="math inline">\(\mathbf{b}\)</span> on the left by <span class="math inline">\(P\)</span>, i.e., <span class="math inline">\(P\mathbf{b}\)</span>. This gives us the reordered augmented matrix:</p>
+<p>To apply this permutation to the matrix <span class="math inline">\(\mathbf{A}\)</span>, we multiply <span class="math inline">\(\mathbf{A}\)</span> on the left by <span class="math inline">\(\mathbf{P}\)</span>, i.e., <span class="math inline">\(P\mathbf{A}\)</span>. Similarly, to apply the permutation to the vector <span class="math inline">\(\mathbf{b}\)</span>, we multiply <span class="math inline">\(\mathbf{b}\)</span> on the left by <span class="math inline">\(\mathbf{P}\)</span>, i.e., <span class="math inline">\(P\mathbf{b}\)</span>. This gives us the reordered augmented matrix:</p>
 <p><span class="math display">\[
 \begin{align*}
-P\begin{bmatrix} \mathbf{A} &amp; \mathbf{b} \end{bmatrix} = \begin{bmatrix} P\mathbf{A} &amp; P\mathbf{b} \end{bmatrix}
+\mathbf{P}\begin{bmatrix} \mathbf{A} &amp; \mathbf{b} \end{bmatrix} = \begin{bmatrix} \mathbf{P}\mathbf{A} &amp; \mathbf{P}\mathbf{b} \end{bmatrix}
 \end{align*}
 \]</span></p>
 <p>By permuting the rows of the augmented matrix, we can obtain a row echelon form that is easier to work with and may lead to simpler solutions for <span class="math inline">\(\mathbf{x}\)</span>.</p>

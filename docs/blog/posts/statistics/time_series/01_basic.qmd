@@ -450,6 +450,75 @@ plot(result)
 checkresiduals(wn)
 ```
 
+## Time Series Decomposition
+
+The characteristics of time series data has trend, seasonality, and autocorrelation. To check if autocorrelation exists in data, we used ACF and PACF. Then, how to check the trend and seasonality characteristics? Time series decomposition can be used to check them.
+
+The observed time series $y_t$ can be decomposed into four components: the trend component $T_t$, the seasonal component $S_t$, the cyclical component $C_t$, and the remainder or error component $E_t$. This can be expressed as:
+
+$$
+\begin{equation}
+y_t = T_t + S_t + C_t + E_t, \quad \text{where} \quad E_t \sim \text{WN}(0,\sigma^2),
+\end{equation}
+$$
+
+where $T_t$ is the trend component, $S_t$ is the seasonal component, $C_t$ is the cyclical component, and $E_t$ is the error term, which is a random variable with a white noise distribution with mean 0 and variance $\sigma^2$.
+
+The trend component $T_t$ represents the long-term behavior of the time series, and can be either deterministic or stochastic. The seasonal component $S_t$ represents the regular and repeated variations that occur within a single year or other fixed time period. The cyclical component $C_t$ represents the irregular variations in the time series that do not follow a fixed pattern.
+
+:::{.callout-tip}
+Deterministic refers to a situation where the outcome is completely determined by the initial conditions, and there is no randomness involved. For example, if you drop a ball from a certain height, the time it takes to hit the ground can be determined exactly based on the initial height and the acceleration due to gravity. This is a deterministic process because there is no randomness involved.
+
+Stochastic, on the other hand, refers to a situation where the outcome is uncertain and subject to randomness. For example, if you roll a fair six-sided die, you cannot predict with certainty what number will come up. The outcome is determined by chance, and is therefore stochastic.
+:::
+
+There are two ways of decomposing time series data: **additive decomposition** and **multiplicative decomposition**
+This additive deomoposition method is suitable for the time series data with a constant variation of seasonality according the trend, while multiplicative decomposition is suitable for the time series data with a inconsistent variation of seasonality according the trend. The variation magnitude could increase or decrease.
+
+### Additive Decomposition
+
+A common method for decomposing time series is the additive decomposition, which can be expressed as:
+$$
+\begin{equation}
+y_t = T_t + S_t + E_t.
+\end{equation}
+$$
+
+
+The trend component $T_t$ is estimated by smoothing the data using techniques such as moving averages or exponential smoothing. The seasonal component $S_t$ is estimated by computing the seasonal indices, which are ratios of the observed values to the estimated trend component. The cyclical component $C_t$ is usually not explicitly estimated, but can be identified as the fluctuations that remain after removing the trend and seasonal components.
+
+For example, let $X_t$ be a quarterly time series of sales data for a company, with $t$ ranging from 1 to 20. We can decompose the time series using an additive model:
+
+$$
+\begin{equation}
+X_t = T_t + S_t + E_t,
+\end{equation}
+$$
+
+where $T_t$ is the trend component, $S_t$ is the seasonal component, and $E_t$ is the error term. The trend component can be estimated using a 3-period moving average:
+$$
+\begin{equation}
+T_t = \frac{1}{3} (X_{t-1} + X_t + X_{t+1}),
+\end{equation}
+$$
+
+where $t=2,3,\ldots,19$. The seasonal component can be estimated by computing the average value of $X_t$ for each quarter:
+
+$$
+\begin{equation}
+S_t = \frac{1}{5} \sum_{i=0}^3 X_{t+4i}.
+\end{equation}
+$$
+
+Finally, the error term $E_t$ can be computed as:
+
+$$
+\begin{equation}
+E_t = X_t - T_t - S_t.
+\end{equation}
+$$
+
+This decomposition allows us to separate the long-term trend, seasonal patterns, and irregular fluctuations in the sales data, and can help us identify any underlying patterns or trends that may be present in the data.
 
 :::
 </div>

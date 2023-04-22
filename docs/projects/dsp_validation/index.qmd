@@ -1,0 +1,182 @@
+---
+title: "Project (ongoing): Diagnostic Signal Processing Algorithm Validation for Surveilance"
+subtitle: "Seegene's Top Priority Project"
+description: "This project is necessary for entering global markets to prepare for the requirement of the government all around the world. Due to security concerns, it is difficult to display the data used in this project."
+author: Kwangmin Kim
+date: 2023-04-22
+format: 
+  html:
+    toc: true  
+    page-layout: full
+    code-fold: true  
+---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+## Background
+
+* 의료 장비와 연관된 시약 제품의 특성상 Global Market 진출시 각 나라의 정부에서 자국민의 건강 및 생명의 안전을 위해 요구하는 규제사항들이 있다.
+    * 시약의 안정성 검증 요구
+    * 장비의 안정성 검증 요구
+    * Software의 안정성 검증 요구
+    * **Diagnostic Algorithm의 안정성 검증 요구**
+* COVID19 특수 시기 해제 후 Global market으로 진입 및 유지를 위해 제품의 안정성 검증이 각 국의 정부로 부터 요구된다. 그 중 가장 엄격한 기준을 요구하는 미국의 FDA와 캐나다의 Health Canada를 기준으로 진단 알고리즘의 안정성 검증 문서를 기획하고 작성해야만 한다.
+* 시간이 지날 수록 각 국에서 Software 및 algorithms에 대한 규제가 강화되고 있기때문에 기존의 Software Engineering에 의한 안전성 검증보다 더 엄격한 Advanced Testing이 요구되고 있다.
+
+## Objective
+
+* algorithm이 안전한 성능을 발휘한다는 것을 증명한다
+* algorithm이 risk 관리가 가능하다는 것을 증명한다.
+
+## Strategies
+
+* 세계에서 가장 엄격한 검열 인증서를 발급 및 교육을 제공하는 기업인 SGS의 guidance를 참고한다.
+* SGS는 FDA를 target으로 guidance를 제공한다.
+* Software의 안전성 검증을 위해 FDA에서 제공하는 General Principles of Software Validation 문서를 정독 후 이 문서를 기반으로 기획 및 작성한다.
+* Structural Testing와 Advanced Testing 모두 포함한다.
+* algorithm 안전성에 대한 정의와 논리를 확립한다.
+* algorithm 안전성에 대한 지표를 확립한다.
+* Software engineering은 General Principles of Software Validation 문서를 기반하여 수행한다.
+* Advanced Testing인 Statistical Testing은 data scientist의 창의성이 요구되는 작업으로 Testing Model을 기획하여 statistical analysis design을 한다.
+* 기획된 Testing model에 적합한 statistical model을 찾고 biological experiment design과 engineering design을 한다.
+
+## Issues
+
+* 선례 및 template를 찾을 수 없을 정도로 매우 드물다.
+
+## Required Skills
+
+* FDA software validation
+* Statistics
+* Dynamic documentation
+* Biology
+* Clinical study design
+
+## Colaborators
+
+* project owner (me)
+* 7 data scientists 
+* 1 data enineer
+* 27 biologists
+* 2 patent attoneys
+ 
+## Acheivements
+
+|Noise Test| As-Is |To-Be |
+|:---:|:---|:---|
+| Sample Size  | n=100  | 2552번의 실험에서 얻은 신호 n=61,248   |
+| Evaluation Metrics | 2 metrics | 10 metrics ( the exsting 2 metrics + new 8 metrics)   |
+| Input Process | manually copy & paste data of excel files extracted from a certain program | Web-Based Automation, upload multiple experiment files |
+| Output Process| Batch Evaluation method, if even one of the signals from the equipment fails, the equipment fails. (Blind Spot: If there is one human error signal, the equipment is unconditionally disqualified.)| Differential Evaluation method, The signals from the equipment are scored, the average value is obtained, and the equipment is graded A+, A, B, and F. Failed if F. Robust on the error signal as it excludes the error signal from evaluation  |
+| Output 1 |  pass: 92.58%, fail: 7.42% | A+ (pass): 7.01%, A (pass): 12.91%, B (pass): 75.72%, F (fail): 4.36%  |
+| Output 2 |  NA | Visualized Plots and Tables.|
+| Output 3 |  NA | Normal Signals, Human Errors, Device Errors, Manufacturing Errors |
+| Time Consumed  | About 30 minutes per 20 experiments | About 25 minutes per 2552 experiments  |
+| Data Management| Non-standard management method (stored in NAS directory in a different form as an Excel file in a different way for each worker) | Automatic loading in DB in standardized form by a scheduler (equipment failure tracing analysis becomes possible) |
+
+### Remarkable
+
+
+
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+## Background
+
+* Quality Control of diagnostic equipment is one of the necessities for the regulations required by the government of each country when entering the global market due to the nature of products related to medical equipment.
+    * Reagent stability verification & validation required
+    * **Equipment stability verification & validation request**
+    * Software stability verification & validation request
+    * Stability Verification & validation Request of Diagnostic Algorithm
+* Since the diagnostic equipment currently being used by Seegene is not its own product, it is difficult to manage the quality of the diagnostic equipment.
+* The noise test of PCR equipment is one of the QC processes of medical equipments, and it is a quality verification system that directly affects the performance stability of Seegene's reagent products.
+* As the size of the company grows and frequent organizational reshuffles result in manual noise tests being transferred to various departments, the noise test performers' understanding and skills are low, resulting in noise tests not being performed correctly.
+* A project to automate the noise test was selected for Seegene's long-term goal of enterprise automation.
+ 
+## Objective
+
+* Data-driven parameters obtained from 61,248 signals from 2552 experiments were used to evaluate 2201 PCR devices, which were stocked between 2020.12.19 and 2021.03.06. yield Enables continuous analysis of equipment performance over time.
+* Improve the following major problems:
+    * Improved metrics that produces erroneous results by greatly affecting the noise test result depending on the size of the signal amplification. 
+    * It relieves the burden on the field department with a robust evaluation system by supplementing the problem of unconditionally determining equipment rejection in response to a simple human error signal.
+    * Equipment error signals are labeled by finding patterns that occur in equipment.
+* The time required for the manual calculation process can be reduced from 30 minutes per 20 tests to about 2 to 3 minutes with web-based automation.
+* By making it the best practice of Seegene's full automation, establish and vitalize the cooperation system between the IT, manufacturing and BT sectors.
+* Visualization and noise test result history are provided to build a tracking and VOC response system.
+
+## Strategies
+
+### Strategy A
+
+* The QC process is subdivided through close communication with the field departments, and the results of the noise test, which is the next stage QC, are predicted by utilizing the data generated in the previous stage QC.
+* Noise test omitted only for devices that are certain to have low noise.
+
+### Strategy B
+
+* Automate or semi-automate the entire QC process
+* Improve the accuracy of inspection results by analyzing the existing noise measurement metric and creating a new metric
+* Visualization and noise test result history are provided to increase the understanding of practitioners and enable management
+
+## Issues
+
+* Absence of job description
+* Backup Mistakes by Practitioners
+* Data scattered across departments
+* High level of data cleansing
+    * Select data that can be analyzed from practitioner data
+    * Incorrect input of practitioner data
+    * Manual release of DRM for data and documents
+* reverse engineering required
+* Absence of contact system for related personnel and departments due to frequent organizational reshuffle
+
+## Required Skills
+
+* Back-end Engineering for DevOps Pipeline Construction
+* Data Engineering for data cleansing and reverse engineering
+* Data Modeling for a RDB system construction
+* Statistical Analysis for the noise test performance verification
+* Machine Learning for pattern analysis
+* Front-end Engineering for UI/UX construction
+* Biologics, Biophysics, Physics Knowledge
+
+## Colaborators
+
+* 1 data scientist (me) - project owner
+* 5 mechanical engineers 
+* 4 biologists
+* 2 patent attoneys
+* 2 data engineers
+* 3 full stack developers
+* 1 advisor (a professor of Computer Science at Seoul National University)
+ 
+## Acheivements
+
+|Noise Test| As-Is |To-Be |
+|:---:|:---|:---|
+| Sample Size  | n=100  | Signals from 2552 experiments, n=61,248   |
+| Evaluation Metrics | 2 metrics | 10 metrics ( the exsting 2 metrics + new 8 metrics)   |
+| Input Process | manually copy & paste data of excel files extracted from a certain program | Web-Based Automation, upload multiple experiment files |
+| Output Process| Batch Evaluation method, if even one of the signals from the equipment fails, the equipment fails. (Blind Spot: If there is one human error signal, the equipment is unconditionally disqualified.)| Differential Evaluation method, The signals from the equipment are scored, the average value is obtained, and the equipment is graded A+, A, B, and F. Failed if F. Robust on the error signal as it excludes the error signal from evaluation  |
+| Output 1 |  pass: 92.58%, fail: 7.42% | A+ (pass): 7.01%, A (pass): 12.91%, B (pass): 75.72%, F (fail): 4.36%  |
+| Output 2 |  NA | Visualized Plots and Tables.|
+| Output 3 |  NA | Normal Signals, Human Errors, Device Errors, Manufacturing Errors |
+| Time Consumed  | About 30 minutes per 20 experiments | About 25 minutes per 2552 experiments  |
+| Data Management| Non-standard management method (stored in NAS directory in a different form as an Excel file in a different way for each worker) | Automatic loading in DB in standardized form by a scheduler (equipment failure tracing analysis becomes possible) |
+
+### Remarkable
+
+* The noise test was abolished in the whole QC Process because I statistically proved that the noise test result does not have a significant impact on the difference of the mean of the final result in the whole diagnostic process at the 1% significance level.
+* It turned out to be an opportunity for the Data Science department to increase their understanding of experiments and data generated from equipment.
+* It served as the basis for building a company-wide DB and building a platform architecture.
+</div>

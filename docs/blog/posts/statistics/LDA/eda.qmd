@@ -1,0 +1,139 @@
+---
+title: LDA - EDA
+subtitle: Exploratory Data Analysis
+description: |
+  template
+categories:
+  - Statistics
+author: Kwangmin Kim
+date: 04/23/2023
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    toc: true
+    number-sections: true
+execute: 
+  echo: false
+draft: true
+---
+```{r}
+library(tidyverse)
+library(lme4)
+rm(list=ls())
+#unzip("C:/Users/kmkim/Desktop/projects/data/LDA.zip",list=T)
+spruce_data<-read.table("C:/Users/kmkim/Desktop/projects/data/LDA/spruce_data.txt")
+milk_data<-read.table("C:/Users/kmkim/Desktop/projects/data/LDA/milk_modified.tsv")
+names(milk_data)<-c('trt','id','time','protein')
+```
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+
+mean function, covariance structure, variogram
+
+## Mean Function Estimation Using Smoothing Methods
+
+response variable의 trend estimation을 smoothing을 통해 수행한다.
+
+Visualization should be performed to capture the characteristics of data and to support the statistical inference results.
+
+* 시간에 따라 변화하는 반응 변수의 평균 패턴 인식
+* 시간에 따라 변화하는 개인별 패턴 인식
+* 그룹간의 반응 변수와의 관계 인식
+* 이상점 또는 특이치를 판독 
+
+
+### Recognition of Average Patterns in Response Variables Changing over Time
+
+#### Spaghetti Plot
+
+Spaghetti Plot: individual trends of a response variable
+
+```{r}
+ggplot(data=milk_data,aes(x=time,y=protein,group=id))+
+geom_line()
+
+ggplot(data=milk_data,aes(x=time,y=protein,group=id,col=factor(trt)))+
+geom_line()+
+facet_wrap(.~trt,ncol=1)
+```
+
+
+#### Spaghetti Plot with Smoothing
+
+Spaghetti plot에 mean function을 추가해 더 more informative visualtion
+
+$$
+Y(t)=\mu(t)+\epsilon
+$$
+
+###### Kernel Estimation
+
+t시점을 중심으로 window에 포함된 반응변수 값에 대해 적절한 가중치를 적용하여 mean function을 추정.
+
+$$
+\mu(t)=\operatorname{E}(Y|T=t)=\int y f(y|t)dy=\int y \frac{f(t.y)}{}
+$$
+
+```{r}
+ggplot(data=milk_data,aes(x=time,y=protein,group=id))+
+geom_line()+
+geom_smooth(aes(group=1),method='loess',formula=y~x)+
+stat_summary(aes(x = 19, yintercept = ..y.., group = 1), fun = "median", color = "red", geom = "hline")
+
+ggplot(data=milk_data,aes(x=time,y=protein,group=id,col=factor(trt)))+
+geom_line()+
+geom_smooth(aes(group=1),method='loess',formula=y~x,color='black')+
+stat_summary(aes(x = 19, yintercept = ..y.., group = 1), fun = "median", color = "red", geom = "hline")+
+facet_wrap(.~trt,ncol=3)
+```
+
+
+### Recognition of Individual Patterns Changing over Time
+
+### Recognition of Relationships with Response Variables between Groups
+
+### Recognition of Outliers or Anomaly Data 
+
+
+:::
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
+
+:::
+
+
+</div>
+
+```{python}
+#| echo: false
+#| eval: true
+radius = 10
+from IPython.display import display, Markdown
+display(Markdown("""
+The radius of the circle is {radius}.
+""".format(radius = radius)))
+```
+
+
+# Go to Project Content List
+
+[Project Content List](./docs/projects/index.qmd)
+
+# Go to Blog Content List
+
+[Blog Content List](../../content_list.qmd)

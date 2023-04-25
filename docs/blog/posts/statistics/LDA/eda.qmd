@@ -15,6 +15,7 @@ format:
     number-sections: true
 execute: 
   echo: false
+  warning: false
 draft: true
 ---
 ```{r}
@@ -80,11 +81,141 @@ $$
 
 ###### Kernel Estimation
 
+Kernel estimation is a nonparametric method used to estimate the underlying probability density function of a random variable. In kernel estimation, the density estimate is calculated at each point by placing a kernel function around that point, and the values of all kernel functions are added up to estimate the density.
+
+:::{.callout}
+In statistics and data analysis, a kernel is a mathematical function that weights data points in a certain way to estimate a target function, such as a probability density function or a regression function. The idea is to assign weights to neighboring data points based on their distance to the target point, with the weights determined by the kernel function. The kernel function is typically a symmetric, non-negative function that integrates to 1, such as the Gaussian or Epanechnikov kernel.
+:::
+
+In the case of estimating the conditional mean function $\mu(t)=\operatorname{E}(Y|T=t)$, we can use kernel estimation with a smoothing kernel function to estimate the mean at each point $t$. The kernel function is used to assign weights to the data points near each point $t$ based on their distance from $t$, and the weighted average of the $Y$ values for these nearby data points gives the estimated value of $\mu(t)$.
+
 t시점을 중심으로 window에 포함된 반응변수 값에 대해 적절한 가중치를 적용하여 mean function을 추정.
 
 $$
 \mu(t)=\operatorname{E}(Y|T=t)=\int y f(y|t)dy=\int y \frac{f(t.y)}{}
 $$
+
+
+$$
+\hat{\mu}(t) = \frac{\sum_{i=1}^n K\left(\frac{t-t_i}{h}\right) y_i}{\sum_{i=1}^n K\left(\frac{t-t_i}{h}\right)} =\hat{\mu}_{NW}(t)
+$$
+
+where $\hat{\mu}(t)$ is the estimate of the mean function at time point $t$, $y_i$ is the response variable for the $i$ th observation, $t_i$ is the time point for the $i$ th observation, $K_h$ is the kernel function with bandwidth parameter $h$, $n$ is the number of observations, and $\hat{\mu}_{NW}(t)$ is the Nadarian-Watson estimator.
+
+$$
+\hat{\mu}(t) = \frac{\sum\limits_{i=1}^n y_i K_h(t-T_i)}{\sum\limits_{i=1}^n K_h(t-T_i)}=\frac{\sum\limits_{i=1}^n y_iw(t,t_i,h)}{\sum\limits_{i=1}^n w(t,t_i,h)}
+
+$$
+
+where $w(t,t_i,h)=\frac{K(t-t_i)}{h}$ 
+
+The smaller the bandwith parameter $h$, the smoothing line more wiggly.
+
+The kernel function $K(\cdot)$ is usually a symmetric probability density function that integrates to one, such as the Gaussian kernel and Epanechnikov kernel. The Gassuian kernel is most commonly chosen:
+
+**Gaussian kernel**
+$$
+K(u) = \frac{1}{\sqrt{2\pi}}\exp{\left(-\frac{1}{2}u^2\right)}
+$$
+
+**Epanechnikov kernel**
+
+$$
+K(u) = \begin{cases}
+\dfrac{3}{4}(1-u^2), & \text{if } |u|<1 \\
+0, & \text{otherwise}
+\end{cases}
+$$
+
+
+```{r}
+#| eval: false
+
+# Nadaraya-Watson estimator using Gaussian kernel
+gaussian_kernel_density <- function(x, x_i, h) {
+  dnorm((x - x_i) / h) / h
+}
+
+gaussian_nadaraya_watson <- function(x, y, t, h) {
+  numerator <- sum(y * gaussian_kernel_density(t, x, h))
+  denominator <- sum(gaussian_kernel_density(t, x, h))
+  return(numerator / denominator)
+}
+
+# Nadaraya-Watson estimator using Epanechnikov kernel
+Epanechnikov_kernel_density <- function(x, x_i, h) {
+  ifelse(abs((x - x_i) / h) > 1, 0, 0.75 * (1 - ((x - x_i) / h) ^ 2) / h)
+}
+
+Epanechnikov_nadaraya_watson <- function(x, y, t, h) {
+  numerator <- sum(y * Epanechnikov_kernel_density(t, x, h))
+  denominator <- sum(Epanechnikov_kernel_density(t, x, h))
+  return(numerator / denominator)
+}
+
+# long_milk_data<-milk_data%>%
+#   mutate(gaussian_wt_h0.1=sapply(milk_data$time, 
+#   function(t) gaussian_nadaraya_watson(milk_data$time, milk_data$protein, t, h=0.1)),
+#   Epanechnikov_wt_h0.1=sapply(milk_data$time, 
+#   function(t) Epanechnikov_nadaraya_watson(milk_data$time, milk_data$protein, t, h=0.1)),
+#   gaussian_wt_h0.3=sapply(milk_data$time, 
+#   function(t) gaussian_nadaraya_watson(milk_data$time, milk_data$protein, t, h=0.3)),
+#   Epanechnikov_wt_h0.3=sapply(milk_data$time, 
+#   function(t) Epanechnikov_nadaraya_watson(milk_data$time, milk_data$protein, t, h=0.3)),
+#   gaussian_wt_h0.6=sapply(milk_data$time, 
+#   function(t) gaussian_nadaraya_watson(milk_data$time, milk_data$protein, t, h=0.6)),
+#   Epanechnikov_wt_h0.6=sapply(milk_data$time, 
+#   function(t) Epanechnikov_nadaraya_watson(milk_data$time, milk_data$protein, t, h=0.6)),
+#   gaussian_wt_h0.9=sapply(milk_data$time, 
+#   function(t) gaussian_nadaraya_watson(milk_data$time, milk_data$protein, t, h=0.9)),
+#   Epanechnikov_wt_h0.9=sapply(milk_data$time, 
+#   function(t) Epanechnikov_nadaraya_watson(milk_data$time, milk_data$protein, t, h=0.9)))%>%
+#   gather(key=kernels,value=smoothed,protein:Epanechnikov_wt_h0.9)
+
+bandwidths <- c(0.1, 0.3, 0.6, 0.9)
+kernels <- c("gaussian", "Epanechnikov")
+
+smoothed_data <- map_dfc(bandwidths, function(h) {
+  map_dfc(kernels, function(kernel) {
+    col_name <- paste0(kernel, "_wt_h", h)
+    smoothed_values <- sapply(milk_data$time, function(t) {
+      if (kernel == "gaussian") {
+        gaussian_nadaraya_watson(milk_data$time, milk_data$protein, t, h)
+      } else {
+        Epanechnikov_nadaraya_watson(milk_data$time, milk_data$protein, t, h)
+      }
+    })
+    tibble(!!col_name := smoothed_values)
+  })
+})
+
+milk_data <- bind_cols(milk_data, smoothed_data)
+
+
+```
+
+```{r}
+
+
+# Generate fake data
+set.seed(123)
+n <- 100
+x <- seq(0, 1, length.out = n)
+y <- sin(2*pi*x) + rnorm(n, sd = 0.2)
+
+# Estimate mean function using Gaussian Nadaraya-Watson estimator
+t_grid <- seq(0, 1, length.out = 100)
+h <- 0.1
+mu_hat <- sapply(t_grid, function(t) gaussian_nadaraya_watson(x, y, t, h))
+
+# Plot results
+plot(x, y, main = "Gaussian Nadaraya-Watson estimator", xlab = "x", ylab = "y", ylim = c(-2, 2))
+lines(t_grid, mu_hat, col = "red", lwd = 2)
+
+
+
+
+```
 
 ```{r}
 ggplot(data=milk_data,aes(x=time,y=protein,group=id))+
@@ -99,6 +230,18 @@ stat_summary(aes(x = 19, yintercept = ..y.., group = 1), fun = "median", color =
 facet_wrap(.~trt,ncol=3)
 ```
 
+###### LOESS
+
+```{r}
+ggplot(milk_data, aes(x = time, y = protein)) +
+geom_point()+
+geom_smooth(method = "loess", formula = "y~x", se = FALSE, span = 0.1,color='red')+
+geom_smooth(method = "loess", formula = "y~x", se = FALSE, span = 0.3,color='green')+
+geom_smooth(method = "loess", formula = "y~x", se = FALSE, span = 0.6,color='blue')+
+geom_smooth(method = "loess", formula = "y~x", se = FALSE, span = 0.9,color='purple')+
+scale_color_manual(values=c('red','green','blue','purple'),
+labels = c("Span = 0.1", "Span = 0.3", "Span = 0.6", "Span = 0.9"))
+```
 
 ### Recognition of Individual Patterns Changing over Time
 

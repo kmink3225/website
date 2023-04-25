@@ -202,11 +202,10 @@ English
 
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
-<p>mean function, covariance structure, variogram</p>
+<p>In EDA of longitudinal data, mean function, covariance structure, and variogram are estimated and visualized to capture the characteristics of the data and to support the statistical inference results.</p>
 <section id="mean-function-estimation-using-smoothing-methods" class="level2" data-number="0.1">
 <h2 data-number="0.1" class="anchored" data-anchor-id="mean-function-estimation-using-smoothing-methods"><span class="header-section-number">0.1</span> Mean Function Estimation Using Smoothing Methods</h2>
-<p>response variable의 trend estimation을 smoothing을 통해 수행한다.</p>
-<p>Visualization should be performed to capture the characteristics of data and to support the statistical inference results.</p>
+<p>To show a trend of a response variable, smoothing methods are used to estimate the trend or mean funtion.</p>
 <ul>
 <li>시간에 따라 변화하는 반응 변수의 평균 패턴 인식</li>
 <li>시간에 따라 변화하는 개인별 패턴 인식</li>
@@ -229,39 +228,44 @@ English
 </section>
 <section id="spaghetti-plot-with-smoothing" class="level4" data-number="0.1.1.2">
 <h4 data-number="0.1.1.2" class="anchored" data-anchor-id="spaghetti-plot-with-smoothing"><span class="header-section-number">0.1.1.2</span> Spaghetti Plot with Smoothing</h4>
-<p>Spaghetti plot에 mean function을 추가해 더 more informative visualtion</p>
+<p>Spaghetti plots with mean functions are used to make them more informative.</p>
 <p><span class="math display">\[
 Y(t)=\mu(t)+\epsilon
 \]</span></p>
-<section id="kernel-estimation" class="level6" data-number="0.1.1.2.0.1">
-<h6 data-number="0.1.1.2.0.1" class="anchored" data-anchor-id="kernel-estimation"><span class="header-section-number">0.1.1.2.0.1</span> Kernel Estimation</h6>
+<section id="kernel-estimation" class="level5" data-number="0.1.1.2.1">
+<h5 data-number="0.1.1.2.1" class="anchored" data-anchor-id="kernel-estimation"><span class="header-section-number">0.1.1.2.1</span> Kernel Estimation</h5>
 <p>Kernel estimation is a nonparametric method used to estimate the underlying probability density function of a random variable. In kernel estimation, the density estimate is calculated at each point by placing a kernel function around that point, and the values of all kernel functions are added up to estimate the density.</p>
-<div class="callout callout callout-style-simple no-icon">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-body-container">
-<p>In statistics and data analysis, a kernel is a mathematical function that weights data points in a certain way to estimate a target function, such as a probability density function or a regression function. The idea is to assign weights to neighboring data points based on their distance to the target point, with the weights determined by the kernel function. The kernel function is typically a symmetric, non-negative function that integrates to 1, such as the Gaussian or Epanechnikov kernel.</p>
-</div>
-</div>
-</div>
 <p>In the case of estimating the conditional mean function <span class="math inline">\(\mu(t)=\operatorname{E}(Y|T=t)\)</span>, we can use kernel estimation with a smoothing kernel function to estimate the mean at each point <span class="math inline">\(t\)</span>. The kernel function is used to assign weights to the data points near each point <span class="math inline">\(t\)</span> based on their distance from <span class="math inline">\(t\)</span>, and the weighted average of the <span class="math inline">\(Y\)</span> values for these nearby data points gives the estimated value of <span class="math inline">\(\mu(t)\)</span>.</p>
 <p>t시점을 중심으로 window에 포함된 반응변수 값에 대해 적절한 가중치를 적용하여 mean function을 추정.</p>
 <p><span class="math display">\[
-\mu(t)=\operatorname{E}(Y|T=t)=\int y f(y|t)dy=\int y \frac{f(t.y)}{}
+\mu(t)=\operatorname{E}(Y|T=t)=\int y f(y|t)dy=\int y \frac{f(t.y)}{f_{T}(t)}dy
 \]</span></p>
 <p><span class="math display">\[
-\hat{\mu}(t) = \frac{\sum_{i=1}^n K\left(\frac{t-t_i}{h}\right) y_i}{\sum_{i=1}^n K\left(\frac{t-t_i}{h}\right)} =\hat{\mu}_{NW}(t)
+\begin{aligned}
+\hat{\mu}(t) &amp;= \frac{\sum_{i=1}^n K\left(\frac{t-t_i}{h}\right) y_i}{\sum_{i=1}^n K\left(\frac{t-t_i}{h}\right)} \\
+&amp;=\frac{\sum\limits_{i=1}^n y_i K_h(t-t_i)}{\sum\limits_{i=1}^n K_h(t-t_i)} \\
+&amp;=\frac{\sum\limits_{i=1}^n y_iw(t,t_i,h)}{\sum\limits_{i=1}^n w(t,t_i,h)} \\
+&amp;=\hat{\mu}_{NW}(t)
+\end{aligned}
 \]</span></p>
-<p>where <span class="math inline">\(\hat{\mu}(t)\)</span> is the estimate of the mean function at time point <span class="math inline">\(t\)</span>, <span class="math inline">\(y_i\)</span> is the response variable for the <span class="math inline">\(i\)</span> th observation, <span class="math inline">\(t_i\)</span> is the time point for the <span class="math inline">\(i\)</span> th observation, <span class="math inline">\(K_h\)</span> is the kernel function with bandwidth parameter <span class="math inline">\(h\)</span>, <span class="math inline">\(n\)</span> is the number of observations, and <span class="math inline">\(\hat{\mu}_{NW}(t)\)</span> is the Nadarian-Watson estimator.</p>
-<p>$$ (t) = =</p>
-<p>$$</p>
-<p>where <span class="math inline">\(w(t,t_i,h)=\frac{K(t-t_i)}{h}\)</span></p>
-<p>The smaller the bandwith parameter <span class="math inline">\(h\)</span>, the smoothing line more wiggly.</p>
-<p>The kernel function <span class="math inline">\(K(\cdot)\)</span> is usually a symmetric probability density function that integrates to one, such as the Gaussian kernel and Epanechnikov kernel. The Gassuian kernel is most commonly chosen:</p>
+<p>where <span class="math inline">\(\hat{\mu}(t)\)</span> is the estimate of the mean function at time point <span class="math inline">\(t\)</span>, <span class="math inline">\(y_i\)</span> is the response variable for the <span class="math inline">\(i\)</span> th observation, <span class="math inline">\(t_i\)</span> is the time point for the <span class="math inline">\(i\)</span> th observation, <span class="math inline">\(K_h\)</span> is the kernel function with bandwidth parameter <span class="math inline">\(h\)</span>, <span class="math inline">\(n\)</span> is the number of observations, <span class="math inline">\(\hat{\mu}_{NW}(t)\)</span> is the Nadarian-Watson estimator, and <span class="math inline">\(w(t,t_i,h)=\frac{K(t-t_i)}{h}\)</span>.</p>
+<p>The smaller the bandwith parameter <span class="math inline">\(h\)</span>, the more wiggly the smoothing line .</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A kernel is a mathematical function that weights data points in a certain way to estimate a target function, such as a pdf or a regression function. The idea is to assign weights to neighboring data points based on their distance to the target point, with the weights determined by the kernel function. The kernel function, <span class="math inline">\(K(\cdot)\)</span> is typically a symmetric, non-negative function that integrates to 1, such as the Gaussian or Epanechnikov kernel.</p>
+</div>
+</div>
+<p>The Gassuian kernel is most commonly chosen:</p>
 <p><strong>Gaussian kernel</strong> <span class="math display">\[
-K(u) = \frac{1}{\sqrt{2\pi}}\exp{\left(-\frac{1}{2}u^2\right)}
+K(u) = \frac{1}{\sqrt{2\pi}}\exp{\left(-\frac{u^2}{2}\right)}
 \]</span></p>
 <p><strong>Epanechnikov kernel</strong></p>
 <p><span class="math display">\[
@@ -274,8 +278,8 @@ K(u) = \begin{cases}
 
 </div>
 </section>
-<section id="tuning-hyperparameter-h" class="level5" data-number="0.1.1.2.1">
-<h5 data-number="0.1.1.2.1" class="anchored" data-anchor-id="tuning-hyperparameter-h"><span class="header-section-number">0.1.1.2.1</span> Tuning Hyperparameter <code>h</code></h5>
+<section id="tuning-hyperparameter-h" class="level5" data-number="0.1.1.2.2">
+<h5 data-number="0.1.1.2.2" class="anchored" data-anchor-id="tuning-hyperparameter-h"><span class="header-section-number">0.1.1.2.2</span> Tuning Hyperparameter <code>h</code></h5>
 <p>To tune the hyperparameter <code>h</code>, we can use and estimate PSE (average predicted squared error) reflecting both bias and variance using cross-validation.</p>
 <p><span class="math display">\[
 \operatorname{PSE}(h)=\frac{1}{n}\sum_{i=1}^{n}\operatorname{E}(Y_i^{*}-\hat{\mu}(t,h))^2
@@ -288,8 +292,8 @@ K(u) = \begin{cases}
 <div class="cell">
 
 </div>
-<section id="loess" class="level6" data-number="0.1.1.2.1.1">
-<h6 data-number="0.1.1.2.1.1" class="anchored" data-anchor-id="loess"><span class="header-section-number">0.1.1.2.1.1</span> LOESS</h6>
+<section id="loess" class="level6" data-number="0.1.1.2.2.1">
+<h6 data-number="0.1.1.2.2.1" class="anchored" data-anchor-id="loess"><span class="header-section-number">0.1.1.2.2.1</span> LOESS</h6>
 <p>LOESS (locally estimated scatterplot smoothing or LOcal regrESSion) is a nonparametric regression method used for modeling the relationship between a response variable <span class="math inline">\(Y\)</span> and a predictor variable <span class="math inline">\(T\)</span>. The goal of LOESS is to estimate the conditional mean function <span class="math inline">\(\mu(t) = \mathbb{E}(Y|T = t)\)</span> using a weighted polynomial regression model.</p>
 <p>LOESS involves fitting a separate polynomial regression model to the data in each local neighborhood of the predictor variable <span class="math inline">\(T\)</span>. The size of the local neighborhood is controlled by a tuning parameter called the smoothing parameter. For each observation <span class="math inline">\(i\)</span>, the model is fit using a weighted least squares method, with weights given by a kernel function that assigns higher weights to observations closer to <span class="math inline">\(i\)</span> in the predictor variable <span class="math inline">\(T\)</span>. The polynomial order of the regression model is chosen by the user, with a typical choice being a second-order polynomial.</p>
 <p>The loess method first selects a subset of data points near a target point <span class="math inline">\(t\)</span> using a kernel function. A weighted linear regression model is then fit to the data points in the subset, giving more weight to points closer to the target point <span class="math inline">\(t\)</span>. The degree of smoothing is controlled by a bandwidth parameter, which determines the size of the subset of data points used in the regression.</p>

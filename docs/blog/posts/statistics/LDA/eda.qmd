@@ -41,19 +41,16 @@ names(milk_data)<-c('trt','id','time','protein')
 
 ::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
 
-mean function, covariance structure, variogram
+In EDA of longitudinal data, mean function, covariance structure, and variogram are estimated and visualized to capture the characteristics of the data and to support the statistical inference results.
 
 ## Mean Function Estimation Using Smoothing Methods
 
-response variable의 trend estimation을 smoothing을 통해 수행한다.
-
-Visualization should be performed to capture the characteristics of data and to support the statistical inference results.
+To show a trend of a response variable, smoothing methods are used to estimate the trend or mean funtion.
 
 * 시간에 따라 변화하는 반응 변수의 평균 패턴 인식
 * 시간에 따라 변화하는 개인별 패턴 인식
 * 그룹간의 반응 변수와의 관계 인식
 * 이상점 또는 특이치를 판독 
-
 
 ### Recognition of Average Patterns in Response Variables Changing over Time
 
@@ -73,49 +70,55 @@ facet_wrap(.~trt,ncol=1)
 
 #### Spaghetti Plot with Smoothing
 
-Spaghetti plot에 mean function을 추가해 더 more informative visualtion
+Spaghetti plots with mean functions are used to make them more informative.
 
 $$
 Y(t)=\mu(t)+\epsilon
 $$
 
-###### Kernel Estimation
+##### Kernel Estimation
 
 Kernel estimation is a nonparametric method used to estimate the underlying probability density function of a random variable. In kernel estimation, the density estimate is calculated at each point by placing a kernel function around that point, and the values of all kernel functions are added up to estimate the density.
 
-:::{.callout}
-In statistics and data analysis, a kernel is a mathematical function that weights data points in a certain way to estimate a target function, such as a probability density function or a regression function. The idea is to assign weights to neighboring data points based on their distance to the target point, with the weights determined by the kernel function. The kernel function is typically a symmetric, non-negative function that integrates to 1, such as the Gaussian or Epanechnikov kernel.
-:::
 
 In the case of estimating the conditional mean function $\mu(t)=\operatorname{E}(Y|T=t)$, we can use kernel estimation with a smoothing kernel function to estimate the mean at each point $t$. The kernel function is used to assign weights to the data points near each point $t$ based on their distance from $t$, and the weighted average of the $Y$ values for these nearby data points gives the estimated value of $\mu(t)$.
 
 t시점을 중심으로 window에 포함된 반응변수 값에 대해 적절한 가중치를 적용하여 mean function을 추정.
 
 $$
-\mu(t)=\operatorname{E}(Y|T=t)=\int y f(y|t)dy=\int y \frac{f(t.y)}{}
+\mu(t)=\operatorname{E}(Y|T=t)=\int y f(y|t)dy=\int y \frac{f(t.y)}{f_{T}(t)}dy
 $$
 
 
 $$
-\hat{\mu}(t) = \frac{\sum_{i=1}^n K\left(\frac{t-t_i}{h}\right) y_i}{\sum_{i=1}^n K\left(\frac{t-t_i}{h}\right)} =\hat{\mu}_{NW}(t)
+\begin{aligned}
+\hat{\mu}(t) &= \frac{\sum_{i=1}^n K\left(\frac{t-t_i}{h}\right) y_i}{\sum_{i=1}^n K\left(\frac{t-t_i}{h}\right)} \\
+&=\frac{\sum\limits_{i=1}^n y_i K_h(t-t_i)}{\sum\limits_{i=1}^n K_h(t-t_i)} \\
+&=\frac{\sum\limits_{i=1}^n y_iw(t,t_i,h)}{\sum\limits_{i=1}^n w(t,t_i,h)} \\
+&=\hat{\mu}_{NW}(t)
+\end{aligned}
 $$
 
-where $\hat{\mu}(t)$ is the estimate of the mean function at time point $t$, $y_i$ is the response variable for the $i$ th observation, $t_i$ is the time point for the $i$ th observation, $K_h$ is the kernel function with bandwidth parameter $h$, $n$ is the number of observations, and $\hat{\mu}_{NW}(t)$ is the Nadarian-Watson estimator.
+where 
+$\hat{\mu}(t)$ is the estimate of the mean function at time point $t$, 
+$y_i$ is the response variable for the $i$ th observation, 
+$t_i$ is the time point for the $i$ th observation, 
+$K_h$ is the kernel function with bandwidth parameter $h$, 
+$n$ is the number of observations, 
+$\hat{\mu}_{NW}(t)$ is the Nadarian-Watson estimator, and 
+$w(t,t_i,h)=\frac{K(t-t_i)}{h}$.
 
-$$
-\hat{\mu}(t) = \frac{\sum\limits_{i=1}^n y_i K_h(t-T_i)}{\sum\limits_{i=1}^n K_h(t-T_i)}=\frac{\sum\limits_{i=1}^n y_iw(t,t_i,h)}{\sum\limits_{i=1}^n w(t,t_i,h)}
+The smaller the bandwith parameter $h$, the more wiggly the smoothing line .
 
-$$
+:::{.callout-note}
+A kernel is a mathematical function that weights data points in a certain way to estimate a target function, such as a pdf or a regression function. The idea is to assign weights to neighboring data points based on their distance to the target point, with the weights determined by the kernel function. The kernel function, $K(\cdot)$ is typically a symmetric, non-negative function that integrates to 1, such as the Gaussian or Epanechnikov kernel.
+:::
 
-where $w(t,t_i,h)=\frac{K(t-t_i)}{h}$ 
-
-The smaller the bandwith parameter $h$, the smoothing line more wiggly.
-
-The kernel function $K(\cdot)$ is usually a symmetric probability density function that integrates to one, such as the Gaussian kernel and Epanechnikov kernel. The Gassuian kernel is most commonly chosen:
+The Gassuian kernel is most commonly chosen:
 
 **Gaussian kernel**
 $$
-K(u) = \frac{1}{\sqrt{2\pi}}\exp{\left(-\frac{1}{2}u^2\right)}
+K(u) = \frac{1}{\sqrt{2\pi}}\exp{\left(-\frac{u^2}{2}\right)}
 $$
 
 **Epanechnikov kernel**

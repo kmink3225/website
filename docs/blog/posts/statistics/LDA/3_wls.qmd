@@ -72,13 +72,13 @@ It assumes that the errors are homoscedastic and independent of each other. OLS 
 
 $$
 \begin{aligned}
-  \hat{\beta}&=\min_\beta||Y-X\beta||^2 \\ 
-  &=(X^TX)^{-1}X^TY
+  \hat{\beta}&=\min_\beta||y-X\beta||^2 \\ 
+  &=(X^TX)^{-1}X^Ty
 \end{aligned}
 $$
 
-$\hat \beta$ is unbiased because if we assume that the errors $\epsilon \sim N(0,\simga^2I)$, 
-$E(\hat \beta)=\text{E}((X^TX)^{-1}X^TY)=(X^TX)^{-1}X^T\text{E}(Y)=(X^TX)^{-1}X^TX\beta=\beta$
+$\hat \beta$ is unbiased because if we assume that the errors $\epsilon \sim N(0,\sigma^2I)$, 
+$E(\hat \beta)=\text{E}((X^TX)^{-1}X^Ty)=(X^TX)^{-1}X^T\text{E}(y)=(X^TX)^{-1}X^TX\beta=\beta$
 
 ### GLS 
 
@@ -86,30 +86,84 @@ It relaxes the assumptions of OLS and allows for heteroscedasticity and autocorr
 
 #### Generalized Least Squares
 
-The estimator $\hat{\beta}$, which is also known as the generalized least squares estimator, is given by $\hat{\beta}=(X^TWX)^{-1}X^TWY$, where $W$ is a positive definite weighting matrix.
+The estimator $\hat{\beta}$, which is also known as the generalized least squares estimator, is given by $\hat{\beta}=(X^TWX)^{-1}X^TWy$, where $W$ is a positive definite weighting matrix.
 
 $$
 \begin{aligned}
-  \hat{\beta}&=\min_\beta||Y-X\beta||^2 \\ 
-  &=(X^TWX)^{-1}X^TWY
+  \hat{\beta}&=\min_\beta||y-X\beta||^2 \\ 
+  &=(X^TWX)^{-1}X^TWy
 \end{aligned}
 $$
 
-Under the assumptions of the GLS model, the GLS estimator is unbiased. This means that on average, the GLS estimator will estimate the true population parameters correctly.
 
+##### Weighted Least Square
+
+The weighted least squares (WLS) solution can be obtained by minimizing the sum of squared weighted residuals, given by:
+
+$$
+\hat{\beta}=\min_\beta||y-X\beta||^2 
+$$
+
+The WLS solution is given by:
+$$
+\beta_{WLS} = (X^TWX)^{-1}X^TWy
+$$
+
+where $X$ is the design matrix, $W$ is a diagonal weight matrix with $w_i$ on the $i$ th diagonal element, and $y$ is the vector of responses. The predicted response $\hat{y}$ can be obtained as $\hat{y} = X\hat{\beta}$.
+
+:::{.callout-note}
+Note that the OLS solution is a special case of WLS when all weights are equal to 1.
+:::
+
+1. Define the weighted design matrix, $\mathbf{W}$, as a diagonal matrix of weights, where each diagonal element corresponds to the weight for the corresponding observation.
+1. Define the weighted response vector, $\mathbf{y}_{w}$, as a vector of the response values multiplied by the square root of the corresponding weight.
+1. Define the weighted parameter estimates, $\hat{\beta}_{w}$, as the solution to the weighted least squares problem:
+$$
+\hat{\beta}_w = \operatorname*{arg\,min}_{\beta} (y_w - X\beta)^T W (y_w - X\beta)
+$$
+where $\mathbf{X}$ is the design matrix of predictor variables.
+4. The estimated model can be obtained by substituting the weighted parameter estimates, $\hat{\beta}_{w}$, into the regression equation:
+
+$$
+\hat{y}=\mathbf{X}\hat{\beta}_w
+$$
+
+Let's start by defining the problem: we have a set of m data points, represented as a matrix $\mathbf{X}$ with dimensions $m \times n$, where $n$ is the number of independent variables. We also have a corresponding vector $\mathbf y$ with $m$ elements, representing the dependent variable. We want to fit a linear function of the form $\mathbf y = \mathbf{X\beta}+ \mathbf \epsilon$ to the data points, where $\mathbf \beta$ is a vector of coefficients to be determined and $\mathbf \epsilon$ is the residual error.
+
+To perform weighted least squares, we define a weight matrix $\mathbf W$ with dimensions $m \times m$, where the diagonal elements $w_i$ are the weights for each data point $i$. Weights are typically chosen to be proportional to the inverse of the variance of the data point, so that data points with smaller variances are given more weight.
+
+Using this weight matrix, the objective function for weighted least squares is defined as follows:
+$$
+\begin{aligned}
+\text{minimize } S &= (y - X\beta)^TW(y - X\beta) \\
+&= y^TWy - \beta^TX^TWy - y^TWX\beta + \beta^TX^TWX\beta \\
+\frac{\partial S}{\partial \beta} &= -2X^TWy + 2X^TWX\beta = 0 \\
+X^TWX\beta &= X^TWy \\
+\beta &= (X^TWX)^{-1}X^TWy
+\end{aligned}
+$$
+
+
+Under the assumptions of the GLS model, the GLS estimator is unbiased, which means on average, the GLS estimator will estimate the true population parameters correctly.
 To be specific, the GLS estimator is based on the assumption that the errors or residuals follow a multivariate normal distribution with a mean vector of zeros and a covariance matrix that is known up to a scalar factor. If this assumption holds, then the GLS estimator is the Best Linear Unbiased Estimator (BLUE) of the model parameters.
 
+:::{.callout-note}
 Being a BLUE estimator implies that the GLS estimator has the smallest possible variance among all linear unbiased estimators. Therefore, under the GLS assumptions, the GLS estimator is not only unbiased but also efficient, meaning that it achieves the lowest possible variance of all unbiased estimators.
 
-However, it is important to note that the GLS estimator is only unbiased and efficient if the underlying assumptions are correct. If the assumptions are violated (e.g., the errors are not normally distributed or the covariance structure is misspecified), then the GLS estimator may not be unbiased or efficient.
+However, If the assumptions are violated (e.g., the errors are not normally distributed or the covariance structure is misspecified), then the GLS estimator may not be unbiased or efficient.
+:::
 
-$\hat{\beta}_{GLS} = (X^T V^{-1} X)^{-1} X^T V^{-1} Y$
+$$
+\hat{\beta}_{GLS} = (X^T V^{-1} X)^{-1} X^T V^{-1} Y
+$$
 
 where $V$ is the known covariance matrix of the errors or residuals.
 
 To show that $\hat{\beta}_{GLS}$ is unbiased, we need to show that:
 
-$E(\hat{\beta}_{GLS}) = \beta$
+$$
+\operatorname{E}(\hat{\beta}_{GLS}) = \beta
+$$
 
 where $\beta$ is the true population parameter.
 
@@ -117,9 +171,9 @@ Using the linearity of expectation, we have:
 
 $$
 \begin{align}
-E(\hat{\beta}_{GLS}) 
-&= E((X^T W^{-1} X)^{-1} X^T W^{-1} Y)\\
-&= (X^T W^{-1} X)^{-1} X^T W^{-1} E(Y)\\
+\operatorname{E}(\hat{\beta}_{GLS}) 
+&= \operatorname{E}((X^T W^{-1} X)^{-1} X^T W^{-1} Y)\\
+&= (X^T W^{-1} X)^{-1} X^T W^{-1} \operatorname{E}(Y)\\
 &= (X^T W^{-1} X)^{-1} X^T W^{-1} X \beta\\
 &= (X^T W^{-1} X)^{-1} X^T W^{-1} X (X^T X)^{-1} X^T X \beta\\
 &= (X^T X)^{-1} X^T W^{-1} X (X^T X)^{-1} X^T X \beta\\
@@ -131,118 +185,8 @@ $$
 where the second-to-last equality follows from the fact that $X^T W^{-1} X$ is a symmetric positive definite matrix, and hence its inverse can be written as $(X^T X)^{-1}$. Therefore, we have shown that the GLS estimator is unbiased, i.e., its expected value is equal to the true population parameter.
 
 
-2. WLS
-
-W dimension: the same diemnsion of the total measurement m*n
-
-In weighted least squares (WLS) regression, the goal is to find the values of the coefficients b0 and b1 that minimize the weighted sum of the squared residuals. The weights are used to adjust the influence of each data point on the fitting line.
-
-The formula for the coefficients b0 and b1 in WLS is very similar to the one in OLS, with the addition of a weight matrix W.
-
-The equation for WLS is Y = b0 + b1*X + e, where e is the error term and W is a diagonal matrix of weights.
-
-To derive the formula for the coefficients b0 and b1 in WLS, we need to define the following matrices:
-
-X: the matrix of independent variables (also called the design matrix)
-Y: the matrix of dependent variables
-W: the weight matrix (a diagonal matrix of weights)
-beta: the vector of coefficients to be estimated
-The formula for beta in WLS is beta = (X^T W X)^{-1} X^T W Y, where (^T) denotes the transpose of a matrix and (^{-1}) denotes the inverse of a matrix.
-
-To show that this formula is unbiased, we need to show that the expected value of beta equals the true value of the coefficients, that is E(beta) = (b0, b1).
-
-Let's start by calculating the expected value of beta:
-
-E(beta) = E((X^T W X)^{-1} X^T W Y)
-
-Using the properties of matrix expectations, we can simplify this expression:
-
-E(beta) = (X^T W X)^{-1} X^T W E(Y)
-
-Since Y = b0 + b1*X + e, we have:
-
-E(Y) = E(b0 + b1X + e) = b0 + b1E(X) + E(e) = b0 + b1*X
-
-where we have used the fact that E(e) = 0 and E(X) is a constant.
-
-Substituting this expression for E(Y) into the previous equation, we get:
-
-E(beta) = (X^T W X)^{-1} X^T W (b0 + b1*X)
-
-Expanding this expression, we get:
-
-E(beta) = (X^T W X)^{-1} X^T W b0 + (X^T W X)^{-1} X^T W b1*X
-
-Using the distributive property of matrix multiplication, we can simplify this expression further:
-
-E(beta) = (X^T W X)^{-1} X^T W b0 + b1 (X^T W X)^{-1} (X^T W X)
-
-Since (X^T W X)^{-1} (X^T W X) = I (the identity matrix), we have:
-
-E(beta) = (X^T W X)^{-1} X^T W b0 + b1 I
-
-Finally, we can compare this expression with the true value of the coefficients (b0, b1):
-
-(b0, b1) = (X^T W X)^{-1} X^T W Y
-
-Substituting Y = b0 + b1*X + e into this expression, we get:
-
-(b0, b1) = (X^T W X)^{-1} X^T W (b0 + b1*X + e)
-
-Using the distributive property of matrix multiplication, we can simplify this expression to:
-
-(b0, b1) = (X^T W X)^{-1} X^T W b0 + b1 (X^T W X)^{-1} X^T W X
-
-uniasedness of WLS
-
-To show that (b0, b1) = (X^T W X)^{-1} X^T W b0 + b1 (X^T W X)^{-1} X^T W X is an unbiased estimator of the true coefficients (b0, b1), we need to show that E((b0, b1)) = (b0, b1).
-
-Taking the expected value of both sides of the equation (b0, b1) = (X^T W X)^{-1} X^T W b0 + b1 (X^T W X)^{-1} X^T W X, we have:
-
-E((b0, b1)) = E((X^T W X)^{-1} X^T W b0 + b1 (X^T W X)^{-1} X^T W X)
-
-Using the linearity of the expectation operator, we can distribute it inside the sum, obtaining:
-
-E((b0, b1)) = E((X^T W X)^{-1} X^T W b0) + E(b1 (X^T W X)^{-1} X^T W X)
-
-We can calculate each term separately. First, let's consider the term E((X^T W X)^{-1} X^T W b0):
-
-E((X^T W X)^{-1} X^T W b0) = (X^T W X)^{-1} X^T W E(b0)
-
-Since b0 is a constant, we have E(b0) = b0. Substituting this in the expression above, we get:
-
-E((X^T W X)^{-1} X^T W b0) = (X^T W X)^{-1} X^T W b0
-
-Now let's consider the term E(b1 (X^T W X)^{-1} X^T W X):
-
-E(b1 (X^T W X)^{-1} X^T W X) = b1 E((X^T W X)^{-1} X^T W X)
-
-We need to show that E((X^T W X)^{-1} X^T W X) = I, where I is the identity matrix. This is true because:
-
-E((X^T W X)^{-1} X^T W X) = (X^T W X)^{-1} X^T W E(X) = (X^T W X)^{-1} X^T W X
-
-where we have used the fact that E(X) is a constant and W is a diagonal matrix with non-zero entries. Therefore, we have:
-
-E(b1 (X^T W X)^{-1} X^T W X) = b1 I
-
-Substituting these expressions for the two terms back into the original equation, we obtain:
-
-E((b0, b1)) = (X^T W X)^{-1} X^T W b0 + b1 I
-
-Comparing this with the true coefficients (b0, b1), we see that they are equal. Therefore, we have shown that (b0, b1) = (X^T W X)^{-1} X^T W b0 + b1 (X^T W X)^{-1} X^T W X is an unbiased estimator of the true coefficients in weighted least squares regression.
 
 
-The expression "blkdiag(\Sigma)^{-1}" means the inverse of a block diagonal matrix where each block is a covariance matrix denoted by Sigma (\Sigma). Specifically, if we have n covariance matrices \Sigma_1, \Sigma_2, ..., \Sigma_n, then the block diagonal matrix is given by:
-
-blkdiag(\Sigma_1, \Sigma_2, ..., \Sigma_n) = \begin{bmatrix} \Sigma_1 & 0 & \cdots & 0 \ 0 & \Sigma_2 & \cdots & 0 \ \vdots & \vdots & \ddots & \vdots \ 0 & 0 & \cdots & \Sigma_n \end{bmatrix}
-
-The inverse of this block diagonal matrix can be computed by taking the inverse of each block matrix and placing them on the diagonal, resulting in the following expression:
-
-[blkdiag(\Sigma_1, \Sigma_2, ..., \Sigma_n)]^{-1} = \begin{bmatrix} \Sigma_1^{-1} & 0 & \cdots & 0 \ 0 & \Sigma_2^{-1} & \cdots & 0 \ \vdots & \vdots & \ddots & \vdots \ 0 & 0 & \cdots & \Sigma_n^{-1} \end{bmatrix}
-
-Therefore, blkdiag(\Sigma)^{-1} is a block diagonal matrix where each block is the inverse of the corresponding covariance matrix, and it can be computed by taking the inverse of each block and placing them on the diagonal.
-
-REML for estimating \Sigma variance covrainace matrix divides the data into twp parts: irrelevant to sigma and irrelevant to beta (REML estimate)
 
 
 #### GLS Solution
@@ -284,6 +228,19 @@ which is the usual OLS estimator.
 
 
 ## If  W=blkdiag(\Sigma)^{-1} in longitudinal data analysis, why more efficient than OLS?
+
+The expression "blkdiag(\Sigma)^{-1}" means the inverse of a block diagonal matrix where each block is a covariance matrix denoted by Sigma (\Sigma). Specifically, if we have n covariance matrices \Sigma_1, \Sigma_2, ..., \Sigma_n, then the block diagonal matrix is given by:
+
+blkdiag(\Sigma_1, \Sigma_2, ..., \Sigma_n) = \begin{bmatrix} \Sigma_1 & 0 & \cdots & 0 \ 0 & \Sigma_2 & \cdots & 0 \ \vdots & \vdots & \ddots & \vdots \ 0 & 0 & \cdots & \Sigma_n \end{bmatrix}
+
+The inverse of this block diagonal matrix can be computed by taking the inverse of each block matrix and placing them on the diagonal, resulting in the following expression:
+
+[blkdiag(\Sigma_1, \Sigma_2, ..., \Sigma_n)]^{-1} = \begin{bmatrix} \Sigma_1^{-1} & 0 & \cdots & 0 \ 0 & \Sigma_2^{-1} & \cdots & 0 \ \vdots & \vdots & \ddots & \vdots \ 0 & 0 & \cdots & \Sigma_n^{-1} \end{bmatrix}
+
+Therefore, blkdiag(\Sigma)^{-1} is a block diagonal matrix where each block is the inverse of the corresponding covariance matrix, and it can be computed by taking the inverse of each block and placing them on the diagonal.
+
+REML for estimating \Sigma variance covrainace matrix divides the data into twp parts: irrelevant to sigma and irrelevant to beta (REML estimate)
+
 
 In longitudinal data analysis, it is common to use a generalized linear mixed model (GLMM) to account for the correlated nature of the data. The GLMM framework includes random effects to capture the individual-level variation and allows for the specification of a covariance structure to model the correlation between the repeated measurements within each individual. When fitting a GLMM, the covariance matrix of the random effects, denoted by \Sigma, needs to be estimated.
 

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Kwangmin Kim">
+<meta name="dcterms.date" content="2023-04-23">
+<meta name="description" content="template">
+
+<title>Kwangmin Kim - LDA - EDA</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../../">
+<script src="../../../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../../../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="../../../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../../.././images/logo.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../../../../index.html">
+    <span class="navbar-title">Kwangmin Kim</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../index.html">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/CV/index.html">
+ <span class="menu-text">CV</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/projects/index.html">
+ <span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/blog/index.html">
+ <span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../about.html">
+ <span class="menu-text">Me</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/kmink3225"><i class="bi bi-github" role="img" aria-label="Github">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/kwangmin-kim-a5241b200/"><i class="bi bi-linkedin" role="img" aria-label="Linkedin">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/blog/index.html"><i class="bi bi-rss" role="img">
+</i> 
+ <span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#go-to-project-content-list" id="toc-go-to-project-content-list" class="nav-link active" data-scroll-target="#go-to-project-content-list"><span class="toc-section-number">1</span>  Go to Project Content List</a></li>
+  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link" data-scroll-target="#go-to-blog-content-list"><span class="toc-section-number">2</span>  Go to Blog Content List</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">LDA - EDA</h1>
+<p class="subtitle lead">Exploratory Data Analysis</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Statistics</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    <p>template</p>
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Kwangmin Kim </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">April 23, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="cell">
+
+</div>
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+<li class="nav-item" role="presentation">
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">
+Korean
+</button>
+</li>
+<li class="nav-item" role="presentation">
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">
+English
+</button>
+</li>
+<div class="tab-content" id="language-tabcontent">
+
+<div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
+<div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
+<p>mean function, covariance structure, variogram</p>
+<section id="mean-function-estimation-using-smoothing-methods" class="level2" data-number="0.1">
+<h2 data-number="0.1" class="anchored" data-anchor-id="mean-function-estimation-using-smoothing-methods"><span class="header-section-number">0.1</span> Mean Function Estimation Using Smoothing Methods</h2>
+<p>response variable의 trend estimation을 smoothing을 통해 수행한다.</p>
+<p>Visualization should be performed to capture the characteristics of data and to support the statistical inference results.</p>
+<ul>
+<li>시간에 따라 변화하는 반응 변수의 평균 패턴 인식</li>
+<li>시간에 따라 변화하는 개인별 패턴 인식</li>
+<li>그룹간의 반응 변수와의 관계 인식</li>
+<li>이상점 또는 특이치를 판독</li>
+</ul>
+<section id="recognition-of-average-patterns-in-response-variables-changing-over-time" class="level3" data-number="0.1.1">
+<h3 data-number="0.1.1" class="anchored" data-anchor-id="recognition-of-average-patterns-in-response-variables-changing-over-time"><span class="header-section-number">0.1.1</span> Recognition of Average Patterns in Response Variables Changing over Time</h3>
+<section id="spaghetti-plot" class="level4" data-number="0.1.1.1">
+<h4 data-number="0.1.1.1" class="anchored" data-anchor-id="spaghetti-plot"><span class="header-section-number">0.1.1.1</span> Spaghetti Plot</h4>
+<p>Spaghetti Plot: individual trends of a response variable</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="eda_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="eda_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="spaghetti-plot-with-smoothing" class="level4" data-number="0.1.1.2">
+<h4 data-number="0.1.1.2" class="anchored" data-anchor-id="spaghetti-plot-with-smoothing"><span class="header-section-number">0.1.1.2</span> Spaghetti Plot with Smoothing</h4>
+<p>Spaghetti plot에 mean function을 추가해 더 more informative visualtion</p>
+<p><span class="math display">\[
+Y(t)=\mu(t)+\epsilon
+\]</span></p>
+<section id="kernel-estimation" class="level6" data-number="0.1.1.2.0.1">
+<h6 data-number="0.1.1.2.0.1" class="anchored" data-anchor-id="kernel-estimation"><span class="header-section-number">0.1.1.2.0.1</span> Kernel Estimation</h6>
+<p>Kernel estimation is a nonparametric method used to estimate the underlying probability density function of a random variable. In kernel estimation, the density estimate is calculated at each point by placing a kernel function around that point, and the values of all kernel functions are added up to estimate the density.</p>
+<div class="callout callout callout-style-simple no-icon">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>In statistics and data analysis, a kernel is a mathematical function that weights data points in a certain way to estimate a target function, such as a probability density function or a regression function. The idea is to assign weights to neighboring data points based on their distance to the target point, with the weights determined by the kernel function. The kernel function is typically a symmetric, non-negative function that integrates to 1, such as the Gaussian or Epanechnikov kernel.</p>
+</div>
+</div>
+</div>
+<p>In the case of estimating the conditional mean function <span class="math inline">\(\mu(t)=\operatorname{E}(Y|T=t)\)</span>, we can use kernel estimation with a smoothing kernel function to estimate the mean at each point <span class="math inline">\(t\)</span>. The kernel function is used to assign weights to the data points near each point <span class="math inline">\(t\)</span> based on their distance from <span class="math inline">\(t\)</span>, and the weighted average of the <span class="math inline">\(Y\)</span> values for these nearby data points gives the estimated value of <span class="math inline">\(\mu(t)\)</span>.</p>
+<p>t시점을 중심으로 window에 포함된 반응변수 값에 대해 적절한 가중치를 적용하여 mean function을 추정.</p>
+<p><span class="math display">\[
+\mu(t)=\operatorname{E}(Y|T=t)=\int y f(y|t)dy=\int y \frac{f(t.y)}{}
+\]</span></p>
+<p><span class="math display">\[
+\hat{\mu}(t) = \frac{\sum_{i=1}^n K\left(\frac{t-t_i}{h}\right) y_i}{\sum_{i=1}^n K\left(\frac{t-t_i}{h}\right)} =\hat{\mu}_{NW}(t)
+\]</span></p>
+<p>where <span class="math inline">\(\hat{\mu}(t)\)</span> is the estimate of the mean function at time point <span class="math inline">\(t\)</span>, <span class="math inline">\(y_i\)</span> is the response variable for the <span class="math inline">\(i\)</span> th observation, <span class="math inline">\(t_i\)</span> is the time point for the <span class="math inline">\(i\)</span> th observation, <span class="math inline">\(K_h\)</span> is the kernel function with bandwidth parameter <span class="math inline">\(h\)</span>, <span class="math inline">\(n\)</span> is the number of observations, and <span class="math inline">\(\hat{\mu}_{NW}(t)\)</span> is the Nadarian-Watson estimator.</p>
+<p>$$ (t) = =</p>
+<p>$$</p>
+<p>where <span class="math inline">\(w(t,t_i,h)=\frac{K(t-t_i)}{h}\)</span></p>
+<p>The smaller the bandwith parameter <span class="math inline">\(h\)</span>, the smoothing line more wiggly.</p>
+<p>The kernel function <span class="math inline">\(K(\cdot)\)</span> is usually a symmetric probability density function that integrates to one, such as the Gaussian kernel and Epanechnikov kernel. The Gassuian kernel is most commonly chosen:</p>
+<p><strong>Gaussian kernel</strong> <span class="math display">\[
+K(u) = \frac{1}{\sqrt{2\pi}}\exp{\left(-\frac{1}{2}u^2\right)}
+\]</span></p>
+<p><strong>Epanechnikov kernel</strong></p>
+<p><span class="math display">\[
+K(u) = \begin{cases}
+\dfrac{3}{4}(1-u^2), &amp; \text{if } |u|&lt;1 \\
+0, &amp; \text{otherwise}
+\end{cases}
+\]</span></p>
+<div class="cell">
+
+</div>
+</section>
+<section id="tuning-hyperparameter-h" class="level5" data-number="0.1.1.2.1">
+<h5 data-number="0.1.1.2.1" class="anchored" data-anchor-id="tuning-hyperparameter-h"><span class="header-section-number">0.1.1.2.1</span> Tuning Hyperparameter <code>h</code></h5>
+<p>To tune the hyperparameter <code>h</code>, we can use and estimate PSE (average predicted squared error) reflecting both bias and variance using cross-validation.</p>
+<p><span class="math display">\[
+\operatorname{PSE}(h)=\frac{1}{n}\sum_{i=1}^{n}\operatorname{E}(Y_i^{*}-\hat{\mu}(t,h))^2
+\]</span></p>
+<p><span class="math inline">\(Y_i^{*}\)</span> typically denotes a transformed version of the response variable <span class="math inline">\(Y_i\)</span>. It is used to make the distribution of <span class="math inline">\(Y_i^{*}\)</span> more symmetric or more normal, which can be helpful in some statistical analyses.</p>
+<p><span class="math display">\[
+\operatorname{CV}(h)=\sum_{i=1}^{n}\operatorname{E}(y_i-\hat{\mu}^{-i}(t,h))^2
+\]</span></p>
+<p>where <span class="math inline">\(\hat{\mu}^{-i}\)</span> is the mean estimator estimated excluding the ith observation.</p>
+<div class="cell">
+
+</div>
+<section id="loess" class="level6" data-number="0.1.1.2.1.1">
+<h6 data-number="0.1.1.2.1.1" class="anchored" data-anchor-id="loess"><span class="header-section-number">0.1.1.2.1.1</span> LOESS</h6>
+<p>LOESS (locally estimated scatterplot smoothing or LOcal regrESSion) is a nonparametric regression method used for modeling the relationship between a response variable <span class="math inline">\(Y\)</span> and a predictor variable <span class="math inline">\(T\)</span>. The goal of LOESS is to estimate the conditional mean function <span class="math inline">\(\mu(t) = \mathbb{E}(Y|T = t)\)</span> using a weighted polynomial regression model.</p>
+<p>LOESS involves fitting a separate polynomial regression model to the data in each local neighborhood of the predictor variable <span class="math inline">\(T\)</span>. The size of the local neighborhood is controlled by a tuning parameter called the smoothing parameter. For each observation <span class="math inline">\(i\)</span>, the model is fit using a weighted least squares method, with weights given by a kernel function that assigns higher weights to observations closer to <span class="math inline">\(i\)</span> in the predictor variable <span class="math inline">\(T\)</span>. The polynomial order of the regression model is chosen by the user, with a typical choice being a second-order polynomial.</p>
+<p>The loess method first selects a subset of data points near a target point <span class="math inline">\(t\)</span> using a kernel function. A weighted linear regression model is then fit to the data points in the subset, giving more weight to points closer to the target point <span class="math inline">\(t\)</span>. The degree of smoothing is controlled by a bandwidth parameter, which determines the size of the subset of data points used in the regression.</p>
+<p>The estimated mean function <span class="math inline">\(\hat{\mu}(t)\)</span> is obtained by repeating this process at a large number of target points along the range of <span class="math inline">\(t\)</span> values. The final smooth function is obtained by connecting these estimated mean values.</p>
+<p>Loess is particularly useful for estimating smooth nonlinear functions and can handle heteroscedasticity (non-constant variance) and nonlinearity in the data. It is commonly used in applications such as time series analysis, epidemiology, and environmental science.</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><strong>weighted least square</strong></p>
+<p>The weighted least squares (WLS) solution can be obtained by minimizing the sum of squared weighted residuals, given by:</p>
+<p><span class="math display">\[
+\operatorname{minimize} \sum_{i=1}^{n} w_i(y_i - f(x_i))^2
+\]</span></p>
+<p>The WLS solution is given by: $$ _{WLS} = (X<sup>TWX)</sup>{-1}X^TWy</p>
+<p>$$</p>
+<p>where <span class="math inline">\(X\)</span> is the design matrix, <span class="math inline">\(W\)</span> is a diagonal weight matrix with <span class="math inline">\(w_i\)</span> on the <span class="math inline">\(i\)</span>th diagonal element, and <span class="math inline">\(y\)</span> is the vector of responses. The predicted response <span class="math inline">\(\hat{y}\)</span> can be obtained as <span class="math inline">\(\hat{y} = X\hat{\beta}\)</span>.</p>
+<p>Note that the OLS solution is a special case of WLS when all weights are equal to 1.</p>
+<ol type="1">
+<li>Define the weighted design matrix, <span class="math inline">\(\mathbf{W}\)</span>, as a diagonal matrix of weights, where each diagonal element corresponds to the weight for the corresponding observation.</li>
+<li>Define the weighted response vector, <span class="math inline">\(\mathbf{y}_{w}\)</span>, as a vector of the response values multiplied by the square root of the corresponding weight.</li>
+<li>Define the weighted parameter estimates, <span class="math inline">\(\hat{\beta}_{w}\)</span>, as the solution to the weighted least squares problem: <span class="math display">\[
+\hat{\beta}_w = \operatorname*{arg\,min}_{\beta} (y_w - X\beta)^T W (y_w - X\beta)
+\]</span> where <span class="math inline">\(\mathbf{X}\)</span> is the design matrix of predictor variables.</li>
+<li>The estimated model can be obtained by substituting the weighted parameter estimates, <span class="math inline">\(\hat{\beta}_{w}\)</span>, into the regression equation:</li>
+</ol>
+<p><span class="math display">\[
+\hat{y}=\mathbf{X}\hat{\beta}_w
+\]</span></p>
+<p>Let’s start by defining the problem: we have a set of m data points, represented as a matrix X with dimensions m x p, where p is the number of independent variables. We also have a corresponding vector y with m elements, representing the dependent variable. We want to fit a linear function of the form y = Xβ + ε to the data points, where β is a vector of coefficients to be determined and ε is the residual error.</p>
+<p>To perform weighted least squares, we define a weight matrix W with dimensions m x m, where the diagonal elements w(i) are the weights for each data point i. Weights are typically chosen to be proportional to the inverse of the variance of the data point, so that data points with smaller variances are given more weight.</p>
+Using this weight matrix, the objective function for weighted least squares is defined as follows: $$
+<span class="math display">\[\begin{aligned}
+\text{minimize } S &amp;= (y - X\beta)^TW(y - X\beta) \\
+&amp;= y^TWy - \beta^TX^TWy - y^TWX\beta + \beta^TX^TWX\beta \\
+\frac{\partial S}{\partial \beta} &amp;= -2X^TWy + 2X^TWX\beta = 0 \\
+X^TWX\beta &amp;= X^TWy \\
+\beta &amp;= (X^TWX)^{-1}X^TWy
+\end{aligned}\]</span>
+<p>$$</p>
+</div>
+</div>
+<p>the LOESS model can be expressed as: <span class="math display">\[
+\hat{\mu}(t_i)=\sum_{j=1}^{n}w_{ij}(t_i)y_j
+\]</span></p>
+<p>where <span class="math inline">\(\hat{\mu}(t_i)\)</span> is the estimated mean response at predictor value <span class="math inline">\(t_i\)</span>, <span class="math inline">\(y_j\)</span> is the response value at predictor value <span class="math inline">\(t_j\)</span>, and <span class="math inline">\(w_{ij}(t_i)\)</span> is the weight assigned to the <span class="math inline">\(j\)</span>th observation in the local neighborhood of <span class="math inline">\(t_i\)</span>. The weights are defined by a kernel function <span class="math inline">\(K\)</span>, such that:</p>
+<p><span class="math display">\[
+w_{ij}(t_i)=K\left(\frac{t_i-t_j}{h}\right)
+\]</span></p>
+<p>where <span class="math inline">\(h\)</span> is the smoothing parameter, controlling the size of the local neighborhood. A common choice for the kernel function is the tri-cube kernel:</p>
+<p><span class="math display">\[
+K(x) = \begin{cases}
+         \left(1 - |x|^3\right)^3, &amp; \text{if } |x| &lt; 1 \\
+         0, &amp; \text{otherwise}
+      \end{cases}
+\]</span></p>
+<div class="cell">
+
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="eda_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="eda_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="cell-output-display">
+<p><img src="eda_files/figure-html/unnamed-chunk-7-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+<section id="recognition-of-individual-patterns-changing-over-time" class="level3" data-number="0.1.2">
+<h3 data-number="0.1.2" class="anchored" data-anchor-id="recognition-of-individual-patterns-changing-over-time"><span class="header-section-number">0.1.2</span> Recognition of Individual Patterns Changing over Time</h3>
+</section>
+<section id="recognition-of-relationships-with-response-variables-between-groups" class="level3" data-number="0.1.3">
+<h3 data-number="0.1.3" class="anchored" data-anchor-id="recognition-of-relationships-with-response-variables-between-groups"><span class="header-section-number">0.1.3</span> Recognition of Relationships with Response Variables between Groups</h3>
+</section>
+<section id="recognition-of-outliers-or-anomaly-data" class="level3" data-number="0.1.4">
+<h3 data-number="0.1.4" class="anchored" data-anchor-id="recognition-of-outliers-or-anomaly-data"><span class="header-section-number">0.1.4</span> Recognition of Outliers or Anomaly Data</h3>
+</section>
+</section>
+</div>
+</div>
+<div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
+<div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
+
+</div>
+</div>
+<section id="go-to-project-content-list" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Go to Project Content List</h1>
+<p><a href="./docs/projects/index.qmd">Project Content List</a></p>
+</section>
+<section id="go-to-blog-content-list" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Go to Blog Content List</h1>
+<p><a href="../../../../../docs/blog/posts/content_list.html">Blog Content List</a></p>
+
+
+</section>
+
+</div></ul></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

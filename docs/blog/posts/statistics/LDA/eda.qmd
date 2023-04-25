@@ -191,12 +191,6 @@ smoothed_data <- map_dfc(bandwidths, function(h) {
 
 milk_data <- bind_cols(milk_data, smoothed_data)
 
-
-```
-
-```{r}
-
-
 # Generate fake data
 set.seed(123)
 n <- 100
@@ -206,15 +200,263 @@ y <- sin(2*pi*x) + rnorm(n, sd = 0.2)
 # Estimate mean function using Gaussian Nadaraya-Watson estimator
 t_grid <- seq(0, 1, length.out = 100)
 h <- 0.1
-mu_hat <- sapply(t_grid, function(t) gaussian_nadaraya_watson(x, y, t, h))
+gaussian_mu_hat_0.1 <- sapply(t_grid, function(t) gaussian_nadaraya_watson(x, y, t, 0.1))
+gaussian_mu_hat_0.3 <- sapply(t_grid, function(t) gaussian_nadaraya_watson(x, y, t, 0.3))
+gaussian_mu_hat_0.6 <- sapply(t_grid, function(t) gaussian_nadaraya_watson(x, y, t, 0.6))
+gaussian_mu_hat_0.9 <- sapply(t_grid, function(t) gaussian_nadaraya_watson(x, y, t, 0.9))
 
 # Plot results
 plot(x, y, main = "Gaussian Nadaraya-Watson estimator", xlab = "x", ylab = "y", ylim = c(-2, 2))
-lines(t_grid, mu_hat, col = "red", lwd = 2)
+lines(t_grid, gaussian_mu_hat_0.1 , col = "red", lwd = 2,lty=2)
+lines(t_grid, gaussian_mu_hat_0.3 , col = "green", lwd = 2,lty=3)
+lines(t_grid, gaussian_mu_hat_0.6 , col = "blue", lwd = 2,lty=4)
+lines(t_grid, gaussian_mu_hat_0.9 , col = "purple", lwd = 2,lty=5)
+
+
+```
+
+##### Tuning Hyperparameter `h`
+
+To tune the hyperparameter `h`, we can use and estimate PSE (average predicted squared error) reflecting both bias and variance using cross-validation. 
+
+$$
+\operatorname{PSE}(h)=\frac{1}{n}\sum_{i=1}^{n}\operatorname{E}(Y_i^{*}-\hat{\mu}(t,h))^2
+$$
+
+$Y_i^{*}$ typically denotes a transformed version of the response variable $Y_i$. It is used to make the distribution of $Y_i^{*}$ more symmetric or more normal, which can be helpful in some statistical analyses.
+
+$$
+\operatorname{CV}(h)=\sum_{i=1}^{n}\operatorname{E}(y_i-\hat{\mu}^{-i}(t,h))^2
+$$
+
+where $\hat{\mu}^{-i}$ is the mean estimator estimated excluding the ith observation.
+
+```{r}
+#| eval: false
+
+set.seed(123)
+
+# Generate fake data
+n <- 100
+x <- seq(0, 10, length.out = n)
+y <- rnorm(n, mean = sin(x))
+milk_data <- data.frame(time = x, protein = y)
+
+# PSE function
+PSE <- function(h, x, y, K) {
+  n <- length(y)
+  Y_hat_star <- rep(0, n)
+  for (i in 1:n) {
+    Y_hat_star[i] <- sum(K((x - x[i]) / h) * y) / sum(K((x - x[i]) / h))
+  }
+  return(mean((Y_hat_star - y)^2))
+}
+
+# CV function
+CV <- function(h, x, y, K) {
+  n <- length(y)
+  Y_hat_minus_i <- rep(0, n)
+  for (i in 1:n) {
+    Y_hat_minus_i[i] <- sum(K((x[-i] - x[i]) / h) * y[-i]) / sum(K((x[-i] - x[i]) / h))
+  }
+  return(sum((y - Y_hat_minus_i)^2))
+}
+
+# Bandwidth tuning using PSE
+tune_bandwidth_PSE <- function(x, y, K) {
+  n <- length(y)
+  h_seq <- seq(0.01, 1, length = 100)
+  PSE_seq <- sapply(h_seq, PSE, x = x, y = y, K = K)
+  h_opt <- h_seq[which.min(PSE_seq)]
+  return(h_opt)
+}
+
+# Bandwidth tuning using CV
+tune_bandwidth_CV <- function(x, y, K) {
+  n <- length(y)
+  h_seq <- seq(0.01, 1, length = 100)
+  CV_seq <- sapply(h_seq, CV, x = x, y = y, K = K)
+  h_opt <- h_seq[which.min(CV_seq)]
+  return(h_opt)
+}
+
+h_opt_PSE <- tune_bandwidth_PSE(milk_data$time, milk_data$protein, dnorm)
+
+h_opt_CV <- tune_bandwidth_CV(milk_data$time, milk_data$protein, function(x) ifelse(abs(x) > 1, 0, 0.75 * (1 - x^2)))
+
+# Plotting CV sequence against bandwidth values
+CV_plot <- function(x, y, K) {
+  n <- length(y)
+  h_seq <- seq(0.01, 1, length = 100)
+  CV_seq <- sapply(h_seq, CV, x = x, y = y, K = K)
+  df <- data.frame(h = h_seq, CV = CV_seq)
+  ggplot(df, aes(x = h, y = CV)) +
+    geom_line() +
+    geom_vline(xintercept = tune_bandwidth_CV(x, y, K), linetype = "dashed", color = "red") +
+    labs(x = "Bandwidth", y = "Cross-validation score", title = "Bandwidth tuning using CV")
+}
+
+CV_plot(milk_data$time, milk_data$protein, function(x) ifelse(abs(x) > 1, 0, 0.75 * (1 - x^2)))
+
+# Bandwidth tuning using CV, returning CV sequence for all bandwidth values
+tune_bandwidth_CV_table <- function(x, y, K) {
+  n <- length(y)
+  h_seq <- seq(0.01, 1, length = 100)
+  CV_seq <- sapply(h_seq, CV, x = x, y = y, K = K)
+  df <- data.frame(h = h_seq, CV = CV_seq)
+  return(df)
+}
+
+CV_table <- tune_bandwidth_CV_table(milk_data$time, milk_data$protein, function(x) ifelse(abs(x) > 1, 0, 0.75 * (1 - x^2)))
+
+knitr::kable(CV_table)
+```
 
 
 
+###### LOESS
 
+LOESS (locally estimated scatterplot smoothing or LOcal regrESSion) is a nonparametric regression method used for modeling the relationship between a response variable $Y$ and a predictor variable $T$. The goal of LOESS is to estimate the conditional mean function $\mu(t) = \mathbb{E}(Y|T = t)$ using a weighted polynomial regression model.
+
+LOESS involves fitting a separate polynomial regression model to the data in each local neighborhood of the predictor variable $T$. The size of the local neighborhood is controlled by a tuning parameter called the smoothing parameter. For each observation $i$, the model is fit using a weighted least squares method, with weights given by a kernel function that assigns higher weights to observations closer to $i$ in the predictor variable $T$. The polynomial order of the regression model is chosen by the user, with a typical choice being a second-order polynomial.
+
+The loess method first selects a subset of data points near a target point $t$ using a kernel function. A weighted linear regression model is then fit to the data points in the subset, giving more weight to points closer to the target point $t$. The degree of smoothing is controlled by a bandwidth parameter, which determines the size of the subset of data points used in the regression.
+
+The estimated mean function $\hat{\mu}(t)$ is obtained by repeating this process at a large number of target points along the range of $t$ values. The final smooth function is obtained by connecting these estimated mean values.
+
+Loess is particularly useful for estimating smooth nonlinear functions and can handle heteroscedasticity (non-constant variance) and nonlinearity in the data. It is commonly used in applications such as time series analysis, epidemiology, and environmental science.
+
+:::{.callout-tip}
+**weighted least square**
+
+The weighted least squares (WLS) solution can be obtained by minimizing the sum of squared weighted residuals, given by:
+
+$$
+\operatorname{minimize} \sum_{i=1}^{n} w_i(y_i - f(x_i))^2
+$$
+
+The WLS solution is given by:
+$$
+\beta_{WLS} = (X^TWX)^{-1}X^TWy
+
+$$
+
+where $X$ is the design matrix, $W$ is a diagonal weight matrix with $w_i$ on the $i$th diagonal element, and $y$ is the vector of responses. The predicted response $\hat{y}$ can be obtained as $\hat{y} = X\hat{\beta}$.
+
+Note that the OLS solution is a special case of WLS when all weights are equal to 1.
+
+
+1. Define the weighted design matrix, $\mathbf{W}$, as a diagonal matrix of weights, where each diagonal element corresponds to the weight for the corresponding observation.
+1. Define the weighted response vector, $\mathbf{y}_{w}$, as a vector of the response values multiplied by the square root of the corresponding weight.
+1. Define the weighted parameter estimates, $\hat{\beta}_{w}$, as the solution to the weighted least squares problem:
+$$
+\hat{\beta}_w = \operatorname*{arg\,min}_{\beta} (y_w - X\beta)^T W (y_w - X\beta)
+$$
+where $\mathbf{X}$ is the design matrix of predictor variables.
+4. The estimated model can be obtained by substituting the weighted parameter estimates, $\hat{\beta}_{w}$, into the regression equation:
+
+$$
+\hat{y}=\mathbf{X}\hat{\beta}_w
+$$
+
+Let's start by defining the problem: we have a set of m data points, represented as a matrix X with dimensions m x p, where p is the number of independent variables. We also have a corresponding vector y with m elements, representing the dependent variable. We want to fit a linear function of the form y = Xβ + ε to the data points, where β is a vector of coefficients to be determined and ε is the residual error.
+
+To perform weighted least squares, we define a weight matrix W with dimensions m x m, where the diagonal elements w(i) are the weights for each data point i. Weights are typically chosen to be proportional to the inverse of the variance of the data point, so that data points with smaller variances are given more weight.
+
+Using this weight matrix, the objective function for weighted least squares is defined as follows:
+$$
+\begin{aligned}
+\text{minimize } S &= (y - X\beta)^TW(y - X\beta) \\
+&= y^TWy - \beta^TX^TWy - y^TWX\beta + \beta^TX^TWX\beta \\
+\frac{\partial S}{\partial \beta} &= -2X^TWy + 2X^TWX\beta = 0 \\
+X^TWX\beta &= X^TWy \\
+\beta &= (X^TWX)^{-1}X^TWy
+\end{aligned}
+
+$$
+
+:::
+the LOESS model can be expressed as:
+$$
+\hat{\mu}(t_i)=\sum_{j=1}^{n}w_{ij}(t_i)y_j
+$$
+
+where $\hat{\mu}(t_i)$ is the estimated mean response at predictor value $t_i$, $y_j$ is the response value at predictor value $t_j$, and $w_{ij}(t_i)$ is the weight assigned to the $j$th observation in the local neighborhood of $t_i$. The weights are defined by a kernel function $K$, such that:
+
+$$
+w_{ij}(t_i)=K\left(\frac{t_i-t_j}{h}\right)
+$$
+
+where $h$ is the smoothing parameter, controlling the size of the local neighborhood. A common choice for the kernel function is the tri-cube kernel:
+
+$$
+K(x) = \begin{cases} 
+         \left(1 - |x|^3\right)^3, & \text{if } |x| < 1 \\
+         0, & \text{otherwise}
+      \end{cases}
+$$
+
+```{r}
+#| eval: false
+
+tri_cube_kernel <- function(x) {
+  sapply(x, function(x_i) {
+    ifelse(abs(x_i) <= 1, (1 - abs(x_i)^3)^3, 0)
+  })
+}
+
+# Define LOESS function
+loess <- function(x, y, span, degree) {
+  n <- length(x)
+  weights <- matrix(0, n, n)
+  for (i in 1:n) {
+    weights[i,] <- tri_cube_kernel((x - x[i]) / span)
+  }
+  fit <- lm(y ~ poly(x, degree), weights = weights)
+  return(fit)
+}
+
+# Generate fake data
+set.seed(123)
+n <- 100
+x <- seq(0, 10, length.out = n)
+y <- rnorm(n, mean = sin(x) + 0.1 * x)
+df <- data.frame(x = x, y = y)
+
+# Fit LOESS
+fit <- loess(x = df$x, y = df$y, span = 0.2, degree = 2)
+# Predict on new data
+new_x <- seq(0, 10, length.out = 1000)
+pred <- predict(fit, newdata = data.frame(x = new_x))
+
+# Plot results
+library(ggplot2)
+ggplot(data = df, aes(x = x, y = y)) +
+  geom_point() +
+  geom_line(aes(x = new_x, y = pred), color = "red", size = 1) +
+  theme_minimal()
+
+
+# Fit loess model
+loess_fit <- loess(y ~ x, data = sim_data, span = 0.5)
+
+# Plot data and fitted curve
+plot(sim_data, pch = 16, col = "blue", main = "Simulated Data with Loess Fit")
+lines(sim_data$x, loess_fit$fitted, col = "red", lwd = 2)
+```
+
+
+```{r}
+
+
+ggplot(milk_data, aes(x = time, y = protein)) +
+geom_point()+
+geom_smooth(method = "loess", formula = "y~x", se = FALSE, span = 0.1,color='red')+
+geom_smooth(method = "loess", formula = "y~x", se = FALSE, span = 0.3,color='green')+
+geom_smooth(method = "loess", formula = "y~x", se = FALSE, span = 0.6,color='blue')+
+geom_smooth(method = "loess", formula = "y~x", se = FALSE, span = 0.9,color='purple')+
+scale_color_manual(values=c('red','green','blue','purple'),
+labels = c("Span = 0.1", "Span = 0.3", "Span = 0.6", "Span = 0.9"))
 ```
 
 ```{r}
@@ -228,19 +470,6 @@ geom_line()+
 geom_smooth(aes(group=1),method='loess',formula=y~x,color='black')+
 stat_summary(aes(x = 19, yintercept = ..y.., group = 1), fun = "median", color = "red", geom = "hline")+
 facet_wrap(.~trt,ncol=3)
-```
-
-###### LOESS
-
-```{r}
-ggplot(milk_data, aes(x = time, y = protein)) +
-geom_point()+
-geom_smooth(method = "loess", formula = "y~x", se = FALSE, span = 0.1,color='red')+
-geom_smooth(method = "loess", formula = "y~x", se = FALSE, span = 0.3,color='green')+
-geom_smooth(method = "loess", formula = "y~x", se = FALSE, span = 0.6,color='blue')+
-geom_smooth(method = "loess", formula = "y~x", se = FALSE, span = 0.9,color='purple')+
-scale_color_manual(values=c('red','green','blue','purple'),
-labels = c("Span = 0.1", "Span = 0.3", "Span = 0.6", "Span = 0.9"))
 ```
 
 ### Recognition of Individual Patterns Changing over Time
@@ -261,17 +490,6 @@ labels = c("Span = 0.1", "Span = 0.3", "Span = 0.6", "Span = 0.9"))
 
 
 </div>
-
-```{python}
-#| echo: false
-#| eval: true
-radius = 10
-from IPython.display import display, Markdown
-display(Markdown("""
-The radius of the circle is {radius}.
-""".format(radius = radius)))
-```
-
 
 # Go to Project Content List
 

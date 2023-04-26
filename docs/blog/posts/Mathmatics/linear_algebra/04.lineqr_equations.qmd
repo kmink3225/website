@@ -23,8 +23,19 @@ draft: False
 #| echo: false
 
 import numpy as np
+import matplotlib_inline
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+import sympy as sym # for RREF
+import scipy.linalg # for LU
+import matplotlib.gridspec as gridspec # used to create non-regular subplots
+
+# NOTE: these lines define global figure properties used for publication.
+from IPython import display
+matplotlib_inline.backend_inline.set_matplotlib_formats('svg')
+#display.set_matplotlib_formats('svg') # display figures in vector format
+plt.rcParams.update({'font.size':14}) # set global font size
+     
 ```
 
 # Solving Linear Equations
@@ -903,6 +914,16 @@ such that $\mathbf{B} = \mathbf{E}_3 \mathbf{E}_2 \mathbf{E}_1 \mathbf{I}$.
 
 ## Factorization
 
+Factorization is one of the computational backbones underlying data-science algorithms, including least squares model fitting and the matrix inverse. 
+
+**Prerequisites**
+
+* systems of equations, 
+* row reduction or elmentary row operations, and
+* Gaussian elimination
+* echelon matrices and 
+* permutation matrices
+
 ::: {#def-factorization}
 The LU factorization, also known as the LU decomposition, is a matrix factorization method that expresses a given matrix $\mathbf{A}$ as the product of two matrices: a lower triangular matrix $\mathbf{L}$ and an upper triangular matrix $\mathbf{U}$:
 $$
@@ -917,6 +938,10 @@ where
 :::
 
 It decomposes a given square matrix into the product of two matrices, a lower triangular matrix ($\mathbf{L}$) and an upper triangular matrix ($\mathbf{U}$).
+
+row reduction can be expressed as $\mathbf{L}^{-1}\mathbf{A} = \mathbf{U}$, where $\mathbf{L}^{-1}$ contains the set of row manipulations that transforms the dense $\mathbf{A}$ into upper-triangular (echelon) $\mathbf{U}$. Because the echelon form is not unique, LU decomposition is not necessarily unique. Thus, there is an infinite pairing of lower- and upper-triangular matrices that could multiply to produce matrix $\mathbf{A}$. 
+
+However, adding the constraint that the diagonals of L equal 1 ensures that LU decomposition is unique for a full-rank square matrix $\mathbf{A}$. 
 
 * Efficient Solution of Linear Systems: Once a matrix is factorized into its LU form, it can be used to efficiently solve systems of linear equations. This is because solving a system of equations involving triangular matrices (such as L and U) is computationally more efficient compared to directly solving the original system of equations involving a general matrix.
 * Matrix Inversion: LU decomposition can also be used to efficiently calculate the inverse of a matrix. Once a matrix is factorized into its LU form, the inverse can be obtained by solving two triangular systems of equations, which is computationally more efficient compared to direct methods for matrix inversion.
@@ -977,58 +1002,25 @@ $$
 $$
 
 ```{python}
-import scipy
-import numpy as np
-
-#def lu_factorization(A):
-#    n = A.shape[0]
-#    L = np.zeros((n, n))
-#    U = np.copy(A)
-#
-#    for k in range(n-1):
-#        if U[k][k] == 0:
-#            print("LU factorization is not possible as U[{}][{}] is zero".format(k, k))
-#            return None, None
-#        
-#        for i in range(k+1, n):
-#            L[i][k] = U[i][k] / U[k][k]
-#            U[i][k+1:n] -= L[i][k] * U[k][k+1:n]
-#            U[i][k] = 0
-#
-#    np.fill_diagonal(L, 1)
-#    return L, U
-#
-# Example
 
 A = np.array([[2, 3, 1],
               [0, 4, -2],
               [0, 0, 3]])
+           
+# its LU decomposition via scipy (please ignore the first output for now)
+_,L,U = scipy.linalg.lu(A)
+# print them out
+print('A: ')
+print(A), print(' ')
 
-#L, U = lu_factorization(A)
-#print("L:")
-#print(L)
-#print("U:")
-#print(U)
+print('L: ')
+print(L), print(' ')
 
+print('U: ')
+print(U), print(' ')
 
-
-
-
-# Define the right-hand side vector b
-b = np.array([7, 4, 6])
-
-# Solve the system of equations Ax = b using LU decomposition
-# First, perform LU decomposition of A
-P, L, U = scipy.linalg.lu(A)
-
-# Then, solve the lower triangular system Lc = Pb for c
-c = np.linalg.solve(L, np.dot(P, b))
-
-# Finally, solve the upper triangular system Ux = c for x
-x = np.linalg.solve(U, c)
-
-# Print the solution vector x
-print("Solution vector x:", x)
+print('A - LU: ')
+print(A - L@U) # should be zeros
 ```
 
 ## Transposes and Permutations
@@ -1040,6 +1032,26 @@ print("Solution vector x:", x)
 ### Permutations
 
 A permutation is a reordering of a finite sequence of elements. In the context of solving $\mathbf{Ax=b}$, a permutation can be used to reorder the rows of the augmented matrix $\begin{bmatrix} \mathbf{A} & \mathbf{b} \end{bmatrix}$ to simplify the process of finding the row echelon form.
+
+Some matrices do not easily transform into an upper-triangular form, which can be transformed into upper-triangular form through a permutation matrix. Consider the following matrix:
+
+$$
+\begin{align*}
+&\mathbf{A} = \begin{bmatrix}
+3 & 2 & 1 \\
+0 & 0 & 5 \\
+0 & 7 & 2
+\end{bmatrix} \rightarrow
+
+\mathbf{A}' = \begin{bmatrix}
+3 & 2 & 1 \\
+0 & 7 & 2 \\
+0 & 0 & 5
+\end{bmatrix} \\ \\
+&\text{through a permutation matrix}
+\end{align*}
+$$
+
 
 ::: {#def-permutation}
 
@@ -1070,10 +1082,24 @@ $$
 
 By permuting the rows of the augmented matrix, we can obtain a row echelon form that is easier to work with and may lead to simpler solutions for $\mathbf{x}$.
 
+The full LU decomposition actually takes the following form:
+
+$$
+\begin{align*}
+\mathbf{P}\mathbf{A} &= \mathbf{L}\mathbf{U} \\
+\mathbf{A} &= \mathbf{P}^{T}\mathbf{L}\mathbf{U} \because \mathbf{P} \text{ is orthogonal, } \mathbf{P}^{-1}=\mathbf{P}^{T}
+\end{align*}
+$$
+
+All elements of a permutation matrix are either 0 or 1, and rows are swapped only once, each column has exactly one nonzero element (indeed, all permutation matrices are identity matrices with row swaps). Therefore, the dot
+product of any two columns is 0 while the dot product of a column with itself is 1, meaning $\mathbf{P}^{T}\mathbf{P}=\mathbf{I}$
+
+
 #### Properties
 
 Permutations are used in solving linear systems of equations using Gaussian elimination, which is a common method for finding solutions to $\mathbf{Ax=b}$. Here are some formal properties of permutations:
 
+* The LU decomposition with permutations is used in several applications, including computing the determinant and the matrix inverse.
 * A permutation matrix $\mathbf{P}$ is a square matrix obtained by permuting the rows of the identity matrix $\mathbf{I}$.
 * The product of two permutation matrices is also a permutation matrix.
 * The inverse of a permutation matrix is its transpose.
@@ -1156,3 +1182,72 @@ $$
 $$
 
 We can now continue with Gaussian elimination on this new augmented matrix, which is in row echelon form.
+
+#### Example
+
+The Scipy package actually returns $\mathbf{A = PLU}$, which we could also write as $\mathbf{P^{T}A = LU}$.
+
+```{python}
+
+# matrix sizes
+m = 4
+n = 6
+
+A = np.random.randn(m,n)
+
+P,L,U = scipy.linalg.lu(A)
+
+# show the matrices
+fig,axs = plt.subplots(1,5,figsize=(13,4))
+
+axs[0].imshow(A,vmin=-1,vmax=1)
+axs[0].set_title('A')
+
+axs[1].imshow(np.ones((m,n)),cmap='gray',vmin=-1,vmax=1)
+axs[1].text(n/2,m/2,'=',ha='center',fontsize=30,fontweight='bold')
+# axs[1].axis('off')
+
+axs[2].imshow(P.T,vmin=-1,vmax=1)
+axs[2].set_title(r'P')
+
+axs[3].imshow(L,vmin=-1,vmax=1)
+axs[3].set_title('L')
+
+h = axs[4].imshow(U,vmin=-1,vmax=1)
+axs[4].set_title('U')
+
+for a in axs:
+  a.axis('off')
+  a.set_xlim([-.5,n-.5])
+  a.set_ylim([m-.5,-.5])
+
+
+fig.colorbar(h,ax=axs[-1],fraction=.05)
+plt.tight_layout()
+plt.savefig('Figure_10_01.png',dpi=300)
+plt.show()
+     
+```
+
+```{python}
+A = np.array([[1, 2, 3, 7],
+              [4, 5, 6, 8],
+              [7, 8, 9, 10]])
+           
+# its LU decomposition via scipy (please ignore the first output for now)
+_,L,U = scipy.linalg.lu(A)
+# print them out
+print('A: ')
+print(A), print(' ')
+
+print('L: ')
+print(L), print(' ')
+
+print('U: ')
+print(U), print(' ')
+
+print('A - LU: ')
+print(A - L@U) # should be zeros
+```
+
+

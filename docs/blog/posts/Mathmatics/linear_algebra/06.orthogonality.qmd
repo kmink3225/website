@@ -940,11 +940,11 @@ Therefore, the QR decomposition of $\mathbf{A}$ is given by $\mathbf{A} = \mathb
 
 $$
 \begin{align*}
-q_1 &= \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix}, \\
-u_2 &= v_2 - \langle v_2, q_1 \rangle q_1 = \begin{bmatrix} -1 \\ 0 \\ 1 \end{bmatrix} - \frac{1}{3}\begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} = \begin{bmatrix} -\frac{4}{3} \\ -\frac{1}{3} \\ \frac{2}{3} \end{bmatrix}, \\
-q_2 &= \frac{u_2}{|u_2|} = \frac{1}{\sqrt{2}} \begin{bmatrix} -2 \\ -1 \\ 1 \end{bmatrix}, \\
-u_3 &= v_3 - \langle v_3, q_1 \rangle q_1 - \langle v_3, q_2 \rangle q_2 = \begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix} - \frac{1}{3}\begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} - \frac{1}{2}\begin{bmatrix} -2 \\ -1 \\ 1 \end{bmatrix} = \begin{bmatrix} \frac{1}{3} \\ -\frac{1}{3} \\ -\frac{1}{3} \end{bmatrix}, \\
-q_3 &= \frac{u_3}{|u_3|} = \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ -1 \\ -1 \end{bmatrix}.
+\mathbf q_1 &= \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix}, \\
+\mathbf u_2 &= \mathbf v_2 - \langle \mathbf v_2, \mathbf q_1 \rangle \mathbf q_1 = \begin{bmatrix} -1 \\ 0 \\ 1 \end{bmatrix} - \frac{1}{3}\begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} = \begin{bmatrix} -\frac{4}{3} \\ -\frac{1}{3} \\ \frac{2}{3} \end{bmatrix}, \\
+\mathbf q_2 &= \frac{u_2}{|u_2|} = \frac{1}{\sqrt{2}} \begin{bmatrix} -2 \\ -1 \\ 1 \end{bmatrix}, \\
+\mathbf u_3 &= \mathbf v_3 - \langle \mathbf v_3, \mathbf q_1 \rangle \mathbf q_1 - \langle \mathbf v_3, \mathbf q_2 \rangle \mathbf q_2 = \begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix} - \frac{1}{3}\begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} - \frac{1}{2}\begin{bmatrix} -2 \\ -1 \\ 1 \end{bmatrix} = \begin{bmatrix} \frac{1}{3} \\ -\frac{1}{3} \\ -\frac{1}{3} \end{bmatrix}, \\
+\mathbf q_3 &= \frac{\mathbf u_3}{|\mathbf u_3|} = \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ -1 \\ -1 \end{bmatrix}.
 \end{align*}
 $$
 
@@ -1005,6 +1005,93 @@ print("QR =\n", Q @ R)
 ```
 
 The QR decomposition of a matrix is not unique, So the $\mathbf Q$ and $\mathbf R$ could be different from the latex ones.
+
+### Sizes of $\mathbf Q$ and $\mathbf R$
+
+The sizes of $\mathbf Q$ and $\mathbf R$ depend on the size of the matrix $\mathbf A$ and on whether the QR decomposition is *reduced* or *full*.
+
+For a tall matrix $(m > n)$, do we create a $\mathbf Q$ matrix with n columns or m columns? 
+
+* Economy or Reduced: $\mathbf Q_{m\times n}$ (tall $\mathbf Q$)
+* Full or Complete: $\mathbf Q_{m\times m}$ (square $\mathbf Q$) 
+  * $\mathbf Q$ can be square when $\mathbf A$ is tall ($\mathbf Q$ can have more columns than $\mathbf A$)
+  * In python, the option of `np.linalg.qr(A,'complete')` is 'complete', which produces a full QR decomposition.
+  * The option of `np.linalg.qr(A,'reduced')` is 'reduced', which is the default, gives the economy-mode QR decomposition, in which $\mathbf Q$ is the same size as $\mathbf A$.
+* Likewise, the rank of $\mathbf Q$ is always the maximum possible rank, which is $m$ for all square $\mathbf Q$ matrices and $n$ for the economy $\mathbf Q$. The rank of $\mathbf R$ is the same as the rank of $\mathbf A$.
+  * the difference of $\operatorname{rank}(\mathbf A) and \operatorname{rank}(\mathbf Q)$ means $\mathbf Q$ spans all of $\mathbb R^m$ even if the $\operatorname{col}(\mathbf A)$ is only a lower-dimensional subspace of $\mathbb R^m$.
+* **non-uniqueness**: QR decomposition is not unique for all matrix sizes and ranks. ($\mathbf A = \mathbf Q_1 \mathbf R_1$ and $\mathbf A = \mathbf Q_2\mathbf R_2$ where $\mathbf Q_1 \ne \mathbf Q_2$).
+* **uniqueness with constraints**: QR decomposition can be made unique given additional constraints (e.g., positive values on the diagonals of $\mathbf R$)
+
+```{python}
+A = np.array([ [1,-1] ]).T
+Q,R = np.linalg.qr(A,'complete')
+Q*np.sqrt(2) # scaled by sqrt(2) to get integers
+print("A =\n", A)
+print("Q =\n", Q)
+print("R =\n", R)
+print("Q*np.sqrt(2)=\n", Q*np.sqrt(2))
+```
+
+### Upper-triangle of $\mathbf R$
+
+* $\mathbf R$ comes from the formula $\mathbf{Q}^T\mathbf{A = R}$.
+* The lower triangle of a product matrix comprises dot products between later rows of the left matrix and earlier columns of the right matrix.
+* The rows of $\mathbf{Q}^T$ are the columns of $\mathbf{Q}$.
+
+```{python}
+# Define matrix A
+A = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+
+# Compute QR decomposition of A
+Q, R = np.linalg.qr(A)
+
+# Compute Q^T * A
+QtA = np.matmul(Q.T, A)
+
+# Extract upper triangle of R
+upper_R = np.triu(R)
+
+# Compute dot products between later rows of Q^T and earlier columns of A
+dot_products = np.zeros((3, 3))
+for i in range(3):
+    for j in range(i):
+        dot_products[i, j] = np.dot(Q.T[i], A[:, j])
+
+# Print results
+print("A = ")
+print(A)
+print("Q = ")
+print(Q)
+print("R = ")
+print(R)
+print(r"$Q^T * A = $")
+print(QtA)
+print("Upper-triangle of R = ")
+print(upper_R)
+print("Dot products between later rows of Q^T and earlier columns of A = ")
+print(dot_products)
+```
+
+The lower triangle of $\mathbf{R}$ comprises dot products of $\mathbf Q^T\mathbf A$ (between later rows of $\mathbf{Q}^T$ and earlier columns of $\mathbf{A}$)
+:::{.callout-note}
+Note that the lower triangle of $\mathbf{R}$ is zero, because the first column of $\mathbf{A}$ is orthogonal to the remaining columns of $\mathbf{A}$. Thus, the pairs of vectors used to form the lower triangle of $\mathbf{R}$ are orthogonal. On the other hand, the upper triangle of $\mathbf{R}$ comes from the dot product of later rows of $\mathbf{Q}$ and earlier columns of $\mathbf{A}$. Specifically, the $(2,1)$ entry of $\mathbf{R}$ is the dot product of the second row of $\mathbf{Q}$ with the first column of $\mathbf{A}$
+
+If columns $i$ and $j$ of $\mathbf A$ were already orthogonal, then the corresponding $(i,j)$ th element in $\mathbf R$ would be zero. In fact, if you compute the QR decomposition of an orthogonal matrix, then $\mathbf R$ will be a diagonal matrix in which the diagonal elements are the norms of each column in $\mathbf A$. That means that if $\mathbf{A = Q}$, then $\mathbf{R = I}$, which is obvious from the equation solved for $\mathbf{R}$ 
+:::
+
+### QR and Inverses
+
+QR decomposition provides a more numerically stable way to compute the matrix inverse, $\mathbf A^{-1}$ of $\mathbf A$ because $\mathbf Q$ is numerically stable due to the Householder reflection algorithm, and $\mathbf R$ is numerically stable because it simply results from matrix multiplication.
+
+$$
+\begin{align*}
+  \mathbf{A}&=\mathbf{QR}\\
+  \mathbf{A}^{-1}&=(\mathbf{QR})^{-1}\\
+  \mathbf{A}^{-1}&=\mathbf{R}^{-1}\mathbf{Q}^{-1}\\
+  \mathbf{A}^{-1}&=\mathbf{R}^{-1}\mathbf{Q}^{T}
+\end{align*}
+$$
+
 
 ## Projections
 

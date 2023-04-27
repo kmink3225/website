@@ -218,6 +218,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#qr-decomposition" id="toc-qr-decomposition" class="nav-link" data-scroll-target="#qr-decomposition"><span class="toc-section-number">1.3</span>  QR Decomposition</a>
   <ul class="collapse">
   <li><a href="#examples-2" id="toc-examples-2" class="nav-link" data-scroll-target="#examples-2"><span class="toc-section-number">1.3.1</span>  Examples</a></li>
+  <li><a href="#sizes-of-mathbf-q-and-mathbf-r" id="toc-sizes-of-mathbf-q-and-mathbf-r" class="nav-link" data-scroll-target="#sizes-of-mathbf-q-and-mathbf-r"><span class="toc-section-number">1.3.2</span>  Sizes of <span class="math inline">\(\mathbf Q\)</span> and <span class="math inline">\(\mathbf R\)</span></a></li>
+  <li><a href="#upper-triangle-of-mathbf-r" id="toc-upper-triangle-of-mathbf-r" class="nav-link" data-scroll-target="#upper-triangle-of-mathbf-r"><span class="toc-section-number">1.3.3</span>  Upper-triangle of <span class="math inline">\(\mathbf R\)</span></a></li>
+  <li><a href="#qr-and-inverses" id="toc-qr-and-inverses" class="nav-link" data-scroll-target="#qr-and-inverses"><span class="toc-section-number">1.3.4</span>  QR and Inverses</a></li>
   </ul></li>
   <li><a href="#projections" id="toc-projections" class="nav-link" data-scroll-target="#projections"><span class="toc-section-number">1.4</span>  Projections</a></li>
   <li><a href="#least-squares-approximations" id="toc-least-squares-approximations" class="nav-link" data-scroll-target="#least-squares-approximations"><span class="toc-section-number">1.5</span>  Least Squares Approximations</a></li>
@@ -866,7 +869,7 @@ q_3 &amp;= \frac{u_3}{|u_3|} = \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ 1 \\ -1 \
 <p><img src="06.orthogonality_files/figure-html/cell-7-output-1.svg" class="img-fluid"></p>
 </div>
 <div class="cell-output cell-output-display" data-execution_count="5">
-<pre><code>&lt;matplotlib.animation.FuncAnimation at 0x14bfee500d0&gt;</code></pre>
+<pre><code>&lt;matplotlib.animation.FuncAnimation at 0x2b7ae48bfa0&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <p><img src="06.orthogonality_files/figure-html/cell-7-output-3.svg" class="img-fluid"></p>
@@ -993,26 +996,26 @@ q_3 &amp;= \frac{u_3}{|u_3|} = \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ 1 \\ -1 \
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Q matrix (Gram-Schmidt):
- [[ 0.27312993  0.27811349  0.76687831  0.5098535 ]
- [-0.15985965 -0.92858067  0.31096833  0.12442476]
- [-0.7776442   0.15581731 -0.16865856  0.58527323]
- [ 0.54324435 -0.19003102 -0.53549104  0.6180802 ]]
+ [[-0.21612002  0.00295319  0.58858215  0.77900864]
+ [ 0.33237278 -0.75639537 -0.39967725  0.39705475]
+ [-0.83218081  0.00185048 -0.52834015  0.1683103 ]
+ [-0.38767972 -0.65410542  0.46334203 -0.45515349]]
 Q matrix (numpy):
- [[-0.27312993  0.27811349 -0.76687831  0.5098535 ]
- [ 0.15985965 -0.92858067 -0.31096833  0.12442476]
- [ 0.7776442   0.15581731  0.16865856  0.58527323]
- [-0.54324435 -0.19003102  0.53549104  0.6180802 ]]
+ [[-0.21612002  0.00295319  0.58858215 -0.77900864]
+ [ 0.33237278 -0.75639537 -0.39967725 -0.39705475]
+ [-0.83218081  0.00185048 -0.52834015 -0.1683103 ]
+ [-0.38767972 -0.65410542  0.46334203  0.45515349]]
 Difference between Q and Q_np:
- [[ 0.54625987  0.          1.53375661  0.        ]
- [-0.31971931  0.          0.62193667  0.        ]
- [-1.5552884   0.         -0.33731712 -0.        ]
- [ 1.08648871 -0.         -1.07098207  0.        ]]
+ [[ 0.         -0.          0.          1.55801729]
+ [ 0.          0.          0.          0.79410951]
+ [-0.         -0.          0.          0.33662061]
+ [ 0.          0.          0.         -0.91030697]]
  
 Sum of Q and Q_np:
- [[-0.          0.55622697  0.          1.019707  ]
- [-0.         -1.85716135  0.          0.24884951]
- [-0.          0.31163461 -0.          1.17054646]
- [ 0.         -0.38006204  0.          1.2361604 ]]</code></pre>
+ [[-0.43224004  0.00590638  1.1771643   0.        ]
+ [ 0.66474556 -1.51279074 -0.79935449 -0.        ]
+ [-1.66436163  0.00370095 -1.0566803   0.        ]
+ [-0.77535944 -1.30821084  0.92668406  0.        ]]</code></pre>
 </div>
 </div>
 </section>
@@ -1113,11 +1116,11 @@ Sum of Q and Q_np:
 </ol>
 <p><span class="math display">\[
 \begin{align*}
-q_1 &amp;= \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix}, \\
-u_2 &amp;= v_2 - \langle v_2, q_1 \rangle q_1 = \begin{bmatrix} -1 \\ 0 \\ 1 \end{bmatrix} - \frac{1}{3}\begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} = \begin{bmatrix} -\frac{4}{3} \\ -\frac{1}{3} \\ \frac{2}{3} \end{bmatrix}, \\
-q_2 &amp;= \frac{u_2}{|u_2|} = \frac{1}{\sqrt{2}} \begin{bmatrix} -2 \\ -1 \\ 1 \end{bmatrix}, \\
-u_3 &amp;= v_3 - \langle v_3, q_1 \rangle q_1 - \langle v_3, q_2 \rangle q_2 = \begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix} - \frac{1}{3}\begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} - \frac{1}{2}\begin{bmatrix} -2 \\ -1 \\ 1 \end{bmatrix} = \begin{bmatrix} \frac{1}{3} \\ -\frac{1}{3} \\ -\frac{1}{3} \end{bmatrix}, \\
-q_3 &amp;= \frac{u_3}{|u_3|} = \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ -1 \\ -1 \end{bmatrix}.
+\mathbf q_1 &amp;= \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix}, \\
+\mathbf u_2 &amp;= \mathbf v_2 - \langle \mathbf v_2, \mathbf q_1 \rangle \mathbf q_1 = \begin{bmatrix} -1 \\ 0 \\ 1 \end{bmatrix} - \frac{1}{3}\begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} = \begin{bmatrix} -\frac{4}{3} \\ -\frac{1}{3} \\ \frac{2}{3} \end{bmatrix}, \\
+\mathbf q_2 &amp;= \frac{u_2}{|u_2|} = \frac{1}{\sqrt{2}} \begin{bmatrix} -2 \\ -1 \\ 1 \end{bmatrix}, \\
+\mathbf u_3 &amp;= \mathbf v_3 - \langle \mathbf v_3, \mathbf q_1 \rangle \mathbf q_1 - \langle \mathbf v_3, \mathbf q_2 \rangle \mathbf q_2 = \begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix} - \frac{1}{3}\begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} - \frac{1}{2}\begin{bmatrix} -2 \\ -1 \\ 1 \end{bmatrix} = \begin{bmatrix} \frac{1}{3} \\ -\frac{1}{3} \\ -\frac{1}{3} \end{bmatrix}, \\
+\mathbf q_3 &amp;= \frac{\mathbf u_3}{|\mathbf u_3|} = \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ -1 \\ -1 \end{bmatrix}.
 \end{align*}
 \]</span></p>
 <p>So the QR decomposition of <span class="math inline">\(\mathbf{A}\)</span> is <span class="math inline">\(\mathbf{A} = \mathbf{QR}\)</span> where</p>
@@ -1183,6 +1186,136 @@ QR =
 </div>
 </div>
 <p>The QR decomposition of a matrix is not unique, So the <span class="math inline">\(\mathbf Q\)</span> and <span class="math inline">\(\mathbf R\)</span> could be different from the latex ones.</p>
+</section>
+<section id="sizes-of-mathbf-q-and-mathbf-r" class="level3" data-number="1.3.2">
+<h3 data-number="1.3.2" class="anchored" data-anchor-id="sizes-of-mathbf-q-and-mathbf-r"><span class="header-section-number">1.3.2</span> Sizes of <span class="math inline">\(\mathbf Q\)</span> and <span class="math inline">\(\mathbf R\)</span></h3>
+<p>The sizes of <span class="math inline">\(\mathbf Q\)</span> and <span class="math inline">\(\mathbf R\)</span> depend on the size of the matrix <span class="math inline">\(\mathbf A\)</span> and on whether the QR decomposition is <em>reduced</em> or <em>full</em>.</p>
+<p>For a tall matrix <span class="math inline">\((m &gt; n)\)</span>, do we create a <span class="math inline">\(\mathbf Q\)</span> matrix with n columns or m columns?</p>
+<ul>
+<li>Economy or Reduced: <span class="math inline">\(\mathbf Q_{m\times n}\)</span> (tall <span class="math inline">\(\mathbf Q\)</span>)</li>
+<li>Full or Complete: <span class="math inline">\(\mathbf Q_{m\times m}\)</span> (square <span class="math inline">\(\mathbf Q\)</span>)
+<ul>
+<li><span class="math inline">\(\mathbf Q\)</span> can be square when <span class="math inline">\(\mathbf A\)</span> is tall (<span class="math inline">\(\mathbf Q\)</span> can have more columns than <span class="math inline">\(\mathbf A\)</span>)</li>
+<li>In python, the option of <code>np.linalg.qr(A,'complete')</code> is ‘complete’, which produces a full QR decomposition.</li>
+<li>The option of <code>np.linalg.qr(A,'reduced')</code> is ‘reduced’, which is the default, gives the economy-mode QR decomposition, in which <span class="math inline">\(\mathbf Q\)</span> is the same size as <span class="math inline">\(\mathbf A\)</span>.</li>
+</ul></li>
+<li>Likewise, the rank of <span class="math inline">\(\mathbf Q\)</span> is always the maximum possible rank, which is <span class="math inline">\(m\)</span> for all square <span class="math inline">\(\mathbf Q\)</span> matrices and <span class="math inline">\(n\)</span> for the economy <span class="math inline">\(\mathbf Q\)</span>. The rank of <span class="math inline">\(\mathbf R\)</span> is the same as the rank of <span class="math inline">\(\mathbf A\)</span>.
+<ul>
+<li>the difference of <span class="math inline">\(\operatorname{rank}(\mathbf A) and \operatorname{rank}(\mathbf Q)\)</span> means <span class="math inline">\(\mathbf Q\)</span> spans all of <span class="math inline">\(\mathbb R^m\)</span> even if the <span class="math inline">\(\operatorname{col}(\mathbf A)\)</span> is only a lower-dimensional subspace of <span class="math inline">\(\mathbb R^m\)</span>.</li>
+</ul></li>
+<li><strong>non-uniqueness</strong>: QR decomposition is not unique for all matrix sizes and ranks. (<span class="math inline">\(\mathbf A = \mathbf Q_1 \mathbf R_1\)</span> and <span class="math inline">\(\mathbf A = \mathbf Q_2\mathbf R_2\)</span> where <span class="math inline">\(\mathbf Q_1 \ne \mathbf Q_2\)</span>).</li>
+<li><strong>uniqueness with constraints</strong>: QR decomposition can be made unique given additional constraints (e.g., positive values on the diagonals of <span class="math inline">\(\mathbf R\)</span>)</li>
+</ul>
+<div class="cell" data-execution_count="10">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([ [<span class="dv">1</span>,<span class="op">-</span><span class="dv">1</span>] ]).T</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>Q,R <span class="op">=</span> np.linalg.qr(A,<span class="st">'complete'</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>Q<span class="op">*</span>np.sqrt(<span class="dv">2</span>) <span class="co"># scaled by sqrt(2) to get integers</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"A =</span><span class="ch">\n</span><span class="st">"</span>, A)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Q =</span><span class="ch">\n</span><span class="st">"</span>, Q)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"R =</span><span class="ch">\n</span><span class="st">"</span>, R)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Q*np.sqrt(2)=</span><span class="ch">\n</span><span class="st">"</span>, Q<span class="op">*</span>np.sqrt(<span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>A =
+ [[ 1]
+ [-1]]
+Q =
+ [[-0.70710678  0.70710678]
+ [ 0.70710678  0.70710678]]
+R =
+ [[-1.41421356]
+ [ 0.        ]]
+Q*np.sqrt(2)=
+ [[-1.  1.]
+ [ 1.  1.]]</code></pre>
+</div>
+</div>
+</section>
+<section id="upper-triangle-of-mathbf-r" class="level3" data-number="1.3.3">
+<h3 data-number="1.3.3" class="anchored" data-anchor-id="upper-triangle-of-mathbf-r"><span class="header-section-number">1.3.3</span> Upper-triangle of <span class="math inline">\(\mathbf R\)</span></h3>
+<ul>
+<li><span class="math inline">\(\mathbf R\)</span> comes from the formula <span class="math inline">\(\mathbf{Q}^T\mathbf{A = R}\)</span>.</li>
+<li>The lower triangle of a product matrix comprises dot products between later rows of the left matrix and earlier columns of the right matrix.</li>
+<li>The rows of <span class="math inline">\(\mathbf{Q}^T\)</span> are the columns of <span class="math inline">\(\mathbf{Q}\)</span>.</li>
+</ul>
+<div class="cell" data-execution_count="11">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define matrix A</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>], [<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>], [<span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>]])</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute QR decomposition of A</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>Q, R <span class="op">=</span> np.linalg.qr(A)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute Q^T * A</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>QtA <span class="op">=</span> np.matmul(Q.T, A)</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract upper triangle of R</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>upper_R <span class="op">=</span> np.triu(R)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute dot products between later rows of Q^T and earlier columns of A</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>dot_products <span class="op">=</span> np.zeros((<span class="dv">3</span>, <span class="dv">3</span>))</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(i):</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>        dot_products[i, j] <span class="op">=</span> np.dot(Q.T[i], A[:, j])</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Print results</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"A = "</span>)</span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(A)</span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Q = "</span>)</span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(Q)</span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"R = "</span>)</span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(R)</span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="vs">r"$Q^T * A = $"</span>)</span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(QtA)</span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Upper-triangle of R = "</span>)</span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(upper_R)</span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Dot products between later rows of Q^T and earlier columns of A = "</span>)</span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(dot_products)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>A = 
+[[1 2 3]
+ [4 5 6]
+ [7 8 9]]
+Q = 
+[[-0.12309149  0.90453403  0.40824829]
+ [-0.49236596  0.30151134 -0.81649658]
+ [-0.86164044 -0.30151134  0.40824829]]
+R = 
+[[-8.12403840e+00 -9.60113630e+00 -1.10782342e+01]
+ [ 0.00000000e+00  9.04534034e-01  1.80906807e+00]
+ [ 0.00000000e+00  0.00000000e+00 -8.88178420e-16]]
+$Q^T * A = $
+[[-8.12403840e+00 -9.60113630e+00 -1.10782342e+01]
+ [ 1.55431223e-15  9.04534034e-01  1.80906807e+00]
+ [ 6.10622664e-16 -4.44089210e-16 -1.05471187e-15]]
+Upper-triangle of R = 
+[[-8.12403840e+00 -9.60113630e+00 -1.10782342e+01]
+ [ 0.00000000e+00  9.04534034e-01  1.80906807e+00]
+ [ 0.00000000e+00  0.00000000e+00 -8.88178420e-16]]
+Dot products between later rows of Q^T and earlier columns of A = 
+[[ 0.00000000e+00  0.00000000e+00  0.00000000e+00]
+ [ 1.77635684e-15  0.00000000e+00  0.00000000e+00]
+ [ 4.44089210e-16 -8.88178420e-16  0.00000000e+00]]</code></pre>
+</div>
+</div>
+<p>The lower triangle of <span class="math inline">\(\mathbf{R}\)</span> comprises dot products of <span class="math inline">\(\mathbf Q^T\mathbf A\)</span> (between later rows of <span class="math inline">\(\mathbf{Q}^T\)</span> and earlier columns of <span class="math inline">\(\mathbf{A}\)</span>) :::{.callout-note} Note that the lower triangle of <span class="math inline">\(\mathbf{R}\)</span> is zero, because the first column of <span class="math inline">\(\mathbf{A}\)</span> is orthogonal to the remaining columns of <span class="math inline">\(\mathbf{A}\)</span>. Thus, the pairs of vectors used to form the lower triangle of <span class="math inline">\(\mathbf{R}\)</span> are orthogonal. On the other hand, the upper triangle of <span class="math inline">\(\mathbf{R}\)</span> comes from the dot product of later rows of <span class="math inline">\(\mathbf{Q}\)</span> and earlier columns of <span class="math inline">\(\mathbf{A}\)</span>. Specifically, the <span class="math inline">\((2,1)\)</span> entry of <span class="math inline">\(\mathbf{R}\)</span> is the dot product of the second row of <span class="math inline">\(\mathbf{Q}\)</span> with the first column of <span class="math inline">\(\mathbf{A}\)</span></p>
+<p>If columns <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span> of <span class="math inline">\(\mathbf A\)</span> were already orthogonal, then the corresponding <span class="math inline">\((i,j)\)</span> th element in <span class="math inline">\(\mathbf R\)</span> would be zero. In fact, if you compute the QR decomposition of an orthogonal matrix, then <span class="math inline">\(\mathbf R\)</span> will be a diagonal matrix in which the diagonal elements are the norms of each column in <span class="math inline">\(\mathbf A\)</span>. That means that if <span class="math inline">\(\mathbf{A = Q}\)</span>, then <span class="math inline">\(\mathbf{R = I}\)</span>, which is obvious from the equation solved for <span class="math inline">\(\mathbf{R}\)</span> :::</p>
+</section>
+<section id="qr-and-inverses" class="level3" data-number="1.3.4">
+<h3 data-number="1.3.4" class="anchored" data-anchor-id="qr-and-inverses"><span class="header-section-number">1.3.4</span> QR and Inverses</h3>
+<p>QR decomposition provides a more numerically stable way to compute the matrix inverse, <span class="math inline">\(\mathbf A^{-1}\)</span> of <span class="math inline">\(\mathbf A\)</span> because <span class="math inline">\(\mathbf Q\)</span> is numerically stable due to the Householder reflection algorithm, and <span class="math inline">\(\mathbf R\)</span> is numerically stable because it simply results from matrix multiplication.</p>
+<p><span class="math display">\[
+\begin{align*}
+  \mathbf{A}&amp;=\mathbf{QR}\\
+  \mathbf{A}^{-1}&amp;=(\mathbf{QR})^{-1}\\
+  \mathbf{A}^{-1}&amp;=\mathbf{R}^{-1}\mathbf{Q}^{-1}\\
+  \mathbf{A}^{-1}&amp;=\mathbf{R}^{-1}\mathbf{Q}^{T}
+\end{align*}
+\]</span></p>
 </section>
 </section>
 <section id="projections" class="level2" data-number="1.4">

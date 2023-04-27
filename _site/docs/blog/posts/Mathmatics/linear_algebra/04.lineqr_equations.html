@@ -412,7 +412,7 @@ y = 1.1428571428571428
 z = -8.881784197001253e-17</code></pre>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="04.lineqr_equations_files/figure-html/cell-3-output-2.png" width="412" height="412"></p>
+<p><img src="04.lineqr_equations_files/figure-html/cell-3-output-2.svg" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-execution_count="3">
@@ -459,7 +459,7 @@ z = -8.881784197001253e-17</code></pre>
 <span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<p><img src="04.lineqr_equations_files/figure-html/cell-4-output-1.png" width="402" height="419"></p>
+<p><img src="04.lineqr_equations_files/figure-html/cell-4-output-1.svg" class="img-fluid"></p>
 </div>
 </div>
 </section>
@@ -1090,6 +1090,15 @@ d &amp; -b \\
 </section>
 <section id="factorization" class="level2" data-number="1.6">
 <h2 data-number="1.6" class="anchored" data-anchor-id="factorization"><span class="header-section-number">1.6</span> Factorization</h2>
+<p>Factorization is one of the computational backbones underlying data-science algorithms, including least squares model fitting and the matrix inverse.</p>
+<p><strong>Prerequisites</strong></p>
+<ul>
+<li>systems of equations,</li>
+<li>row reduction or elmentary row operations, and</li>
+<li>Gaussian elimination</li>
+<li>echelon matrices and</li>
+<li>permutation matrices</li>
+</ul>
 <div id="def-factorization" class="theorem definition">
 <p><span class="theorem-title"><strong>Definition 8 </strong></span>The LU factorization, also known as the LU decomposition, is a matrix factorization method that expresses a given matrix <span class="math inline">\(\mathbf{A}\)</span> as the product of two matrices: a lower triangular matrix <span class="math inline">\(\mathbf{L}\)</span> and an upper triangular matrix <span class="math inline">\(\mathbf{U}\)</span>: <span class="math display">\[
 \mathbf{A} = \mathbf{LU}
@@ -1102,6 +1111,8 @@ d &amp; -b \\
 </ul>
 </div>
 <p>It decomposes a given square matrix into the product of two matrices, a lower triangular matrix (<span class="math inline">\(\mathbf{L}\)</span>) and an upper triangular matrix (<span class="math inline">\(\mathbf{U}\)</span>).</p>
+<p>row reduction can be expressed as <span class="math inline">\(\mathbf{L}^{-1}\mathbf{A} = \mathbf{U}\)</span>, where <span class="math inline">\(\mathbf{L}^{-1}\)</span> contains the set of row manipulations that transforms the dense <span class="math inline">\(\mathbf{A}\)</span> into upper-triangular (echelon) <span class="math inline">\(\mathbf{U}\)</span>. Because the echelon form is not unique, LU decomposition is not necessarily unique. Thus, there is an infinite pairing of lower- and upper-triangular matrices that could multiply to produce matrix <span class="math inline">\(\mathbf{A}\)</span>.</p>
+<p>However, adding the constraint that the diagonals of L equal 1 ensures that LU decomposition is unique for a full-rank square matrix <span class="math inline">\(\mathbf{A}\)</span>.</p>
 <ul>
 <li>Efficient Solution of Linear Systems: Once a matrix is factorized into its LU form, it can be used to efficiently solve systems of linear equations. This is because solving a system of equations involving triangular matrices (such as L and U) is computationally more efficient compared to directly solving the original system of equations involving a general matrix.</li>
 <li>Matrix Inversion: LU decomposition can also be used to efficiently calculate the inverse of a matrix. Once a matrix is factorized into its LU form, the inverse can be obtained by solving two triangular systems of equations, which is computationally more efficient compared to direct methods for matrix inversion.</li>
@@ -1163,61 +1174,45 @@ u_{11} &amp; u_{12} &amp; \cdots &amp; u_{1n} \\
 <div class="cell" data-execution_count="4">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#def lu_factorization(A):</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#    n = A.shape[0]</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#    L = np.zeros((n, n))</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#    U = np.copy(A)</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#    for k in range(n-1):</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">#        if U[k][k] == 0:</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#            print("LU factorization is not possible as U[{}][{}] is zero".format(k, k))</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#            return None, None</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#        </span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#        for i in range(k+1, n):</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#            L[i][k] = U[i][k] / U[k][k]</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#            U[i][k+1:n] -= L[i][k] * U[k][k+1:n]</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">#            U[i][k] = 0</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">#    np.fill_diagonal(L, 1)</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">#    return L, U</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Example</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">1</span>],</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">0</span>, <span class="dv">4</span>, <span class="op">-</span><span class="dv">2</span>],</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">3</span>]])</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co">#L, U = lu_factorization(A)</span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co">#print("L:")</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="co">#print(L)</span></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co">#print("U:")</span></span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="co">#print(U)</span></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the right-hand side vector b</span></span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> np.array([<span class="dv">7</span>, <span class="dv">4</span>, <span class="dv">6</span>])</span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="co"># Solve the system of equations Ax = b using LU decomposition</span></span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="co"># First, perform LU decomposition of A</span></span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>P, L, U <span class="op">=</span> scipy.linalg.lu(A)</span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Then, solve the lower triangular system Lc = Pb for c</span></span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> np.linalg.solve(L, np.dot(P, b))</span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Finally, solve the upper triangular system Ux = c for x</span></span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linalg.solve(U, c)</span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the solution vector x</span></span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Solution vector x:"</span>, x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">1</span>],</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">0</span>, <span class="dv">4</span>, <span class="op">-</span><span class="dv">2</span>],</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">3</span>]])</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>           </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># its LU decomposition via scipy (please ignore the first output for now)</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>_,L,U <span class="op">=</span> scipy.linalg.lu(A)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print them out</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'A: '</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(A), <span class="bu">print</span>(<span class="st">' '</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'L: '</span>)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(L), <span class="bu">print</span>(<span class="st">' '</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'U: '</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(U), <span class="bu">print</span>(<span class="st">' '</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'A - LU: '</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(A <span class="op">-</span> L<span class="op">@</span>U) <span class="co"># should be zeros</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Solution vector x: [-0.5  2.   2. ]</code></pre>
+<pre><code>A: 
+[[ 2  3  1]
+ [ 0  4 -2]
+ [ 0  0  3]]
+ 
+L: 
+[[1. 0. 0.]
+ [0. 1. 0.]
+ [0. 0. 1.]]
+ 
+U: 
+[[ 2.  3.  1.]
+ [ 0.  4. -2.]
+ [ 0.  0.  3.]]
+ 
+A - LU: 
+[[0. 0. 0.]
+ [0. 0. 0.]
+ [0. 0. 0.]]</code></pre>
 </div>
 </div>
 </section>
@@ -1231,6 +1226,21 @@ u_{11} &amp; u_{12} &amp; \cdots &amp; u_{1n} \\
 <section id="permutations" class="level3" data-number="1.7.2">
 <h3 data-number="1.7.2" class="anchored" data-anchor-id="permutations"><span class="header-section-number">1.7.2</span> Permutations</h3>
 <p>A permutation is a reordering of a finite sequence of elements. In the context of solving <span class="math inline">\(\mathbf{Ax=b}\)</span>, a permutation can be used to reorder the rows of the augmented matrix <span class="math inline">\(\begin{bmatrix} \mathbf{A} &amp; \mathbf{b} \end{bmatrix}\)</span> to simplify the process of finding the row echelon form.</p>
+<p>Some matrices do not easily transform into an upper-triangular form, which can be transformed into upper-triangular form through a permutation matrix. Consider the following matrix:</p>
+<p>$$ <span class="math display">\[\begin{align*}
+&amp;\mathbf{A} = \begin{bmatrix}
+3 &amp; 2 &amp; 1 \\
+0 &amp; 0 &amp; 5 \\
+0 &amp; 7 &amp; 2
+\end{bmatrix} \rightarrow
+
+\mathbf{A}' = \begin{bmatrix}
+3 &amp; 2 &amp; 1 \\
+0 &amp; 7 &amp; 2 \\
+0 &amp; 0 &amp; 5
+\end{bmatrix} \\ \\
+&amp;\text{through a permutation matrix}
+\end{align*}\]</span> $$</p>
 <div id="def-permutation" class="theorem definition">
 <p><span class="theorem-title"><strong>Definition 9 </strong></span>A permutation of a set of size <span class="math inline">\(n\)</span> is a bijective function <span class="math inline">\(\sigma: {1, 2, \ldots, n} \to {1, 2, \ldots, n}\)</span>, which means that every element in the set is mapped to a unique element in the set and vice versa. A common way to represent a permutation is by using a permutation matrix, which is a square matrix with a single 1 in each row and each column and 0s elsewhere. The location of the 1 in each row represents the new position of that row after the permutation.</p>
 </div>
@@ -1253,11 +1263,20 @@ u_{11} &amp; u_{12} &amp; \cdots &amp; u_{1n} \\
 \end{align*}
 \]</span></p>
 <p>By permuting the rows of the augmented matrix, we can obtain a row echelon form that is easier to work with and may lead to simpler solutions for <span class="math inline">\(\mathbf{x}\)</span>.</p>
+<p>The full LU decomposition actually takes the following form:</p>
+<p><span class="math display">\[
+\begin{align*}
+\mathbf{P}\mathbf{A} &amp;= \mathbf{L}\mathbf{U} \\
+\mathbf{A} &amp;= \mathbf{P}^{T}\mathbf{L}\mathbf{U} \because \mathbf{P} \text{ is orthogonal, } \mathbf{P}^{-1}=\mathbf{P}^{T}
+\end{align*}
+\]</span></p>
+<p>All elements of a permutation matrix are either 0 or 1, and rows are swapped only once, each column has exactly one nonzero element (indeed, all permutation matrices are identity matrices with row swaps). Therefore, the dot product of any two columns is 0 while the dot product of a column with itself is 1, meaning <span class="math inline">\(\mathbf{P}^{T}\mathbf{P}=\mathbf{I}\)</span></p>
 </section>
 <section id="properties-1" class="level4" data-number="1.7.2.2">
 <h4 data-number="1.7.2.2" class="anchored" data-anchor-id="properties-1"><span class="header-section-number">1.7.2.2</span> Properties</h4>
 <p>Permutations are used in solving linear systems of equations using Gaussian elimination, which is a common method for finding solutions to <span class="math inline">\(\mathbf{Ax=b}\)</span>. Here are some formal properties of permutations:</p>
 <ul>
+<li>The LU decomposition with permutations is used in several applications, including computing the determinant and the matrix inverse.</li>
 <li>A permutation matrix <span class="math inline">\(\mathbf{P}\)</span> is a square matrix obtained by permuting the rows of the identity matrix <span class="math inline">\(\mathbf{I}\)</span>.</li>
 <li>The product of two permutation matrices is also a permutation matrix.</li>
 <li>The inverse of a permutation matrix is its transpose.</li>
@@ -1329,6 +1348,99 @@ x_1 + 2x_2 + 3x_3 &amp;= 7 \\
 \end{align*}
 \]</span></p>
 <p>We can now continue with Gaussian elimination on this new augmented matrix, which is in row echelon form.</p>
+</section>
+<section id="example-7" class="level4" data-number="1.7.2.3">
+<h4 data-number="1.7.2.3" class="anchored" data-anchor-id="example-7"><span class="header-section-number">1.7.2.3</span> Example</h4>
+<p>The Scipy package actually returns <span class="math inline">\(\mathbf{A = PLU}\)</span>, which we could also write as <span class="math inline">\(\mathbf{P^{T}A = LU}\)</span>.</p>
+<div class="cell" data-execution_count="5">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># matrix sizes</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">6</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.random.randn(m,n)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>P,L,U <span class="op">=</span> scipy.linalg.lu(A)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># show the matrices</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>fig,axs <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">5</span>,figsize<span class="op">=</span>(<span class="dv">13</span>,<span class="dv">4</span>))</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].imshow(A,vmin<span class="op">=-</span><span class="dv">1</span>,vmax<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_title(<span class="st">'A'</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].imshow(np.ones((m,n)),cmap<span class="op">=</span><span class="st">'gray'</span>,vmin<span class="op">=-</span><span class="dv">1</span>,vmax<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].text(n<span class="op">/</span><span class="dv">2</span>,m<span class="op">/</span><span class="dv">2</span>,<span class="st">'='</span>,ha<span class="op">=</span><span class="st">'center'</span>,fontsize<span class="op">=</span><span class="dv">30</span>,fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co"># axs[1].axis('off')</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>].imshow(P.T,vmin<span class="op">=-</span><span class="dv">1</span>,vmax<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>].set_title(<span class="vs">r'P'</span>)</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>].imshow(L,vmin<span class="op">=-</span><span class="dv">1</span>,vmax<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>].set_title(<span class="st">'L'</span>)</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>h <span class="op">=</span> axs[<span class="dv">4</span>].imshow(U,vmin<span class="op">=-</span><span class="dv">1</span>,vmax<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">4</span>].set_title(<span class="st">'U'</span>)</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> axs:</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  a.axis(<span class="st">'off'</span>)</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  a.set_xlim([<span class="op">-</span><span class="fl">.5</span>,n<span class="op">-</span><span class="fl">.5</span>])</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>  a.set_ylim([m<span class="op">-</span><span class="fl">.5</span>,<span class="op">-</span><span class="fl">.5</span>])</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>fig.colorbar(h,ax<span class="op">=</span>axs[<span class="op">-</span><span class="dv">1</span>],fraction<span class="op">=</span><span class="fl">.05</span>)</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">'Figure_10_01.png'</span>,dpi<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="04.lineqr_equations_files/figure-html/cell-6-output-1.svg" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution_count="6">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">7</span>],</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>, <span class="dv">8</span>],</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>, <span class="dv">10</span>]])</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>           </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># its LU decomposition via scipy (please ignore the first output for now)</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>_,L,U <span class="op">=</span> scipy.linalg.lu(A)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># print them out</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'A: '</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(A), <span class="bu">print</span>(<span class="st">' '</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'L: '</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(L), <span class="bu">print</span>(<span class="st">' '</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'U: '</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(U), <span class="bu">print</span>(<span class="st">' '</span>)</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'A - LU: '</span>)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(A <span class="op">-</span> L<span class="op">@</span>U) <span class="co"># should be zeros</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>A: 
+[[ 1  2  3  7]
+ [ 4  5  6  8]
+ [ 7  8  9 10]]
+ 
+L: 
+[[1.         0.         0.        ]
+ [0.14285714 1.         0.        ]
+ [0.57142857 0.5        1.        ]]
+ 
+U: 
+[[ 7.          8.          9.         10.        ]
+ [ 0.          0.85714286  1.71428571  5.57142857]
+ [ 0.          0.          0.         -0.5       ]]
+ 
+A - LU: 
+[[-6. -6. -6. -3.]
+ [ 3.  3.  3.  1.]
+ [ 3.  3.  3.  2.]]</code></pre>
+</div>
+</div>
 
 
 </section>

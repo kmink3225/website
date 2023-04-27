@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.335">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Kwangmin Kim">
+<meta name="dcterms.date" content="2023-03-31">
+<meta name="description" content="template">
+
+<title>Kwangmin Kim - Orthogonality</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../../">
+<script src="../../../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../../../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="../../../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../../.././images/logo.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../../../../index.html">
+    <span class="navbar-title">Kwangmin Kim</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../index.html">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/CV/index.html">
+ <span class="menu-text">CV</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/projects/index.html">
+ <span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/blog/index.html">
+ <span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../about.html">
+ <span class="menu-text">Me</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/kmink3225"><i class="bi bi-github" role="img" aria-label="Github">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/kwangmin-kim-a5241b200/"><i class="bi bi-linkedin" role="img" aria-label="Linkedin">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/blog/index.html"><i class="bi bi-rss" role="img">
+</i> 
+ <span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#orthogonality" id="toc-orthogonality" class="nav-link active" data-scroll-target="#orthogonality"><span class="toc-section-number">1</span>  Orthogonality</a>
+  <ul class="collapse">
+  <li><a href="#orthogonality-of-the-four-subspaces" id="toc-orthogonality-of-the-four-subspaces" class="nav-link" data-scroll-target="#orthogonality-of-the-four-subspaces"><span class="toc-section-number">1.1</span>  Orthogonality of the Four Subspaces</a>
+  <ul class="collapse">
+  <li><a href="#orthogonal-vectors" id="toc-orthogonal-vectors" class="nav-link" data-scroll-target="#orthogonal-vectors"><span class="toc-section-number">1.1.1</span>  Orthogonal Vectors</a></li>
+  <li><a href="#orthogonal-subspaces" id="toc-orthogonal-subspaces" class="nav-link" data-scroll-target="#orthogonal-subspaces"><span class="toc-section-number">1.1.2</span>  Orthogonal Subspaces</a></li>
+  <li><a href="#orthogonal-complements" id="toc-orthogonal-complements" class="nav-link" data-scroll-target="#orthogonal-complements"><span class="toc-section-number">1.1.3</span>  Orthogonal Complements</a></li>
+  <li><a href="#combining-bases-from-subspaces" id="toc-combining-bases-from-subspaces" class="nav-link" data-scroll-target="#combining-bases-from-subspaces"><span class="toc-section-number">1.1.4</span>  Combining bases from Subspaces</a></li>
+  <li><a href="#example-2" id="toc-example-2" class="nav-link" data-scroll-target="#example-2"><span class="toc-section-number">1.1.5</span>  Example</a></li>
+  <li><a href="#orthogonal-matrices" id="toc-orthogonal-matrices" class="nav-link" data-scroll-target="#orthogonal-matrices"><span class="toc-section-number">1.1.6</span>  Orthogonal Matrices</a></li>
+  <li><a href="#properties-1" id="toc-properties-1" class="nav-link" data-scroll-target="#properties-1"><span class="toc-section-number">1.1.7</span>  Properties</a></li>
+  <li><a href="#example-3" id="toc-example-3" class="nav-link" data-scroll-target="#example-3"><span class="toc-section-number">1.1.8</span>  Example</a></li>
+  </ul></li>
+  <li><a href="#gram-schmidt-gs-or-g-s" id="toc-gram-schmidt-gs-or-g-s" class="nav-link" data-scroll-target="#gram-schmidt-gs-or-g-s"><span class="toc-section-number">1.2</span>  Gram-Schmidt (GS or G-S)</a></li>
+  <li><a href="#qr-decomposition" id="toc-qr-decomposition" class="nav-link" data-scroll-target="#qr-decomposition"><span class="toc-section-number">1.3</span>  QR Decomposition</a>
+  <ul class="collapse">
+  <li><a href="#examples-2" id="toc-examples-2" class="nav-link" data-scroll-target="#examples-2"><span class="toc-section-number">1.3.1</span>  Examples</a></li>
+  </ul></li>
+  <li><a href="#projections" id="toc-projections" class="nav-link" data-scroll-target="#projections"><span class="toc-section-number">1.4</span>  Projections</a></li>
+  <li><a href="#least-squares-approximations" id="toc-least-squares-approximations" class="nav-link" data-scroll-target="#least-squares-approximations"><span class="toc-section-number">1.5</span>  Least Squares Approximations</a></li>
+  <li><a href="#orthogonal-bases-and-gram-schmidt" id="toc-orthogonal-bases-and-gram-schmidt" class="nav-link" data-scroll-target="#orthogonal-bases-and-gram-schmidt"><span class="toc-section-number">1.6</span>  Orthogonal Bases and Gram-Schmidt</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Orthogonality</h1>
+<p class="subtitle lead">Vectors and Linear Equations, Elimination, Rules for Matrix Operations, Inverse Matrices, Factorization, Transposes and Permutations</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Mathematics</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    <p>template</p>
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Kwangmin Kim </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 31, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.animation <span class="im">as</span> animation</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib_inline</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mpl_toolkits.mplot3d <span class="im">import</span> Axes3D</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sympy <span class="im">as</span> sym <span class="co"># for RREF</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy.linalg <span class="co"># for LU</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.gridspec <span class="im">as</span> gridspec <span class="co"># used to create non-regular subplots</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.linalg <span class="im">import</span> lstsq <span class="co"># for least square example</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">NOTE</span><span class="co">: these lines define global figure properties used for publication.</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython <span class="im">import</span> display</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>matplotlib_inline.backend_inline.set_matplotlib_formats(<span class="st">'svg'</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#display.set_matplotlib_formats('svg') # display figures in vector format</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>plt.rcParams.update({<span class="st">'font.size'</span>:<span class="dv">14</span>}) <span class="co"># set global font size     </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="orthogonality" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Orthogonality</h1>
+<ul>
+<li>Orthogonality of the Four Subspaces
+<ul>
+<li>Orthogonal Vectors</li>
+<li>Orthogonal Subspaces</li>
+<li>Orthogonal Components</li>
+<li>Orthogonal Matrices</li>
+</ul></li>
+<li>orthogonal vector decomposition,</li>
+<li>QR decomposition
+<ul>
+<li>‘Q’ stands for an orthogonal matrix, and</li>
+<li>‘R’ stands for an upper triangular matrix.</li>
+</ul></li>
+<li>LU decomposition,</li>
+<li>eigendecomposition, and</li>
+<li>singular value decomposition</li>
+</ul>
+<section id="orthogonality-of-the-four-subspaces" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="orthogonality-of-the-four-subspaces"><span class="header-section-number">1.1</span> Orthogonality of the Four Subspaces</h2>
+<p>The four subspaces: vectors, subspaces, orthogonal bases, and orthogonal matrices</p>
+<section id="orthogonal-vectors" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="orthogonal-vectors"><span class="header-section-number">1.1.1</span> Orthogonal Vectors</h3>
+<div id="def-orthogonalVec" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 1 </strong></span>Two vectors <span class="math inline">\(\mathbf{v}\)</span> and <span class="math inline">\(\mathbf{w}\)</span> in <span class="math inline">\(\mathbb{R}^n\)</span> are said to be orthogonal if their dot product is zero:</p>
+<p><span class="math display">\[
+\mathbf{v} \cdot \mathbf{w} = \sum_{i=1}^n v_i w_i = 0 \text{ and }||\mathbf{v}||^2+||\mathbf{w}||^2=||\mathbf{v}+\mathbf{w}||^2
+\]</span></p>
+</div>
+<p>Geometrically, two vectors are orthogonal if they are perpendicular to each other.</p>
+<p>Orthogonality is an important concept in linear algebra and has many applications, including in the construction of orthonormal bases and in least-squares regression.</p>
+<section id="examples" class="level4" data-number="1.1.1.1">
+<h4 data-number="1.1.1.1" class="anchored" data-anchor-id="examples"><span class="header-section-number">1.1.1.1</span> Examples</h4>
+<p>Here are some examples of orthogonal vectors:</p>
+<p><span class="math inline">\(\mathbf{v} = \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}\)</span> and <span class="math inline">\(\mathbf{w} = \begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix}\)</span> are orthogonal because <span class="math inline">\(\mathbf{v} \cdot \mathbf{w} = 1 \cdot 0 + 0 \cdot 1 + 0 \cdot 0 = 0\)</span>. These vectors are also perpendicular to each other in 3D space.</p>
+<p><span class="math inline">\(\mathbf{v} = \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix}\)</span> and <span class="math inline">\(\mathbf{w} = \begin{bmatrix} 1 \\ -2 \\ 1 \end{bmatrix}\)</span> are orthogonal because <span class="math inline">\(\mathbf{v} \cdot \mathbf{w} = 1 \cdot 1 + 1 \cdot (-2) + 1 \cdot 1 = 0\)</span>. These vectors are also perpendicular to each other in 3D space.</p>
+<p><span class="math inline">\(\mathbf{v} = \begin{bmatrix} 1 \\ 2 \end{bmatrix}\)</span> and <span class="math inline">\(\mathbf{w} = \begin{bmatrix} -2 \\ 1 \end{bmatrix}\)</span> are orthogonal because <span class="math inline">\(\mathbf{v} \cdot \mathbf{w} = 1 \cdot (-2) + 2 \cdot 1 = 0\)</span>. These vectors are also perpendicular to each other in 2D space.</p>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Example 1</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>v1 <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>])</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>w1 <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>])</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.dot(v1, w1))  <span class="co"># Output: 0</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Example 2</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>v2 <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>])</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>w2 <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="op">-</span><span class="dv">2</span>, <span class="dv">1</span>])</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.dot(v2, w2))  <span class="co"># Output: 0</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Example 3</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>v3 <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>])</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>w3 <span class="op">=</span> np.array([<span class="op">-</span><span class="dv">2</span>, <span class="dv">1</span>])</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.dot(v3, w3))  <span class="co"># Output: 0</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Example 1</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>v1 <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">0</span>])</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>w1 <span class="op">=</span> np.array([<span class="dv">0</span>, <span class="dv">1</span>])</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>plt.quiver(<span class="dv">0</span>, <span class="dv">0</span>, v1[<span class="dv">0</span>], v1[<span class="dv">1</span>], angles<span class="op">=</span><span class="st">'xy'</span>, scale_units<span class="op">=</span><span class="st">'xy'</span>, scale<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'b'</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>plt.quiver(<span class="dv">0</span>, <span class="dv">0</span>, w1[<span class="dv">0</span>], w1[<span class="dv">1</span>], angles<span class="op">=</span><span class="st">'xy'</span>, scale_units<span class="op">=</span><span class="st">'xy'</span>, scale<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'r'</span>)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>plt.xlim(<span class="op">-</span><span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="op">-</span><span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Example 1: Orthogonal Vectors"</span>)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>plt.legend([<span class="st">"v"</span>, <span class="st">"w"</span>])</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Example 2</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>v2 <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>])</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>w2 <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="op">-</span><span class="dv">2</span>, <span class="dv">1</span>])</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure()</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>, projection<span class="op">=</span><span class="st">'3d'</span>)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>ax.quiver(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, v2[<span class="dv">0</span>], v2[<span class="dv">1</span>], v2[<span class="dv">2</span>], colors<span class="op">=</span><span class="st">'b'</span>, arrow_length_ratio<span class="op">=</span><span class="fl">0.1</span>)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>ax.quiver(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, w2[<span class="dv">0</span>], w2[<span class="dv">1</span>], w2[<span class="dv">2</span>], colors<span class="op">=</span><span class="st">'r'</span>, arrow_length_ratio<span class="op">=</span><span class="fl">0.1</span>)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>ax.set_xlim([<span class="op">-</span><span class="dv">1</span>, <span class="dv">2</span>])</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>ax.set_ylim([<span class="op">-</span><span class="dv">1</span>, <span class="dv">2</span>])</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>ax.set_zlim([<span class="op">-</span><span class="dv">1</span>, <span class="dv">2</span>])</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">"Example 2: Orthogonal Vectors"</span>)</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>ax.legend([<span class="st">"v"</span>, <span class="st">"w"</span>])</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="co"># Example 3</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>v3 <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>])</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>w3 <span class="op">=</span> np.array([<span class="op">-</span><span class="dv">2</span>, <span class="dv">1</span>])</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>plt.quiver(<span class="dv">0</span>, <span class="dv">0</span>, v3[<span class="dv">0</span>], v3[<span class="dv">1</span>], angles<span class="op">=</span><span class="st">'xy'</span>, scale_units<span class="op">=</span><span class="st">'xy'</span>, scale<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'b'</span>)</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>plt.quiver(<span class="dv">0</span>, <span class="dv">0</span>, w3[<span class="dv">0</span>], w3[<span class="dv">1</span>], angles<span class="op">=</span><span class="st">'xy'</span>, scale_units<span class="op">=</span><span class="st">'xy'</span>, scale<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'r'</span>)</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>plt.xlim(<span class="op">-</span><span class="dv">3</span>, <span class="dv">3</span>)</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="op">-</span><span class="dv">3</span>, <span class="dv">3</span>)</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Example 3: Orthogonal Vectors"</span>)</span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>plt.legend([<span class="st">"v"</span>, <span class="st">"w"</span>])</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>0
+0
+0</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="06.orthogonality_files/figure-html/cell-3-output-2.svg" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="06.orthogonality_files/figure-html/cell-3-output-3.svg" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="06.orthogonality_files/figure-html/cell-3-output-4.svg" class="img-fluid"></p>
+</div>
+</div>
+</section>
+<section id="properties" class="level4" data-number="1.1.1.2">
+<h4 data-number="1.1.1.2" class="anchored" data-anchor-id="properties"><span class="header-section-number">1.1.1.2</span> Properties</h4>
+<ul>
+<li><p>Orthogonal vectors have a dot product of zero: <span class="math display">\[
+\mathbf{v} \cdot \mathbf{w} = 0
+\]</span></p></li>
+<li><p>The magnitude (length) of the projection of a vector onto an orthogonal vector is given by: <span class="math display">\[
+\text{proj}_{\mathbf{w}}(\mathbf{v}) = \frac{\mathbf{v} \cdot \mathbf{w}}{\|\mathbf{w}\|^2} \mathbf{w} = 0
+\]</span></p></li>
+<li><p>The Pythagorean theorem holds for orthogonal vectors: <span class="math display">\[
+\|\mathbf{v} + \mathbf{w}\|^2 = \|\mathbf{v}\|^2 + \|\mathbf{w}\|^2
+\]</span></p></li>
+<li><p>The angle between two orthogonal vectors is <span class="math inline">\(\frac{\pi}{2}\)</span> radians or <span class="math inline">\(90\)</span> degrees: <span class="math display">\[
+\theta = \frac{\pi}{2}
+\]</span></p></li>
+<li><p>Orthogonal vectors are linearly independent, which means that no vector in the span of one vector can be expressed as a linear combination of the other vector: <span class="math display">\[
+\text{span}\{\mathbf{v}\} \cap \text{span}\{\mathbf{w}\} = \{\mathbf{0}\}
+\]</span></p></li>
+<li><p>The row space is perpendicular to the nullspace</p></li>
+<li><p>The column space is perpendicular to the nullspace of <span class="math inline">\(\mathbf{A}^T\)</span>.</p>
+<ul>
+<li>This peroperty plays a key role in solving the equation <span class="math inline">\(\mathbf{Ax=b}\)</span> but <span class="math inline">\(\mathbf{b}\)</span> is outside the column space (meaning we can’t solve the equation directly). In this case, we use the nullspace of <span class="math inline">\(\mathbf{A}^T\)</span> to find the “least-squares” solution, which gives us the smallest possible error <span class="math inline">\(\mathbf{e = b - Ax}\)</span> in our solution.</li>
+</ul></li>
+</ul>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When <span class="math inline">\(\mathbf{b}\)</span> is outside the column space of <span class="math inline">\(\mathbf{A}\)</span>, there is no exact solution to the equation <span class="math inline">\(\mathbf{Ax = b}\)</span>. Instead, we seek a solution that minimizes the error <span class="math inline">\(\mathbf{e = b - Ax}\)</span>. The least-squares solution achieves this by finding the projection of <span class="math inline">\(\mathbf{b}\)</span> onto the column space of <span class="math inline">\(\mathbf{A}\)</span>. It turns out that the projection of <span class="math inline">\(\mathbf{b}\)</span> onto the column space of <span class="math inline">\(\mathbf{A}\)</span> is exactly equal to the solution of the equation <span class="math inline">\(\mathbf{A}^T\mathbf{Ax} = \mathbf{A}^T\mathbf{b}\)</span>, which can be solved using the nullspace of <span class="math inline">\(\mathbf{A}^T\)</span>.</p>
+<p>In summary, the statement “the column space is perpendicular to the nullspace of <span class="math inline">\(\mathbf{A}^T\)</span>” tells us that the column space and nullspace are orthogonal (i.e., perpendicular) subspaces, and this fact allows us to use the nullspace of <span class="math inline">\(\mathbf{A}^T\)</span> to find the least-squares solution to <span class="math inline">\(\mathbf{Ax = b}\)</span>.</p>
+<section id="example" class="level5" data-number="1.1.1.2.1">
+<h5 data-number="1.1.1.2.1" class="anchored" data-anchor-id="example"><span class="header-section-number">1.1.1.2.1</span> Example</h5>
+<p>Suppose we have a system of equations <span class="math inline">\(\mathbf{Ax} = \mathbf{b}\)</span> where <span class="math inline">\(\mathbf{A}\)</span> is an <span class="math inline">\(m \times n\)</span> matrix and <span class="math inline">\(\mathbf{b}\)</span> is an <span class="math inline">\(m \times 1\)</span> vector, and we want to find the least squares solution to this system (i.e., the solution that minimizes the residual <span class="math inline">\(|\mathbf{Ax} - \mathbf{b}|\)</span>). If <span class="math inline">\(\mathbf{A}\)</span> has linearly independent columns, then we can solve for <span class="math inline">\(\mathbf{x}\)</span> using the formula <span class="math inline">\(\mathbf{x} = (\mathbf{A}^T\mathbf{A})^{-1}\mathbf{A}^T\mathbf{b}\)</span>. However, if <span class="math inline">\(\mathbf{A}\)</span> does not have linearly independent columns, then we can use the fact that the column space of <span class="math inline">\(\mathbf{A}\)</span> is perpendicular to the nullspace of <span class="math inline">\(\mathbf{A}^T\)</span> to find the least squares solution.</p>
+<p>To do this, we first find a basis for the column space of <span class="math inline">\(\mathbf{A}\)</span> and a basis for the nullspace of <span class="math inline">\(\mathbf{A}^T\)</span>. Let <span class="math inline">\(\mathbf{P}\)</span> be the projection matrix onto the column space of <span class="math inline">\(\mathbf{A}\)</span>, given by <span class="math inline">\(\mathbf{P} = \mathbf{A}(\mathbf{A}^T\mathbf{A})^{-1}\mathbf{A}^T\)</span>. Then the least squares solution to <span class="math inline">\(\mathbf{Ax} = \mathbf{b}\)</span> is given by <span class="math inline">\(\mathbf{x} = \mathbf{P}\mathbf{b}\)</span>, and the residual <span class="math inline">\(\mathbf{e} = \mathbf{b} - \mathbf{Ax}\)</span> is in the nullspace of <span class="math inline">\(\mathbf{A}^T\)</span>.</p>
+<div class="cell" data-execution_count="3">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the matrix A and the vector b</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>],</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>],</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>],</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>              [<span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span>]])</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>])</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the least-squares solution using lstsq from SciPy</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>x, res, rank, s <span class="op">=</span> lstsq(A, b)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the error e = b - Ax</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>e <span class="op">=</span> b <span class="op">-</span> A <span class="op">@</span> x <span class="co"># matrix multiplication</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the projection of b onto the column space of A</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>Projected_b <span class="op">=</span> A <span class="op">@</span> x</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the projection of b onto the orthogonal complement of the column space of A</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>Projected_b_perp <span class="op">=</span> b <span class="op">-</span> Projected_b</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the projection of e onto the nullspace of A^T</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>Projected_e <span class="op">=</span> np.linalg.pinv(A.T).T <span class="op">@</span> e</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">'''</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co">The expected value of Projected_e = np.linalg.pinv(A.T) @ e is the projection of the true value x onto the column space of A. This is because the least squares solution x_hat is the orthogonal projection of the vector b onto the column space of A, which is given by x_hat = A @ np.linalg.lstsq(A, b)[0].</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co">Since e = b - Ax_hat is the error in the least squares solution, np.linalg.pinv(A.T) @ e computes the projection of this error vector onto the nullspace of A^T. Therefore, the expected value of Projected_e is zero, since the error e is orthogonal to the column space of A and its projection onto the nullspace of A^T is also orthogonal to the column space of A.</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="co">In other words, Projected_e is the component of the error e that lies in the nullspace of A^T, and since the nullspace of A^T is orthogonal to the column space of A, the expected value of Projected_e is zero.</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="co">'''</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the projection of e onto the orthogonal complement of the nullspace of A^T</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>Projected_e_perp <span class="op">=</span> e <span class="op">-</span> A <span class="op">@</span> Projected_e</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Verify that the column space is perpendicular to the nullspace of A^T</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.allclose(A <span class="op">@</span> Projected_e, np.zeros((A.shape[<span class="dv">0</span>],)))</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="co">#assert np.allclose(Projected_e_perp @ x, np.zeros((x.shape[0],)))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>In this example, we define the matrix <code>A</code> and the vector <code>b</code>, and use the lstsq function from SciPy to compute the least-squares solution <code>x</code>. We then compute the error <code>e = b - Ax</code>, and project <code>b</code> onto the column space of <code>A</code> to obtain <code>Pb</code>, and onto the orthogonal complement of the column space of <code>A</code> to obtain <code>Pb_perp</code>. We also project <code>e</code> onto the nullspace of <code>A^T</code> to obtain <code>Pe</code>, and onto the orthogonal complement of the nullspace of <code>A^T</code> to obtain <code>Pe_perp</code>. Finally, we verify that the column space of <code>A</code> is perpendicular to the nullspace of <code>A^T</code> by checking that <code>A^T</code> <code>Pe = 0</code> and <code>Pe_perp x = 0</code>.</p>
+<div class="cell" data-execution_count="4">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define the matrix A and vector b</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">1</span>], [<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>], [<span class="dv">2</span>, <span class="dv">1</span>], [<span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>]])</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> np.array([<span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">5</span>, <span class="dv">3</span>])</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate the least-squares solution</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linalg.lstsq(A, b, rcond<span class="op">=</span><span class="va">None</span>)[<span class="dv">0</span>]</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># create a figure with a 3D axes object</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure()</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>, projection<span class="op">=</span><span class="st">'3d'</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the points in the column space of A</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>x1 <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">10</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>x2 <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">10</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>X1, X2 <span class="op">=</span> np.meshgrid(x1, x2)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> x[<span class="dv">0</span>]<span class="op">*</span>X1 <span class="op">+</span> x[<span class="dv">1</span>]<span class="op">*</span>X2</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>ax.plot_surface(X1, X2, Y, alpha<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the points in the nullspace of A^T</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>x1 <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">10</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>x3 <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">10</span>)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>X1, X3 <span class="op">=</span> np.meshgrid(x1, x3)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>Y <span class="op">=</span> np.zeros_like(X1)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> x[<span class="dv">0</span>]<span class="op">*</span>X1 <span class="op">+</span> x[<span class="dv">1</span>]<span class="op">*</span>Y <span class="op">+</span> x[<span class="dv">2</span>]<span class="op">*</span>X3</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>ax.plot_surface(X1, Y, X3, color<span class="op">=</span><span class="st">'red'</span>, alpha<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the data points and the least-squares solution</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>ax.scatter(A[:,<span class="dv">0</span>], A[:,<span class="dv">1</span>], b, color<span class="op">=</span><span class="st">'blue'</span>, marker<span class="op">=</span><span class="st">'o'</span>, s<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>ax.scatter(x[<span class="dv">0</span>], x[<span class="dv">1</span>], x[<span class="dv">2</span>], color<span class="op">=</span><span class="st">'green'</span>, marker<span class="op">=</span><span class="st">'*'</span>, s<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co"># set the axis labels and limits</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'x1'</span>)</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'x2'</span>)</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>ax.set_zlabel(<span class="st">'b'</span>)</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>ax.set_xlim(<span class="op">-</span><span class="dv">1</span>, <span class="dv">3</span>)</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>ax.set_ylim(<span class="op">-</span><span class="dv">1</span>, <span class="dv">3</span>)</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>ax.set_zlim(<span class="dv">0</span>, <span class="dv">6</span>)</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="co"># show the plot</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+</div>
+</div>
+</section>
+</section>
+<section id="orthogonal-subspaces" class="level3" data-number="1.1.2">
+<h3 data-number="1.1.2" class="anchored" data-anchor-id="orthogonal-subspaces"><span class="header-section-number">1.1.2</span> Orthogonal Subspaces</h3>
+<div id="def-orthogonalSubspaces" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 2 </strong></span>Two subspaces <span class="math inline">\(U\)</span> and <span class="math inline">\(V\)</span> of a vector space <span class="math inline">\(W\)</span> are said to be orthogonal subspaces if every vector in <span class="math inline">\(U\)</span> is orthogonal to every vector in <span class="math inline">\(V\)</span>. Symbolically, we write <span class="math inline">\(U \perp V\)</span> if and only if <span class="math inline">\(\mathbf{u} \cdot \mathbf{v} = 0\)</span> for all <span class="math inline">\(\mathbf{u} \in U\)</span> and <span class="math inline">\(\mathbf{v} \in V\)</span>.</p>
+<p><span class="math display">\[
+\mathbf u^T \mathbf v = 0
+\]</span></p>
+</div>
+<p>Every vector <span class="math inline">\(\mathbf{x}\)</span> in the nullspace is perpendicular to every row of <span class="math inline">\(\mathbf{A}\)</span>, because <span class="math inline">\(\mathbf{Ax=0}\)</span> The <span class="math inline">\(\operatorname{null}(\mathbf{A})\)</span> and the row space <span class="math inline">\(\operatorname{Col}(\mathbf{A}^T)\)</span> are orthogonal subspaces of <span class="math inline">\(\mathbb{R}^n\)</span></p>
+<p>Every vector <span class="math inline">\(\mathbf{y}\)</span> in the nullspace of <span class="math inline">\(\mathbf{A}^T\)</span> is perpendicular to every column of <span class="math inline">\(\mathbf{A}\)</span>. The left <span class="math inline">\(\operatorname{null}(\mathbf{A}^T)\)</span> and the column space <span class="math inline">\(\operatorname{Col}(\mathbf{A})\)</span> are orthogonal subspaces in <span class="math inline">\(\mathbb{R}^n\)</span></p>
+<section id="examples-1" class="level4" data-number="1.1.2.1">
+<h4 data-number="1.1.2.1" class="anchored" data-anchor-id="examples-1"><span class="header-section-number">1.1.2.1</span> Examples</h4>
+<p>Let <span class="math inline">\(\mathbf{v} = \begin{bmatrix} 1 \\ 0 \\ 1 \end{bmatrix}\)</span> and <span class="math inline">\(\mathbf{w} = \begin{bmatrix} 0 \\ 1 \\ -1 \end{bmatrix}\)</span> be two vectors in <span class="math inline">\(\mathbb{R}^3\)</span>. Then the subspaces <span class="math inline">\(U = \text{span}{\mathbf{v}}\)</span> and <span class="math inline">\(V = \text{span}{\mathbf{w}}\)</span> are orthogonal subspaces, since <span class="math inline">\(\mathbf{v} \cdot \mathbf{w} = 0\)</span>.</p>
+<p><span class="math display">\[
+U = \text{span}\{\mathbf{v}\} = \text{span}\left\{\begin{bmatrix} 1 \\ 0 \\ 1 \end{bmatrix}\right\}, \quad
+V = \text{span}\{\mathbf{w}\} = \text{span}\left\{\begin{bmatrix} 0 \\ 1 \\ -1 \end{bmatrix}\right\}
+\]</span></p>
+<p>Let <span class="math inline">\(U\)</span> be the subspace of <span class="math inline">\(\mathbb{R}^3\)</span> spanned by the vectors <span class="math inline">\(\begin{bmatrix} 1 \\ 2 \\ 0 \end{bmatrix}\)</span> and <span class="math inline">\(\begin{bmatrix} 1 \\ 0 \\ -1 \end{bmatrix}\)</span>, and let <span class="math inline">\(V\)</span> be the subspace spanned by the vector <span class="math inline">\(\begin{bmatrix} 2 \\ -1 \\ 1 \end{bmatrix}\)</span>. Then <span class="math inline">\(U\)</span> and <span class="math inline">\(V\)</span> are orthogonal subspaces, since every vector in <span class="math inline">\(U\)</span> is orthogonal to every vector in <span class="math inline">\(V\)</span>.</p>
+<p><span class="math display">\[
+U = \text{span}\left\{\begin{bmatrix} 1 \\ 2 \\ 0 \end{bmatrix}, \begin{bmatrix} 1 \\ 0 \\ -1 \end{bmatrix}\right\}, \quad
+V = \text{span}\left\{\begin{bmatrix} 2 \\ -1 \\ 1 \end{bmatrix}\right\}
+\]</span></p>
+<p>Let <span class="math inline">\(U\)</span> and <span class="math inline">\(V\)</span> be the subspaces of <span class="math inline">\(\mathbb{R}^2\)</span> spanned by the vectors <span class="math inline">\(\begin{bmatrix} 1 \ 1 \end{bmatrix}\)</span> and <span class="math inline">\(\begin{bmatrix} 1 \ -1 \end{bmatrix}\)</span>, respectively. Then <span class="math inline">\(U\)</span> and <span class="math inline">\(V\)</span> are not orthogonal subspaces, since <span class="math inline">\(\begin{bmatrix} 1 \ 1 \end{bmatrix} \cdot \begin{bmatrix} 1 \ -1 \end{bmatrix} \neq 0\)</span>.</p>
+<p><span class="math display">\[
+U = \text{span}\left\{\begin{bmatrix} 1 \\ 1 \end{bmatrix}\right\}, \quad
+V = \text{span}\left\{\begin{bmatrix} 1 \\ -1 \end{bmatrix}\right\}
+\]</span></p>
+<div class="cell" data-execution_count="5">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>v <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">1</span>])</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># plot vectors</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>plt.figure()</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, v[<span class="dv">0</span>]], [<span class="dv">0</span>, v[<span class="dv">1</span>]], <span class="st">'b'</span>, label<span class="op">=</span><span class="vs">r'$\mathbf</span><span class="sc">{v}</span><span class="vs">$'</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, w[<span class="dv">0</span>]], [<span class="dv">0</span>, w[<span class="dv">1</span>]], <span class="st">'r'</span>, label<span class="op">=</span><span class="vs">r'$\mathbf</span><span class="sc">{w}</span><span class="vs">$'</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># plot subspaces</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>plt.axline((<span class="dv">0</span>, <span class="dv">0</span>), slope<span class="op">=</span>v[<span class="dv">1</span>]<span class="op">/</span>v[<span class="dv">0</span>], color<span class="op">=</span><span class="st">'b'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, label<span class="op">=</span><span class="vs">r'$U$'</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>plt.axline((<span class="dv">0</span>, <span class="dv">0</span>), slope<span class="op">=</span>w[<span class="dv">1</span>]<span class="op">/</span>w[<span class="dv">0</span>], color<span class="op">=</span><span class="st">'r'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, label<span class="op">=</span><span class="vs">r'$V$'</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>plt.xlim(<span class="op">-</span><span class="fl">1.5</span>, <span class="fl">1.5</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="op">-</span><span class="fl">1.5</span>, <span class="fl">1.5</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>plt.gca().set_aspect(<span class="st">'equal'</span>, adjustable<span class="op">=</span><span class="st">'box'</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="06.orthogonality_files/figure-html/cell-6-output-1.svg" class="img-fluid"></p>
+</div>
+</div>
+<p>The vectors <span class="math inline">\(\mathbf{v}\)</span> and <span class="math inline">\(\mathbf{w}\)</span> are in blue and red, respectively, and the subspaces <span class="math inline">\(U\)</span> and <span class="math inline">\(V\)</span> as dashed lines with corresponding colors. Since <span class="math inline">\(\mathbf{v} \cdot \mathbf{w} = 0\)</span>, the subspaces are orthogonal.</p>
+</section>
+</section>
+<section id="orthogonal-complements" class="level3" data-number="1.1.3">
+<h3 data-number="1.1.3" class="anchored" data-anchor-id="orthogonal-complements"><span class="header-section-number">1.1.3</span> Orthogonal Complements</h3>
+<p>Given a subspace <span class="math inline">\(V\)</span> of a vector space <span class="math inline">\(W\)</span>, we can decompose any vector <span class="math inline">\(\mathbf{w} \in W\)</span> into two orthogonal components, one in <span class="math inline">\(V\)</span> and one in the orthogonal complement of <span class="math inline">\(V\)</span>.</p>
+<div id="def-orthogonalComplements" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 3 </strong></span>Let <span class="math inline">\(V\)</span> be a subspace of a vector space <span class="math inline">\(W\)</span>. The orthogonal complement of <span class="math inline">\(V\)</span>, denoted by <span class="math inline">\(V^\perp\)</span>, is the set of all vectors in <span class="math inline">\(W\)</span> that are orthogonal to every vector in <span class="math inline">\(V\)</span>. That is, the orthogonal complement of <span class="math inline">\(V\)</span> is the set of vectors <span class="math inline">\(\mathbf w \in W\)</span> such that the inner product between <span class="math inline">\(\mathbf w\)</span> and any vector <span class="math inline">\(\mathbf v \in V\)</span> is equal to zero: <span class="math display">\[
+V^\perp = \{ \mathbf w \in W | \langle \mathbf w,\mathbf v \rangle = 0, \forall \mathbf v \in V \}.
+\]</span></p>
+<p>where <span class="math inline">\(V^\perp\)</span> represents the orthogonal complement of the subspace <span class="math inline">\(V\)</span>, <span class="math inline">\(w\)</span> and <span class="math inline">\(v\)</span> are vectors in the subspaces <span class="math inline">\(W\)</span> and <span class="math inline">\(V\)</span> respectively, and <span class="math inline">\(\langle\)</span> and <span class="math inline">\(\rangle\)</span> denote the inner product between two vectors.</p>
+</div>
+<p>We can then decompose any vector <span class="math inline">\(\mathbf{w} \in W\)</span> into two orthogonal components as follows: <span class="math display">\[
+\mathbf w = \mathbf w_{V} +\mathbf w_{V^{\perp}}  
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{w}_{V}\)</span> is the orthogonal projection of <span class="math inline">\(\mathbf{w}\)</span> onto <span class="math inline">\(V\)</span>, and <span class="math inline">\(\mathbf{w}_{V^\perp}\)</span> is the orthogonal projection of <span class="math inline">\(\mathbf{w}\)</span> onto <span class="math inline">\(V^\perp\)</span>.</p>
+<p>If <span class="math inline">\(\mathbf v\)</span> is orthogonal to the nullspace, it must be in the row space.</p>
+<section id="example-1" class="level4" data-number="1.1.3.1">
+<h4 data-number="1.1.3.1" class="anchored" data-anchor-id="example-1"><span class="header-section-number">1.1.3.1</span> Example</h4>
+<p>Let <span class="math inline">\(W = \mathbb{R}^3\)</span> and <span class="math inline">\(V\)</span> be the subspace spanned by the vectors <span class="math inline">\(\mathbf{v}_1 = (1,0,0)\)</span> and <span class="math inline">\(\mathbf{v}_2 = (0,1,1)\)</span>. Then, we can find a basis for <span class="math inline">\(V^\perp\)</span> by solving the system of equations</p>
+<p><span class="math display">\[
+\begin{bmatrix} 1 &amp; 0 &amp; 0 \\ 0 &amp; 1 &amp; 1  \end{bmatrix} \begin{bmatrix} x \\ y \\ z \end{bmatrix} = \begin{bmatrix} 0 \\ 0 \end{bmatrix}
+\]</span></p>
+<p>This gives us the solution <span class="math inline">\(x = 0\)</span>, <span class="math inline">\(y = 0\)</span>, <span class="math inline">\(z = 0\)</span>, so <span class="math inline">\(V^\perp\)</span> is the subspace spanned by the vector <span class="math inline">\(\mathbf{w} = (0,0,1)\)</span>. we have a <span class="math inline">\(2\times 3\)</span> matrix multiplying a <span class="math inline">\(3\times 1\)</span> vector, resulting in a <span class="math inline">\(2\times 1\)</span> vector. This means that the equation is restricting the first two coordinates of the vector to be zero.</p>
+<p>Therefore, we can consider the subspace <span class="math inline">\(V\)</span> to be the <span class="math inline">\(xy\)</span>-plane in <span class="math inline">\(\mathbb{R}^3\)</span>, i.e., <span class="math inline">\(V = {(x,y,z) \in \mathbb{R}^3 : z = 0}\)</span>. Then, the orthogonal complement <span class="math inline">\(V^\perp\)</span> is the set of all vectors that are orthogonal to every vector in <span class="math inline">\(V\)</span>. In this case, we can see that <span class="math inline">\(\begin{bmatrix} 0 \\ 0 \\ 1 \end{bmatrix}\)</span> is perpendicular to every vector in <span class="math inline">\(V\)</span>, since its third coordinate is always <span class="math inline">\(1\)</span> while the third coordinate of any vector in <span class="math inline">\(V\)</span> is always <span class="math inline">\(0\)</span>. Therefore, <span class="math inline">\(V^\perp\)</span> is the subspace spanned by <span class="math inline">\(\begin{bmatrix} 0 \\ 0 \\ 1 \end{bmatrix}\)</span>, which is the <span class="math inline">\(z\)</span>-axis in <span class="math inline">\(\mathbb{R}^3\)</span>.</p>
+<p>Now, given any vector <span class="math inline">\(\mathbf{w} \in \mathbb{R}^3\)</span>, we can decompose it into two orthogonal components as</p>
+<p><span class="math display">\[
+\mathbf w = \mathbf w_{V} +\mathbf w_{V^{\perp}}  
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{w}V\)</span> is the projection of <span class="math inline">\(\mathbf{w}\)</span> onto <span class="math inline">\(V\)</span>, and <span class="math inline">\(\mathbf{w}{V^\perp}\)</span> is the projection of <span class="math inline">\(\mathbf{w}\)</span> onto <span class="math inline">\(V^\perp\)</span>. For example, if <span class="math inline">\(\mathbf{w} = (1,2,3)\)</span>, We can compute the projections <span class="math inline">\(\mathbf{w}V\)</span> and <span class="math inline">\(\mathbf{w}{V^\perp}\)</span> as follows:</p>
+<p>The projection of <span class="math inline">\(\mathbf{w}\)</span> onto <span class="math inline">\(V\)</span> is given by</p>
+<p><span class="math display">\[
+\mathbf{w}_V = \operatorname{proj}_{V}(\mathbf{w}) = \frac{\langle \mathbf{w},\mathbf{v}_1\rangle}{\|\mathbf{v}_1\|^2} \mathbf{v}_1 + \frac{\langle \mathbf{w},\mathbf{v}_2\rangle}{\|\mathbf{v}_2\|^2} \mathbf{v}_2 = \frac{1}{1^2+0^2+0^2} \begin{bmatrix} 1 \\ 0 \\ 0\end{bmatrix} =\begin{bmatrix} 1 \\ 0 \\ 0\end{bmatrix}
+\]</span></p>
+<p>The projection of <span class="math inline">\(\mathbf{w}\)</span> onto <span class="math inline">\(V^\perp\)</span> is given by</p>
+<p><span class="math display">\[
+\mathbf w = \mathbf w_{V} -\mathbf w_{V^{\perp}}  = \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix} - \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix} = \begin{bmatrix} 0 \\ 2 \\ 3 \end{bmatrix}
+\]</span></p>
+<p>Therefore, we have decomposed <span class="math inline">\(\mathbf{w}\)</span> into two orthogonal components as <span class="math inline">\(\mathbf{w} = \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix} + \begin{bmatrix} 0 \\ 2 \\ 3 \end{bmatrix}\)</span>.</p>
+<p>The Fundamental Theorem of Linear Algebra states that for a given matrix <span class="math inline">\(\mathbf A\)</span>, the column space of <span class="math inline">\(\mathbf A\)</span> and the null space of <span class="math inline">\(\mathbf A\)</span> are orthogonal complements of each other. In other words, every vector in the null space of <span class="math inline">\(\mathbf A\)</span> is orthogonal to every vector in the column space of <span class="math inline">\(\mathbf A\)</span>, and vice versa. This means that any vector in the domain of <span class="math inline">\(\mathbf A\)</span> can be uniquely decomposed as the sum of a vector in the column space and a vector in the null space.</p>
+<div id="thm-fundamentralThm" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 1 </strong></span>Let <span class="math inline">\(\mathbf A\)</span> be an <span class="math inline">\(m\times n\)</span> matrix over <span class="math inline">\(\mathbb{R}\)</span>. Then,</p>
+<ul>
+<li>The column space of <span class="math inline">\(\mathbf A\)</span>, denoted <span class="math inline">\(C(\mathbf A)\)</span>, is a subspace of <span class="math inline">\(\mathbb{R}^m\)</span>.</li>
+<li>The null space of <span class="math inline">\(\mathbf A\)</span>, denoted <span class="math inline">\(N(\mathbf A)\)</span>, is a subspace of <span class="math inline">\(\mathbb{R}^n\)</span>.</li>
+<li>The orthogonal complement of <span class="math inline">\(C(\mathbf A)\)</span>, denoted <span class="math inline">\(C(\mathbf A)^\perp\)</span>, is equal to <span class="math inline">\(N(\mathbf A)\)</span>.</li>
+<li>The orthogonal complement of <span class="math inline">\(N(\mathbf A)\)</span>, denoted <span class="math inline">\(N(\mathbf A)^\perp\)</span>, is equal to <span class="math inline">\(C(\mathbf A)\)</span>.</li>
+</ul>
+<p>In other words, we have the following orthogonal decomposition of <span class="math inline">\(\mathbb{R}^n\)</span>: <span class="math display">\[
+\mathbb R^n = N(\mathbf A) \oplus C(\mathbf A)^\perp
+\]</span></p>
+<p>and the following orthogonal decomposition of <span class="math inline">\(\mathbb{R}^m\)</span>:</p>
+<p><span class="math display">\[
+\mathbb R^m = C(\mathbf A) \oplus N(\mathbf A)^\perp
+\]</span></p>
+<p>where <span class="math inline">\(\oplus\)</span> denotes the direct sum of subspaces.</p>
+</div>
+</section>
+<section id="exmaple" class="level4" data-number="1.1.3.2">
+<h4 data-number="1.1.3.2" class="anchored" data-anchor-id="exmaple"><span class="header-section-number">1.1.3.2</span> Exmaple</h4>
+<p><strong>Example1</strong> Let <span class="math inline">\(\mathbf A\)</span> be an <span class="math inline">\(m \times n\)</span> matrix with rank <span class="math inline">\(r\)</span>. Then, <span class="math inline">\(\mathbb{R}^n\)</span> can be decomposed as <span class="math inline">\(\mathbb{R}^n = N(\mathbf A) \oplus N(\mathbf A)^{\perp}\)</span>, where <span class="math inline">\(N(\mathbf A)\)</span> is the null space of <span class="math inline">\(\mathbf A\)</span>, <span class="math inline">\(N(\mathbf A)^{\perp}\)</span> is its orthogonal complement, and <span class="math inline">\(\oplus\)</span> denotes the direct sum. This means that any vector <span class="math inline">\(\mathbf{v} \in \mathbb{R}^n\)</span> can be written uniquely as <span class="math inline">\(\mathbf{v} = \mathbf{v}_1 + \mathbf{v}_2\)</span>, where <span class="math inline">\(\mathbf{v}_1 \in N(\mathbf A)\)</span> and <span class="math inline">\(\mathbf{v}_2 \in N(\mathbf A)^{\perp}\)</span>.</p>
+<p><strong>Example2</strong> Let <span class="math inline">\(\mathbf A\)</span> be an <span class="math inline">\(m \times n\)</span> matrix with rank <span class="math inline">\(r\)</span>. Then, the column space of <span class="math inline">\(\mathbf A\)</span>, denoted <span class="math inline">\(C(\mathbf A)\)</span>, is equal to the orthogonal complement of the null space of <span class="math inline">\(\mathbf A^T\)</span>, i.e., <span class="math inline">\(C(\mathbf A) = N(\mathbf A^T)^{\perp}\)</span>.</p>
+<p><strong>Example3</strong> Let <span class="math inline">\(\mathbf A\)</span> be an <span class="math inline">\(m \times n\)</span> matrix with rank <span class="math inline">\(r\)</span>, and let <span class="math inline">\(\mathbf{b} \in \mathbb{R}^m\)</span> be a vector. Then, the system of linear equations <span class="math inline">\(A\mathbf{x} = \mathbf{b}\)</span> has a solution if and only if <span class="math inline">\(\mathbf{b} \in C(\mathbf A)\)</span>. Moreover, if <span class="math inline">\(\mathbf{x}_0\)</span> is a particular solution to <span class="math inline">\(\mathbf A\mathbf{x} = \mathbf{b}\)</span>, then the set of all solutions is given by <span class="math inline">\({\mathbf{x}_0 + \mathbf{v} : \mathbf{v} \in N(\mathbf A)}\)</span>, i.e., it is the affine space consisting of <span class="math inline">\(\mathbf{x}_0\)</span> plus the null space of <span class="math inline">\(\mathbf A\)</span>.</p>
+<p><strong>Example4</strong> Every diagonal matrix <span class="math inline">\(\mathbf D\)</span> has a diagonal submatrix consisting of its first <span class="math inline">\(r\)</span> diagonal entries that is <span class="math inline">\(r \times r\)</span> and invertible for any <span class="math inline">\(r\)</span> between <span class="math inline">\(1\)</span> and the size of <span class="math inline">\(\mathbf D\)</span>. For example, consider the diagonal matrix <span class="math inline">\(\mathbf D = \begin{bmatrix} 2 &amp; 0 &amp; 0 \\ 0 &amp; 3 &amp; 0 \\ 0 &amp; 0 &amp; 4 \end{bmatrix}\)</span>. The <span class="math inline">\(2 \times 2\)</span> diagonal submatrix consisting of the first two diagonal entries, <span class="math inline">\(\mathbf D' = \begin{bmatrix} 2 &amp; 0 \\ 0 &amp; 3 \end{bmatrix}\)</span>, is invertible since its diagonal entries are nonzero. Similarly, the <span class="math inline">\(3 \times 3\)</span> diagonal submatrix consisting of all the diagonal entries, <span class="math inline">\(\mathbf D'' = \begin{bmatrix} 2 &amp; 0 &amp; 0 \\ 0 &amp; 3 &amp; 0 \\ 0 &amp; 0 &amp; 4 \end{bmatrix}\)</span>, is also invertible since all of its diagonal entries are nonzero. This example illustrates the fact that every diagonal matrix has an invertible diagonal submatrix of any size between <span class="math inline">\(1\)</span> and the size of the matrix.</p>
+<p><strong>Example5</strong> Consider the matrix <span class="math inline">\(A=\begin{bmatrix}1 &amp; 2 &amp; 3 \\ 4 &amp; 5 &amp; 6 \end{bmatrix}\)</span>. We want to find the right bases for <span class="math inline">\(\mathbb{R}^2\)</span> and <span class="math inline">\(\mathbb{R}^3\)</span> such that <span class="math inline">\(A\)</span> becomes a diagonal matrix.</p>
+<p>We begin by computing <span class="math inline">\(A^TA\)</span>:</p>
+<p><span class="math display">\[
+A^T A = \begin{bmatrix} 1 &amp; 4 \\ 2 &amp; 5 \\ 3 &amp; 6 \end{bmatrix}\begin{bmatrix} 1 &amp; 2 &amp; 3 \\ 4 &amp; 5 &amp; 6 \end{bmatrix}  = \begin{bmatrix} 17 &amp; 22 &amp; 27 \\ 22 &amp; 29 &amp; 36 \\ 27 &amp; 36 &amp; 45\end{bmatrix}
+\]</span></p>
+<p>The eigenvalues of <span class="math inline">\(A^TA\)</span> are <span class="math inline">\(\lambda_1 = 0\)</span>, <span class="math inline">\(\lambda_2 = 1\)</span>, and <span class="math inline">\(\lambda_3 = 90\)</span>. We can find the corresponding eigenvectors as follows:</p>
+<ul>
+<li>For <span class="math inline">\(\lambda_1 = 0\)</span>, we solve <span class="math inline">\((A^TA - \lambda_1 I)v = 0\)</span>, which gives us the equation <span class="math inline">\(17x + 22y + 27z = 0\)</span>. One possible eigenvector is <span class="math inline">\(\begin{bmatrix} -2 \\ 1 \\ 0 \end{bmatrix}\)</span>.</li>
+<li>For <span class="math inline">\(\lambda_2 = 1\)</span>, we solve <span class="math inline">\((A^TA - \lambda_2 I)v = 0\)</span>, which gives us the equation <span class="math inline">\(16x + 20y + 24z = 0\)</span>. One possible eigenvector is <span class="math inline">\(\begin{bmatrix} 3 \\ -2 \\ 0 \end{bmatrix}\)</span>.</li>
+<li>For <span class="math inline">\(\lambda_3 = 90\)</span>, we solve <span class="math inline">\((A^TA - \lambda_3 I)v = 0\)</span>, which gives us the equation <span class="math inline">\(-2x + y + z = 0\)</span>. One possible eigenvector is <span class="math inline">\(\begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix}\)</span>.</li>
+</ul>
+<p>We normalize these eigenvectors to obtain an orthonormal basis for <span class="math inline">\(\mathbb{R}^3\)</span>:</p>
+<p><span class="math display">\[
+v_1 = \frac{1}{\sqrt{5}}\begin{bmatrix} -2 \\ 1 \\ 0 \end{bmatrix}, \quad v_2 = \frac{1}{\sqrt{13}}\begin{bmatrix} 3 \\ -2 \\ 0 \end{bmatrix}, \quad v_3 = \frac{1}{\sqrt{6}}\begin{bmatrix} 1 \\ 2 \\ -1 \end{bmatrix}
+\]</span></p>
+<p>Next, we compute <span class="math inline">\(Av_i\)</span> for each <span class="math inline">\(i=1,2,3\)</span>:</p>
+<p><span class="math display">\[
+Av_1 = \begin{bmatrix} 1 &amp; 2 &amp; 3 \\ 4 &amp; 5 &amp; 6 \end{bmatrix}\begin{bmatrix} \frac{-2}{\sqrt{5}} \\ \frac{1}{\sqrt{5}} \\ 0 \end{bmatrix} = \begin{bmatrix} \frac{-2}{\sqrt{5}} \\ \frac{8}{\sqrt{5}} \end{bmatrix} = \frac{2}{\sqrt{5}}\begin{bmatrix} -1 \\ 2 \end{bmatrix}
+\]</span></p>
+<p><span class="math display">\[
+Av_2 = \begin{bmatrix} 1 &amp; 2 &amp; 3 \\ 4 &amp; 5 &amp; 6 \end{bmatrix}\begin{bmatrix} -0.6931 \\ -0.1184 \\ 0.7107 \end{bmatrix} \approx \begin{bmatrix} -3.1623 \\ -7.4162 \end{bmatrix} \approx -3.1623v_1,
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+Av_3 = \begin{bmatrix} 1 &amp; 2 &amp; 3 \\ 4 &amp; 5 &amp; 6 \end{bmatrix}\begin{bmatrix} -0.6931 \\ 0.6646 \\ -0.2774 \end{bmatrix} \approx \begin{bmatrix} -4.7246 \\ 4.6707 \end{bmatrix} \approx 4.6707v_1,
+\]</span></p>
+<p>where <span class="math inline">\(v_1=\begin{bmatrix} 0.2673 \\ 0.5345 \\ 0.8018 \end{bmatrix}\)</span>.</p>
+<p>Therefore, we can take <span class="math inline">\(v_1\)</span> as the first column of the matrix <span class="math inline">\(V\)</span>, and the normalized eigenvectors <span class="math inline">\(v_2\)</span> and <span class="math inline">\(v_3\)</span> as the second and third columns of <span class="math inline">\(V\)</span>, respectively. Then we can define <span class="math inline">\(U=AV\Sigma^{-1}\)</span>, where <span class="math inline">\(\Sigma\)</span> is the diagonal matrix with the square roots of the nonzero eigenvalues of <span class="math inline">\(A^TA\)</span> as its entries.</p>
+<p>&lt; 여기서 부터 다시 볼것&gt; Thus, we have</p>
+<p><span class="math display">\[
+A = U\Sigma V^T = \begin{bmatrix} -0.231 \ \ \ 0.9730 \\ -0.5253 \ \ \ 0.0806 \\ -0.8196 -0.9195 \end{bmatrix} \begin{bmatrix} 9.4868 &amp; 0 &amp; 0 \\ 0 &amp; 1 &amp; 0 \\ 0 &amp; 0 &amp; 0 \end{bmatrix} \begin{bmatrix} -0.2673 \ \ \ 0.5345 \ \ \ 0.8018 \\ -0.6931 \ \ \ -0.1184 \ \ \ 0.7107 \\ -0.6646 \ \ \ 0.7774 \ \ \ -0.2774 \end{bmatrix}.
+\]</span> This gives us the diagonalization <span class="math inline">\(A=QDQ^{-1}\)</span>, where <span class="math inline">\(Q=U\Sigma\)</span> and <span class="math inline">\(D=V^T\)</span>. Therefore, by choosing the appropriate bases for <span class="math inline">\(\mathbb{R}^2\)</span> and <span class="math inline">\(\mathbb{R}^3\)</span> given by the columns of <span class="math inline">\(Q\)</span>, we can make <span class="math inline">\(A\)</span> a diagonal matrix.</p>
+<p>&lt; 여기까지&gt;</p>
+<p><span class="math display">\[
+A = U\Sigma V^T = \begin{bmatrix} -0.231 &amp; 0.973 &amp; 0 \\ 0.732 &amp; 0.182 &amp; -0.655 \\ 0.641 &amp; 0.136 &amp; 0.755 \end{bmatrix} \begin{bmatrix} 3.89 &amp; 0 &amp; 0 \\ 0 &amp; 1.27 &amp; 0 \\ 0 &amp; 0 &amp; 0.43 \end{bmatrix} \begin{bmatrix} -0.227 &amp; -0.592 &amp; -0.773 \\ -0.904 &amp; 0.275 &amp; 0.329 \\ 0.361 &amp; 0.758 &amp; -0.541 \end{bmatrix}
+\]</span></p>
+<p>This is known as the Singular Value Decomposition (SVD) of <span class="math inline">\(A\)</span>. The diagonal matrix <span class="math inline">\(\Sigma\)</span> contains the singular values of <span class="math inline">\(A\)</span>, which are the square roots of the eigenvalues of <span class="math inline">\(A^TA\)</span>. These values represent the importance of the corresponding singular vectors in the matrix <span class="math inline">\(A\)</span>.</p>
+<p>The SVD can be used for a variety of applications, including data compression, dimensionality reduction, and image processing. It is also used in machine learning and data science for tasks such as collaborative filtering, recommender systems, and principal component analysis.</p>
+</section>
+</section>
+<section id="combining-bases-from-subspaces" class="level3" data-number="1.1.4">
+<h3 data-number="1.1.4" class="anchored" data-anchor-id="combining-bases-from-subspaces"><span class="header-section-number">1.1.4</span> Combining bases from Subspaces</h3>
+<p><code>Any $n$ independent vectors in $\mathbf R^n$ must span $\mathbf R^n$. So, they are a basis.</code></p>
+<p>In <span class="math inline">\(\mathbf R^n\)</span>, a set of <span class="math inline">\(n\)</span> independent vectors is said to span <span class="math inline">\(\mathbf R^n\)</span> if any vector in <span class="math inline">\(\mathbf R^n\)</span> can be expressed as a linear combination of these <span class="math inline">\(n\)</span> vectors. This means that the <span class="math inline">\(n\)</span> vectors are sufficient to represent any vector in <span class="math inline">\(\mathbf R^n\)</span>.</p>
+<p>To see why this is the case, consider that any vector in <span class="math inline">\(\mathbf R^n\)</span> can be represented as a column vector with <span class="math inline">\(n\)</span> entries. By definition, each entry can be written as a linear combination of the entries of the <span class="math inline">\(n\)</span> independent vectors. Therefore, the entire column vector can be expressed as a linear combination of the <span class="math inline">\(n\)</span> independent vectors. Since this is true for any vector in <span class="math inline">\(\mathbf R^n\)</span>, the set of <span class="math inline">\(n\)</span> independent vectors must span <span class="math inline">\(\mathbf R^n\)</span>.</p>
+<p>Moreover, if a set of <span class="math inline">\(n\)</span> independent vectors spans <span class="math inline">\(\mathbf R^n\)</span>, then they are a basis for <span class="math inline">\(\mathbf R^n\)</span>. This means that the <span class="math inline">\(n\)</span> vectors are linearly independent and also span <span class="math inline">\(\mathbf R^n\)</span>. By definition, a basis is a set of vectors that can be used to represent any vector in a space and that is linearly independent. So, any set of <span class="math inline">\(n\)</span> independent vectors that spans <span class="math inline">\(\mathbf R^n\)</span> is a basis for <span class="math inline">\(\mathbf R^n\)</span>.</p>
+<p><code>Any $n$ vectors that span $\mathbf R^n$ must be independent. So, they are a basis.</code></p>
+<p>Let <span class="math inline">\({v_1,v_2,\dots,v_n}\)</span> be a set of <span class="math inline">\(n\)</span> vectors that span <span class="math inline">\(\mathbf R^n\)</span>. This means that any vector <span class="math inline">\(\mathbf x\)</span> in <span class="math inline">\(\mathbf R^n\)</span> can be expressed as a linear combination of the vectors in <span class="math inline">\({v_1,v_2,\dots,v_n}\)</span>, i.e., there exist scalars <span class="math inline">\(a_1,a_2,\dots,a_n\)</span> such that <span class="math inline">\(\mathbf x = a_1v_1+a_2v_2+\cdots+a_nv_n\)</span>.</p>
+<p>Now suppose that the vectors in <span class="math inline">\({v_1,v_2,\dots,v_n}\)</span> are not independent. Then there exist scalars <span class="math inline">\(b_1,b_2,\dots,b_n\)</span>, not all zero, such that <span class="math inline">\(b_1v_1+b_2v_2+\cdots+b_nv_n=\mathbf 0\)</span>, where <span class="math inline">\(\mathbf 0\)</span> denotes the zero vector in <span class="math inline">\(\mathbf R^n\)</span>.</p>
+<p>We can rewrite this equation as <span class="math inline">\(a_1v_1+a_2v_2+\cdots+a_nv_n=\mathbf 0\)</span>, where <span class="math inline">\(a_i=-b_i\)</span> for <span class="math inline">\(i=1,2,\dots,n\)</span>. But this implies that the vector <span class="math inline">\(\mathbf x=\mathbf 0\)</span> can be expressed as a nontrivial linear combination of the vectors in <span class="math inline">\({v_1,v_2,\dots,v_n}\)</span>, which contradicts the assumption that these vectors span <span class="math inline">\(\mathbf R^n\)</span>.</p>
+<p>Therefore, the vectors <span class="math inline">\({v_1,v_2,\dots,v_n}\)</span> must be independent. Since they span <span class="math inline">\(\mathbf R^n\)</span>, they form a basis for <span class="math inline">\(\mathbf R^n\)</span>.</p>
+<p><code>If the $n$ columns of $\mathbf A$ are independent, they span $\mathbf R^n$. So Ax=b is solvable</code></p>
+<p>If the <span class="math inline">\(n\)</span> columns of a matrix <span class="math inline">\(\mathbf A\)</span> are independent, then they span <span class="math inline">\(\mathbf R^n\)</span>, which means that any vector <span class="math inline">\(\mathbf b\)</span> in <span class="math inline">\(\mathbf R^n\)</span> can be expressed as a linear combination of the columns of <span class="math inline">\(\mathbf A\)</span>.</p>
+<p>Suppose we have a system of linear equations <span class="math inline">\(\mathbf{Ax} = \mathbf{b}\)</span>. If the columns of <span class="math inline">\(\mathbf A\)</span> are independent, then we can find a unique linear combination of the columns that equals <span class="math inline">\(\mathbf b\)</span>. In other words, we can solve the system of equations for <span class="math inline">\(\mathbf x\)</span>. This means that <span class="math inline">\(\mathbf{Ax} = \mathbf{b}\)</span> is solvable for any vector <span class="math inline">\(\mathbf b\)</span> in <span class="math inline">\(\mathbf R^n\)</span>.</p>
+<p>Therefore, if the columns of <span class="math inline">\(\mathbf A\)</span> are independent, the equation <span class="math inline">\(\mathbf{Ax} = \mathbf{b}\)</span> is solvable for any <span class="math inline">\(\mathbf b \in \mathbf R^n\)</span>, and the columns of <span class="math inline">\(\mathbf A\)</span> form a basis for <span class="math inline">\(\mathbf R^n\)</span>.</p>
+<p><code>If the $n$ columns span $\mathbf R^n$, they are independent. So $\mathbf{Ax=b}$ has only one solution.</code></p>
+<p>If the <span class="math inline">\(n\)</span> columns of <span class="math inline">\(\mathbf A\)</span> span <span class="math inline">\(\mathbf R^n\)</span>, it means that any vector in <span class="math inline">\(\mathbf R^n\)</span> can be expressed as a linear combination of those columns. Mathematically, if we denote the <span class="math inline">\(n\)</span> columns of <span class="math inline">\(\mathbf A\)</span> as <span class="math inline">\(\mathbf a_1, \mathbf a_2, \dots, \mathbf a_n\)</span>, then for any vector <span class="math inline">\(\mathbf b \in \mathbf R^n\)</span>, there exist scalars <span class="math inline">\(x_1, x_2, \dots, x_n\)</span> such that:</p>
+<p><span class="math display">\[
+\mathbf{b} = x_1 \mathbf{a}_1 + x_2 \mathbf{a}_2 + \cdots + x_n \mathbf{a}_n
+\]</span></p>
+<p>Now, let’s assume that the columns of <span class="math inline">\(\mathbf A\)</span> are not independent. This means that there exist scalars <span class="math inline">\(x_1, x_2, \dots, x_n\)</span>, not all zero, such that:</p>
+<p><span class="math display">\[
+x_1 \mathbf{a}_1 + x_2 \mathbf{a}_2 + \cdots + x_n \mathbf{a}_n = \mathbf{0}
+\]</span></p>
+<p>This implies that the homogeneous system <span class="math inline">\(\mathbf{Ax}=\mathbf 0\)</span> has a nontrivial solution, since we can choose <span class="math inline">\(\mathbf x = \begin{bmatrix} x_1 \ x_2 \ \vdots \ x_n \end{bmatrix} \neq \mathbf 0\)</span> as a solution.</p>
+<p>However, this contradicts the assumption that the columns of <span class="math inline">\(\mathbf A\)</span> span <span class="math inline">\(\mathbf R^n\)</span>. If there exists a nontrivial solution <span class="math inline">\(\mathbf x\)</span> to <span class="math inline">\(\mathbf{Ax}=\mathbf 0\)</span>, it means that the columns of <span class="math inline">\(\mathbf A\)</span> do not span the entire <span class="math inline">\(\mathbf R^n\)</span> space, because they are not able to generate the zero vector. Therefore, the assumption that the columns of <span class="math inline">\(\mathbf A\)</span> are not independent leads to a contradiction.</p>
+<p>Hence, we conclude that the columns of <span class="math inline">\(\mathbf A\)</span> must be independent if they span <span class="math inline">\(\mathbf R^n\)</span>. This also implies that <span class="math inline">\(\mathbf A\)</span> is invertible, since the equation <span class="math inline">\(\mathbf{Ax}=\mathbf b\)</span> has a unique solution for any <span class="math inline">\(\mathbf b \in \mathbf R^n\)</span>.</p>
+</section>
+<section id="example-2" class="level3" data-number="1.1.5">
+<h3 data-number="1.1.5" class="anchored" data-anchor-id="example-2"><span class="header-section-number">1.1.5</span> Example</h3>
+<p><span class="math display">\[
+\mathbf v_1=\begin{bmatrix} 1 \\0\\1 \end{bmatrix} \quad \mathbf v_2=\begin{bmatrix} 0 \\1\\1 \end{bmatrix} \quad  \mathbf v_3=\begin{bmatrix} 1 \\1\\0 \end{bmatrix}
+\]</span></p>
+<p><span class="math display">\[
+\begin{align*}
+q_1 &amp;= \frac{v_1}{|v_1|} = \frac{1}{\sqrt{2}} \begin{bmatrix} 1 \\ 0 \\ 1 \end{bmatrix}, \\
+u_2 &amp;= v_2 - \langle v_2, q_1 \rangle q_1 = \begin{bmatrix} 0 \\ 1 \\ 1 \end{bmatrix} - \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 0 \\ 1 \end{bmatrix} = \begin{bmatrix} -\frac{1}{\sqrt{2}} \\ 1 \\ \frac{1}{\sqrt{2}} \end{bmatrix}, \\
+q_2 &amp;= \frac{u_2}{|u_2|} = \frac{1}{\sqrt{2}} \begin{bmatrix} -1 \\ 1 \\ 1 \end{bmatrix}, \\
+u_3 &amp;= v_3 - \langle v_3, q_1 \rangle q_1 - \langle v_3, q_2 \rangle q_2 = \begin{bmatrix} 1 \\ 1 \\ 0 \end{bmatrix} - \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 0 \\ 1 \end{bmatrix} - \frac{1}{\sqrt{6}}\begin{bmatrix} -1 \\ 1 \\ 1 \end{bmatrix} = \begin{bmatrix} \frac{1}{\sqrt{3}} \\ \frac{1}{\sqrt{3}} \ -\frac{1}{\sqrt{3}} \end{bmatrix}, \\
+q_3 &amp;= \frac{u_3}{|u_3|} = \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ 1 \\ -1 \end{bmatrix}.
+\end{align*}
+\]</span></p>
+<p>Therefore, the orthogonal matrix <span class="math inline">\(\mathbf{Q}\)</span> is:</p>
+<p><span class="math display">\[
+\mathbf{Q}=
+\begin{bmatrix}
+\frac{1}{\sqrt{2}} &amp; -\frac{1}{\sqrt{2}} &amp; 0\\
+0 &amp; \frac{1}{\sqrt{2}} &amp; \frac{1}{\sqrt{6}}\\
+\frac{1}{\sqrt{2}} &amp; \frac{1}{\sqrt{2}} &amp; -\frac{1}{\sqrt{3}}
+\end{bmatrix}
+\]</span></p>
+</section>
+<section id="orthogonal-matrices" class="level3" data-number="1.1.6">
+<h3 data-number="1.1.6" class="anchored" data-anchor-id="orthogonal-matrices"><span class="header-section-number">1.1.6</span> Orthogonal Matrices</h3>
+<div id="def-orthogonalMatrix" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 4 </strong></span>An <span class="math inline">\(n\times n\)</span> matrix <span class="math inline">\(\mathbf{Q}\)</span> is orthogonal if its columns <span class="math inline">\(\mathbf q\)</span> form an orthonormal set. That is, the columns <span class="math inline">\(\mathbf q\)</span> of <span class="math inline">\(\mathbf{Q}\)</span> satisfy</p>
+<p><span class="math display">\[
+\langle\mathbf{q}_i,\mathbf{q}_j\rangle =
+\begin{cases}
+0 \text{ if } i \ne j \\
+1 \text{ if } i = j
+\end{cases}
+\]</span></p>
+<p>We can organize all of the dot products amongst all pairs of columns by premultiplying the matrix by its transpose. Since matrix multiplication is defined as dot products between all rows of the left matrix with all columns of the right matrix,</p>
+<p><span class="math display">\[
+\mathbf{Q}\mathbf{Q}^T=\mathbf{Q}^T\mathbf{Q}=\mathbf{I}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{I}\)</span> is the <span class="math inline">\(n\times n\)</span> identity matrix.</p>
+</div>
+</section>
+<section id="properties-1" class="level3" data-number="1.1.7">
+<h3 data-number="1.1.7" class="anchored" data-anchor-id="properties-1"><span class="header-section-number">1.1.7</span> Properties</h3>
+<ul>
+<li>Orthogonal columns: all columns are pair-wise orthogonal</li>
+<li>Unit-norm columns: the norm (geometric length) of each column is exactly 1.</li>
+<li><span class="math inline">\(\mathbf{Q}^T\mathbf{Q}=\mathbf{Q}\mathbf{Q}^T=\mathbf{I}\)</span>, where <span class="math inline">\(\mathbf{I}\)</span> is the identity matrix of appropriate size.</li>
+<li><span class="math inline">\(\mathbf{Q}^T=\mathbf{Q}^{-1}\)</span>
+<ul>
+<li>Great propoerty because the matrix inverse is tedious and prone to numerical inaccuracies, whereas the matrix transpose is fast and accurate.</li>
+</ul></li>
+<li>The determinant of an orthogonal matrix is either <span class="math inline">\(1\)</span> or <span class="math inline">\(-1\)</span>.</li>
+<li>If <span class="math inline">\(\mathbf{Q}\)</span> is orthogonal, then its columns form an orthonormal set, i.e., the columns are pairwise orthogonal and each column has unit length.</li>
+<li>Orthogonal matrices preserve lengths and angles. If <span class="math inline">\(\mathbf{x}\)</span> and <span class="math inline">\(\mathbf{y}\)</span> are two vectors, then <span class="math inline">\(||\mathbf{Qx}||=||\mathbf{x}||\)</span> and <span class="math inline">\(\mathbf{x}^T\mathbf{y}=(\mathbf{Qx})^T(\mathbf{Qy})\)</span>.</li>
+</ul>
+</section>
+<section id="example-3" class="level3" data-number="1.1.8">
+<h3 data-number="1.1.8" class="anchored" data-anchor-id="example-3"><span class="header-section-number">1.1.8</span> Example</h3>
+<p><strong>Example1</strong> Orthogonal matrices include rotation matrices and reflection matrices.</p>
+<p>the <span class="math inline">\(2\times 2\)</span> matrix and the <span class="math inline">\(3\times 3\)</span> matrix: <span class="math display">\[
+\begin{bmatrix}
+\cos \theta &amp; -\sin \theta \\
+\sin \theta &amp; \cos \theta
+\end{bmatrix}
+\quad
+\begin{bmatrix}
+\cos \theta &amp; -\sin \theta &amp; 0 \\
+\sin \theta &amp; \cos \theta &amp; 0 \\
+0 &amp; 0 &amp; 1
+\end{bmatrix}
+\]</span></p>
+<p>is an orthogonal matrix that rotates a vector counterclockwise by an angle <span class="math inline">\(\theta\)</span> regardless of the rotation angle (as long as the same rotation angle is used in all matrix elements).</p>
+<div class="cell" data-execution_count="6">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pure rotation matrix</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># angle to rotate by</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>th <span class="op">=</span> np.pi<span class="op">/</span><span class="dv">5</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># transformation matrix</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> np.array([ </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>              [ np.cos(th),np.sin(th)],</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>              [<span class="op">-</span>np.sin(th),np.cos(th)]</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>            ])</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># original dots are a vertical line</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">20</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>origPoints <span class="op">=</span> np.vstack( (np.zeros(x.shape),x) )</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co"># apply the transformation</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>transformedPoints <span class="op">=</span> T <span class="op">@</span> origPoints</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the points</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">6</span>,<span class="dv">6</span>))</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>plt.plot(origPoints[<span class="dv">0</span>,:],origPoints[<span class="dv">1</span>,:],<span class="st">'ko'</span>,label<span class="op">=</span><span class="st">'Original'</span>)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>plt.plot(transformedPoints[<span class="dv">0</span>,:],transformedPoints[<span class="dv">1</span>,:],<span class="st">'s'</span>,color<span class="op">=</span>[<span class="fl">.7</span>,<span class="fl">.7</span>,<span class="fl">.7</span>],label<span class="op">=</span><span class="st">'Transformed'</span>)</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">'square'</span>)</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>plt.xlim([<span class="op">-</span><span class="fl">1.2</span>,<span class="fl">1.2</span>])</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>plt.ylim([<span class="op">-</span><span class="fl">1.2</span>,<span class="fl">1.2</span>])</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="ss">f'Rotation by </span><span class="sc">{</span>np<span class="sc">.</span>rad2deg(th)<span class="sc">:.0f}</span><span class="ss"> degrees.'</span>)</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Animating transformations</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="co"># function to update the axis on each iteration</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> aframe(ph):</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create the transformation matrix</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>  T <span class="op">=</span> np.array([</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>                 [  <span class="dv">1</span>, <span class="dv">1</span><span class="op">-</span>ph ],</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>                 [  <span class="dv">0</span>, <span class="dv">1</span>    ]</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>                ])</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>  <span class="co"># apply the transformation to the points using matrix multiplication</span></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>  P <span class="op">=</span> T<span class="op">@</span>points</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>  <span class="co"># update the dots</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>  plth.set_xdata(P[<span class="dv">0</span>,:])</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>  plth.set_ydata(P[<span class="dv">1</span>,:])</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>  <span class="co"># export the plot handles</span></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> plth</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a><span class="co"># define XY points</span></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>theta  <span class="op">=</span> np.linspace(<span class="dv">0</span>,<span class="dv">2</span><span class="op">*</span>np.pi,<span class="dv">100</span>)</span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>points <span class="op">=</span> np.vstack((np.sin(theta),np.cos(theta)))</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a><span class="co"># setup figure</span></span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>fig,ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>,figsize<span class="op">=</span>(<span class="dv">12</span>,<span class="dv">6</span>))</span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>plth,  <span class="op">=</span> ax.plot(np.cos(x),np.sin(x),<span class="st">'ko'</span>)</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>ax.set_aspect(<span class="st">'equal'</span>)</span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>ax.set_xlim([<span class="op">-</span><span class="dv">2</span>,<span class="dv">2</span>])</span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>ax.set_ylim([<span class="op">-</span><span class="dv">2</span>,<span class="dv">2</span>])</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a><span class="co"># define values for transformation (note: clip off the final point for a smooth animation loop)</span></span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>phi <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span><span class="op">-</span><span class="dv">1</span><span class="op">/</span><span class="dv">40</span>,<span class="dv">40</span>)<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a><span class="co"># run animation!</span></span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>animation.FuncAnimation(fig, aframe, phi, interval<span class="op">=</span><span class="dv">100</span>, repeat<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="06.orthogonality_files/figure-html/cell-7-output-1.svg" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>&lt;matplotlib.animation.FuncAnimation at 0x14bfee500d0&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="06.orthogonality_files/figure-html/cell-7-output-3.svg" class="img-fluid"></p>
+</div>
+</div>
+<p><span class="math display">\[
+\begin{align*}
+\textbf{Example:} Consider the matrix $\mathbf{Q}=\begin{bmatrix}
+\frac{1}{\sqrt{2}} &amp; -\frac{1}{\sqrt{2}}\\
+\frac{1}{\sqrt{2}} &amp; \frac{1}{\sqrt{2}}
+\end{bmatrix}$. We can verify that $\mathbf{Q}$ is orthogonal by computing $\mathbf{Q}^T\mathbf{Q}$:
+\begin{align*}
+\mathbf{Q}^T\mathbf{Q}&amp;=\begin{bmatrix}
+\frac{1}{\sqrt{2}} &amp; \frac{1}{\sqrt{2}}\\
+-\frac{1}{\sqrt{2}} &amp; \frac{1}{\sqrt{2}}
+\end{bmatrix}\begin{bmatrix}
+\frac{1}{\sqrt{2}} &amp; -\frac{1}{\sqrt{2}}\\
+\frac{1}{\sqrt{2}} &amp; \frac{1}{\sqrt{2}}
+\end{bmatrix}\\
+&amp;=\begin{bmatrix}
+\frac{1}{2}+\frac{1}{2} &amp; -\frac{1}{2}+\frac{1}{2}\\
+-\frac{1}{2}+\frac{1}{2} &amp; \frac{1}{2}+\frac{1}{2}
+\end{bmatrix}\\
+&amp;=\begin{bmatrix}
+1 &amp; 0\\
+0 &amp; 1
+\end{bmatrix}\\
+&amp;=\mathbf{I}.
+\end{align*}
+\]</span> Therefore, <span class="math inline">\(\mathbf{Q}\)</span> is an orthogonal matrix.</p>
+<p><strong>Example 2</strong> <span class="math display">\[
+\begin{bmatrix}
+1 &amp; 0 &amp; 0 \\
+0 &amp; -1 &amp; 0 \\
+0 &amp; 0 &amp; -1
+\end{bmatrix}
+\]</span>,</p>
+<p>which is an orthogonal matrix that reflects a vector across the <span class="math inline">\(x\)</span>-axis.</p>
+<p><strong>Example 3</strong> the identity matrix is an example of an orthogonal matrix</p>
+<p><strong>Exmaple 4</strong> Permutation matrices are also orthogonal. Permutation matrices are used to exchange rows of a matrix.</p>
+</section>
+</section>
+<section id="gram-schmidt-gs-or-g-s" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="gram-schmidt-gs-or-g-s"><span class="header-section-number">1.2</span> Gram-Schmidt (GS or G-S)</h2>
+<p>The Gram-Schmidt procedure is a method of transforming a nonorthogonal matrix into an orthogonal matrix by orthonormalizing a set of linearly independent vectors in an inner product space, usually the Euclidean space <span class="math inline">\(\mathbb{R}^n\)</span>. The process takes a sequence of vectors <span class="math inline">\(\mathbf v_1, \mathbf v_2, \dots, \mathbf v_n\)</span> and constructs an orthonormal sequence <span class="math inline">\(\mathbf q_1, \mathbf q_2, \dots, \mathbf q_n\)</span> that spans the same subspace as the original sequence.</p>
+<p>The Gram-Schmidt procedure is useful for understanding orthogonal vector decomposition when programming and implementing the QR decomposition algorithm, and GS is the right way to conceptualize how and why QR decomposition works even if the low-level implementation is slightly different.</p>
+<div id="def-gramSchmidt" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 5 </strong></span>Let <span class="math inline">\(\mathbf v_1, \mathbf v_2, \dots, \mathbf v_n\)</span> be a sequence of linearly independent vectors in <span class="math inline">\(\mathbb{R}^n\)</span>. Define <span class="math inline">\(\mathbf q_1\)</span> to be the unit vector in the direction of <span class="math inline">\(\mathbf v_1\)</span>, i.e., <span class="math inline">\(\mathbf q_1 = \frac{\mathbf v_1}{|\mathbf v_1|}\)</span>. For <span class="math inline">\(k = 2, 3, \dots, n\)</span>, define <span class="math inline">\(\mathbf q_k\)</span> as follows:</p>
+<p><span class="math display">\[
+\mathbf q_k = \frac{\mathbf u_k}{|\mathbf u_k|}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf u_k=\mathbf v_k-\sum_{j=1}^{k-1}\langle \mathbf v_k,\mathbf q_j \rangle\mathbf q_j\)</span></p>
+</div>
+<p>The vector <span class="math inline">\(\mathbf u_k\)</span> is the projection of <span class="math inline">\(\mathbf v_k\)</span> onto the subspace orthogonal to <span class="math inline">\(\text{span}{\mathbf q_1, \mathbf q_2, \dots, \mathbf q_{k-1}}\)</span>.</p>
+<p>The Gram-Schmidt process produces an orthonormal basis <span class="math inline">\(\mathbf q_1, \mathbf q_2, \dots, \mathbf q_n\)</span> for <span class="math inline">\(\text{span}{\mathbf v_1, \mathbf v_2, \dots, \mathbf v_n}\)</span>. The matrix whose columns are <span class="math inline">\(\mathbf q_1, \mathbf q_2, \dots, \mathbf q_n\)</span> is an orthogonal matrix <span class="math inline">\(\mathbf{Q}\)</span>.</p>
+<p><span class="math inline">\(\mathbf{V}\)</span> is transformed into <span class="math inline">\(\mathbf{Q}\)</span> according to the following algorithm:</p>
+<p>For all column vectors <span class="math inline">\(\mathbf{v} \in V\)</span> starting from the first (leftmost) and moving systematically to the last (rightmost):</p>
+<ol type="1">
+<li>Orthogonalize <span class="math inline">\(\mathbf v_k\)</span> to all previous columns in matrix <span class="math inline">\(\mathbf Q\)</span> using orthogonal vector decomposition. That is, compute the component of <span class="math inline">\(\mathbf v_k\)</span> that is perpendicular to <span class="math inline">\(\mathbf q_{k-1}, \mathbf q_{k-2}\)</span>, and so on down to <span class="math inline">\(\mathbf q_{1}\)</span>. The orthogonalized vector is called <span class="math inline">\(\mathbf v^{*}_k\)</span>. :::{.callout-note} The first column vector is not orthogonalized because there are no preceeding vectors; therefore, you begin with the following normalization step. :::</li>
+<li>Normalize <span class="math inline">\(\mathbf v^{*}_k\)</span> to unit length. This is now <span class="math inline">\(\mathbf q_{k}\)</span>, the <span class="math inline">\(k\)</span> th column in matrix <span class="math inline">\(\mathbf Q\)</span>.</li>
+</ol>
+<div class="cell" data-execution_count="7">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># # Define a 4x4 random matrix</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># A = np.random.rand(4,4)</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># # Gram-Schmidt procedure</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Q = np.zeros_like(A)</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># for j in range(A.shape[1]):</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#     v = A[:,j]</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">#     for i in range(j):</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#         q = Q[:,i]</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">#         R[i,j] = np.dot(q,v)</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#         v -= R[i,j]*q</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co">#     R[j,j] = np.linalg.norm(v)</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co">#     Q[:,j] = v/R[j,j]</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co"># # Check answer against Q from np.linalg.qr</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Q_np, R_np = np.linalg.qr(A)</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co"># diff = Q - Q_np</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co"># sum_Q = Q + Q_np</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co"># print("Q matrix (Gram-Schmidt):\n", Q)</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co"># print("Q matrix (numpy):\n", Q_np)</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="co"># print("Difference between Q and Q_np:\n", diff)</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="co"># print("Sum of Q and Q_np:\n", sum_Q)</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="co"># create the matrix </span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.random.randn(m,n)</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>Q <span class="op">=</span> np.zeros((m,n))</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a><span class="co"># the GS algo</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n):</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>    <span class="co"># initialize</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>    Q[:,i] <span class="op">=</span> A[:,i]</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># orthogonalize</span></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> A[:,i] <span class="co"># convenience</span></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(i): <span class="co"># only to earlier cols</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>        q <span class="op">=</span> Q[:,j] <span class="co"># convenience</span></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>        Q[:,i]<span class="op">=</span>Q[:,i]<span class="op">-</span>np.dot(a,q)<span class="op">/</span>np.dot(q,q)<span class="op">*</span>q</span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>    <span class="co"># normalize</span></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>    Q[:,i] <span class="op">=</span> Q[:,i] <span class="op">/</span> np.linalg.norm(Q[:,i])</span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a><span class="co"># "real" QR decomposition for comparison</span></span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>Q_np,R <span class="op">=</span> np.linalg.qr(A)</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a><span class="co"># note the possible sign differences.</span></span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a><span class="co"># seemingly non-zero columns will be 0 when adding</span></span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Q matrix (Gram-Schmidt):</span><span class="ch">\n</span><span class="st">"</span>, Q)</span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Q matrix (numpy):</span><span class="ch">\n</span><span class="st">"</span>, Q_np)</span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Difference between Q and Q_np:</span><span class="ch">\n</span><span class="st">"</span>, np.<span class="bu">round</span>( Q<span class="op">-</span>Q_np ,<span class="dv">10</span>) ), <span class="bu">print</span>(<span class="st">' '</span>)</span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Sum of Q and Q_np:</span><span class="ch">\n</span><span class="st">"</span>, np.<span class="bu">round</span>( Q<span class="op">+</span>Q_np ,<span class="dv">10</span>) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Q matrix (Gram-Schmidt):
+ [[ 0.27312993  0.27811349  0.76687831  0.5098535 ]
+ [-0.15985965 -0.92858067  0.31096833  0.12442476]
+ [-0.7776442   0.15581731 -0.16865856  0.58527323]
+ [ 0.54324435 -0.19003102 -0.53549104  0.6180802 ]]
+Q matrix (numpy):
+ [[-0.27312993  0.27811349 -0.76687831  0.5098535 ]
+ [ 0.15985965 -0.92858067 -0.31096833  0.12442476]
+ [ 0.7776442   0.15581731  0.16865856  0.58527323]
+ [-0.54324435 -0.19003102  0.53549104  0.6180802 ]]
+Difference between Q and Q_np:
+ [[ 0.54625987  0.          1.53375661  0.        ]
+ [-0.31971931  0.          0.62193667  0.        ]
+ [-1.5552884   0.         -0.33731712 -0.        ]
+ [ 1.08648871 -0.         -1.07098207  0.        ]]
+ 
+Sum of Q and Q_np:
+ [[-0.          0.55622697  0.          1.019707  ]
+ [-0.         -1.85716135  0.          0.24884951]
+ [-0.          0.31163461 -0.          1.17054646]
+ [ 0.         -0.38006204  0.          1.2361604 ]]</code></pre>
+</div>
+</div>
+</section>
+<section id="qr-decomposition" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="qr-decomposition"><span class="header-section-number">1.3</span> QR Decomposition</h2>
+<p>QR decomposition is a factorization of a matrix <span class="math inline">\(\mathbf{A}\)</span> into the product of an orthogonal matrix <span class="math inline">\(\mathbf{Q}\)</span> and an upper triangular matrix <span class="math inline">\(\mathbf{R}\)</span>:</p>
+<p><span class="math display">\[
+\mathbf{A}=\mathbf{QR}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{Q}\)</span> has orthonormal columns and <span class="math inline">\(\mathbf{R}\)</span> is an upper triangular matrix.</p>
+<p>The process of finding the QR decomposition of <span class="math inline">\(\mathbf{A}\)</span> involves the Gram-Schmidt orthogonalization process, which produces an orthonormal basis for the columns of <span class="math inline">\(\mathbf{A}\)</span> as mentioned earlier. The columns of <span class="math inline">\(\mathbf{Q}\)</span> are the orthonormal basis vectors, and <span class="math inline">\(\mathbf{R}\)</span> is the matrix that expresses the columns of <span class="math inline">\(\mathbf{A}\)</span> in terms of the orthonormal basis vectors.</p>
+<p><span class="math display">\[
+\begin{align*}
+\mathbf{A}&amp;=\mathbf{QR}\\
+\mathbf{Q}^T \mathbf{A}&amp;=\mathbf{Q}^T\mathbf{QR}\\
+\mathbf{Q}^T\mathbf{A}&amp;=\mathbf{R}
+\end{align*}
+\]</span></p>
+<p>The algorithm for computing the QR decomposition of a matrix <span class="math inline">\(\mathbf{A}\)</span> is as follows:</p>
+<ol type="1">
+<li>Apply the Gram-Schmidt orthogonalization process to the columns of <span class="math inline">\(\mathbf{A}\)</span> to obtain an orthonormal basis for the column space of <span class="math inline">\(\mathbf{A}\)</span>. Let the resulting matrix be denoted by <span class="math inline">\(\mathbf{Q}\)</span>.</li>
+<li>Compute the matrix <span class="math inline">\(\mathbf{R}\)</span> such that <span class="math inline">\(\mathbf{A} = \mathbf{Q}\mathbf{R}\)</span>. This can be done by solving the linear system <span class="math inline">\(\mathbf{R} = \mathbf{Q}^T\mathbf{A}\)</span>, which expresses the columns of <span class="math inline">\(\mathbf{A}\)</span> in terms of the orthonormal basis vectors.</li>
+</ol>
+<div class="cell" data-execution_count="8">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a random matrix</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.random.randn(<span class="dv">6</span>,<span class="dv">6</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># QR decomposition</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>Q,R <span class="op">=</span> np.linalg.qr(A)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co"># show the matrices</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">6</span>))</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>axs <span class="op">=</span> [<span class="dv">0</span>]<span class="op">*</span><span class="dv">5</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> <span class="fl">1.5</span> <span class="co"># color limits</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>gs1 <span class="op">=</span> gridspec.GridSpec(<span class="dv">2</span>,<span class="dv">6</span>)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>] <span class="op">=</span> plt.subplot(gs1[<span class="dv">0</span>,:<span class="dv">2</span>])</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].imshow(A,vmin<span class="op">=-</span>c,vmax<span class="op">=</span>c,cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">0</span>].set_title(<span class="st">'A'</span>,fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>] <span class="op">=</span> plt.subplot(gs1[<span class="dv">0</span>,<span class="dv">2</span>:<span class="dv">4</span>])</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].imshow(Q,vmin<span class="op">=-</span>c,vmax<span class="op">=</span>c,cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">1</span>].set_title(<span class="st">'Q'</span>,fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>] <span class="op">=</span> plt.subplot(gs1[<span class="dv">0</span>,<span class="dv">4</span>:<span class="dv">6</span>])</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>].imshow(R,vmin<span class="op">=-</span>c,vmax<span class="op">=</span>c,cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">2</span>].set_title(<span class="st">'R'</span>,fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>] <span class="op">=</span> plt.subplot(gs1[<span class="dv">1</span>,<span class="dv">1</span>:<span class="dv">3</span>])</span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>].imshow(A <span class="op">-</span> Q<span class="op">@</span>R,vmin<span class="op">=-</span>c,vmax<span class="op">=</span>c,cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">3</span>].set_title(<span class="st">'A - QR'</span>,fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">4</span>] <span class="op">=</span> plt.subplot(gs1[<span class="dv">1</span>,<span class="dv">3</span>:<span class="dv">5</span>])</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">4</span>].imshow(Q.T<span class="op">@</span>Q,cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>axs[<span class="dv">4</span>].set_title(<span class="vs">r'$\mathbf</span><span class="sc">{Q}</span><span class="vs">^</span><span class="sc">{T}</span><span class="vs">\mathbf</span><span class="sc">{Q}</span><span class="vs">$'</span>,fontweight<span class="op">=</span><span class="st">'bold'</span>)</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a><span class="co"># remove ticks from all axes</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> axs:</span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>  a.set_xticks([])</span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>  a.set_yticks([])</span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="06.orthogonality_files/figure-html/cell-9-output-1.svg" class="img-fluid"></p>
+</div>
+</div>
+<section id="examples-2" class="level3" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="examples-2"><span class="header-section-number">1.3.1</span> Examples</h3>
+<ol type="1">
+<li>Consider the matrix <span class="math inline">\(\mathbf{A} = \begin{bmatrix} 1 &amp; 2 \\ 2 &amp; 3 \\ 3 &amp; 4 \end{bmatrix}\)</span>. To find its QR decomposition, we first apply the Gram-Schmidt process to obtain an orthonormal basis for its column space:</li>
+</ol>
+<p><span class="math display">\[
+\mathbf q_1 = \frac{1}{\sqrt{14}}\begin{bmatrix} 1 \\ 2 \\ 3\end{bmatrix} \quad \mathbf q_2 = \frac{1}{\sqrt{2}}\begin{bmatrix} -2 \\ 1 \\ 0\end{bmatrix}
+\]</span></p>
+<p>The resulting orthogonal matrix is <span class="math display">\[\begin{align*}
+\mathbf{Q} = \begin{bmatrix}
+\frac{1}{\sqrt{14}} &amp; -\frac{2}{\sqrt{28}} \\
+\frac{2}{\sqrt{14}} &amp; \frac{1}{\sqrt{2}} \\
+\frac{3}{\sqrt{14}} &amp; 0
+\end{bmatrix}
+\end{align*}
+\]</span>.</p>
+<p>Next, we compute the upper triangular matrix <span class="math inline">\(\mathbf{R}\)</span> by solving <span class="math inline">\(\mathbf{R} = \mathbf{Q}^T\mathbf{A}\)</span>. This gives <span class="math display">\[
+\mathbf{R} = \begin{bmatrix}
+\sqrt{14} &amp; \frac{11}{\sqrt{14}} \\
+0 &amp; \frac{\sqrt{2}}{\sqrt{7}}
+\end{bmatrix}
+\]</span></p>
+<p>Therefore, the QR decomposition of <span class="math inline">\(\mathbf{A}\)</span> is given by <span class="math inline">\(\mathbf{A} = \mathbf{Q}\mathbf{R}\)</span>.</p>
+<ol start="2" type="1">
+<li>Consider the matrix <span class="math inline">\(\mathbf{A} = \begin{bmatrix} 1 &amp; -1 &amp; 0 \\ 1 &amp; 0 &amp; 1 \\ 1 &amp; 1 &amp; 0 \end{bmatrix}\)</span>. Applying the Gram-Schmidt process to its columns yields the orthonormal basis vectors:</li>
+</ol>
+<p><span class="math display">\[
+\begin{align*}
+q_1 &amp;= \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix}, \\
+u_2 &amp;= v_2 - \langle v_2, q_1 \rangle q_1 = \begin{bmatrix} -1 \\ 0 \\ 1 \end{bmatrix} - \frac{1}{3}\begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} = \begin{bmatrix} -\frac{4}{3} \\ -\frac{1}{3} \\ \frac{2}{3} \end{bmatrix}, \\
+q_2 &amp;= \frac{u_2}{|u_2|} = \frac{1}{\sqrt{2}} \begin{bmatrix} -2 \\ -1 \\ 1 \end{bmatrix}, \\
+u_3 &amp;= v_3 - \langle v_3, q_1 \rangle q_1 - \langle v_3, q_2 \rangle q_2 = \begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix} - \frac{1}{3}\begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} - \frac{1}{2}\begin{bmatrix} -2 \\ -1 \\ 1 \end{bmatrix} = \begin{bmatrix} \frac{1}{3} \\ -\frac{1}{3} \\ -\frac{1}{3} \end{bmatrix}, \\
+q_3 &amp;= \frac{u_3}{|u_3|} = \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ -1 \\ -1 \end{bmatrix}.
+\end{align*}
+\]</span></p>
+<p>So the QR decomposition of <span class="math inline">\(\mathbf{A}\)</span> is <span class="math inline">\(\mathbf{A} = \mathbf{QR}\)</span> where</p>
+<p><span class="math display">\[
+\mathbf{A=QR} = \begin{bmatrix}
+\frac{1}{\sqrt{3}} &amp; -\frac{1}{\sqrt{6}} &amp; \frac{1}{\sqrt{2}} \\
+\frac{1}{\sqrt{3}} &amp; \frac{1}{\sqrt{6}} &amp; -\frac{1}{\sqrt{2}} \\
+\frac{1}{\sqrt{3}} &amp; \frac{2}{\sqrt{6}} &amp; 0 \\
+\end{bmatrix}
+\]</span></p>
+<p>and</p>
+<p><span class="math display">\[
+\mathbf{R} = \begin{bmatrix}
+\sqrt{3} &amp; \frac{1}{\sqrt{3}} &amp; \sqrt{3} \\
+0 &amp; \frac{2}{\sqrt{6}} &amp; -\frac{1}{\sqrt{2}} \\
+0 &amp; 0 &amp; \frac{1}{\sqrt{2}} \\
+\end{bmatrix}
+\]</span>.</p>
+<p>So, <span class="math display">\[
+\mathbf{A} =
+\begin{bmatrix}
+1 &amp; -1 &amp; 0 \\
+1 &amp; 0  &amp; 1 \\
+1 &amp; 1  &amp; 0
+\end{bmatrix} =
+\begin{bmatrix}
+\frac{1}{\sqrt{3}} &amp; -\frac{1}{\sqrt{6}} &amp; \frac{1}{\sqrt{2}} \\
+\frac{1}{\sqrt{3}} &amp; \frac{1}{\sqrt{6}} &amp; -\frac{1}{\sqrt{2}} \\
+\frac{1}{\sqrt{3}} &amp; \frac{2}{\sqrt{6}} &amp; 0 \
+\end{bmatrix}
+\begin{bmatrix}
+\sqrt{3} &amp; \frac{1}{\sqrt{3}} &amp; \sqrt{3} \\
+0 &amp; \frac{2}{\sqrt{6}} &amp; -\frac{1}{\sqrt{2}} \\
+0 &amp; 0 &amp; \frac{1}{\sqrt{2}}
+\end{bmatrix}
+=
+\mathbf{QR}
+\]</span></p>
+<p>In Python,</p>
+<div class="cell" data-execution_count="9">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="op">-</span><span class="dv">1</span>, <span class="dv">0</span>], [<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>], [<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>]])</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>Q, R <span class="op">=</span> np.linalg.qr(A)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Q =</span><span class="ch">\n</span><span class="st">"</span>, Q)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"R =</span><span class="ch">\n</span><span class="st">"</span>, R)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"QR =</span><span class="ch">\n</span><span class="st">"</span>, Q <span class="op">@</span> R)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Q =
+ [[-5.77350269e-01  7.07106781e-01  4.08248290e-01]
+ [-5.77350269e-01  5.55111512e-17 -8.16496581e-01]
+ [-5.77350269e-01 -7.07106781e-01  4.08248290e-01]]
+R =
+ [[-1.73205081e+00  0.00000000e+00 -5.77350269e-01]
+ [ 0.00000000e+00 -1.41421356e+00  1.11022302e-16]
+ [ 0.00000000e+00  0.00000000e+00 -8.16496581e-01]]
+QR =
+ [[ 1.00000000e+00 -1.00000000e+00  3.55968130e-17]
+ [ 1.00000000e+00 -7.85046229e-17  1.00000000e+00]
+ [ 1.00000000e+00  1.00000000e+00 -3.01008243e-17]]</code></pre>
+</div>
+</div>
+<p>The QR decomposition of a matrix is not unique, So the <span class="math inline">\(\mathbf Q\)</span> and <span class="math inline">\(\mathbf R\)</span> could be different from the latex ones.</p>
+</section>
+</section>
+<section id="projections" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="projections"><span class="header-section-number">1.4</span> Projections</h2>
+</section>
+<section id="least-squares-approximations" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="least-squares-approximations"><span class="header-section-number">1.5</span> Least Squares Approximations</h2>
+</section>
+<section id="orthogonal-bases-and-gram-schmidt" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="orthogonal-bases-and-gram-schmidt"><span class="header-section-number">1.6</span> Orthogonal Bases and Gram-Schmidt</h2>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

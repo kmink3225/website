@@ -18,6 +18,7 @@ draft: False
 
 ```{python}
 import numpy as np
+import matplotlib.animation as animation
 import matplotlib_inline
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
@@ -35,8 +36,18 @@ plt.rcParams.update({'font.size':14}) # set global font size
 
 # Orthogonality
 
-
-
+* Orthogonality of the Four Subspaces
+  * Orthogonal Vectors
+  * Orthogonal Subspaces
+  * Orthogonal Components
+  * Orthogonal Matrices
+* orthogonal vector decomposition,
+* QR decomposition
+  * 'Q' stands for an orthogonal matrix, and 
+  * 'R' stands for an upper triangular matrix. 
+* LU decomposition, 
+* eigendecomposition, and 
+* singular value decomposition
 
 ## Orthogonality of the Four Subspaces
 
@@ -208,6 +219,7 @@ assert np.allclose(A @ Projected_e, np.zeros((A.shape[0],)))
 In this example, we define the matrix `A` and the vector `b`, and use the lstsq function from SciPy to compute the least-squares solution `x`. We then compute the error `e = b - Ax`, and project `b` onto the column space of `A` to obtain `Pb`, and onto the orthogonal complement of the column space of `A` to obtain `Pb_perp`. We also project `e` onto the nullspace of `A^T` to obtain `Pe`, and onto the orthogonal complement of the nullspace of `A^T` to obtain `Pe_perp`. Finally, we verify that the column space of `A` is perpendicular to the nullspace of `A^T` by checking that `A^T` `Pe = 0` and `Pe_perp x = 0`.
 
 ```{python}
+#| eval: false
 
 # define the matrix A and vector b
 A = np.array([[1, 1], [1, -1], [2, 1], [2, -1]])
@@ -402,7 +414,6 @@ where $\oplus$ denotes the direct sum of subspaces.
 #### Exmaple
 
 **Example1**
-
 Let $\mathbf A$ be an $m \times n$ matrix with rank $r$. Then, $\mathbb{R}^n$ can be decomposed as $\mathbb{R}^n = N(\mathbf A) \oplus N(\mathbf A)^{\perp}$, where $N(\mathbf A)$ is the null space of $\mathbf A$, $N(\mathbf A)^{\perp}$ is its orthogonal complement, and $\oplus$ denotes the direct sum. This means that any vector $\mathbf{v} \in \mathbb{R}^n$ can be written uniquely as $\mathbf{v} = \mathbf{v}_1 + \mathbf{v}_2$, where $\mathbf{v}_1 \in N(\mathbf A)$ and $\mathbf{v}_2 \in N(\mathbf A)^{\perp}$.
 
 **Example2**
@@ -415,7 +426,6 @@ Let $\mathbf A$ be an $m \times n$ matrix with rank $r$, and let $\mathbf{b} \in
 Every diagonal matrix $\mathbf D$ has a diagonal submatrix consisting of its first $r$ diagonal entries that is $r \times r$ and invertible for any $r$ between $1$ and the size of $\mathbf D$. For example, consider the diagonal matrix $\mathbf D = \begin{bmatrix} 2 & 0 & 0 \\ 0 & 3 & 0 \\ 0 & 0 & 4 \end{bmatrix}$. The $2 \times 2$ diagonal submatrix consisting of the first two diagonal entries, $\mathbf D' = \begin{bmatrix} 2 & 0 \\ 0 & 3 \end{bmatrix}$, is invertible since its diagonal entries are nonzero. Similarly, the $3 \times 3$ diagonal submatrix consisting of all the diagonal entries, $\mathbf D'' = \begin{bmatrix} 2 & 0 & 0 \\ 0 & 3 & 0 \\ 0 & 0 & 4 \end{bmatrix}$, is also invertible since all of its diagonal entries are nonzero. This example illustrates the fact that every diagonal matrix has an invertible diagonal submatrix of any size between $1$ and the size of the matrix.
 
 **Example5**
-
 Consider the matrix $A=\begin{bmatrix}1 & 2 & 3 \\ 4 & 5 & 6 \end{bmatrix}$. We want to find the right bases for $\mathbb{R}^2$ and $\mathbb{R}^3$ such that $A$ becomes a diagonal matrix.
 
 We begin by computing $A^TA$:
@@ -523,6 +533,478 @@ This implies that the homogeneous system $\mathbf{Ax}=\mathbf 0$ has a nontrivia
 However, this contradicts the assumption that the columns of $\mathbf A$ span $\mathbf R^n$. If there exists a nontrivial solution $\mathbf x$ to $\mathbf{Ax}=\mathbf 0$, it means that the columns of $\mathbf A$ do not span the entire $\mathbf R^n$ space, because they are not able to generate the zero vector. Therefore, the assumption that the columns of $\mathbf A$ are not independent leads to a contradiction.
 
 Hence, we conclude that the columns of $\mathbf A$ must be independent if they span $\mathbf R^n$. This also implies that $\mathbf A$ is invertible, since the equation $\mathbf{Ax}=\mathbf b$ has a unique solution for any $\mathbf b \in \mathbf R^n$.
+
+### Example
+
+$$
+\mathbf v_1=\begin{bmatrix} 1 \\0\\1 \end{bmatrix} \quad \mathbf v_2=\begin{bmatrix} 0 \\1\\1 \end{bmatrix} \quad  \mathbf v_3=\begin{bmatrix} 1 \\1\\0 \end{bmatrix}
+$$
+
+$$
+\begin{align*}
+q_1 &= \frac{v_1}{|v_1|} = \frac{1}{\sqrt{2}} \begin{bmatrix} 1 \\ 0 \\ 1 \end{bmatrix}, \\
+u_2 &= v_2 - \langle v_2, q_1 \rangle q_1 = \begin{bmatrix} 0 \\ 1 \\ 1 \end{bmatrix} - \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 0 \\ 1 \end{bmatrix} = \begin{bmatrix} -\frac{1}{\sqrt{2}} \\ 1 \\ \frac{1}{\sqrt{2}} \end{bmatrix}, \\
+q_2 &= \frac{u_2}{|u_2|} = \frac{1}{\sqrt{2}} \begin{bmatrix} -1 \\ 1 \\ 1 \end{bmatrix}, \\
+u_3 &= v_3 - \langle v_3, q_1 \rangle q_1 - \langle v_3, q_2 \rangle q_2 = \begin{bmatrix} 1 \\ 1 \\ 0 \end{bmatrix} - \frac{1}{\sqrt{2}}\begin{bmatrix} 1 \\ 0 \\ 1 \end{bmatrix} - \frac{1}{\sqrt{6}}\begin{bmatrix} -1 \\ 1 \\ 1 \end{bmatrix} = \begin{bmatrix} \frac{1}{\sqrt{3}} \\ \frac{1}{\sqrt{3}} \ -\frac{1}{\sqrt{3}} \end{bmatrix}, \\
+q_3 &= \frac{u_3}{|u_3|} = \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ 1 \\ -1 \end{bmatrix}.
+\end{align*}
+$$
+
+Therefore, the orthogonal matrix $\mathbf{Q}$ is:
+
+$$
+\mathbf{Q}=
+\begin{bmatrix} 
+\frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{2}} & 0\\ 
+0 & \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{6}}\\ 
+\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{3}}
+\end{bmatrix}
+$$
+
+
+### Orthogonal Matrices
+
+
+:::{#def-orthogonalMatrix}
+An $n\times n$ matrix $\mathbf{Q}$ is orthogonal if its columns $\mathbf q$ form an orthonormal set. That is, the columns $\mathbf q$ of $\mathbf{Q}$ satisfy 
+
+$$
+\langle\mathbf{q}_i,\mathbf{q}_j\rangle =
+\begin{cases}
+0 \text{ if } i \ne j \\
+1 \text{ if } i = j 
+\end{cases}
+$$
+
+We can organize all of the dot products amongst all pairs of columns by premultiplying the matrix by its transpose. Since matrix multiplication is defined as dot products between all rows of the left matrix with all columns of the right matrix, 
+
+$$
+\mathbf{Q}\mathbf{Q}^T=\mathbf{Q}^T\mathbf{Q}=\mathbf{I}
+$$
+
+where $\mathbf{I}$ is the $n\times n$ identity matrix.
+:::
+
+### Properties
+
+* Orthogonal columns: all columns are pair-wise orthogonal
+* Unit-norm columns: the norm (geometric length) of each column is exactly 1.
+* $\mathbf{Q}^T\mathbf{Q}=\mathbf{Q}\mathbf{Q}^T=\mathbf{I}$, where $\mathbf{I}$ is the identity matrix of appropriate size.
+* $\mathbf{Q}^T=\mathbf{Q}^{-1}$
+  * Great propoerty because the matrix inverse is tedious and prone to numerical inaccuracies, whereas the matrix transpose is fast and accurate.
+* The determinant of an orthogonal matrix is either $1$ or $-1$.
+* If $\mathbf{Q}$ is orthogonal, then its columns form an orthonormal set, i.e., the columns are pairwise orthogonal and each column has unit length.
+* Orthogonal matrices preserve lengths and angles. If $\mathbf{x}$ and $\mathbf{y}$ are two vectors, then $||\mathbf{Qx}||=||\mathbf{x}||$ and $\mathbf{x}^T\mathbf{y}=(\mathbf{Qx})^T(\mathbf{Qy})$.
+
+### Example
+
+**Example1** 
+Orthogonal matrices include rotation matrices and reflection matrices. 
+
+the $2\times 2$ matrix and the $3\times 3$ matrix:
+$$
+\begin{bmatrix}
+\cos \theta & -\sin \theta \\
+\sin \theta & \cos \theta
+\end{bmatrix}
+\quad
+\begin{bmatrix}
+\cos \theta & -\sin \theta & 0 \\
+\sin \theta & \cos \theta & 0 \\
+0 & 0 & 1 
+\end{bmatrix}
+$$
+
+is an orthogonal matrix that rotates a vector counterclockwise by an angle $\theta$ regardless of the
+rotation angle (as long as the same rotation angle is used in all matrix elements). 
+
+```{python}
+# Pure rotation matrix
+
+# angle to rotate by
+th = np.pi/5
+
+# transformation matrix
+T = np.array([ 
+              [ np.cos(th),np.sin(th)],
+              [-np.sin(th),np.cos(th)]
+            ])
+
+
+# original dots are a vertical line
+x = np.linspace(-1,1,20)
+origPoints = np.vstack( (np.zeros(x.shape),x) )
+
+
+# apply the transformation
+transformedPoints = T @ origPoints
+
+
+# plot the points
+plt.figure(figsize=(6,6))
+plt.plot(origPoints[0,:],origPoints[1,:],'ko',label='Original')
+plt.plot(transformedPoints[0,:],transformedPoints[1,:],'s',color=[.7,.7,.7],label='Transformed')
+
+plt.axis('square')
+plt.xlim([-1.2,1.2])
+plt.ylim([-1.2,1.2])
+plt.legend()
+plt.title(f'Rotation by {np.rad2deg(th):.0f} degrees.')
+plt.show()
+
+# Animating transformations
+# function to update the axis on each iteration
+def aframe(ph):
+
+  # create the transformation matrix
+  T = np.array([
+                 [  1, 1-ph ],
+                 [  0, 1    ]
+                ])
+  
+  # apply the transformation to the points using matrix multiplication
+  P = T@points
+
+  # update the dots
+  plth.set_xdata(P[0,:])
+  plth.set_ydata(P[1,:])
+
+  # export the plot handles
+  return plth
+
+
+# define XY points
+theta  = np.linspace(0,2*np.pi,100)
+points = np.vstack((np.sin(theta),np.cos(theta)))
+
+
+# setup figure
+fig,ax = plt.subplots(1,figsize=(12,6))
+plth,  = ax.plot(np.cos(x),np.sin(x),'ko')
+ax.set_aspect('equal')
+ax.set_xlim([-2,2])
+ax.set_ylim([-2,2])
+
+# define values for transformation (note: clip off the final point for a smooth animation loop)
+phi = np.linspace(-1,1-1/40,40)**2
+
+# run animation!
+animation.FuncAnimation(fig, aframe, phi, interval=100, repeat=True)
+
+```
+
+$$
+\begin{align*}
+\textbf{Example:} Consider the matrix $\mathbf{Q}=\begin{bmatrix}
+\frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{2}}\\
+\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}}
+\end{bmatrix}$. We can verify that $\mathbf{Q}$ is orthogonal by computing $\mathbf{Q}^T\mathbf{Q}$:
+\begin{align*}
+\mathbf{Q}^T\mathbf{Q}&=\begin{bmatrix}
+\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}}\\
+-\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}}
+\end{bmatrix}\begin{bmatrix}
+\frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{2}}\\
+\frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}}
+\end{bmatrix}\\
+&=\begin{bmatrix}
+\frac{1}{2}+\frac{1}{2} & -\frac{1}{2}+\frac{1}{2}\\
+-\frac{1}{2}+\frac{1}{2} & \frac{1}{2}+\frac{1}{2}
+\end{bmatrix}\\
+&=\begin{bmatrix}
+1 & 0\\
+0 & 1
+\end{bmatrix}\\
+&=\mathbf{I}.
+\end{align*}
+$$
+Therefore, $\mathbf{Q}$ is an orthogonal matrix.
+
+**Example 2**
+$$
+\begin{bmatrix}
+1 & 0 & 0 \\
+0 & -1 & 0 \\
+0 & 0 & -1 
+\end{bmatrix}
+$$,
+
+which is an orthogonal matrix that reflects a vector across the $x$-axis.
+
+**Example 3**
+the identity matrix is an example of an orthogonal matrix
+
+**Exmaple 4**
+Permutation matrices are also orthogonal. Permutation matrices are used to exchange rows of a matrix.
+
+
+
+
+## Gram-Schmidt (GS or G-S)
+
+The Gram-Schmidt procedure is a method of transforming a nonorthogonal matrix into an orthogonal matrix by orthonormalizing a set of linearly independent vectors in an inner product space, usually the Euclidean space $\mathbb{R}^n$. The process takes a sequence of vectors $\mathbf v_1, \mathbf v_2, \dots, \mathbf v_n$ and constructs an orthonormal sequence $\mathbf q_1, \mathbf q_2, \dots, \mathbf q_n$ that spans the same subspace as the original sequence.
+
+The Gram-Schmidt procedure is useful for understanding orthogonal vector decomposition when programming and implementing the QR decomposition algorithm, and GS is the right way to conceptualize how and why QR decomposition works even if the low-level implementation is slightly different.
+
+:::{#def-gramSchmidt}
+Let $\mathbf v_1, \mathbf v_2, \dots, \mathbf v_n$ be a sequence of linearly independent vectors in $\mathbb{R}^n$. Define $\mathbf q_1$ to be the unit vector in the direction of $\mathbf v_1$, i.e., $\mathbf q_1 = \frac{\mathbf v_1}{|\mathbf v_1|}$. For $k = 2, 3, \dots, n$, define $\mathbf q_k$ as follows:
+
+$$
+\mathbf q_k = \frac{\mathbf u_k}{|\mathbf u_k|}
+$$
+
+where $\mathbf u_k=\mathbf v_k-\sum_{j=1}^{k-1}\langle \mathbf v_k,\mathbf q_j \rangle\mathbf q_j$ 
+:::
+
+The vector $\mathbf u_k$ is the projection of $\mathbf v_k$ onto the subspace orthogonal to $\text{span}{\mathbf q_1, \mathbf q_2, \dots, \mathbf q_{k-1}}$.
+
+The Gram-Schmidt process produces an orthonormal basis $\mathbf q_1, \mathbf q_2, \dots, \mathbf q_n$ for $\text{span}{\mathbf v_1, \mathbf v_2, \dots, \mathbf v_n}$. The matrix whose columns are $\mathbf q_1, \mathbf q_2, \dots, \mathbf q_n$ is an orthogonal matrix $\mathbf{Q}$.
+
+$\mathbf{V}$ is transformed into $\mathbf{Q}$ according to the following algorithm:
+
+For all column vectors $\mathbf{v} \in V$ starting from the first (leftmost) and moving systematically to the last (rightmost):
+
+1. Orthogonalize $\mathbf v_k$ to all previous columns in matrix $\mathbf Q$ using orthogonal vector decomposition. That is, compute the component of $\mathbf v_k$ that is perpendicular to $\mathbf q_{k-1}, \mathbf q_{k-2}$, and so on down to $\mathbf q_{1}$. The orthogonalized vector is called $\mathbf v^{*}_k$.
+:::{.callout-note}
+The first column vector is not orthogonalized because there are no preceeding vectors; therefore, you begin
+with the following normalization step.
+:::
+2. Normalize $\mathbf v^{*}_k$ to unit length. This is now $\mathbf q_{k}$, the $k$ th column in matrix $\mathbf Q$.
+
+```{python}
+
+# # Define a 4x4 random matrix
+# A = np.random.rand(4,4)
+# 
+# # Gram-Schmidt procedure
+# Q = np.zeros_like(A)
+# for j in range(A.shape[1]):
+#     v = A[:,j]
+#     for i in range(j):
+#         q = Q[:,i]
+#         R[i,j] = np.dot(q,v)
+#         v -= R[i,j]*q
+#     R[j,j] = np.linalg.norm(v)
+#     Q[:,j] = v/R[j,j]
+# 
+# # Check answer against Q from np.linalg.qr
+# Q_np, R_np = np.linalg.qr(A)
+# diff = Q - Q_np
+# sum_Q = Q + Q_np
+# 
+# print("Q matrix (Gram-Schmidt):\n", Q)
+# print("Q matrix (numpy):\n", Q_np)
+# print("Difference between Q and Q_np:\n", diff)
+# print("Sum of Q and Q_np:\n", sum_Q)
+
+
+# create the matrix 
+m = 4
+n = 4
+A = np.random.randn(m,n)
+
+# initialize
+Q = np.zeros((m,n))
+
+
+# the GS algo
+for i in range(n):
+    
+    # initialize
+    Q[:,i] = A[:,i]
+    
+    # orthogonalize
+    a = A[:,i] # convenience
+    for j in range(i): # only to earlier cols
+        q = Q[:,j] # convenience
+        Q[:,i]=Q[:,i]-np.dot(a,q)/np.dot(q,q)*q
+    
+    # normalize
+    Q[:,i] = Q[:,i] / np.linalg.norm(Q[:,i])
+
+    
+# "real" QR decomposition for comparison
+Q_np,R = np.linalg.qr(A)
+
+# note the possible sign differences.
+# seemingly non-zero columns will be 0 when adding
+print("Q matrix (Gram-Schmidt):\n", Q)
+print("Q matrix (numpy):\n", Q_np)
+print("Difference between Q and Q_np:\n", np.round( Q-Q_np ,10) ), print(' ')
+print("Sum of Q and Q_np:\n", np.round( Q+Q_np ,10) )
+
+```
+
+## QR Decomposition
+
+QR decomposition is a factorization of a matrix $\mathbf{A}$ into the product of an orthogonal matrix $\mathbf{Q}$ and an upper triangular matrix $\mathbf{R}$:
+
+$$
+\mathbf{A}=\mathbf{QR}
+$$ 
+
+where $\mathbf{Q}$ has orthonormal columns and $\mathbf{R}$ is an upper triangular matrix.
+
+The process of finding the QR decomposition of $\mathbf{A}$ involves the Gram-Schmidt orthogonalization process, which produces an orthonormal basis for the columns of $\mathbf{A}$ as mentioned earlier. The columns of $\mathbf{Q}$ are the orthonormal basis vectors, and $\mathbf{R}$ is the matrix that expresses the columns of $\mathbf{A}$ in terms of the orthonormal basis vectors.
+
+$$
+\begin{align*}
+\mathbf{A}&=\mathbf{QR}\\
+\mathbf{Q}^T \mathbf{A}&=\mathbf{Q}^T\mathbf{QR}\\
+\mathbf{Q}^T\mathbf{A}&=\mathbf{R}
+\end{align*}
+$$
+
+The algorithm for computing the QR decomposition of a matrix $\mathbf{A}$ is as follows:
+
+1. Apply the Gram-Schmidt orthogonalization process to the columns of $\mathbf{A}$ to obtain an orthonormal basis for the column space of $\mathbf{A}$. Let the resulting matrix be denoted by $\mathbf{Q}$.
+2. Compute the matrix $\mathbf{R}$ such that $\mathbf{A} = \mathbf{Q}\mathbf{R}$. This can be done by solving the linear system $\mathbf{R} = \mathbf{Q}^T\mathbf{A}$, which expresses the columns of $\mathbf{A}$ in terms of the orthonormal basis vectors.
+```{python}
+
+
+# create a random matrix
+A = np.random.randn(6,6)
+
+# QR decomposition
+Q,R = np.linalg.qr(A)
+
+
+
+# show the matrices
+fig = plt.figure(figsize=(10,6))
+axs = [0]*5
+c = 1.5 # color limits
+
+gs1 = gridspec.GridSpec(2,6)
+axs[0] = plt.subplot(gs1[0,:2])
+axs[0].imshow(A,vmin=-c,vmax=c,cmap='gray')
+axs[0].set_title('A',fontweight='bold')
+
+axs[1] = plt.subplot(gs1[0,2:4])
+axs[1].imshow(Q,vmin=-c,vmax=c,cmap='gray')
+axs[1].set_title('Q',fontweight='bold')
+
+axs[2] = plt.subplot(gs1[0,4:6])
+axs[2].imshow(R,vmin=-c,vmax=c,cmap='gray')
+axs[2].set_title('R',fontweight='bold')
+
+axs[3] = plt.subplot(gs1[1,1:3])
+axs[3].imshow(A - Q@R,vmin=-c,vmax=c,cmap='gray')
+axs[3].set_title('A - QR',fontweight='bold')
+
+axs[4] = plt.subplot(gs1[1,3:5])
+axs[4].imshow(Q.T@Q,cmap='gray')
+axs[4].set_title(r'$\mathbf{Q}^{T}\mathbf{Q}$',fontweight='bold')
+
+# remove ticks from all axes
+for a in axs:
+  a.set_xticks([])
+  a.set_yticks([])
+
+plt.tight_layout()
+plt.show()
+```
+
+
+
+### Examples
+
+1. Consider the matrix $\mathbf{A} = \begin{bmatrix} 1 & 2 \\ 2 & 3 \\ 3 & 4 \end{bmatrix}$. To find its QR decomposition, we first apply the Gram-Schmidt process to obtain an orthonormal basis for its column space:
+
+$$
+\mathbf q_1 = \frac{1}{\sqrt{14}}\begin{bmatrix} 1 \\ 2 \\ 3\end{bmatrix} \quad \mathbf q_2 = \frac{1}{\sqrt{2}}\begin{bmatrix} -2 \\ 1 \\ 0\end{bmatrix}
+$$
+
+The resulting orthogonal matrix is 
+$$\begin{align*}
+\mathbf{Q} = \begin{bmatrix} 
+\frac{1}{\sqrt{14}} & -\frac{2}{\sqrt{28}} \\
+\frac{2}{\sqrt{14}} & \frac{1}{\sqrt{2}} \\
+\frac{3}{\sqrt{14}} & 0 
+\end{bmatrix}
+\end{align*}
+$$.
+
+Next, we compute the upper triangular matrix $\mathbf{R}$ by solving $\mathbf{R} = \mathbf{Q}^T\mathbf{A}$. This gives 
+$$
+\mathbf{R} = \begin{bmatrix}
+\sqrt{14} & \frac{11}{\sqrt{14}} \\
+0 & \frac{\sqrt{2}}{\sqrt{7}}
+\end{bmatrix}
+$$
+
+
+Therefore, the QR decomposition of $\mathbf{A}$ is given by $\mathbf{A} = \mathbf{Q}\mathbf{R}$.
+
+2. Consider the matrix $\mathbf{A} = \begin{bmatrix} 1 & -1 & 0 \\ 1 & 0 & 1 \\ 1 & 1 & 0 \end{bmatrix}$. Applying the Gram-Schmidt process to its columns yields the orthonormal basis vectors:
+
+$$
+\begin{align*}
+q_1 &= \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix}, \\
+u_2 &= v_2 - \langle v_2, q_1 \rangle q_1 = \begin{bmatrix} -1 \\ 0 \\ 1 \end{bmatrix} - \frac{1}{3}\begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} = \begin{bmatrix} -\frac{4}{3} \\ -\frac{1}{3} \\ \frac{2}{3} \end{bmatrix}, \\
+q_2 &= \frac{u_2}{|u_2|} = \frac{1}{\sqrt{2}} \begin{bmatrix} -2 \\ -1 \\ 1 \end{bmatrix}, \\
+u_3 &= v_3 - \langle v_3, q_1 \rangle q_1 - \langle v_3, q_2 \rangle q_2 = \begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix} - \frac{1}{3}\begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix} - \frac{1}{2}\begin{bmatrix} -2 \\ -1 \\ 1 \end{bmatrix} = \begin{bmatrix} \frac{1}{3} \\ -\frac{1}{3} \\ -\frac{1}{3} \end{bmatrix}, \\
+q_3 &= \frac{u_3}{|u_3|} = \frac{1}{\sqrt{3}} \begin{bmatrix} 1 \\ -1 \\ -1 \end{bmatrix}.
+\end{align*}
+$$
+
+So the QR decomposition of $\mathbf{A}$ is $\mathbf{A} = \mathbf{QR}$ where
+
+$$
+\mathbf{A=QR} = \begin{bmatrix}
+\frac{1}{\sqrt{3}} & -\frac{1}{\sqrt{6}} & \frac{1}{\sqrt{2}} \\
+\frac{1}{\sqrt{3}} & \frac{1}{\sqrt{6}} & -\frac{1}{\sqrt{2}} \\
+\frac{1}{\sqrt{3}} & \frac{2}{\sqrt{6}} & 0 \\
+\end{bmatrix}
+$$
+
+and
+
+$$
+\mathbf{R} = \begin{bmatrix}
+\sqrt{3} & \frac{1}{\sqrt{3}} & \sqrt{3} \\
+0 & \frac{2}{\sqrt{6}} & -\frac{1}{\sqrt{2}} \\
+0 & 0 & \frac{1}{\sqrt{2}} \\
+\end{bmatrix}
+$$.
+
+So, 
+$$
+\mathbf{A} = 
+\begin{bmatrix}
+ 1 & -1 & 0 \\
+ 1 & 0  & 1 \\
+ 1 & 1  & 0 
+\end{bmatrix} =
+\begin{bmatrix}
+\frac{1}{\sqrt{3}} & -\frac{1}{\sqrt{6}} & \frac{1}{\sqrt{2}} \\
+\frac{1}{\sqrt{3}} & \frac{1}{\sqrt{6}} & -\frac{1}{\sqrt{2}} \\
+\frac{1}{\sqrt{3}} & \frac{2}{\sqrt{6}} & 0 \
+\end{bmatrix}
+\begin{bmatrix}
+\sqrt{3} & \frac{1}{\sqrt{3}} & \sqrt{3} \\
+0 & \frac{2}{\sqrt{6}} & -\frac{1}{\sqrt{2}} \\
+0 & 0 & \frac{1}{\sqrt{2}} 
+\end{bmatrix}
+=
+\mathbf{QR}
+$$
+
+
+In Python,
+
+```{python}
+
+A = np.array([[1, -1, 0], [1, 0, 1], [1, 1, 0]])
+Q, R = np.linalg.qr(A)
+
+print("Q =\n", Q)
+print("R =\n", R)
+print("QR =\n", Q @ R)
+
+```
+
+The QR decomposition of a matrix is not unique, So the $\mathbf Q$ and $\mathbf R$ could be different from the latex ones.
 
 ## Projections
 

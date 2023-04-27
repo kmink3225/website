@@ -1,12 +1,12 @@
 ---
 title: "Orthogonality"
-subtitle: Vectors and Linear Equations, Elimination, Rules for Matrix Operations, Inverse Matrices, Factorization, Transposes and Permutations
+subtitle: Orthogonality of the Four Subspaces, Gram-Schmidt, QR Decomposition,
 description: |
   template
 categories:
   - Mathematics
 author: Kwangmin Kim
-date: 03/31/2023
+date: 04/21/2023
 format: 
   html:
     page-layout: full
@@ -14,6 +14,8 @@ format:
     toc: true
     number-sections: true
 draft: False
+execute:
+  warning: false
 ---
 
 ```{python}
@@ -26,12 +28,6 @@ import sympy as sym # for RREF
 import scipy.linalg # for LU
 import matplotlib.gridspec as gridspec # used to create non-regular subplots
 from scipy.linalg import lstsq # for least square example
-
-# NOTE: these lines define global figure properties used for publication.
-from IPython import display
-matplotlib_inline.backend_inline.set_matplotlib_formats('svg')
-#display.set_matplotlib_formats('svg') # display figures in vector format
-plt.rcParams.update({'font.size':14}) # set global font size     
 ```
 
 # Orthogonality
@@ -695,10 +691,15 @@ animation.FuncAnimation(fig, aframe, phi, interval=100, repeat=True)
 
 $$
 \begin{align*}
-\textbf{Example:} Consider the matrix $\mathbf{Q}=\begin{bmatrix}
+\mathbf{Q}&=\begin{bmatrix}
 \frac{1}{\sqrt{2}} & -\frac{1}{\sqrt{2}}\\
 \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}}
-\end{bmatrix}$. We can verify that $\mathbf{Q}$ is orthogonal by computing $\mathbf{Q}^T\mathbf{Q}$:
+\end{bmatrix}
+\end{align*}
+$$
+
+$\mathbf{Q}$ is orthogonal by computing $\mathbf{Q}^T\mathbf{Q}$:
+$$
 \begin{align*}
 \mathbf{Q}^T\mathbf{Q}&=\begin{bmatrix}
 \frac{1}{\sqrt{2}} & \frac{1}{\sqrt{2}}\\
@@ -715,9 +716,10 @@ $$
 1 & 0\\
 0 & 1
 \end{bmatrix}\\
-&=\mathbf{I}.
+&=\mathbf{I}
 \end{align*}
 $$
+
 Therefore, $\mathbf{Q}$ is an orthogonal matrix.
 
 **Example 2**
@@ -738,7 +740,46 @@ the identity matrix is an example of an orthogonal matrix
 Permutation matrices are also orthogonal. Permutation matrices are used to exchange rows of a matrix.
 
 
+## Orthogonal Bases
 
+An orthogonal basis is a set of vectors that are pairwise orthogonal (perpendicular) and each vector is non-zero.
+
+:::{#def-orthogonalBases}
+A set of vectors ${\mathbf{v}_1, \mathbf{v}_2, \dots, \mathbf{v}_n}$ is said to be an orthogonal basis of a vector space $V$ if:
+1. Each vector $\mathbf{v}_i$ is non-zero.
+2. Each vector $\mathbf{v}_i$ is orthogonal (perpendicular) to every other vector $\mathbf{v}_j$, $i \neq j$. In other words, $\mathbf{v}_i \cdot \mathbf{v}_j = 0$ for $i \neq j$.
+:::
+
+### Example
+
+**Example1**
+Let $\mathbf{v} = \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix}$ and $\mathbf{u} = \begin{bmatrix} -1 \ 0 \ 1 \end{bmatrix}$. We can check if these vectors form an orthogonal basis by computing their dot product:
+
+$$
+\mathbf{v} \cdot \mathbf{u} = \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix} \cdot \begin{bmatrix} -1 \\ 0 \\ 1 \end{bmatrix} = (-1) \cdot 1 + (0) \cdot 2 + (1) \cdot 3 = 2
+$$
+
+Since the dot product is not zero, we can conclude that $\mathbf{v}$ and $\mathbf{u}$ do not form an orthogonal basis.
+
+**Example2**
+
+Let $\mathbf{v} = \begin{bmatrix} 1 \\ 2 \\ 0 \end{bmatrix}$ and $\mathbf{u} = \begin{bmatrix} -2 \\ 1 \\ 1 \end{bmatrix}$. To check if they form an orthogonal basis, we need to compute their dot product:
+
+$$
+\mathbf{v} \cdot \mathbf{u} = (1)(-2) + (2)(1) + (0)(1) = -2 + 2 + 0 = 0
+$$
+
+Since the dot product is zero, we know that $\mathbf{v}$ and $\mathbf{u}$ are orthogonal. We can also check that they are both nonzero and linearly independent by computing their norms:
+
+$$
+||\mathbf{v}|| = \sqrt{1^2 + 2^2 + 0^2} = \sqrt{5} \ne 0
+$$
+
+$$
+||\mathbf{w}|| = \sqrt{(-2)^2 + 1^2 + 1^2} = \sqrt{6} \ne 0
+$$
+
+Therefore, $\mathbf{v}$ and $\mathbf{w}$ form an orthogonal basis for $\mathbb{R}^3$.
 
 ## Gram-Schmidt (GS or G-S)
 

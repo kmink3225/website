@@ -1069,6 +1069,903 @@ Note
   <pubDate>Fri, 21 Apr 2023 15:00:00 GMT</pubDate>
 </item>
 <item>
+  <title>Orthogonality</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/06.orthogonality.html</link>
+  <description><![CDATA[ 
+
+
+
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;">import</span> numpy <span class="im" style="color: #00769E;">as</span> np</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;">import</span> matplotlib.animation <span class="im" style="color: #00769E;">as</span> animation</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;">import</span> matplotlib_inline</span>
+<span id="cb1-4"><span class="im" style="color: #00769E;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;">as</span> plt</span>
+<span id="cb1-5"><span class="im" style="color: #00769E;">from</span> mpl_toolkits.mplot3d <span class="im" style="color: #00769E;">import</span> Axes3D</span>
+<span id="cb1-6"><span class="im" style="color: #00769E;">import</span> sympy <span class="im" style="color: #00769E;">as</span> sym <span class="co" style="color: #5E5E5E;"># for RREF</span></span>
+<span id="cb1-7"><span class="im" style="color: #00769E;">import</span> scipy.linalg <span class="co" style="color: #5E5E5E;"># for LU</span></span>
+<span id="cb1-8"><span class="im" style="color: #00769E;">import</span> matplotlib.gridspec <span class="im" style="color: #00769E;">as</span> gridspec <span class="co" style="color: #5E5E5E;"># used to create non-regular subplots</span></span>
+<span id="cb1-9"><span class="im" style="color: #00769E;">from</span> scipy.linalg <span class="im" style="color: #00769E;">import</span> lstsq <span class="co" style="color: #5E5E5E;"># for least square example</span></span></code></pre></div>
+</details>
+</div>
+<section id="orthogonality" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Orthogonality</h1>
+<ul>
+<li>Orthogonality of the Four Subspaces
+<ul>
+<li>Orthogonal Vectors</li>
+<li>Orthogonal Subspaces</li>
+<li>Orthogonal Components</li>
+<li>Orthogonal Matrices</li>
+</ul></li>
+<li>orthogonal vector decomposition,</li>
+<li>QR decomposition
+<ul>
+<li>‘Q’ stands for an orthogonal matrix, and</li>
+<li>‘R’ stands for an upper triangular matrix.</li>
+</ul></li>
+<li>LU decomposition,</li>
+<li>eigendecomposition, and</li>
+<li>singular value decomposition</li>
+</ul>
+<section id="orthogonality-of-the-four-subspaces" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="orthogonality-of-the-four-subspaces"><span class="header-section-number">1.1</span> Orthogonality of the Four Subspaces</h2>
+<p>The four subspaces: vectors, subspaces, orthogonal bases, and orthogonal matrices</p>
+<section id="orthogonal-vectors" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="orthogonal-vectors"><span class="header-section-number">1.1.1</span> Orthogonal Vectors</h3>
+<div id="def-orthogonalVec" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 1 </strong></span>Two vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D"> in <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5En"> are said to be orthogonal if their dot product is zero:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7Bv%7D%20%5Ccdot%20%5Cmathbf%7Bw%7D%20=%20%5Csum_%7Bi=1%7D%5En%20v_i%20w_i%20=%200%20%5Ctext%7B%20and%20%7D%7C%7C%5Cmathbf%7Bv%7D%7C%7C%5E2+%7C%7C%5Cmathbf%7Bw%7D%7C%7C%5E2=%7C%7C%5Cmathbf%7Bv%7D+%5Cmathbf%7Bw%7D%7C%7C%5E2%0A"></p>
+</div>
+<p>Geometrically, two vectors are orthogonal if they are perpendicular to each other.</p>
+<p>Orthogonality is an important concept in linear algebra and has many applications, including in the construction of orthonormal bases and in least-squares regression.</p>
+<section id="examples" class="level4" data-number="1.1.1.1">
+<h4 data-number="1.1.1.1" class="anchored" data-anchor-id="examples"><span class="header-section-number">1.1.1.1</span> Examples</h4>
+<p>Here are some examples of orthogonal vectors:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5C%5C%200%20%5Cend%7Bbmatrix%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D%20=%20%5Cbegin%7Bbmatrix%7D%200%20%5C%5C%201%20%5C%5C%200%20%5Cend%7Bbmatrix%7D"> are orthogonal because <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20%5Ccdot%20%5Cmathbf%7Bw%7D%20=%201%20%5Ccdot%200%20+%200%20%5Ccdot%201%20+%200%20%5Ccdot%200%20=%200">. These vectors are also perpendicular to each other in 3D space.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%201%20%5C%5C%201%20%5Cend%7Bbmatrix%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%20-2%20%5C%5C%201%20%5Cend%7Bbmatrix%7D"> are orthogonal because <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20%5Ccdot%20%5Cmathbf%7Bw%7D%20=%201%20%5Ccdot%201%20+%201%20%5Ccdot%20(-2)%20+%201%20%5Ccdot%201%20=%200">. These vectors are also perpendicular to each other in 3D space.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%202%20%5Cend%7Bbmatrix%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D%20=%20%5Cbegin%7Bbmatrix%7D%20-2%20%5C%5C%201%20%5Cend%7Bbmatrix%7D"> are orthogonal because <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20%5Ccdot%20%5Cmathbf%7Bw%7D%20=%201%20%5Ccdot%20(-2)%20+%202%20%5Ccdot%201%20=%200">. These vectors are also perpendicular to each other in 2D space.</p>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;"># Example 1</span></span>
+<span id="cb2-2">v1 <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>])</span>
+<span id="cb2-3">w1 <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>])</span>
+<span id="cb2-4"><span class="bu" style="color: null;">print</span>(np.dot(v1, w1))  <span class="co" style="color: #5E5E5E;"># Output: 0</span></span>
+<span id="cb2-5"></span>
+<span id="cb2-6"><span class="co" style="color: #5E5E5E;"># Example 2</span></span>
+<span id="cb2-7">v2 <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb2-8">w2 <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">1</span>, <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb2-9"><span class="bu" style="color: null;">print</span>(np.dot(v2, w2))  <span class="co" style="color: #5E5E5E;"># Output: 0</span></span>
+<span id="cb2-10"></span>
+<span id="cb2-11"><span class="co" style="color: #5E5E5E;"># Example 3</span></span>
+<span id="cb2-12">v3 <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>])</span>
+<span id="cb2-13">w3 <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb2-14"><span class="bu" style="color: null;">print</span>(np.dot(v3, w3))  <span class="co" style="color: #5E5E5E;"># Output: 0</span></span>
+<span id="cb2-15"></span>
+<span id="cb2-16"><span class="co" style="color: #5E5E5E;"># Example 1</span></span>
+<span id="cb2-17">v1 <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>])</span>
+<span id="cb2-18">w1 <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb2-19">plt.quiver(<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>, v1[<span class="dv" style="color: #AD0000;">0</span>], v1[<span class="dv" style="color: #AD0000;">1</span>], angles<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'xy'</span>, scale_units<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'xy'</span>, scale<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>, color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'b'</span>)</span>
+<span id="cb2-20">plt.quiver(<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>, w1[<span class="dv" style="color: #AD0000;">0</span>], w1[<span class="dv" style="color: #AD0000;">1</span>], angles<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'xy'</span>, scale_units<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'xy'</span>, scale<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>, color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'r'</span>)</span>
+<span id="cb2-21">plt.xlim(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>)</span>
+<span id="cb2-22">plt.ylim(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>)</span>
+<span id="cb2-23">plt.title(<span class="st" style="color: #20794D;">"Example 1: Orthogonal Vectors"</span>)</span>
+<span id="cb2-24">plt.legend([<span class="st" style="color: #20794D;">"v"</span>, <span class="st" style="color: #20794D;">"w"</span>])</span>
+<span id="cb2-25">plt.grid(<span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb2-26">plt.show()</span>
+<span id="cb2-27"></span>
+<span id="cb2-28"><span class="co" style="color: #5E5E5E;"># Example 2</span></span>
+<span id="cb2-29">v2 <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb2-30">w2 <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">1</span>, <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb2-31">fig <span class="op" style="color: #5E5E5E;">=</span> plt.figure()</span>
+<span id="cb2-32">ax <span class="op" style="color: #5E5E5E;">=</span> fig.add_subplot(<span class="dv" style="color: #AD0000;">111</span>, projection<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'3d'</span>)</span>
+<span id="cb2-33">ax.quiver(<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>, v2[<span class="dv" style="color: #AD0000;">0</span>], v2[<span class="dv" style="color: #AD0000;">1</span>], v2[<span class="dv" style="color: #AD0000;">2</span>], colors<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'b'</span>, arrow_length_ratio<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">0.1</span>)</span>
+<span id="cb2-34">ax.quiver(<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>, w2[<span class="dv" style="color: #AD0000;">0</span>], w2[<span class="dv" style="color: #AD0000;">1</span>], w2[<span class="dv" style="color: #AD0000;">2</span>], colors<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'r'</span>, arrow_length_ratio<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">0.1</span>)</span>
+<span id="cb2-35">ax.set_xlim([<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>])</span>
+<span id="cb2-36">ax.set_ylim([<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>])</span>
+<span id="cb2-37">ax.set_zlim([<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>])</span>
+<span id="cb2-38">ax.set_title(<span class="st" style="color: #20794D;">"Example 2: Orthogonal Vectors"</span>)</span>
+<span id="cb2-39">ax.legend([<span class="st" style="color: #20794D;">"v"</span>, <span class="st" style="color: #20794D;">"w"</span>])</span>
+<span id="cb2-40">plt.show()</span>
+<span id="cb2-41"></span>
+<span id="cb2-42"><span class="co" style="color: #5E5E5E;"># Example 3</span></span>
+<span id="cb2-43">v3 <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>])</span>
+<span id="cb2-44">w3 <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb2-45">plt.quiver(<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>, v3[<span class="dv" style="color: #AD0000;">0</span>], v3[<span class="dv" style="color: #AD0000;">1</span>], angles<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'xy'</span>, scale_units<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'xy'</span>, scale<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>, color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'b'</span>)</span>
+<span id="cb2-46">plt.quiver(<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>, w3[<span class="dv" style="color: #AD0000;">0</span>], w3[<span class="dv" style="color: #AD0000;">1</span>], angles<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'xy'</span>, scale_units<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'xy'</span>, scale<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">1</span>, color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'r'</span>)</span>
+<span id="cb2-47">plt.xlim(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">3</span>)</span>
+<span id="cb2-48">plt.ylim(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">3</span>)</span>
+<span id="cb2-49">plt.title(<span class="st" style="color: #20794D;">"Example 3: Orthogonal Vectors"</span>)</span>
+<span id="cb2-50">plt.legend([<span class="st" style="color: #20794D;">"v"</span>, <span class="st" style="color: #20794D;">"w"</span>])</span>
+<span id="cb2-51">plt.grid(<span class="va" style="color: #111111;">True</span>)</span>
+<span id="cb2-52">plt.show()</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>0
+0
+0</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/06.orthogonality_files/figure-html/cell-3-output-2.png" width="592" height="431"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/06.orthogonality_files/figure-html/cell-3-output-3.png" width="408" height="419"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/06.orthogonality_files/figure-html/cell-3-output-4.png" width="573" height="431"></p>
+</div>
+</div>
+</section>
+<section id="properties" class="level4" data-number="1.1.1.2">
+<h4 data-number="1.1.1.2" class="anchored" data-anchor-id="properties"><span class="header-section-number">1.1.1.2</span> Properties</h4>
+<ul>
+<li><p>Orthogonal vectors have a dot product of zero: <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7Bv%7D%20%5Ccdot%20%5Cmathbf%7Bw%7D%20=%200%0A"></p></li>
+<li><p>The magnitude (length) of the projection of a vector onto an orthogonal vector is given by: <img src="https://latex.codecogs.com/png.latex?%0A%5Ctext%7Bproj%7D_%7B%5Cmathbf%7Bw%7D%7D(%5Cmathbf%7Bv%7D)%20=%20%5Cfrac%7B%5Cmathbf%7Bv%7D%20%5Ccdot%20%5Cmathbf%7Bw%7D%7D%7B%5C%7C%5Cmathbf%7Bw%7D%5C%7C%5E2%7D%20%5Cmathbf%7Bw%7D%20=%200%0A"></p></li>
+<li><p>The Pythagorean theorem holds for orthogonal vectors: <img src="https://latex.codecogs.com/png.latex?%0A%5C%7C%5Cmathbf%7Bv%7D%20+%20%5Cmathbf%7Bw%7D%5C%7C%5E2%20=%20%5C%7C%5Cmathbf%7Bv%7D%5C%7C%5E2%20+%20%5C%7C%5Cmathbf%7Bw%7D%5C%7C%5E2%0A"></p></li>
+<li><p>The angle between two orthogonal vectors is <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Cpi%7D%7B2%7D"> radians or <img src="https://latex.codecogs.com/png.latex?90"> degrees: <img src="https://latex.codecogs.com/png.latex?%0A%5Ctheta%20=%20%5Cfrac%7B%5Cpi%7D%7B2%7D%0A"></p></li>
+<li><p>Orthogonal vectors are linearly independent, which means that no vector in the span of one vector can be expressed as a linear combination of the other vector: <img src="https://latex.codecogs.com/png.latex?%0A%5Ctext%7Bspan%7D%5C%7B%5Cmathbf%7Bv%7D%5C%7D%20%5Ccap%20%5Ctext%7Bspan%7D%5C%7B%5Cmathbf%7Bw%7D%5C%7D%20=%20%5C%7B%5Cmathbf%7B0%7D%5C%7D%0A"></p></li>
+<li><p>The row space is perpendicular to the nullspace</p></li>
+<li><p>The column space is perpendicular to the nullspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET">.</p>
+<ul>
+<li>This peroperty plays a key role in solving the equation <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAx=b%7D"> but <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D"> is outside the column space (meaning we can’t solve the equation directly). In this case, we use the nullspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET"> to find the “least-squares” solution, which gives us the smallest possible error <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Be%20=%20b%20-%20Ax%7D"> in our solution.</li>
+</ul></li>
+</ul>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>When <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D"> is outside the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">, there is no exact solution to the equation <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAx%20=%20b%7D">. Instead, we seek a solution that minimizes the error <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Be%20=%20b%20-%20Ax%7D">. The least-squares solution achieves this by finding the projection of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D"> onto the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">. It turns out that the projection of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D"> onto the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is exactly equal to the solution of the equation <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET%5Cmathbf%7BAx%7D%20=%20%5Cmathbf%7BA%7D%5ET%5Cmathbf%7Bb%7D">, which can be solved using the nullspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET">.</p>
+<p>In summary, the statement “the column space is perpendicular to the nullspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET">” tells us that the column space and nullspace are orthogonal (i.e., perpendicular) subspaces, and this fact allows us to use the nullspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET"> to find the least-squares solution to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAx%20=%20b%7D">.</p>
+<section id="example" class="level5" data-number="1.1.1.2.1">
+<h5 data-number="1.1.1.2.1" class="anchored" data-anchor-id="example"><span class="header-section-number">1.1.1.2.1</span> Example</h5>
+<p>Suppose we have a system of equations <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAx%7D%20=%20%5Cmathbf%7Bb%7D"> where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> matrix and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D"> is an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%201"> vector, and we want to find the least squares solution to this system (i.e., the solution that minimizes the residual <img src="https://latex.codecogs.com/png.latex?%7C%5Cmathbf%7BAx%7D%20-%20%5Cmathbf%7Bb%7D%7C">). If <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> has linearly independent columns, then we can solve for <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> using the formula <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20(%5Cmathbf%7BA%7D%5ET%5Cmathbf%7BA%7D)%5E%7B-1%7D%5Cmathbf%7BA%7D%5ET%5Cmathbf%7Bb%7D">. However, if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> does not have linearly independent columns, then we can use the fact that the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is perpendicular to the nullspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET"> to find the least squares solution.</p>
+<p>To do this, we first find a basis for the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> and a basis for the nullspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET">. Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BP%7D"> be the projection matrix onto the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">, given by <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BP%7D%20=%20%5Cmathbf%7BA%7D(%5Cmathbf%7BA%7D%5ET%5Cmathbf%7BA%7D)%5E%7B-1%7D%5Cmathbf%7BA%7D%5ET">. Then the least squares solution to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAx%7D%20=%20%5Cmathbf%7Bb%7D"> is given by <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20%5Cmathbf%7BP%7D%5Cmathbf%7Bb%7D">, and the residual <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Be%7D%20=%20%5Cmathbf%7Bb%7D%20-%20%5Cmathbf%7BAx%7D"> is in the nullspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET">.</p>
+<div class="cell" data-execution_count="3">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="co" style="color: #5E5E5E;"># Define the matrix A and the vector b</span></span>
+<span id="cb4-2">A <span class="op" style="color: #5E5E5E;">=</span> np.array([[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">3</span>],</span>
+<span id="cb4-3">              [<span class="dv" style="color: #AD0000;">4</span>, <span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">6</span>],</span>
+<span id="cb4-4">              [<span class="dv" style="color: #AD0000;">7</span>, <span class="dv" style="color: #AD0000;">8</span>, <span class="dv" style="color: #AD0000;">9</span>],</span>
+<span id="cb4-5">              [<span class="dv" style="color: #AD0000;">10</span>, <span class="dv" style="color: #AD0000;">11</span>, <span class="dv" style="color: #AD0000;">12</span>]])</span>
+<span id="cb4-6">b <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">4</span>])</span>
+<span id="cb4-7"></span>
+<span id="cb4-8"><span class="co" style="color: #5E5E5E;"># Compute the least-squares solution using lstsq from SciPy</span></span>
+<span id="cb4-9">x, res, rank, s <span class="op" style="color: #5E5E5E;">=</span> lstsq(A, b)</span>
+<span id="cb4-10"></span>
+<span id="cb4-11"><span class="co" style="color: #5E5E5E;"># Compute the error e = b - Ax</span></span>
+<span id="cb4-12">e <span class="op" style="color: #5E5E5E;">=</span> b <span class="op" style="color: #5E5E5E;">-</span> A <span class="op" style="color: #5E5E5E;">@</span> x <span class="co" style="color: #5E5E5E;"># matrix multiplication</span></span>
+<span id="cb4-13"></span>
+<span id="cb4-14"><span class="co" style="color: #5E5E5E;"># Compute the projection of b onto the column space of A</span></span>
+<span id="cb4-15">Projected_b <span class="op" style="color: #5E5E5E;">=</span> A <span class="op" style="color: #5E5E5E;">@</span> x</span>
+<span id="cb4-16"></span>
+<span id="cb4-17"><span class="co" style="color: #5E5E5E;"># Compute the projection of b onto the orthogonal complement of the column space of A</span></span>
+<span id="cb4-18">Projected_b_perp <span class="op" style="color: #5E5E5E;">=</span> b <span class="op" style="color: #5E5E5E;">-</span> Projected_b</span>
+<span id="cb4-19"></span>
+<span id="cb4-20"><span class="co" style="color: #5E5E5E;"># Compute the projection of e onto the nullspace of A^T</span></span>
+<span id="cb4-21">Projected_e <span class="op" style="color: #5E5E5E;">=</span> np.linalg.pinv(A.T).T <span class="op" style="color: #5E5E5E;">@</span> e</span>
+<span id="cb4-22"></span>
+<span id="cb4-23"><span class="co" style="color: #5E5E5E;">'''</span></span>
+<span id="cb4-24"><span class="co" style="color: #5E5E5E;">The expected value of Projected_e = np.linalg.pinv(A.T) @ e is the projection of the true value x onto the column space of A. This is because the least squares solution x_hat is the orthogonal projection of the vector b onto the column space of A, which is given by x_hat = A @ np.linalg.lstsq(A, b)[0].</span></span>
+<span id="cb4-25"></span>
+<span id="cb4-26"><span class="co" style="color: #5E5E5E;">Since e = b - Ax_hat is the error in the least squares solution, np.linalg.pinv(A.T) @ e computes the projection of this error vector onto the nullspace of A^T. Therefore, the expected value of Projected_e is zero, since the error e is orthogonal to the column space of A and its projection onto the nullspace of A^T is also orthogonal to the column space of A.</span></span>
+<span id="cb4-27"></span>
+<span id="cb4-28"><span class="co" style="color: #5E5E5E;">In other words, Projected_e is the component of the error e that lies in the nullspace of A^T, and since the nullspace of A^T is orthogonal to the column space of A, the expected value of Projected_e is zero.</span></span>
+<span id="cb4-29"><span class="co" style="color: #5E5E5E;">'''</span></span>
+<span id="cb4-30"></span>
+<span id="cb4-31"><span class="co" style="color: #5E5E5E;"># Compute the projection of e onto the orthogonal complement of the nullspace of A^T</span></span>
+<span id="cb4-32">Projected_e_perp <span class="op" style="color: #5E5E5E;">=</span> e <span class="op" style="color: #5E5E5E;">-</span> A <span class="op" style="color: #5E5E5E;">@</span> Projected_e</span>
+<span id="cb4-33"></span>
+<span id="cb4-34"><span class="co" style="color: #5E5E5E;"># Verify that the column space is perpendicular to the nullspace of A^T</span></span>
+<span id="cb4-35"><span class="cf" style="color: #003B4F;">assert</span> np.allclose(A <span class="op" style="color: #5E5E5E;">@</span> Projected_e, np.zeros((A.shape[<span class="dv" style="color: #AD0000;">0</span>],)))</span>
+<span id="cb4-36"><span class="co" style="color: #5E5E5E;">#assert np.allclose(Projected_e_perp @ x, np.zeros((x.shape[0],)))</span></span></code></pre></div>
+</details>
+</div>
+<p>In this example, we define the matrix <code>A</code> and the vector <code>b</code>, and use the lstsq function from SciPy to compute the least-squares solution <code>x</code>. We then compute the error <code>e = b - Ax</code>, and project <code>b</code> onto the column space of <code>A</code> to obtain <code>Pb</code>, and onto the orthogonal complement of the column space of <code>A</code> to obtain <code>Pb_perp</code>. We also project <code>e</code> onto the nullspace of <code>A^T</code> to obtain <code>Pe</code>, and onto the orthogonal complement of the nullspace of <code>A^T</code> to obtain <code>Pe_perp</code>. Finally, we verify that the column space of <code>A</code> is perpendicular to the nullspace of <code>A^T</code> by checking that <code>A^T</code> <code>Pe = 0</code> and <code>Pe_perp x = 0</code>.</p>
+<div class="cell" data-execution_count="4">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="co" style="color: #5E5E5E;"># define the matrix A and vector b</span></span>
+<span id="cb5-2">A <span class="op" style="color: #5E5E5E;">=</span> np.array([[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>], [<span class="dv" style="color: #AD0000;">1</span>, <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>], [<span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">1</span>], [<span class="dv" style="color: #AD0000;">2</span>, <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>]])</span>
+<span id="cb5-3">b <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">3</span>])</span>
+<span id="cb5-4"></span>
+<span id="cb5-5"><span class="co" style="color: #5E5E5E;"># calculate the least-squares solution</span></span>
+<span id="cb5-6">x <span class="op" style="color: #5E5E5E;">=</span> np.linalg.lstsq(A, b, rcond<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">None</span>)[<span class="dv" style="color: #AD0000;">0</span>]</span>
+<span id="cb5-7"></span>
+<span id="cb5-8"><span class="co" style="color: #5E5E5E;"># create a figure with a 3D axes object</span></span>
+<span id="cb5-9">fig <span class="op" style="color: #5E5E5E;">=</span> plt.figure()</span>
+<span id="cb5-10">ax <span class="op" style="color: #5E5E5E;">=</span> fig.add_subplot(<span class="dv" style="color: #AD0000;">111</span>, projection<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'3d'</span>)</span>
+<span id="cb5-11"></span>
+<span id="cb5-12"><span class="co" style="color: #5E5E5E;"># plot the points in the column space of A</span></span>
+<span id="cb5-13">x1 <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">10</span>)</span>
+<span id="cb5-14">x2 <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">10</span>)</span>
+<span id="cb5-15">X1, X2 <span class="op" style="color: #5E5E5E;">=</span> np.meshgrid(x1, x2)</span>
+<span id="cb5-16">Y <span class="op" style="color: #5E5E5E;">=</span> x[<span class="dv" style="color: #AD0000;">0</span>]<span class="op" style="color: #5E5E5E;">*</span>X1 <span class="op" style="color: #5E5E5E;">+</span> x[<span class="dv" style="color: #AD0000;">1</span>]<span class="op" style="color: #5E5E5E;">*</span>X2</span>
+<span id="cb5-17">ax.plot_surface(X1, X2, Y, alpha<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">0.2</span>)</span>
+<span id="cb5-18"></span>
+<span id="cb5-19"><span class="co" style="color: #5E5E5E;"># plot the points in the nullspace of A^T</span></span>
+<span id="cb5-20">x1 <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">10</span>)</span>
+<span id="cb5-21">x3 <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">10</span>)</span>
+<span id="cb5-22">X1, X3 <span class="op" style="color: #5E5E5E;">=</span> np.meshgrid(x1, x3)</span>
+<span id="cb5-23">Y <span class="op" style="color: #5E5E5E;">=</span> np.zeros_like(X1)</span>
+<span id="cb5-24">Z <span class="op" style="color: #5E5E5E;">=</span> x[<span class="dv" style="color: #AD0000;">0</span>]<span class="op" style="color: #5E5E5E;">*</span>X1 <span class="op" style="color: #5E5E5E;">+</span> x[<span class="dv" style="color: #AD0000;">1</span>]<span class="op" style="color: #5E5E5E;">*</span>Y <span class="op" style="color: #5E5E5E;">+</span> x[<span class="dv" style="color: #AD0000;">2</span>]<span class="op" style="color: #5E5E5E;">*</span>X3</span>
+<span id="cb5-25">ax.plot_surface(X1, Y, X3, color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'red'</span>, alpha<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">0.2</span>)</span>
+<span id="cb5-26"></span>
+<span id="cb5-27"><span class="co" style="color: #5E5E5E;"># plot the data points and the least-squares solution</span></span>
+<span id="cb5-28">ax.scatter(A[:,<span class="dv" style="color: #AD0000;">0</span>], A[:,<span class="dv" style="color: #AD0000;">1</span>], b, color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'blue'</span>, marker<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'o'</span>, s<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">50</span>)</span>
+<span id="cb5-29">ax.scatter(x[<span class="dv" style="color: #AD0000;">0</span>], x[<span class="dv" style="color: #AD0000;">1</span>], x[<span class="dv" style="color: #AD0000;">2</span>], color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'green'</span>, marker<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'*'</span>, s<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">100</span>)</span>
+<span id="cb5-30"></span>
+<span id="cb5-31"><span class="co" style="color: #5E5E5E;"># set the axis labels and limits</span></span>
+<span id="cb5-32">ax.set_xlabel(<span class="st" style="color: #20794D;">'x1'</span>)</span>
+<span id="cb5-33">ax.set_ylabel(<span class="st" style="color: #20794D;">'x2'</span>)</span>
+<span id="cb5-34">ax.set_zlabel(<span class="st" style="color: #20794D;">'b'</span>)</span>
+<span id="cb5-35">ax.set_xlim(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">3</span>)</span>
+<span id="cb5-36">ax.set_ylim(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">3</span>)</span>
+<span id="cb5-37">ax.set_zlim(<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">6</span>)</span>
+<span id="cb5-38"></span>
+<span id="cb5-39"><span class="co" style="color: #5E5E5E;"># show the plot</span></span>
+<span id="cb5-40">plt.show()</span></code></pre></div>
+</details>
+</div>
+</section>
+</div>
+</div>
+</section>
+</section>
+<section id="orthogonal-subspaces" class="level3" data-number="1.1.2">
+<h3 data-number="1.1.2" class="anchored" data-anchor-id="orthogonal-subspaces"><span class="header-section-number">1.1.2</span> Orthogonal Subspaces</h3>
+<div id="def-orthogonalSubspaces" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 2 </strong></span>Two subspaces <img src="https://latex.codecogs.com/png.latex?U"> and <img src="https://latex.codecogs.com/png.latex?V"> of a vector space <img src="https://latex.codecogs.com/png.latex?W"> are said to be orthogonal subspaces if every vector in <img src="https://latex.codecogs.com/png.latex?U"> is orthogonal to every vector in <img src="https://latex.codecogs.com/png.latex?V">. Symbolically, we write <img src="https://latex.codecogs.com/png.latex?U%20%5Cperp%20V"> if and only if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bu%7D%20%5Ccdot%20%5Cmathbf%7Bv%7D%20=%200"> for all <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bu%7D%20%5Cin%20U"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20%5Cin%20V">.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20u%5ET%20%5Cmathbf%20v%20=%200%0A"></p>
+</div>
+<p>Every vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> in the nullspace is perpendicular to every row of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">, because <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAx=0%7D"> The <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Bnull%7D(%5Cmathbf%7BA%7D)"> and the row space <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BCol%7D(%5Cmathbf%7BA%7D%5ET)"> are orthogonal subspaces of <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5En"></p>
+<p>Every vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D"> in the nullspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET"> is perpendicular to every column of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">. The left <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Bnull%7D(%5Cmathbf%7BA%7D%5ET)"> and the column space <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BCol%7D(%5Cmathbf%7BA%7D)"> are orthogonal subspaces in <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5En"></p>
+<section id="examples-1" class="level4" data-number="1.1.2.1">
+<h4 data-number="1.1.2.1" class="anchored" data-anchor-id="examples-1"><span class="header-section-number">1.1.2.1</span> Examples</h4>
+<p>Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5C%5C%201%20%5Cend%7Bbmatrix%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D%20=%20%5Cbegin%7Bbmatrix%7D%200%20%5C%5C%201%20%5C%5C%20-1%20%5Cend%7Bbmatrix%7D"> be two vectors in <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E3">. Then the subspaces <img src="https://latex.codecogs.com/png.latex?U%20=%20%5Ctext%7Bspan%7D%7B%5Cmathbf%7Bv%7D%7D"> and <img src="https://latex.codecogs.com/png.latex?V%20=%20%5Ctext%7Bspan%7D%7B%5Cmathbf%7Bw%7D%7D"> are orthogonal subspaces, since <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20%5Ccdot%20%5Cmathbf%7Bw%7D%20=%200">.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AU%20=%20%5Ctext%7Bspan%7D%5C%7B%5Cmathbf%7Bv%7D%5C%7D%20=%20%5Ctext%7Bspan%7D%5Cleft%5C%7B%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5C%5C%201%20%5Cend%7Bbmatrix%7D%5Cright%5C%7D,%20%5Cquad%0AV%20=%20%5Ctext%7Bspan%7D%5C%7B%5Cmathbf%7Bw%7D%5C%7D%20=%20%5Ctext%7Bspan%7D%5Cleft%5C%7B%5Cbegin%7Bbmatrix%7D%200%20%5C%5C%201%20%5C%5C%20-1%20%5Cend%7Bbmatrix%7D%5Cright%5C%7D%0A"></p>
+<p>Let <img src="https://latex.codecogs.com/png.latex?U"> be the subspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E3"> spanned by the vectors <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%202%20%5C%5C%200%20%5Cend%7Bbmatrix%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5C%5C%20-1%20%5Cend%7Bbmatrix%7D">, and let <img src="https://latex.codecogs.com/png.latex?V"> be the subspace spanned by the vector <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%202%20%5C%5C%20-1%20%5C%5C%201%20%5Cend%7Bbmatrix%7D">. Then <img src="https://latex.codecogs.com/png.latex?U"> and <img src="https://latex.codecogs.com/png.latex?V"> are orthogonal subspaces, since every vector in <img src="https://latex.codecogs.com/png.latex?U"> is orthogonal to every vector in <img src="https://latex.codecogs.com/png.latex?V">.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AU%20=%20%5Ctext%7Bspan%7D%5Cleft%5C%7B%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%202%20%5C%5C%200%20%5Cend%7Bbmatrix%7D,%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5C%5C%20-1%20%5Cend%7Bbmatrix%7D%5Cright%5C%7D,%20%5Cquad%0AV%20=%20%5Ctext%7Bspan%7D%5Cleft%5C%7B%5Cbegin%7Bbmatrix%7D%202%20%5C%5C%20-1%20%5C%5C%201%20%5Cend%7Bbmatrix%7D%5Cright%5C%7D%0A"></p>
+<p>Let <img src="https://latex.codecogs.com/png.latex?U"> and <img src="https://latex.codecogs.com/png.latex?V"> be the subspaces of <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E2"> spanned by the vectors <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%201%20%5C%201%20%5Cend%7Bbmatrix%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%201%20%5C%20-1%20%5Cend%7Bbmatrix%7D">, respectively. Then <img src="https://latex.codecogs.com/png.latex?U"> and <img src="https://latex.codecogs.com/png.latex?V"> are not orthogonal subspaces, since <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%201%20%5C%201%20%5Cend%7Bbmatrix%7D%20%5Ccdot%20%5Cbegin%7Bbmatrix%7D%201%20%5C%20-1%20%5Cend%7Bbmatrix%7D%20%5Cneq%200">.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AU%20=%20%5Ctext%7Bspan%7D%5Cleft%5C%7B%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%201%20%5Cend%7Bbmatrix%7D%5Cright%5C%7D,%20%5Cquad%0AV%20=%20%5Ctext%7Bspan%7D%5Cleft%5C%7B%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%20-1%20%5Cend%7Bbmatrix%7D%5Cright%5C%7D%0A"></p>
+<div class="cell" data-execution_count="5">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">v <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb6-2">w <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">1</span>, <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb6-3"></span>
+<span id="cb6-4"><span class="co" style="color: #5E5E5E;"># plot vectors</span></span>
+<span id="cb6-5">plt.figure()</span>
+<span id="cb6-6">plt.plot([<span class="dv" style="color: #AD0000;">0</span>, v[<span class="dv" style="color: #AD0000;">0</span>]], [<span class="dv" style="color: #AD0000;">0</span>, v[<span class="dv" style="color: #AD0000;">1</span>]], <span class="st" style="color: #20794D;">'b'</span>, label<span class="op" style="color: #5E5E5E;">=</span><span class="vs" style="color: #20794D;">r'$\mathbf</span><span class="sc" style="color: #5E5E5E;">{v}</span><span class="vs" style="color: #20794D;">$'</span>)</span>
+<span id="cb6-7">plt.plot([<span class="dv" style="color: #AD0000;">0</span>, w[<span class="dv" style="color: #AD0000;">0</span>]], [<span class="dv" style="color: #AD0000;">0</span>, w[<span class="dv" style="color: #AD0000;">1</span>]], <span class="st" style="color: #20794D;">'r'</span>, label<span class="op" style="color: #5E5E5E;">=</span><span class="vs" style="color: #20794D;">r'$\mathbf</span><span class="sc" style="color: #5E5E5E;">{w}</span><span class="vs" style="color: #20794D;">$'</span>)</span>
+<span id="cb6-8">plt.legend()</span>
+<span id="cb6-9"></span>
+<span id="cb6-10"><span class="co" style="color: #5E5E5E;"># plot subspaces</span></span>
+<span id="cb6-11">plt.axline((<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>), slope<span class="op" style="color: #5E5E5E;">=</span>v[<span class="dv" style="color: #AD0000;">1</span>]<span class="op" style="color: #5E5E5E;">/</span>v[<span class="dv" style="color: #AD0000;">0</span>], color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'b'</span>, linestyle<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'--'</span>, label<span class="op" style="color: #5E5E5E;">=</span><span class="vs" style="color: #20794D;">r'$U$'</span>)</span>
+<span id="cb6-12">plt.axline((<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>), slope<span class="op" style="color: #5E5E5E;">=</span>w[<span class="dv" style="color: #AD0000;">1</span>]<span class="op" style="color: #5E5E5E;">/</span>w[<span class="dv" style="color: #AD0000;">0</span>], color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'r'</span>, linestyle<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'--'</span>, label<span class="op" style="color: #5E5E5E;">=</span><span class="vs" style="color: #20794D;">r'$V$'</span>)</span>
+<span id="cb6-13"></span>
+<span id="cb6-14">plt.xlim(<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">1.5</span>, <span class="fl" style="color: #AD0000;">1.5</span>)</span>
+<span id="cb6-15">plt.ylim(<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">1.5</span>, <span class="fl" style="color: #AD0000;">1.5</span>)</span>
+<span id="cb6-16">plt.gca().set_aspect(<span class="st" style="color: #20794D;">'equal'</span>, adjustable<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'box'</span>)</span>
+<span id="cb6-17">plt.show()</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/06.orthogonality_files/figure-html/cell-6-output-1.png" width="441" height="416"></p>
+</div>
+</div>
+<p>The vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D"> are in blue and red, respectively, and the subspaces <img src="https://latex.codecogs.com/png.latex?U"> and <img src="https://latex.codecogs.com/png.latex?V"> as dashed lines with corresponding colors. Since <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20%5Ccdot%20%5Cmathbf%7Bw%7D%20=%200">, the subspaces are orthogonal.</p>
+</section>
+</section>
+<section id="orthogonal-complements" class="level3" data-number="1.1.3">
+<h3 data-number="1.1.3" class="anchored" data-anchor-id="orthogonal-complements"><span class="header-section-number">1.1.3</span> Orthogonal Complements</h3>
+<p>Given a subspace <img src="https://latex.codecogs.com/png.latex?V"> of a vector space <img src="https://latex.codecogs.com/png.latex?W">, we can decompose any vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D%20%5Cin%20W"> into two orthogonal components, one in <img src="https://latex.codecogs.com/png.latex?V"> and one in the orthogonal complement of <img src="https://latex.codecogs.com/png.latex?V">.</p>
+<div id="def-orthogonalComplements" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 3 </strong></span>Let <img src="https://latex.codecogs.com/png.latex?V"> be a subspace of a vector space <img src="https://latex.codecogs.com/png.latex?W">. The orthogonal complement of <img src="https://latex.codecogs.com/png.latex?V">, denoted by <img src="https://latex.codecogs.com/png.latex?V%5E%5Cperp">, is the set of all vectors in <img src="https://latex.codecogs.com/png.latex?W"> that are orthogonal to every vector in <img src="https://latex.codecogs.com/png.latex?V">. That is, the orthogonal complement of <img src="https://latex.codecogs.com/png.latex?V"> is the set of vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20w%20%5Cin%20W"> such that the inner product between <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20w"> and any vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20v%20%5Cin%20V"> is equal to zero: <img src="https://latex.codecogs.com/png.latex?%0AV%5E%5Cperp%20=%20%5C%7B%20%5Cmathbf%20w%20%5Cin%20W%20%7C%20%5Clangle%20%5Cmathbf%20w,%5Cmathbf%20v%20%5Crangle%20=%200,%20%5Cforall%20%5Cmathbf%20v%20%5Cin%20V%20%5C%7D.%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?V%5E%5Cperp"> represents the orthogonal complement of the subspace <img src="https://latex.codecogs.com/png.latex?V">, <img src="https://latex.codecogs.com/png.latex?w"> and <img src="https://latex.codecogs.com/png.latex?v"> are vectors in the subspaces <img src="https://latex.codecogs.com/png.latex?W"> and <img src="https://latex.codecogs.com/png.latex?V"> respectively, and <img src="https://latex.codecogs.com/png.latex?%5Clangle"> and <img src="https://latex.codecogs.com/png.latex?%5Crangle"> denote the inner product between two vectors.</p>
+</div>
+<p>We can then decompose any vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D%20%5Cin%20W"> into two orthogonal components as follows: <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20w%20=%20%5Cmathbf%20w_%7BV%7D%20+%5Cmathbf%20w_%7BV%5E%7B%5Cperp%7D%7D%20%20%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D_%7BV%7D"> is the orthogonal projection of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D"> onto <img src="https://latex.codecogs.com/png.latex?V">, and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D_%7BV%5E%5Cperp%7D"> is the orthogonal projection of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D"> onto <img src="https://latex.codecogs.com/png.latex?V%5E%5Cperp">.</p>
+<p>If <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20v"> is orthogonal to the nullspace, it must be in the row space.</p>
+<section id="example-1" class="level4" data-number="1.1.3.1">
+<h4 data-number="1.1.3.1" class="anchored" data-anchor-id="example-1"><span class="header-section-number">1.1.3.1</span> Example</h4>
+<p>Let <img src="https://latex.codecogs.com/png.latex?W%20=%20%5Cmathbb%7BR%7D%5E3"> and <img src="https://latex.codecogs.com/png.latex?V"> be the subspace spanned by the vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D_1%20=%20(1,0,0)"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D_2%20=%20(0,1,1)">. Then, we can find a basis for <img src="https://latex.codecogs.com/png.latex?V%5E%5Cperp"> by solving the system of equations</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bbmatrix%7D%201%20&amp;%200%20&amp;%200%20%5C%5C%200%20&amp;%201%20&amp;%201%20%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20x%20%5C%5C%20y%20%5C%5C%20z%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%200%20%5C%5C%200%20%5Cend%7Bbmatrix%7D%0A"></p>
+<p>This gives us the solution <img src="https://latex.codecogs.com/png.latex?x%20=%200">, <img src="https://latex.codecogs.com/png.latex?y%20=%200">, <img src="https://latex.codecogs.com/png.latex?z%20=%200">, so <img src="https://latex.codecogs.com/png.latex?V%5E%5Cperp"> is the subspace spanned by the vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D%20=%20(0,0,1)">. we have a <img src="https://latex.codecogs.com/png.latex?2%5Ctimes%203"> matrix multiplying a <img src="https://latex.codecogs.com/png.latex?3%5Ctimes%201"> vector, resulting in a <img src="https://latex.codecogs.com/png.latex?2%5Ctimes%201"> vector. This means that the equation is restricting the first two coordinates of the vector to be zero.</p>
+<p>Therefore, we can consider the subspace <img src="https://latex.codecogs.com/png.latex?V"> to be the <img src="https://latex.codecogs.com/png.latex?xy">-plane in <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E3">, i.e., <img src="https://latex.codecogs.com/png.latex?V%20=%20%7B(x,y,z)%20%5Cin%20%5Cmathbb%7BR%7D%5E3%20:%20z%20=%200%7D">. Then, the orthogonal complement <img src="https://latex.codecogs.com/png.latex?V%5E%5Cperp"> is the set of all vectors that are orthogonal to every vector in <img src="https://latex.codecogs.com/png.latex?V">. In this case, we can see that <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%200%20%5C%5C%200%20%5C%5C%201%20%5Cend%7Bbmatrix%7D"> is perpendicular to every vector in <img src="https://latex.codecogs.com/png.latex?V">, since its third coordinate is always <img src="https://latex.codecogs.com/png.latex?1"> while the third coordinate of any vector in <img src="https://latex.codecogs.com/png.latex?V"> is always <img src="https://latex.codecogs.com/png.latex?0">. Therefore, <img src="https://latex.codecogs.com/png.latex?V%5E%5Cperp"> is the subspace spanned by <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%200%20%5C%5C%200%20%5C%5C%201%20%5Cend%7Bbmatrix%7D">, which is the <img src="https://latex.codecogs.com/png.latex?z">-axis in <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E3">.</p>
+<p>Now, given any vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D%20%5Cin%20%5Cmathbb%7BR%7D%5E3">, we can decompose it into two orthogonal components as</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20w%20=%20%5Cmathbf%20w_%7BV%7D%20+%5Cmathbf%20w_%7BV%5E%7B%5Cperp%7D%7D%20%20%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7DV"> is the projection of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D"> onto <img src="https://latex.codecogs.com/png.latex?V">, and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D%7BV%5E%5Cperp%7D"> is the projection of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D"> onto <img src="https://latex.codecogs.com/png.latex?V%5E%5Cperp">. For example, if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D%20=%20(1,2,3)">, We can compute the projections <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7DV"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D%7BV%5E%5Cperp%7D"> as follows:</p>
+<p>The projection of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D"> onto <img src="https://latex.codecogs.com/png.latex?V"> is given by</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7Bw%7D_V%20=%20%5Coperatorname%7Bproj%7D_%7BV%7D(%5Cmathbf%7Bw%7D)%20=%20%5Cfrac%7B%5Clangle%20%5Cmathbf%7Bw%7D,%5Cmathbf%7Bv%7D_1%5Crangle%7D%7B%5C%7C%5Cmathbf%7Bv%7D_1%5C%7C%5E2%7D%20%5Cmathbf%7Bv%7D_1%20+%20%5Cfrac%7B%5Clangle%20%5Cmathbf%7Bw%7D,%5Cmathbf%7Bv%7D_2%5Crangle%7D%7B%5C%7C%5Cmathbf%7Bv%7D_2%5C%7C%5E2%7D%20%5Cmathbf%7Bv%7D_2%20=%20%5Cfrac%7B1%7D%7B1%5E2+0%5E2+0%5E2%7D%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5C%5C%200%5Cend%7Bbmatrix%7D%20=%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5C%5C%200%5Cend%7Bbmatrix%7D%0A"></p>
+<p>The projection of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D"> onto <img src="https://latex.codecogs.com/png.latex?V%5E%5Cperp"> is given by</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20w%20=%20%5Cmathbf%20w_%7BV%7D%20-%5Cmathbf%20w_%7BV%5E%7B%5Cperp%7D%7D%20%20=%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%202%20%5C%5C%203%20%5Cend%7Bbmatrix%7D%20-%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5C%5C%200%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%200%20%5C%5C%202%20%5C%5C%203%20%5Cend%7Bbmatrix%7D%0A"></p>
+<p>Therefore, we have decomposed <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D"> into two orthogonal components as <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5C%5C%200%20%5Cend%7Bbmatrix%7D%20+%20%5Cbegin%7Bbmatrix%7D%200%20%5C%5C%202%20%5C%5C%203%20%5Cend%7Bbmatrix%7D">.</p>
+<p>The Fundamental Theorem of Linear Algebra states that for a given matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> and the null space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> are orthogonal complements of each other. In other words, every vector in the null space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is orthogonal to every vector in the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, and vice versa. This means that any vector in the domain of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> can be uniquely decomposed as the sum of a vector in the column space and a vector in the null space.</p>
+<div id="thm-fundamentralThm" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 1 </strong></span>Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> be an <img src="https://latex.codecogs.com/png.latex?m%5Ctimes%20n"> matrix over <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D">. Then,</p>
+<ul>
+<li>The column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, denoted <img src="https://latex.codecogs.com/png.latex?C(%5Cmathbf%20A)">, is a subspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5Em">.</li>
+<li>The null space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, denoted <img src="https://latex.codecogs.com/png.latex?N(%5Cmathbf%20A)">, is a subspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5En">.</li>
+<li>The orthogonal complement of <img src="https://latex.codecogs.com/png.latex?C(%5Cmathbf%20A)">, denoted <img src="https://latex.codecogs.com/png.latex?C(%5Cmathbf%20A)%5E%5Cperp">, is equal to <img src="https://latex.codecogs.com/png.latex?N(%5Cmathbf%20A)">.</li>
+<li>The orthogonal complement of <img src="https://latex.codecogs.com/png.latex?N(%5Cmathbf%20A)">, denoted <img src="https://latex.codecogs.com/png.latex?N(%5Cmathbf%20A)%5E%5Cperp">, is equal to <img src="https://latex.codecogs.com/png.latex?C(%5Cmathbf%20A)">.</li>
+</ul>
+<p>In other words, we have the following orthogonal decomposition of <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5En">: <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbb%20R%5En%20=%20N(%5Cmathbf%20A)%20%5Coplus%20C(%5Cmathbf%20A)%5E%5Cperp%0A"></p>
+<p>and the following orthogonal decomposition of <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5Em">:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbb%20R%5Em%20=%20C(%5Cmathbf%20A)%20%5Coplus%20N(%5Cmathbf%20A)%5E%5Cperp%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Coplus"> denotes the direct sum of subspaces.</p>
+</div>
+</section>
+<section id="exmaple" class="level4" data-number="1.1.3.2">
+<h4 data-number="1.1.3.2" class="anchored" data-anchor-id="exmaple"><span class="header-section-number">1.1.3.2</span> Exmaple</h4>
+<p><strong>Example1</strong> Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> be an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> matrix with rank <img src="https://latex.codecogs.com/png.latex?r">. Then, <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5En"> can be decomposed as <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5En%20=%20N(%5Cmathbf%20A)%20%5Coplus%20N(%5Cmathbf%20A)%5E%7B%5Cperp%7D">, where <img src="https://latex.codecogs.com/png.latex?N(%5Cmathbf%20A)"> is the null space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, <img src="https://latex.codecogs.com/png.latex?N(%5Cmathbf%20A)%5E%7B%5Cperp%7D"> is its orthogonal complement, and <img src="https://latex.codecogs.com/png.latex?%5Coplus"> denotes the direct sum. This means that any vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20%5Cin%20%5Cmathbb%7BR%7D%5En"> can be written uniquely as <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20=%20%5Cmathbf%7Bv%7D_1%20+%20%5Cmathbf%7Bv%7D_2">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D_1%20%5Cin%20N(%5Cmathbf%20A)"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D_2%20%5Cin%20N(%5Cmathbf%20A)%5E%7B%5Cperp%7D">.</p>
+<p><strong>Example2</strong> Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> be an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> matrix with rank <img src="https://latex.codecogs.com/png.latex?r">. Then, the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, denoted <img src="https://latex.codecogs.com/png.latex?C(%5Cmathbf%20A)">, is equal to the orthogonal complement of the null space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A%5ET">, i.e., <img src="https://latex.codecogs.com/png.latex?C(%5Cmathbf%20A)%20=%20N(%5Cmathbf%20A%5ET)%5E%7B%5Cperp%7D">.</p>
+<p><strong>Example3</strong> Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> be an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> matrix with rank <img src="https://latex.codecogs.com/png.latex?r">, and let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D%20%5Cin%20%5Cmathbb%7BR%7D%5Em"> be a vector. Then, the system of linear equations <img src="https://latex.codecogs.com/png.latex?A%5Cmathbf%7Bx%7D%20=%20%5Cmathbf%7Bb%7D"> has a solution if and only if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D%20%5Cin%20C(%5Cmathbf%20A)">. Moreover, if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D_0"> is a particular solution to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A%5Cmathbf%7Bx%7D%20=%20%5Cmathbf%7Bb%7D">, then the set of all solutions is given by <img src="https://latex.codecogs.com/png.latex?%7B%5Cmathbf%7Bx%7D_0%20+%20%5Cmathbf%7Bv%7D%20:%20%5Cmathbf%7Bv%7D%20%5Cin%20N(%5Cmathbf%20A)%7D">, i.e., it is the affine space consisting of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D_0"> plus the null space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">.</p>
+<p><strong>Example4</strong> Every diagonal matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20D"> has a diagonal submatrix consisting of its first <img src="https://latex.codecogs.com/png.latex?r"> diagonal entries that is <img src="https://latex.codecogs.com/png.latex?r%20%5Ctimes%20r"> and invertible for any <img src="https://latex.codecogs.com/png.latex?r"> between <img src="https://latex.codecogs.com/png.latex?1"> and the size of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20D">. For example, consider the diagonal matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20D%20=%20%5Cbegin%7Bbmatrix%7D%202%20&amp;%200%20&amp;%200%20%5C%5C%200%20&amp;%203%20&amp;%200%20%5C%5C%200%20&amp;%200%20&amp;%204%20%5Cend%7Bbmatrix%7D">. The <img src="https://latex.codecogs.com/png.latex?2%20%5Ctimes%202"> diagonal submatrix consisting of the first two diagonal entries, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20D'%20=%20%5Cbegin%7Bbmatrix%7D%202%20&amp;%200%20%5C%5C%200%20&amp;%203%20%5Cend%7Bbmatrix%7D">, is invertible since its diagonal entries are nonzero. Similarly, the <img src="https://latex.codecogs.com/png.latex?3%20%5Ctimes%203"> diagonal submatrix consisting of all the diagonal entries, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20D''%20=%20%5Cbegin%7Bbmatrix%7D%202%20&amp;%200%20&amp;%200%20%5C%5C%200%20&amp;%203%20&amp;%200%20%5C%5C%200%20&amp;%200%20&amp;%204%20%5Cend%7Bbmatrix%7D">, is also invertible since all of its diagonal entries are nonzero. This example illustrates the fact that every diagonal matrix has an invertible diagonal submatrix of any size between <img src="https://latex.codecogs.com/png.latex?1"> and the size of the matrix.</p>
+<p><strong>Example5</strong> Consider the matrix <img src="https://latex.codecogs.com/png.latex?A=%5Cbegin%7Bbmatrix%7D1%20&amp;%202%20&amp;%203%20%5C%5C%204%20&amp;%205%20&amp;%206%20%5Cend%7Bbmatrix%7D">. We want to find the right bases for <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E2"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E3"> such that <img src="https://latex.codecogs.com/png.latex?A"> becomes a diagonal matrix.</p>
+<p>We begin by computing <img src="https://latex.codecogs.com/png.latex?A%5ETA">:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AA%5ET%20A%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%204%20%5C%5C%202%20&amp;%205%20%5C%5C%203%20&amp;%206%20%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20&amp;%203%20%5C%5C%204%20&amp;%205%20&amp;%206%20%5Cend%7Bbmatrix%7D%20%20=%20%5Cbegin%7Bbmatrix%7D%2017%20&amp;%2022%20&amp;%2027%20%5C%5C%2022%20&amp;%2029%20&amp;%2036%20%5C%5C%2027%20&amp;%2036%20&amp;%2045%5Cend%7Bbmatrix%7D%0A"></p>
+<p>The eigenvalues of <img src="https://latex.codecogs.com/png.latex?A%5ETA"> are <img src="https://latex.codecogs.com/png.latex?%5Clambda_1%20=%200">, <img src="https://latex.codecogs.com/png.latex?%5Clambda_2%20=%201">, and <img src="https://latex.codecogs.com/png.latex?%5Clambda_3%20=%2090">. We can find the corresponding eigenvectors as follows:</p>
+<ul>
+<li>For <img src="https://latex.codecogs.com/png.latex?%5Clambda_1%20=%200">, we solve <img src="https://latex.codecogs.com/png.latex?(A%5ETA%20-%20%5Clambda_1%20I)v%20=%200">, which gives us the equation <img src="https://latex.codecogs.com/png.latex?17x%20+%2022y%20+%2027z%20=%200">. One possible eigenvector is <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%20-2%20%5C%5C%201%20%5C%5C%200%20%5Cend%7Bbmatrix%7D">.</li>
+<li>For <img src="https://latex.codecogs.com/png.latex?%5Clambda_2%20=%201">, we solve <img src="https://latex.codecogs.com/png.latex?(A%5ETA%20-%20%5Clambda_2%20I)v%20=%200">, which gives us the equation <img src="https://latex.codecogs.com/png.latex?16x%20+%2020y%20+%2024z%20=%200">. One possible eigenvector is <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%203%20%5C%5C%20-2%20%5C%5C%200%20%5Cend%7Bbmatrix%7D">.</li>
+<li>For <img src="https://latex.codecogs.com/png.latex?%5Clambda_3%20=%2090">, we solve <img src="https://latex.codecogs.com/png.latex?(A%5ETA%20-%20%5Clambda_3%20I)v%20=%200">, which gives us the equation <img src="https://latex.codecogs.com/png.latex?-2x%20+%20y%20+%20z%20=%200">. One possible eigenvector is <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%202%20%5C%5C%20-1%20%5Cend%7Bbmatrix%7D">.</li>
+</ul>
+<p>We normalize these eigenvectors to obtain an orthonormal basis for <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E3">:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Av_1%20=%20%5Cfrac%7B1%7D%7B%5Csqrt%7B5%7D%7D%5Cbegin%7Bbmatrix%7D%20-2%20%5C%5C%201%20%5C%5C%200%20%5Cend%7Bbmatrix%7D,%20%5Cquad%20v_2%20=%20%5Cfrac%7B1%7D%7B%5Csqrt%7B13%7D%7D%5Cbegin%7Bbmatrix%7D%203%20%5C%5C%20-2%20%5C%5C%200%20%5Cend%7Bbmatrix%7D,%20%5Cquad%20v_3%20=%20%5Cfrac%7B1%7D%7B%5Csqrt%7B6%7D%7D%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%202%20%5C%5C%20-1%20%5Cend%7Bbmatrix%7D%0A"></p>
+<p>Next, we compute <img src="https://latex.codecogs.com/png.latex?Av_i"> for each <img src="https://latex.codecogs.com/png.latex?i=1,2,3">:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AAv_1%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20&amp;%203%20%5C%5C%204%20&amp;%205%20&amp;%206%20%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7D%20%5Cfrac%7B-2%7D%7B%5Csqrt%7B5%7D%7D%20%5C%5C%20%5Cfrac%7B1%7D%7B%5Csqrt%7B5%7D%7D%20%5C%5C%200%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%20%5Cfrac%7B-2%7D%7B%5Csqrt%7B5%7D%7D%20%5C%5C%20%5Cfrac%7B8%7D%7B%5Csqrt%7B5%7D%7D%20%5Cend%7Bbmatrix%7D%20=%20%5Cfrac%7B2%7D%7B%5Csqrt%7B5%7D%7D%5Cbegin%7Bbmatrix%7D%20-1%20%5C%5C%202%20%5Cend%7Bbmatrix%7D%0A"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AAv_2%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20&amp;%203%20%5C%5C%204%20&amp;%205%20&amp;%206%20%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7D%20-0.6931%20%5C%5C%20-0.1184%20%5C%5C%200.7107%20%5Cend%7Bbmatrix%7D%20%5Capprox%20%5Cbegin%7Bbmatrix%7D%20-3.1623%20%5C%5C%20-7.4162%20%5Cend%7Bbmatrix%7D%20%5Capprox%20-3.1623v_1,%0A"></p>
+<p>and</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AAv_3%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20&amp;%203%20%5C%5C%204%20&amp;%205%20&amp;%206%20%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7D%20-0.6931%20%5C%5C%200.6646%20%5C%5C%20-0.2774%20%5Cend%7Bbmatrix%7D%20%5Capprox%20%5Cbegin%7Bbmatrix%7D%20-4.7246%20%5C%5C%204.6707%20%5Cend%7Bbmatrix%7D%20%5Capprox%204.6707v_1,%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?v_1=%5Cbegin%7Bbmatrix%7D%200.2673%20%5C%5C%200.5345%20%5C%5C%200.8018%20%5Cend%7Bbmatrix%7D">.</p>
+<p>Therefore, we can take <img src="https://latex.codecogs.com/png.latex?v_1"> as the first column of the matrix <img src="https://latex.codecogs.com/png.latex?V">, and the normalized eigenvectors <img src="https://latex.codecogs.com/png.latex?v_2"> and <img src="https://latex.codecogs.com/png.latex?v_3"> as the second and third columns of <img src="https://latex.codecogs.com/png.latex?V">, respectively. Then we can define <img src="https://latex.codecogs.com/png.latex?U=AV%5CSigma%5E%7B-1%7D">, where <img src="https://latex.codecogs.com/png.latex?%5CSigma"> is the diagonal matrix with the square roots of the nonzero eigenvalues of <img src="https://latex.codecogs.com/png.latex?A%5ETA"> as its entries.</p>
+<p>&lt; 여기서 부터 다시 볼것&gt; Thus, we have</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AA%20=%20U%5CSigma%20V%5ET%20=%20%5Cbegin%7Bbmatrix%7D%20-0.231%20%5C%20%5C%20%5C%200.9730%20%5C%5C%20-0.5253%20%5C%20%5C%20%5C%200.0806%20%5C%5C%20-0.8196%20-0.9195%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%209.4868%20&amp;%200%20&amp;%200%20%5C%5C%200%20&amp;%201%20&amp;%200%20%5C%5C%200%20&amp;%200%20&amp;%200%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20-0.2673%20%5C%20%5C%20%5C%200.5345%20%5C%20%5C%20%5C%200.8018%20%5C%5C%20-0.6931%20%5C%20%5C%20%5C%20-0.1184%20%5C%20%5C%20%5C%200.7107%20%5C%5C%20-0.6646%20%5C%20%5C%20%5C%200.7774%20%5C%20%5C%20%5C%20-0.2774%20%5Cend%7Bbmatrix%7D.%0A"> This gives us the diagonalization <img src="https://latex.codecogs.com/png.latex?A=QDQ%5E%7B-1%7D">, where <img src="https://latex.codecogs.com/png.latex?Q=U%5CSigma"> and <img src="https://latex.codecogs.com/png.latex?D=V%5ET">. Therefore, by choosing the appropriate bases for <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E2"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E3"> given by the columns of <img src="https://latex.codecogs.com/png.latex?Q">, we can make <img src="https://latex.codecogs.com/png.latex?A"> a diagonal matrix.</p>
+<p>&lt; 여기까지&gt;</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AA%20=%20U%5CSigma%20V%5ET%20=%20%5Cbegin%7Bbmatrix%7D%20-0.231%20&amp;%200.973%20&amp;%200%20%5C%5C%200.732%20&amp;%200.182%20&amp;%20-0.655%20%5C%5C%200.641%20&amp;%200.136%20&amp;%200.755%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%203.89%20&amp;%200%20&amp;%200%20%5C%5C%200%20&amp;%201.27%20&amp;%200%20%5C%5C%200%20&amp;%200%20&amp;%200.43%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20-0.227%20&amp;%20-0.592%20&amp;%20-0.773%20%5C%5C%20-0.904%20&amp;%200.275%20&amp;%200.329%20%5C%5C%200.361%20&amp;%200.758%20&amp;%20-0.541%20%5Cend%7Bbmatrix%7D%0A"></p>
+<p>This is known as the Singular Value Decomposition (SVD) of <img src="https://latex.codecogs.com/png.latex?A">. The diagonal matrix <img src="https://latex.codecogs.com/png.latex?%5CSigma"> contains the singular values of <img src="https://latex.codecogs.com/png.latex?A">, which are the square roots of the eigenvalues of <img src="https://latex.codecogs.com/png.latex?A%5ETA">. These values represent the importance of the corresponding singular vectors in the matrix <img src="https://latex.codecogs.com/png.latex?A">.</p>
+<p>The SVD can be used for a variety of applications, including data compression, dimensionality reduction, and image processing. It is also used in machine learning and data science for tasks such as collaborative filtering, recommender systems, and principal component analysis.</p>
+</section>
+</section>
+<section id="combining-bases-from-subspaces" class="level3" data-number="1.1.4">
+<h3 data-number="1.1.4" class="anchored" data-anchor-id="combining-bases-from-subspaces"><span class="header-section-number">1.1.4</span> Combining bases from Subspaces</h3>
+<p><code>Any $n$ independent vectors in $\mathbf R^n$ must span $\mathbf R^n$. So, they are a basis.</code></p>
+<p>In <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">, a set of <img src="https://latex.codecogs.com/png.latex?n"> independent vectors is said to span <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En"> if any vector in <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En"> can be expressed as a linear combination of these <img src="https://latex.codecogs.com/png.latex?n"> vectors. This means that the <img src="https://latex.codecogs.com/png.latex?n"> vectors are sufficient to represent any vector in <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">.</p>
+<p>To see why this is the case, consider that any vector in <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En"> can be represented as a column vector with <img src="https://latex.codecogs.com/png.latex?n"> entries. By definition, each entry can be written as a linear combination of the entries of the <img src="https://latex.codecogs.com/png.latex?n"> independent vectors. Therefore, the entire column vector can be expressed as a linear combination of the <img src="https://latex.codecogs.com/png.latex?n"> independent vectors. Since this is true for any vector in <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">, the set of <img src="https://latex.codecogs.com/png.latex?n"> independent vectors must span <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">.</p>
+<p>Moreover, if a set of <img src="https://latex.codecogs.com/png.latex?n"> independent vectors spans <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">, then they are a basis for <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">. This means that the <img src="https://latex.codecogs.com/png.latex?n"> vectors are linearly independent and also span <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">. By definition, a basis is a set of vectors that can be used to represent any vector in a space and that is linearly independent. So, any set of <img src="https://latex.codecogs.com/png.latex?n"> independent vectors that spans <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En"> is a basis for <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">.</p>
+<p><code>Any $n$ vectors that span $\mathbf R^n$ must be independent. So, they are a basis.</code></p>
+<p>Let <img src="https://latex.codecogs.com/png.latex?%7Bv_1,v_2,%5Cdots,v_n%7D"> be a set of <img src="https://latex.codecogs.com/png.latex?n"> vectors that span <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">. This means that any vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x"> in <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En"> can be expressed as a linear combination of the vectors in <img src="https://latex.codecogs.com/png.latex?%7Bv_1,v_2,%5Cdots,v_n%7D">, i.e., there exist scalars <img src="https://latex.codecogs.com/png.latex?a_1,a_2,%5Cdots,a_n"> such that <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x%20=%20a_1v_1+a_2v_2+%5Ccdots+a_nv_n">.</p>
+<p>Now suppose that the vectors in <img src="https://latex.codecogs.com/png.latex?%7Bv_1,v_2,%5Cdots,v_n%7D"> are not independent. Then there exist scalars <img src="https://latex.codecogs.com/png.latex?b_1,b_2,%5Cdots,b_n">, not all zero, such that <img src="https://latex.codecogs.com/png.latex?b_1v_1+b_2v_2+%5Ccdots+b_nv_n=%5Cmathbf%200">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%200"> denotes the zero vector in <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">.</p>
+<p>We can rewrite this equation as <img src="https://latex.codecogs.com/png.latex?a_1v_1+a_2v_2+%5Ccdots+a_nv_n=%5Cmathbf%200">, where <img src="https://latex.codecogs.com/png.latex?a_i=-b_i"> for <img src="https://latex.codecogs.com/png.latex?i=1,2,%5Cdots,n">. But this implies that the vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x=%5Cmathbf%200"> can be expressed as a nontrivial linear combination of the vectors in <img src="https://latex.codecogs.com/png.latex?%7Bv_1,v_2,%5Cdots,v_n%7D">, which contradicts the assumption that these vectors span <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">.</p>
+<p>Therefore, the vectors <img src="https://latex.codecogs.com/png.latex?%7Bv_1,v_2,%5Cdots,v_n%7D"> must be independent. Since they span <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">, they form a basis for <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">.</p>
+<p><code>If the $n$ columns of $\mathbf A$ are independent, they span $\mathbf R^n$. So Ax=b is solvable</code></p>
+<p>If the <img src="https://latex.codecogs.com/png.latex?n"> columns of a matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> are independent, then they span <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">, which means that any vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20b"> in <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En"> can be expressed as a linear combination of the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">.</p>
+<p>Suppose we have a system of linear equations <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAx%7D%20=%20%5Cmathbf%7Bb%7D">. If the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> are independent, then we can find a unique linear combination of the columns that equals <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20b">. In other words, we can solve the system of equations for <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x">. This means that <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAx%7D%20=%20%5Cmathbf%7Bb%7D"> is solvable for any vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20b"> in <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">.</p>
+<p>Therefore, if the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> are independent, the equation <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAx%7D%20=%20%5Cmathbf%7Bb%7D"> is solvable for any <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20b%20%5Cin%20%5Cmathbf%20R%5En">, and the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> form a basis for <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">.</p>
+<p><code>If the $n$ columns span $\mathbf R^n$, they are independent. So $\mathbf{Ax=b}$ has only one solution.</code></p>
+<p>If the <img src="https://latex.codecogs.com/png.latex?n"> columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> span <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">, it means that any vector in <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En"> can be expressed as a linear combination of those columns. Mathematically, if we denote the <img src="https://latex.codecogs.com/png.latex?n"> columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> as <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20a_1,%20%5Cmathbf%20a_2,%20%5Cdots,%20%5Cmathbf%20a_n">, then for any vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20b%20%5Cin%20%5Cmathbf%20R%5En">, there exist scalars <img src="https://latex.codecogs.com/png.latex?x_1,%20x_2,%20%5Cdots,%20x_n"> such that:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7Bb%7D%20=%20x_1%20%5Cmathbf%7Ba%7D_1%20+%20x_2%20%5Cmathbf%7Ba%7D_2%20+%20%5Ccdots%20+%20x_n%20%5Cmathbf%7Ba%7D_n%0A"></p>
+<p>Now, let’s assume that the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> are not independent. This means that there exist scalars <img src="https://latex.codecogs.com/png.latex?x_1,%20x_2,%20%5Cdots,%20x_n">, not all zero, such that:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Ax_1%20%5Cmathbf%7Ba%7D_1%20+%20x_2%20%5Cmathbf%7Ba%7D_2%20+%20%5Ccdots%20+%20x_n%20%5Cmathbf%7Ba%7D_n%20=%20%5Cmathbf%7B0%7D%0A"></p>
+<p>This implies that the homogeneous system <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAx%7D=%5Cmathbf%200"> has a nontrivial solution, since we can choose <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%20x_2%20%5C%20%5Cvdots%20%5C%20x_n%20%5Cend%7Bbmatrix%7D%20%5Cneq%20%5Cmathbf%200"> as a solution.</p>
+<p>However, this contradicts the assumption that the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> span <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">. If there exists a nontrivial solution <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x"> to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAx%7D=%5Cmathbf%200">, it means that the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> do not span the entire <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En"> space, because they are not able to generate the zero vector. Therefore, the assumption that the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> are not independent leads to a contradiction.</p>
+<p>Hence, we conclude that the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> must be independent if they span <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R%5En">. This also implies that <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is invertible, since the equation <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAx%7D=%5Cmathbf%20b"> has a unique solution for any <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20b%20%5Cin%20%5Cmathbf%20R%5En">.</p>
+</section>
+<section id="example-2" class="level3" data-number="1.1.5">
+<h3 data-number="1.1.5" class="anchored" data-anchor-id="example-2"><span class="header-section-number">1.1.5</span> Example</h3>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20v_1=%5Cbegin%7Bbmatrix%7D%201%20%5C%5C0%5C%5C1%20%5Cend%7Bbmatrix%7D%20%5Cquad%20%5Cmathbf%20v_2=%5Cbegin%7Bbmatrix%7D%200%20%5C%5C1%5C%5C1%20%5Cend%7Bbmatrix%7D%20%5Cquad%20%20%5Cmathbf%20v_3=%5Cbegin%7Bbmatrix%7D%201%20%5C%5C1%5C%5C0%20%5Cend%7Bbmatrix%7D%0A"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0Aq_1%20&amp;=%20%5Cfrac%7Bv_1%7D%7B%7Cv_1%7C%7D%20=%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5C%5C%201%20%5Cend%7Bbmatrix%7D,%20%5C%5C%0Au_2%20&amp;=%20v_2%20-%20%5Clangle%20v_2,%20q_1%20%5Crangle%20q_1%20=%20%5Cbegin%7Bbmatrix%7D%200%20%5C%5C%201%20%5C%5C%201%20%5Cend%7Bbmatrix%7D%20-%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5C%5C%201%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%20-%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20%5C%5C%201%20%5C%5C%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20%5Cend%7Bbmatrix%7D,%20%5C%5C%0Aq_2%20&amp;=%20%5Cfrac%7Bu_2%7D%7B%7Cu_2%7C%7D%20=%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20%5Cbegin%7Bbmatrix%7D%20-1%20%5C%5C%201%20%5C%5C%201%20%5Cend%7Bbmatrix%7D,%20%5C%5C%0Au_3%20&amp;=%20v_3%20-%20%5Clangle%20v_3,%20q_1%20%5Crangle%20q_1%20-%20%5Clangle%20v_3,%20q_2%20%5Crangle%20q_2%20=%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%201%20%5C%5C%200%20%5Cend%7Bbmatrix%7D%20-%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5C%5C%201%20%5Cend%7Bbmatrix%7D%20-%20%5Cfrac%7B1%7D%7B%5Csqrt%7B6%7D%7D%5Cbegin%7Bbmatrix%7D%20-1%20%5C%5C%201%20%5C%5C%201%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%20%5Cfrac%7B1%7D%7B%5Csqrt%7B3%7D%7D%20%5C%5C%20%5Cfrac%7B1%7D%7B%5Csqrt%7B3%7D%7D%20%5C%20-%5Cfrac%7B1%7D%7B%5Csqrt%7B3%7D%7D%20%5Cend%7Bbmatrix%7D,%20%5C%5C%0Aq_3%20&amp;=%20%5Cfrac%7Bu_3%7D%7B%7Cu_3%7C%7D%20=%20%5Cfrac%7B1%7D%7B%5Csqrt%7B3%7D%7D%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%201%20%5C%5C%20-1%20%5Cend%7Bbmatrix%7D.%0A%5Cend%7Balign*%7D%0A"></p>
+<p>Therefore, the orthogonal matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D"> is:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BQ%7D=%0A%5Cbegin%7Bbmatrix%7D%0A%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20&amp;%20-%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20&amp;%200%5C%5C%0A0%20&amp;%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20&amp;%20%5Cfrac%7B1%7D%7B%5Csqrt%7B6%7D%7D%5C%5C%0A%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20&amp;%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20&amp;%20-%5Cfrac%7B1%7D%7B%5Csqrt%7B3%7D%7D%0A%5Cend%7Bbmatrix%7D%0A"></p>
+</section>
+<section id="orthogonal-matrices" class="level3" data-number="1.1.6">
+<h3 data-number="1.1.6" class="anchored" data-anchor-id="orthogonal-matrices"><span class="header-section-number">1.1.6</span> Orthogonal Matrices</h3>
+<div id="def-orthogonalMatrix" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 4 </strong></span>An <img src="https://latex.codecogs.com/png.latex?n%5Ctimes%20n"> matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D"> is orthogonal if its columns <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20q"> form an orthonormal set. That is, the columns <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20q"> of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D"> satisfy</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Clangle%5Cmathbf%7Bq%7D_i,%5Cmathbf%7Bq%7D_j%5Crangle%20=%0A%5Cbegin%7Bcases%7D%0A0%20%5Ctext%7B%20if%20%7D%20i%20%5Cne%20j%20%5C%5C%0A1%20%5Ctext%7B%20if%20%7D%20i%20=%20j%0A%5Cend%7Bcases%7D%0A"></p>
+<p>We can organize all of the dot products amongst all pairs of columns by premultiplying the matrix by its transpose. Since matrix multiplication is defined as dot products between all rows of the left matrix with all columns of the right matrix,</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BQ%7D%5Cmathbf%7BQ%7D%5ET=%5Cmathbf%7BQ%7D%5ET%5Cmathbf%7BQ%7D=%5Cmathbf%7BI%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BI%7D"> is the <img src="https://latex.codecogs.com/png.latex?n%5Ctimes%20n"> identity matrix.</p>
+</div>
+</section>
+<section id="properties-1" class="level3" data-number="1.1.7">
+<h3 data-number="1.1.7" class="anchored" data-anchor-id="properties-1"><span class="header-section-number">1.1.7</span> Properties</h3>
+<ul>
+<li>Orthogonal columns: all columns are pair-wise orthogonal</li>
+<li>Unit-norm columns: the norm (geometric length) of each column is exactly 1.</li>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D%5ET%5Cmathbf%7BQ%7D=%5Cmathbf%7BQ%7D%5Cmathbf%7BQ%7D%5ET=%5Cmathbf%7BI%7D">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BI%7D"> is the identity matrix of appropriate size.</li>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D%5ET=%5Cmathbf%7BQ%7D%5E%7B-1%7D">
+<ul>
+<li>Great propoerty because the matrix inverse is tedious and prone to numerical inaccuracies, whereas the matrix transpose is fast and accurate.</li>
+</ul></li>
+<li>The determinant of an orthogonal matrix is either <img src="https://latex.codecogs.com/png.latex?1"> or <img src="https://latex.codecogs.com/png.latex?-1">.</li>
+<li>If <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D"> is orthogonal, then its columns form an orthonormal set, i.e., the columns are pairwise orthogonal and each column has unit length.</li>
+<li>Orthogonal matrices preserve lengths and angles. If <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D"> are two vectors, then <img src="https://latex.codecogs.com/png.latex?%7C%7C%5Cmathbf%7BQx%7D%7C%7C=%7C%7C%5Cmathbf%7Bx%7D%7C%7C"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%5Cmathbf%7By%7D=(%5Cmathbf%7BQx%7D)%5ET(%5Cmathbf%7BQy%7D)">.</li>
+</ul>
+</section>
+<section id="example-3" class="level3" data-number="1.1.8">
+<h3 data-number="1.1.8" class="anchored" data-anchor-id="example-3"><span class="header-section-number">1.1.8</span> Example</h3>
+<p><strong>Example1</strong> Orthogonal matrices include rotation matrices and reflection matrices.</p>
+<p>the <img src="https://latex.codecogs.com/png.latex?2%5Ctimes%202"> matrix and the <img src="https://latex.codecogs.com/png.latex?3%5Ctimes%203"> matrix: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bbmatrix%7D%0A%5Ccos%20%5Ctheta%20&amp;%20-%5Csin%20%5Ctheta%20%5C%5C%0A%5Csin%20%5Ctheta%20&amp;%20%5Ccos%20%5Ctheta%0A%5Cend%7Bbmatrix%7D%0A%5Cquad%0A%5Cbegin%7Bbmatrix%7D%0A%5Ccos%20%5Ctheta%20&amp;%20-%5Csin%20%5Ctheta%20&amp;%200%20%5C%5C%0A%5Csin%20%5Ctheta%20&amp;%20%5Ccos%20%5Ctheta%20&amp;%200%20%5C%5C%0A0%20&amp;%200%20&amp;%201%0A%5Cend%7Bbmatrix%7D%0A"></p>
+<p>is an orthogonal matrix that rotates a vector counterclockwise by an angle <img src="https://latex.codecogs.com/png.latex?%5Ctheta"> regardless of the rotation angle (as long as the same rotation angle is used in all matrix elements).</p>
+<div class="cell" data-execution_count="6">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="co" style="color: #5E5E5E;"># Pure rotation matrix</span></span>
+<span id="cb7-2"></span>
+<span id="cb7-3"><span class="co" style="color: #5E5E5E;"># angle to rotate by</span></span>
+<span id="cb7-4">th <span class="op" style="color: #5E5E5E;">=</span> np.pi<span class="op" style="color: #5E5E5E;">/</span><span class="dv" style="color: #AD0000;">5</span></span>
+<span id="cb7-5"></span>
+<span id="cb7-6"><span class="co" style="color: #5E5E5E;"># transformation matrix</span></span>
+<span id="cb7-7">T <span class="op" style="color: #5E5E5E;">=</span> np.array([ </span>
+<span id="cb7-8">              [ np.cos(th),np.sin(th)],</span>
+<span id="cb7-9">              [<span class="op" style="color: #5E5E5E;">-</span>np.sin(th),np.cos(th)]</span>
+<span id="cb7-10">            ])</span>
+<span id="cb7-11"></span>
+<span id="cb7-12"></span>
+<span id="cb7-13"><span class="co" style="color: #5E5E5E;"># original dots are a vertical line</span></span>
+<span id="cb7-14">x <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">20</span>)</span>
+<span id="cb7-15">origPoints <span class="op" style="color: #5E5E5E;">=</span> np.vstack( (np.zeros(x.shape),x) )</span>
+<span id="cb7-16"></span>
+<span id="cb7-17"></span>
+<span id="cb7-18"><span class="co" style="color: #5E5E5E;"># apply the transformation</span></span>
+<span id="cb7-19">transformedPoints <span class="op" style="color: #5E5E5E;">=</span> T <span class="op" style="color: #5E5E5E;">@</span> origPoints</span>
+<span id="cb7-20"></span>
+<span id="cb7-21"></span>
+<span id="cb7-22"><span class="co" style="color: #5E5E5E;"># plot the points</span></span>
+<span id="cb7-23">plt.figure(figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">6</span>,<span class="dv" style="color: #AD0000;">6</span>))</span>
+<span id="cb7-24">plt.plot(origPoints[<span class="dv" style="color: #AD0000;">0</span>,:],origPoints[<span class="dv" style="color: #AD0000;">1</span>,:],<span class="st" style="color: #20794D;">'ko'</span>,label<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'Original'</span>)</span>
+<span id="cb7-25">plt.plot(transformedPoints[<span class="dv" style="color: #AD0000;">0</span>,:],transformedPoints[<span class="dv" style="color: #AD0000;">1</span>,:],<span class="st" style="color: #20794D;">'s'</span>,color<span class="op" style="color: #5E5E5E;">=</span>[<span class="fl" style="color: #AD0000;">.7</span>,<span class="fl" style="color: #AD0000;">.7</span>,<span class="fl" style="color: #AD0000;">.7</span>],label<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'Transformed'</span>)</span>
+<span id="cb7-26"></span>
+<span id="cb7-27">plt.axis(<span class="st" style="color: #20794D;">'square'</span>)</span>
+<span id="cb7-28">plt.xlim([<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">1.2</span>,<span class="fl" style="color: #AD0000;">1.2</span>])</span>
+<span id="cb7-29">plt.ylim([<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">1.2</span>,<span class="fl" style="color: #AD0000;">1.2</span>])</span>
+<span id="cb7-30">plt.legend()</span>
+<span id="cb7-31">plt.title(<span class="ss" style="color: #20794D;">f'Rotation by </span><span class="sc" style="color: #5E5E5E;">{</span>np<span class="sc" style="color: #5E5E5E;">.</span>rad2deg(th)<span class="sc" style="color: #5E5E5E;">:.0f}</span><span class="ss" style="color: #20794D;"> degrees.'</span>)</span>
+<span id="cb7-32">plt.show()</span>
+<span id="cb7-33"></span>
+<span id="cb7-34"><span class="co" style="color: #5E5E5E;"># Animating transformations</span></span>
+<span id="cb7-35"><span class="co" style="color: #5E5E5E;"># function to update the axis on each iteration</span></span>
+<span id="cb7-36"><span class="kw" style="color: #003B4F;">def</span> aframe(ph):</span>
+<span id="cb7-37"></span>
+<span id="cb7-38">  <span class="co" style="color: #5E5E5E;"># create the transformation matrix</span></span>
+<span id="cb7-39">  T <span class="op" style="color: #5E5E5E;">=</span> np.array([</span>
+<span id="cb7-40">                 [  <span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span><span class="op" style="color: #5E5E5E;">-</span>ph ],</span>
+<span id="cb7-41">                 [  <span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>    ]</span>
+<span id="cb7-42">                ])</span>
+<span id="cb7-43">  </span>
+<span id="cb7-44">  <span class="co" style="color: #5E5E5E;"># apply the transformation to the points using matrix multiplication</span></span>
+<span id="cb7-45">  P <span class="op" style="color: #5E5E5E;">=</span> T<span class="op" style="color: #5E5E5E;">@</span>points</span>
+<span id="cb7-46"></span>
+<span id="cb7-47">  <span class="co" style="color: #5E5E5E;"># update the dots</span></span>
+<span id="cb7-48">  plth.set_xdata(P[<span class="dv" style="color: #AD0000;">0</span>,:])</span>
+<span id="cb7-49">  plth.set_ydata(P[<span class="dv" style="color: #AD0000;">1</span>,:])</span>
+<span id="cb7-50"></span>
+<span id="cb7-51">  <span class="co" style="color: #5E5E5E;"># export the plot handles</span></span>
+<span id="cb7-52">  <span class="cf" style="color: #003B4F;">return</span> plth</span>
+<span id="cb7-53"></span>
+<span id="cb7-54"></span>
+<span id="cb7-55"><span class="co" style="color: #5E5E5E;"># define XY points</span></span>
+<span id="cb7-56">theta  <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">2</span><span class="op" style="color: #5E5E5E;">*</span>np.pi,<span class="dv" style="color: #AD0000;">100</span>)</span>
+<span id="cb7-57">points <span class="op" style="color: #5E5E5E;">=</span> np.vstack((np.sin(theta),np.cos(theta)))</span>
+<span id="cb7-58"></span>
+<span id="cb7-59"></span>
+<span id="cb7-60"><span class="co" style="color: #5E5E5E;"># setup figure</span></span>
+<span id="cb7-61">fig,ax <span class="op" style="color: #5E5E5E;">=</span> plt.subplots(<span class="dv" style="color: #AD0000;">1</span>,figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">12</span>,<span class="dv" style="color: #AD0000;">6</span>))</span>
+<span id="cb7-62">plth,  <span class="op" style="color: #5E5E5E;">=</span> ax.plot(np.cos(x),np.sin(x),<span class="st" style="color: #20794D;">'ko'</span>)</span>
+<span id="cb7-63">ax.set_aspect(<span class="st" style="color: #20794D;">'equal'</span>)</span>
+<span id="cb7-64">ax.set_xlim([<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">2</span>,<span class="dv" style="color: #AD0000;">2</span>])</span>
+<span id="cb7-65">ax.set_ylim([<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">2</span>,<span class="dv" style="color: #AD0000;">2</span>])</span>
+<span id="cb7-66"></span>
+<span id="cb7-67"><span class="co" style="color: #5E5E5E;"># define values for transformation (note: clip off the final point for a smooth animation loop)</span></span>
+<span id="cb7-68">phi <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span><span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span><span class="op" style="color: #5E5E5E;">/</span><span class="dv" style="color: #AD0000;">40</span>,<span class="dv" style="color: #AD0000;">40</span>)<span class="op" style="color: #5E5E5E;">**</span><span class="dv" style="color: #AD0000;">2</span></span>
+<span id="cb7-69"></span>
+<span id="cb7-70"><span class="co" style="color: #5E5E5E;"># run animation!</span></span>
+<span id="cb7-71">animation.FuncAnimation(fig, aframe, phi, interval<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">100</span>, repeat<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/06.orthogonality_files/figure-html/cell-7-output-1.png" width="504" height="505"></p>
+</div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+<pre><code>&lt;matplotlib.animation.FuncAnimation at 0x217d4484c40&gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/06.orthogonality_files/figure-html/cell-7-output-3.png" width="515" height="490"></p>
+</div>
+</div>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A%5Cmathbf%7BQ%7D&amp;=%5Cbegin%7Bbmatrix%7D%0A%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20&amp;%20-%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%5C%5C%0A%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20&amp;%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%0A%5Cend%7Bbmatrix%7D%0A%5Cend%7Balign*%7D%0A"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D"> is orthogonal by computing <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D%5ET%5Cmathbf%7BQ%7D">: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A%5Cmathbf%7BQ%7D%5ET%5Cmathbf%7BQ%7D&amp;=%5Cbegin%7Bbmatrix%7D%0A%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20&amp;%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%5C%5C%0A-%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20&amp;%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%0A%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7D%0A%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20&amp;%20-%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%5C%5C%0A%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20&amp;%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%0A%5Cend%7Bbmatrix%7D%5C%5C%0A&amp;=%5Cbegin%7Bbmatrix%7D%0A%5Cfrac%7B1%7D%7B2%7D+%5Cfrac%7B1%7D%7B2%7D%20&amp;%20-%5Cfrac%7B1%7D%7B2%7D+%5Cfrac%7B1%7D%7B2%7D%5C%5C%0A-%5Cfrac%7B1%7D%7B2%7D+%5Cfrac%7B1%7D%7B2%7D%20&amp;%20%5Cfrac%7B1%7D%7B2%7D+%5Cfrac%7B1%7D%7B2%7D%0A%5Cend%7Bbmatrix%7D%5C%5C%0A&amp;=%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%200%5C%5C%0A0%20&amp;%201%0A%5Cend%7Bbmatrix%7D%5C%5C%0A&amp;=%5Cmathbf%7BI%7D%0A%5Cend%7Balign*%7D%0A"></p>
+<p>Therefore, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D"> is an orthogonal matrix.</p>
+<p><strong>Example 2</strong> <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%200%20&amp;%200%20%5C%5C%0A0%20&amp;%20-1%20&amp;%200%20%5C%5C%0A0%20&amp;%200%20&amp;%20-1%0A%5Cend%7Bbmatrix%7D%0A">,</p>
+<p>which is an orthogonal matrix that reflects a vector across the <img src="https://latex.codecogs.com/png.latex?x">-axis.</p>
+<p><strong>Example 3</strong> the identity matrix is an example of an orthogonal matrix</p>
+<p><strong>Exmaple 4</strong> Permutation matrices are also orthogonal. Permutation matrices are used to exchange rows of a matrix.</p>
+</section>
+</section>
+<section id="orthogonal-bases" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="orthogonal-bases"><span class="header-section-number">1.2</span> Orthogonal Bases</h2>
+<p>An orthogonal basis is a set of vectors that are pairwise orthogonal (perpendicular) and each vector is non-zero.</p>
+<div id="def-orthogonalBases" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 5 </strong></span>A set of vectors <img src="https://latex.codecogs.com/png.latex?%7B%5Cmathbf%7Bv%7D_1,%20%5Cmathbf%7Bv%7D_2,%20%5Cdots,%20%5Cmathbf%7Bv%7D_n%7D"> is said to be an orthogonal basis of a vector space <img src="https://latex.codecogs.com/png.latex?V"> if: 1. Each vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D_i"> is non-zero. 2. Each vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D_i"> is orthogonal (perpendicular) to every other vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D_j">, <img src="https://latex.codecogs.com/png.latex?i%20%5Cneq%20j">. In other words, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D_i%20%5Ccdot%20%5Cmathbf%7Bv%7D_j%20=%200"> for <img src="https://latex.codecogs.com/png.latex?i%20%5Cneq%20j">.</p>
+</div>
+<section id="example-4" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="example-4"><span class="header-section-number">1.2.1</span> Example</h3>
+<p><strong>Example1</strong> Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%202%20%5C%5C%203%20%5Cend%7Bbmatrix%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bu%7D%20=%20%5Cbegin%7Bbmatrix%7D%20-1%20%5C%200%20%5C%201%20%5Cend%7Bbmatrix%7D">. We can check if these vectors form an orthogonal basis by computing their dot product:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7Bv%7D%20%5Ccdot%20%5Cmathbf%7Bu%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%202%20%5C%5C%203%20%5Cend%7Bbmatrix%7D%20%5Ccdot%20%5Cbegin%7Bbmatrix%7D%20-1%20%5C%5C%200%20%5C%5C%201%20%5Cend%7Bbmatrix%7D%20=%20(-1)%20%5Ccdot%201%20+%20(0)%20%5Ccdot%202%20+%20(1)%20%5Ccdot%203%20=%202%0A"></p>
+<p>Since the dot product is not zero, we can conclude that <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bu%7D"> do not form an orthogonal basis.</p>
+<p><strong>Example2</strong></p>
+<p>Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%202%20%5C%5C%200%20%5Cend%7Bbmatrix%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bu%7D%20=%20%5Cbegin%7Bbmatrix%7D%20-2%20%5C%5C%201%20%5C%5C%201%20%5Cend%7Bbmatrix%7D">. To check if they form an orthogonal basis, we need to compute their dot product:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7Bv%7D%20%5Ccdot%20%5Cmathbf%7Bu%7D%20=%20(1)(-2)%20+%20(2)(1)%20+%20(0)(1)%20=%20-2%20+%202%20+%200%20=%200%0A"></p>
+<p>Since the dot product is zero, we know that <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bu%7D"> are orthogonal. We can also check that they are both nonzero and linearly independent by computing their norms:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%7C%7C%5Cmathbf%7Bv%7D%7C%7C%20=%20%5Csqrt%7B1%5E2%20+%202%5E2%20+%200%5E2%7D%20=%20%5Csqrt%7B5%7D%20%5Cne%200%0A"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%7C%7C%5Cmathbf%7Bw%7D%7C%7C%20=%20%5Csqrt%7B(-2)%5E2%20+%201%5E2%20+%201%5E2%7D%20=%20%5Csqrt%7B6%7D%20%5Cne%200%0A"></p>
+<p>Therefore, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D"> form an orthogonal basis for <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E3">.</p>
+</section>
+</section>
+<section id="gram-schmidt-gs-or-g-s" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="gram-schmidt-gs-or-g-s"><span class="header-section-number">1.3</span> Gram-Schmidt (GS or G-S)</h2>
+<p>The Gram-Schmidt procedure is a method of transforming a nonorthogonal matrix into an orthogonal matrix by orthonormalizing a set of linearly independent vectors in an inner product space, usually the Euclidean space <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5En">. The process takes a sequence of vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20v_1,%20%5Cmathbf%20v_2,%20%5Cdots,%20%5Cmathbf%20v_n"> and constructs an orthonormal sequence <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20q_1,%20%5Cmathbf%20q_2,%20%5Cdots,%20%5Cmathbf%20q_n"> that spans the same subspace as the original sequence.</p>
+<p>The Gram-Schmidt procedure is useful for understanding orthogonal vector decomposition when programming and implementing the QR decomposition algorithm, and GS is the right way to conceptualize how and why QR decomposition works even if the low-level implementation is slightly different.</p>
+<div id="def-gramSchmidt" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 6 </strong></span>Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20v_1,%20%5Cmathbf%20v_2,%20%5Cdots,%20%5Cmathbf%20v_n"> be a sequence of linearly independent vectors in <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5En">. Define <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20q_1"> to be the unit vector in the direction of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20v_1">, i.e., <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20q_1%20=%20%5Cfrac%7B%5Cmathbf%20v_1%7D%7B%7C%5Cmathbf%20v_1%7C%7D">. For <img src="https://latex.codecogs.com/png.latex?k%20=%202,%203,%20%5Cdots,%20n">, define <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20q_k"> as follows:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20q_k%20=%20%5Cfrac%7B%5Cmathbf%20u_k%7D%7B%7C%5Cmathbf%20u_k%7C%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20u_k=%5Cmathbf%20v_k-%5Csum_%7Bj=1%7D%5E%7Bk-1%7D%5Clangle%20%5Cmathbf%20v_k,%5Cmathbf%20q_j%20%5Crangle%5Cmathbf%20q_j"></p>
+</div>
+<p>The vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20u_k"> is the projection of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20v_k"> onto the subspace orthogonal to <img src="https://latex.codecogs.com/png.latex?%5Ctext%7Bspan%7D%7B%5Cmathbf%20q_1,%20%5Cmathbf%20q_2,%20%5Cdots,%20%5Cmathbf%20q_%7Bk-1%7D%7D">.</p>
+<p>The Gram-Schmidt process produces an orthonormal basis <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20q_1,%20%5Cmathbf%20q_2,%20%5Cdots,%20%5Cmathbf%20q_n"> for <img src="https://latex.codecogs.com/png.latex?%5Ctext%7Bspan%7D%7B%5Cmathbf%20v_1,%20%5Cmathbf%20v_2,%20%5Cdots,%20%5Cmathbf%20v_n%7D">. The matrix whose columns are <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20q_1,%20%5Cmathbf%20q_2,%20%5Cdots,%20%5Cmathbf%20q_n"> is an orthogonal matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D">.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BV%7D"> is transformed into <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D"> according to the following algorithm:</p>
+<p>For all column vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D%20%5Cin%20V"> starting from the first (leftmost) and moving systematically to the last (rightmost):</p>
+<ol type="1">
+<li>Orthogonalize <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20v_k"> to all previous columns in matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q"> using orthogonal vector decomposition. That is, compute the component of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20v_k"> that is perpendicular to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20q_%7Bk-1%7D,%20%5Cmathbf%20q_%7Bk-2%7D">, and so on down to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20q_%7B1%7D">. The orthogonalized vector is called <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20v%5E%7B*%7D_k">. :::{.callout-note} The first column vector is not orthogonalized because there are no preceeding vectors; therefore, you begin with the following normalization step. :::</li>
+<li>Normalize <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20v%5E%7B*%7D_k"> to unit length. This is now <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20q_%7Bk%7D">, the <img src="https://latex.codecogs.com/png.latex?k"> th column in matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q">.</li>
+</ol>
+<div class="cell" data-execution_count="7">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="co" style="color: #5E5E5E;"># # Define a 4x4 random matrix</span></span>
+<span id="cb9-2"><span class="co" style="color: #5E5E5E;"># A = np.random.rand(4,4)</span></span>
+<span id="cb9-3"><span class="co" style="color: #5E5E5E;"># </span></span>
+<span id="cb9-4"><span class="co" style="color: #5E5E5E;"># # Gram-Schmidt procedure</span></span>
+<span id="cb9-5"><span class="co" style="color: #5E5E5E;"># Q = np.zeros_like(A)</span></span>
+<span id="cb9-6"><span class="co" style="color: #5E5E5E;"># for j in range(A.shape[1]):</span></span>
+<span id="cb9-7"><span class="co" style="color: #5E5E5E;">#     v = A[:,j]</span></span>
+<span id="cb9-8"><span class="co" style="color: #5E5E5E;">#     for i in range(j):</span></span>
+<span id="cb9-9"><span class="co" style="color: #5E5E5E;">#         q = Q[:,i]</span></span>
+<span id="cb9-10"><span class="co" style="color: #5E5E5E;">#         R[i,j] = np.dot(q,v)</span></span>
+<span id="cb9-11"><span class="co" style="color: #5E5E5E;">#         v -= R[i,j]*q</span></span>
+<span id="cb9-12"><span class="co" style="color: #5E5E5E;">#     R[j,j] = np.linalg.norm(v)</span></span>
+<span id="cb9-13"><span class="co" style="color: #5E5E5E;">#     Q[:,j] = v/R[j,j]</span></span>
+<span id="cb9-14"><span class="co" style="color: #5E5E5E;"># </span></span>
+<span id="cb9-15"><span class="co" style="color: #5E5E5E;"># # Check answer against Q from np.linalg.qr</span></span>
+<span id="cb9-16"><span class="co" style="color: #5E5E5E;"># Q_np, R_np = np.linalg.qr(A)</span></span>
+<span id="cb9-17"><span class="co" style="color: #5E5E5E;"># diff = Q - Q_np</span></span>
+<span id="cb9-18"><span class="co" style="color: #5E5E5E;"># sum_Q = Q + Q_np</span></span>
+<span id="cb9-19"><span class="co" style="color: #5E5E5E;"># </span></span>
+<span id="cb9-20"><span class="co" style="color: #5E5E5E;"># print("Q matrix (Gram-Schmidt):\n", Q)</span></span>
+<span id="cb9-21"><span class="co" style="color: #5E5E5E;"># print("Q matrix (numpy):\n", Q_np)</span></span>
+<span id="cb9-22"><span class="co" style="color: #5E5E5E;"># print("Difference between Q and Q_np:\n", diff)</span></span>
+<span id="cb9-23"><span class="co" style="color: #5E5E5E;"># print("Sum of Q and Q_np:\n", sum_Q)</span></span>
+<span id="cb9-24"></span>
+<span id="cb9-25"></span>
+<span id="cb9-26"><span class="co" style="color: #5E5E5E;"># create the matrix </span></span>
+<span id="cb9-27">m <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">4</span></span>
+<span id="cb9-28">n <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">4</span></span>
+<span id="cb9-29">A <span class="op" style="color: #5E5E5E;">=</span> np.random.randn(m,n)</span>
+<span id="cb9-30"></span>
+<span id="cb9-31"><span class="co" style="color: #5E5E5E;"># initialize</span></span>
+<span id="cb9-32">Q <span class="op" style="color: #5E5E5E;">=</span> np.zeros((m,n))</span>
+<span id="cb9-33"></span>
+<span id="cb9-34"></span>
+<span id="cb9-35"><span class="co" style="color: #5E5E5E;"># the GS algo</span></span>
+<span id="cb9-36"><span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(n):</span>
+<span id="cb9-37">    </span>
+<span id="cb9-38">    <span class="co" style="color: #5E5E5E;"># initialize</span></span>
+<span id="cb9-39">    Q[:,i] <span class="op" style="color: #5E5E5E;">=</span> A[:,i]</span>
+<span id="cb9-40">    </span>
+<span id="cb9-41">    <span class="co" style="color: #5E5E5E;"># orthogonalize</span></span>
+<span id="cb9-42">    a <span class="op" style="color: #5E5E5E;">=</span> A[:,i] <span class="co" style="color: #5E5E5E;"># convenience</span></span>
+<span id="cb9-43">    <span class="cf" style="color: #003B4F;">for</span> j <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(i): <span class="co" style="color: #5E5E5E;"># only to earlier cols</span></span>
+<span id="cb9-44">        q <span class="op" style="color: #5E5E5E;">=</span> Q[:,j] <span class="co" style="color: #5E5E5E;"># convenience</span></span>
+<span id="cb9-45">        Q[:,i]<span class="op" style="color: #5E5E5E;">=</span>Q[:,i]<span class="op" style="color: #5E5E5E;">-</span>np.dot(a,q)<span class="op" style="color: #5E5E5E;">/</span>np.dot(q,q)<span class="op" style="color: #5E5E5E;">*</span>q</span>
+<span id="cb9-46">    </span>
+<span id="cb9-47">    <span class="co" style="color: #5E5E5E;"># normalize</span></span>
+<span id="cb9-48">    Q[:,i] <span class="op" style="color: #5E5E5E;">=</span> Q[:,i] <span class="op" style="color: #5E5E5E;">/</span> np.linalg.norm(Q[:,i])</span>
+<span id="cb9-49"></span>
+<span id="cb9-50">    </span>
+<span id="cb9-51"><span class="co" style="color: #5E5E5E;"># "real" QR decomposition for comparison</span></span>
+<span id="cb9-52">Q_np,R <span class="op" style="color: #5E5E5E;">=</span> np.linalg.qr(A)</span>
+<span id="cb9-53"></span>
+<span id="cb9-54"><span class="co" style="color: #5E5E5E;"># note the possible sign differences.</span></span>
+<span id="cb9-55"><span class="co" style="color: #5E5E5E;"># seemingly non-zero columns will be 0 when adding</span></span>
+<span id="cb9-56"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q matrix (Gram-Schmidt):</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q)</span>
+<span id="cb9-57"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q matrix (numpy):</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q_np)</span>
+<span id="cb9-58"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Difference between Q and Q_np:</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, np.<span class="bu" style="color: null;">round</span>( Q<span class="op" style="color: #5E5E5E;">-</span>Q_np ,<span class="dv" style="color: #AD0000;">10</span>) ), <span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">' '</span>)</span>
+<span id="cb9-59"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Sum of Q and Q_np:</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, np.<span class="bu" style="color: null;">round</span>( Q<span class="op" style="color: #5E5E5E;">+</span>Q_np ,<span class="dv" style="color: #AD0000;">10</span>) )</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Q matrix (Gram-Schmidt):
+ [[ 0.63856595 -0.34542699 -0.51868723 -0.45152772]
+ [-0.75740993 -0.38730591 -0.29691586 -0.43378025]
+ [-0.03091152  0.77115889  0.00193437 -0.6358889 ]
+ [-0.13269593  0.3687659  -0.80174858  0.45122357]]
+Q matrix (numpy):
+ [[-0.63856595 -0.34542699 -0.51868723 -0.45152772]
+ [ 0.75740993 -0.38730591 -0.29691586 -0.43378025]
+ [ 0.03091152  0.77115889  0.00193437 -0.6358889 ]
+ [ 0.13269593  0.3687659  -0.80174858  0.45122357]]
+Difference between Q and Q_np:
+ [[ 1.27713189  0.         -0.          0.        ]
+ [-1.51481986 -0.         -0.         -0.        ]
+ [-0.06182304  0.          0.         -0.        ]
+ [-0.26539186  0.         -0.         -0.        ]]
+ 
+Sum of Q and Q_np:
+ [[-0.         -0.69085397 -1.03737446 -0.90305545]
+ [ 0.         -0.77461182 -0.59383172 -0.8675605 ]
+ [ 0.          1.54231778  0.00386874 -1.27177781]
+ [ 0.          0.73753181 -1.60349716  0.90244714]]</code></pre>
+</div>
+</div>
+</section>
+<section id="qr-decomposition" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="qr-decomposition"><span class="header-section-number">1.4</span> QR Decomposition</h2>
+<p>QR decomposition is a factorization of a matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> into the product of an orthogonal matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D"> and an upper triangular matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BR%7D">:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D=%5Cmathbf%7BQR%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D"> has orthonormal columns and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BR%7D"> is an upper triangular matrix.</p>
+<p>The process of finding the QR decomposition of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> involves the Gram-Schmidt orthogonalization process, which produces an orthonormal basis for the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> as mentioned earlier. The columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D"> are the orthonormal basis vectors, and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BR%7D"> is the matrix that expresses the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> in terms of the orthonormal basis vectors.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A%5Cmathbf%7BA%7D&amp;=%5Cmathbf%7BQR%7D%5C%5C%0A%5Cmathbf%7BQ%7D%5ET%20%5Cmathbf%7BA%7D&amp;=%5Cmathbf%7BQ%7D%5ET%5Cmathbf%7BQR%7D%5C%5C%0A%5Cmathbf%7BQ%7D%5ET%5Cmathbf%7BA%7D&amp;=%5Cmathbf%7BR%7D%0A%5Cend%7Balign*%7D%0A"></p>
+<p>The algorithm for computing the QR decomposition of a matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is as follows:</p>
+<ol type="1">
+<li>Apply the Gram-Schmidt orthogonalization process to the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> to obtain an orthonormal basis for the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">. Let the resulting matrix be denoted by <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D">.</li>
+<li>Compute the matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BR%7D"> such that <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cmathbf%7BQ%7D%5Cmathbf%7BR%7D">. This can be done by solving the linear system <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BR%7D%20=%20%5Cmathbf%7BQ%7D%5ET%5Cmathbf%7BA%7D">, which expresses the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> in terms of the orthonormal basis vectors.</li>
+</ol>
+<div class="cell" data-execution_count="8">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="co" style="color: #5E5E5E;"># create a random matrix</span></span>
+<span id="cb11-2">A <span class="op" style="color: #5E5E5E;">=</span> np.random.randn(<span class="dv" style="color: #AD0000;">6</span>,<span class="dv" style="color: #AD0000;">6</span>)</span>
+<span id="cb11-3"></span>
+<span id="cb11-4"><span class="co" style="color: #5E5E5E;"># QR decomposition</span></span>
+<span id="cb11-5">Q,R <span class="op" style="color: #5E5E5E;">=</span> np.linalg.qr(A)</span>
+<span id="cb11-6"></span>
+<span id="cb11-7"></span>
+<span id="cb11-8"></span>
+<span id="cb11-9"><span class="co" style="color: #5E5E5E;"># show the matrices</span></span>
+<span id="cb11-10">fig <span class="op" style="color: #5E5E5E;">=</span> plt.figure(figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">10</span>,<span class="dv" style="color: #AD0000;">6</span>))</span>
+<span id="cb11-11">axs <span class="op" style="color: #5E5E5E;">=</span> [<span class="dv" style="color: #AD0000;">0</span>]<span class="op" style="color: #5E5E5E;">*</span><span class="dv" style="color: #AD0000;">5</span></span>
+<span id="cb11-12">c <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">1.5</span> <span class="co" style="color: #5E5E5E;"># color limits</span></span>
+<span id="cb11-13"></span>
+<span id="cb11-14">gs1 <span class="op" style="color: #5E5E5E;">=</span> gridspec.GridSpec(<span class="dv" style="color: #AD0000;">2</span>,<span class="dv" style="color: #AD0000;">6</span>)</span>
+<span id="cb11-15">axs[<span class="dv" style="color: #AD0000;">0</span>] <span class="op" style="color: #5E5E5E;">=</span> plt.subplot(gs1[<span class="dv" style="color: #AD0000;">0</span>,:<span class="dv" style="color: #AD0000;">2</span>])</span>
+<span id="cb11-16">axs[<span class="dv" style="color: #AD0000;">0</span>].imshow(A,vmin<span class="op" style="color: #5E5E5E;">=-</span>c,vmax<span class="op" style="color: #5E5E5E;">=</span>c,cmap<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'gray'</span>)</span>
+<span id="cb11-17">axs[<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">'A'</span>,fontweight<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'bold'</span>)</span>
+<span id="cb11-18"></span>
+<span id="cb11-19">axs[<span class="dv" style="color: #AD0000;">1</span>] <span class="op" style="color: #5E5E5E;">=</span> plt.subplot(gs1[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">2</span>:<span class="dv" style="color: #AD0000;">4</span>])</span>
+<span id="cb11-20">axs[<span class="dv" style="color: #AD0000;">1</span>].imshow(Q,vmin<span class="op" style="color: #5E5E5E;">=-</span>c,vmax<span class="op" style="color: #5E5E5E;">=</span>c,cmap<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'gray'</span>)</span>
+<span id="cb11-21">axs[<span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">'Q'</span>,fontweight<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'bold'</span>)</span>
+<span id="cb11-22"></span>
+<span id="cb11-23">axs[<span class="dv" style="color: #AD0000;">2</span>] <span class="op" style="color: #5E5E5E;">=</span> plt.subplot(gs1[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">4</span>:<span class="dv" style="color: #AD0000;">6</span>])</span>
+<span id="cb11-24">axs[<span class="dv" style="color: #AD0000;">2</span>].imshow(R,vmin<span class="op" style="color: #5E5E5E;">=-</span>c,vmax<span class="op" style="color: #5E5E5E;">=</span>c,cmap<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'gray'</span>)</span>
+<span id="cb11-25">axs[<span class="dv" style="color: #AD0000;">2</span>].set_title(<span class="st" style="color: #20794D;">'R'</span>,fontweight<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'bold'</span>)</span>
+<span id="cb11-26"></span>
+<span id="cb11-27">axs[<span class="dv" style="color: #AD0000;">3</span>] <span class="op" style="color: #5E5E5E;">=</span> plt.subplot(gs1[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span>:<span class="dv" style="color: #AD0000;">3</span>])</span>
+<span id="cb11-28">axs[<span class="dv" style="color: #AD0000;">3</span>].imshow(A <span class="op" style="color: #5E5E5E;">-</span> Q<span class="op" style="color: #5E5E5E;">@</span>R,vmin<span class="op" style="color: #5E5E5E;">=-</span>c,vmax<span class="op" style="color: #5E5E5E;">=</span>c,cmap<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'gray'</span>)</span>
+<span id="cb11-29">axs[<span class="dv" style="color: #AD0000;">3</span>].set_title(<span class="st" style="color: #20794D;">'A - QR'</span>,fontweight<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'bold'</span>)</span>
+<span id="cb11-30"></span>
+<span id="cb11-31">axs[<span class="dv" style="color: #AD0000;">4</span>] <span class="op" style="color: #5E5E5E;">=</span> plt.subplot(gs1[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">3</span>:<span class="dv" style="color: #AD0000;">5</span>])</span>
+<span id="cb11-32">axs[<span class="dv" style="color: #AD0000;">4</span>].imshow(Q.T<span class="op" style="color: #5E5E5E;">@</span>Q,cmap<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'gray'</span>)</span>
+<span id="cb11-33">axs[<span class="dv" style="color: #AD0000;">4</span>].set_title(<span class="vs" style="color: #20794D;">r'$\mathbf</span><span class="sc" style="color: #5E5E5E;">{Q}</span><span class="vs" style="color: #20794D;">^</span><span class="sc" style="color: #5E5E5E;">{T}</span><span class="vs" style="color: #20794D;">\mathbf</span><span class="sc" style="color: #5E5E5E;">{Q}</span><span class="vs" style="color: #20794D;">$'</span>,fontweight<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'bold'</span>)</span>
+<span id="cb11-34"></span>
+<span id="cb11-35"><span class="co" style="color: #5E5E5E;"># remove ticks from all axes</span></span>
+<span id="cb11-36"><span class="cf" style="color: #003B4F;">for</span> a <span class="kw" style="color: #003B4F;">in</span> axs:</span>
+<span id="cb11-37">  a.set_xticks([])</span>
+<span id="cb11-38">  a.set_yticks([])</span>
+<span id="cb11-39"></span>
+<span id="cb11-40">plt.tight_layout()</span>
+<span id="cb11-41">plt.show()</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/06.orthogonality_files/figure-html/cell-9-output-1.png" width="894" height="566"></p>
+</div>
+</div>
+<section id="examples-2" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="examples-2"><span class="header-section-number">1.4.1</span> Examples</h3>
+<ol type="1">
+<li>Consider the matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20%5C%5C%202%20&amp;%203%20%5C%5C%203%20&amp;%204%20%5Cend%7Bbmatrix%7D">. To find its QR decomposition, we first apply the Gram-Schmidt process to obtain an orthonormal basis for its column space:</li>
+</ol>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20q_1%20=%20%5Cfrac%7B1%7D%7B%5Csqrt%7B14%7D%7D%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%202%20%5C%5C%203%5Cend%7Bbmatrix%7D%20%5Cquad%20%5Cmathbf%20q_2%20=%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%5Cbegin%7Bbmatrix%7D%20-2%20%5C%5C%201%20%5C%5C%200%5Cend%7Bbmatrix%7D%0A"></p>
+<p>The resulting orthogonal matrix is <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Balign*%7D%0A%5Cmathbf%7BQ%7D%20=%20%5Cbegin%7Bbmatrix%7D%0A%5Cfrac%7B1%7D%7B%5Csqrt%7B14%7D%7D%20&amp;%20-%5Cfrac%7B2%7D%7B%5Csqrt%7B28%7D%7D%20%5C%5C%0A%5Cfrac%7B2%7D%7B%5Csqrt%7B14%7D%7D%20&amp;%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20%5C%5C%0A%5Cfrac%7B3%7D%7B%5Csqrt%7B14%7D%7D%20&amp;%200%0A%5Cend%7Bbmatrix%7D%0A%5Cend%7Balign*%7D%0A">.</p>
+<p>Next, we compute the upper triangular matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BR%7D"> by solving <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BR%7D%20=%20%5Cmathbf%7BQ%7D%5ET%5Cmathbf%7BA%7D">. This gives <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BR%7D%20=%20%5Cbegin%7Bbmatrix%7D%0A%5Csqrt%7B14%7D%20&amp;%20%5Cfrac%7B11%7D%7B%5Csqrt%7B14%7D%7D%20%5C%5C%0A0%20&amp;%20%5Cfrac%7B%5Csqrt%7B2%7D%7D%7B%5Csqrt%7B7%7D%7D%0A%5Cend%7Bbmatrix%7D%0A"></p>
+<p>Therefore, the QR decomposition of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is given by <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cmathbf%7BQ%7D%5Cmathbf%7BR%7D">.</p>
+<ol start="2" type="1">
+<li>Consider the matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%20-1%20&amp;%200%20%5C%5C%201%20&amp;%200%20&amp;%201%20%5C%5C%201%20&amp;%201%20&amp;%200%20%5Cend%7Bbmatrix%7D">. Applying the Gram-Schmidt process to its columns yields the orthonormal basis vectors:</li>
+</ol>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A%5Cmathbf%20q_1%20&amp;=%20%5Cfrac%7B1%7D%7B%5Csqrt%7B3%7D%7D%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%201%20%5C%5C%201%20%5Cend%7Bbmatrix%7D,%20%5C%5C%0A%5Cmathbf%20u_2%20&amp;=%20%5Cmathbf%20v_2%20-%20%5Clangle%20%5Cmathbf%20v_2,%20%5Cmathbf%20q_1%20%5Crangle%20%5Cmathbf%20q_1%20=%20%5Cbegin%7Bbmatrix%7D%20-1%20%5C%5C%200%20%5C%5C%201%20%5Cend%7Bbmatrix%7D%20-%20%5Cfrac%7B1%7D%7B3%7D%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%201%20%5C%5C%201%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%20-%5Cfrac%7B4%7D%7B3%7D%20%5C%5C%20-%5Cfrac%7B1%7D%7B3%7D%20%5C%5C%20%5Cfrac%7B2%7D%7B3%7D%20%5Cend%7Bbmatrix%7D,%20%5C%5C%0A%5Cmathbf%20q_2%20&amp;=%20%5Cfrac%7Bu_2%7D%7B%7Cu_2%7C%7D%20=%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20%5Cbegin%7Bbmatrix%7D%20-2%20%5C%5C%20-1%20%5C%5C%201%20%5Cend%7Bbmatrix%7D,%20%5C%5C%0A%5Cmathbf%20u_3%20&amp;=%20%5Cmathbf%20v_3%20-%20%5Clangle%20%5Cmathbf%20v_3,%20%5Cmathbf%20q_1%20%5Crangle%20%5Cmathbf%20q_1%20-%20%5Clangle%20%5Cmathbf%20v_3,%20%5Cmathbf%20q_2%20%5Crangle%20%5Cmathbf%20q_2%20=%20%5Cbegin%7Bbmatrix%7D%200%20%5C%5C%201%20%5C%5C%200%20%5Cend%7Bbmatrix%7D%20-%20%5Cfrac%7B1%7D%7B3%7D%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%201%20%5C%5C%201%20%5Cend%7Bbmatrix%7D%20-%20%5Cfrac%7B1%7D%7B2%7D%5Cbegin%7Bbmatrix%7D%20-2%20%5C%5C%20-1%20%5C%5C%201%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%20%5Cfrac%7B1%7D%7B3%7D%20%5C%5C%20-%5Cfrac%7B1%7D%7B3%7D%20%5C%5C%20-%5Cfrac%7B1%7D%7B3%7D%20%5Cend%7Bbmatrix%7D,%20%5C%5C%0A%5Cmathbf%20q_3%20&amp;=%20%5Cfrac%7B%5Cmathbf%20u_3%7D%7B%7C%5Cmathbf%20u_3%7C%7D%20=%20%5Cfrac%7B1%7D%7B%5Csqrt%7B3%7D%7D%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%20-1%20%5C%5C%20-1%20%5Cend%7Bbmatrix%7D.%0A%5Cend%7Balign*%7D%0A"></p>
+<p>So the QR decomposition of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cmathbf%7BQR%7D"> where</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA=QR%7D%20=%20%5Cbegin%7Bbmatrix%7D%0A%5Cfrac%7B1%7D%7B%5Csqrt%7B3%7D%7D%20&amp;%20-%5Cfrac%7B1%7D%7B%5Csqrt%7B6%7D%7D%20&amp;%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20%5C%5C%0A%5Cfrac%7B1%7D%7B%5Csqrt%7B3%7D%7D%20&amp;%20%5Cfrac%7B1%7D%7B%5Csqrt%7B6%7D%7D%20&amp;%20-%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20%5C%5C%0A%5Cfrac%7B1%7D%7B%5Csqrt%7B3%7D%7D%20&amp;%20%5Cfrac%7B2%7D%7B%5Csqrt%7B6%7D%7D%20&amp;%200%20%5C%5C%0A%5Cend%7Bbmatrix%7D%0A"></p>
+<p>and</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BR%7D%20=%20%5Cbegin%7Bbmatrix%7D%0A%5Csqrt%7B3%7D%20&amp;%20%5Cfrac%7B1%7D%7B%5Csqrt%7B3%7D%7D%20&amp;%20%5Csqrt%7B3%7D%20%5C%5C%0A0%20&amp;%20%5Cfrac%7B2%7D%7B%5Csqrt%7B6%7D%7D%20&amp;%20-%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20%5C%5C%0A0%20&amp;%200%20&amp;%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20%5C%5C%0A%5Cend%7Bbmatrix%7D%0A">.</p>
+<p>So, <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%20-1%20&amp;%200%20%5C%5C%0A1%20&amp;%200%20%20&amp;%201%20%5C%5C%0A1%20&amp;%201%20%20&amp;%200%0A%5Cend%7Bbmatrix%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0A%5Cfrac%7B1%7D%7B%5Csqrt%7B3%7D%7D%20&amp;%20-%5Cfrac%7B1%7D%7B%5Csqrt%7B6%7D%7D%20&amp;%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20%5C%5C%0A%5Cfrac%7B1%7D%7B%5Csqrt%7B3%7D%7D%20&amp;%20%5Cfrac%7B1%7D%7B%5Csqrt%7B6%7D%7D%20&amp;%20-%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20%5C%5C%0A%5Cfrac%7B1%7D%7B%5Csqrt%7B3%7D%7D%20&amp;%20%5Cfrac%7B2%7D%7B%5Csqrt%7B6%7D%7D%20&amp;%200%20%5C%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7Bbmatrix%7D%0A%5Csqrt%7B3%7D%20&amp;%20%5Cfrac%7B1%7D%7B%5Csqrt%7B3%7D%7D%20&amp;%20%5Csqrt%7B3%7D%20%5C%5C%0A0%20&amp;%20%5Cfrac%7B2%7D%7B%5Csqrt%7B6%7D%7D%20&amp;%20-%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%20%5C%5C%0A0%20&amp;%200%20&amp;%20%5Cfrac%7B1%7D%7B%5Csqrt%7B2%7D%7D%0A%5Cend%7Bbmatrix%7D%0A=%0A%5Cmathbf%7BQR%7D%0A"></p>
+<p>In Python,</p>
+<div class="cell" data-execution_count="9">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1">A <span class="op" style="color: #5E5E5E;">=</span> np.array([[<span class="dv" style="color: #AD0000;">1</span>, <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>], [<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>], [<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>]])</span>
+<span id="cb12-2">Q, R <span class="op" style="color: #5E5E5E;">=</span> np.linalg.qr(A)</span>
+<span id="cb12-3"></span>
+<span id="cb12-4"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q)</span>
+<span id="cb12-5"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"R =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, R)</span>
+<span id="cb12-6"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"QR =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q <span class="op" style="color: #5E5E5E;">@</span> R)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Q =
+ [[-5.77350269e-01  7.07106781e-01  4.08248290e-01]
+ [-5.77350269e-01  5.55111512e-17 -8.16496581e-01]
+ [-5.77350269e-01 -7.07106781e-01  4.08248290e-01]]
+R =
+ [[-1.73205081e+00  0.00000000e+00 -5.77350269e-01]
+ [ 0.00000000e+00 -1.41421356e+00  1.11022302e-16]
+ [ 0.00000000e+00  0.00000000e+00 -8.16496581e-01]]
+QR =
+ [[ 1.00000000e+00 -1.00000000e+00  3.55968130e-17]
+ [ 1.00000000e+00 -7.85046229e-17  1.00000000e+00]
+ [ 1.00000000e+00  1.00000000e+00 -3.01008243e-17]]</code></pre>
+</div>
+</div>
+<p>The QR decomposition of a matrix is not unique, So the <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R"> could be different from the latex ones.</p>
+</section>
+<section id="sizes-of-mathbf-q-and-mathbf-r" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="sizes-of-mathbf-q-and-mathbf-r"><span class="header-section-number">1.4.2</span> Sizes of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R"></h3>
+<p>The sizes of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R"> depend on the size of the matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> and on whether the QR decomposition is <em>reduced</em> or <em>full</em>.</p>
+<p>For a tall matrix <img src="https://latex.codecogs.com/png.latex?(m%20%3E%20n)">, do we create a <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q"> matrix with n columns or m columns?</p>
+<ul>
+<li>Economy or Reduced: <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q_%7Bm%5Ctimes%20n%7D"> (tall <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q">)</li>
+<li>Full or Complete: <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q_%7Bm%5Ctimes%20m%7D"> (square <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q">)
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q"> can be square when <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is tall (<img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q"> can have more columns than <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">)</li>
+<li>In python, the option of <code>np.linalg.qr(A,'complete')</code> is ‘complete’, which produces a full QR decomposition.</li>
+<li>The option of <code>np.linalg.qr(A,'reduced')</code> is ‘reduced’, which is the default, gives the economy-mode QR decomposition, in which <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q"> is the same size as <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">.</li>
+</ul></li>
+<li>Likewise, the rank of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q"> is always the maximum possible rank, which is <img src="https://latex.codecogs.com/png.latex?m"> for all square <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q"> matrices and <img src="https://latex.codecogs.com/png.latex?n"> for the economy <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q">. The rank of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R"> is the same as the rank of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">.
+<ul>
+<li>the difference of <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Brank%7D(%5Cmathbf%20A)%20and%20%5Coperatorname%7Brank%7D(%5Cmathbf%20Q)"> means <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q"> spans all of <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%20R%5Em"> even if the <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Bcol%7D(%5Cmathbf%20A)"> is only a lower-dimensional subspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%20R%5Em">.</li>
+</ul></li>
+<li><strong>non-uniqueness</strong>: QR decomposition is not unique for all matrix sizes and ranks. (<img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A%20=%20%5Cmathbf%20Q_1%20%5Cmathbf%20R_1"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A%20=%20%5Cmathbf%20Q_2%5Cmathbf%20R_2"> where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q_1%20%5Cne%20%5Cmathbf%20Q_2">).</li>
+<li><strong>uniqueness with constraints</strong>: QR decomposition can be made unique given additional constraints (e.g., positive values on the diagonals of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R">)</li>
+</ul>
+<div class="cell" data-execution_count="10">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">A <span class="op" style="color: #5E5E5E;">=</span> np.array([ [<span class="dv" style="color: #AD0000;">1</span>,<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>] ]).T</span>
+<span id="cb14-2">Q,R <span class="op" style="color: #5E5E5E;">=</span> np.linalg.qr(A,<span class="st" style="color: #20794D;">'complete'</span>)</span>
+<span id="cb14-3">Q<span class="op" style="color: #5E5E5E;">*</span>np.sqrt(<span class="dv" style="color: #AD0000;">2</span>) <span class="co" style="color: #5E5E5E;"># scaled by sqrt(2) to get integers</span></span>
+<span id="cb14-4"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"A =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, A)</span>
+<span id="cb14-5"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q)</span>
+<span id="cb14-6"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"R =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, R)</span>
+<span id="cb14-7"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q*np.sqrt(2)=</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q<span class="op" style="color: #5E5E5E;">*</span>np.sqrt(<span class="dv" style="color: #AD0000;">2</span>))</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>A =
+ [[ 1]
+ [-1]]
+Q =
+ [[-0.70710678  0.70710678]
+ [ 0.70710678  0.70710678]]
+R =
+ [[-1.41421356]
+ [ 0.        ]]
+Q*np.sqrt(2)=
+ [[-1.  1.]
+ [ 1.  1.]]</code></pre>
+</div>
+</div>
+</section>
+<section id="upper-triangle-of-mathbf-r" class="level3" data-number="1.4.3">
+<h3 data-number="1.4.3" class="anchored" data-anchor-id="upper-triangle-of-mathbf-r"><span class="header-section-number">1.4.3</span> Upper-triangle of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R"></h3>
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R"> comes from the formula <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D%5ET%5Cmathbf%7BA%20=%20R%7D">.</li>
+<li>The lower triangle of a product matrix comprises dot products between later rows of the left matrix and earlier columns of the right matrix.</li>
+<li>The rows of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D%5ET"> are the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D">.</li>
+</ul>
+<div class="cell" data-execution_count="11">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><span class="co" style="color: #5E5E5E;"># Define matrix A</span></span>
+<span id="cb16-2">A <span class="op" style="color: #5E5E5E;">=</span> np.array([[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">3</span>], [<span class="dv" style="color: #AD0000;">4</span>, <span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">6</span>], [<span class="dv" style="color: #AD0000;">7</span>, <span class="dv" style="color: #AD0000;">8</span>, <span class="dv" style="color: #AD0000;">9</span>]])</span>
+<span id="cb16-3"></span>
+<span id="cb16-4"><span class="co" style="color: #5E5E5E;"># Compute QR decomposition of A</span></span>
+<span id="cb16-5">Q, R <span class="op" style="color: #5E5E5E;">=</span> np.linalg.qr(A)</span>
+<span id="cb16-6"></span>
+<span id="cb16-7"><span class="co" style="color: #5E5E5E;"># Compute Q^T * A</span></span>
+<span id="cb16-8">QtA <span class="op" style="color: #5E5E5E;">=</span> np.matmul(Q.T, A)</span>
+<span id="cb16-9"></span>
+<span id="cb16-10"><span class="co" style="color: #5E5E5E;"># Extract upper triangle of R</span></span>
+<span id="cb16-11">upper_R <span class="op" style="color: #5E5E5E;">=</span> np.triu(R)</span>
+<span id="cb16-12"></span>
+<span id="cb16-13"><span class="co" style="color: #5E5E5E;"># Compute dot products between later rows of Q^T and earlier columns of A</span></span>
+<span id="cb16-14">dot_products <span class="op" style="color: #5E5E5E;">=</span> np.zeros((<span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">3</span>))</span>
+<span id="cb16-15"><span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(<span class="dv" style="color: #AD0000;">3</span>):</span>
+<span id="cb16-16">    <span class="cf" style="color: #003B4F;">for</span> j <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(i):</span>
+<span id="cb16-17">        dot_products[i, j] <span class="op" style="color: #5E5E5E;">=</span> np.dot(Q.T[i], A[:, j])</span>
+<span id="cb16-18"></span>
+<span id="cb16-19"><span class="co" style="color: #5E5E5E;"># Print results</span></span>
+<span id="cb16-20"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"A = "</span>)</span>
+<span id="cb16-21"><span class="bu" style="color: null;">print</span>(A)</span>
+<span id="cb16-22"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q = "</span>)</span>
+<span id="cb16-23"><span class="bu" style="color: null;">print</span>(Q)</span>
+<span id="cb16-24"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"R = "</span>)</span>
+<span id="cb16-25"><span class="bu" style="color: null;">print</span>(R)</span>
+<span id="cb16-26"><span class="bu" style="color: null;">print</span>(<span class="vs" style="color: #20794D;">r"$Q^T * A = $"</span>)</span>
+<span id="cb16-27"><span class="bu" style="color: null;">print</span>(QtA)</span>
+<span id="cb16-28"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Upper-triangle of R = "</span>)</span>
+<span id="cb16-29"><span class="bu" style="color: null;">print</span>(upper_R)</span>
+<span id="cb16-30"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Dot products between later rows of Q^T and earlier columns of A = "</span>)</span>
+<span id="cb16-31"><span class="bu" style="color: null;">print</span>(dot_products)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>A = 
+[[1 2 3]
+ [4 5 6]
+ [7 8 9]]
+Q = 
+[[-0.12309149  0.90453403  0.40824829]
+ [-0.49236596  0.30151134 -0.81649658]
+ [-0.86164044 -0.30151134  0.40824829]]
+R = 
+[[-8.12403840e+00 -9.60113630e+00 -1.10782342e+01]
+ [ 0.00000000e+00  9.04534034e-01  1.80906807e+00]
+ [ 0.00000000e+00  0.00000000e+00 -8.88178420e-16]]
+$Q^T * A = $
+[[-8.12403840e+00 -9.60113630e+00 -1.10782342e+01]
+ [ 1.55431223e-15  9.04534034e-01  1.80906807e+00]
+ [ 6.10622664e-16 -4.44089210e-16 -1.05471187e-15]]
+Upper-triangle of R = 
+[[-8.12403840e+00 -9.60113630e+00 -1.10782342e+01]
+ [ 0.00000000e+00  9.04534034e-01  1.80906807e+00]
+ [ 0.00000000e+00  0.00000000e+00 -8.88178420e-16]]
+Dot products between later rows of Q^T and earlier columns of A = 
+[[ 0.00000000e+00  0.00000000e+00  0.00000000e+00]
+ [ 1.77635684e-15  0.00000000e+00  0.00000000e+00]
+ [ 4.44089210e-16 -8.88178420e-16  0.00000000e+00]]</code></pre>
+</div>
+</div>
+<p>The lower triangle of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BR%7D"> comprises dot products of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q%5ET%5Cmathbf%20A"> (between later rows of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D%5ET"> and earlier columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">) :::{.callout-note} Note that the lower triangle of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BR%7D"> is zero, because the first column of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is orthogonal to the remaining columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">. Thus, the pairs of vectors used to form the lower triangle of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BR%7D"> are orthogonal. On the other hand, the upper triangle of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BR%7D"> comes from the dot product of later rows of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D"> and earlier columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">. Specifically, the <img src="https://latex.codecogs.com/png.latex?(2,1)"> entry of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BR%7D"> is the dot product of the second row of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D"> with the first column of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"></p>
+<p>If columns <img src="https://latex.codecogs.com/png.latex?i"> and <img src="https://latex.codecogs.com/png.latex?j"> of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> were already orthogonal, then the corresponding <img src="https://latex.codecogs.com/png.latex?(i,j)"> th element in <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R"> would be zero. In fact, if you compute the QR decomposition of an orthogonal matrix, then <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R"> will be a diagonal matrix in which the diagonal elements are the norms of each column in <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">. That means that if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%20=%20Q%7D">, then <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BR%20=%20I%7D">, which is obvious from the equation solved for <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BR%7D"> :::</p>
+</section>
+<section id="qr-and-inverses" class="level3" data-number="1.4.4">
+<h3 data-number="1.4.4" class="anchored" data-anchor-id="qr-and-inverses"><span class="header-section-number">1.4.4</span> QR and Inverses</h3>
+<p>QR decomposition provides a more numerically stable way to compute the matrix inverse, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A%5E%7B-1%7D"> of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> because <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q"> is numerically stable due to the Householder reflection algorithm, and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20R"> is numerically stable because it simply results from matrix multiplication.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A%20%20%5Cmathbf%7BA%7D&amp;=%5Cmathbf%7BQR%7D%5C%5C%0A%20%20%5Cmathbf%7BA%7D%5E%7B-1%7D&amp;=(%5Cmathbf%7BQR%7D)%5E%7B-1%7D%5C%5C%0A%20%20%5Cmathbf%7BA%7D%5E%7B-1%7D&amp;=%5Cmathbf%7BR%7D%5E%7B-1%7D%5Cmathbf%7BQ%7D%5E%7B-1%7D%5C%5C%0A%20%20%5Cmathbf%7BA%7D%5E%7B-1%7D&amp;=%5Cmathbf%7BR%7D%5E%7B-1%7D%5Cmathbf%7BQ%7D%5E%7BT%7D%0A%5Cend%7Balign*%7D%0A"></p>
+</section>
+</section>
+<section id="projections" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="projections"><span class="header-section-number">1.5</span> Projections</h2>
+</section>
+<section id="least-squares-approximations" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="least-squares-approximations"><span class="header-section-number">1.6</span> Least Squares Approximations</h2>
+</section>
+<section id="orthogonal-bases-and-gram-schmidt" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="orthogonal-bases-and-gram-schmidt"><span class="header-section-number">1.7</span> Orthogonal Bases and Gram-Schmidt</h2>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>Mathematics</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/06.orthogonality.html</guid>
+  <pubDate>Thu, 20 Apr 2023 15:00:00 GMT</pubDate>
+</item>
+<item>
   <title>Vector Space</title>
   <dc:creator>Kwangmin Kim</dc:creator>
   <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/05.vector_space.html</link>
@@ -2865,35 +3762,6 @@ carb  -1.89411290  -0.46370968   0.04637097   0.3266129  2.60887097</code></pre>
  ]]></description>
   <category>Mathematics</category>
   <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/03.basic_special_matrix.html</guid>
-  <pubDate>Thu, 30 Mar 2023 15:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Basics (4) - Tensor</title>
-  <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/04.basic_tensor copy.html</link>
-  <description><![CDATA[ 
-
-
-
-<section id="tensor" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="tensor"><span class="header-section-number">1</span> Tensor</h2>
-<p>A tensor is a mathematical object that generalizes vectors and matrices to higher dimensions. A tensor of order <img src="https://latex.codecogs.com/png.latex?n"> is an object that can be represented by a multidimensional array of <img src="https://latex.codecogs.com/png.latex?n"> indices. Each index can take on a range of values, which determine the dimensionality of the tensor along that axis.</p>
-<p>For example, a rank-2 tensor (i.e., a matrix) can be represented as:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20A_%7Bij%7D%20%5Ctext%7B%20,%20%7D%20i=1,%5Cdots%20m%20%5Ctext%7B,%20%7D%20j=1,%5Cdots,n%0A"> where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is the tensor, <img src="https://latex.codecogs.com/png.latex?i"> and <img src="https://latex.codecogs.com/png.latex?j"> are the indices, and <img src="https://latex.codecogs.com/png.latex?m"> and <img src="https://latex.codecogs.com/png.latex?n"> are the dimensions of the tensor along each axis. The entries of the tensor are given by <img src="https://latex.codecogs.com/png.latex?a_%7Bij%7D">.</p>
-<p>A rank-3 tensor can be represented as: <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20A_%7Bijk%7D%20%5Ctext%7B%20,%20%7D%20i=1,%5Cdots%20m%20%5Ctext%7B,%20%7D%20j=1,%5Cdots,n%5Ctext%7B,%20%7D%20k=1,%5Cdots,p%0A"> where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is the tensor, <img src="https://latex.codecogs.com/png.latex?i">, <img src="https://latex.codecogs.com/png.latex?j">, and <img src="https://latex.codecogs.com/png.latex?k"> are the indices, and <img src="https://latex.codecogs.com/png.latex?m">, <img src="https://latex.codecogs.com/png.latex?n">, and <img src="https://latex.codecogs.com/png.latex?p"> are the dimensions of the tensor along each axis. The entries of the tensor are given by <img src="https://latex.codecogs.com/png.latex?A_%7Bijk%7D">.</p>
-</section>
-<section id="basic-tensor-operations" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="basic-tensor-operations"><span class="header-section-number">2</span> Basic Tensor Operations</h2>
-<section id="section" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="section"><span class="header-section-number">2.1</span> </h3>
-
-
-</section>
-</section>
-
- ]]></description>
-  <category>Mathematics</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/04.basic_tensor copy.html</guid>
   <pubDate>Thu, 30 Mar 2023 15:00:00 GMT</pubDate>
 </item>
 </channel>

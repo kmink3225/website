@@ -35,15 +35,16 @@ from scipy.linalg import lstsq # for least square example
 * Orthogonality of the Four Subspaces
   * Orthogonal Vectors
   * Orthogonal Subspaces
-  * Orthogonal Components
+    * Orthogonal Components
+  * Orthogonal Bases
   * Orthogonal Matrices
-* orthogonal vector decomposition,
+* Orthogonal Vector Decomposition,
 * QR decomposition
   * 'Q' stands for an orthogonal matrix, and 
   * 'R' stands for an upper triangular matrix. 
-* LU decomposition, 
-* eigendecomposition, and 
-* singular value decomposition
+* Gram-Schmidt Decomposition, 
+* Eigen Decomposition, and 
+* Singular Value Decomposition
 
 ## Orthogonality of the Four Subspaces
 
@@ -65,12 +66,13 @@ Orthogonality is an important concept in linear algebra and has many application
 
 #### Examples
 
-Here are some examples of orthogonal vectors:
-
+**Example1**
 $\mathbf{v} = \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix}$ and $\mathbf{w} = \begin{bmatrix} 0 \\ 1 \\ 0 \end{bmatrix}$ are orthogonal because $\mathbf{v} \cdot \mathbf{w} = 1 \cdot 0 + 0 \cdot 1 + 0 \cdot 0 = 0$. These vectors are also perpendicular to each other in 3D space.
 
+**Example2**
 $\mathbf{v} = \begin{bmatrix} 1 \\ 1 \\ 1 \end{bmatrix}$ and $\mathbf{w} = \begin{bmatrix} 1 \\ -2 \\ 1 \end{bmatrix}$ are orthogonal because $\mathbf{v} \cdot \mathbf{w} = 1 \cdot 1 + 1 \cdot (-2) + 1 \cdot 1 = 0$. These vectors are also perpendicular to each other in 3D space.
 
+**Example3**
 $\mathbf{v} = \begin{bmatrix} 1 \\ 2 \end{bmatrix}$ and $\mathbf{w} = \begin{bmatrix} -2 \\ 1 \end{bmatrix}$ are orthogonal because $\mathbf{v} \cdot \mathbf{w} = 1 \cdot (-2) + 2 \cdot 1 = 0$. These vectors are also perpendicular to each other in 2D space.
 
 ```{python}
@@ -90,18 +92,6 @@ w3 = np.array([-2, 1])
 print(np.dot(v3, w3))  # Output: 0
 
 # Example 1
-v1 = np.array([1, 0])
-w1 = np.array([0, 1])
-plt.quiver(0, 0, v1[0], v1[1], angles='xy', scale_units='xy', scale=1, color='b')
-plt.quiver(0, 0, w1[0], w1[1], angles='xy', scale_units='xy', scale=1, color='r')
-plt.xlim(-1, 2)
-plt.ylim(-1, 2)
-plt.title("Example 1: Orthogonal Vectors")
-plt.legend(["v", "w"])
-plt.grid(True)
-plt.show()
-
-# Example 2
 v2 = np.array([1, 1, 1])
 w2 = np.array([1, -2, 1])
 fig = plt.figure()
@@ -111,9 +101,22 @@ ax.quiver(0, 0, 0, w2[0], w2[1], w2[2], colors='r', arrow_length_ratio=0.1)
 ax.set_xlim([-1, 2])
 ax.set_ylim([-1, 2])
 ax.set_zlim([-1, 2])
-ax.set_title("Example 2: Orthogonal Vectors")
+ax.set_title("Example 1: Orthogonal Vectors")
 ax.legend(["v", "w"])
 plt.show()
+
+# Example 2
+v1 = np.array([1, 0])
+w1 = np.array([0, 1])
+plt.quiver(0, 0, v1[0], v1[1], angles='xy', scale_units='xy', scale=1, color='b')
+plt.quiver(0, 0, w1[0], w1[1], angles='xy', scale_units='xy', scale=1, color='r')
+plt.xlim(-1, 2)
+plt.ylim(-1, 2)
+plt.title("Example 2: Orthogonal Vectors")
+plt.legend(["v", "w"])
+plt.grid(True)
+plt.show()
+
 
 # Example 3
 v3 = np.array([1, 2])
@@ -155,18 +158,23 @@ $$
 \text{span}\{\mathbf{v}\} \cap \text{span}\{\mathbf{w}\} = \{\mathbf{0}\}
 $$
 
+![Orthogonal Space-Gilbert Strang: Introduction to Linear Algebra](../../../../../images/linear_algebra/orthogonal_space.PNG)
+
 * The row space is perpendicular to the nullspace
 * The column space is perpendicular to the nullspace of $\mathbf{A}^T$.
-  * This peroperty plays a key role in solving the equation $\mathbf{Ax=b}$ but $\mathbf{b}$ is outside the column space (meaning we can't solve the equation directly). In this case, we use the nullspace of $\mathbf{A}^T$ to find the "least-squares" solution, which gives us the smallest possible error $\mathbf{e = b - Ax}$ in our solution.
+  * This peroperty $\mathbf{A}$ plays a key role in solving the equation $\mathbf{Ax=b}$ but $\mathbf{b}$ is outside the column space (meaning we can't solve the equation directly). In this case, we use the nullspace of $\mathbf{A}^T$ to find the "least-squares" solution, which gives us the smallest possible error $\mathbf{e = b - Ax}$ in the solution.
 
 :::{.callout-note}
 When $\mathbf{b}$ is outside the column space of $\mathbf{A}$, there is no exact solution to the equation $\mathbf{Ax = b}$. Instead, we seek a solution that minimizes the error $\mathbf{e = b - Ax}$. The least-squares solution achieves this by finding the projection of $\mathbf{b}$ onto the column space of $\mathbf{A}$. It turns out that the projection of $\mathbf{b}$ onto the column space of $\mathbf{A}$ is exactly equal to the solution of the equation $\mathbf{A}^T\mathbf{Ax} = \mathbf{A}^T\mathbf{b}$, which can be solved using the nullspace of $\mathbf{A}^T$.
 
 In summary, the statement "the column space is perpendicular to the nullspace of $\mathbf{A}^T$" tells us that the column space and nullspace are orthogonal (i.e., perpendicular) subspaces, and this fact allows us to use the nullspace of $\mathbf{A}^T$ to find the least-squares solution to $\mathbf{Ax = b}$.
+:::
 
-##### Example
+##### Least Square Example
 
-Suppose we have a system of equations $\mathbf{Ax} = \mathbf{b}$ where $\mathbf{A}$ is an $m \times n$ matrix and $\mathbf{b}$ is an $m \times 1$ vector, and we want to find the least squares solution to this system (i.e., the solution that minimizes the residual $|\mathbf{Ax} - \mathbf{b}|$). If $\mathbf{A}$ has linearly independent columns, then we can solve for $\mathbf{x}$ using the formula $\mathbf{x} = (\mathbf{A}^T\mathbf{A})^{-1}\mathbf{A}^T\mathbf{b}$. However, if $\mathbf{A}$ does not have linearly independent columns, then we can use the fact that the column space of $\mathbf{A}$ is perpendicular to the nullspace of $\mathbf{A}^T$ to find the least squares solution.
+Suppose we have a system of equations $\mathbf{Ax} = \mathbf{b}$ where $\mathbf{A}$ is an $m \times n$ matrix and $\mathbf{b}$ is an $m \times 1$ vector, and we want to find the least squares solution to this system (i.e., the solution that minimizes the residual $|\mathbf{Ax} - \mathbf{b}|$). If $\mathbf{A}$ has linearly independent columns, then we can solve for $\mathbf{x}$ using the formula $\mathbf{x} = (\mathbf{A}^T\mathbf{A})^{-1}\mathbf{A}^T\mathbf{b}$. 
+
+However, if $\mathbf{A}$ does not have linearly independent columns, then we can use the fact that the column space of $\mathbf{A}$ is perpendicular to the nullspace of $\mathbf{A}^T$ to find the least squares solution.
 
 To do this, we first find a basis for the column space of $\mathbf{A}$ and a basis for the nullspace of $\mathbf{A}^T$. Let $\mathbf{P}$ be the projection matrix onto the column space of $\mathbf{A}$, given by $\mathbf{P} = \mathbf{A}(\mathbf{A}^T\mathbf{A})^{-1}\mathbf{A}^T$. Then the least squares solution to $\mathbf{Ax} = \mathbf{b}$ is given by $\mathbf{x} = \mathbf{P}\mathbf{b}$, and the residual $\mathbf{e} = \mathbf{b} - \mathbf{Ax}$ is in the nullspace of $\mathbf{A}^T$.
 
@@ -261,7 +269,7 @@ plt.show()
 
 
 
-:::
+
 
 ### Orthogonal Subspaces
 
@@ -273,21 +281,24 @@ $$
 $$
 :::
 
-Every vector $\mathbf{x}$ in the nullspace is perpendicular to every row of $\mathbf{A}$, because $\mathbf{Ax=0}$
+Every vector $\mathbf{x}$ in the nullspace is perpendicular to every row of $\mathbf{A}$, because $\mathbf{Ax=0}$. 
 The $\operatorname{null}(\mathbf{A})$ and the row space $\operatorname{Col}(\mathbf{A}^T)$ are orthogonal subspaces of $\mathbb{R}^n$
 
 Every vector $\mathbf{y}$ in the nullspace of $\mathbf{A}^T$ is perpendicular to every column of $\mathbf{A}$. The left $\operatorname{null}(\mathbf{A}^T)$ and the column space $\operatorname{Col}(\mathbf{A})$ are orthogonal subspaces in $\mathbb{R}^n$
 
+![Orthogonal Space-Gilbert Strang: Introduction to Linear Algebra](../../../../../images/linear_algebra/orthogonal_space.PNG)
 
 #### Examples
 
-Let $\mathbf{v} = \begin{bmatrix} 1 \\ 0 \\ 1 \end{bmatrix}$ and $\mathbf{w} = \begin{bmatrix} 0 \\ 1 \\ -1 \end{bmatrix}$ be two vectors in $\mathbb{R}^3$. Then the subspaces $U = \text{span}{\mathbf{v}}$ and $V = \text{span}{\mathbf{w}}$ are orthogonal subspaces, since $\mathbf{v} \cdot \mathbf{w} = 0$.
+**Example1**
+Let $\mathbf{v} = \begin{bmatrix} 1 \\ 0 \\ 1 \end{bmatrix}$ and $\mathbf{u} = \begin{bmatrix} 0 \\ 1 \\ -1 \end{bmatrix}$ be two vectors in $\mathbb{R}^3$. Then the subspaces $U = \text{span}\{\mathbf{u}\}$ and $V = \text{span}\{\mathbf{v}\}$ are orthogonal subspaces, since $\mathbf{u} \cdot \mathbf{v} = 0$.
 
 $$
-U = \text{span}\{\mathbf{v}\} = \text{span}\left\{\begin{bmatrix} 1 \\ 0 \\ 1 \end{bmatrix}\right\}, \quad
-V = \text{span}\{\mathbf{w}\} = \text{span}\left\{\begin{bmatrix} 0 \\ 1 \\ -1 \end{bmatrix}\right\}
+U = \text{span}\{\mathbf{u}\} = \text{span}\left\{\begin{bmatrix} 1 \\ 0 \\ 1 \end{bmatrix}\right\}, \quad
+V = \text{span}\{\mathbf{v}\} = \text{span}\left\{\begin{bmatrix} 0 \\ 1 \\ -1 \end{bmatrix}\right\}
 $$
 
+**Example2**
 Let $U$ be the subspace of $\mathbb{R}^3$ spanned by the vectors $\begin{bmatrix} 1 \\ 2 \\ 0 \end{bmatrix}$ and $\begin{bmatrix} 1 \\ 0 \\ -1 \end{bmatrix}$, and let $V$ be the subspace spanned by the vector $\begin{bmatrix} 2 \\ -1 \\ 1 \end{bmatrix}$. Then $U$ and $V$ are orthogonal subspaces, since every vector in $U$ is orthogonal to every vector in $V$.
 
 $$
@@ -295,6 +306,7 @@ U = \text{span}\left\{\begin{bmatrix} 1 \\ 2 \\ 0 \end{bmatrix}, \begin{bmatrix}
 V = \text{span}\left\{\begin{bmatrix} 2 \\ -1 \\ 1 \end{bmatrix}\right\}
 $$
 
+**Example3**
 Let $U$ and $V$ be the subspaces of $\mathbb{R}^2$ spanned by the vectors $\begin{bmatrix} 1 \ 1 \end{bmatrix}$ and $\begin{bmatrix} 1 \ -1 \end{bmatrix}$, respectively. Then $U$ and $V$ are not orthogonal subspaces, since $\begin{bmatrix} 1 \ 1 \end{bmatrix} \cdot \begin{bmatrix} 1 \ -1 \end{bmatrix} \neq 0$.
 
 $$
@@ -303,18 +315,18 @@ V = \text{span}\left\{\begin{bmatrix} 1 \\ -1 \end{bmatrix}\right\}
 $$
 
 ```{python}
-v = np.array([1, 1])
-w = np.array([1, -1])
+u = np.array([1, 1])
+v = np.array([1, -1])
 
 # plot vectors
 plt.figure()
-plt.plot([0, v[0]], [0, v[1]], 'b', label=r'$\mathbf{v}$')
-plt.plot([0, w[0]], [0, w[1]], 'r', label=r'$\mathbf{w}$')
+plt.plot([0, u[0]], [0, u[1]], 'b', label=r'$\mathbf{u}$')
+plt.plot([0, v[0]], [0, v[1]], 'r', label=r'$\mathbf{v}$')
 plt.legend()
 
 # plot subspaces
-plt.axline((0, 0), slope=v[1]/v[0], color='b', linestyle='--', label=r'$U$')
-plt.axline((0, 0), slope=w[1]/w[0], color='r', linestyle='--', label=r'$V$')
+plt.axline((0, 0), slope=u[1]/u[0], color='b', linestyle='--', label=r'$U$')
+plt.axline((0, 0), slope=v[1]/v[0], color='r', linestyle='--', label=r'$V$')
 
 plt.xlim(-1.5, 1.5)
 plt.ylim(-1.5, 1.5)
@@ -322,7 +334,7 @@ plt.gca().set_aspect('equal', adjustable='box')
 plt.show()
 ```
 
-The vectors $\mathbf{v}$ and $\mathbf{w}$ are in blue and red, respectively, and the subspaces $U$ and $V$ as dashed lines with corresponding colors. Since $\mathbf{v} \cdot \mathbf{w} = 0$, the subspaces are orthogonal.
+The vectors $\mathbf{u}$ and $\mathbf{v}$ are in blue and red, respectively, and the subspaces $U$ and $V$ as dashed lines with corresponding colors. Since $\mathbf{u} \cdot \mathbf{v} = 0$, the subspaces are orthogonal.
 
 ### Orthogonal Complements
 
@@ -334,7 +346,7 @@ $$
 V^\perp = \{ \mathbf w \in W | \langle \mathbf w,\mathbf v \rangle = 0, \forall \mathbf v \in V \}.
 $$
 
-where  $V^\perp$ represents the orthogonal complement of the subspace $V$, $w$ and $v$ are vectors in the subspaces $W$ and $V$ respectively, and $\langle$ and $\rangle$ denote the inner product between two vectors.
+where  $V^\perp$ represents the orthogonal complement of the subspace $V$, $w$ and $v$ are vectors in the subspaces $W$ and $V$ respectively, and $\langle \rangle$ denote the inner product between two vectors.
 :::
 
 We can then decompose any vector $\mathbf{w} \in W$ into two orthogonal components as follows:

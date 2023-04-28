@@ -180,6 +180,8 @@ To do this, we first find a basis for the column space of $\mathbf{A}$ and a bas
 
 
 ```{python}
+#| echo: false
+#| eval: false
 
 # Define the matrix A and the vector b
 A = np.array([[1, 2, 3],
@@ -204,11 +206,18 @@ Projected_b_perp = b - Projected_b
 Projected_e = np.linalg.pinv(A.T).T @ e
 
 '''
-The expected value of Projected_e = np.linalg.pinv(A.T) @ e is the projection of the true value x onto the column space of A. This is because the least squares solution x_hat is the orthogonal projection of the vector b onto the column space of A, which is given by x_hat = A @ np.linalg.lstsq(A, b)[0].
+The expected value of Projected_e = np.linalg.pinv(A.T) @ e is the projection of the true value x 
+onto the column space of A. 
+This is because the least squares solution x_hat is the orthogonal projection of the vector b onto the column space of A, 
+which is given by x_hat = A @ np.linalg.lstsq(A, b)[0].
 
-Since e = b - Ax_hat is the error in the least squares solution, np.linalg.pinv(A.T) @ e computes the projection of this error vector onto the nullspace of A^T. Therefore, the expected value of Projected_e is zero, since the error e is orthogonal to the column space of A and its projection onto the nullspace of A^T is also orthogonal to the column space of A.
+Since e = b - Ax_hat is the error in the least squares solution, 
+np.linalg.pinv(A.T) @ e computes the projection of this error vector onto the nullspace of A^T. 
+Therefore, the expected value of Projected_e is zero, since the error e is orthogonal to the column space of A and 
+its projection onto the nullspace of A^T is also orthogonal to the column space of A.
 
-In other words, Projected_e is the component of the error e that lies in the nullspace of A^T, and since the nullspace of A^T is orthogonal to the column space of A, the expected value of Projected_e is zero.
+In other words, Projected_e is the component of the error e that lies in the nullspace of A^T, and 
+since the nullspace of A^T is orthogonal to the column space of A, the expected value of Projected_e is zero.
 '''
 
 # Compute the projection of e onto the orthogonal complement of the nullspace of A^T
@@ -217,13 +226,17 @@ Projected_e_perp = e - A @ Projected_e
 # Verify that the column space is perpendicular to the nullspace of A^T
 assert np.allclose(A @ Projected_e, np.zeros((A.shape[0],)))
 #assert np.allclose(Projected_e_perp @ x, np.zeros((x.shape[0],)))
+
+'''
+In this example, we define the matrix `A` and the vector `b`, and use the lstsq function from SciPy to compute the least-squares solution `x`. We then compute the error `e = b - Ax`, and project `b` onto the column space of `A` to obtain `Projected_b`, and onto the orthogonal complement of the column space of `A` to obtain `Projected_b_perp`. We also project `e` onto the nullspace of `A^T` to obtain `Projected_e`, and onto the orthogonal complement of the nullspace of `A^T` to obtain `Projected_e_perp`. Finally, we verify that the column space of `A` is perpendicular to the nullspace of `A^T` by checking that `A^T` `Projected_e = 0` and `Projected_e_perp @ x = 0`.
+'''
 ```
 
 
-In this example, we define the matrix `A` and the vector `b`, and use the lstsq function from SciPy to compute the least-squares solution `x`. We then compute the error `e = b - Ax`, and project `b` onto the column space of `A` to obtain `Pb`, and onto the orthogonal complement of the column space of `A` to obtain `Pb_perp`. We also project `e` onto the nullspace of `A^T` to obtain `Pe`, and onto the orthogonal complement of the nullspace of `A^T` to obtain `Pe_perp`. Finally, we verify that the column space of `A` is perpendicular to the nullspace of `A^T` by checking that `A^T` `Pe = 0` and `Pe_perp x = 0`.
 
 ```{python}
 #| eval: false
+#| echo: false
 
 # define the matrix A and vector b
 A = np.array([[1, 1], [1, -1], [2, 1], [2, -1]])
@@ -267,10 +280,6 @@ ax.set_zlim(0, 6)
 plt.show()
 ```
 
-
-
-
-
 ### Orthogonal Subspaces
 
 :::{#def-orthogonalSubspaces}
@@ -286,7 +295,8 @@ The $\operatorname{null}(\mathbf{A})$ and the row space $\operatorname{Col}(\mat
 
 Every vector $\mathbf{y}$ in the nullspace of $\mathbf{A}^T$ is perpendicular to every column of $\mathbf{A}$. The left $\operatorname{null}(\mathbf{A}^T)$ and the column space $\operatorname{Col}(\mathbf{A})$ are orthogonal subspaces in $\mathbb{R}^n$
 
-![Orthogonal Space-Gilbert Strang: Introduction to Linear Algebra](../../../../../images/linear_algebra/orthogonal_space.PNG)
+![Null(A) $\perp$ Col(A^T)-Gilbert Strang: Introduction to Linear Algebra](../../../../../images/linear_algebra/Null(A)_Col(A%5ET)_orthogonal.PNG)
+
 
 #### Examples
 
@@ -347,6 +357,8 @@ V^\perp = \{ \mathbf w \in W | \langle \mathbf w,\mathbf v \rangle = 0, \forall 
 $$
 
 where  $V^\perp$ represents the orthogonal complement of the subspace $V$, $w$ and $v$ are vectors in the subspaces $W$ and $V$ respectively, and $\langle \rangle$ denote the inner product between two vectors.
+
+In other words, The orthogonal complement of a subspace $V$ contains every vector that is perpendicular to $V$. This orthogonal subspace is denoted by $V^\perp$.
 :::
 
 We can then decompose any vector $\mathbf{w} \in W$ into two orthogonal components as follows:
@@ -392,17 +404,14 @@ $$
 
 Therefore, we have decomposed $\mathbf{w}$ into two orthogonal components as $\mathbf{w} = \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix} + \begin{bmatrix} 0 \\ 2 \\ 3 \end{bmatrix}$.
 
-
-The Fundamental Theorem of Linear Algebra states that for a given matrix $\mathbf A$, the column space of $\mathbf A$ and the null space of $\mathbf A$ are orthogonal complements of each other. In other words, every vector in the null space of $\mathbf A$ is orthogonal to every vector in the column space of $\mathbf A$, and vice versa. This means that any vector in the domain of $\mathbf A$ can be uniquely decomposed as the sum of a vector in the column space and a vector in the null space.
-
 :::{#thm-fundamentralThm}
-
+The Fundamental Theorem.  
 Let $\mathbf A$ be an $m\times n$ matrix over $\mathbb{R}$. Then,
 
-* The column space of $\mathbf A$, denoted $C(\mathbf A)$, is a subspace of $\mathbb{R}^m$.
-* The null space of $\mathbf A$, denoted $N(\mathbf A)$, is a subspace of $\mathbb{R}^n$.
-* The orthogonal complement of $C(\mathbf A)$, denoted $C(\mathbf A)^\perp$, is equal to $N(\mathbf A)$.
-* The orthogonal complement of $N(\mathbf A)$, denoted $N(\mathbf A)^\perp$, is equal to $C(\mathbf A)$.
+* The column space of $\mathbf A$, denoted $\operatorname{Col}(\mathbf A)$, is a subspace of $\mathbb{R}^m$.
+* The null space of $\mathbf A$, denoted $\operatorname{Null}(\mathbf A)$, is a subspace of $\mathbb{R}^n$.
+* The orthogonal complement of $\operatorname{Col}(\mathbf A)$, denoted $\operatorname{Col}(\mathbf A)^\perp$, is equal to $\operatorname{Null}(\mathbf A)$.
+* The orthogonal complement of $\operatorname{Null}(\mathbf A)$, denoted $\operatorname{Null}(\mathbf A)^\perp$, is equal to $\operatorname{Col}(\mathbf A)$.
 
 In other words, we have the following orthogonal decomposition of $\mathbb{R}^n$:
 $$
@@ -418,6 +427,17 @@ $$
 where $\oplus$ denotes the direct sum of subspaces.
 
 :::
+
+The Fundamental Theorem states that for a given matrix $\mathbf A$, the column space of $\mathbf A$ and the null space of $\mathbf A$ are orthogonal complements of each other. In other words, every vector in the null space of $\mathbf A$ is orthogonal to every vector in the column space of $\mathbf A$, and vice versa. This means that any vector in the domain of $\mathbf A$ can be uniquely decomposed as the sum of a vector in the column space and a vector in the null space.
+
+The point of **complements** is that every $\mathbf x$ can be split into a row space component $\mathbf x^r$ and a nullspace component $\mathbf x^n$. When $\mathbf  A$ multiplies $\mathbf x = \mathbf x^r + \mathbf x^n$, Figure 4.3 shows what happens:
+
+![Null Space Complement-Gilbert Strang: Introduction to Linear Algebra](../../../../../images/linear_algebra/nullspace_complement.PNG)
+
+* The nullspace component goes to zero: $\mathbf{Ax}_n = \mathbf{0}$.
+* The row space component goes to the column space: $\mathbf{Ax}_r = \mathbf{Ax}$ Ax r = Ax.
+* Every vector $\mathbf b$ in the column space comes from one and only one vector in the row space.
+* pseudoinverse: there is an $r$ by $r$ invertible matrix hiding inside $\mathbf A$, if we throwaway the two nullspaces. From the row space to the column space, $\mathbf A$ is invertible.
 
 #### Exmaple
 

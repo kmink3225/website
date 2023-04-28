@@ -475,7 +475,6 @@ Note
 <li>1111-11-11,</li>
 <li>1111-11-11, Eigen Decomposition</li>
 <li>1111-11-11, Singular Value Decomposition (SVD)</li>
-<li>1111-11-11, Gram-Schmidt</li>
 <li>1111-11-11, Group</li>
 <li>1111-11-11, Rotation &amp; Group</li>
 <li>2023-04-02, <a href="../../../../../docs/blog/posts/Mathmatics/linear_algebra/quadratic_form.html">Matrix Transformation (5) - Quadratic Form</a></li>
@@ -1243,93 +1242,6 @@ Note
 <p>Suppose we have a system of equations <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAx%7D%20=%20%5Cmathbf%7Bb%7D"> where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> matrix and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D"> is an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%201"> vector, and we want to find the least squares solution to this system (i.e., the solution that minimizes the residual <img src="https://latex.codecogs.com/png.latex?%7C%5Cmathbf%7BAx%7D%20-%20%5Cmathbf%7Bb%7D%7C">). If <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> has linearly independent columns, then we can solve for <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> using the formula <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20(%5Cmathbf%7BA%7D%5ET%5Cmathbf%7BA%7D)%5E%7B-1%7D%5Cmathbf%7BA%7D%5ET%5Cmathbf%7Bb%7D">.</p>
 <p>However, if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> does not have linearly independent columns, then we can use the fact that the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is perpendicular to the nullspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET"> to find the least squares solution.</p>
 <p>To do this, we first find a basis for the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> and a basis for the nullspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET">. Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BP%7D"> be the projection matrix onto the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">, given by <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BP%7D%20=%20%5Cmathbf%7BA%7D(%5Cmathbf%7BA%7D%5ET%5Cmathbf%7BA%7D)%5E%7B-1%7D%5Cmathbf%7BA%7D%5ET">. Then the least squares solution to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAx%7D%20=%20%5Cmathbf%7Bb%7D"> is given by <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20%5Cmathbf%7BP%7D%5Cmathbf%7Bb%7D">, and the residual <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Be%7D%20=%20%5Cmathbf%7Bb%7D%20-%20%5Cmathbf%7BAx%7D"> is in the nullspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET">.</p>
-<div class="cell" data-execution_count="3">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="co" style="color: #5E5E5E;"># Define the matrix A and the vector b</span></span>
-<span id="cb4-2">A <span class="op" style="color: #5E5E5E;">=</span> np.array([[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">3</span>],</span>
-<span id="cb4-3">              [<span class="dv" style="color: #AD0000;">4</span>, <span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">6</span>],</span>
-<span id="cb4-4">              [<span class="dv" style="color: #AD0000;">7</span>, <span class="dv" style="color: #AD0000;">8</span>, <span class="dv" style="color: #AD0000;">9</span>],</span>
-<span id="cb4-5">              [<span class="dv" style="color: #AD0000;">10</span>, <span class="dv" style="color: #AD0000;">11</span>, <span class="dv" style="color: #AD0000;">12</span>]])</span>
-<span id="cb4-6">b <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">4</span>])</span>
-<span id="cb4-7"></span>
-<span id="cb4-8"><span class="co" style="color: #5E5E5E;"># Compute the least-squares solution using lstsq from SciPy</span></span>
-<span id="cb4-9">x, res, rank, s <span class="op" style="color: #5E5E5E;">=</span> lstsq(A, b)</span>
-<span id="cb4-10"></span>
-<span id="cb4-11"><span class="co" style="color: #5E5E5E;"># Compute the error e = b - Ax</span></span>
-<span id="cb4-12">e <span class="op" style="color: #5E5E5E;">=</span> b <span class="op" style="color: #5E5E5E;">-</span> A <span class="op" style="color: #5E5E5E;">@</span> x <span class="co" style="color: #5E5E5E;"># matrix multiplication</span></span>
-<span id="cb4-13"></span>
-<span id="cb4-14"><span class="co" style="color: #5E5E5E;"># Compute the projection of b onto the column space of A</span></span>
-<span id="cb4-15">Projected_b <span class="op" style="color: #5E5E5E;">=</span> A <span class="op" style="color: #5E5E5E;">@</span> x</span>
-<span id="cb4-16"></span>
-<span id="cb4-17"><span class="co" style="color: #5E5E5E;"># Compute the projection of b onto the orthogonal complement of the column space of A</span></span>
-<span id="cb4-18">Projected_b_perp <span class="op" style="color: #5E5E5E;">=</span> b <span class="op" style="color: #5E5E5E;">-</span> Projected_b</span>
-<span id="cb4-19"></span>
-<span id="cb4-20"><span class="co" style="color: #5E5E5E;"># Compute the projection of e onto the nullspace of A^T</span></span>
-<span id="cb4-21">Projected_e <span class="op" style="color: #5E5E5E;">=</span> np.linalg.pinv(A.T).T <span class="op" style="color: #5E5E5E;">@</span> e</span>
-<span id="cb4-22"></span>
-<span id="cb4-23"><span class="co" style="color: #5E5E5E;">'''</span></span>
-<span id="cb4-24"><span class="co" style="color: #5E5E5E;">The expected value of Projected_e = np.linalg.pinv(A.T) @ e is the projection of the true value x onto the column space of A. This is because the least squares solution x_hat is the orthogonal projection of the vector b onto the column space of A, which is given by x_hat = A @ np.linalg.lstsq(A, b)[0].</span></span>
-<span id="cb4-25"></span>
-<span id="cb4-26"><span class="co" style="color: #5E5E5E;">Since e = b - Ax_hat is the error in the least squares solution, np.linalg.pinv(A.T) @ e computes the projection of this error vector onto the nullspace of A^T. Therefore, the expected value of Projected_e is zero, since the error e is orthogonal to the column space of A and its projection onto the nullspace of A^T is also orthogonal to the column space of A.</span></span>
-<span id="cb4-27"></span>
-<span id="cb4-28"><span class="co" style="color: #5E5E5E;">In other words, Projected_e is the component of the error e that lies in the nullspace of A^T, and since the nullspace of A^T is orthogonal to the column space of A, the expected value of Projected_e is zero.</span></span>
-<span id="cb4-29"><span class="co" style="color: #5E5E5E;">'''</span></span>
-<span id="cb4-30"></span>
-<span id="cb4-31"><span class="co" style="color: #5E5E5E;"># Compute the projection of e onto the orthogonal complement of the nullspace of A^T</span></span>
-<span id="cb4-32">Projected_e_perp <span class="op" style="color: #5E5E5E;">=</span> e <span class="op" style="color: #5E5E5E;">-</span> A <span class="op" style="color: #5E5E5E;">@</span> Projected_e</span>
-<span id="cb4-33"></span>
-<span id="cb4-34"><span class="co" style="color: #5E5E5E;"># Verify that the column space is perpendicular to the nullspace of A^T</span></span>
-<span id="cb4-35"><span class="cf" style="color: #003B4F;">assert</span> np.allclose(A <span class="op" style="color: #5E5E5E;">@</span> Projected_e, np.zeros((A.shape[<span class="dv" style="color: #AD0000;">0</span>],)))</span>
-<span id="cb4-36"><span class="co" style="color: #5E5E5E;">#assert np.allclose(Projected_e_perp @ x, np.zeros((x.shape[0],)))</span></span></code></pre></div>
-</details>
-</div>
-<p>In this example, we define the matrix <code>A</code> and the vector <code>b</code>, and use the lstsq function from SciPy to compute the least-squares solution <code>x</code>. We then compute the error <code>e = b - Ax</code>, and project <code>b</code> onto the column space of <code>A</code> to obtain <code>Pb</code>, and onto the orthogonal complement of the column space of <code>A</code> to obtain <code>Pb_perp</code>. We also project <code>e</code> onto the nullspace of <code>A^T</code> to obtain <code>Pe</code>, and onto the orthogonal complement of the nullspace of <code>A^T</code> to obtain <code>Pe_perp</code>. Finally, we verify that the column space of <code>A</code> is perpendicular to the nullspace of <code>A^T</code> by checking that <code>A^T</code> <code>Pe = 0</code> and <code>Pe_perp x = 0</code>.</p>
-<div class="cell" data-execution_count="4">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="co" style="color: #5E5E5E;"># define the matrix A and vector b</span></span>
-<span id="cb5-2">A <span class="op" style="color: #5E5E5E;">=</span> np.array([[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>], [<span class="dv" style="color: #AD0000;">1</span>, <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>], [<span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">1</span>], [<span class="dv" style="color: #AD0000;">2</span>, <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>]])</span>
-<span id="cb5-3">b <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">3</span>])</span>
-<span id="cb5-4"></span>
-<span id="cb5-5"><span class="co" style="color: #5E5E5E;"># calculate the least-squares solution</span></span>
-<span id="cb5-6">x <span class="op" style="color: #5E5E5E;">=</span> np.linalg.lstsq(A, b, rcond<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">None</span>)[<span class="dv" style="color: #AD0000;">0</span>]</span>
-<span id="cb5-7"></span>
-<span id="cb5-8"><span class="co" style="color: #5E5E5E;"># create a figure with a 3D axes object</span></span>
-<span id="cb5-9">fig <span class="op" style="color: #5E5E5E;">=</span> plt.figure()</span>
-<span id="cb5-10">ax <span class="op" style="color: #5E5E5E;">=</span> fig.add_subplot(<span class="dv" style="color: #AD0000;">111</span>, projection<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'3d'</span>)</span>
-<span id="cb5-11"></span>
-<span id="cb5-12"><span class="co" style="color: #5E5E5E;"># plot the points in the column space of A</span></span>
-<span id="cb5-13">x1 <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">10</span>)</span>
-<span id="cb5-14">x2 <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">10</span>)</span>
-<span id="cb5-15">X1, X2 <span class="op" style="color: #5E5E5E;">=</span> np.meshgrid(x1, x2)</span>
-<span id="cb5-16">Y <span class="op" style="color: #5E5E5E;">=</span> x[<span class="dv" style="color: #AD0000;">0</span>]<span class="op" style="color: #5E5E5E;">*</span>X1 <span class="op" style="color: #5E5E5E;">+</span> x[<span class="dv" style="color: #AD0000;">1</span>]<span class="op" style="color: #5E5E5E;">*</span>X2</span>
-<span id="cb5-17">ax.plot_surface(X1, X2, Y, alpha<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">0.2</span>)</span>
-<span id="cb5-18"></span>
-<span id="cb5-19"><span class="co" style="color: #5E5E5E;"># plot the points in the nullspace of A^T</span></span>
-<span id="cb5-20">x1 <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">10</span>)</span>
-<span id="cb5-21">x3 <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">10</span>)</span>
-<span id="cb5-22">X1, X3 <span class="op" style="color: #5E5E5E;">=</span> np.meshgrid(x1, x3)</span>
-<span id="cb5-23">Y <span class="op" style="color: #5E5E5E;">=</span> np.zeros_like(X1)</span>
-<span id="cb5-24">Z <span class="op" style="color: #5E5E5E;">=</span> x[<span class="dv" style="color: #AD0000;">0</span>]<span class="op" style="color: #5E5E5E;">*</span>X1 <span class="op" style="color: #5E5E5E;">+</span> x[<span class="dv" style="color: #AD0000;">1</span>]<span class="op" style="color: #5E5E5E;">*</span>Y <span class="op" style="color: #5E5E5E;">+</span> x[<span class="dv" style="color: #AD0000;">2</span>]<span class="op" style="color: #5E5E5E;">*</span>X3</span>
-<span id="cb5-25">ax.plot_surface(X1, Y, X3, color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'red'</span>, alpha<span class="op" style="color: #5E5E5E;">=</span><span class="fl" style="color: #AD0000;">0.2</span>)</span>
-<span id="cb5-26"></span>
-<span id="cb5-27"><span class="co" style="color: #5E5E5E;"># plot the data points and the least-squares solution</span></span>
-<span id="cb5-28">ax.scatter(A[:,<span class="dv" style="color: #AD0000;">0</span>], A[:,<span class="dv" style="color: #AD0000;">1</span>], b, color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'blue'</span>, marker<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'o'</span>, s<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">50</span>)</span>
-<span id="cb5-29">ax.scatter(x[<span class="dv" style="color: #AD0000;">0</span>], x[<span class="dv" style="color: #AD0000;">1</span>], x[<span class="dv" style="color: #AD0000;">2</span>], color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'green'</span>, marker<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'*'</span>, s<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">100</span>)</span>
-<span id="cb5-30"></span>
-<span id="cb5-31"><span class="co" style="color: #5E5E5E;"># set the axis labels and limits</span></span>
-<span id="cb5-32">ax.set_xlabel(<span class="st" style="color: #20794D;">'x1'</span>)</span>
-<span id="cb5-33">ax.set_ylabel(<span class="st" style="color: #20794D;">'x2'</span>)</span>
-<span id="cb5-34">ax.set_zlabel(<span class="st" style="color: #20794D;">'b'</span>)</span>
-<span id="cb5-35">ax.set_xlim(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">3</span>)</span>
-<span id="cb5-36">ax.set_ylim(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">3</span>)</span>
-<span id="cb5-37">ax.set_zlim(<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">6</span>)</span>
-<span id="cb5-38"></span>
-<span id="cb5-39"><span class="co" style="color: #5E5E5E;"># show the plot</span></span>
-<span id="cb5-40">plt.show()</span></code></pre></div>
-</details>
-</div>
 </section>
 </section>
 </section>
@@ -1343,8 +1255,8 @@ Note
 <p>Every vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D"> in the nullspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET"> is perpendicular to every column of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">. The left <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Bnull%7D(%5Cmathbf%7BA%7D%5ET)"> and the column space <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BCol%7D(%5Cmathbf%7BA%7D)"> are orthogonal subspaces in <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5En"></p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="kmink3225.netlify.app/images/linear_algebra/orthogonal_space.PNG" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Orthogonal Space-Gilbert Strang: Introduction to Linear Algebra</figcaption><p></p>
+<p><img src="kmink3225.netlify.app/images/linear_algebra/Null(A)_Col(A^T)_orthogonal.PNG" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Null(A) <img src="https://latex.codecogs.com/png.latex?%5Cperp"> Col(A^T)-Gilbert Strang: Introduction to Linear Algebra</figcaption><p></p>
 </figure>
 </div>
 <section id="examples-1" class="level4" data-number="1.1.2.1">
@@ -1358,23 +1270,23 @@ Note
 <div class="cell" data-execution_count="5">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">u <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
-<span id="cb6-2">v <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">1</span>, <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>])</span>
-<span id="cb6-3"></span>
-<span id="cb6-4"><span class="co" style="color: #5E5E5E;"># plot vectors</span></span>
-<span id="cb6-5">plt.figure()</span>
-<span id="cb6-6">plt.plot([<span class="dv" style="color: #AD0000;">0</span>, u[<span class="dv" style="color: #AD0000;">0</span>]], [<span class="dv" style="color: #AD0000;">0</span>, u[<span class="dv" style="color: #AD0000;">1</span>]], <span class="st" style="color: #20794D;">'b'</span>, label<span class="op" style="color: #5E5E5E;">=</span><span class="vs" style="color: #20794D;">r'$\mathbf</span><span class="sc" style="color: #5E5E5E;">{u}</span><span class="vs" style="color: #20794D;">$'</span>)</span>
-<span id="cb6-7">plt.plot([<span class="dv" style="color: #AD0000;">0</span>, v[<span class="dv" style="color: #AD0000;">0</span>]], [<span class="dv" style="color: #AD0000;">0</span>, v[<span class="dv" style="color: #AD0000;">1</span>]], <span class="st" style="color: #20794D;">'r'</span>, label<span class="op" style="color: #5E5E5E;">=</span><span class="vs" style="color: #20794D;">r'$\mathbf</span><span class="sc" style="color: #5E5E5E;">{v}</span><span class="vs" style="color: #20794D;">$'</span>)</span>
-<span id="cb6-8">plt.legend()</span>
-<span id="cb6-9"></span>
-<span id="cb6-10"><span class="co" style="color: #5E5E5E;"># plot subspaces</span></span>
-<span id="cb6-11">plt.axline((<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>), slope<span class="op" style="color: #5E5E5E;">=</span>u[<span class="dv" style="color: #AD0000;">1</span>]<span class="op" style="color: #5E5E5E;">/</span>u[<span class="dv" style="color: #AD0000;">0</span>], color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'b'</span>, linestyle<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'--'</span>, label<span class="op" style="color: #5E5E5E;">=</span><span class="vs" style="color: #20794D;">r'$U$'</span>)</span>
-<span id="cb6-12">plt.axline((<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>), slope<span class="op" style="color: #5E5E5E;">=</span>v[<span class="dv" style="color: #AD0000;">1</span>]<span class="op" style="color: #5E5E5E;">/</span>v[<span class="dv" style="color: #AD0000;">0</span>], color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'r'</span>, linestyle<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'--'</span>, label<span class="op" style="color: #5E5E5E;">=</span><span class="vs" style="color: #20794D;">r'$V$'</span>)</span>
-<span id="cb6-13"></span>
-<span id="cb6-14">plt.xlim(<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">1.5</span>, <span class="fl" style="color: #AD0000;">1.5</span>)</span>
-<span id="cb6-15">plt.ylim(<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">1.5</span>, <span class="fl" style="color: #AD0000;">1.5</span>)</span>
-<span id="cb6-16">plt.gca().set_aspect(<span class="st" style="color: #20794D;">'equal'</span>, adjustable<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'box'</span>)</span>
-<span id="cb6-17">plt.show()</span></code></pre></div>
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">u <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb4-2">v <span class="op" style="color: #5E5E5E;">=</span> np.array([<span class="dv" style="color: #AD0000;">1</span>, <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>])</span>
+<span id="cb4-3"></span>
+<span id="cb4-4"><span class="co" style="color: #5E5E5E;"># plot vectors</span></span>
+<span id="cb4-5">plt.figure()</span>
+<span id="cb4-6">plt.plot([<span class="dv" style="color: #AD0000;">0</span>, u[<span class="dv" style="color: #AD0000;">0</span>]], [<span class="dv" style="color: #AD0000;">0</span>, u[<span class="dv" style="color: #AD0000;">1</span>]], <span class="st" style="color: #20794D;">'b'</span>, label<span class="op" style="color: #5E5E5E;">=</span><span class="vs" style="color: #20794D;">r'$\mathbf</span><span class="sc" style="color: #5E5E5E;">{u}</span><span class="vs" style="color: #20794D;">$'</span>)</span>
+<span id="cb4-7">plt.plot([<span class="dv" style="color: #AD0000;">0</span>, v[<span class="dv" style="color: #AD0000;">0</span>]], [<span class="dv" style="color: #AD0000;">0</span>, v[<span class="dv" style="color: #AD0000;">1</span>]], <span class="st" style="color: #20794D;">'r'</span>, label<span class="op" style="color: #5E5E5E;">=</span><span class="vs" style="color: #20794D;">r'$\mathbf</span><span class="sc" style="color: #5E5E5E;">{v}</span><span class="vs" style="color: #20794D;">$'</span>)</span>
+<span id="cb4-8">plt.legend()</span>
+<span id="cb4-9"></span>
+<span id="cb4-10"><span class="co" style="color: #5E5E5E;"># plot subspaces</span></span>
+<span id="cb4-11">plt.axline((<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>), slope<span class="op" style="color: #5E5E5E;">=</span>u[<span class="dv" style="color: #AD0000;">1</span>]<span class="op" style="color: #5E5E5E;">/</span>u[<span class="dv" style="color: #AD0000;">0</span>], color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'b'</span>, linestyle<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'--'</span>, label<span class="op" style="color: #5E5E5E;">=</span><span class="vs" style="color: #20794D;">r'$U$'</span>)</span>
+<span id="cb4-12">plt.axline((<span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">0</span>), slope<span class="op" style="color: #5E5E5E;">=</span>v[<span class="dv" style="color: #AD0000;">1</span>]<span class="op" style="color: #5E5E5E;">/</span>v[<span class="dv" style="color: #AD0000;">0</span>], color<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'r'</span>, linestyle<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'--'</span>, label<span class="op" style="color: #5E5E5E;">=</span><span class="vs" style="color: #20794D;">r'$V$'</span>)</span>
+<span id="cb4-13"></span>
+<span id="cb4-14">plt.xlim(<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">1.5</span>, <span class="fl" style="color: #AD0000;">1.5</span>)</span>
+<span id="cb4-15">plt.ylim(<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">1.5</span>, <span class="fl" style="color: #AD0000;">1.5</span>)</span>
+<span id="cb4-16">plt.gca().set_aspect(<span class="st" style="color: #20794D;">'equal'</span>, adjustable<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'box'</span>)</span>
+<span id="cb4-17">plt.show()</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/06.orthogonality_files/figure-html/cell-6-output-1.png" width="441" height="416"></p>
@@ -1389,6 +1301,7 @@ Note
 <div id="def-orthogonalComplements" class="theorem definition">
 <p><span class="theorem-title"><strong>Definition 3 </strong></span>Let <img src="https://latex.codecogs.com/png.latex?V"> be a subspace of a vector space <img src="https://latex.codecogs.com/png.latex?W">. The orthogonal complement of <img src="https://latex.codecogs.com/png.latex?V">, denoted by <img src="https://latex.codecogs.com/png.latex?V%5E%5Cperp">, is the set of all vectors in <img src="https://latex.codecogs.com/png.latex?W"> that are orthogonal to every vector in <img src="https://latex.codecogs.com/png.latex?V">. That is, the orthogonal complement of <img src="https://latex.codecogs.com/png.latex?V"> is the set of vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20w%20%5Cin%20W"> such that the inner product between <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20w"> and any vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20v%20%5Cin%20V"> is equal to zero: <img src="https://latex.codecogs.com/png.latex?%0AV%5E%5Cperp%20=%20%5C%7B%20%5Cmathbf%20w%20%5Cin%20W%20%7C%20%5Clangle%20%5Cmathbf%20w,%5Cmathbf%20v%20%5Crangle%20=%200,%20%5Cforall%20%5Cmathbf%20v%20%5Cin%20V%20%5C%7D.%0A"></p>
 <p>where <img src="https://latex.codecogs.com/png.latex?V%5E%5Cperp"> represents the orthogonal complement of the subspace <img src="https://latex.codecogs.com/png.latex?V">, <img src="https://latex.codecogs.com/png.latex?w"> and <img src="https://latex.codecogs.com/png.latex?v"> are vectors in the subspaces <img src="https://latex.codecogs.com/png.latex?W"> and <img src="https://latex.codecogs.com/png.latex?V"> respectively, and <img src="https://latex.codecogs.com/png.latex?%5Clangle%20%5Crangle"> denote the inner product between two vectors.</p>
+<p>In other words, The orthogonal complement of a subspace <img src="https://latex.codecogs.com/png.latex?V"> contains every vector that is perpendicular to <img src="https://latex.codecogs.com/png.latex?V">. This orthogonal subspace is denoted by <img src="https://latex.codecogs.com/png.latex?V%5E%5Cperp">.</p>
 </div>
 <p>We can then decompose any vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D%20%5Cin%20W"> into two orthogonal components as follows: <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20w%20=%20%5Cmathbf%20w_%7BV%7D%20+%5Cmathbf%20w_%7BV%5E%7B%5Cperp%7D%7D%20%20%0A"></p>
 <p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D_%7BV%7D"> is the orthogonal projection of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D"> onto <img src="https://latex.codecogs.com/png.latex?V">, and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D_%7BV%5E%5Cperp%7D"> is the orthogonal projection of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D"> onto <img src="https://latex.codecogs.com/png.latex?V%5E%5Cperp">.</p>
@@ -1407,20 +1320,34 @@ Note
 <p>The projection of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D"> onto <img src="https://latex.codecogs.com/png.latex?V%5E%5Cperp"> is given by</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20w%20=%20%5Cmathbf%20w_%7BV%7D%20-%5Cmathbf%20w_%7BV%5E%7B%5Cperp%7D%7D%20%20=%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%202%20%5C%5C%203%20%5Cend%7Bbmatrix%7D%20-%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5C%5C%200%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%200%20%5C%5C%202%20%5C%5C%203%20%5Cend%7Bbmatrix%7D%0A"></p>
 <p>Therefore, we have decomposed <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D"> into two orthogonal components as <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bw%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%200%20%5C%5C%200%20%5Cend%7Bbmatrix%7D%20+%20%5Cbegin%7Bbmatrix%7D%200%20%5C%5C%202%20%5C%5C%203%20%5Cend%7Bbmatrix%7D">.</p>
-<p>The Fundamental Theorem of Linear Algebra states that for a given matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> and the null space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> are orthogonal complements of each other. In other words, every vector in the null space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is orthogonal to every vector in the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, and vice versa. This means that any vector in the domain of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> can be uniquely decomposed as the sum of a vector in the column space and a vector in the null space.</p>
 <div id="thm-fundamentralThm" class="theorem">
-<p><span class="theorem-title"><strong>Theorem 1 </strong></span>Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> be an <img src="https://latex.codecogs.com/png.latex?m%5Ctimes%20n"> matrix over <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D">. Then,</p>
+<p><span class="theorem-title"><strong>Theorem 1 </strong></span>The Fundamental Theorem.<br>
+Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> be an <img src="https://latex.codecogs.com/png.latex?m%5Ctimes%20n"> matrix over <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D">. Then,</p>
 <ul>
-<li>The column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, denoted <img src="https://latex.codecogs.com/png.latex?C(%5Cmathbf%20A)">, is a subspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5Em">.</li>
-<li>The null space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, denoted <img src="https://latex.codecogs.com/png.latex?N(%5Cmathbf%20A)">, is a subspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5En">.</li>
-<li>The orthogonal complement of <img src="https://latex.codecogs.com/png.latex?C(%5Cmathbf%20A)">, denoted <img src="https://latex.codecogs.com/png.latex?C(%5Cmathbf%20A)%5E%5Cperp">, is equal to <img src="https://latex.codecogs.com/png.latex?N(%5Cmathbf%20A)">.</li>
-<li>The orthogonal complement of <img src="https://latex.codecogs.com/png.latex?N(%5Cmathbf%20A)">, denoted <img src="https://latex.codecogs.com/png.latex?N(%5Cmathbf%20A)%5E%5Cperp">, is equal to <img src="https://latex.codecogs.com/png.latex?C(%5Cmathbf%20A)">.</li>
+<li>The column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, denoted <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BCol%7D(%5Cmathbf%20A)">, is a subspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5Em">.</li>
+<li>The null space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, denoted <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BNull%7D(%5Cmathbf%20A)">, is a subspace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5En">.</li>
+<li>The orthogonal complement of <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BCol%7D(%5Cmathbf%20A)">, denoted <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BCol%7D(%5Cmathbf%20A)%5E%5Cperp">, is equal to <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BNull%7D(%5Cmathbf%20A)">.</li>
+<li>The orthogonal complement of <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BNull%7D(%5Cmathbf%20A)">, denoted <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BNull%7D(%5Cmathbf%20A)%5E%5Cperp">, is equal to <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BCol%7D(%5Cmathbf%20A)">.</li>
 </ul>
 <p>In other words, we have the following orthogonal decomposition of <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5En">: <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbb%20R%5En%20=%20N(%5Cmathbf%20A)%20%5Coplus%20C(%5Cmathbf%20A)%5E%5Cperp%0A"></p>
 <p>and the following orthogonal decomposition of <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5Em">:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbb%20R%5Em%20=%20C(%5Cmathbf%20A)%20%5Coplus%20N(%5Cmathbf%20A)%5E%5Cperp%0A"></p>
 <p>where <img src="https://latex.codecogs.com/png.latex?%5Coplus"> denotes the direct sum of subspaces.</p>
 </div>
+<p>The Fundamental Theorem states that for a given matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> and the null space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> are orthogonal complements of each other. In other words, every vector in the null space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is orthogonal to every vector in the column space of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, and vice versa. This means that any vector in the domain of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> can be uniquely decomposed as the sum of a vector in the column space and a vector in the null space.</p>
+<p>The point of <strong>complements</strong> is that every <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x"> can be split into a row space component <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x%5Er"> and a nullspace component <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x%5En">. When <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> multiplies <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x%20=%20%5Cmathbf%20x%5Er%20+%20%5Cmathbf%20x%5En">, Figure 4.3 shows what happens:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="kmink3225.netlify.app/images/linear_algebra/nullspace_complement.PNG" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Null Space Complement-Gilbert Strang: Introduction to Linear Algebra</figcaption><p></p>
+</figure>
+</div>
+<ul>
+<li>The nullspace component goes to zero: <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAx%7D_n%20=%20%5Cmathbf%7B0%7D">.</li>
+<li>The row space component goes to the column space: <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAx%7D_r%20=%20%5Cmathbf%7BAx%7D"> Ax r = Ax.</li>
+<li>Every vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20b"> in the column space comes from one and only one vector in the row space.</li>
+<li>pseudoinverse: there is an <img src="https://latex.codecogs.com/png.latex?r"> by <img src="https://latex.codecogs.com/png.latex?r"> invertible matrix hiding inside <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, if we throwaway the two nullspaces. From the row space to the column space, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is invertible.</li>
+</ul>
 </section>
 <section id="exmaple" class="level4" data-number="1.1.3.2">
 <h4 data-number="1.1.3.2" class="anchored" data-anchor-id="exmaple"><span class="header-section-number">1.1.3.2</span> Exmaple</h4>
@@ -1518,83 +1445,83 @@ Note
 <div class="cell" data-execution_count="6">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="co" style="color: #5E5E5E;"># Pure rotation matrix</span></span>
-<span id="cb7-2"></span>
-<span id="cb7-3"><span class="co" style="color: #5E5E5E;"># angle to rotate by</span></span>
-<span id="cb7-4">th <span class="op" style="color: #5E5E5E;">=</span> np.pi<span class="op" style="color: #5E5E5E;">/</span><span class="dv" style="color: #AD0000;">5</span></span>
-<span id="cb7-5"></span>
-<span id="cb7-6"><span class="co" style="color: #5E5E5E;"># transformation matrix</span></span>
-<span id="cb7-7">T <span class="op" style="color: #5E5E5E;">=</span> np.array([ </span>
-<span id="cb7-8">              [ np.cos(th),np.sin(th)],</span>
-<span id="cb7-9">              [<span class="op" style="color: #5E5E5E;">-</span>np.sin(th),np.cos(th)]</span>
-<span id="cb7-10">            ])</span>
-<span id="cb7-11"></span>
-<span id="cb7-12"></span>
-<span id="cb7-13"><span class="co" style="color: #5E5E5E;"># original dots are a vertical line</span></span>
-<span id="cb7-14">x <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">20</span>)</span>
-<span id="cb7-15">origPoints <span class="op" style="color: #5E5E5E;">=</span> np.vstack( (np.zeros(x.shape),x) )</span>
-<span id="cb7-16"></span>
-<span id="cb7-17"></span>
-<span id="cb7-18"><span class="co" style="color: #5E5E5E;"># apply the transformation</span></span>
-<span id="cb7-19">transformedPoints <span class="op" style="color: #5E5E5E;">=</span> T <span class="op" style="color: #5E5E5E;">@</span> origPoints</span>
-<span id="cb7-20"></span>
-<span id="cb7-21"></span>
-<span id="cb7-22"><span class="co" style="color: #5E5E5E;"># plot the points</span></span>
-<span id="cb7-23">plt.figure(figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">6</span>,<span class="dv" style="color: #AD0000;">6</span>))</span>
-<span id="cb7-24">plt.plot(origPoints[<span class="dv" style="color: #AD0000;">0</span>,:],origPoints[<span class="dv" style="color: #AD0000;">1</span>,:],<span class="st" style="color: #20794D;">'ko'</span>,label<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'Original'</span>)</span>
-<span id="cb7-25">plt.plot(transformedPoints[<span class="dv" style="color: #AD0000;">0</span>,:],transformedPoints[<span class="dv" style="color: #AD0000;">1</span>,:],<span class="st" style="color: #20794D;">'s'</span>,color<span class="op" style="color: #5E5E5E;">=</span>[<span class="fl" style="color: #AD0000;">.7</span>,<span class="fl" style="color: #AD0000;">.7</span>,<span class="fl" style="color: #AD0000;">.7</span>],label<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'Transformed'</span>)</span>
-<span id="cb7-26"></span>
-<span id="cb7-27">plt.axis(<span class="st" style="color: #20794D;">'square'</span>)</span>
-<span id="cb7-28">plt.xlim([<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">1.2</span>,<span class="fl" style="color: #AD0000;">1.2</span>])</span>
-<span id="cb7-29">plt.ylim([<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">1.2</span>,<span class="fl" style="color: #AD0000;">1.2</span>])</span>
-<span id="cb7-30">plt.legend()</span>
-<span id="cb7-31">plt.title(<span class="ss" style="color: #20794D;">f'Rotation by </span><span class="sc" style="color: #5E5E5E;">{</span>np<span class="sc" style="color: #5E5E5E;">.</span>rad2deg(th)<span class="sc" style="color: #5E5E5E;">:.0f}</span><span class="ss" style="color: #20794D;"> degrees.'</span>)</span>
-<span id="cb7-32">plt.show()</span>
-<span id="cb7-33"></span>
-<span id="cb7-34"><span class="co" style="color: #5E5E5E;"># Animating transformations</span></span>
-<span id="cb7-35"><span class="co" style="color: #5E5E5E;"># function to update the axis on each iteration</span></span>
-<span id="cb7-36"><span class="kw" style="color: #003B4F;">def</span> aframe(ph):</span>
-<span id="cb7-37"></span>
-<span id="cb7-38">  <span class="co" style="color: #5E5E5E;"># create the transformation matrix</span></span>
-<span id="cb7-39">  T <span class="op" style="color: #5E5E5E;">=</span> np.array([</span>
-<span id="cb7-40">                 [  <span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span><span class="op" style="color: #5E5E5E;">-</span>ph ],</span>
-<span id="cb7-41">                 [  <span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>    ]</span>
-<span id="cb7-42">                ])</span>
-<span id="cb7-43">  </span>
-<span id="cb7-44">  <span class="co" style="color: #5E5E5E;"># apply the transformation to the points using matrix multiplication</span></span>
-<span id="cb7-45">  P <span class="op" style="color: #5E5E5E;">=</span> T<span class="op" style="color: #5E5E5E;">@</span>points</span>
-<span id="cb7-46"></span>
-<span id="cb7-47">  <span class="co" style="color: #5E5E5E;"># update the dots</span></span>
-<span id="cb7-48">  plth.set_xdata(P[<span class="dv" style="color: #AD0000;">0</span>,:])</span>
-<span id="cb7-49">  plth.set_ydata(P[<span class="dv" style="color: #AD0000;">1</span>,:])</span>
-<span id="cb7-50"></span>
-<span id="cb7-51">  <span class="co" style="color: #5E5E5E;"># export the plot handles</span></span>
-<span id="cb7-52">  <span class="cf" style="color: #003B4F;">return</span> plth</span>
-<span id="cb7-53"></span>
-<span id="cb7-54"></span>
-<span id="cb7-55"><span class="co" style="color: #5E5E5E;"># define XY points</span></span>
-<span id="cb7-56">theta  <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">2</span><span class="op" style="color: #5E5E5E;">*</span>np.pi,<span class="dv" style="color: #AD0000;">100</span>)</span>
-<span id="cb7-57">points <span class="op" style="color: #5E5E5E;">=</span> np.vstack((np.sin(theta),np.cos(theta)))</span>
-<span id="cb7-58"></span>
-<span id="cb7-59"></span>
-<span id="cb7-60"><span class="co" style="color: #5E5E5E;"># setup figure</span></span>
-<span id="cb7-61">fig,ax <span class="op" style="color: #5E5E5E;">=</span> plt.subplots(<span class="dv" style="color: #AD0000;">1</span>,figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">12</span>,<span class="dv" style="color: #AD0000;">6</span>))</span>
-<span id="cb7-62">plth,  <span class="op" style="color: #5E5E5E;">=</span> ax.plot(np.cos(x),np.sin(x),<span class="st" style="color: #20794D;">'ko'</span>)</span>
-<span id="cb7-63">ax.set_aspect(<span class="st" style="color: #20794D;">'equal'</span>)</span>
-<span id="cb7-64">ax.set_xlim([<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">2</span>,<span class="dv" style="color: #AD0000;">2</span>])</span>
-<span id="cb7-65">ax.set_ylim([<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">2</span>,<span class="dv" style="color: #AD0000;">2</span>])</span>
-<span id="cb7-66"></span>
-<span id="cb7-67"><span class="co" style="color: #5E5E5E;"># define values for transformation (note: clip off the final point for a smooth animation loop)</span></span>
-<span id="cb7-68">phi <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span><span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span><span class="op" style="color: #5E5E5E;">/</span><span class="dv" style="color: #AD0000;">40</span>,<span class="dv" style="color: #AD0000;">40</span>)<span class="op" style="color: #5E5E5E;">**</span><span class="dv" style="color: #AD0000;">2</span></span>
-<span id="cb7-69"></span>
-<span id="cb7-70"><span class="co" style="color: #5E5E5E;"># run animation!</span></span>
-<span id="cb7-71">animation.FuncAnimation(fig, aframe, phi, interval<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">100</span>, repeat<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span></code></pre></div>
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="co" style="color: #5E5E5E;"># Pure rotation matrix</span></span>
+<span id="cb5-2"></span>
+<span id="cb5-3"><span class="co" style="color: #5E5E5E;"># angle to rotate by</span></span>
+<span id="cb5-4">th <span class="op" style="color: #5E5E5E;">=</span> np.pi<span class="op" style="color: #5E5E5E;">/</span><span class="dv" style="color: #AD0000;">5</span></span>
+<span id="cb5-5"></span>
+<span id="cb5-6"><span class="co" style="color: #5E5E5E;"># transformation matrix</span></span>
+<span id="cb5-7">T <span class="op" style="color: #5E5E5E;">=</span> np.array([ </span>
+<span id="cb5-8">              [ np.cos(th),np.sin(th)],</span>
+<span id="cb5-9">              [<span class="op" style="color: #5E5E5E;">-</span>np.sin(th),np.cos(th)]</span>
+<span id="cb5-10">            ])</span>
+<span id="cb5-11"></span>
+<span id="cb5-12"></span>
+<span id="cb5-13"><span class="co" style="color: #5E5E5E;"># original dots are a vertical line</span></span>
+<span id="cb5-14">x <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">20</span>)</span>
+<span id="cb5-15">origPoints <span class="op" style="color: #5E5E5E;">=</span> np.vstack( (np.zeros(x.shape),x) )</span>
+<span id="cb5-16"></span>
+<span id="cb5-17"></span>
+<span id="cb5-18"><span class="co" style="color: #5E5E5E;"># apply the transformation</span></span>
+<span id="cb5-19">transformedPoints <span class="op" style="color: #5E5E5E;">=</span> T <span class="op" style="color: #5E5E5E;">@</span> origPoints</span>
+<span id="cb5-20"></span>
+<span id="cb5-21"></span>
+<span id="cb5-22"><span class="co" style="color: #5E5E5E;"># plot the points</span></span>
+<span id="cb5-23">plt.figure(figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">6</span>,<span class="dv" style="color: #AD0000;">6</span>))</span>
+<span id="cb5-24">plt.plot(origPoints[<span class="dv" style="color: #AD0000;">0</span>,:],origPoints[<span class="dv" style="color: #AD0000;">1</span>,:],<span class="st" style="color: #20794D;">'ko'</span>,label<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'Original'</span>)</span>
+<span id="cb5-25">plt.plot(transformedPoints[<span class="dv" style="color: #AD0000;">0</span>,:],transformedPoints[<span class="dv" style="color: #AD0000;">1</span>,:],<span class="st" style="color: #20794D;">'s'</span>,color<span class="op" style="color: #5E5E5E;">=</span>[<span class="fl" style="color: #AD0000;">.7</span>,<span class="fl" style="color: #AD0000;">.7</span>,<span class="fl" style="color: #AD0000;">.7</span>],label<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'Transformed'</span>)</span>
+<span id="cb5-26"></span>
+<span id="cb5-27">plt.axis(<span class="st" style="color: #20794D;">'square'</span>)</span>
+<span id="cb5-28">plt.xlim([<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">1.2</span>,<span class="fl" style="color: #AD0000;">1.2</span>])</span>
+<span id="cb5-29">plt.ylim([<span class="op" style="color: #5E5E5E;">-</span><span class="fl" style="color: #AD0000;">1.2</span>,<span class="fl" style="color: #AD0000;">1.2</span>])</span>
+<span id="cb5-30">plt.legend()</span>
+<span id="cb5-31">plt.title(<span class="ss" style="color: #20794D;">f'Rotation by </span><span class="sc" style="color: #5E5E5E;">{</span>np<span class="sc" style="color: #5E5E5E;">.</span>rad2deg(th)<span class="sc" style="color: #5E5E5E;">:.0f}</span><span class="ss" style="color: #20794D;"> degrees.'</span>)</span>
+<span id="cb5-32">plt.show()</span>
+<span id="cb5-33"></span>
+<span id="cb5-34"><span class="co" style="color: #5E5E5E;"># Animating transformations</span></span>
+<span id="cb5-35"><span class="co" style="color: #5E5E5E;"># function to update the axis on each iteration</span></span>
+<span id="cb5-36"><span class="kw" style="color: #003B4F;">def</span> aframe(ph):</span>
+<span id="cb5-37"></span>
+<span id="cb5-38">  <span class="co" style="color: #5E5E5E;"># create the transformation matrix</span></span>
+<span id="cb5-39">  T <span class="op" style="color: #5E5E5E;">=</span> np.array([</span>
+<span id="cb5-40">                 [  <span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span><span class="op" style="color: #5E5E5E;">-</span>ph ],</span>
+<span id="cb5-41">                 [  <span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>    ]</span>
+<span id="cb5-42">                ])</span>
+<span id="cb5-43">  </span>
+<span id="cb5-44">  <span class="co" style="color: #5E5E5E;"># apply the transformation to the points using matrix multiplication</span></span>
+<span id="cb5-45">  P <span class="op" style="color: #5E5E5E;">=</span> T<span class="op" style="color: #5E5E5E;">@</span>points</span>
+<span id="cb5-46"></span>
+<span id="cb5-47">  <span class="co" style="color: #5E5E5E;"># update the dots</span></span>
+<span id="cb5-48">  plth.set_xdata(P[<span class="dv" style="color: #AD0000;">0</span>,:])</span>
+<span id="cb5-49">  plth.set_ydata(P[<span class="dv" style="color: #AD0000;">1</span>,:])</span>
+<span id="cb5-50"></span>
+<span id="cb5-51">  <span class="co" style="color: #5E5E5E;"># export the plot handles</span></span>
+<span id="cb5-52">  <span class="cf" style="color: #003B4F;">return</span> plth</span>
+<span id="cb5-53"></span>
+<span id="cb5-54"></span>
+<span id="cb5-55"><span class="co" style="color: #5E5E5E;"># define XY points</span></span>
+<span id="cb5-56">theta  <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">2</span><span class="op" style="color: #5E5E5E;">*</span>np.pi,<span class="dv" style="color: #AD0000;">100</span>)</span>
+<span id="cb5-57">points <span class="op" style="color: #5E5E5E;">=</span> np.vstack((np.sin(theta),np.cos(theta)))</span>
+<span id="cb5-58"></span>
+<span id="cb5-59"></span>
+<span id="cb5-60"><span class="co" style="color: #5E5E5E;"># setup figure</span></span>
+<span id="cb5-61">fig,ax <span class="op" style="color: #5E5E5E;">=</span> plt.subplots(<span class="dv" style="color: #AD0000;">1</span>,figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">12</span>,<span class="dv" style="color: #AD0000;">6</span>))</span>
+<span id="cb5-62">plth,  <span class="op" style="color: #5E5E5E;">=</span> ax.plot(np.cos(x),np.sin(x),<span class="st" style="color: #20794D;">'ko'</span>)</span>
+<span id="cb5-63">ax.set_aspect(<span class="st" style="color: #20794D;">'equal'</span>)</span>
+<span id="cb5-64">ax.set_xlim([<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">2</span>,<span class="dv" style="color: #AD0000;">2</span>])</span>
+<span id="cb5-65">ax.set_ylim([<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">2</span>,<span class="dv" style="color: #AD0000;">2</span>])</span>
+<span id="cb5-66"></span>
+<span id="cb5-67"><span class="co" style="color: #5E5E5E;"># define values for transformation (note: clip off the final point for a smooth animation loop)</span></span>
+<span id="cb5-68">phi <span class="op" style="color: #5E5E5E;">=</span> np.linspace(<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span><span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span><span class="op" style="color: #5E5E5E;">/</span><span class="dv" style="color: #AD0000;">40</span>,<span class="dv" style="color: #AD0000;">40</span>)<span class="op" style="color: #5E5E5E;">**</span><span class="dv" style="color: #AD0000;">2</span></span>
+<span id="cb5-69"></span>
+<span id="cb5-70"><span class="co" style="color: #5E5E5E;"># run animation!</span></span>
+<span id="cb5-71">animation.FuncAnimation(fig, aframe, phi, interval<span class="op" style="color: #5E5E5E;">=</span><span class="dv" style="color: #AD0000;">100</span>, repeat<span class="op" style="color: #5E5E5E;">=</span><span class="va" style="color: #111111;">True</span>)</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/06.orthogonality_files/figure-html/cell-7-output-1.png" width="504" height="505"></p>
 </div>
-<div class="cell-output cell-output-display" data-execution_count="17">
-<pre><code>&lt;matplotlib.animation.FuncAnimation at 0x1d769e148b0&gt;</code></pre>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<pre><code>&lt;matplotlib.animation.FuncAnimation at 0x1682c939d90&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-display">
 <p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/06.orthogonality_files/figure-html/cell-7-output-3.png" width="515" height="490"></p>
@@ -1649,88 +1576,88 @@ Note
 <div class="cell" data-execution_count="7">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="co" style="color: #5E5E5E;"># # Define a 4x4 random matrix</span></span>
-<span id="cb9-2"><span class="co" style="color: #5E5E5E;"># A = np.random.rand(4,4)</span></span>
-<span id="cb9-3"><span class="co" style="color: #5E5E5E;"># </span></span>
-<span id="cb9-4"><span class="co" style="color: #5E5E5E;"># # Gram-Schmidt procedure</span></span>
-<span id="cb9-5"><span class="co" style="color: #5E5E5E;"># Q = np.zeros_like(A)</span></span>
-<span id="cb9-6"><span class="co" style="color: #5E5E5E;"># for j in range(A.shape[1]):</span></span>
-<span id="cb9-7"><span class="co" style="color: #5E5E5E;">#     v = A[:,j]</span></span>
-<span id="cb9-8"><span class="co" style="color: #5E5E5E;">#     for i in range(j):</span></span>
-<span id="cb9-9"><span class="co" style="color: #5E5E5E;">#         q = Q[:,i]</span></span>
-<span id="cb9-10"><span class="co" style="color: #5E5E5E;">#         R[i,j] = np.dot(q,v)</span></span>
-<span id="cb9-11"><span class="co" style="color: #5E5E5E;">#         v -= R[i,j]*q</span></span>
-<span id="cb9-12"><span class="co" style="color: #5E5E5E;">#     R[j,j] = np.linalg.norm(v)</span></span>
-<span id="cb9-13"><span class="co" style="color: #5E5E5E;">#     Q[:,j] = v/R[j,j]</span></span>
-<span id="cb9-14"><span class="co" style="color: #5E5E5E;"># </span></span>
-<span id="cb9-15"><span class="co" style="color: #5E5E5E;"># # Check answer against Q from np.linalg.qr</span></span>
-<span id="cb9-16"><span class="co" style="color: #5E5E5E;"># Q_np, R_np = np.linalg.qr(A)</span></span>
-<span id="cb9-17"><span class="co" style="color: #5E5E5E;"># diff = Q - Q_np</span></span>
-<span id="cb9-18"><span class="co" style="color: #5E5E5E;"># sum_Q = Q + Q_np</span></span>
-<span id="cb9-19"><span class="co" style="color: #5E5E5E;"># </span></span>
-<span id="cb9-20"><span class="co" style="color: #5E5E5E;"># print("Q matrix (Gram-Schmidt):\n", Q)</span></span>
-<span id="cb9-21"><span class="co" style="color: #5E5E5E;"># print("Q matrix (numpy):\n", Q_np)</span></span>
-<span id="cb9-22"><span class="co" style="color: #5E5E5E;"># print("Difference between Q and Q_np:\n", diff)</span></span>
-<span id="cb9-23"><span class="co" style="color: #5E5E5E;"># print("Sum of Q and Q_np:\n", sum_Q)</span></span>
-<span id="cb9-24"></span>
-<span id="cb9-25"></span>
-<span id="cb9-26"><span class="co" style="color: #5E5E5E;"># create the matrix </span></span>
-<span id="cb9-27">m <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">4</span></span>
-<span id="cb9-28">n <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">4</span></span>
-<span id="cb9-29">A <span class="op" style="color: #5E5E5E;">=</span> np.random.randn(m,n)</span>
-<span id="cb9-30"></span>
-<span id="cb9-31"><span class="co" style="color: #5E5E5E;"># initialize</span></span>
-<span id="cb9-32">Q <span class="op" style="color: #5E5E5E;">=</span> np.zeros((m,n))</span>
-<span id="cb9-33"></span>
-<span id="cb9-34"></span>
-<span id="cb9-35"><span class="co" style="color: #5E5E5E;"># the GS algo</span></span>
-<span id="cb9-36"><span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(n):</span>
-<span id="cb9-37">    </span>
-<span id="cb9-38">    <span class="co" style="color: #5E5E5E;"># initialize</span></span>
-<span id="cb9-39">    Q[:,i] <span class="op" style="color: #5E5E5E;">=</span> A[:,i]</span>
-<span id="cb9-40">    </span>
-<span id="cb9-41">    <span class="co" style="color: #5E5E5E;"># orthogonalize</span></span>
-<span id="cb9-42">    a <span class="op" style="color: #5E5E5E;">=</span> A[:,i] <span class="co" style="color: #5E5E5E;"># convenience</span></span>
-<span id="cb9-43">    <span class="cf" style="color: #003B4F;">for</span> j <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(i): <span class="co" style="color: #5E5E5E;"># only to earlier cols</span></span>
-<span id="cb9-44">        q <span class="op" style="color: #5E5E5E;">=</span> Q[:,j] <span class="co" style="color: #5E5E5E;"># convenience</span></span>
-<span id="cb9-45">        Q[:,i]<span class="op" style="color: #5E5E5E;">=</span>Q[:,i]<span class="op" style="color: #5E5E5E;">-</span>np.dot(a,q)<span class="op" style="color: #5E5E5E;">/</span>np.dot(q,q)<span class="op" style="color: #5E5E5E;">*</span>q</span>
-<span id="cb9-46">    </span>
-<span id="cb9-47">    <span class="co" style="color: #5E5E5E;"># normalize</span></span>
-<span id="cb9-48">    Q[:,i] <span class="op" style="color: #5E5E5E;">=</span> Q[:,i] <span class="op" style="color: #5E5E5E;">/</span> np.linalg.norm(Q[:,i])</span>
-<span id="cb9-49"></span>
-<span id="cb9-50">    </span>
-<span id="cb9-51"><span class="co" style="color: #5E5E5E;"># "real" QR decomposition for comparison</span></span>
-<span id="cb9-52">Q_np,R <span class="op" style="color: #5E5E5E;">=</span> np.linalg.qr(A)</span>
-<span id="cb9-53"></span>
-<span id="cb9-54"><span class="co" style="color: #5E5E5E;"># note the possible sign differences.</span></span>
-<span id="cb9-55"><span class="co" style="color: #5E5E5E;"># seemingly non-zero columns will be 0 when adding</span></span>
-<span id="cb9-56"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q matrix (Gram-Schmidt):</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q)</span>
-<span id="cb9-57"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q matrix (numpy):</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q_np)</span>
-<span id="cb9-58"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Difference between Q and Q_np:</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, np.<span class="bu" style="color: null;">round</span>( Q<span class="op" style="color: #5E5E5E;">-</span>Q_np ,<span class="dv" style="color: #AD0000;">10</span>) ), <span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">' '</span>)</span>
-<span id="cb9-59"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Sum of Q and Q_np:</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, np.<span class="bu" style="color: null;">round</span>( Q<span class="op" style="color: #5E5E5E;">+</span>Q_np ,<span class="dv" style="color: #AD0000;">10</span>) )</span></code></pre></div>
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="co" style="color: #5E5E5E;"># # Define a 4x4 random matrix</span></span>
+<span id="cb7-2"><span class="co" style="color: #5E5E5E;"># A = np.random.rand(4,4)</span></span>
+<span id="cb7-3"><span class="co" style="color: #5E5E5E;"># </span></span>
+<span id="cb7-4"><span class="co" style="color: #5E5E5E;"># # Gram-Schmidt procedure</span></span>
+<span id="cb7-5"><span class="co" style="color: #5E5E5E;"># Q = np.zeros_like(A)</span></span>
+<span id="cb7-6"><span class="co" style="color: #5E5E5E;"># for j in range(A.shape[1]):</span></span>
+<span id="cb7-7"><span class="co" style="color: #5E5E5E;">#     v = A[:,j]</span></span>
+<span id="cb7-8"><span class="co" style="color: #5E5E5E;">#     for i in range(j):</span></span>
+<span id="cb7-9"><span class="co" style="color: #5E5E5E;">#         q = Q[:,i]</span></span>
+<span id="cb7-10"><span class="co" style="color: #5E5E5E;">#         R[i,j] = np.dot(q,v)</span></span>
+<span id="cb7-11"><span class="co" style="color: #5E5E5E;">#         v -= R[i,j]*q</span></span>
+<span id="cb7-12"><span class="co" style="color: #5E5E5E;">#     R[j,j] = np.linalg.norm(v)</span></span>
+<span id="cb7-13"><span class="co" style="color: #5E5E5E;">#     Q[:,j] = v/R[j,j]</span></span>
+<span id="cb7-14"><span class="co" style="color: #5E5E5E;"># </span></span>
+<span id="cb7-15"><span class="co" style="color: #5E5E5E;"># # Check answer against Q from np.linalg.qr</span></span>
+<span id="cb7-16"><span class="co" style="color: #5E5E5E;"># Q_np, R_np = np.linalg.qr(A)</span></span>
+<span id="cb7-17"><span class="co" style="color: #5E5E5E;"># diff = Q - Q_np</span></span>
+<span id="cb7-18"><span class="co" style="color: #5E5E5E;"># sum_Q = Q + Q_np</span></span>
+<span id="cb7-19"><span class="co" style="color: #5E5E5E;"># </span></span>
+<span id="cb7-20"><span class="co" style="color: #5E5E5E;"># print("Q matrix (Gram-Schmidt):\n", Q)</span></span>
+<span id="cb7-21"><span class="co" style="color: #5E5E5E;"># print("Q matrix (numpy):\n", Q_np)</span></span>
+<span id="cb7-22"><span class="co" style="color: #5E5E5E;"># print("Difference between Q and Q_np:\n", diff)</span></span>
+<span id="cb7-23"><span class="co" style="color: #5E5E5E;"># print("Sum of Q and Q_np:\n", sum_Q)</span></span>
+<span id="cb7-24"></span>
+<span id="cb7-25"></span>
+<span id="cb7-26"><span class="co" style="color: #5E5E5E;"># create the matrix </span></span>
+<span id="cb7-27">m <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">4</span></span>
+<span id="cb7-28">n <span class="op" style="color: #5E5E5E;">=</span> <span class="dv" style="color: #AD0000;">4</span></span>
+<span id="cb7-29">A <span class="op" style="color: #5E5E5E;">=</span> np.random.randn(m,n)</span>
+<span id="cb7-30"></span>
+<span id="cb7-31"><span class="co" style="color: #5E5E5E;"># initialize</span></span>
+<span id="cb7-32">Q <span class="op" style="color: #5E5E5E;">=</span> np.zeros((m,n))</span>
+<span id="cb7-33"></span>
+<span id="cb7-34"></span>
+<span id="cb7-35"><span class="co" style="color: #5E5E5E;"># the GS algo</span></span>
+<span id="cb7-36"><span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(n):</span>
+<span id="cb7-37">    </span>
+<span id="cb7-38">    <span class="co" style="color: #5E5E5E;"># initialize</span></span>
+<span id="cb7-39">    Q[:,i] <span class="op" style="color: #5E5E5E;">=</span> A[:,i]</span>
+<span id="cb7-40">    </span>
+<span id="cb7-41">    <span class="co" style="color: #5E5E5E;"># orthogonalize</span></span>
+<span id="cb7-42">    a <span class="op" style="color: #5E5E5E;">=</span> A[:,i] <span class="co" style="color: #5E5E5E;"># convenience</span></span>
+<span id="cb7-43">    <span class="cf" style="color: #003B4F;">for</span> j <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(i): <span class="co" style="color: #5E5E5E;"># only to earlier cols</span></span>
+<span id="cb7-44">        q <span class="op" style="color: #5E5E5E;">=</span> Q[:,j] <span class="co" style="color: #5E5E5E;"># convenience</span></span>
+<span id="cb7-45">        Q[:,i]<span class="op" style="color: #5E5E5E;">=</span>Q[:,i]<span class="op" style="color: #5E5E5E;">-</span>np.dot(a,q)<span class="op" style="color: #5E5E5E;">/</span>np.dot(q,q)<span class="op" style="color: #5E5E5E;">*</span>q</span>
+<span id="cb7-46">    </span>
+<span id="cb7-47">    <span class="co" style="color: #5E5E5E;"># normalize</span></span>
+<span id="cb7-48">    Q[:,i] <span class="op" style="color: #5E5E5E;">=</span> Q[:,i] <span class="op" style="color: #5E5E5E;">/</span> np.linalg.norm(Q[:,i])</span>
+<span id="cb7-49"></span>
+<span id="cb7-50">    </span>
+<span id="cb7-51"><span class="co" style="color: #5E5E5E;"># "real" QR decomposition for comparison</span></span>
+<span id="cb7-52">Q_np,R <span class="op" style="color: #5E5E5E;">=</span> np.linalg.qr(A)</span>
+<span id="cb7-53"></span>
+<span id="cb7-54"><span class="co" style="color: #5E5E5E;"># note the possible sign differences.</span></span>
+<span id="cb7-55"><span class="co" style="color: #5E5E5E;"># seemingly non-zero columns will be 0 when adding</span></span>
+<span id="cb7-56"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q matrix (Gram-Schmidt):</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q)</span>
+<span id="cb7-57"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q matrix (numpy):</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q_np)</span>
+<span id="cb7-58"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Difference between Q and Q_np:</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, np.<span class="bu" style="color: null;">round</span>( Q<span class="op" style="color: #5E5E5E;">-</span>Q_np ,<span class="dv" style="color: #AD0000;">10</span>) ), <span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">' '</span>)</span>
+<span id="cb7-59"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Sum of Q and Q_np:</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, np.<span class="bu" style="color: null;">round</span>( Q<span class="op" style="color: #5E5E5E;">+</span>Q_np ,<span class="dv" style="color: #AD0000;">10</span>) )</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Q matrix (Gram-Schmidt):
- [[ 0.52376317  0.05380644 -0.68148094  0.50829198]
- [-0.27870639 -0.84522143  0.05654013  0.45246734]
- [ 0.78767991 -0.40695779  0.3367394  -0.31709982]
- [ 0.16599774  0.34218556  0.64729709  0.66057572]]
+ [[ 0.5084218   0.53944174 -0.66408349 -0.09748333]
+ [ 0.78817521 -0.06844165  0.49511631  0.35910364]
+ [ 0.34160267 -0.72049337 -0.24261961 -0.55256913]
+ [ 0.05995602  0.43035758  0.50496405 -0.74579416]]
 Q matrix (numpy):
- [[-0.52376317  0.05380644  0.68148094  0.50829198]
- [ 0.27870639 -0.84522143 -0.05654013  0.45246734]
- [-0.78767991 -0.40695779 -0.3367394  -0.31709982]
- [-0.16599774  0.34218556 -0.64729709  0.66057572]]
+ [[-0.5084218   0.53944174 -0.66408349  0.09748333]
+ [-0.78817521 -0.06844165  0.49511631 -0.35910364]
+ [-0.34160267 -0.72049337 -0.24261961  0.55256913]
+ [-0.05995602  0.43035758  0.50496405  0.74579416]]
 Difference between Q and Q_np:
- [[ 1.04752634 -0.         -1.36296188  0.        ]
- [-0.55741279  0.          0.11308026 -0.        ]
- [ 1.57535982 -0.          0.6734788   0.        ]
- [ 0.33199549  0.          1.29459417  0.        ]]
+ [[ 1.01684361 -0.          0.         -0.19496665]
+ [ 1.57635042  0.         -0.          0.71820728]
+ [ 0.68320534  0.         -0.         -1.10513825]
+ [ 0.11991204  0.          0.         -1.49158833]]
  
 Sum of Q and Q_np:
- [[ 0.          0.10761288 -0.          1.01658396]
- [ 0.         -1.69044286  0.          0.90493468]
- [-0.         -0.81391559 -0.         -0.63419964]
- [-0.          0.68437111 -0.          1.32115143]]</code></pre>
+ [[ 0.          1.07888348 -1.32816698  0.        ]
+ [ 0.         -0.13688329  0.99023261 -0.        ]
+ [ 0.         -1.44098675 -0.48523921  0.        ]
+ [ 0.          0.86071517  1.0099281  -0.        ]]</code></pre>
 </div>
 </div>
 </section>
@@ -1749,47 +1676,47 @@ Sum of Q and Q_np:
 <div class="cell" data-execution_count="8">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="co" style="color: #5E5E5E;"># create a random matrix</span></span>
-<span id="cb11-2">A <span class="op" style="color: #5E5E5E;">=</span> np.random.randn(<span class="dv" style="color: #AD0000;">6</span>,<span class="dv" style="color: #AD0000;">6</span>)</span>
-<span id="cb11-3"></span>
-<span id="cb11-4"><span class="co" style="color: #5E5E5E;"># QR decomposition</span></span>
-<span id="cb11-5">Q,R <span class="op" style="color: #5E5E5E;">=</span> np.linalg.qr(A)</span>
-<span id="cb11-6"></span>
-<span id="cb11-7"></span>
-<span id="cb11-8"></span>
-<span id="cb11-9"><span class="co" style="color: #5E5E5E;"># show the matrices</span></span>
-<span id="cb11-10">fig <span class="op" style="color: #5E5E5E;">=</span> plt.figure(figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">10</span>,<span class="dv" style="color: #AD0000;">6</span>))</span>
-<span id="cb11-11">axs <span class="op" style="color: #5E5E5E;">=</span> [<span class="dv" style="color: #AD0000;">0</span>]<span class="op" style="color: #5E5E5E;">*</span><span class="dv" style="color: #AD0000;">5</span></span>
-<span id="cb11-12">c <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">1.5</span> <span class="co" style="color: #5E5E5E;"># color limits</span></span>
-<span id="cb11-13"></span>
-<span id="cb11-14">gs1 <span class="op" style="color: #5E5E5E;">=</span> gridspec.GridSpec(<span class="dv" style="color: #AD0000;">2</span>,<span class="dv" style="color: #AD0000;">6</span>)</span>
-<span id="cb11-15">axs[<span class="dv" style="color: #AD0000;">0</span>] <span class="op" style="color: #5E5E5E;">=</span> plt.subplot(gs1[<span class="dv" style="color: #AD0000;">0</span>,:<span class="dv" style="color: #AD0000;">2</span>])</span>
-<span id="cb11-16">axs[<span class="dv" style="color: #AD0000;">0</span>].imshow(A,vmin<span class="op" style="color: #5E5E5E;">=-</span>c,vmax<span class="op" style="color: #5E5E5E;">=</span>c,cmap<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'gray'</span>)</span>
-<span id="cb11-17">axs[<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">'A'</span>,fontweight<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'bold'</span>)</span>
-<span id="cb11-18"></span>
-<span id="cb11-19">axs[<span class="dv" style="color: #AD0000;">1</span>] <span class="op" style="color: #5E5E5E;">=</span> plt.subplot(gs1[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">2</span>:<span class="dv" style="color: #AD0000;">4</span>])</span>
-<span id="cb11-20">axs[<span class="dv" style="color: #AD0000;">1</span>].imshow(Q,vmin<span class="op" style="color: #5E5E5E;">=-</span>c,vmax<span class="op" style="color: #5E5E5E;">=</span>c,cmap<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'gray'</span>)</span>
-<span id="cb11-21">axs[<span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">'Q'</span>,fontweight<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'bold'</span>)</span>
-<span id="cb11-22"></span>
-<span id="cb11-23">axs[<span class="dv" style="color: #AD0000;">2</span>] <span class="op" style="color: #5E5E5E;">=</span> plt.subplot(gs1[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">4</span>:<span class="dv" style="color: #AD0000;">6</span>])</span>
-<span id="cb11-24">axs[<span class="dv" style="color: #AD0000;">2</span>].imshow(R,vmin<span class="op" style="color: #5E5E5E;">=-</span>c,vmax<span class="op" style="color: #5E5E5E;">=</span>c,cmap<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'gray'</span>)</span>
-<span id="cb11-25">axs[<span class="dv" style="color: #AD0000;">2</span>].set_title(<span class="st" style="color: #20794D;">'R'</span>,fontweight<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'bold'</span>)</span>
-<span id="cb11-26"></span>
-<span id="cb11-27">axs[<span class="dv" style="color: #AD0000;">3</span>] <span class="op" style="color: #5E5E5E;">=</span> plt.subplot(gs1[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span>:<span class="dv" style="color: #AD0000;">3</span>])</span>
-<span id="cb11-28">axs[<span class="dv" style="color: #AD0000;">3</span>].imshow(A <span class="op" style="color: #5E5E5E;">-</span> Q<span class="op" style="color: #5E5E5E;">@</span>R,vmin<span class="op" style="color: #5E5E5E;">=-</span>c,vmax<span class="op" style="color: #5E5E5E;">=</span>c,cmap<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'gray'</span>)</span>
-<span id="cb11-29">axs[<span class="dv" style="color: #AD0000;">3</span>].set_title(<span class="st" style="color: #20794D;">'A - QR'</span>,fontweight<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'bold'</span>)</span>
-<span id="cb11-30"></span>
-<span id="cb11-31">axs[<span class="dv" style="color: #AD0000;">4</span>] <span class="op" style="color: #5E5E5E;">=</span> plt.subplot(gs1[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">3</span>:<span class="dv" style="color: #AD0000;">5</span>])</span>
-<span id="cb11-32">axs[<span class="dv" style="color: #AD0000;">4</span>].imshow(Q.T<span class="op" style="color: #5E5E5E;">@</span>Q,cmap<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'gray'</span>)</span>
-<span id="cb11-33">axs[<span class="dv" style="color: #AD0000;">4</span>].set_title(<span class="vs" style="color: #20794D;">r'$\mathbf</span><span class="sc" style="color: #5E5E5E;">{Q}</span><span class="vs" style="color: #20794D;">^</span><span class="sc" style="color: #5E5E5E;">{T}</span><span class="vs" style="color: #20794D;">\mathbf</span><span class="sc" style="color: #5E5E5E;">{Q}</span><span class="vs" style="color: #20794D;">$'</span>,fontweight<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'bold'</span>)</span>
-<span id="cb11-34"></span>
-<span id="cb11-35"><span class="co" style="color: #5E5E5E;"># remove ticks from all axes</span></span>
-<span id="cb11-36"><span class="cf" style="color: #003B4F;">for</span> a <span class="kw" style="color: #003B4F;">in</span> axs:</span>
-<span id="cb11-37">  a.set_xticks([])</span>
-<span id="cb11-38">  a.set_yticks([])</span>
-<span id="cb11-39"></span>
-<span id="cb11-40">plt.tight_layout()</span>
-<span id="cb11-41">plt.show()</span></code></pre></div>
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="co" style="color: #5E5E5E;"># create a random matrix</span></span>
+<span id="cb9-2">A <span class="op" style="color: #5E5E5E;">=</span> np.random.randn(<span class="dv" style="color: #AD0000;">6</span>,<span class="dv" style="color: #AD0000;">6</span>)</span>
+<span id="cb9-3"></span>
+<span id="cb9-4"><span class="co" style="color: #5E5E5E;"># QR decomposition</span></span>
+<span id="cb9-5">Q,R <span class="op" style="color: #5E5E5E;">=</span> np.linalg.qr(A)</span>
+<span id="cb9-6"></span>
+<span id="cb9-7"></span>
+<span id="cb9-8"></span>
+<span id="cb9-9"><span class="co" style="color: #5E5E5E;"># show the matrices</span></span>
+<span id="cb9-10">fig <span class="op" style="color: #5E5E5E;">=</span> plt.figure(figsize<span class="op" style="color: #5E5E5E;">=</span>(<span class="dv" style="color: #AD0000;">10</span>,<span class="dv" style="color: #AD0000;">6</span>))</span>
+<span id="cb9-11">axs <span class="op" style="color: #5E5E5E;">=</span> [<span class="dv" style="color: #AD0000;">0</span>]<span class="op" style="color: #5E5E5E;">*</span><span class="dv" style="color: #AD0000;">5</span></span>
+<span id="cb9-12">c <span class="op" style="color: #5E5E5E;">=</span> <span class="fl" style="color: #AD0000;">1.5</span> <span class="co" style="color: #5E5E5E;"># color limits</span></span>
+<span id="cb9-13"></span>
+<span id="cb9-14">gs1 <span class="op" style="color: #5E5E5E;">=</span> gridspec.GridSpec(<span class="dv" style="color: #AD0000;">2</span>,<span class="dv" style="color: #AD0000;">6</span>)</span>
+<span id="cb9-15">axs[<span class="dv" style="color: #AD0000;">0</span>] <span class="op" style="color: #5E5E5E;">=</span> plt.subplot(gs1[<span class="dv" style="color: #AD0000;">0</span>,:<span class="dv" style="color: #AD0000;">2</span>])</span>
+<span id="cb9-16">axs[<span class="dv" style="color: #AD0000;">0</span>].imshow(A,vmin<span class="op" style="color: #5E5E5E;">=-</span>c,vmax<span class="op" style="color: #5E5E5E;">=</span>c,cmap<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'gray'</span>)</span>
+<span id="cb9-17">axs[<span class="dv" style="color: #AD0000;">0</span>].set_title(<span class="st" style="color: #20794D;">'A'</span>,fontweight<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'bold'</span>)</span>
+<span id="cb9-18"></span>
+<span id="cb9-19">axs[<span class="dv" style="color: #AD0000;">1</span>] <span class="op" style="color: #5E5E5E;">=</span> plt.subplot(gs1[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">2</span>:<span class="dv" style="color: #AD0000;">4</span>])</span>
+<span id="cb9-20">axs[<span class="dv" style="color: #AD0000;">1</span>].imshow(Q,vmin<span class="op" style="color: #5E5E5E;">=-</span>c,vmax<span class="op" style="color: #5E5E5E;">=</span>c,cmap<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'gray'</span>)</span>
+<span id="cb9-21">axs[<span class="dv" style="color: #AD0000;">1</span>].set_title(<span class="st" style="color: #20794D;">'Q'</span>,fontweight<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'bold'</span>)</span>
+<span id="cb9-22"></span>
+<span id="cb9-23">axs[<span class="dv" style="color: #AD0000;">2</span>] <span class="op" style="color: #5E5E5E;">=</span> plt.subplot(gs1[<span class="dv" style="color: #AD0000;">0</span>,<span class="dv" style="color: #AD0000;">4</span>:<span class="dv" style="color: #AD0000;">6</span>])</span>
+<span id="cb9-24">axs[<span class="dv" style="color: #AD0000;">2</span>].imshow(R,vmin<span class="op" style="color: #5E5E5E;">=-</span>c,vmax<span class="op" style="color: #5E5E5E;">=</span>c,cmap<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'gray'</span>)</span>
+<span id="cb9-25">axs[<span class="dv" style="color: #AD0000;">2</span>].set_title(<span class="st" style="color: #20794D;">'R'</span>,fontweight<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'bold'</span>)</span>
+<span id="cb9-26"></span>
+<span id="cb9-27">axs[<span class="dv" style="color: #AD0000;">3</span>] <span class="op" style="color: #5E5E5E;">=</span> plt.subplot(gs1[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">1</span>:<span class="dv" style="color: #AD0000;">3</span>])</span>
+<span id="cb9-28">axs[<span class="dv" style="color: #AD0000;">3</span>].imshow(A <span class="op" style="color: #5E5E5E;">-</span> Q<span class="op" style="color: #5E5E5E;">@</span>R,vmin<span class="op" style="color: #5E5E5E;">=-</span>c,vmax<span class="op" style="color: #5E5E5E;">=</span>c,cmap<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'gray'</span>)</span>
+<span id="cb9-29">axs[<span class="dv" style="color: #AD0000;">3</span>].set_title(<span class="st" style="color: #20794D;">'A - QR'</span>,fontweight<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'bold'</span>)</span>
+<span id="cb9-30"></span>
+<span id="cb9-31">axs[<span class="dv" style="color: #AD0000;">4</span>] <span class="op" style="color: #5E5E5E;">=</span> plt.subplot(gs1[<span class="dv" style="color: #AD0000;">1</span>,<span class="dv" style="color: #AD0000;">3</span>:<span class="dv" style="color: #AD0000;">5</span>])</span>
+<span id="cb9-32">axs[<span class="dv" style="color: #AD0000;">4</span>].imshow(Q.T<span class="op" style="color: #5E5E5E;">@</span>Q,cmap<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'gray'</span>)</span>
+<span id="cb9-33">axs[<span class="dv" style="color: #AD0000;">4</span>].set_title(<span class="vs" style="color: #20794D;">r'$\mathbf</span><span class="sc" style="color: #5E5E5E;">{Q}</span><span class="vs" style="color: #20794D;">^</span><span class="sc" style="color: #5E5E5E;">{T}</span><span class="vs" style="color: #20794D;">\mathbf</span><span class="sc" style="color: #5E5E5E;">{Q}</span><span class="vs" style="color: #20794D;">$'</span>,fontweight<span class="op" style="color: #5E5E5E;">=</span><span class="st" style="color: #20794D;">'bold'</span>)</span>
+<span id="cb9-34"></span>
+<span id="cb9-35"><span class="co" style="color: #5E5E5E;"># remove ticks from all axes</span></span>
+<span id="cb9-36"><span class="cf" style="color: #003B4F;">for</span> a <span class="kw" style="color: #003B4F;">in</span> axs:</span>
+<span id="cb9-37">  a.set_xticks([])</span>
+<span id="cb9-38">  a.set_yticks([])</span>
+<span id="cb9-39"></span>
+<span id="cb9-40">plt.tight_layout()</span>
+<span id="cb9-41">plt.show()</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/06.orthogonality_files/figure-html/cell-9-output-1.png" width="894" height="566"></p>
@@ -1817,12 +1744,12 @@ Sum of Q and Q_np:
 <div class="cell" data-execution_count="9">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1">A <span class="op" style="color: #5E5E5E;">=</span> np.array([[<span class="dv" style="color: #AD0000;">1</span>, <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>], [<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>], [<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>]])</span>
-<span id="cb12-2">Q, R <span class="op" style="color: #5E5E5E;">=</span> np.linalg.qr(A)</span>
-<span id="cb12-3"></span>
-<span id="cb12-4"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q)</span>
-<span id="cb12-5"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"R =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, R)</span>
-<span id="cb12-6"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"QR =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q <span class="op" style="color: #5E5E5E;">@</span> R)</span></code></pre></div>
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">A <span class="op" style="color: #5E5E5E;">=</span> np.array([[<span class="dv" style="color: #AD0000;">1</span>, <span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>], [<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>, <span class="dv" style="color: #AD0000;">1</span>], [<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">0</span>]])</span>
+<span id="cb10-2">Q, R <span class="op" style="color: #5E5E5E;">=</span> np.linalg.qr(A)</span>
+<span id="cb10-3"></span>
+<span id="cb10-4"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q)</span>
+<span id="cb10-5"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"R =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, R)</span>
+<span id="cb10-6"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"QR =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q <span class="op" style="color: #5E5E5E;">@</span> R)</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Q =
@@ -1863,13 +1790,13 @@ QR =
 <div class="cell" data-execution_count="10">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">A <span class="op" style="color: #5E5E5E;">=</span> np.array([ [<span class="dv" style="color: #AD0000;">1</span>,<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>] ]).T</span>
-<span id="cb14-2">Q,R <span class="op" style="color: #5E5E5E;">=</span> np.linalg.qr(A,<span class="st" style="color: #20794D;">'complete'</span>)</span>
-<span id="cb14-3">Q<span class="op" style="color: #5E5E5E;">*</span>np.sqrt(<span class="dv" style="color: #AD0000;">2</span>) <span class="co" style="color: #5E5E5E;"># scaled by sqrt(2) to get integers</span></span>
-<span id="cb14-4"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"A =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, A)</span>
-<span id="cb14-5"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q)</span>
-<span id="cb14-6"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"R =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, R)</span>
-<span id="cb14-7"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q*np.sqrt(2)=</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q<span class="op" style="color: #5E5E5E;">*</span>np.sqrt(<span class="dv" style="color: #AD0000;">2</span>))</span></code></pre></div>
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1">A <span class="op" style="color: #5E5E5E;">=</span> np.array([ [<span class="dv" style="color: #AD0000;">1</span>,<span class="op" style="color: #5E5E5E;">-</span><span class="dv" style="color: #AD0000;">1</span>] ]).T</span>
+<span id="cb12-2">Q,R <span class="op" style="color: #5E5E5E;">=</span> np.linalg.qr(A,<span class="st" style="color: #20794D;">'complete'</span>)</span>
+<span id="cb12-3">Q<span class="op" style="color: #5E5E5E;">*</span>np.sqrt(<span class="dv" style="color: #AD0000;">2</span>) <span class="co" style="color: #5E5E5E;"># scaled by sqrt(2) to get integers</span></span>
+<span id="cb12-4"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"A =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, A)</span>
+<span id="cb12-5"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q)</span>
+<span id="cb12-6"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"R =</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, R)</span>
+<span id="cb12-7"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q*np.sqrt(2)=</span><span class="ch" style="color: #20794D;">\n</span><span class="st" style="color: #20794D;">"</span>, Q<span class="op" style="color: #5E5E5E;">*</span>np.sqrt(<span class="dv" style="color: #AD0000;">2</span>))</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>A =
@@ -1897,37 +1824,37 @@ Q*np.sqrt(2)=
 <div class="cell" data-execution_count="11">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><span class="co" style="color: #5E5E5E;"># Define matrix A</span></span>
-<span id="cb16-2">A <span class="op" style="color: #5E5E5E;">=</span> np.array([[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">3</span>], [<span class="dv" style="color: #AD0000;">4</span>, <span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">6</span>], [<span class="dv" style="color: #AD0000;">7</span>, <span class="dv" style="color: #AD0000;">8</span>, <span class="dv" style="color: #AD0000;">9</span>]])</span>
-<span id="cb16-3"></span>
-<span id="cb16-4"><span class="co" style="color: #5E5E5E;"># Compute QR decomposition of A</span></span>
-<span id="cb16-5">Q, R <span class="op" style="color: #5E5E5E;">=</span> np.linalg.qr(A)</span>
-<span id="cb16-6"></span>
-<span id="cb16-7"><span class="co" style="color: #5E5E5E;"># Compute Q^T * A</span></span>
-<span id="cb16-8">QtA <span class="op" style="color: #5E5E5E;">=</span> np.matmul(Q.T, A)</span>
-<span id="cb16-9"></span>
-<span id="cb16-10"><span class="co" style="color: #5E5E5E;"># Extract upper triangle of R</span></span>
-<span id="cb16-11">upper_R <span class="op" style="color: #5E5E5E;">=</span> np.triu(R)</span>
-<span id="cb16-12"></span>
-<span id="cb16-13"><span class="co" style="color: #5E5E5E;"># Compute dot products between later rows of Q^T and earlier columns of A</span></span>
-<span id="cb16-14">dot_products <span class="op" style="color: #5E5E5E;">=</span> np.zeros((<span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">3</span>))</span>
-<span id="cb16-15"><span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(<span class="dv" style="color: #AD0000;">3</span>):</span>
-<span id="cb16-16">    <span class="cf" style="color: #003B4F;">for</span> j <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(i):</span>
-<span id="cb16-17">        dot_products[i, j] <span class="op" style="color: #5E5E5E;">=</span> np.dot(Q.T[i], A[:, j])</span>
-<span id="cb16-18"></span>
-<span id="cb16-19"><span class="co" style="color: #5E5E5E;"># Print results</span></span>
-<span id="cb16-20"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"A = "</span>)</span>
-<span id="cb16-21"><span class="bu" style="color: null;">print</span>(A)</span>
-<span id="cb16-22"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q = "</span>)</span>
-<span id="cb16-23"><span class="bu" style="color: null;">print</span>(Q)</span>
-<span id="cb16-24"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"R = "</span>)</span>
-<span id="cb16-25"><span class="bu" style="color: null;">print</span>(R)</span>
-<span id="cb16-26"><span class="bu" style="color: null;">print</span>(<span class="vs" style="color: #20794D;">r"$Q^T * A = $"</span>)</span>
-<span id="cb16-27"><span class="bu" style="color: null;">print</span>(QtA)</span>
-<span id="cb16-28"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Upper-triangle of R = "</span>)</span>
-<span id="cb16-29"><span class="bu" style="color: null;">print</span>(upper_R)</span>
-<span id="cb16-30"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Dot products between later rows of Q^T and earlier columns of A = "</span>)</span>
-<span id="cb16-31"><span class="bu" style="color: null;">print</span>(dot_products)</span></code></pre></div>
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><span class="co" style="color: #5E5E5E;"># Define matrix A</span></span>
+<span id="cb14-2">A <span class="op" style="color: #5E5E5E;">=</span> np.array([[<span class="dv" style="color: #AD0000;">1</span>, <span class="dv" style="color: #AD0000;">2</span>, <span class="dv" style="color: #AD0000;">3</span>], [<span class="dv" style="color: #AD0000;">4</span>, <span class="dv" style="color: #AD0000;">5</span>, <span class="dv" style="color: #AD0000;">6</span>], [<span class="dv" style="color: #AD0000;">7</span>, <span class="dv" style="color: #AD0000;">8</span>, <span class="dv" style="color: #AD0000;">9</span>]])</span>
+<span id="cb14-3"></span>
+<span id="cb14-4"><span class="co" style="color: #5E5E5E;"># Compute QR decomposition of A</span></span>
+<span id="cb14-5">Q, R <span class="op" style="color: #5E5E5E;">=</span> np.linalg.qr(A)</span>
+<span id="cb14-6"></span>
+<span id="cb14-7"><span class="co" style="color: #5E5E5E;"># Compute Q^T * A</span></span>
+<span id="cb14-8">QtA <span class="op" style="color: #5E5E5E;">=</span> np.matmul(Q.T, A)</span>
+<span id="cb14-9"></span>
+<span id="cb14-10"><span class="co" style="color: #5E5E5E;"># Extract upper triangle of R</span></span>
+<span id="cb14-11">upper_R <span class="op" style="color: #5E5E5E;">=</span> np.triu(R)</span>
+<span id="cb14-12"></span>
+<span id="cb14-13"><span class="co" style="color: #5E5E5E;"># Compute dot products between later rows of Q^T and earlier columns of A</span></span>
+<span id="cb14-14">dot_products <span class="op" style="color: #5E5E5E;">=</span> np.zeros((<span class="dv" style="color: #AD0000;">3</span>, <span class="dv" style="color: #AD0000;">3</span>))</span>
+<span id="cb14-15"><span class="cf" style="color: #003B4F;">for</span> i <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(<span class="dv" style="color: #AD0000;">3</span>):</span>
+<span id="cb14-16">    <span class="cf" style="color: #003B4F;">for</span> j <span class="kw" style="color: #003B4F;">in</span> <span class="bu" style="color: null;">range</span>(i):</span>
+<span id="cb14-17">        dot_products[i, j] <span class="op" style="color: #5E5E5E;">=</span> np.dot(Q.T[i], A[:, j])</span>
+<span id="cb14-18"></span>
+<span id="cb14-19"><span class="co" style="color: #5E5E5E;"># Print results</span></span>
+<span id="cb14-20"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"A = "</span>)</span>
+<span id="cb14-21"><span class="bu" style="color: null;">print</span>(A)</span>
+<span id="cb14-22"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Q = "</span>)</span>
+<span id="cb14-23"><span class="bu" style="color: null;">print</span>(Q)</span>
+<span id="cb14-24"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"R = "</span>)</span>
+<span id="cb14-25"><span class="bu" style="color: null;">print</span>(R)</span>
+<span id="cb14-26"><span class="bu" style="color: null;">print</span>(<span class="vs" style="color: #20794D;">r"$Q^T * A = $"</span>)</span>
+<span id="cb14-27"><span class="bu" style="color: null;">print</span>(QtA)</span>
+<span id="cb14-28"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Upper-triangle of R = "</span>)</span>
+<span id="cb14-29"><span class="bu" style="color: null;">print</span>(upper_R)</span>
+<span id="cb14-30"><span class="bu" style="color: null;">print</span>(<span class="st" style="color: #20794D;">"Dot products between later rows of Q^T and earlier columns of A = "</span>)</span>
+<span id="cb14-31"><span class="bu" style="color: null;">print</span>(dot_products)</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>A = 

@@ -309,15 +309,15 @@ V = \text{span}\{\mathbf{v}\} = \text{span}\left\{\begin{bmatrix} 0 \\ 1 \\ -1 \
 $$
 
 **Example2**
-Let $U$ be the subspace of $\mathbb{R}^3$ spanned by the vectors $\begin{bmatrix} 1 \\ 2 \\ 0 \end{bmatrix}$ and $\begin{bmatrix} 1 \\ 0 \\ -1 \end{bmatrix}$, and let $V$ be the subspace spanned by the vector $\begin{bmatrix} 2 \\ -1 \\ 1 \end{bmatrix}$. Then $U$ and $V$ are orthogonal subspaces, since every vector in $U$ is orthogonal to every vector in $V$.
+Let $U$ be the subspace of $\mathbb{R}^3$ spanned by the vectors $\begin{bmatrix} 1 \\ 2 \\ 0 \end{bmatrix}$ and $\begin{bmatrix} 1 \\ 0 \\ -2 \end{bmatrix}$, and let $V$ be the subspace spanned by the vector $\begin{bmatrix} 2 \\ -1 \\ 1 \end{bmatrix}$. Then $U$ and $V$ are orthogonal subspaces, since every vector in $U$ is orthogonal to every vector in $V$.
 
 $$
-U = \text{span}\left\{\begin{bmatrix} 1 \\ 2 \\ 0 \end{bmatrix}, \begin{bmatrix} 1 \\ 0 \\ -1 \end{bmatrix}\right\}, \quad
+U = \text{span}\left\{\begin{bmatrix} 1 \\ 2 \\ 0 \end{bmatrix}, \begin{bmatrix} 1 \\ 0 \\ -2 \end{bmatrix}\right\}, \quad
 V = \text{span}\left\{\begin{bmatrix} 2 \\ -1 \\ 1 \end{bmatrix}\right\}
 $$
 
 **Example3**
-Let $U$ and $V$ be the subspaces of $\mathbb{R}^2$ spanned by the vectors $\begin{bmatrix} 1 \ 1 \end{bmatrix}$ and $\begin{bmatrix} 1 \ -1 \end{bmatrix}$, respectively. Then $U$ and $V$ are not orthogonal subspaces, since $\begin{bmatrix} 1 \ 1 \end{bmatrix} \cdot \begin{bmatrix} 1 \ -1 \end{bmatrix} \neq 0$.
+Let $U$ and $V$ be the subspaces of $\mathbb{R}^2$ spanned by the vectors $\begin{bmatrix} 1 \\ 1 \end{bmatrix}$ and $\begin{bmatrix} 1 \\ -1 \end{bmatrix}$, respectively. Then $U$ and $V$ are orthogonal subspaces, since $\begin{bmatrix} 1 & 1 \end{bmatrix} \cdot \begin{bmatrix} 1 \\ -1 \end{bmatrix} = 0$.
 
 $$
 U = \text{span}\left\{\begin{bmatrix} 1 \\ 1 \end{bmatrix}\right\}, \quad
@@ -370,6 +370,11 @@ where $\mathbf{w}_{V}$ is the orthogonal projection of $\mathbf{w}$ onto $V$, an
 
 If $\mathbf v$ is orthogonal to the nullspace, it must be in the row space.
 
+:::{#thm-orthogonalComplement}
+Let $\mathbf A$ be a matrix and let $\mathbf W = \operatorname{Col}(A)$. Then, $\mathbf W^{\perp} = \operatorname{Null}(\mathbf A)$.
+:::
+By the proposition, computing the orthogonal complement of a span means solving a system of linear equations.
+
 #### Example
 
 Let $W = \mathbb{R}^3$ and $V$ be the subspace spanned by the vectors $\mathbf{v}_1 = (1,0,0)$ and $\mathbf{v}_2 = (0,1,1)$. Then, we can find a basis for $V^\perp$ by solving the system of equations
@@ -378,17 +383,41 @@ $$
 \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 1  \end{bmatrix} \begin{bmatrix} x \\ y \\ z \end{bmatrix} = \begin{bmatrix} 0 \\ 0 \end{bmatrix}
 $$
 
-This gives us the solution $x = 0$, $y = 0$, $z = 0$, so $V^\perp$ is the subspace spanned by the vector $\mathbf{w} = (0,0,1)$. we have a $2\times 3$ matrix multiplying a $3\times 1$ vector, resulting in a $2\times 1$ vector. This means that the equation is restricting the first two coordinates of the vector to be zero.
+Compute $W^{\perp}$, where $W=\operatorname{Span}\left\{ \begin{bmatrix}1 \\ 0 \\ 0 \end{bmatrix},\begin{bmatrix}0 \\ 1 \\ 1 \end{bmatrix}  \right\}$
 
-Therefore, we can consider the subspace $V$ to be the $xy$-plane in $\mathbb{R}^3$, i.e., $V = {(x,y,z) \in \mathbb{R}^3 : z = 0}$. Then, the orthogonal complement $V^\perp$ is the set of all vectors that are orthogonal to every vector in $V$. In this case, we can see that $\begin{bmatrix} 0 \\ 0 \\ 1 \end{bmatrix}$ is perpendicular to every vector in $V$, since its third coordinate is always $1$ while the third coordinate of any vector in $V$ is always $0$. Therefore, $V^\perp$ is the subspace spanned by $\begin{bmatrix} 0 \\ 0 \\ 1 \end{bmatrix}$, which is the $z$-axis in $\mathbb{R}^3$.
+Compute $\operatorname{Null}(\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 1  \end{bmatrix})$
+$$
+\begin{align*}
+x &= 0 \\
+y + z &= 0\\
+W^{\perp}&=\operatorname{\begin{bmatrix} 0 \\ -z \\ z\end{bmatrix}}
+\end{align*}
+$$,
+which has the unique solution $x = 0$, $y = -z$. Therefore, the subspace $V^\perp$ is spanned by the vector $\begin{bmatrix} 0 \\ -1 \\ 1 \end{bmatrix}$.
 
-Now, given any vector $\mathbf{w} \in \mathbb{R}^3$, we can decompose it into two orthogonal components as
+To see this, note that any vector $\begin{bmatrix} x \\ y \\ z \end{bmatrix}$ in $V^\perp$ must satisfy $\begin{bmatrix} x \\ y \\ z \end{bmatrix} \cdot \begin{bmatrix} 1 \\ 0 \\ 0 \end{bmatrix} = 0$ and $\begin{bmatrix} x \\ y \\ z \end{bmatrix} \cdot \begin{bmatrix} 0 \\ 1 \\ 1 \end{bmatrix} = 0$. These conditions can be rewritten as the equations $x = 0$ and $y = -z$, respectively. Therefore, any vector in $V^\perp$ must have the form $\begin{bmatrix} 0 \\ -z \\ z \end{bmatrix}$, and it is easy to check that $\begin{bmatrix} 0 \\ -1 \\ 1 \end{bmatrix}$ satisfies this equation and is linearly independent from $\mathbf{v}_1$ and $\mathbf{v}_2$, so it is a basis for $V^\perp$.
+
+Therefore, we have $V^\perp = \operatorname{span}\left(\begin{bmatrix} 0 \\ -1 \\ 1 \end{bmatrix}\right)$.
+
+Given any vector $\mathbf{w} = \begin{bmatrix} w_1 \\ w_2 \\ w_3 \end{bmatrix} \in \mathbb{R}^3$, we can decompose it into two orthogonal components as
 
 $$
 \mathbf w = \mathbf w_{V} +\mathbf w_{V^{\perp}}  
 $$
 
-where $\mathbf{w}V$ is the projection of $\mathbf{w}$ onto $V$, and $\mathbf{w}{V^\perp}$ is the projection of $\mathbf{w}$ onto $V^\perp$. For example, if $\mathbf{w} = (1,2,3)$, We can compute the projections $\mathbf{w}V$ and $\mathbf{w}{V^\perp}$ as follows:
+where $\mathbf{w}_V$ is the projection of $\mathbf{w}$ onto $V$, and $\mathbf{w}_{V^\perp}$ is the projection of $\mathbf{w}$ onto $V^\perp$.
+
+To compute $\mathbf{w}_V$, note that $\mathbf{w}$ can be written as a linear combination of $\mathbf{v}_1$ and $\mathbf{v}_2$ as
+
+$$
+\begin{align*}
+\mathbf{w} &= \frac{\mathbf{w} \cdot \mathbf{v}_1}{||\mathbf{v}_1||^2} \mathbf{v}_1 + \frac{\mathbf{w} \cdot \mathbf{v}_2}{||\mathbf{v}_2||^2} \mathbf{v}_2 \\
+&= \frac{1}{1^2}\begin{bmatrix}1 \\ 0 \\ 0 \end{bmatrix}+ \frac{1}{2}\begin{bmatrix}0 \\ 1 \\ 1 \end{bmatrix} \\
+&= \begin{bmatrix}1 \\ \frac{1}{2} \\ \frac{1}{2}\end{bmatrix}
+\end{align*}
+$$
+
+Therefore, the subspace spanned by $\mathbf{w}$ is the line passing through the point $\begin{bmatrix}1 \\ \frac{1}{2} \\ \frac{1}{2}\end{bmatrix}$ in the direction of $\mathbf{w}$, which is $\text{span}\left \{\begin{bmatrix}1 \\ \frac{1}{2} \\ \frac{1}{2}\end{bmatrix}\right \}$.
 
 The projection of $\mathbf{w}$ onto $V$ is given by
 

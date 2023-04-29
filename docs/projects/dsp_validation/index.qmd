@@ -30,33 +30,64 @@ format:
     * 장비의 안정성 검증 요구
     * Software의 안정성 검증 요구
     * **Diagnostic Algorithm의 안정성 검증 요구**
-* COVID19 특수 시기 해제 후 Global market으로 진입 및 유지를 위해 제품의 안정성 검증이 각 국의 정부로 부터 요구된다. 그 중 가장 엄격한 기준을 요구하는 미국의 FDA와 캐나다의 Health Canada를 기준으로 진단 알고리즘의 안정성 검증 문서를 기획하고 작성해야만 한다.
-* 시간이 지날 수록 각 국에서 Software 및 algorithms에 대한 규제가 강화되고 있기때문에 기존의 Software Engineering에 의한 안전성 검증보다 더 엄격한 Advanced Testing이 요구되고 있다.
+* COVID19 특수 시기 해제 후 Global market으로 진입 및 유지를 위해 제품의 안정성 검증이 각 국의 정부로 부터 요구된다. 
+* EU(European Union)의 경우 IVDR (In Vitro Diagnostics Regulation) 을 요구하고 그 중 가장 엄격한 기준을 요구하는 미국의 FDA와 캐나다의 Health Canada의 surveilance 기준으로 진단 알고리즘의 안정성 검증 문서를 기획하고 작성한다.
+* 시간이 지날 수록 각 국에서 Software 및 algorithms에 대한 규제가 강화되고 있기때문에 기존의 Software Engineering에 의한 안전성 검증 방식보다 더 엄격한 Advanced Testing이 요구되고 있다.
+* 따라서, Diagnostic Algorithm의 안정성 검증은 Software Engineering Testing과 Advanced Testing을 포함한다. 여기서 Advanced Testing은 Statiscal Analysis에 기반한 Statistical Testing을 의미하고 안정적인 Software Engineering System 구축이 그 전제가 된다.
+* Seegene의 Diagnostic Signal Process (DSP) Algorithm의 안정성 검증 방식은 기업의 사업성과 직결되는 만큼 회사내에서 1급 보안사항으로 분류되어 구체적이고 자세한 기획 및 구현 내용을 공유할 수는 없다.
 
 ## Objective
 
-* algorithm이 안전한 성능을 발휘한다는 것을 증명한다
-* algorithm이 risk 관리가 가능하다는 것을 증명한다.
+* algorithm이 안전한 성능을 보여준다는 것을 통계적으로 증명하기 위한 system을 기획한다.
+* algorithm이 안전한 성능을 보여준다는 것을 Statistical Validation Sytem을 확립하여 통계적 분석으로 증명한다.
+  * 여기서, 확립 (Establishment)은 정의(definition), 문서화(documentation) 및 구현 (Implement)으로 정의된다.
+* algorithm의 risk를 구체적으로 정의하고 risk가 algorithm에 미치는 영향도를 정량 분석한다.
+* algorithm이 risk 관리가 가능하다는 것을 statistical simulation을 통해 증명한다.
+* algorithm 구현 및 운영에 있어서 code의 변화가 있을 경우 새로운 validation report를 제출해야하므로 자동화 시스템을 구축한다. 
 
-## Strategies
+## Methodology
 
 * 세계에서 가장 엄격한 검열 인증서를 발급 및 교육을 제공하는 기업인 SGS의 guidance를 참고한다.
 * SGS는 FDA를 target으로 guidance를 제공한다.
-* Software의 안전성 검증을 위해 FDA에서 제공하는 General Principles of Software Validation 문서를 정독 후 이 문서를 기반으로 기획 및 작성한다.
+* Software의 안전성 검증을 위해 FDA에서 제공하는 General Principles of Software Validation 문서를 정독 후 이 문서를 기반으로 validation system을 확립한다.
+* Software engineering은 General Principles of Software Validation 문서를 기반하여 수행한다.
 * Structural Testing와 Advanced Testing 모두 포함한다.
 * algorithm 안전성에 대한 정의와 논리를 확립한다.
 * algorithm 안전성에 대한 지표를 확립한다.
-* Software engineering은 General Principles of Software Validation 문서를 기반하여 수행한다.
 * Advanced Testing인 Statistical Testing은 data scientist의 창의성이 요구되는 작업으로 Testing Model을 기획하여 statistical analysis design을 한다.
-* 기획된 Testing model에 적합한 statistical model을 찾고 biological experiment design과 engineering design을 한다.
+* BT (Biotechnology) 부문과 IT (Information technology) 부문의 협력이 전제가 되어야하며 BT 부서의 experiment design 및 limitation factors at a experimental level을 고려한 engineering design와 statistical design을 확립한다.
+* 기획된 Testing model에 적합한 statistical model을 찾고 minimum reuirement sample size를 계산한다.
+* 위의 전략대로, BT 부서에서의 실험과 IT 부서 (Data Science 팀)에서 분석을 수행한다.
+* algorithm 구현 및 운영에 있어서 code의 변화가 있을 경우와 새로운 제품에 대한 새로운 validation report를 제출해야하는 의무사항에 대비한 문서 자동화 시스템을 구축한다. 
 
-## Issues
+## Issues 및 Solutions
 
-* 선례 및 template를 찾을 수 없을 정도로 매우 드물다.
+### Issues
+
+* BT에서 생성된 data를 입력할 수 있는 시스템 부재
+* BT부서의 업무기술서 부재로 인한 소통의 어려움
+* 입력 데이터를 전처리하는 시스템 부재
+* Data Science 팀내 업무 기술서 부재로 인한 팀내 소통의 어려움
+* Validation report에 대한 선례 및 template를 찾을 수 없을 정도로 매우 드물다.
+
+### Solutions
+
+* BT에서 생성된 data를 입력할 수 있는 시스템 구축
+  * digitalization: experimental design file, raw data generated from medical device, data extracted from medical device
+* BT부서와의 소통으로 업무 문서화 진행하여 실험 결과의 기대 정답 기준 확립, 독립 변수 및 종속 변수 확립
+* 입력 데이터를 전처리하여 diagnostic algorithm의 결과물을 병합하는 engineering 시스템 구축
+* Data Quality Control Process 강화
+  * 1단계 오타 교정
+  * 2단계 결측치 처리
+  * 3단계 anomaly data 처리
+  * 4단계 algorithm data 정합성 1차 검정: FDA validtion을 위한 전처리된 algorithm vs Original algorithm
+  * 5단계 algorithm data 정합성 2차 검정: Data Science팀의 FDA validtion을 위한 전처리된 algorithm vs BT 부서에 published algorithm
+* Data Science 팀내 업무 기술서 작성으로 코드 중앙화, 데이터 중앙화, 특이사항 문서화 실현
+* Seegene 고유의 software testing model 기획 및 확립 후 statistical analysis 기획 및 수행
 
 ## Required Skills
 
-* FDA software validation
+* FDA software validation knowledge
 * Statistics
 * Dynamic documentation
 * Biology
@@ -64,27 +95,20 @@ format:
 
 ## Colaborators
 
-* project owner (me)
-* 7 data scientists 
-* 1 data enineer
+* 5 data scientists (I am a project owner.)
+* 3 data enineers
 * 27 biologists
 * 2 patent attoneys
  
 ## Acheivements
 
-|Noise Test| As-Is |To-Be |
-|:---:|:---|:---|
-| Sample Size  | n=100  | 2552번의 실험에서 얻은 신호 n=61,248   |
-| Evaluation Metrics | 2 metrics | 10 metrics ( the exsting 2 metrics + new 8 metrics)   |
-| Input Process | manually copy & paste data of excel files extracted from a certain program | Web-Based Automation, upload multiple experiment files |
-| Output Process| Batch Evaluation method, if even one of the signals from the equipment fails, the equipment fails. (Blind Spot: If there is one human error signal, the equipment is unconditionally disqualified.)| Differential Evaluation method, The signals from the equipment are scored, the average value is obtained, and the equipment is graded A+, A, B, and F. Failed if F. Robust on the error signal as it excludes the error signal from evaluation  |
-| Output 1 |  pass: 92.58%, fail: 7.42% | A+ (pass): 7.01%, A (pass): 12.91%, B (pass): 75.72%, F (fail): 4.36%  |
-| Output 2 |  NA | Visualized Plots and Tables.|
-| Output 3 |  NA | Normal Signals, Human Errors, Device Errors, Manufacturing Errors |
-| Time Consumed  | About 30 minutes per 20 experiments | About 25 minutes per 2552 experiments  |
-| Data Management| Non-standard management method (stored in NAS directory in a different form as an Excel file in a different way for each worker) | Automatic loading in DB in standardized form by a scheduler (equipment failure tracing analysis becomes possible) |
-
-### Remarkable
+|DSP Algorithm Output| Description |
+|:---:|:---|
+| Data Input System | 임시적인 데이터 입력 시스템으로 대량의 data를 대량으로 연산하는 플랫폼 구축으로 발전  |
+| Documentation System | 기존에 부재했던 문서화 및 문서 자동화 시스템 구축 $\rightarrow$ 업무 소통과 Relational Database System 구축에 필요 |
+| Data Management System | data quality control system |
+| FDA Validation Model | DSP algorithm을 위한 Validation Model 확립|
+| Patent Invention |  FDA Validation Model 발명 |
 
 
 
@@ -94,89 +118,90 @@ format:
 
 ## Background
 
-* Quality Control of diagnostic equipment is one of the necessities for the regulations required by the government of each country when entering the global market due to the nature of products related to medical equipment.
-    * Reagent stability verification & validation required
-    * **Equipment stability verification & validation request**
-    * Software stability verification & validation request
-    * Stability Verification & validation Request of Diagnostic Algorithm
-* Since the diagnostic equipment currently being used by Seegene is not its own product, it is difficult to manage the quality of the diagnostic equipment.
-* The noise test of PCR equipment is one of the QC processes of medical equipments, and it is a quality verification system that directly affects the performance stability of Seegene's reagent products.
-* As the size of the company grows and frequent organizational reshuffles result in manual noise tests being transferred to various departments, the noise test performers' understanding and skills are low, resulting in noise tests not being performed correctly.
-* A project to automate the noise test was selected for Seegene's long-term goal of enterprise automation.
- 
+* Due to the nature of reagent products related to medical device, there are regulations required by each country's government for the health and life safety of its citizens when entering the global market.
+  * Reagent stability verification and validation required
+  * Equipment stability verification and validation request
+  * Software stability verification and validation request
+  * **Stability verification and validation Request of Diagnostic Algorithm**
+* In order to enter and maintain the global market after the COVID19 special period is lifted, product stability verification and validation is required from the government of each country.
+* In the case of the EU (European Union), IVDR (In Vitro Diagnostics Regulation) is required, and the safety verification document of the diagnostic algorithm is planned and prepared according to the surveilance standards of the US FDA and Canada's Health Canada, which require the most stringent standards among them.
+* As time goes by, regulations on software and algorithms are being strengthened in each country, so advanced testing that is more stringent than the existing safety verification method by software engineering is required.
+* Therefore, the stability verification and validation of the diagnostic algorithm includes software engineering testing and advanced testing. Here, advanced testing means statistical testing based on statistical analysis, and building a stable software engineering system is the prerequisite.
+* Since the stability verification method of Seegene's Diagnostic Signal Process (DSP) Algorithm is directly related to the business performance of the company, it is classified as a first-class security matter within the company, so specific and detailed planning and implementation details cannot be shared.
+
 ## Objective
 
-* Data-driven parameters obtained from 61,248 signals from 2552 experiments were used to evaluate 2201 PCR devices, which were stocked between 2020.12.19 and 2021.03.06. yield Enables continuous analysis of equipment performance over time.
-* Improve the following major problems:
-    * Improved metrics that produces erroneous results by greatly affecting the noise test result depending on the size of the signal amplification. 
-    * It relieves the burden on the field department with a robust evaluation system by supplementing the problem of unconditionally determining equipment rejection in response to a simple human error signal.
-    * Equipment error signals are labeled by finding patterns that occur in equipment.
-* The time required for the manual calculation process can be reduced from 30 minutes per 20 tests to about 2 to 3 minutes with web-based automation.
-* By making it the best practice of Seegene's full automation, establish and vitalize the cooperation system between the IT, manufacturing and BT sectors.
-* Visualization and noise test result history are provided to build a tracking and VOC response system.
+* Design a system to statistically prove that the algorithm shows safe performance.
+* Establish a Statistical Validation System to prove that the algorithm shows safe performance through statistical analysis.
+  * Here, Establishment is defined as Definition, Documentation, and Implementation.
+* Define the risk of the algorithm in detail and quantitatively analyze the effect of the risk on the algorithm.
+* It is proved through statistical simulation that the algorithm is capable of risk management.
+* In the case of code changes according to algorithm implementations and operations, a new validation report must be submitted, so an automation system is built.
 
-## Strategies
+## Methodology
 
-### Strategy A
+* Refer to the guidance of SGS, a company that issues and provides training for the world's most stringent inspection certificates.
+* SGS provides guidance to the FDA as a target.
+* After thoroughly reading the General Principles of Software Validation document provided by the FDA for software safety verification, establish a validation system based on this document.
+* Software engineering is performed based on the General Principles of Software Validation document.
+* Includes both Structural Testing and Advanced Testing. 
+* Establish a definition and logic for algorithm safety.
+* Establish metrics or indicators for algorithm safety.
+* Statistical Testing, which is Advanced Testing, is a task that requires the creativity of a data scientist, and statistical analysis design is performed by planning a testing model.
+* Cooperation between the BT (Biotechnology) sector and the IT (Information technology) sector must be a premise, and engineering design and statistical design should be established considering the BT department's experimental design and limitation factors at a experimental level.
+* Find a statistical model suitable for the planned testing model and calculate the minimum reuirement sample size.
+* As per the above strategy, the BT department conducts experiments and the IT department (Data Science team) conducts analysis.
+* Establish a document automation system in case of code changes in algorithm implementation and operation and the obligation to submit a new validation report for new products.
 
-* The QC process is subdivided through close communication with the field departments, and the results of the noise test, which is the next stage QC, are predicted by utilizing the data generated in the previous stage QC.
-* Noise test omitted only for devices that are certain to have low noise.
+## Issues & Solutions
 
-### Strategy B
+### Issues
 
-* Automate or semi-automate the entire QC process
-* Improve the accuracy of inspection results by analyzing the existing noise measurement metric and creating a new metric
-* Visualization and noise test result history are provided to increase the understanding of practitioners and enable management
+* Absence of a system that can input data generated by BT departments
+* Difficulties in communication due to lack of job description in BT departments.
+* Absence of a system that preprocesses input data.
+* Difficulties in communication within the team due to lack of job description within the Data Science team.
+* It is so rare that no precedent or template for validation report can be found.
 
-## Issues
+### Solutions
 
-* Absence of job description
-* Backup Mistakes by Practitioners
-* Data scattered across departments
-* High level of data cleansing
-    * Select data that can be analyzed from practitioner data
-    * Incorrect input of practitioner data
-    * Manual release of DRM for data and documents
-* reverse engineering required
-* Absence of contact system for related personnel and departments due to frequent organizational reshuffle
+* Building a system that can input data generated by BT departments
+  * digitalization: experimental design file, raw data generated from medical device, data extracted from medical device
+* Work documented through communication with the BT department to establish the standard for the expected correct answer of the experiment results, and to establish independent and dependent variables
+* Building an engineering system that preprocesses input data and merges the results of diagnostic algorithms
+* Strengthen Data Quality Control Process
+  * Step 1 typo correction
+  * Step 2 missing value processing
+  * Step 3 anomaly data processing
+  * Step 4 algorithm data conformity 1st Test: Preprocessed algorithm for FDA validation vs Original algorithm
+  * Step 5 algorithm data conformity 2nd test: Data Science team’s preprocessed algorithm for FDA validation vs algorithm published by BT department
+* Realization of code centralization, data centralization, and documentation of specific matters by writing job descriptions within the Data Science team
+* Plan and perform statistical analysis after planning and establishing Seegene's own algorithm testing model
 
 ## Required Skills
 
-* Back-end Engineering for DevOps Pipeline Construction
-* Data Engineering for data cleansing and reverse engineering
-* Data Modeling for a RDB system construction
-* Statistical Analysis for the noise test performance verification
-* Machine Learning for pattern analysis
-* Front-end Engineering for UI/UX construction
-* Biologics, Biophysics, Physics Knowledge
+* FDA software validation knowledge
+* Statistics
+* Dynamic documentation
+* Biology
+* Clinical study design
 
 ## Colaborators
 
-* 1 data scientist (me) - project owner
-* 5 mechanical engineers 
-* 4 biologists
+* 5 data scientists (I am a project owner.)
+* 3 data enineers
+* 27 biologists
 * 2 patent attoneys
-* 2 data engineers
-* 3 full stack developers
-* 1 advisor (a professor of Computer Science at Seoul National University)
  
 ## Acheivements
 
-|Noise Test| As-Is |To-Be |
-|:---:|:---|:---|
-| Sample Size  | n=100  | Signals from 2552 experiments, n=61,248   |
-| Evaluation Metrics | 2 metrics | 10 metrics ( the exsting 2 metrics + new 8 metrics)   |
-| Input Process | manually copy & paste data of excel files extracted from a certain program | Web-Based Automation, upload multiple experiment files |
-| Output Process| Batch Evaluation method, if even one of the signals from the equipment fails, the equipment fails. (Blind Spot: If there is one human error signal, the equipment is unconditionally disqualified.)| Differential Evaluation method, The signals from the equipment are scored, the average value is obtained, and the equipment is graded A+, A, B, and F. Failed if F. Robust on the error signal as it excludes the error signal from evaluation  |
-| Output 1 |  pass: 92.58%, fail: 7.42% | A+ (pass): 7.01%, A (pass): 12.91%, B (pass): 75.72%, F (fail): 4.36%  |
-| Output 2 |  NA | Visualized Plots and Tables.|
-| Output 3 |  NA | Normal Signals, Human Errors, Device Errors, Manufacturing Errors |
-| Time Consumed  | About 30 minutes per 20 experiments | About 25 minutes per 2552 experiments  |
-| Data Management| Non-standard management method (stored in NAS directory in a different form as an Excel file in a different way for each worker) | Automatic loading in DB in standardized form by a scheduler (equipment failure tracing analysis becomes possible) |
+|DSP Algorithm Output| Description |
+|:---:|:---|
+| Data Input System | It is a temporary data input system that develops into a platform that calculates a large amount of data in large quantities. |
+| Documentation System | Establishment of previously absent documentation and document automation systems $\rightarrow$ Necessary for business communication and establishment of Relational Database System |
+| Data Management System | data quality control system |
+| FDA Validation Model |Establishment of validation model for DSP algorithm|
+| Patent Invention |  Inventing the FDA Validation Model |
 
-### Remarkable
 
-* The noise test was abolished in the whole QC Process because I statistically proved that the noise test result does not have a significant impact on the difference of the mean of the final result in the whole diagnostic process at the 1% significance level.
-* It turned out to be an opportunity for the Data Science department to increase their understanding of experiments and data generated from equipment.
-* It served as the basis for building a company-wide DB and building a platform architecture.
 </div>

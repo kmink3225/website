@@ -1,0 +1,229 @@
+---
+title: "Project Description"
+subtitle: "Modeling Adsorption Kinetics with Differential Equations"
+description: "Modeling adsorption kinetics with differential equations and non-linear least square algorithm: With a hypothesized mechanistic model of the adsorption process, demonstrated the model is useful for predicting the rate at which tea leaves can remove heavy metal ions from polluted water."
+author: Kwangmin Kim
+date: 2023-04-29
+format: 
+  html:
+    toc: true  
+    page-layout: full
+    code-fold: true  
+---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+* 중금속(예: 구리(Cu), 아연(Zn) 및 코발트(Co))은 silent 오염 물질이다. 물 속에서 그들의 존재는 쉽게 감지되지 않는다. 이러한 오염 물질은 다양한 방식으로 우리 몸에 들어갈 수 있는데 오염된 물을 마시거나 오염된 음식을 섭취함으로써 이러한 오염 물질은 인간과 다른 살아있는 유기체에 독성 영향을 미치게 된다. 사용한 찻잎은 오염된 폐수에서 발견되는 2가 Cu, Zn 및 Co 이온에 대한 흡착 기질로 사용할 수 있다.
+* 오염된 물에서 중금속을 제거하기 위해 찻잎을 사용할 수 있는 비율을 모델링하기 위해 미분 방정식이 사용되었다. 이 모델은 실험의 시계열 데이터와 비선형 최소 제곱 회귀를 사용하여 테스트되었다. 
+
+## Objective
+
+* 찻잎에 대한 중금속의 흡착 과정은 미분 방정식을 사용하여 mechnistically 모델링할 수 있다.
+* mechanistic model parameter는 시계열 데이터에 맞게 추정할 수 있다.
+
+## Methodology
+
+### Mechanistic Modeling
+
+#### Definitions
+
+* $S(t)$ is the number of heavy metal molecules adsorbed to the tea leaves at time $t$.
+* $W(t)$ is the number of heavy metal molecules in the water (and not adsorbed) at time $t$.
+* $W_0=W(0)=S(t)+W(t)$
+* $S_e$ is the number of heavy metal molecules adsorbed at the equilibrium state = the “relevant” number of adsorption sites. $S_e$ is system dependent: e.g., a different initial concentration will have a different $S_e$  
+* $S_e=W_0 - W_e$
+* $q(t)$ is the fraction of heavy metal molecules adsorbed out of the waste water at time $t$
+* $q(t)=\frac{S(t)}{W_0}$
+
+#### Formulation
+
+$$
+\begin{align*}
+\frac{dS}{dt} &=\frac{W_0-S(t)}{V}fb\frac{S_e-S(t)}{S_e}p\\
+&=k_s(W_0-S(t))(S_e-S(t)) \text{ where } k_s=\frac{fbp}{VS_e}
+\end{align*}
+$$
+
+where
+
+* $\frac{W_0-S(t)}{V}fb$ is a fraction of heavy metal molecules per $mL$ of water,
+* $f$ is $mL$'s of water that contact leaves per minute,
+* $b$ is the probability that a leaf hitting molecule hits a binding site,
+* $\frac{S_e-S(t)}{S_e}$ is a fraction of biniding sites that are occupied, and
+* $p$ is the probability that hitting an unoccupied binding site results in binding.
+
+Since $q(t)-\frac{S(t)}{W_0}$,
+
+$$
+\begin{align*}
+\frac{dq}{dt} &=\frac{S'(t)}{W_0}\\
+&=\frac{k_S}{W_0}(W_0-S(t))(S_e-S(t))\\
+&=W_0k_S\frac{(W_0-S(t))(S_e-S(t))}{W_0^2}\\
+&=k_S(1-q(t))(q_e-q(t)) \text{ where } k_q=W_0k_S=\frac{W_0fbp}{VS_e}=\frac{fbp}{Vq_e} \\
+&=\frac{dq}{dt} \\
+&=k_q(1-q)(q_e-q) \\
+q(0) &=0
+\end{align*}
+$$
+
+Solving the above initial value problem:
+$$
+\begin{align*}
+\frac{dq}{dt}&=k_q(1-q)(q_e-q) \\
+\frac{dq}{(1-q)(q_e-q)}&=k_qdt \\
+\int \frac{dq}{(1-q)(q_e-q)}&=\int k_qdt \\
+\frac{1}{(1-q)(q_e-q)}&=\frac{A}{1-q}+\frac{B}{q_e-q} \\
+1&=A(q_e-q)+B(1-q)\\
+1&=A(q_e-1) \text{ by letting } q=1\\
+(q_e-1)^{-1}&=A\\
+1&=B(1-q_e) \text{ by letting } q=q_e\\
+(1-q_e)^{-1}&=B\\
+\int\frac{dq}{(1-q)(q_e-q)}&=\int k_qdt \\
+\int \left \{\frac{(q_e-1)^{-1}}{1-q}+\frac{(1-q_e)^{-1}}{q_e-q}\right\}dq&=\int k_qdt \\
+q(t)&= \frac{q_e-q_ee^{-kt}}{1-q_ee^{-kt}}=q_e\frac{1-e^{-kt}}{1-q_ee^{-kt}} \text{ where } k=(1-q_e)k_q\\
+\arg\min_k&\sum_{i=1}^{n}(q(t_i,k)-\hat{q}(t_i))^2 
+\end{align*}
+$$
+where 
+
+* $(t_i,\hat{q}(t_i))$ is the observed values,
+* $q(t,k) =q_e\frac{1-e^{-kt}}{1-q_ee^{-kt}}$
+
+## Required Skills
+
+* Mathematics: differential equation
+* Statistics: non-linear least square with the Levenberg-Marquardt algorithm
+* Biology
+
+## Colaborators
+
+* 1 mathematics professor (advisor)
+* 1 biology professor (advisor)
+* 2 mathematicians
+* 1 biologist
+ 
+## Result
+
+|Metal| $q_e$ |parameter| Estimate |Std. Error| $t$ value | $Pr(>|t|)$| df | n|
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|copper| .46 |$k$| 0.01281219 |0.0008855| 20.47 | $<2e-16$| 34 | 35|
+|cobalt| .235|$k$| 0.069941 |0.003279| 21.33 | $<2e-16$| 34 | 35|
+|zinc| .24 |$k$| 0.150255 |0.009133| 16.45 | $<2e-16$| 32 | 33|
+
+
+
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+## Background
+
+* Heavy metals (such as Copper (Cu), Zinc (Zn), and Cobalt (Co)) are silent pollutants; their presence in water is not easily detected. These pollutants can enter our bodies in different ways, e.g. through drinking contaminated water or eating contaminated food. These pollutants have toxic effects on humans and other living organisms. Spent tea leaves can be used as adsorbent substrates for divalent Cu, Zn and Co ions found in polluted waste water.
+* Differential equations were used  to model the rate at which tea leaves can be used to clear heavy metals from polluted water. The model was tested using time series data from experiments and non-linear least squares regression. 
+
+## Objective
+
+* the adsorption process of heavy metals to tea leaves can be mechanistically modeld using a differential equation.
+* the parameter of the mechanistic model can be estimated to fit the time series data.
+
+## Methodology
+
+### Mechanistic Modeling
+
+#### Definitions
+
+* $S(t)$ is the number of heavy metal molecules adsorbed to the tea leaves at time $t$.
+* $W(t)$ is the number of heavy metal molecules in the water (and not adsorbed) at time $t$.
+* $W_0=W(0)=S(t)+W(t)$
+* $S_e$ is the number of heavy metal molecules adsorbed at the equilibrium state = the “relevant” number of adsorption sites. $S_e$ is system dependent: e.g., a different initial concentration will have a different $S_e$  
+* $S_e=W_0 - W_e$
+* $q(t)$ is the fraction of heavy metal molecules adsorbed out of the waste water at time $t$
+* $q(t)=\frac{S(t)}{W_0}$
+
+#### Formulation
+
+$$
+\begin{align*}
+\frac{dS}{dt} &=\frac{W_0-S(t)}{V}fb\frac{S_e-S(t)}{S_e}p\\
+&=k_s(W_0-S(t))(S_e-S(t)) \text{ where } k_s=\frac{fbp}{VS_e}
+\end{align*}
+$$
+
+where
+
+* $\frac{W_0-S(t)}{V}fb$ is a fraction of heavy metal molecules per $mL$ of water,
+* $f$ is $mL$'s of water that contact leaves per minute,
+* $b$ is the probability that a leaf hitting molecule hits a binding site,
+* $\frac{S_e-S(t)}{S_e}$ is a fraction of biniding sites that are occupied, and
+* $p$ is the probability that hitting an unoccupied binding site results in binding.
+
+Since $q(t)-\frac{S(t)}{W_0}$,
+
+$$
+\begin{align*}
+\frac{dq}{dt} &=\frac{S'(t)}{W_0}\\
+&=\frac{k_S}{W_0}(W_0-S(t))(S_e-S(t))\\
+&=W_0k_S\frac{(W_0-S(t))(S_e-S(t))}{W_0^2}\\
+&=k_S(1-q(t))(q_e-q(t)) \text{ where } k_q=W_0k_S=\frac{W_0fbp}{VS_e}=\frac{fbp}{Vq_e} \\
+&=\frac{dq}{dt} \\
+&=k_q(1-q)(q_e-q) \\
+q(0) &=0
+\end{align*}
+$$
+
+Solving the above initial value problem:
+$$
+\begin{align*}
+\frac{dq}{dt}&=k_q(1-q)(q_e-q) \\
+\frac{dq}{(1-q)(q_e-q)}&=k_qdt \\
+\int \frac{dq}{(1-q)(q_e-q)}&=\int k_qdt \\
+\frac{1}{(1-q)(q_e-q)}&=\frac{A}{1-q}+\frac{B}{q_e-q} \\
+1&=A(q_e-q)+B(1-q)\\
+1&=A(q_e-1) \text{ by letting } q=1\\
+(q_e-1)^{-1}&=A\\
+1&=B(1-q_e) \text{ by letting } q=q_e\\
+(1-q_e)^{-1}&=B\\
+\int\frac{dq}{(1-q)(q_e-q)}&=\int k_qdt \\
+\int \left \{\frac{(q_e-1)^{-1}}{1-q}+\frac{(1-q_e)^{-1}}{q_e-q}\right\}dq&=\int k_qdt \\
+q(t)&= \frac{q_e-q_ee^{-kt}}{1-q_ee^{-kt}}=q_e\frac{1-e^{-kt}}{1-q_ee^{-kt}} \text{ where } k=(1-q_e)k_q\\
+\arg\min_k&\sum_{i=1}^{n}(q(t_i,k)-\hat{q}(t_i))^2 
+\end{align*}
+$$
+where 
+
+* $(t_i,\hat{q}(t_i))$ is the observed values,
+* $q(t,k) =q_e\frac{1-e^{-kt}}{1-q_ee^{-kt}}$
+
+## Required Skills
+
+* Mathematics: differential equation
+* Statistics: non-linear least square with the Levenberg-Marquardt algorithm
+* Biology
+
+## Colaborators
+
+* 1 mathematics professor (advisor)
+* 1 biology professor (advisor)
+* 2 mathematicians
+* 1 biologist
+ 
+## Result
+
+|Metal| $q_e$ |parameter| Estimate |Std. Error| $t$ value | $Pr(>|t|)$| df | n|
+|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+|copper| .46 |$k$| 0.01281219 |0.0008855| 20.47 | $<2e-16$| 34 | 35|
+|cobalt| .235|$k$| 0.069941 |0.003279| 21.33 | $<2e-16$| 34 | 35|
+|zinc| .24 |$k$| 0.150255 |0.009133| 16.45 | $<2e-16$| 32 | 33|
+
+
+</div>

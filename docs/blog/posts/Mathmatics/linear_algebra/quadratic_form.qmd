@@ -15,8 +15,16 @@ format:
     number-sections: true
 draft: false
 execute:
-  echo: false
+  echo: true
+  warning: false
+  message: false
 ---
+
+```{r}
+library(tidyverse)
+library(mosaic)
+library(mvtnorm)
+```
 
 ## Quadratic Form
 
@@ -115,28 +123,136 @@ print(A)
 ```
 :::
 
-### 5 Types of Quadratic Forms
-
-1. Positive Definite: for non-zero vector, $\mathbf{x}$, $\mathbf Q(\mathbf x)>0$
-1. Positive Semi-Definite: for non-zero vector, $\mathbf{x}$, $\mathbf Q(\mathbf x)\ge 0$
-1. Negative Definite: for non-zero vector, $\mathbf{x}$, $\mathbf Q(\mathbf x)<0$
-1. Negative Semi-Definite: for non-zero vector, $\mathbf{x}$, $\mathbf Q(\mathbf x) \le 0$
-1. Indefinite (otherwise)
-
-
-
-
 ### Properties
 
 * Linearity: $Q(a\mathbf{x} + b\mathbf{y}) = aQ(\mathbf{x}) + bQ(\mathbf{y})$, where $a,b$ are scalars and $\mathbf{x},\mathbf{y}$ are vectors.
 * Symmetry: $Q(\mathbf{x}) = Q(\mathbf{x}^T)$ for all vectors $\mathbf{x}$.
 * Homogeneity: $Q(k\mathbf{x}) = k^2 Q(\mathbf{x})$ for all vectors $\mathbf{x}$ and scalar $k$.
-* Positive definite: $Q(\mathbf{x}) > 0$ for all nonzero vectors $\mathbf{x}$.
-* Negative definite: $Q(\mathbf{x}) < 0$ for all nonzero vectors $\mathbf{x}$.
-* Positive semi-definite: $Q(\mathbf{x}) \geq 0$ for all vectors $\mathbf{x}$.
-* Negative semi-definite: $Q(\mathbf{x}) \leq 0$ for all vectors $\mathbf{x}$.
-* Indefinite: $Q(\mathbf{x})$ takes both positive and negative values for some nonzero vector $\mathbf{x}$.
+* 5 Types of Quadratic Forms
+  1. Positive Definite: $Q(\mathbf{x}) > 0$ for all nonzero vectors $\mathbf{x}$.
+  1. Positive Semi-Definite: $Q(\mathbf{x}) \geq 0$ for all vectors $\mathbf{x}$.
+  1. Negative Definite: $Q(\mathbf{x}) < 0$ for all nonzero vectors $\mathbf{x}$.
+  1. Negative Semi-Definite: $Q(\mathbf{x}) \leq 0$ for all vectors $\mathbf{x}$.
+  1. Indefinite: $Q(\mathbf{x})$ takes both positive and negative values for some nonzero vector $\mathbf{x}$.
 
+```{r}
+plot_quadratic_form<-function(formula){
+  plotFun(formula,
+  x1.lim=range(-10,10),
+  x2.lim=range(-10,10),
+  surface=TRUE,
+  xlab=expression(x[1]),
+  ylab=expression(x[2]),
+  zlab=expression(Q(x[1],x[2]))
+  )
+}
+```
+
+```{r}
+## PDM: positive definite matrix
+## PSDM: positive semi-definite matrix
+## NDM: negative definite matrix
+## NSDM: negative semi-definite matrix
+## IDM: indefinte matrix
+
+PDM <-matrix(c(1,0,0,1),2,2)
+PSDM <-matrix(c(1,1,1,1),2,2)
+NDM <-matrix(c(-1,0,0,-1),2,2)
+NSDM <-matrix(c(-1,-1,-1,-1),2,2)
+IDM<- matrix(c(1,0,0,-1),2,2)
+
+# positive definite
+plot_quadratic_form(x1^2 + x2^2 ~x1&x2)
+# positive semi-definite
+plot_quadratic_form(x1^2 +2*x1*x2+x2^2~x1 &x2)
+# negative definite
+plot_quadratic_form(-x1^2 - x2^2 ~x1&x2)
+# negative semi-definite
+plot_quadratic_form(-x1^2 -2*x1*x2-x2^2~x1 &x2)
+# indefinite matrix
+plot_quadratic_form(x1^2 -x2^2~x1 &x2)
+
+```
+
+* all the $a_{ii}$ s has the same sign for the following cases
+  * positive definite: except for f(x1,x2)= f(0,0) =0, all f(x1,x2) are positive. 
+  * semi-positive definite: f(x1,x2)= f(0,0),... , f(10,10) =0, the other all f(x1,x2) are negative.
+  * negative definite: except for f(x1,x2)= f(0,0) =0, all f(x1,x2) are positive.
+  * semi-negative definite: f(x1,x2)= f(0,0),... , f(10,10) =0, the other all f(x1,x2) are negative.
+* indefinite: the graph has the saddle point
+
+```{r}
+# c(3,3,3,7)
+plot_quadratic_form(3*x1^2 +6*x1*x2+7*x2^2~x1 &x2)
+```
+
+#### How to Tell Positive Definite Matrix from Positive Semi-Definite Matrix?
+
+Eigen value decomposition makes it possible to tell a Positive Definite Matrix from a Positive Semi-Definite Matrix. 
+
+:::{#thm-spectral}
+### Spectral Theorem for Symmetric Matrices
+
+A real symmetric matrix is positive definite if and only if all its eigenvalues are positive.
+:::
+
+The result of eigen value decomposition are eigen values and eigen vectors. According to the types of the eigen values, we can determine what the matrix is:
+
+* positive definite if the eigen values are all positive.
+* semi-positive definite if at least one of the eigen values is zero and the rest of them are all positive.
+* negative definite if the eigen values are all negative.
+* semi-negative definite if the eigen values are all negative and the rest of them are all negative.
+* indefinite if the eigen values has both signs +/-.
+
+:::{.callout-important}
+If eigen values are all positive and the matrix is positive definite, the matrix is invertible.
+:::
+
+```{r}
+A<-matrix(c(3,3,3,7), nrow=2)
+eigen(A)
+eigen(PDM)
+eigen(PSDM)
+eigen(NDM)
+eigen(NSDM)
+eigen(IDM)
+```
+
+
+### Positive Definite Matrix
+
+A symmetric matrix $\mathbf{A}$ is positive definite if and only if the quadratic form $f(\mathbf{x})=\mathbf{x}^T \mathbf{A} \mathbf{x}$ is positive for all nonzero vectors $\mathbf{x}$.
+
+To see why this is true, consider the eigenvalue decomposition of $\mathbf{A}$, which can be written as $\mathbf{A} = \mathbf{Q} \Lambda \mathbf{Q}^T$, 
+where $\mathbf{Q}$ is an orthogonal matrix and $\Lambda$ is a diagonal matrix containing the eigenvalues of $\mathbf{A}$. Then, for any nonzero vector $\mathbf{x}$, we have
+
+$$
+\begin{aligned}
+\mathbf x^T \mathbf A \mathbf x&=\mathbf x^T \mathbf Q \mathbf \Lambda \mathbf Q^T \mathbf x \quad (\because \text{diagonalization of } \mathbf A)\\ 
+&=(\mathbf x^T \mathbf Q)\mathbf \Lambda ( \mathbf Q^T\mathbf x)\\
+&=\sum_{i=1}^{n} \lambda_iy_i^2
+\end{aligned}
+$$
+
+where $y_i = (\mathbf{x}^T \mathbf{Q})_i$ is the $i$ th coordinate (i.e., a scalar value that represents the position of a point or a vector relative to a chosen basis) of $\mathbf{x}^T \mathbf{A}$ and $n$ is the dimension of $\mathbf{x}$ and $\mathbf{A}$. 
+
+Note that since $\mathbf{Q}$ is orthogonal, we have $\mathbf{Q}^T \mathbf{Q} = \mathbf{I}$, so $y_i = \mathbf{q}_i^T \mathbf{x}$, where $\mathbf{q}_i$ is the $i$ th column of $\mathbf{Q}$. Therefore, the quadratic form $f(\mathbf{x}) = \mathbf{x}^T \mathbf{A} \mathbf{x}$ can be written in terms of the eigenvalues of $\mathbf{A}$ and the coordinates of $\mathbf{x}$ with respect to the eigenvectors of $\mathbf{A}$.
+
+:::{.callout-tip}
+
+#### Diagonalization 
+
+Diagonalization is a process of finding a diagonal matrix $\mathbf D$ and an invertible matrix $\mathbf P$ such that $\mathbf{P}^{-1}\mathbf{A}\mathbf{P} = \mathbf{D}$, where $\mathbf A$ is a square matrix. In other words, diagonalization is a way of representing a matrix as a diagonal matrix, which is a matrix with non-zero values only on its main diagonal.
+:::
+
+Since $\mathbf{A}$ is positive definite, we have $\lambda_i > 0$ for all $i$, and so $\sum_{i=1}^n \lambda_i y_i^2 > 0$ for all nonzero vectors $\mathbf{x}$. Therefore, the quadratic form $f(\mathbf{x})=\mathbf{x}^T \mathbf{A} \mathbf{x}$ is positive for all nonzero vectors $\mathbf{x}$, which implies that $\mathbf{A}$ is positive definite.
+
+In other words, the positive definiteness of a symmetric matrix $\mathbf{A}$ is equivalent to the positivity of the associated quadratic form $f(\mathbf{x})=\mathbf{x}^T \mathbf{A} \mathbf{x}$ for all nonzero vectors $\mathbf{x}$.
+
+Therefore, a symmetric matrix, $\mathbf A$ is said to be positive definite if all of its eigenvalues are positive or equivalently, a symmetric matrix, $\mathbf A$ is positive definite if left-multiplying and right-multiplying it by the same vector, $\mathbf x$ always gives a positive number if $\mathbf x^T \mathbf A \mathbf x$
+
+
+### Bilinear Form
 
 A quadratic form can be expressed as a bilinear form. In other words, a quadratic form can be written in terms of a bilinear form by defining a new matrix that is the sum of the matrix representing the quadratic form and its transpose.
 
@@ -155,6 +271,10 @@ In other words, every quadratic form can be expressed as a bilinear form, and ev
 
 ## Examples
 
+
+
+## Apllications
+
 ### Sum of Squares
 
 The sum of squares of a vector $\mathbf{x} = [x_1, x_2, \ldots, x_n]^T$ can be represented as a quadratic form $\mathbf{x}^T\mathbf{x}$. To see this, consider the sum of squares:
@@ -170,6 +290,112 @@ $$
 $$
 
 Therefore, the sum of squares can be represented as a quadratic form $\mathbf{x}^T\mathbf{x}$.
+
+
+### Define Multivariate Distributions
+
+#### Bivariate Distributions
+
+Quadratic form is used in the power part of the pdf of a bivariate normal distribution:
+$$
+f(x_1,x_2)=\frac{1}{2\pi\sigma_{\mathbf{X_1}}\sigma_{\mathbf{X_2}}\sqrt{1-\rho^2}}\operatorname{exp}\left[ -\frac{1}{2(1-\rho^2)}\left(\frac{(x_1-\mu_{X_1})^2}{\sigma_{X_1}}-\frac{2\rho(x_1-\mu_{X_1})(x_1-\mu_{X_1})(x_2-\mu_{X_2})}{\sigma_{X_1}\sigma_{X_2}}+\frac{(x_2-\mu_{X_2})^2}{\sigma_{X_2}}\right) \right]
+$$
+where $\mu_{X_1}, \mu_{X_2}$ are the means of $X, Y$ respectively, $\sigma_{X_1}, \sigma_{X_2}$ are the standard deviations of  $X_1,X_2$ respectively, and $\rho$ is the correlation coefficient $X_1,X_2$.
+
+The pdf is equivalent with the following matrix form:
+
+$$
+f(\mathbf{x})=\frac{1}{(2\pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}}\operatorname{exp}\left[ -\frac{1}{2}(\mathbf{x}-\mathbf{\mu})^{T}\mathbf{\Sigma}^{-1}(\mathbf{x}-\mathbf{\mu})\right]
+$$
+
+where $(\mathbf{x}-\mathbf{\mu})^{T}\mathbf{\Sigma}^{-1}(\mathbf{x}-\mathbf{\mu})$ is a quadratic form, $\mathbf{x}$ is a vector in $\mathbb{R}^n$, $\mathbf{\mu}$ is a mean vector in $\mathbb{R}^n$, and $\mathbf{\Sigma}$ is a covariance matrix.
+
+$$
+\mathbf{x}=
+\begin{bmatrix}x_1 \\ x_2\end{bmatrix} \quad 
+\mathbf{\mu}=\begin{bmatrix}\mu_{x_1} \\ \mu_{x_2}\end{bmatrix} \quad 
+\mathbf{\Sigma}=\begin{bmatrix}
+\sigma_{X_1}^2 & \rho\sigma_{X_1}\sigma_{X_2}\\ 
+\rho\sigma_{X_1}\sigma_{X_2} & \sigma_{X_2}
+\end{bmatrix}
+$$.
+
+The quadratic form $\mathbf{\sigma}$ informs us of how data are distributed with means $\mathbf{\mu}$ and the covariance matrix $\mathbf{\Sigma}$.
+
+**Exmaple1** $2x_1^2+4x_2^2$ can be represented as a quadratic form $\begin{bmatrix}x_1 & x_2\end{bmatrix}\begin{bmatrix}2&0 \\0&4\end{bmatrix}\begin{bmatrix}x_1 \\ x_2\end{bmatrix}$. The matrix $\mathbf{A}$ part is $\begin{bmatrix}2&0 \\0&4\end{bmatrix}$ and its inverse is $\begin{bmatrix}2^{-1}&0 \\0&4^{-1}\end{bmatrix}$. Here, since the off diagonal entries are zeros, $X_1$ and $X_2$ are independent. Then, the pdf is:
+
+$$
+f(x_1,x_2)=\frac{1}{2\pi\sigma_{\mathbf{X_1}}\sigma_{\mathbf{X_2}}}\operatorname{exp}\left[ -\frac{1}{2}\left(\frac{(x_1-\mu_{X_1})^2}{\sigma_{X_1}}+\frac{(x_2-\mu_{X_2})^2}{\sigma_{X_2}}\right) \right]
+$$
+
+:::{.callout-tip}
+The inverse of a diagonal matrix is the inverse of each entry
+:::
+
+**Exmaple2** $9x_1^2+6x_1x_2+4x_2^2$
+
+```{r}
+mu<-c(1,2)
+mu1<-1
+mu2<-2
+sigma1<-3
+sigma2<-2
+rho<-0.5
+sigma<-matrix(c(sigma1^2,rho*sigma1*sigma2,rho*sigma1*sigma2,sigma2^2),2)
+
+dmvnorm(x=c(1,1),mean=mu,sigma=sigma) # a pdf value at (1,1)
+# 1/((2*pi)*sqrt(det(sigma)))*exp(-0.5*t(c(1,1)-mu) %*% solve(sigma) %*% (c(1,1)-mu))
+```
+
+This value is the same as $f(\mathbf{x})=\frac{1}{(2\pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}}\operatorname{exp}\left[ -\frac{1}{2}(\mathbf{x}-\mathbf{\mu})^{T}\mathbf{\Sigma}^{-1}(\mathbf{x}-\mathbf{\mu})\right]=$ `r 1/((2*pi)*sqrt(det(sigma)))*exp(-0.5*t(c(1,1)-mu) %*% solve(sigma) %*% (c(1,1)-mu))`
+
+```{r}
+plotFun(1/(2*pi*sigma1*sigma2*sqrt(1-rho^2))*exp(-1/(2*(1-rho^2))*((x1-mu1)^2/sigma1^2+(x2-mu2)^2-2*rho*(x1-mu1)*(x2-mu2))/(sigma1*sigma2))~x1 & x2,
+  mu1=1,
+  mu2=2,
+  sigma1=3,
+  sigma2=2,
+  rho=0.5,
+  x1.lim=range(-5,5),
+  x2.lim=range(-5,5),
+  surface=TRUE,
+  xlab=expression(x[1]),
+  ylab=expression(x[2]),
+  zlab=expression(f(x[1],x[2])))
+```
+
+#### Multivariate Distributions
+
+### Optimization Problems
+
+#### Quadratic Programming
+
+Objective Functions, Constraints, or Penalty Terms
+
+### Study of Quadratic Behavior Systems
+
+#### Harmonic Oscillators
+
+#### Vibrating Systems.
+
+### Machine Learning
+
+#### Cost Functions
+
+#### Regularization terms,
+Ridge Regression
+
+#### Kernel Functions
+SVM
+
+### Finance
+
+Modeling risk and return in portfolio optimization and asset pricing models
+
+### Cryptography
+
+quadratic sieve algorithm for integer factorization
+
 
 ### Variability of Vector, \mathbf x
 
@@ -318,7 +544,6 @@ plt.show()
 
 This representation is useful in many statistical and machine learning applications, where the covariance matrix provides information about the variability and dependencies between different features or variables. For example, in principal component analysis (PCA), the covariance matrix is used to identify the directions of maximum variability in a dataset, which can be used to reduce the dimensionality of the data while retaining as much information as possible.
 
-
 ### PCA
 
 The principal components of a dataset can be obtained by finding the eigenvectors of the covariance matrix. In other words, we can express the covariance matrix as a quadratic form:
@@ -330,35 +555,3 @@ $$
 where $\mathbf{x}$ is a column vector of centered data, and $\mathbf{A}$ is a symmetric positive semi-definite matrix (the covariance matrix). Diagonalizing $\mathbf{A}$ gives us the eigenvalues and eigenvectors, which are used to transform the original data into a new coordinate system, where the first axis (the first principal component) corresponds to the direction of greatest variance, the second axis (the second principal component) corresponds to the direction of second greatest variance, and so on. This new coordinate system is called the principal component space.
 
 In summary, PCA can be seen as a method for finding the principal components of a dataset by diagonalizing the covariance matrix, which can be expressed as a quadratic form.
-
-### Positive Definit Matrix
-
-a symmetric matrix $A$ is positive definite if and only if the quadratic form $f(\mathbf{x})=\mathbf{x}^T A \mathbf{x}$ is positive for all nonzero vectors $\mathbf{x}$.
-
-To see why this is true, consider the eigenvalue decomposition of $A$, which can be written as $A = Q \Lambda Q^T$, where $Q$ is an orthogonal matrix and $\Lambda$ is a diagonal matrix containing the eigenvalues of $A$. Then, for any nonzero vector $\mathbf{x}$, 
-
-:::{.callout-tip}
-
-#### Diagonalization 
-
-Diagonalization is a process of finding a diagonal matrix $\mathbf D$ and an invertible matrix $\mathbf P$ such that $P^{-1}AP = D$, where $\mathbf A$ is a square matrix. In other words, diagonalization is a way of representing a matrix as a diagonal matrix, which is a matrix with non-zero values only on its main diagonal.
-:::
-
-we have
-
-
-$$
-\begin{aligned}
-\mathbf x^T \mathbf A \mathbf x&=\mathbf x^T \mathbf Q \mathbf \Lambda \mathbf Q^T \mathbf x\\
-&=(\mathbf x^T \mathbf Q)\mathbf \Lambda ( \mathbf Q^T\mathbf x)\\
-&=\sum_{i=1}^{n} \lambda_iy_i^2
-\end{aligned}
-$$
-
-where $y_i = (\mathbf{x}^T Q)_i$ is the $i$th coordinate (i.e., a scalar value that represents the position of a point or a vector relative to a chosen basis) of $\mathbf{x}^T Q$ and $n$ is the dimension of $\mathbf{x}$ and $A$. Note that since $Q$ is orthogonal, we have $Q^T Q = I$, so $y_i = \mathbf{q}_i^T \mathbf{x}$, where $\mathbf{q}_i$ is the $i$th column of $Q$. Therefore, the quadratic form $f(\mathbf{x}) = \mathbf{x}^T A \mathbf{x}$ can be written in terms of the eigenvalues of $A$ and the coordinates of $\mathbf{x}$ with respect to the eigenvectors of $A$.
-
-Since $A$ is positive definite, we have $\lambda_i > 0$ for all $i$, and so $\sum_{i=1}^n \lambda_i y_i^2 > 0$ for all nonzero vectors $\mathbf{x}$. Therefore, the quadratic form $f(\mathbf{x})=\mathbf{x}^T A \mathbf{x}$ is positive for all nonzero vectors $\mathbf{x}$, which implies that $A$ is positive definite.
-
-In other words, the positive definiteness of a symmetric matrix $A$ is equivalent to the positivity of the associated quadratic form $f(\mathbf{x})=\mathbf{x}^T A \mathbf{x}$ for all nonzero vectors $\mathbf{x}$.
-
-Therefore, a symmetric matrix, $\mathbf A$ is said to be positive definite if all of its eigenvalues are positive or equivalently, a symmetric matrix, $\mathbf A$ is positive definite if left-multiplying and right-multiplying it by the same vector, $\mathbf x$ always gives a positive number if $\mathbf x^T \mathbf A \mathbf x$

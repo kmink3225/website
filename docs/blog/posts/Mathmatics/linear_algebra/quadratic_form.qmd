@@ -20,14 +20,21 @@ execute:
 
 ## Quadratic Form
 
+:::{#def-quadratic}
+### Quadratic Form
 For a vector $\mathbf{x} = [x_1,x_2,\ldots,x_n]^T$, the quadratic form is defined as
 
-$Q(\mathbf{x}) = \mathbf{x}^T \mathbf{A} \mathbf{x}$
+$$
+Q(\mathbf{x}) = \mathbf{x}^T \mathbf{A} \mathbf{x}
+$$
 
 where $\mathbf{A}$ is an $n \times n$ symmetric matrix.
 
+:::
+
 Here, $\mathbf{x}^T$ represents the transpose of the vector $\mathbf{x}$ and $\mathbf{x}^T \mathbf{A} \mathbf{x}$ represents the dot product of the vector $\mathbf{x}$ with itself after the transformation by the matrix $\mathbf{A}$.
 
+The quadratic form can be used to represent a quadratic equation using vectors and matrices.
 For example, let $\mathbf{x} = [x_1,x_2]^T$ and $\mathbf{A}$ be a $2 \times 2$ symmetric matrix given by:
 
 $$
@@ -36,23 +43,111 @@ $$
 
 Then, the quadratic form $Q(\mathbf{x})$ can be written as:
 
-
 $$
-\mathbf Q(\mathbf x) = \begin{bmatrix} x_1 & x_2 \end{bmatrix}\begin{bmatrix} 2&1 \\ 1&3 \end{bmatrix}\begin{bmatrix} x_1 \\ x_2 \end{bmatrix}=2x_1^2+4x_1x_2+3x_2^2
+\begin{align*}
+\mathbf{Q}(\mathbf{x}) &= 
+\begin{bmatrix} x_1 & x_2 
+\end{bmatrix} 
+\begin{bmatrix} 
+2 & 1 \\ 
+1 & 3 
+\end{bmatrix} 
+\begin{bmatrix} 
+x_1 \\ x_2 
+\end{bmatrix} \\
+&= \begin{bmatrix} 2x_1 + x_2 & x_1 + 3x_2 \end{bmatrix} 
+\begin{bmatrix} x_1 \\ x_2 \end{bmatrix} \\
+&= 2x_1^2 + 2x_1x_2 + 3x_2^2
+\end{align*}
 $$
 
 
 Here, we can see that the quadratic form can be represented as a polynomial function of degree 2 in the variables $x_1$ and $x_2$ with the coefficients given by the entries of the symmetric matrix $\mathbf{A}$.
 
-a quadratic form can be expressed as a bilinear form. In other words, a quadratic form can be written in terms of a bilinear form by defining a new matrix that is the sum of the matrix representing the quadratic form and its transpose.
 
-More formally, suppose we have a quadratic form defined as:
+:::{.callout-note}
+#### Non-uniqueness
 
-$q(\mathbf{x}) = \mathbf{x}^T \mathbf{A} \mathbf{x}$
+Note that the matrix $\mathbf{A}$ of the quadratic form $Q(\mathbf{x})$ is not uniuqe if $\mathbf{A}$ is not symmetric. Different choices of $\mathbf{A}$ can give rise to the same quadratic form. For example, $\mathbf B = \begin{bmatrix} 2&1.5 \\ 0.5&3 \end{bmatrix}$ makes the $\mathbf Q(\mathbf x) = 2x_1^2+2x_1x_2+3x_2^2$
 
-where $\mathbf{A}$ is a symmetric matrix. Then, we can define a bilinear form as:
+$$
+\mathbf Q(\mathbf x) = \mathbf{x}^T \mathbf{B} \mathbf{x}=
+\begin{bmatrix} 
+x_1 & x_2 
+\end{bmatrix}
+\begin{bmatrix} 
+2&1.5 \\ 0.5&3 
+\end{bmatrix}
+\begin{bmatrix} 
+x_1 \\ x_2 
+\end{bmatrix}=2x_1^2+2x_1x_2+3x_2^2
+$$
 
-$b(\mathbf{x}, \mathbf{y}) = \frac{1}{2}(\mathbf{x}^T \mathbf{A} \mathbf{y} + \mathbf{y}^T \mathbf{A} \mathbf{x})$
+There are infinitely many cases that resulting in $\mathbf Q(\mathbf x) = 2x_1^2+2x_1x_2+3x_2^2$ with any combination of $b_{12},b_{21}$ such that $b_{12} + b_{21} =2$.
+
+Another example of $\mathbf Q(\mathbf x)= \mathbf{x}^T \mathbf{A} \mathbf{x}= 4x_1^2+7x_1x_2+9x_2^2$ gives the possible multiple $\mathbf{B}$ matrices such as 
+$$
+\mathbf{B}_1 = \begin{bmatrix} 4&4 \\ 3&9 \end{bmatrix} \quad \mathbf{B}_2 = \begin{bmatrix} 4&3.5 \\ 3.5&9 \end{bmatrix} \quad \mathbf{B}_3 = \begin{bmatrix} 4&1 \\ 6&9 \end{bmatrix} \quad \mathbf{B}_4 = \begin{bmatrix} 4&2 \\ 5&9 \end{bmatrix} \quad \text{etc}
+$$.
+
+
+**But there are several constraints that can be imposed on $\mathbf{A}$ to make it unique**:
+
+* Symmetric: If $\mathbf{A}$ is required to be symmetric, i.e., $\mathbf{A} = \mathbf{A}^T$, then it can be shown that $\mathbf{A}$ is unique.
+  * Suppose $Q(\mathbf{x})=x_1^2+x_2^2+x_3^2$. Then the associated matrix is $\mathbf{A}=\begin{bmatrix}1&0&0\\0&1&0\\0&0&1\end{bmatrix}$.
+* Positive definite: If $\mathbf{A}$ is required to be positive definite, i.e., $\mathbf{x}^T \mathbf{A} \mathbf{x} > 0$ for all nonzero vectors $\mathbf{x}$, then it can be shown that $\mathbf{A}$ is unique.
+  * Suppose $Q(\mathbf{x})=2x_1^2+3x_2^2+4x_3^2+4x_1x_2-4x_1x_3+8x_2x_3$. Then the associated matrix is $\mathbf{A}=\begin{bmatrix}2&2&-2\\2&3&4\\-2&4&4\end{bmatrix}$.
+* Diagonal: If $\mathbf{A}$ is required to be diagonal, then it is unique up to the order of the diagonal elements.
+  * Consider the quadratic form $Q(\mathbf{x}) = x_1^2 - 4x_1x_2 + 4x_2^2 + 4x_3^2$. To express $Q(\mathbf{x})$ in the form of $\mathbf{x}^T\mathbf{A}\mathbf{x}$, we first define the matrix $\mathbf{A}$ as $\mathbf{A}=\begin{bmatrix}1&-2&0\\-2&3&0\\0&0&4\end{bmatrix}$. Then we have $Q(\mathbf{x}) = \mathbf{x}^T \mathbf{A} \mathbf{x}=\begin{bmatrix}x_1&x_2&x_3\end{bmatrix}\begin{bmatrix}1&-2&0\\-2&3&0\\0&0&4\end{bmatrix}\begin{bmatrix}x_1\\x_2\\x_3\end{bmatrix}$. So, the matrix $\mathbf{A}$ is unique, and it is the one we defined above.
+
+To find the symmetrtic matrix $\mathbf{A}$ among these candidates, pick one of the candidates matrices and conduct the following operation:
+$$
+\mathbf{A}=\frac{1}{2}(\mathbf{B}_i+\mathbf{B}_i^T)
+$$
+
+```{r}
+B<-matrix(c(6,65,98,5),ncol=2)
+A<-0.5*(B+t(B))
+print('B=')
+print(B)
+print('A=')
+print(A)
+```
+:::
+
+### 5 Types of Quadratic Forms
+
+1. Positive Definite: for non-zero vector, $\mathbf{x}$, $\mathbf Q(\mathbf x)>0$
+1. Positive Semi-Definite: for non-zero vector, $\mathbf{x}$, $\mathbf Q(\mathbf x)\ge 0$
+1. Negative Definite: for non-zero vector, $\mathbf{x}$, $\mathbf Q(\mathbf x)<0$
+1. Negative Semi-Definite: for non-zero vector, $\mathbf{x}$, $\mathbf Q(\mathbf x) \le 0$
+1. Indefinite (otherwise)
+
+
+
+
+### Properties
+
+* Linearity: $Q(a\mathbf{x} + b\mathbf{y}) = aQ(\mathbf{x}) + bQ(\mathbf{y})$, where $a,b$ are scalars and $\mathbf{x},\mathbf{y}$ are vectors.
+* Symmetry: $Q(\mathbf{x}) = Q(\mathbf{x}^T)$ for all vectors $\mathbf{x}$.
+* Homogeneity: $Q(k\mathbf{x}) = k^2 Q(\mathbf{x})$ for all vectors $\mathbf{x}$ and scalar $k$.
+* Positive definite: $Q(\mathbf{x}) > 0$ for all nonzero vectors $\mathbf{x}$.
+* Negative definite: $Q(\mathbf{x}) < 0$ for all nonzero vectors $\mathbf{x}$.
+* Positive semi-definite: $Q(\mathbf{x}) \geq 0$ for all vectors $\mathbf{x}$.
+* Negative semi-definite: $Q(\mathbf{x}) \leq 0$ for all vectors $\mathbf{x}$.
+* Indefinite: $Q(\mathbf{x})$ takes both positive and negative values for some nonzero vector $\mathbf{x}$.
+
+
+A quadratic form can be expressed as a bilinear form. In other words, a quadratic form can be written in terms of a bilinear form by defining a new matrix that is the sum of the matrix representing the quadratic form and its transpose.
+
+:::{#def-bilinear}
+### Bilinear Form
+Suppose we have a quadratic form defined as $q(\mathbf{x}) = \mathbf{x}^T \mathbf{A} \mathbf{x}$ where $\mathbf{A}$ is a symmetric matrix. Then, we can define a bilinear form as:
+
+$$
+b(\mathbf{x}, \mathbf{y}) = \frac{1}{2}(\mathbf{x}^T \mathbf{A} \mathbf{y} + \mathbf{y}^T \mathbf{A} \mathbf{x})
+$$
+:::
 
 Note that the factor of $\frac{1}{2}$ is introduced to avoid double-counting. It can be shown that the two forms are equivalent, in the sense that for any $\mathbf{x}$, $q(\mathbf{x}) = b(\mathbf{x}, \mathbf{x})$.
 

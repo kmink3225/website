@@ -524,28 +524,38 @@ English
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: center;">Sample Size</td>
+<td style="text-align: center;">QC 알고리즘 개발에 사용되는 샘플 크기</td>
 <td style="text-align: left;">n=100</td>
-<td style="text-align: left;">2552번의 실험에서 얻은 신호 n=61,248</td>
+<td style="text-align: left;">Signals from 2552 experiments, n=61,248</td>
 </tr>
 <tr class="even">
+<td style="text-align: center;">QC 알고리즘 성능 비교에 사용되는 샘플 크기</td>
+<td style="text-align: left;">n=61,248</td>
+<td style="text-align: left;">n=61,248</td>
+</tr>
+<tr class="odd">
 <td style="text-align: center;">Evaluation Metrics</td>
 <td style="text-align: left;">2 metrics</td>
 <td style="text-align: left;">10 metrics ( the exsting 2 metrics + new 8 metrics)</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: center;">Input Process</td>
-<td style="text-align: left;">manually copy &amp; paste data of excel files extracted from a certain program</td>
-<td style="text-align: left;">Web-Based Automation, upload multiple experiment files</td>
+<td style="text-align: left;">특정 프로그램에서 추출한 엑셀 파일의 데이터를 수동으로 복사하여 붙여넣기</td>
+<td style="text-align: left;">웹 기반 자동화, 다수의 실험 파일 업로드</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Output Process</td>
+<td style="text-align: left;">Batch Evaluation method,</td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="even">
-<td style="text-align: center;">Output Process</td>
-<td style="text-align: left;">Batch Evaluation method, if even one of the signals from the equipment fails, the equipment fails. (Blind Spot: If there is one human error signal, the equipment is unconditionally disqualified.)</td>
-<td style="text-align: left;">Differential Evaluation method, The signals from the equipment are scored, the average value is obtained, and the equipment is graded A+, A, B, and F. Failed if F. Robust on the error signal as it excludes the error signal from evaluation</td>
+<td style="text-align: center;">장비의 신호 중 하나라도 부적합 판정되면 장비 자체가 QC 부적합 판정 (맹점: 휴먼에러 신호가 1개라도 있으면 장비는 무조건 실격 처리)</td>
+<td style="text-align: left;">Differential Evaluation method, 장비의 신호에 점수를 계산 후 평균값을 구하고 장비 등급을 A+, A, B, F로 지정. F인 경우 부적합. 오류 신호를 평가에서 제외하므로 오류 신호에 robust</td>
+<td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">Output 1</td>
-<td style="text-align: left;">pass: 92.58%, fail: 7.42%</td>
+<td style="text-align: left;">pass: 92.58%, fail: 7.42% (after excluding many human errors)</td>
 <td style="text-align: left;">A+ (pass): 7.01%, A (pass): 12.91%, B (pass): 75.72%, F (fail): 4.36%</td>
 </tr>
 <tr class="even">
@@ -556,7 +566,7 @@ English
 <tr class="odd">
 <td style="text-align: center;">Output 3</td>
 <td style="text-align: left;">NA</td>
-<td style="text-align: left;">Normal Signals, Human Errors, Device Errors, Manufacturing Errors</td>
+<td style="text-align: left;">Classfication Results: Normal Signals, Human Errors, Device Errors, Manufacturing Errors</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">Time Consumed</td>
@@ -565,17 +575,17 @@ English
 </tr>
 <tr class="odd">
 <td style="text-align: center;">Data Management</td>
-<td style="text-align: left;">Non-standard management method (stored in NAS directory in a different form as an Excel file in a different way for each worker)</td>
-<td style="text-align: left;">Automatic loading in DB in standardized form by a scheduler (equipment failure tracing analysis becomes possible)</td>
+<td style="text-align: left;">Non-standard management method (작업자마다 다른 방식으로 Excel 파일로 다른 형태로 NAS 디렉토리에 저장)</td>
+<td style="text-align: left;">RDB uploaded by a scheduler (장비 고장 추적 분석이 가능)</td>
 </tr>
 </tbody>
 </table>
 <section id="remarkable" class="level3">
 <h3 class="anchored" data-anchor-id="remarkable">Remarkable</h3>
 <ul>
-<li>The noise test was abolished in the whole QC Process because I statistically proved that the noise test result does not have a significant impact on the difference of the mean of the final result in the whole diagnostic process at the 1% significance level.</li>
-<li>It turned out to be an opportunity for the Data Science department to increase their understanding of experiments and data generated from equipment.</li>
-<li>It served as the basis for building a company-wide DB and building a platform architecture.</li>
+<li>1% 유의수준에서 노이즈 테스트 결과가 전체 진단 과정에서 최종 결과의 평균 차이에 큰 영향을 미치지 않는다는 것을 통계적으로 증명했기 때문에 전체 QC 프로세스에서 노이즈 테스트를 폐지.</li>
+<li>데이터 사이언스 부서에서 실험과 장비에서 생성된 데이터에 대한 이해도를 높일 수 있는 기회가 됐음.</li>
+<li>전사 DB구축 및 플랫폼 아키텍처 구축의 기반이 됨.</li>
 </ul>
 </section>
 </section>
@@ -687,12 +697,12 @@ English
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: center;">Sample Size for QC Algorithm Development</td>
+<td style="text-align: center;">Sample Size Used for QC Algorithm Development</td>
 <td style="text-align: left;">n=100</td>
 <td style="text-align: left;">Signals from 2552 experiments, n=61,248</td>
 </tr>
 <tr class="even">
-<td style="text-align: center;">Sample Size for QC Algorithm Comparison</td>
+<td style="text-align: center;">Sample Size Used for QC Algorithm Performance Comparison</td>
 <td style="text-align: left;">n=61,248</td>
 <td style="text-align: left;">n=61,248</td>
 </tr>

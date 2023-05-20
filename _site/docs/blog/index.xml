@@ -738,6 +738,7 @@ Note
 </ul></li>
 <li>1111-11-11, tidymodels</li>
 <li>1111-11-11, R shiny</li>
+<li>1111-11-11, mosaic</li>
 </ul>
 </section>
 <section id="python" class="level2">
@@ -4408,6 +4409,20 @@ Tip
 
 
 
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyverse)</span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(mosaic)</span>
+<span id="cb1-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(mvtnorm)</span></code></pre></div>
+</details>
+</div>
 <section id="quadratic-form" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="quadratic-form"><span class="header-section-number">1</span> Quadratic Form</h2>
 <div id="def-quadratic" class="theorem definition">
@@ -4452,17 +4467,75 @@ Non-uniqueness
 </ul>
 <p>To find the symmetrtic matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> among these candidates, pick one of the candidates matrices and conduct the following operation: <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D=%5Cfrac%7B1%7D%7B2%7D(%5Cmathbf%7BB%7D_i+%5Cmathbf%7BB%7D_i%5ET)%0A"></p>
 <div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">B<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">65</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">98</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ncol=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb2-2">A<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>(B<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">t</span>(B))</span>
+<span id="cb2-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'B='</span>)</span></code></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "B="</code></pre>
 </div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">print</span>(B)</span></code></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2]
 [1,]    6   98
 [2,]   65    5</code></pre>
 </div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'A='</span>)</span></code></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "A="</code></pre>
 </div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">print</span>(A)</span></code></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2]
 [1,]  6.0 81.5
@@ -4471,28 +4544,592 @@ Non-uniqueness
 </div>
 </div>
 </div>
-<section id="types-of-quadratic-forms" class="level3" data-number="1.1">
-<h3 data-number="1.1" class="anchored" data-anchor-id="types-of-quadratic-forms"><span class="header-section-number">1.1</span> 5 Types of Quadratic Forms</h3>
-<ol type="1">
-<li>Positive Definite: for non-zero vector, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q(%5Cmathbf%20x)%3E0"></li>
-<li>Positive Semi-Definite: for non-zero vector, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q(%5Cmathbf%20x)%5Cge%200"></li>
-<li>Negative Definite: for non-zero vector, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q(%5Cmathbf%20x)%3C0"></li>
-<li>Negative Semi-Definite: for non-zero vector, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20Q(%5Cmathbf%20x)%20%5Cle%200"></li>
-<li>Indefinite (otherwise)</li>
-</ol>
-</section>
-<section id="properties" class="level3" data-number="1.2">
-<h3 data-number="1.2" class="anchored" data-anchor-id="properties"><span class="header-section-number">1.2</span> Properties</h3>
+<section id="properties" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="properties"><span class="header-section-number">1.1</span> Properties</h3>
 <ul>
 <li>Linearity: <img src="https://latex.codecogs.com/png.latex?Q(a%5Cmathbf%7Bx%7D%20+%20b%5Cmathbf%7By%7D)%20=%20aQ(%5Cmathbf%7Bx%7D)%20+%20bQ(%5Cmathbf%7By%7D)">, where <img src="https://latex.codecogs.com/png.latex?a,b"> are scalars and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D,%5Cmathbf%7By%7D"> are vectors.</li>
 <li>Symmetry: <img src="https://latex.codecogs.com/png.latex?Q(%5Cmathbf%7Bx%7D)%20=%20Q(%5Cmathbf%7Bx%7D%5ET)"> for all vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</li>
 <li>Homogeneity: <img src="https://latex.codecogs.com/png.latex?Q(k%5Cmathbf%7Bx%7D)%20=%20k%5E2%20Q(%5Cmathbf%7Bx%7D)"> for all vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> and scalar <img src="https://latex.codecogs.com/png.latex?k">.</li>
-<li>Positive definite: <img src="https://latex.codecogs.com/png.latex?Q(%5Cmathbf%7Bx%7D)%20%3E%200"> for all nonzero vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</li>
-<li>Negative definite: <img src="https://latex.codecogs.com/png.latex?Q(%5Cmathbf%7Bx%7D)%20%3C%200"> for all nonzero vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</li>
-<li>Positive semi-definite: <img src="https://latex.codecogs.com/png.latex?Q(%5Cmathbf%7Bx%7D)%20%5Cgeq%200"> for all vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</li>
-<li>Negative semi-definite: <img src="https://latex.codecogs.com/png.latex?Q(%5Cmathbf%7Bx%7D)%20%5Cleq%200"> for all vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</li>
+<li>5 Types of Quadratic Forms
+<ol type="1">
+<li>Positive Definite: <img src="https://latex.codecogs.com/png.latex?Q(%5Cmathbf%7Bx%7D)%20%3E%200"> for all nonzero vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</li>
+<li>Positive Semi-Definite: <img src="https://latex.codecogs.com/png.latex?Q(%5Cmathbf%7Bx%7D)%20%5Cgeq%200"> for all vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</li>
+<li>Negative Definite: <img src="https://latex.codecogs.com/png.latex?Q(%5Cmathbf%7Bx%7D)%20%3C%200"> for all nonzero vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</li>
+<li>Negative Semi-Definite: <img src="https://latex.codecogs.com/png.latex?Q(%5Cmathbf%7Bx%7D)%20%5Cleq%200"> for all vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</li>
 <li>Indefinite: <img src="https://latex.codecogs.com/png.latex?Q(%5Cmathbf%7Bx%7D)"> takes both positive and negative values for some nonzero vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</li>
+</ol></li>
 </ul>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1">plot_quadratic_form<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">function</span>(formula){</span>
+<span id="cb10-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plotFun</span>(formula,</span>
+<span id="cb10-3">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x1.lim=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">range</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>),</span>
+<span id="cb10-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x2.lim=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">range</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>),</span>
+<span id="cb10-5">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">surface=</span><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>,</span>
+<span id="cb10-6">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">xlab=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">expression</span>(x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]),</span>
+<span id="cb10-7">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ylab=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">expression</span>(x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]),</span>
+<span id="cb10-8">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">zlab=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">expression</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">Q</span>(x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>],x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]))</span>
+<span id="cb10-9">  )</span>
+<span id="cb10-10">}</span></code></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## PDM: positive definite matrix</span></span>
+<span id="cb11-2"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## PSDM: positive semi-definite matrix</span></span>
+<span id="cb11-3"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## NDM: negative definite matrix</span></span>
+<span id="cb11-4"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## NSDM: negative semi-definite matrix</span></span>
+<span id="cb11-5"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## IDM: indefinte matrix</span></span>
+<span id="cb11-6"></span>
+<span id="cb11-7">PDM <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb11-8">PSDM <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb11-9">NDM <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb11-10">NSDM <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb11-11">IDM<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb11-12"></span>
+<span id="cb11-13"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># positive definite</span></span>
+<span id="cb11-14"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot_quadratic_form</span>(x1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> x2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>x1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span>x2)</span></code></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># positive semi-definite</span></span>
+<span id="cb12-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot_quadratic_form</span>(x1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>x1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>x2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>x2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>x1 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span>x2)</span></code></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># negative definite</span></span>
+<span id="cb13-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot_quadratic_form</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>x1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> x2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>x1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span>x2)</span></code></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-4-3.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># negative semi-definite</span></span>
+<span id="cb14-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot_quadratic_form</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>x1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>x1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>x2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>x2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>x1 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span>x2)</span></code></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-4-4.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># indefinite matrix</span></span>
+<span id="cb15-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot_quadratic_form</span>(x1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>x2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>x1 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span>x2)</span></code></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-4-5.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<ul>
+<li>all the <img src="https://latex.codecogs.com/png.latex?a_%7Bii%7D"> s has the same sign for the following cases
+<ul>
+<li>positive definite: except for f(x1,x2)= f(0,0) =0, all f(x1,x2) are positive.</li>
+<li>semi-positive definite: f(x1,x2)= f(0,0),… , f(10,10) =0, the other all f(x1,x2) are negative.</li>
+<li>negative definite: except for f(x1,x2)= f(0,0) =0, all f(x1,x2) are positive.</li>
+<li>semi-negative definite: f(x1,x2)= f(0,0),… , f(10,10) =0, the other all f(x1,x2) are negative.</li>
+</ul></li>
+<li>indefinite: the graph has the saddle point</li>
+</ul>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># c(3,3,3,7)</span></span>
+<span id="cb16-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot_quadratic_form</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>x1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>x1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>x2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>x2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>x1 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span>x2)</span></code></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<section id="how-to-tell-positive-definite-matrix-from-positive-semi-definite-matrix" class="level4" data-number="1.1.1">
+<h4 data-number="1.1.1" class="anchored" data-anchor-id="how-to-tell-positive-definite-matrix-from-positive-semi-definite-matrix"><span class="header-section-number">1.1.1</span> How to Tell Positive Definite Matrix from Positive Semi-Definite Matrix?</h4>
+<p>Eigen value decomposition makes it possible to tell a Positive Definite Matrix from a Positive Semi-Definite Matrix.</p>
+<div id="thm-spectral" class="theorem">
+<p><span class="theorem-title"><strong>Theorem 1 (Spectral Theorem for Symmetric Matrices) </strong></span>A real symmetric matrix is positive definite if and only if all its eigenvalues are positive.</p>
+</div>
+<p>The result of eigen value decomposition are eigen values and eigen vectors. According to the types of the eigen values, we can determine what the matrix is:</p>
+<ul>
+<li>positive definite if the eigen values are all positive.</li>
+<li>semi-positive definite if at least one of the eigen values is zero and the rest of them are all positive.</li>
+<li>negative definite if the eigen values are all negative.</li>
+<li>semi-negative definite if the eigen values are all negative and the rest of them are all negative.</li>
+<li>indefinite if the eigen values has both signs +/-.</li>
+</ul>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If eigen values are all positive and the matrix is positive definite, the matrix is invertible.</p>
+</div>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1">A<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7</span>), <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">nrow=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb17-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eigen</span>(A)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>eigen() decomposition
+$values
+[1] 8.605551 1.394449
+
+$vectors
+          [,1]       [,2]
+[1,] 0.4718579 -0.8816746
+[2,] 0.8816746  0.4718579</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eigen</span>(PDM)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>eigen() decomposition
+$values
+[1] 1 1
+
+$vectors
+     [,1] [,2]
+[1,]    0   -1
+[2,]    1    0</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eigen</span>(PSDM)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>eigen() decomposition
+$values
+[1] 2 0
+
+$vectors
+          [,1]       [,2]
+[1,] 0.7071068 -0.7071068
+[2,] 0.7071068  0.7071068</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eigen</span>(NDM)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>eigen() decomposition
+$values
+[1] -1 -1
+
+$vectors
+     [,1] [,2]
+[1,]    1    0
+[2,]    0    1</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eigen</span>(NSDM)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>eigen() decomposition
+$values
+[1]  0 -2
+
+$vectors
+           [,1]      [,2]
+[1,] -0.7071068 0.7071068
+[2,]  0.7071068 0.7071068</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb27" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eigen</span>(IDM)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>eigen() decomposition
+$values
+[1]  1 -1
+
+$vectors
+     [,1] [,2]
+[1,]   -1    0
+[2,]    0   -1</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="positive-definite-matrix" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="positive-definite-matrix"><span class="header-section-number">1.2</span> Positive Definite Matrix</h3>
+<p>A symmetric matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is positive definite if and only if the quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D"> is positive for all nonzero vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
+<p>To see why this is true, consider the eigenvalue decomposition of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">, which can be written as <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cmathbf%7BQ%7D%20%5CLambda%20%5Cmathbf%7BQ%7D%5ET">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D"> is an orthogonal matrix and <img src="https://latex.codecogs.com/png.latex?%5CLambda"> is a diagonal matrix containing the eigenvalues of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">. Then, for any nonzero vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">, we have</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5Cmathbf%20x%5ET%20%5Cmathbf%20A%20%5Cmathbf%20x&amp;=%5Cmathbf%20x%5ET%20%5Cmathbf%20Q%20%5Cmathbf%20%5CLambda%20%5Cmathbf%20Q%5ET%20%5Cmathbf%20x%20%5Cquad%20(%5Cbecause%20%5Ctext%7Bdiagonalization%20of%20%7D%20%5Cmathbf%20A)%5C%5C%0A&amp;=(%5Cmathbf%20x%5ET%20%5Cmathbf%20Q)%5Cmathbf%20%5CLambda%20(%20%5Cmathbf%20Q%5ET%5Cmathbf%20x)%5C%5C%0A&amp;=%5Csum_%7Bi=1%7D%5E%7Bn%7D%20%5Clambda_iy_i%5E2%0A%5Cend%7Baligned%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?y_i%20=%20(%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BQ%7D)_i"> is the <img src="https://latex.codecogs.com/png.latex?i"> th coordinate (i.e., a scalar value that represents the position of a point or a vector relative to a chosen basis) of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D"> and <img src="https://latex.codecogs.com/png.latex?n"> is the dimension of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</p>
+<p>Note that since <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D"> is orthogonal, we have <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D%5ET%20%5Cmathbf%7BQ%7D%20=%20%5Cmathbf%7BI%7D">, so <img src="https://latex.codecogs.com/png.latex?y_i%20=%20%5Cmathbf%7Bq%7D_i%5ET%20%5Cmathbf%7Bx%7D">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bq%7D_i"> is the <img src="https://latex.codecogs.com/png.latex?i"> th column of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D">. Therefore, the quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)%20=%20%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D"> can be written in terms of the eigenvalues of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> and the coordinates of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> with respect to the eigenvectors of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Diagonalization
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Diagonalization is a process of finding a diagonal matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20D"> and an invertible matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20P"> such that <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BP%7D%5E%7B-1%7D%5Cmathbf%7BA%7D%5Cmathbf%7BP%7D%20=%20%5Cmathbf%7BD%7D">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is a square matrix. In other words, diagonalization is a way of representing a matrix as a diagonal matrix, which is a matrix with non-zero values only on its main diagonal.</p>
+</div>
+</div>
+<p>Since <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is positive definite, we have <img src="https://latex.codecogs.com/png.latex?%5Clambda_i%20%3E%200"> for all <img src="https://latex.codecogs.com/png.latex?i">, and so <img src="https://latex.codecogs.com/png.latex?%5Csum_%7Bi=1%7D%5En%20%5Clambda_i%20y_i%5E2%20%3E%200"> for all nonzero vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">. Therefore, the quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D"> is positive for all nonzero vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">, which implies that <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is positive definite.</p>
+<p>In other words, the positive definiteness of a symmetric matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is equivalent to the positivity of the associated quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D"> for all nonzero vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
+<p>Therefore, a symmetric matrix, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is said to be positive definite if all of its eigenvalues are positive or equivalently, a symmetric matrix, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is positive definite if left-multiplying and right-multiplying it by the same vector, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x"> always gives a positive number if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x%5ET%20%5Cmathbf%20A%20%5Cmathbf%20x"></p>
+</section>
+<section id="bilinear-form" class="level3" data-number="1.3">
+<h3 data-number="1.3" class="anchored" data-anchor-id="bilinear-form"><span class="header-section-number">1.3</span> Bilinear Form</h3>
 <p>A quadratic form can be expressed as a bilinear form. In other words, a quadratic form can be written in terms of a bilinear form by defining a new matrix that is the sum of the matrix representing the quadratic form and its transpose.</p>
 <div id="def-bilinear" class="theorem definition">
 <p><span class="theorem-title"><strong>Definition 2 (Bilinear Form) </strong></span>Suppose we have a quadratic form defined as <img src="https://latex.codecogs.com/png.latex?q(%5Cmathbf%7Bx%7D)%20=%20%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D"> where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is a symmetric matrix. Then, we can define a bilinear form as:</p>
@@ -4504,16 +5141,354 @@ Non-uniqueness
 </section>
 <section id="examples" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="examples"><span class="header-section-number">2</span> Examples</h2>
-<section id="sum-of-squares" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="sum-of-squares"><span class="header-section-number">2.1</span> Sum of Squares</h3>
+</section>
+<section id="apllications" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="apllications"><span class="header-section-number">3</span> Apllications</h2>
+<section id="sum-of-squares" class="level3" data-number="3.1">
+<h3 data-number="3.1" class="anchored" data-anchor-id="sum-of-squares"><span class="header-section-number">3.1</span> Sum of Squares</h3>
 <p>The sum of squares of a vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20%5Bx_1,%20x_2,%20%5Cldots,%20x_n%5D%5ET"> can be represented as a quadratic form <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%5Cmathbf%7Bx%7D">. To see this, consider the sum of squares:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Csum_%7Bi=1%7D%5E%7Bn%7D%20x_i%5E2%20=%20x_1%5E2%20+%20x_2%5E2%20+%20%5Cdots%20+x_n%5E2%0A"></p>
 <p>Now, we can write this in vector form as:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20x%5ET%20%5Cmathbf%20I%20%5Cmathbf%20x%20=%20%20%5Cmathbf%20x%5ET%20%5Cmathbf%20x%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20&amp;%20x_2%20&amp;%20%5Cdots%20&amp;%20x_n%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%5C%20x_2%20%5C%5C%20%5Cvdots%20%5C%5C%20x_n%20%5Cend%7Bbmatrix%7D%0A"></p>
 <p>Therefore, the sum of squares can be represented as a quadratic form <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%5Cmathbf%7Bx%7D">.</p>
 </section>
-<section id="variability-of-vector-x" class="level3" data-number="2.2">
-<h3 data-number="2.2" class="anchored" data-anchor-id="variability-of-vector-x"><span class="header-section-number">2.2</span> Variability of Vector, x</h3>
+<section id="define-multivariate-distributions" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="define-multivariate-distributions"><span class="header-section-number">3.2</span> Define Multivariate Distributions</h3>
+<section id="bivariate-distributions" class="level4" data-number="3.2.1">
+<h4 data-number="3.2.1" class="anchored" data-anchor-id="bivariate-distributions"><span class="header-section-number">3.2.1</span> Bivariate Distributions</h4>
+<p>Quadratic form is used in the power part of the pdf of a bivariate normal distribution: <img src="https://latex.codecogs.com/png.latex?%0Af(x_1,x_2)=%5Cfrac%7B1%7D%7B2%5Cpi%5Csigma_%7B%5Cmathbf%7BX_1%7D%7D%5Csigma_%7B%5Cmathbf%7BX_2%7D%7D%5Csqrt%7B1-%5Crho%5E2%7D%7D%5Coperatorname%7Bexp%7D%5Cleft%5B%20-%5Cfrac%7B1%7D%7B2(1-%5Crho%5E2)%7D%5Cleft(%5Cfrac%7B(x_1-%5Cmu_%7BX_1%7D)%5E2%7D%7B%5Csigma_%7BX_1%7D%7D-%5Cfrac%7B2%5Crho(x_1-%5Cmu_%7BX_1%7D)(x_1-%5Cmu_%7BX_1%7D)(x_2-%5Cmu_%7BX_2%7D)%7D%7B%5Csigma_%7BX_1%7D%5Csigma_%7BX_2%7D%7D+%5Cfrac%7B(x_2-%5Cmu_%7BX_2%7D)%5E2%7D%7B%5Csigma_%7BX_2%7D%7D%5Cright)%20%5Cright%5D%0A"> where <img src="https://latex.codecogs.com/png.latex?%5Cmu_%7BX_1%7D,%20%5Cmu_%7BX_2%7D"> are the means of <img src="https://latex.codecogs.com/png.latex?X,%20Y"> respectively, <img src="https://latex.codecogs.com/png.latex?%5Csigma_%7BX_1%7D,%20%5Csigma_%7BX_2%7D"> are the standard deviations of <img src="https://latex.codecogs.com/png.latex?X_1,X_2"> respectively, and <img src="https://latex.codecogs.com/png.latex?%5Crho"> is the correlation coefficient <img src="https://latex.codecogs.com/png.latex?X_1,X_2">.</p>
+<p>The pdf is equivalent with the following matrix form:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Af(%5Cmathbf%7Bx%7D)=%5Cfrac%7B1%7D%7B(2%5Cpi)%5E%7B%5Cfrac%7Bn%7D%7B2%7D%7D%7C%5CSigma%7C%5E%7B%5Cfrac%7B1%7D%7B2%7D%7D%7D%5Coperatorname%7Bexp%7D%5Cleft%5B%20-%5Cfrac%7B1%7D%7B2%7D(%5Cmathbf%7Bx%7D-%5Cmathbf%7B%5Cmu%7D)%5E%7BT%7D%5Cmathbf%7B%5CSigma%7D%5E%7B-1%7D(%5Cmathbf%7Bx%7D-%5Cmathbf%7B%5Cmu%7D)%5Cright%5D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?(%5Cmathbf%7Bx%7D-%5Cmathbf%7B%5Cmu%7D)%5E%7BT%7D%5Cmathbf%7B%5CSigma%7D%5E%7B-1%7D(%5Cmathbf%7Bx%7D-%5Cmathbf%7B%5Cmu%7D)"> is a quadratic form, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is a vector in <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5En">, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cmu%7D"> is a mean vector in <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5En">, and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5CSigma%7D"> is a covariance matrix.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7Bx%7D=%0A%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D%20%5Cquad%0A%5Cmathbf%7B%5Cmu%7D=%5Cbegin%7Bbmatrix%7D%5Cmu_%7Bx_1%7D%20%5C%5C%20%5Cmu_%7Bx_2%7D%5Cend%7Bbmatrix%7D%20%5Cquad%0A%5Cmathbf%7B%5CSigma%7D=%5Cbegin%7Bbmatrix%7D%0A%5Csigma_%7BX_1%7D%5E2%20&amp;%20%5Crho%5Csigma_%7BX_1%7D%5Csigma_%7BX_2%7D%5C%5C%0A%5Crho%5Csigma_%7BX_1%7D%5Csigma_%7BX_2%7D%20&amp;%20%5Csigma_%7BX_2%7D%0A%5Cend%7Bbmatrix%7D%0A">.</p>
+<p>The quadratic form <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Csigma%7D"> informs us of how data are distributed with means <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cmu%7D"> and the covariance matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5CSigma%7D">.</p>
+<p><strong>Exmaple1</strong> <img src="https://latex.codecogs.com/png.latex?2x_1%5E2+4x_2%5E2"> can be represented as a quadratic form <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7Dx_1%20&amp;%20x_2%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7D2&amp;0%20%5C%5C0&amp;4%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D">. The matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> part is <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D2&amp;0%20%5C%5C0&amp;4%5Cend%7Bbmatrix%7D"> and its inverse is <img src="https://latex.codecogs.com/png.latex?%5Cbegin%7Bbmatrix%7D2%5E%7B-1%7D&amp;0%20%5C%5C0&amp;4%5E%7B-1%7D%5Cend%7Bbmatrix%7D">. Here, since the off diagonal entries are zeros, <img src="https://latex.codecogs.com/png.latex?X_1"> and <img src="https://latex.codecogs.com/png.latex?X_2"> are independent. Then, the pdf is:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Af(x_1,x_2)=%5Cfrac%7B1%7D%7B2%5Cpi%5Csigma_%7B%5Cmathbf%7BX_1%7D%7D%5Csigma_%7B%5Cmathbf%7BX_2%7D%7D%7D%5Coperatorname%7Bexp%7D%5Cleft%5B%20-%5Cfrac%7B1%7D%7B2%7D%5Cleft(%5Cfrac%7B(x_1-%5Cmu_%7BX_1%7D)%5E2%7D%7B%5Csigma_%7BX_1%7D%7D+%5Cfrac%7B(x_2-%5Cmu_%7BX_2%7D)%5E2%7D%7B%5Csigma_%7BX_2%7D%7D%5Cright)%20%5Cright%5D%0A"></p>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The inverse of a diagonal matrix is the inverse of each entry</p>
+</div>
+</div>
+<p><strong>Exmaple2</strong> <img src="https://latex.codecogs.com/png.latex?9x_1%5E2+6x_1x_2+4x_2%5E2"></p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb29" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1">mu<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb29-2">mu1<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb29-3">mu2<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb29-4">sigma1<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span></span>
+<span id="cb29-5">sigma2<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb29-6">rho<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span></span>
+<span id="cb29-7">sigma<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(sigma1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,rho<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>sigma1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>sigma2,rho<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>sigma1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>sigma2,sigma2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>),<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb29-8"></span>
+<span id="cb29-9"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">dmvnorm</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean=</span>mu,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sigma=</span>sigma) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># a pdf value at (1,1)</span></span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.02592721</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb31" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 1/((2*pi)*sqrt(det(sigma)))*exp(-0.5*t(c(1,1)-mu) %*% solve(sigma) %*% (c(1,1)-mu))</span></span></code></pre></div>
+</details>
+</div>
+<p>This value is the same as <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=%5Cfrac%7B1%7D%7B(2%5Cpi)%5E%7B%5Cfrac%7Bn%7D%7B2%7D%7D%7C%5CSigma%7C%5E%7B%5Cfrac%7B1%7D%7B2%7D%7D%7D%5Coperatorname%7Bexp%7D%5Cleft%5B%20-%5Cfrac%7B1%7D%7B2%7D(%5Cmathbf%7Bx%7D-%5Cmathbf%7B%5Cmu%7D)%5E%7BT%7D%5Cmathbf%7B%5CSigma%7D%5E%7B-1%7D(%5Cmathbf%7Bx%7D-%5Cmathbf%7B%5Cmu%7D)%5Cright%5D="> 0.0259272</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb32" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plotFun</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>pi<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>sigma1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>sigma2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sqrt</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>rho<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>))<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>rho<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>))<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>((x1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>mu1)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>sigma1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>(x2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>mu2)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2-2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>rho<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>(x1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>mu1)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>(x2<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>mu2))<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>(sigma1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>sigma2))<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>x1 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> x2,</span>
+<span id="cb32-2">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mu1=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,</span>
+<span id="cb32-3">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mu2=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,</span>
+<span id="cb32-4">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sigma1=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,</span>
+<span id="cb32-5">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sigma2=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,</span>
+<span id="cb32-6">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">rho=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>,</span>
+<span id="cb32-7">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x1.lim=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">range</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>),</span>
+<span id="cb32-8">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x2.lim=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">range</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>),</span>
+<span id="cb32-9">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">surface=</span><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>,</span>
+<span id="cb32-10">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">xlab=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">expression</span>(x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]),</span>
+<span id="cb32-11">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ylab=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">expression</span>(x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]),</span>
+<span id="cb32-12">  <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">zlab=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">expression</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">f</span>(x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>],x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>])))</span></code></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="multivariate-distributions" class="level4" data-number="3.2.2">
+<h4 data-number="3.2.2" class="anchored" data-anchor-id="multivariate-distributions"><span class="header-section-number">3.2.2</span> Multivariate Distributions</h4>
+</section>
+</section>
+<section id="optimization-problems" class="level3" data-number="3.3">
+<h3 data-number="3.3" class="anchored" data-anchor-id="optimization-problems"><span class="header-section-number">3.3</span> Optimization Problems</h3>
+<section id="quadratic-programming" class="level4" data-number="3.3.1">
+<h4 data-number="3.3.1" class="anchored" data-anchor-id="quadratic-programming"><span class="header-section-number">3.3.1</span> Quadratic Programming</h4>
+<p>Objective Functions, Constraints, or Penalty Terms</p>
+</section>
+</section>
+<section id="study-of-quadratic-behavior-systems" class="level3" data-number="3.4">
+<h3 data-number="3.4" class="anchored" data-anchor-id="study-of-quadratic-behavior-systems"><span class="header-section-number">3.4</span> Study of Quadratic Behavior Systems</h3>
+<section id="harmonic-oscillators" class="level4" data-number="3.4.1">
+<h4 data-number="3.4.1" class="anchored" data-anchor-id="harmonic-oscillators"><span class="header-section-number">3.4.1</span> Harmonic Oscillators</h4>
+</section>
+<section id="vibrating-systems." class="level4" data-number="3.4.2">
+<h4 data-number="3.4.2" class="anchored" data-anchor-id="vibrating-systems."><span class="header-section-number">3.4.2</span> Vibrating Systems.</h4>
+</section>
+</section>
+<section id="machine-learning" class="level3" data-number="3.5">
+<h3 data-number="3.5" class="anchored" data-anchor-id="machine-learning"><span class="header-section-number">3.5</span> Machine Learning</h3>
+<section id="cost-functions" class="level4" data-number="3.5.1">
+<h4 data-number="3.5.1" class="anchored" data-anchor-id="cost-functions"><span class="header-section-number">3.5.1</span> Cost Functions</h4>
+</section>
+<section id="regularization-terms" class="level4" data-number="3.5.2">
+<h4 data-number="3.5.2" class="anchored" data-anchor-id="regularization-terms"><span class="header-section-number">3.5.2</span> Regularization terms,</h4>
+<p>Ridge Regression</p>
+</section>
+<section id="kernel-functions" class="level4" data-number="3.5.3">
+<h4 data-number="3.5.3" class="anchored" data-anchor-id="kernel-functions"><span class="header-section-number">3.5.3</span> Kernel Functions</h4>
+<p>SVM</p>
+</section>
+</section>
+<section id="finance" class="level3" data-number="3.6">
+<h3 data-number="3.6" class="anchored" data-anchor-id="finance"><span class="header-section-number">3.6</span> Finance</h3>
+<p>Modeling risk and return in portfolio optimization and asset pricing models</p>
+</section>
+<section id="cryptography" class="level3" data-number="3.7">
+<h3 data-number="3.7" class="anchored" data-anchor-id="cryptography"><span class="header-section-number">3.7</span> Cryptography</h3>
+<p>quadratic sieve algorithm for integer factorization</p>
+</section>
+<section id="variability-of-vector-x" class="level3" data-number="3.8">
+<h3 data-number="3.8" class="anchored" data-anchor-id="variability-of-vector-x"><span class="header-section-number">3.8</span> Variability of Vector, x</h3>
 <p>The covariance matrix of a random vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> can be represented as a quadratic form in terms of the vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> and the matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BC%7D"> as follows:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20x%5ET%20%5Cmathbf%20C%20%5Cmathbf%20x%0A"></p>
 <p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BC%7D"> is the covariance matrix. This expression is a quadratic form because it involves a quadratic polynomial in the elements of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
@@ -4561,6 +5536,72 @@ Note
 <p>These eigenvectors define the principal components of the data, which are the orthogonal directions in the feature space along which the data varies the most.</p>
 <p>Let’s apply this difference between <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20C=%20%5Coperatorname%7BCov(%5Cmathbf%20X)%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x%5ET%20%5Cmathbf%7BC%7D%20%5Cmathbf%20x"> or PCA to Iris dataset:</p>
 <div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb33" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb33-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> plt</span>
+<span id="cb33-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.datasets <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> load_iris</span>
+<span id="cb33-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> sklearn.preprocessing <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> StandardScaler</span>
+<span id="cb33-5"></span>
+<span id="cb33-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Load the iris dataset</span></span>
+<span id="cb33-7">iris <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> load_iris()</span>
+<span id="cb33-8">X <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> iris.data</span>
+<span id="cb33-9"></span>
+<span id="cb33-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Standardize the data</span></span>
+<span id="cb33-11">scaler <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> StandardScaler()</span>
+<span id="cb33-12">X_std <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> scaler.fit_transform(X)</span>
+<span id="cb33-13"></span>
+<span id="cb33-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Calculate the covariance matrix</span></span>
+<span id="cb33-15">cov_matrix <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.cov(X_std.T)</span>
+<span id="cb33-16"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'C=Cov(X) =</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>cov_matrix<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb33-17"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Calculate the eigenvalues and eigenvectors of the covariance matrix</span></span></code></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>C=Cov(X) =
 [[ 1.00671141 -0.11835884  0.87760447  0.82343066]
@@ -4568,42 +5609,72 @@ Note
  [ 0.87760447 -0.43131554  1.00671141  0.96932762]
  [ 0.82343066 -0.36858315  0.96932762  1.00671141]]</code></pre>
 </div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb35" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1">eigenvalues, eigenvectors <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linalg.eig(cov_matrix)</span>
+<span id="cb35-2"></span>
+<span id="cb35-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Sort the eigenvalues in descending order</span></span>
+<span id="cb35-4">sorted_indexes <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> eigenvalues.argsort()[::<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb35-5">sorted_eigenvalues <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> eigenvalues[sorted_indexes]</span>
+<span id="cb35-6">sorted_eigenvectors <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> eigenvectors[:, sorted_indexes]</span>
+<span id="cb35-7"></span>
+<span id="cb35-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Project the data onto the principal components</span></span>
+<span id="cb35-9">transformed_data <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> X_std.dot(sorted_eigenvectors)</span>
+<span id="cb35-10"></span>
+<span id="cb35-11"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Visualize the PCA</span></span>
+<span id="cb35-12">fig, ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.subplots()</span>
+<span id="cb35-13">ax.scatter(transformed_data[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>], transformed_data[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], c<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>iris.target)</span>
+<span id="cb35-14">ax.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'PC1'</span>)</span>
+<span id="cb35-15">ax.set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'PC2'</span>)</span>
+<span id="cb35-16">ax.set_title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'PCA, Part of the Total Variance of Iris Data Explained by 2 PCs'</span>)</span>
+<span id="cb35-17">plt.show()</span></code></pre></div>
+</details>
 <div class="cell-output-display">
-<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>This representation is useful in many statistical and machine learning applications, where the covariance matrix provides information about the variability and dependencies between different features or variables. For example, in principal component analysis (PCA), the covariance matrix is used to identify the directions of maximum variability in a dataset, which can be used to reduce the dimensionality of the data while retaining as much information as possible.</p>
 </section>
-<section id="pca" class="level3" data-number="2.3">
-<h3 data-number="2.3" class="anchored" data-anchor-id="pca"><span class="header-section-number">2.3</span> PCA</h3>
+<section id="pca" class="level3" data-number="3.9">
+<h3 data-number="3.9" class="anchored" data-anchor-id="pca"><span class="header-section-number">3.9</span> PCA</h3>
 <p>The principal components of a dataset can be obtained by finding the eigenvectors of the covariance matrix. In other words, we can express the covariance matrix as a quadratic form:</p>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20C%20=%20%5Cmathbf%20x%5ET%20%5Cmathbf%20A%20%5Cmathbf%20x%0A"></p>
 <p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is a column vector of centered data, and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is a symmetric positive semi-definite matrix (the covariance matrix). Diagonalizing <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> gives us the eigenvalues and eigenvectors, which are used to transform the original data into a new coordinate system, where the first axis (the first principal component) corresponds to the direction of greatest variance, the second axis (the second principal component) corresponds to the direction of second greatest variance, and so on. This new coordinate system is called the principal component space.</p>
 <p>In summary, PCA can be seen as a method for finding the principal components of a dataset by diagonalizing the covariance matrix, which can be expressed as a quadratic form.</p>
-</section>
-<section id="positive-definite-matrix" class="level3" data-number="2.4">
-<h3 data-number="2.4" class="anchored" data-anchor-id="positive-definite-matrix"><span class="header-section-number">2.4</span> Positive Definite Matrix</h3>
-<p>a symmetric matrix <img src="https://latex.codecogs.com/png.latex?A"> is positive definite if and only if the quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=%5Cmathbf%7Bx%7D%5ET%20A%20%5Cmathbf%7Bx%7D"> is positive for all nonzero vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
-<p>To see why this is true, consider the eigenvalue decomposition of <img src="https://latex.codecogs.com/png.latex?A">, which can be written as <img src="https://latex.codecogs.com/png.latex?A%20=%20Q%20%5CLambda%20Q%5ET">, where <img src="https://latex.codecogs.com/png.latex?Q"> is an orthogonal matrix and <img src="https://latex.codecogs.com/png.latex?%5CLambda"> is a diagonal matrix containing the eigenvalues of <img src="https://latex.codecogs.com/png.latex?A">. Then, for any nonzero vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">,</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Diagonalization
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Diagonalization is a process of finding a diagonal matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20D"> and an invertible matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20P"> such that <img src="https://latex.codecogs.com/png.latex?P%5E%7B-1%7DAP%20=%20D">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is a square matrix. In other words, diagonalization is a way of representing a matrix as a diagonal matrix, which is a matrix with non-zero values only on its main diagonal.</p>
-</div>
-</div>
-<p>we have</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5Cmathbf%20x%5ET%20%5Cmathbf%20A%20%5Cmathbf%20x&amp;=%5Cmathbf%20x%5ET%20%5Cmathbf%20Q%20%5Cmathbf%20%5CLambda%20%5Cmathbf%20Q%5ET%20%5Cmathbf%20x%5C%5C%0A&amp;=(%5Cmathbf%20x%5ET%20%5Cmathbf%20Q)%5Cmathbf%20%5CLambda%20(%20%5Cmathbf%20Q%5ET%5Cmathbf%20x)%5C%5C%0A&amp;=%5Csum_%7Bi=1%7D%5E%7Bn%7D%20%5Clambda_iy_i%5E2%0A%5Cend%7Baligned%7D%0A"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?y_i%20=%20(%5Cmathbf%7Bx%7D%5ET%20Q)_i"> is the <img src="https://latex.codecogs.com/png.latex?i">th coordinate (i.e., a scalar value that represents the position of a point or a vector relative to a chosen basis) of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20Q"> and <img src="https://latex.codecogs.com/png.latex?n"> is the dimension of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> and <img src="https://latex.codecogs.com/png.latex?A">. Note that since <img src="https://latex.codecogs.com/png.latex?Q"> is orthogonal, we have <img src="https://latex.codecogs.com/png.latex?Q%5ET%20Q%20=%20I">, so <img src="https://latex.codecogs.com/png.latex?y_i%20=%20%5Cmathbf%7Bq%7D_i%5ET%20%5Cmathbf%7Bx%7D">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bq%7D_i"> is the <img src="https://latex.codecogs.com/png.latex?i">th column of <img src="https://latex.codecogs.com/png.latex?Q">. Therefore, the quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)%20=%20%5Cmathbf%7Bx%7D%5ET%20A%20%5Cmathbf%7Bx%7D"> can be written in terms of the eigenvalues of <img src="https://latex.codecogs.com/png.latex?A"> and the coordinates of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> with respect to the eigenvectors of <img src="https://latex.codecogs.com/png.latex?A">.</p>
-<p>Since <img src="https://latex.codecogs.com/png.latex?A"> is positive definite, we have <img src="https://latex.codecogs.com/png.latex?%5Clambda_i%20%3E%200"> for all <img src="https://latex.codecogs.com/png.latex?i">, and so <img src="https://latex.codecogs.com/png.latex?%5Csum_%7Bi=1%7D%5En%20%5Clambda_i%20y_i%5E2%20%3E%200"> for all nonzero vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">. Therefore, the quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=%5Cmathbf%7Bx%7D%5ET%20A%20%5Cmathbf%7Bx%7D"> is positive for all nonzero vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">, which implies that <img src="https://latex.codecogs.com/png.latex?A"> is positive definite.</p>
-<p>In other words, the positive definiteness of a symmetric matrix <img src="https://latex.codecogs.com/png.latex?A"> is equivalent to the positivity of the associated quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=%5Cmathbf%7Bx%7D%5ET%20A%20%5Cmathbf%7Bx%7D"> for all nonzero vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
-<p>Therefore, a symmetric matrix, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is said to be positive definite if all of its eigenvalues are positive or equivalently, a symmetric matrix, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is positive definite if left-multiplying and right-multiplying it by the same vector, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x"> always gives a positive number if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x%5ET%20%5Cmathbf%20A%20%5Cmathbf%20x"></p>
 
 
 </section>
@@ -4613,6 +5684,283 @@ Diagonalization
   <category>Mathematics</category>
   <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form.html</guid>
   <pubDate>Sat, 01 Apr 2023 15:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Mosaic Package</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/Language/mosaic.html</link>
+  <description><![CDATA[ 
+
+
+
+<ul class="nav nav-pills" id="language-tab">
+<li class="nav-item">
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
+Korean
+</button>
+</li>
+<li class="nav-item">
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
+English
+</button>
+</li>
+<div class="tab-content" id="language-tabcontent">
+
+<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
+<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
+<section id="plotfun" class="level2" data-number="0.1">
+<h2 data-number="0.1" class="anchored" data-anchor-id="plotfun"><span class="header-section-number">0.1</span> plotFun()</h2>
+<p>수식 base로 함수를 그릴 수 있는 package</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyverse)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: 패키지 'tidyverse'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: 패키지 'ggplot2'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: 패키지 'tibble'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: 패키지 'readr'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: 패키지 'dplyr'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: 패키지 'lubridate'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.2     ✔ readr     2.1.4
+✔ forcats   1.0.0     ✔ stringr   1.5.0
+✔ ggplot2   3.4.2     ✔ tibble    3.2.1
+✔ lubridate 1.9.2     ✔ tidyr     1.3.0
+✔ purrr     1.0.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(mosaic)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: 패키지 'mosaic'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Registered S3 method overwritten by 'mosaic':
+  method                           from   
+  fortify.SpatialPolygonsDataFrame ggplot2
+
+The 'mosaic' package masks several functions from core packages in order to add 
+additional features.  The original behavior of these functions should not be affected by this.
+
+다음의 패키지를 부착합니다: 'mosaic'
+
+The following object is masked from 'package:Matrix':
+
+    mean
+
+The following objects are masked from 'package:dplyr':
+
+    count, do, tally
+
+The following object is masked from 'package:purrr':
+
+    cross
+
+The following object is masked from 'package:ggplot2':
+
+    stat
+
+The following objects are masked from 'package:stats':
+
+    binom.test, cor, cor.test, cov, fivenum, IQR, median, prop.test,
+    quantile, sd, t.test, var
+
+The following objects are masked from 'package:base':
+
+    max, mean, min, prod, range, sample, sum</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rm</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">list=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ls</span>())</span></code></pre></div>
+</details>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plotFun</span>(x1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>x1,</span>
+<span id="cb13-2"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x1.lim=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">range</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>),</span>
+<span id="cb13-3"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x2.lim=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">range</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>),</span>
+<span id="cb13-4"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">surface=</span><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>,</span>
+<span id="cb13-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># surface=FALSE, # contour 를 보여줌</span></span>
+<span id="cb13-6"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">xlab=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">expression</span>(x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]),</span>
+<span id="cb13-7"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ylab=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">expression</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">f</span>(x)))</span></code></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Language/mosaic_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plotFun</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>x1<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span>x1 <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> x2,</span>
+<span id="cb14-2"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x1.lim=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">range</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>),</span>
+<span id="cb14-3"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">x2.lim=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">range</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>),</span>
+<span id="cb14-4"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">surface=</span><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>,</span>
+<span id="cb14-5"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">xlab=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">expression</span>(x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]),</span>
+<span id="cb14-6"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ylab=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">expression</span>(x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]),</span>
+<span id="cb14-7"><span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">zlab=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">expression</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">f</span>(x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>],x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>])))</span></code></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Language/mosaic_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>그려진 그래프를 R studio에선 plot의 톱니바퀴를 누르면 축별로 회전이 가능하지만 vs code에서는 지원이 안되는 것 같음</p>
+</section>
+</div>
+</div>
+<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
+<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
+
+</div>
+</div>
+<section id="go-to-project-content-list" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Go to Project Content List</h1>
+<p><a href="./docs/projects/index.qmd">Project Content List</a></p>
+</section>
+<section id="go-to-blog-content-list" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Go to Blog Content List</h1>
+<p><a href="../../content_list.qmd">Blog Content List</a></p>
+
+
+</section>
+
+</div></ul> ]]></description>
+  <category>Language</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Language/mosaic.html</guid>
+  <pubDate>Thu, 30 Mar 2023 15:00:00 GMT</pubDate>
 </item>
 <item>
   <title>Basics (2) - Matrix Operations</title>
@@ -5893,590 +7241,6 @@ font-style: inherit;">', '</span>)</span></code></pre></div>
  ]]></description>
   <category>Mathematics</category>
   <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/02.basic_matrix.html</guid>
-  <pubDate>Thu, 30 Mar 2023 15:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Basics (3) - Special Matrices</title>
-  <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/03.basic_special_matrix.html</link>
-  <description><![CDATA[ 
-
-
-
-<section id="special-matrix" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="special-matrix"><span class="header-section-number">1</span> Special Matrix</h2>
-<section id="square-matrix" class="level3" data-number="1.1">
-<h3 data-number="1.1" class="anchored" data-anchor-id="square-matrix"><span class="header-section-number">1.1</span> Square Matrix</h3>
-<p>A square matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is a matrix with the same number of rows and columns, i.e., <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is an <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> matrix.</p>
-<p>For example, the following is a <img src="https://latex.codecogs.com/png.latex?3%20%5Ctimes%203"> square matrix:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20A=%20%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%204%20&amp;%207%5C%5C%0A2%20&amp;%205%20&amp;%208%5C%5C%0A3%20&amp;%206%20&amp;%209%0A%5Cend%7Bbmatrix%7D%0A"></p>
-<section id="properties" class="level4" data-number="1.1.1">
-<h4 data-number="1.1.1" class="anchored" data-anchor-id="properties"><span class="header-section-number">1.1.1</span> Properties</h4>
-<p>Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> be an <img src="https://latex.codecogs.com/png.latex?n%5Ctimes%20n"> square matrix. Then, the following properties hold:</p>
-<ul>
-<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is invertible if and only if <img src="https://latex.codecogs.com/png.latex?%5Ctext%7Bdet%7D(%5Cmathbf%7BA%7D)%20%5Cneq%200">.</li>
-<li>The trace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is defined as <img src="https://latex.codecogs.com/png.latex?%5Ctext%7Btr%7D(%5Cmathbf%7BA%7D)%20=%20%5Csum_%7Bi=1%7D%5En%20a_%7Bii%7D">, where <img src="https://latex.codecogs.com/png.latex?a_%7Bii%7D"> is the <img src="https://latex.codecogs.com/png.latex?i">th diagonal element of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</li>
-<li>If <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is symmetric, then it has <img src="https://latex.codecogs.com/png.latex?n"> real eigenvalues and an orthonormal set of eigenvectors.</li>
-<li>If <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is diagonalizable, then <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> can be written as <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cmathbf%7BPDP%7D%5E%7B-1%7D">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BP%7D"> is the matrix whose columns are the eigenvectors of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">, and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BD%7D"> is the diagonal matrix whose diagonal elements are the corresponding eigenvalues.</li>
-<li>The transpose of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">, denoted <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5E%5Ctop">, is obtained by reflecting <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> across its main diagonal. That is, <img src="https://latex.codecogs.com/png.latex?(%5Cmathbf%7BA%7D%5E%5Ctop)_%7Bij%7D%20=%20a_%7Bji%7D">.</li>
-</ul>
-<p>Here’s an example of a <img src="https://latex.codecogs.com/png.latex?3%20%5Ctimes%203"> matrix:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20A=%20%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%204%20&amp;%207%5C%5C%0A2%20&amp;%205%20&amp;%208%5C%5C%0A3%20&amp;%206%20&amp;%209%0A%5Cend%7Bbmatrix%7D%0A"></p>
-<p>With this matrix, we can see that <img src="https://latex.codecogs.com/png.latex?%5Ctext%7Bdet%7D(%5Cmathbf%7BA%7D)%20=%200">, so <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is not invertible. The trace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is <img src="https://latex.codecogs.com/png.latex?%5Ctext%7Btr%7D(%5Cmathbf%7BA%7D)%20=%201%20+%205%20+%209%20=%2015">. Since <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is not symmetric, we cannot say that it has real eigenvalues and an orthonormal set of eigenvectors. However, we can check that <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is diagonalizable, and we can find that <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cmathbf%7BPDP%7D%5E%7B-1%7D"> with</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0AP=%5Cbegin%7Bpmatrix%7D%0A-0.8252%20&amp;%20-0.2886%20&amp;%200.4848%5C%5C%0A-0.3779%20&amp;%20-0.7551%20&amp;%20-0.5375%5C%5C%0A0.2185%20&amp;%20-0.5800%20&amp;%200.7830%0A%5Cend%7Bpmatrix%7D,%20%5Ctext%7B%20%7D%20D=%5Cbegin%7Bpmatrix%7D%0A16.1168%20&amp;%200%20&amp;%200%5C%5C%0A0%20&amp;%20-1.1168%20&amp;%200%5C%5C%0A0%20&amp;%200%20&amp;%200%0A%5Cend%7Bpmatrix%7D%0A%5Cend%7Bequation*%7D%0A"></p>
-</section>
-</section>
-<section id="diagonal-matrix" class="level3" data-number="1.2">
-<h3 data-number="1.2" class="anchored" data-anchor-id="diagonal-matrix"><span class="header-section-number">1.2</span> Diagonal Matrix</h3>
-<p>A diagonal matrix is a square matrix in which all the off-diagonal elements are zero. The diagonal elements can be any scalar value.</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0A%5Cmathbf%7BD%7D%20=%20%5Cbegin%7Bpmatrix%7D%0Ad_%7B1%7D%20&amp;%200%20&amp;%200%20&amp;%20%5Ccdots%20&amp;%200%20%5C%5C%0A0%20&amp;%20d_%7B2%7D%20&amp;%200%20&amp;%20%5Ccdots%20&amp;%200%20%5C%5C%0A0%20&amp;%200%20&amp;%20d_%7B3%7D%20&amp;%20%5Ccdots%20&amp;%200%20%5C%5C%0A%5Cvdots%20&amp;%20%5Cvdots%20&amp;%20%5Cvdots%20&amp;%20%5Cddots%20&amp;%20%5Cvdots%20%5C%5C%0A0%20&amp;%200%20&amp;%200%20&amp;%20%5Ccdots%20&amp;%20d_%7Bn%7D%0A%5Cend%7Bpmatrix%7D%0A%5Cend%7Bequation*%7D%0A"></p>
-<p>Here, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BD%7D"> is an <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> diagonal matrix with diagonal elements <img src="https://latex.codecogs.com/png.latex?d_1,%20d_2,%20%5Cldots,%20d_n">. An example of a <img src="https://latex.codecogs.com/png.latex?3%20%5Ctimes%203"> diagonal matrix is:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0A%5Cmathbf%7BD%7D%20=%20%5Cbegin%7Bpmatrix%7D%0A2%20&amp;%200%20&amp;%200%20%5C%5C%0A0%20&amp;%20-1%20&amp;%200%20%5C%5C%0A0%20&amp;%200%20&amp;%204%0A%5Cend%7Bpmatrix%7D%0A%5Cend%7Bequation*%7D%0A"></p>
-<section id="properties-1" class="level4" data-number="1.2.1">
-<h4 data-number="1.2.1" class="anchored" data-anchor-id="properties-1"><span class="header-section-number">1.2.1</span> Properties</h4>
-<p>A diagonal matrix is a square matrix in which all the off-diagonal elements are zero, i.e., <img src="https://latex.codecogs.com/png.latex?a_%7Bij%7D%20=%200"> for <img src="https://latex.codecogs.com/png.latex?i%20%5Cneq%20j">. Some properties of a diagonal matrix are:</p>
-<ul>
-<li><p>For two diagnoal matrices <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20E">, <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0A%5Cmathbf%7BDE%7D=%0A%5Cbegin%7Bpmatrix%7D%0Ad_%7B1%7De_%7B1%7D%20&amp;%200%20&amp;%200%20&amp;%20%5Ccdots%20&amp;%200%20%5C%5C%0A0%20&amp;%20d_%7B2%7De_%7B2%7D%20&amp;%200%20&amp;%20%5Ccdots%20&amp;%200%20%5C%5C%0A0%20&amp;%200%20&amp;%20d_%7B3%7De_%7B3%7D%20&amp;%20%5Ccdots%20&amp;%200%20%5C%5C%0A%5Cvdots%20&amp;%20%5Cvdots%20&amp;%20%5Cvdots%20&amp;%20%5Cddots%20&amp;%20%5Cvdots%20%5C%5C%0A0%20&amp;%200%20&amp;%200%20&amp;%20%5Ccdots%20&amp;%20d_%7Bn%7De_%7Bn%7D%0A%5Cend%7Bpmatrix%7D%0A%5Cend%7Bequation*%7D%0A"></p></li>
-<li><p>The determinant of a diagonal matrix is the product of its diagonal entries.</p></li>
-<li><p>The trace of a diagonal matrix is the sum of its diagonal entries.</p></li>
-<li><p>The inverse of a non-singular diagonal matrix is a diagonal matrix with the reciprocal of its diagonal entries as its diagonal entries.</p></li>
-</ul>
-</section>
-</section>
-<section id="identity-matrix" class="level3" data-number="1.3">
-<h3 data-number="1.3" class="anchored" data-anchor-id="identity-matrix"><span class="header-section-number">1.3</span> Identity Matrix</h3>
-<p>An identity matrix is a square matrix in which all the diagonal elements are equal to <img src="https://latex.codecogs.com/png.latex?1"> and all the off-diagonal elements are equal to 0. The notation for an identity matrix of size <img src="https://latex.codecogs.com/png.latex?n"> is <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BI%7D_n">.</p>
-<section id="example" class="level4" data-number="1.3.1">
-<h4 data-number="1.3.1" class="anchored" data-anchor-id="example"><span class="header-section-number">1.3.1</span> Example</h4>
-<p>Example of a <img src="https://latex.codecogs.com/png.latex?3%5Ctimes%203"> identity matrix, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BI%7D_3">: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation%7D%0A%5Cmathbf%7BI%7D_3%20=%0A%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%200%20&amp;%200%20%5C%5C%0A0%20&amp;%201%20&amp;%200%20%5C%5C%0A0%20&amp;%200%20&amp;%201%0A%5Cend%7Bbmatrix%7D%0A%5Cend%7Bequation%7D%0A"></p>
-</section>
-<section id="properties-2" class="level4" data-number="1.3.2">
-<h4 data-number="1.3.2" class="anchored" data-anchor-id="properties-2"><span class="header-section-number">1.3.2</span> Properties</h4>
-<p>Some properties of an identity matrix include:</p>
-<ul>
-<li>Multiplying any matrix by an identity matrix results in the same matrix: <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20%5Cmathbf%7BI%7D%20=%20%5Cmathbf%7BI%7D%20%5Cmathbf%7BA%7D%20=%20%5Cmathbf%7BA%7D">.</li>
-<li>The product of any matrix and its corresponding inverse is an identity matrix: <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20%5Cmathbf%7BA%7D%5E%7B-1%7D%20=%20%5Cmathbf%7BA%7D%5E%7B-1%7D%20%5Cmathbf%7BA%7D%20=%20%5Cmathbf%7BI%7D">.</li>
-<li>The determinant of an identity matrix is 1: <img src="https://latex.codecogs.com/png.latex?%5Cdet(%5Cmathbf%7BI%7D)%20=%201">.</li>
-<li>An identity matrix is symmetric: <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BI%7D%20=%20%5Cmathbf%7BI%7D%5ET">.</li>
-</ul>
-</section>
-</section>
-<section id="symmetric-matrix" class="level3" data-number="1.4">
-<h3 data-number="1.4" class="anchored" data-anchor-id="symmetric-matrix"><span class="header-section-number">1.4</span> Symmetric Matrix</h3>
-<p>A symmetric matrix is a square matrix that is equal to its own transpose, i.e., <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cmathbf%7BA%7D%5ET">. Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> be an <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> matrix, then <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is symmetric if and only if <img src="https://latex.codecogs.com/png.latex?a_%7Bij%7D%20=%20a_%7Bji%7D"> for all <img src="https://latex.codecogs.com/png.latex?i"> and <img src="https://latex.codecogs.com/png.latex?j"> such that <img src="https://latex.codecogs.com/png.latex?1%20%5Cle%20i">, <img src="https://latex.codecogs.com/png.latex?j%20%5Cle%20n">.</p>
-<p>Here’s an example of a symmetric matrix: <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D%20=%20%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%202%20&amp;%203%20%5C%5C%0A2%20&amp;%204%20&amp;%205%20%5C%5C%0A3%20&amp;%205%20&amp;%206%0A%5Cend%7Bbmatrix%7D%0A"></p>
-<section id="properties-3" class="level4" data-number="1.4.1">
-<h4 data-number="1.4.1" class="anchored" data-anchor-id="properties-3"><span class="header-section-number">1.4.1</span> Properties</h4>
-<p>A symmetric matrix is a square matrix that is equal to its own transpose. Some properties of symmetric matrices include:</p>
-<ul>
-<li>The diagonal entries are real numbers.</li>
-<li>The matrix is diagonalizable, meaning it can be expressed as <strong>a product of diagonal and orthogonal matrices</strong>.</li>
-<li>The eigenvalues of a symmetric matrix are real numbers.</li>
-<li>The eigenvectors corresponding to different eigenvalues are orthogonal.</li>
-<li>The sum and difference of two symmetric matrices is also symmetric.</li>
-</ul>
-</section>
-</section>
-<section id="idempotent-matrix" class="level3" data-number="1.5">
-<h3 data-number="1.5" class="anchored" data-anchor-id="idempotent-matrix"><span class="header-section-number">1.5</span> Idempotent Matrix</h3>
-<p>An idempotent matrix is a square matrix that when multiplied by itself yields itself. In other words, an idempotent matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BP%7D"> satisfies <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BP%7D%5E2%20=%20%5Cmathbf%7BP%7D">.</p>
-<p>An example of an idempotent matrix is:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation%7D%0A%5Cmathbf%7BP%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0A1%20&amp;%200%20&amp;%200%20%5C%5C%0A0%20&amp;%200%20&amp;%200%20%5C%5C%0A0%20&amp;%200%20&amp;%201%0A%5Cend%7Bbmatrix%7D%0A%5Cend%7Bequation%7D%0A"></p>
-<section id="properties-4" class="level4" data-number="1.5.1">
-<h4 data-number="1.5.1" class="anchored" data-anchor-id="properties-4"><span class="header-section-number">1.5.1</span> Properties</h4>
-<ul>
-<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5E2%20=%20%5Cmathbf%20A">.</li>
-<li>If <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is an idempotent matrix, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BI_n%7D-%5Cmathbf%7BA%7D"> is also an idempotent matrix. <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A(%5Cmathbf%7BI_n%7D-%5Cmathbf%7BA%7D)%5E2&amp;=(%5Cmathbf%7BI_n%7D-%5Cmathbf%7BA%7D)(%5Cmathbf%7BI_n%7D-%5Cmathbf%7BA%7D)%5C%5C%0A&amp;=%5Cmathbf%7BI_n%7D%5Cmathbf%7BI_n%7D-%5Cmathbf%7BI_n%7D%5Cmathbf%7BA%7D-%5Cmathbf%7BA%7D%5Cmathbf%7BI_n%7D+%5Cmathbf%7BA%7D%5Cmathbf%7BA%7D%5C%5C%0A&amp;=%5Cmathbf%7BI_n%7D%5Cmathbf%7BI_n%7D-%5Cmathbf%7BA%7D-%5Cmathbf%7BA%7D+%5Cmathbf%7BA%7D%20%5Cquad%20%5Cbecause%20%5Ctext%7BA%20is%20idempotent%7D%5C%5C%0A&amp;=%5Cmathbf%7BI_n%7D%5Cmathbf%7BI_n%7D-%5Cmathbf%7BA%7D%5C%5C%0A&amp;=%5Cmathbf%7BI_n%7D-%5Cmathbf%7BA%7D%0A%5Cend%7Baligned%7D%0A"></li>
-<li>The determinant of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is either 0 or 1.</li>
-<li>If <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is symmetric, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is idempotent if only if the eigenvalue of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is either <img src="https://latex.codecogs.com/png.latex?0"> or <img src="https://latex.codecogs.com/png.latex?1">.</li>
-<li>The rank of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is equal to the trace of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, which is the sum of the diagonal elements of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">.</li>
-</ul>
-</section>
-</section>
-<section id="ones-matrix" class="level3" data-number="1.6">
-<h3 data-number="1.6" class="anchored" data-anchor-id="ones-matrix"><span class="header-section-number">1.6</span> Ones Matrix</h3>
-<p>The ones matrix, denoted as <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BJ%7D">, is a matrix in which every entry is equal to 1.</p>
-<div class="callout-warning callout callout-style-default callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Warning
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The letter <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BJ%7D"> is not related to the jacobian matrix at all. The letter <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BJ%7D"> of the ones matrix is used for convention.</p>
-</div>
-</div>
-<p>Here is an example of a <img src="https://latex.codecogs.com/png.latex?3%5Ctimes%203"> ones matrix:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BJ%7D%20=%0A%5Cbegin%7Bpmatrix%7D%0A1%20&amp;%201%20&amp;%201%20%5C%5C%0A1%20&amp;%201%20&amp;%201%20%5C%5C%0A1%20&amp;%201%20&amp;%201%0A%5Cend%7Bpmatrix%7D%0A"></p>
-<section id="properties-5" class="level4" data-number="1.6.1">
-<h4 data-number="1.6.1" class="anchored" data-anchor-id="properties-5"><span class="header-section-number">1.6.1</span> Properties</h4>
-<ul>
-<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20J"> is a square matrix</li>
-<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20J"> is symmetric</li>
-<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20J"> has rank 1</li>
-<li>Trace: The trace of the <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20J"> matrix is equal to the dimension of the matrix. For the <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20J"> matrix, it is equal to the number of rows or columns in the matrix.</li>
-<li>Matrix multiplication: When multiplied by any matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">, the <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BJ%7D"> matrix results in a matrix where each row (or column, depending on the multiplication order) is the sum of the elements of the corresponding row (or column) of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.
-<ul>
-<li>In other words, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BJ%7D"> multiplied by a matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> performs a row (or column) summation operation on <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</li>
-<li>If A is any <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> matrix, then <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAJ%7D%20=%20%5Cmathbf%7BJA%7D%20=%20%5Coperatorname%7Btrace%7D(%5Cmathbf%7BA%7D)%5Cmathbf%7BJ%7D">, where <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7Btrace%7D(%5Cmathbf%7BA%7D)"> is the sum of the diagonal elements of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</li>
-</ul></li>
-<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20J_%7Bm%5Ctimes%20n%7D"> can be represented as the product of two vectors, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%201_%7Bm%7D">, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%201_%7Bn%7D">, i.e., <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20J_%7Bm%5Ctimes%20n%7D%20=%20%5Cmathbf%201_%7Bm%7D%20%5Cmathbf%201_%7Bn%7D%5ET"> where <img src="https://latex.codecogs.com/png.latex?m=n"></li>
-<li>Eigenvalues and eigenvectors: The <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20J"> matrix has one eigenvalue equal to the dimension of the matrix, with the corresponding eigenvector being a vector of all 1’s.</li>
-<li>Inverse: The <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20J"> matrix is a special case where it does not have an inverse, as all its rows (or columns) are linearly dependent.</li>
-</ul>
-</section>
-<section id="applications" class="level4" data-number="1.6.2">
-<h4 data-number="1.6.2" class="anchored" data-anchor-id="applications"><span class="header-section-number">1.6.2</span> Applications</h4>
-<ul>
-<li><p>calculate a sum using a <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%201_n"> vector for <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x_n">: <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%201%5ET%5Cmathbf%20x%20=%5Csum_%7Bi=1%7D%5E%7Bn%7D1%5Ctimes%20x_i=x_1+x_2+%5Cdots+x_n%0A"></p></li>
-<li><p>calculate a mean using a <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%201_n"> vector for <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x_n">:</p></li>
-</ul>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbar%7Bx%7D=%5Cfrac%7B1%7D%7Bn%7D%5Cmathbf%201%5ET%5Cmathbf%20x%20=%5Cfrac%7B1%7D%7Bn%7D%5Csum_%7Bi=1%7D%5E%7Bn%7D1%5Ctimes%20x_i=%5Cfrac%7B1%7D%7Bn%7D(x_1+x_2+%5Cdots+x_n)%0A"></p>
-<ul>
-<li>calculate <img src="https://latex.codecogs.com/png.latex?n"> column sums of a dataset using a <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%201_m"> vector for <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20X_%7Bm%5Ctimes%20n%7D">: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbar%7B%5Cmathbf%20x%7D=%5Cfrac%7B1%7D%7Bm%7D%5Cmathbf%20X%5ET%5Cmathbf%201_m%0A"> <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5Cbar%7B%5Cmathbf%20x%7D&amp;=%5Cfrac%7B1%7D%7Bm%7D%5Cmathbf%20X%5ET%5Cmathbf%201%20%5C%5C%0A&amp;=%5Cfrac%7B1%7D%7Bm%7D%0A%5Cbegin%7Bbmatrix%7D%0Ax_%7B11%7D%20&amp;%20x_%7B21%7D%20&amp;%20%5Ccdots%20&amp;%20x_%7Bm1%7D%20%5C%5C%0Ax_%7B12%7D%20&amp;%20x_%7B22%7D%20&amp;%20%5Ccdots%20&amp;%20x_%7Bm2%7D%20%5C%5C%0A%5Cvdots%20&amp;%20%5Cvdots%20&amp;%20%5Cddots%20&amp;%20%5Cvdots%20%5C%5C%0Ax_%7B1n%7D%20&amp;%20x_%7B2n%7D%20&amp;%20%5Ccdots%20&amp;%20x_%7Bmn%7D%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7Bbmatrix%7D%0A1_1%20%5C%5C%201_2%20%5C%5C%20%5Cvdots%20%5C%5C%201_m%0A%5Cend%7Bbmatrix%7D%5C%5C%0A&amp;=%5Cfrac%7B1%7D%7Bm%7D%0A%5Cbegin%7Bbmatrix%7D%0Ax_%7B11%7D%20+%20x_%7B21%7D%20+%20%5Ccdots%20+%20x_%7Bm1%7D%20%5C%5C%0Ax_%7B12%7D%20+%20x_%7B22%7D%20+%20%5Ccdots%20+%20x_%7Bm2%7D%20%5C%5C%0A%5Cvdots%20%20%5C%5C%0Ax_%7B1n%7D%20+%20x_%7B2n%7D%20+%20%5Ccdots%20+%20x_%7Bmn%7D%0A%5Cend%7Bbmatrix%7D%20%5C%5C%0A&amp;=%5Cfrac%7B1%7D%7Bm%7D%0A%5Cbegin%7Bbmatrix%7D%0A%5Csum_%7Bi=1%7D%5E%7Bm%20%7Dx_%7Bi1%7D%20%5C%5C%0A%5Csum_%7Bi=1%7D%5E%7Bm%20%7Dx_%7Bi2%7D%20%5C%5C%0A%5Cvdots%20%20%5C%5C%0A%5Csum_%7Bi=1%7D%5E%7Bm%20%7Dx_%7Bjn%7D%0A%5Cend%7Bbmatrix%7D%20%5C%5C%0A&amp;=%0A%5Cbegin%7Bbmatrix%7D%0A%5Cbar%7Bx%7D_%7B1%7D%20%5C%5C%0A%5Cbar%7Bx%7D_%7B2%7D%20%5C%5C%0A%5Cvdots%20%20%5C%5C%0A%5Cbar%7Bx%7D_%7Bn%7D%0A%5Cend%7Bbmatrix%7D%20%5C%5C%0A&amp;=%5Cbar%7B%5Cmathbf%20x%7D%0A%5Cend%7Baligned%7D%0A"></li>
-</ul>
-</section>
-</section>
-<section id="centering-matrix" class="level3" data-number="1.7">
-<h3 data-number="1.7" class="anchored" data-anchor-id="centering-matrix"><span class="header-section-number">1.7</span> Centering Matrix</h3>
-<p>A centering matrix is a square matrix that is used in multivariate statistical analysis to center data by subtracting the mean of each variable from each observation. The resulting matrix is called the centered data matrix with the mean equal to <img src="https://latex.codecogs.com/png.latex?0">. The centering matrix is defined as:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation%7D%0A%20%20%5Cmathbf%20C%20=%20%5Cmathbf%20I%20-%20%5Cfrac%7B1%7D%7Bm%7D%5Cmathbf%20J%0A%5Cend%7Bequation%7D%0A"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20I"> is the identity matrix, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20J"> is a matrix of ones, and <img src="https://latex.codecogs.com/png.latex?m"> is the number of observations.</p>
-<section id="example-1" class="level4" data-number="1.7.1">
-<h4 data-number="1.7.1" class="anchored" data-anchor-id="example-1"><span class="header-section-number">1.7.1</span> Example</h4>
-<p>Here is an example of a centering matrix of size <img src="https://latex.codecogs.com/png.latex?3%20%5Ctimes%203">:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation*%7D%0A%5Cmathbf%20C%20=%20%5Cfrac%7B1%7D%7B3%7D%20%5Cbegin%7Bbmatrix%7D%0A2%20&amp;%20-1%20&amp;%20-1%20%5C%5C%0A-1%20&amp;%202%20&amp;%20-1%20%5C%5C%0A-1%20&amp;%20-1%20&amp;%202%0A%5Cend%7Bbmatrix%7D%0A%5Cend%7Bequation*%7D%0A"></p>
-</section>
-<section id="properties-6" class="level4" data-number="1.7.2">
-<h4 data-number="1.7.2" class="anchored" data-anchor-id="properties-6"><span class="header-section-number">1.7.2</span> Properties</h4>
-<p>The centering matrix is often used in multivariate statistical analysis, such as principal component analysis, to transform the data into a new coordinate system where the variance of each variable is equal to its eigenvalue.</p>
-<ul>
-<li>A centering matrix is a square matrix.</li>
-<li>A centering matrix is a symmetric matrix.</li>
-<li>A centering matrix is a idempotent matrix.</li>
-<li>The diagonal elements of a centering matrix are all equal and are given by <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B1%7D%7Bm%7D">, where <img src="https://latex.codecogs.com/png.latex?n"> is the size of the matrix.</li>
-<li>The off-diagonal elements of a centering matrix are all equal and are given by <img src="https://latex.codecogs.com/png.latex?-%5Cfrac%7B1%7D%7Bm%7D">.</li>
-<li>Multiplying a matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> on the left by a centering matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20C">, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BCA%7D"> is equivalent to subtracting the mean of the columns of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> from each column of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">.</li>
-<li>Multiplying a matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> on the right by a centering matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20C">, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BAC%7D"> is equivalent to subtracting the mean of the rows of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> from each row of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">.</li>
-</ul>
-</section>
-<section id="applications-1" class="level4" data-number="1.7.3">
-<h4 data-number="1.7.3" class="anchored" data-anchor-id="applications-1"><span class="header-section-number">1.7.3</span> Applications</h4>
-<ul>
-<li>find a centered matrix, <img src="https://latex.codecogs.com/png.latex?%5Ctilde%7B%5Cmathbf%20X%7D"> using a <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%201_m"> vector for <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20X_%7Bm%5Ctimes%20n%7D">:</li>
-</ul>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20C%20=%20%5Cmathbf%20I%20-%20%5Cfrac%7B1%7D%7Bm%7D%5Cmathbf%20J%0A"> <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5Cmathbf%20X&amp;=%0A%5Cbegin%7Bbmatrix%7D%0Ax_%7B11%7D%20&amp;%20x_%7B12%7D%20&amp;%20%5Ccdots%20&amp;%20x_%7B1n%7D%20%5C%5C%0Ax_%7B21%7D%20&amp;%20x_%7B22%7D%20&amp;%20%5Ccdots%20&amp;%20x_%7B2n%7D%20%5C%5C%0A%5Cvdots%20&amp;%20%5Cvdots%20&amp;%20%5Cddots%20&amp;%20%5Cvdots%20%5C%5C%0Ax_%7Bm1%7D%20&amp;%20x_%7Bm2%7D%20&amp;%20%5Ccdots%20&amp;%20x_%7Bmn%7D%0A%5Cend%7Bbmatrix%7D%20%5Ctext%7B%20%7D%20%5C%5C%0A%5Cmathbf%20%7B1_m%5Cbar%7Bx%7D%5ET%7D&amp;=%0A%5Cbegin%7Bbmatrix%7D%0A1%20%5C%5C%0A1%20%5C%5C%0A%5Cvdots%20%5C%5C%0A1%0A%5Cend%7Bbmatrix%7D%0A%5Cbegin%7Bbmatrix%7D%0A%5Cbar%7Bx%7D_%7B1%7D%20&amp;%20%5Cbar%7Bx%7D_%7B2%7D%20&amp;%20%5Cdots%20&amp;%20%5Cbar%7Bx%7D_%7Bn%7D%0A%5Cend%7Bbmatrix%7D%5C%5C%0A&amp;=%5Cbegin%7Bbmatrix%7D%0A%5Cbar%7Bx%7D_%7B1%7D%20&amp;%20%5Cbar%7Bx%7D_%7B2%7D%20&amp;%20%5Cdots%20&amp;%20%5Cbar%7Bx%7D_%7Bn%7D%5C%5C%0A%5Cbar%7Bx%7D_%7B1%7D%20&amp;%20%5Cbar%7Bx%7D_%7B2%7D%20&amp;%20%5Cdots%20&amp;%20%5Cbar%7Bx%7D_%7Bn%7D%5C%5C%0A%5Cvdots%20&amp;%20%5Cvdots%20&amp;%20%5Cddots%20&amp;%20%5Cvdots%5C%5C%0A%5Cbar%7Bx%7D_%7B1%7D%20&amp;%20%5Cbar%7Bx%7D_%7B2%7D%20&amp;%20%5Cdots%20&amp;%20%5Cbar%7Bx%7D_%7Bn%7D%0A%5Cend%7Bbmatrix%7D_%7Bm%5Ctimes%20n%7D%5C%5C%0A%5C%5C%0A%5Ctilde%7B%5Cmathbf%20X%7D&amp;=%5Cmathbf%20X%20-%7B%5Cmathbf%7B1%7D%7D_%7Bm%7D%5Cbar%7B%5Cmathbf%20x%7D%5ET%5C%5C%0A&amp;=%5Cmathbf%20X%20-%5Cmathbf%7B1%7D_%7Bm%7D(%5Cfrac%7B1%7D%7Bm%7D%5Cmathbf%20X%5ET%20%5Cmathbf%7B1%7D_m)%5ET%5C%5C%0A&amp;=%5Cmathbf%20X%20-%5Cmathbf%7B1%7D_%7Bm%7D%5Cmathbf%7B1%7D_m%5ET%5Cfrac%7B1%7D%7Bm%7D%5Cmathbf%20X%5C%5C%0A&amp;=(%5Cmathbf%20I%20-%5Cfrac%7B1%7D%7Bm%7D%5Cmathbf%20J)%5Cmathbf%20X%5C%5C%0A&amp;=%5Cmathbf%20C%20%5Cmathbf%20X%5C%5C%0A%5Cend%7Baligned%7D%0A"></p>
-</section>
-</section>
-<section id="covariance-matrix" class="level3" data-number="1.8">
-<h3 data-number="1.8" class="anchored" data-anchor-id="covariance-matrix"><span class="header-section-number">1.8</span> Covariance Matrix</h3>
-<p>The covariance matrix of a dataset matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D"> with <img src="https://latex.codecogs.com/png.latex?m"> observations and <img src="https://latex.codecogs.com/png.latex?n"> variables is a symmetric <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> matrix given by:</p>
-<section id="algebraic-expression" class="level4" data-number="1.8.1">
-<h4 data-number="1.8.1" class="anchored" data-anchor-id="algebraic-expression"><span class="header-section-number">1.8.1</span> Algebraic Expression</h4>
-<p>For two random variables, <img src="https://latex.codecogs.com/png.latex?X_1,X_2">, if there are <img src="https://latex.codecogs.com/png.latex?m"> of the observed samples or realized values, we can represent the sample data as:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A(x_%7B11%7D,x_%7B12%7D),(x_%7B21%7D,x_%7B22%7D),%5Cdots,(x_%7Bm1%7D,x_%7Bm2%7D)%0A"></p>
-<p>Then, the sample variance between the two random variables are represented as:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0As_%7Bx_1x_2%7D%20=%20%5Cfrac%7B%5Csum_%7Bi=1%7D%5E%7Bm%7D(x_%7Bi1%7D-%5Cbar%7Bx_1%7D)(x_%7Bi2%7D-%5Cbar%7Bx_2%7D)%7D%7Bm-1%7D%0A"></p>
-<div class="callout-note callout callout-style-default callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Sample Variance
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>For each variate, <img src="https://latex.codecogs.com/png.latex?X_j">, <img src="https://latex.codecogs.com/png.latex?j=1,%5Cdots,%20n"></p>
-<p><img src="https://latex.codecogs.com/png.latex?%0As%5E2_%7Bx%7D=s_%7Bxx%7D%20=%20%5Cfrac%7B%5Csum_%7Bi=1%7D%5E%7Bm%7D(x_%7Bij%7D-%5Cbar%7Bx%7D)%5E2%7D%7Bm-1%7D%0A"></p>
-<p>For two random variables, <img src="https://latex.codecogs.com/png.latex?X_1">, <img src="https://latex.codecogs.com/png.latex?X_2">, <img src="https://latex.codecogs.com/png.latex?%0As_%7Bx_1x_2%7D%20=%20%5Cfrac%7B%5Csum_%7Bi=1%7D%5E%7Bm%7D(x_%7Bi1%7D-%5Cbar%7Bx_1%7D)(x_%7Bi2%7D-%5Cbar%7Bx_2%7D)%7D%7Bm-1%7D%0A"></p>
-<p>Often for the notation of sample variance, the squared power is added for the sample variance with one random variable, but it is not for the covariance between two random variables.</p>
-</div>
-</div>
-<p>For two random variables ,<img src="https://latex.codecogs.com/png.latex?X_1,X_2">,</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%20%20%5Cmathbf%7BS%7D%0A%20%20&amp;=%5Cbegin%7Bbmatrix%7D%0A%20%20%20%20s_%7B11%7D&amp;s_%7B12%7D%5C%5C%0A%20%20%20%20s_%7B21%7D&amp;s_%7B22%7D%0A%20%20%5Cend%7Bbmatrix%7D%5C%5C%0A%20%20&amp;=%5Cbegin%7Bbmatrix%7D%0A%20%20%20%20s_%7Bx_1x_1%7D&amp;s_%7Bx_1x_2%7D%5C%5C%0A%20%20%20%20s_%7Bx_2x_1%7D&amp;s_%7Bx_2x_2%7D%0A%20%20%5Cend%7Bbmatrix%7D%5C%5C%0A%20%20&amp;=%5Cfrac%7B1%7D%7Bn-1%7D%0A%20%20%5Cbegin%7Bbmatrix%7D%0A%20%20%20%20%5Csum_%7Bi=1%7D%5E%7Bm%7D(x_%7Bi1%7D-%5Cbar%7Bx%7D_1)(x_%7Bi1%7D-%5Cbar%7Bx%7D_1)&amp;%5Csum_%7Bi=1%7D%5E%7Bm%7D(x_%7Bi1%7D-%5Cbar%7Bx%7D_1)(x_%7Bi2%7D-%5Cbar%7Bx%7D_2)%5C%5C%0A%20%20%20%20%5Csum_%7Bi=1%7D%5E%7Bm%7D(x_%7Bi2%7D-%5Cbar%7Bx%7D_2)(x_%7Bi1%7D-%5Cbar%7Bx%7D_1)&amp;%5Csum_%7Bi=1%7D%5E%7Bm%7D(x_%7Bi2%7D-%5Cbar%7Bx%7D_2)(x_%7Bi2%7D-%5Cbar%7Bx%7D_2)%0A%20%20%5Cend%7Bbmatrix%7D%0A%5Cend%7Baligned%7D%0A"></p>
-<p>For <img src="https://latex.codecogs.com/png.latex?n"> of random variables, <img src="https://latex.codecogs.com/png.latex?X_1,%5Cdots,X_n">, if we observed the sample vectors with <img src="https://latex.codecogs.com/png.latex?m"> observations, the sample covariance matrix can be represented as:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BS%7D=%5Cbegin%7Bbmatrix%7D%0As_%7B11%7D&amp;s_%7B12%7D&amp;%5Cdots&amp;s_%7B1n%7D%5C%5C%0As_%7B21%7D&amp;s_%7B22%7D&amp;%5Cdots&amp;s_%7B2n%7D%5C%5C%0A%5Cvdots&amp;%5Cvdots&amp;%5Cddots&amp;%5Cvdots%5C%5C%0As_%7Bn1%7D&amp;s_%7Bn2%7D&amp;%5Cdots&amp;s_%7Bnn%7D%0A%5Cend%7Bbmatrix%7D%0A"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?s_%7Bjk%7D%20=%20%5Cfrac%7B%5Csum_%7Bi=1%7D%5E%7Bm%7D(x_%7Bij%7D-%5Cbar%7Bx_j%7D)(x_%7Bik%7D-%5Cbar%7Bx_k%7D)%7D%7Bm-1%7D">. The diagonal entries are the sample variances of each random variable, and the off-diagonal entires are the sample covariance between two different random variables.</p>
-</section>
-<section id="vector-form-of-sample-variance-in-linear-algebra" class="level4" data-number="1.8.2">
-<h4 data-number="1.8.2" class="anchored" data-anchor-id="vector-form-of-sample-variance-in-linear-algebra"><span class="header-section-number">1.8.2</span> Vector Form of Sample Variance in Linear Algebra</h4>
-<p>The complicating algebraic notation can be represented as the simpler form in linear algebra. To do so, let a sample vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x%20=%5Cbegin%7Bbmatrix%7Dx_%7B1%7D%5C%5Cx_%7B2%7D%5C%5C%20%5Cvdots%5C%5Cx_%7Bn%7D%5Cend%7Bbmatrix%7D">. In othe words, a record, a row, or the observations across <img src="https://latex.codecogs.com/png.latex?n"> variables in a dataset:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BX%7D=%0A%5Cbegin%7Bbmatrix%7D%0A%5Cmathbf%7Bx%7D_%7B1%7D%5ET%5C%5C%0A%5Cmathbf%7Bx%7D_%7B2%7D%5ET%5C%5C%0A%5Cvdots%5C%5C%0A%5Cmathbf%7Bx%7D_%7Bm%7D%5ET%0A%5Cend%7Bbmatrix%7D%0A=%5Cbegin%7Bbmatrix%7D%0Ax_%7B11%7D&amp;x_%7B12%7D&amp;%5Cdots&amp;x_%7B1n%7D%5C%5C%0Ax_%7B21%7D&amp;x_%7B22%7D&amp;%5Cdots&amp;x_%7B2n%7D%5C%5C%0A%5Cvdots&amp;%5Cvdots&amp;%5Cddots&amp;%5Cvdots%5C%5C%0Ax_%7Bm1%7D&amp;x_%7Bm2%7D&amp;%5Cdots&amp;x_%7Bmn%7D%0A%5Cend%7Bbmatrix%7D%0A"></p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5Cmathbf%20S%0A&amp;=%20%5Coperatorname%7BCov%7D(%5Cmathbf%7BX%7D)%20%5C%5C%0A&amp;=%20%5Cfrac%7B1%7D%7Bm-1%7D%5Csum_%7Bi=1%7D%5E%7Bm%7D(%5Cmathbf%20x_i%20-%20%5Cbar%7B%5Cmathbf%20x%7D_i)(%5Cmathbf%20x_i%20-%20%5Cbar%7B%5Cmathbf%20x%7D_i)%5ET%5C%5C%0A&amp;=%20%5Cfrac%7B1%7D%7Bm-1%7D%5Ctilde%7B%5Cmathbf%7BX%7D%7D%5ET%5Ctilde%7B%5Cmathbf%7BX%7D%7D%5C%5C%0A&amp;=%20%5Cfrac%7B1%7D%7Bm-1%7D(%5Cmathbf%7BCX%7D)%5ET(%5Cmathbf%7BCX%7D)%5C%5C%0A&amp;=%20%5Cfrac%7B1%7D%7Bm-1%7D%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BC%7D%5ET%5Cmathbf%7BCX%7D%5C%5C%0A&amp;=%20%5Cfrac%7B1%7D%7Bm-1%7D%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BC%7D%5Cmathbf%7BC%7D%5Cmathbf%7BX%7D%5Cquad%20(%5Cbecause%20%5Cmathbf%7BC%7D%5Ctext%7B%20is%20symmetric%7D)%5C%5C%0A&amp;=%20%5Cfrac%7B1%7D%7Bm-1%7D%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BC%7D%5Cmathbf%7BX%7D%5Cquad%20(%5Cbecause%20%5Cmathbf%7BC%7D%5Ctext%7B%20is%20an%20idempotent%20matrix%7D)%0A%5Cend%7Baligned%7D%0A"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D"> is the dataset matrix, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx_i%7D=%5Cbegin%7Bbmatrix%7Dx_%7Bi1%7D%5C%5Cx_%7Bi2%7D%5C%5C%20%5Cvdots%5C%5Cx_%7Bin%7D%5Cend%7Bbmatrix%7D"> is the observations of each variable along the columns, <img src="https://latex.codecogs.com/png.latex?%5Cbar%7B%5Cmathbf%7Bx%7D%7D_i=%5Cbegin%7Bbmatrix%7D%5Cbar%7Bx%7D_%7B1%7D%5C%5C%5Cbar%7Bx%7D_%7B2%7D%5C%5C%20%5Cvdots%5C%5C%5Cbar%7Bx%7D_%7Bn%7D%5Cend%7Bbmatrix%7D"> and <img src="https://latex.codecogs.com/png.latex?(%5Cmathbf%7Bx%7D_i%20-%20%5Cbar%7B%5Cmathbf%7Bx%7D%7D_i)%5ET=%5Ctilde%7B%5Cmathbf%7BX%7D%7D"> is the transpose of the centered dataset matrix.</p>
-<p>The size of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20S"> is <img src="https://latex.codecogs.com/png.latex?(1%20%5Ctimes%20n)%5ET(1%20%5Ctimes%20n)=(n%20%5Ctimes%201)(1%20%5Ctimes%20n)=(n%20%5Ctimes%20n)"></p>
-<div class="callout-tip callout callout-style-default callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Tip
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>For the <img src="https://latex.codecogs.com/png.latex?i"> th observation of <img src="https://latex.codecogs.com/png.latex?m"> observations and the <img src="https://latex.codecogs.com/png.latex?j"> th variable of <img src="https://latex.codecogs.com/png.latex?n"> variables in a dataset, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D">, the outer product of <img src="https://latex.codecogs.com/png.latex?(%5Cmathbf%20x_i%20-%20%5Cbar%7B%5Cmathbf%20x%7D_i)(%5Cmathbf%20x_i%20-%20%5Cbar%7B%5Cmathbf%20x%7D_i)%5ET"> generates the following <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> matrix.</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A(%5Cmathbf%20x_i%20-%20%5Cbar%7B%5Cmathbf%20x%7D_i)(%5Cmathbf%20x_i%20-%20%5Cbar%7B%5Cmathbf%20x%7D_i)%5ET%0A&amp;=%20%5Cbegin%7Bbmatrix%7D%0Ax_%7Bi1%7D%20-%5Cbar%7Bx%7D_%7Bi1%7D%5C%5C%20x_%7Bi2%7D%20-%5Cbar%7Bx%7D_%7Bi2%7D%5C%5C%20%5Cvdots%20%5C%5C%20x_%7Bin%7D%20-%5Cbar%7Bx%7D_%7Bin%7D%0A%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7D%0Ax_%7Bi1%7D%20-%5Cbar%7Bx%7D_%7Bi1%7D&amp;x_%7Bi2%7D%20-%5Cbar%7Bx%7D_%7Bi2%7D&amp;%5Cdots&amp;x_%7Bin%7D%20-%5Cbar%7Bx%7D_%7Bin%7D%0A%5Cend%7Bbmatrix%7D%20%5C%5C%0A&amp;=%5Cbegin%7Bbmatrix%7D%0A(x_%7Bi1%7D-%5Cbar%7Bx%7D_%7Bi1%7D)(x_%7Bi1%7D-%5Cbar%7Bx%7D_%7Bi1%7D)%20&amp;%20(x_%7Bi1%7D-%5Cbar%7Bx%7D_%7Bi1%7D)(x_%7Bi2%7D-%5Cbar%7Bx%7D_%7Bi2%7D)%20&amp;%20%5Cdots%20&amp;%20(x_%7Bi1%7D-%5Cbar%7Bx%7D_%7Bi1%7D)(x_%7Bin%7D-%5Cbar%7Bx%7D_%7Bin%7D)%5C%5C%0A(x_%7Bi2%7D-%5Cbar%7Bx%7D_%7Bi2%7D)(x_%7Bi1%7D-%5Cbar%7Bx%7D_%7Bi1%7D)%20&amp;%20(x_%7Bi2%7D-%5Cbar%7Bx%7D_%7Bi2%7D)(x_%7Bi2%7D-%5Cbar%7Bx%7D_%7Bi2%7D)%20&amp;%20%5Cdots%20&amp;%20(x_%7Bi2%7D-%5Cbar%7Bx%7D_%7Bi2%7D)(x_%7Bin%7D-%5Cbar%7Bx%7D_%7Bin%7D)%5C%5C%0A%5Cvdots&amp;%5Cvdots&amp;%5Cddots&amp;%5Cvdots%5C%5C%0A(x_%7Bin%7D-%5Cbar%7Bx%7D_%7Bin%7D)(x_%7Bi1%7D-%5Cbar%7Bx%7D_%7Bi1%7D)&amp;(x_%7Bin%7D-%5Cbar%7Bx%7D_%7Bin%7D)(x_%7Bi2%7D-%5Cbar%7Bx%7D_%7Bi2%7D)&amp;%5Cdots&amp;(x_%7Bin%7D-%5Cbar%7Bx%7D_%7Bin%7D)(x_%7Bin%7D-%5Cbar%7Bx%7D_%7Bin%7D)%0A%5Cend%7Bbmatrix%7D_%7Bn%5Ctimes%20n%7D%0A%5Cend%7Baligned%7D%0A"></p>
-<p>The <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> matrix right above is gnerated by <img src="https://latex.codecogs.com/png.latex?m"> times for the <img src="https://latex.codecogs.com/png.latex?m"> observations of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D_%7Bm%20%5Ctimes%20n%7D">, the <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BCov%7D(%5Cmathbf%20X)"> is the sum of the <img src="https://latex.codecogs.com/png.latex?m"> of <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> matrices divided by <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B1%7D%7Bm-1%7D">. In other words,</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B1%7D%7Bm-1%7D%5Csum_%7Bi=1%7D%5E%7Bm%7D(%5Cmathbf%20x_i%20-%20%5Cbar%7B%5Cmathbf%20x%7D_i)(%5Cmathbf%20x_i%20-%20%5Cbar%7B%5Cmathbf%20x%7D_i)%5ET%0A"></p>
-</div>
-</div>
-</section>
-<section id="example-2" class="level4" data-number="1.8.3">
-<h4 data-number="1.8.3" class="anchored" data-anchor-id="example-2"><span class="header-section-number">1.8.3</span> Example</h4>
-<p><strong>Example 1</strong></p>
-<p>Let’s say we have a dataset with three variables, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D_1,%20%5Cmathbf%7Bx%7D_2,%20%5Ctext%7B%20and%20%7D%20%5Cmathbf%7Bx%7D_3,"> with <img src="https://latex.codecogs.com/png.latex?m"> observations. The dataset can be represented as a matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D"> with dimensions <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%203">, where each row represents an observation and each column represents a variable. The covariance matrix, <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BCov%7D(%5Cmathbf%7BX%7D)">, of the dataset can be computed as follows:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5Coperatorname%7BCov%7D(%5Cmathbf%7BX%7D)%20&amp;=%20%5Cfrac%7B1%7D%7Bm-1%7D%5Csum_%7Bi=1%7D%5E%7Bm%7D(%5Cmathbf%20x_i%20-%20%5Cbar%7B%5Cmathbf%20x%7D_i)%5ET(%5Cmathbf%20x_i%20-%20%5Cbar%7B%5Cmathbf%20x%7D_i)%5C%5C%0A&amp;=%5Cfrac%7B%5Ctilde%7B%5Cmathbf%20X%7D%5ET%5Ctilde%7B%5Cmathbf%20X%7D%7D%7Bm-1%7D%0A%5Cend%7Baligned%7D%0A"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D"> is the dataset matrix, <img src="https://latex.codecogs.com/png.latex?%5Cbar%7Bx%7D"> is the mean of each variable computed along the rows, and <img src="https://latex.codecogs.com/png.latex?(%5Cmathbf%7Bx_i%7D%20-%20%5Cbar%7B%5Cmathbf%7Bx_i%7D%7D)%5ET"> is the transpose of the centered dataset matrix. The covariance matrix <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BCov%7D(%5Cmathbf%7BX%7D)"> will be a <img src="https://latex.codecogs.com/png.latex?3%20%5Ctimes%203"> matrix, with the <img src="https://latex.codecogs.com/png.latex?(i,%20j)"> th entry representing the covariance between the <img src="https://latex.codecogs.com/png.latex?i"> th and <img src="https://latex.codecogs.com/png.latex?j"> th variables in the dataset.</p>
-<p><strong>Example 2</strong></p>
-<p>The second example is to calculate <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BCov%7D(%5Cmathbf%7BX%7D)"> where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D"> is the <code>mtcars</code> dataset.</p>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1">X<span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">as.matrix</span>(mtcars)</span>
-<span id="cb1-2">x_bar_vec<span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">colMeans</span>(mtcars)</span>
-<span id="cb1-3"></span>
-<span id="cb1-4"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">as.numeric</span>(mtcars[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span>]<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span>x_bar_vec)<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%*%</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">t</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">as.numeric</span>(mtcars[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span>]<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span>x_bar_vec)) <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># for 1th row</span></span></code></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>            [,1]        [,2]       [,3]        [,4]         [,5]
-[1,]   0.8269629 -0.17050781  -64.31271  -33.362695   0.27593848
-[2,]  -0.1705078  0.03515625   13.26035    6.878906  -0.05689453
-[3,] -64.3127051 13.26035156 5001.58360 2594.608789 -21.45966895
-[4,] -33.3626953  6.87890625 2594.60879 1345.972656 -11.13236328
-[5,]   0.2759385 -0.05689453  -21.45967  -11.132363   0.09207432</code></pre>
-</div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">as.numeric</span>(mtcars[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span>]<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span>x_bar_vec)<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%*%</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">t</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">as.numeric</span>(mtcars[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span>]<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span>x_bar_vec)) <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># for 2nd row</span></span></code></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>            [,1]        [,2]       [,3]        [,4]         [,5]
-[1,]   0.8269629 -0.17050781  -64.31271  -33.362695   0.27593848
-[2,]  -0.1705078  0.03515625   13.26035    6.878906  -0.05689453
-[3,] -64.3127051 13.26035156 5001.58360 2594.608789 -21.45966895
-[4,] -33.3626953  6.87890625 2594.60879 1345.972656 -11.13236328
-[5,]   0.2759385 -0.05689453  -21.45967  -11.132363   0.09207432</code></pre>
-</div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">X_sweeped<span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">sweep</span>(X,<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">MARGIN=</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>,<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">STAT=</span>x_bar_vec,<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">FUN=</span><span class="st" style="color: #20794D;
-background-color: null;
-font-style: inherit;">'-'</span>)</span>
-<span id="cb5-2">result<span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">matrix</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">0</span>,<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">ncol=</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ncol</span>(mtcars),<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">nrow=</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ncol</span>(mtcars))</span>
-<span id="cb5-3"><span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">for</span> (i <span class="cf" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">in</span> <span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">:</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">nrow</span>(mtcars)){</span>
-<span id="cb5-4">  result<span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span>result<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">+</span>X_sweeped[i,]<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%*%</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">t</span>(X_sweeped[i,])</span>
-<span id="cb5-5">}</span>
-<span id="cb5-6">result<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">/</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">nrow</span>(mtcars)<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>)</span></code></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>              mpg         cyl        disp          hp         drat          wt
- [1,]   36.324103  -9.1723790  -633.09721 -320.732056   2.19506351  -5.1166847
- [2,]   -9.172379   3.1895161   199.66028  101.931452  -0.66836694   1.3673710
- [3,] -633.097208 199.6602823 15360.79983 6721.158669 -47.06401915 107.6842040
- [4,] -320.732056 101.9314516  6721.15867 4700.866935 -16.45110887  44.1926613
- [5,]    2.195064  -0.6683669   -47.06402  -16.451109   0.28588135  -0.3727207
- [6,]   -5.116685   1.3673710   107.68420   44.192661  -0.37272073   0.9573790
- [7,]    4.509149  -1.8868548   -96.05168  -86.770081   0.08714073  -0.3054816
- [8,]    2.017137  -0.7298387   -44.37762  -24.987903   0.11864919  -0.2736613
- [9,]    1.803931  -0.4657258   -36.56401   -8.320565   0.19015121  -0.3381048
-[10,]    2.135685  -0.6491935   -50.80262   -6.358871   0.27598790  -0.4210806
-[11,]   -5.363105   1.5201613    79.06875   83.036290  -0.07840726   0.6757903
-              qsec           vs           am        gear        carb
- [1,]   4.50914919   2.01713710   1.80393145   2.1356855 -5.36310484
- [2,]  -1.88685484  -0.72983871  -0.46572581  -0.6491935  1.52016129
- [3,] -96.05168145 -44.37762097 -36.56401210 -50.8026210 79.06875000
- [4,] -86.77008065 -24.98790323  -8.32056452  -6.3588710 83.03629032
- [5,]   0.08714073   0.11864919   0.19015121   0.2759879 -0.07840726
- [6,]  -0.30548161  -0.27366129  -0.33810484  -0.4210806  0.67579032
- [7,]   3.19316613   0.67056452  -0.20495968  -0.2804032 -1.89411290
- [8,]   0.67056452   0.25403226   0.04233871   0.0766129 -0.46370968
- [9,]  -0.20495968   0.04233871   0.24899194   0.2923387  0.04637097
-[10,]  -0.28040323   0.07661290   0.29233871   0.5443548  0.32661290
-[11,]  -1.89411290  -0.46370968   0.04637097   0.3266129  2.60887097</code></pre>
-</div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># J matrix</span></span>
-<span id="cb7-2">m<span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">nrow</span>(mtcars)</span>
-<span id="cb7-3">J<span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">/</span>m)<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">*</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">matrix</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>,<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">ncol=</span>m,<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">nrow=</span>m)</span>
-<span id="cb7-4"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># Centering matrix</span></span>
-<span id="cb7-5">C<span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">diag</span>(m)<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span>J</span>
-<span id="cb7-6"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># Covariance</span></span>
-<span id="cb7-7">(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">/</span>(m<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">-1</span>))<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">*</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">t</span>(X)<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%*%</span>C<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">%*%</span>X</span></code></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>             mpg         cyl        disp          hp         drat          wt
-mpg    36.324103  -9.1723790  -633.09721 -320.732056   2.19506351  -5.1166847
-cyl    -9.172379   3.1895161   199.66028  101.931452  -0.66836694   1.3673710
-disp -633.097208 199.6602823 15360.79983 6721.158669 -47.06401915 107.6842040
-hp   -320.732056 101.9314516  6721.15867 4700.866935 -16.45110887  44.1926613
-drat    2.195064  -0.6683669   -47.06402  -16.451109   0.28588135  -0.3727207
-wt     -5.116685   1.3673710   107.68420   44.192661  -0.37272073   0.9573790
-qsec    4.509149  -1.8868548   -96.05168  -86.770081   0.08714073  -0.3054816
-vs      2.017137  -0.7298387   -44.37762  -24.987903   0.11864919  -0.2736613
-am      1.803931  -0.4657258   -36.56401   -8.320565   0.19015121  -0.3381048
-gear    2.135685  -0.6491935   -50.80262   -6.358871   0.27598790  -0.4210806
-carb   -5.363105   1.5201613    79.06875   83.036290  -0.07840726   0.6757903
-             qsec           vs           am        gear        carb
-mpg    4.50914919   2.01713710   1.80393145   2.1356855 -5.36310484
-cyl   -1.88685484  -0.72983871  -0.46572581  -0.6491935  1.52016129
-disp -96.05168145 -44.37762097 -36.56401210 -50.8026210 79.06875000
-hp   -86.77008065 -24.98790323  -8.32056452  -6.3588710 83.03629032
-drat   0.08714073   0.11864919   0.19015121   0.2759879 -0.07840726
-wt    -0.30548161  -0.27366129  -0.33810484  -0.4210806  0.67579032
-qsec   3.19316613   0.67056452  -0.20495968  -0.2804032 -1.89411290
-vs     0.67056452   0.25403226   0.04233871   0.0766129 -0.46370968
-am    -0.20495968   0.04233871   0.24899194   0.2923387  0.04637097
-gear  -0.28040323   0.07661290   0.29233871   0.5443548  0.32661290
-carb  -1.89411290  -0.46370968   0.04637097   0.3266129  2.60887097</code></pre>
-</div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">var</span>(X) <span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">#=cov(X)</span></span></code></pre></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>             mpg         cyl        disp          hp         drat          wt
-mpg    36.324103  -9.1723790  -633.09721 -320.732056   2.19506351  -5.1166847
-cyl    -9.172379   3.1895161   199.66028  101.931452  -0.66836694   1.3673710
-disp -633.097208 199.6602823 15360.79983 6721.158669 -47.06401915 107.6842040
-hp   -320.732056 101.9314516  6721.15867 4700.866935 -16.45110887  44.1926613
-drat    2.195064  -0.6683669   -47.06402  -16.451109   0.28588135  -0.3727207
-wt     -5.116685   1.3673710   107.68420   44.192661  -0.37272073   0.9573790
-qsec    4.509149  -1.8868548   -96.05168  -86.770081   0.08714073  -0.3054816
-vs      2.017137  -0.7298387   -44.37762  -24.987903   0.11864919  -0.2736613
-am      1.803931  -0.4657258   -36.56401   -8.320565   0.19015121  -0.3381048
-gear    2.135685  -0.6491935   -50.80262   -6.358871   0.27598790  -0.4210806
-carb   -5.363105   1.5201613    79.06875   83.036290  -0.07840726   0.6757903
-             qsec           vs           am        gear        carb
-mpg    4.50914919   2.01713710   1.80393145   2.1356855 -5.36310484
-cyl   -1.88685484  -0.72983871  -0.46572581  -0.6491935  1.52016129
-disp -96.05168145 -44.37762097 -36.56401210 -50.8026210 79.06875000
-hp   -86.77008065 -24.98790323  -8.32056452  -6.3588710 83.03629032
-drat   0.08714073   0.11864919   0.19015121   0.2759879 -0.07840726
-wt    -0.30548161  -0.27366129  -0.33810484  -0.4210806  0.67579032
-qsec   3.19316613   0.67056452  -0.20495968  -0.2804032 -1.89411290
-vs     0.67056452   0.25403226   0.04233871   0.0766129 -0.46370968
-am    -0.20495968   0.04233871   0.24899194   0.2923387  0.04637097
-gear  -0.28040323   0.07661290   0.29233871   0.5443548  0.32661290
-carb  -1.89411290  -0.46370968   0.04637097   0.3266129  2.60887097</code></pre>
-</div>
-</div>
-</section>
-<section id="properties-7" class="level4" data-number="1.8.4">
-<h4 data-number="1.8.4" class="anchored" data-anchor-id="properties-7"><span class="header-section-number">1.8.4</span> Properties</h4>
-<ul>
-<li>Symmetry</li>
-<li>Diagonal Entries: The diagonal entries of the covariance matrix represent the variances of the individual variables.</li>
-<li>Linearity: The covariance matrix exhibits linearity in the sense that the covariance of a linear combination of variables can be expressed as a linear combination of their covariances. Mathematically, if <img src="https://latex.codecogs.com/png.latex?a"> and <img src="https://latex.codecogs.com/png.latex?b"> are constants and <img src="https://latex.codecogs.com/png.latex?X">, <img src="https://latex.codecogs.com/png.latex?Y">, and <img src="https://latex.codecogs.com/png.latex?Z"> are random variables, then <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BCov%7D(aX%20+%20bY,%20Z)%20=%20a%5Coperatorname%7BCov%7D(X,%20Z)%20+%20b%5Coperatorname%7BCov%7D(Y,%20Z)">.</li>
-<li>Scale Invariance: The covariance between variables is invariant to changes in scale or units of measurement. For example, if variables are measured in different units or are on different scales, the covariance matrix will still be valid and informative for measuring the linear relationship between the variables.</li>
-<li>Independence: If two variables <img src="https://latex.codecogs.com/png.latex?X_i"> and <img src="https://latex.codecogs.com/png.latex?X_j"> are independent, their covariance <img src="https://latex.codecogs.com/png.latex?%5Coperatorname%7BCov%7D(X_j,%20X_k)"> is zero.</li>
-<li>Positive Semidefiniteness: The covariance matrix is positive semidefinite, which means that all of its eigenvalues are non-negative. This property ensures that the covariance matrix is a valid variance-covariance matrix.</li>
-</ul>
-</section>
-</section>
-<section id="positive-definite-matrix" class="level3" data-number="1.9">
-<h3 data-number="1.9" class="anchored" data-anchor-id="positive-definite-matrix"><span class="header-section-number">1.9</span> Positive Definite Matrix</h3>
-<p>A symmetric matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is positive definite if and only if the quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D"> is positive for all nonzero vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
-<p>To see why this is true, consider the eigenvalue decomposition of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">, which can be written as <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cmathbf%7BQ%7D%20%5CLambda%20%5Cmathbf%7BQ%7D%5ET">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D"> is an orthogonal matrix and <img src="https://latex.codecogs.com/png.latex?%5CLambda"> is a diagonal matrix containing the eigenvalues of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">. Then, for any nonzero vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">,</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5Cmathbf%20x%5ET%20%5Cmathbf%20A%20%5Cmathbf%20x&amp;=%5Cmathbf%20x%5ET%20%5Cmathbf%20Q%20%5Cmathbf%20%5CLambda%20%5Cmathbf%20Q%5ET%20%5Cmathbf%20x%5C%5C%0A&amp;=(%5Cmathbf%20x%5ET%20%5Cmathbf%20Q)%5Cmathbf%20%5CLambda%20(%20%5Cmathbf%20Q%5ET%5Cmathbf%20x)%5C%5C%0A&amp;=%5Csum_%7Bi=1%7D%5E%7Bn%7D%20%5Clambda_iy_i%5E2%0A%5Cend%7Baligned%7D%0A"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?y_i%20=%20(%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BQ%7D)_i"> is the <img src="https://latex.codecogs.com/png.latex?i"> th coordinate (i.e., a scalar value that represents the position of a point or a vector relative to a chosen basis) of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BQ%7D"> and <img src="https://latex.codecogs.com/png.latex?n"> is the dimension of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">. Note that since <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D"> is orthogonal, we have <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BQ%7D%5ET%20%5Cmathbf%7BQ%7D%20=%20I">, so <img src="https://latex.codecogs.com/png.latex?y_i%20=%20%5Cmathbf%7Bq%7D_i%5ET%20%5Cmathbf%7Bx%7D">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bq%7D_i"> is the <img src="https://latex.codecogs.com/png.latex?i"> th column of <img src="https://latex.codecogs.com/png.latex?Q">. Therefore, the quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)%20=%20%5Cmathbf%7Bx%7D%5ET%20A%20%5Cmathbf%7Bx%7D"> can be written in terms of the eigenvalues of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> and the coordinates of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> with respect to the eigenvectors of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</p>
-<p>Since <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is positive definite, we have <img src="https://latex.codecogs.com/png.latex?%5Clambda_i%20%3E%200"> for all <img src="https://latex.codecogs.com/png.latex?i">, and so <img src="https://latex.codecogs.com/png.latex?%5Csum_%7Bi=1%7D%5En%20%5Clambda_i%20y_i%5E2%20%3E%200"> for all nonzero vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">. Therefore, the quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D"> is positive for all nonzero vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">, which implies that <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is positive definite.</p>
-<p>In other words, the positive definiteness of a symmetric matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is equivalent to the positivity of the associated quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D"> for all nonzero vectors <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
-<p>Therefore, a symmetric matrix, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is said to be positive definite if all of its eigenvalues are positive or equivalently, a symmetric matrix, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is positive definite if left-multiplying and right-multiplying it by the same vector, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x"> always gives a positive number if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20x%5ET%20%5Cmathbf%20A%20%5Cmathbf%20x"></p>
-<section id="properties-8" class="level4" data-number="1.9.1">
-<h4 data-number="1.9.1" class="anchored" data-anchor-id="properties-8"><span class="header-section-number">1.9.1</span> Properties</h4>
-<p>Properties of a positive definite matrix:</p>
-<ul>
-<li>All eigenvalues are positive.</li>
-<li>The matrix is symmetric.</li>
-<li>All principal submatrices have determinants that are positive.</li>
-</ul>
-<p>Example of a positive definite matrix:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bequation%7D%0A%5Cmathbf%7BA%7D%20=%20%5Cbegin%7Bbmatrix%7D%0A4%20&amp;%20-1%20&amp;%200%20%5C%5C%0A-1%20&amp;%205%20&amp;%20-1%20%5C%5C%0A0%20&amp;%20-1%20&amp;%202%0A%5Cend%7Bbmatrix%7D%0A%5Cend%7Bequation%7D%0A"></p>
-
-
-</section>
-</section>
-</section>
-
- ]]></description>
-  <category>Mathematics</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/03.basic_special_matrix.html</guid>
   <pubDate>Thu, 30 Mar 2023 15:00:00 GMT</pubDate>
 </item>
 </channel>

@@ -1,3 +1,7 @@
+# Trace
+tr<-function(mat){
+  return(sum(diag(mat)))
+}
 #determinant
 ## Cofactors
 cofactor<-function(mat,i,j){

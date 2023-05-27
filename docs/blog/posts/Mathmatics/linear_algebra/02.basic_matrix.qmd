@@ -13,6 +13,9 @@ format:
     code-fold: true
     toc: true
     number-sections: true
+execute:
+  warning: false
+  message: false
 draft: False
 ---
 
@@ -890,7 +893,7 @@ optimal_a <- optim(rep(0,3),
  dependent_function,
  NULL, 
  method='L-BFGS-B',
- matrix=dependent_matrix,
+ input_matrix=dependent_matrix,
  lower=c(1,-5,-5), # c(a1_lower_bound,a2_lower_bound,a3_lower_bound)
  upper=c(5,5,5)) # c(a1_upper_bound,a2_upper_bound,a3_upper_bound)
 
@@ -935,16 +938,15 @@ rowSums(sweep(dependent_matrix,2,a,'*')) # a[1]*v1+a[2]*v2+a[3]*v3
 independent_function<-function(matrix,vector1){
   a<-sample(seq(-5,5,by=0.01),3,replace=T)
   result <- rowSums(sweep(matrix,2,a,'*'))
-  result <- sum(result^2)%>%squrt() # to get a zero vector of result, sum(result^2)%>%squrt() must be 0, which means the rowSums(sweep(matrix,2,a,'*')) must become c(0,0,0).
+  result <- sum(result^2)%>%sqrt() # to get a zero vector of result, sum(result^2)%>%squrt() must be 0, which means the rowSums(sweep(matrix,2,a,'*')) must become c(0,0,0).
   list(coef=a,vector_norm=result)
 }
 
 set.seed(2023)
 
-result <-replicate(50000, independent_function(dependent_matrix), simplify=FALSE)
-linear_combo_sum<-result %>% tibble() %>% unnest_auto(col=result) %>% unnest_wider(coef,names_sep='_')
-linear_combo_sum%>%slice_min(abs(vec_norm), n=10) # ceffecient converges to zero as vector_norm goes to zero
-
+result <-replicate(5000, independent_function(dependent_matrix), simplify=FALSE)
+linear_combo_sum<-result %>% tibble() %>% unnest_auto(col=1) %>% unnest_wider(coef,names_sep='_')
+linear_combo_sum%>%slice_min(abs(vector_norm), n=10) # ceffecient converges to zero as vector_norm goes to zero
 
 rowSums(sweep(dependent_matrix,2,c(0,0,0),'*'))^2%>%sum()%>%sqrt() # thus, we can know the scalars or coefficients that make vector_norm zero are c(0,0,0)
 ```
@@ -971,20 +973,32 @@ $$
 #### Properties
 
 * Symmetry: The Gram matrix is always symmetric, meaning that $\mathbf{G}_{ij}=\mathbf{G}_{ji}$ for all $i$ and $j$
-* The sample covariance matrix is ​​expressed in the form of the Gram matrix of the centering matrix.
+* The sample covariance matrix is ​​expressed in the form of the Gram matrix of the centering matrix because the sample covariance matrix is computed using $\mathbf{X}^{T}\mathbf{X}$. 
+* Covariance interpretation: In statistics, the Gram matrix can represent the covariance matrix of a set of random variables. Each entry ${G}_{ij}$ represents the covariance between the $i$ th and $j$ th random variables.
 * Positive semi-definiteness: The Gram matrix is positive semi-definite, which means that all of its eigenvalues are non-negative. This property ensures that the Gram matrix is non-negative and preserves the positive definite inner product structure.
   $$
-  \mathbf{x}^{T}\mathbf{G}\mathbf{x} = \mathbf{x}^{T}\mathbf{V}^{T}\mathbf{V}\mathbf{x} \ge 0 for all \mathbf{x} 
+  \mathbf{x}^{T}\mathbf{G}\mathbf{x} = \mathbf{x}^{T}\mathbf{V}^{T}\mathbf{V}\mathbf{x} \ge 0 \text{ for all }  \mathbf{x} 
   $$
 * Inner products: The entries of the Gram matrix represent the inner products between vectors.
 * **Linear independence**: The column vectors in $\mathbf{V}$ are linearly independent if and only if the Gram matrix is positive definite, meaning that all of its eigenvalues are strictly positive. 
   $$
-  \mathbf{x}^{T}\mathbf{G}\mathbf{x} = \mathbf{x}^{T}\mathbf{V}^{T}\mathbf{V}\mathbf{x} > 0 for all \mathbf{x} \ne \mathbf{0}
+  \mathbf{x}^{T}\mathbf{G}\mathbf{x} = \mathbf{x}^{T}\mathbf{V}^{T}\mathbf{V}\mathbf{x} > 0 \text{ for all } \mathbf{x} \ne \mathbf{0}
   $$
   * This property allows to determine linear independence of the column vectors of $\mathbf{V}$ by examining the eigenvalues of the Gram matrix.
-* Covariance interpretation: In statistics, the Gram matrix can represent the covariance matrix of a set of random variables. Each entry ${G}_{ij}$ represents the covariance between the $i$ th and $j$ th random variables.
+* When $\mathbf{V}$ has independent columns, its Gram matrix is invertible. When $\mathbf{V}$ has dependent columns, its Gram matrix is not invertible because the trace of $\mathbf{V}$ can be computed using the product of the eigenvalues. If there is at least one zero in the list of the eigenvalues, the product becomes zero and the determinant of the gram matrix is zero, which results in the gram marix corresponding to $\mathbf{V}$ with the dependent columns is not invertible
 
+:::{.callout-tip}
+## Multicolinearity Problem
 
+$$
+\hat{\beta}=(\mathbf{X}^{T}\mathbf{X})^{-1}\mathbf{X}^{T}\mathbf{y}
+$$
+
+where $\mathbf{X}^{T}\mathbf{X}$ is a Gram matrix.
+
+If there are linearly dependent columns, $\operatorname{det}(\mathbf{X}^{T}\mathbf{X})$ is zero. So, there is no inverse of $\mathbf{X}^{T}\mathbf{X}$. If a scatter plot of two columns show not a perfect line but an almost perfect line, at least one of the eigenvalues is close to zero. Then, their product become so small that $\frac{1}{\operatorname{det}(\mathbf{X}^{T}\mathbf{X})}$ becomes very large and unstably computed, which causes unreliable values of $\hat{\beta}$ to be computed. The meaning of 'unstable' is that the estimates of $\hat{\beta}$ are very large or very small or greatly fluctuated to such an extent that it does not make sense whenever the number of the columns or variables change in the regression model.
+
+:::
 
 #### Example
 
@@ -996,23 +1010,23 @@ v2 <- c(4, 5, 6)
 v3 <- c(7, 8, 9)
 
 # Compute the Gram matrix
-G <- t(matrix(c(
+column_vector_matrix <- t(matrix(c(
   crossprod(v1), crossprod(v1, v2), crossprod(v1, v3),
   crossprod(v2, v1), crossprod(v2), crossprod(v2, v3),
   crossprod(v3, v1), crossprod(v3, v2), crossprod(v3)
 ), nrow = 3))
 
 # Print the Gram matrix
-print(G)
+print(column_vector_matrix)
 ```
 
 **Example2** Check if $\mathbf{V}$ is linearly independent using the linear independence property.
 ```{r}
 gram_matrix <- t(column_vector_matrix) %*% column_vector_matrix
-eigen(gram_matrix) %>% round(1)
+eigen(gram_matrix)$values %>% round(1)
 ```
 
-If the result eigenvalues of eigendecomposition of gram matrix are all positive, the columns of $\mathbf{V}$ are linearly independent.
+If the result eigenvalues of eigendecomposition of gram matrix are all positive, the columns of $\mathbf{V}$ are linearly independent. The number of eigen values $>0$ is the number of the eigenvectors.
 
 ### Transpose
 

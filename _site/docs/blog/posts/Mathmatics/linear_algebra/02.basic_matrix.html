@@ -187,10 +187,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#inverse" id="toc-inverse" class="nav-link" data-scroll-target="#inverse"><span class="header-section-number">2.7</span> Inverse</a></li>
   <li><a href="#determinant" id="toc-determinant" class="nav-link" data-scroll-target="#determinant"><span class="header-section-number">2.8</span> Determinant</a></li>
   <li><a href="#linear-equations" id="toc-linear-equations" class="nav-link" data-scroll-target="#linear-equations"><span class="header-section-number">2.9</span> Linear Equations</a></li>
-  <li><a href="#independence-and-dependence" id="toc-independence-and-dependence" class="nav-link" data-scroll-target="#independence-and-dependence"><span class="header-section-number">2.10</span> Independence and Dependence</a></li>
-  <li><a href="#transpose" id="toc-transpose" class="nav-link" data-scroll-target="#transpose"><span class="header-section-number">2.11</span> Transpose</a></li>
-  <li><a href="#trace" id="toc-trace" class="nav-link" data-scroll-target="#trace"><span class="header-section-number">2.12</span> Trace</a></li>
-  <li><a href="#rank" id="toc-rank" class="nav-link" data-scroll-target="#rank"><span class="header-section-number">2.13</span> Rank</a></li>
+  <li><a href="#linear-independence" id="toc-linear-independence" class="nav-link" data-scroll-target="#linear-independence"><span class="header-section-number">2.10</span> Linear Independence</a></li>
+  <li><a href="#gram-matrix" id="toc-gram-matrix" class="nav-link" data-scroll-target="#gram-matrix"><span class="header-section-number">2.11</span> Gram Matrix</a></li>
+  <li><a href="#transpose" id="toc-transpose" class="nav-link" data-scroll-target="#transpose"><span class="header-section-number">2.12</span> Transpose</a></li>
+  <li><a href="#trace" id="toc-trace" class="nav-link" data-scroll-target="#trace"><span class="header-section-number">2.13</span> Trace</a></li>
+  <li><a href="#rank" id="toc-rank" class="nav-link" data-scroll-target="#rank"><span class="header-section-number">2.14</span> Rank</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -239,41 +240,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 패키지 'tidyverse'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 패키지 'ggplot2'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 패키지 'tibble'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 패키지 'readr'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 패키지 'dplyr'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 패키지 'lubridate'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.1.2     ✔ readr     2.1.4
-✔ forcats   1.0.0     ✔ stringr   1.5.0
-✔ ggplot2   3.4.2     ✔ tibble    3.2.1
-✔ lubridate 1.9.2     ✔ tidyr     1.3.0
-✔ purrr     1.0.1     
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
-ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-</div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">100</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <section id="matrix" class="level2" data-number="1">
@@ -654,15 +622,15 @@ x_2
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>A<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,<span class="dv">9</span>,<span class="at">replace =</span> <span class="cn">TRUE</span>),<span class="at">ncol=</span><span class="dv">3</span>,<span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'matrix A= '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>A<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,<span class="dv">9</span>,<span class="at">replace =</span> <span class="cn">TRUE</span>),<span class="at">ncol=</span><span class="dv">3</span>,<span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'matrix A= '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "matrix A= "</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3]
@@ -672,15 +640,15 @@ x_2
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'inverse of A= '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'inverse of A= '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "inverse of A= "</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>inverse_A<span class="ot">&lt;-</span><span class="fu">solve</span>(A)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>inverse_A</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>inverse_A<span class="ot">&lt;-</span><span class="fu">solve</span>(A)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>inverse_A</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>             [,1]        [,2]         [,3]
@@ -690,14 +658,14 @@ x_2
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'AA^{-1}=A^{-1}A=I'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'AA^{-1}=A^{-1}A=I'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "AA^{-1}=A^{-1}A=I"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>A<span class="sc">%*%</span>inverse_A</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>A<span class="sc">%*%</span>inverse_A</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>              [,1]         [,2] [,3]
@@ -707,7 +675,7 @@ x_2
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>inverse_A<span class="sc">%*%</span>A</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>inverse_A<span class="sc">%*%</span>A</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>              [,1]          [,2]         [,3]
@@ -776,15 +744,15 @@ d &amp; -b\\
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>mat_A<span class="ot">&lt;-</span>A[<span class="sc">-</span><span class="dv">3</span>,<span class="sc">-</span><span class="dv">3</span>]</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'2 by 2 matrix:'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mat_A<span class="ot">&lt;-</span>A[<span class="sc">-</span><span class="dv">3</span>,<span class="sc">-</span><span class="dv">3</span>]</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'2 by 2 matrix:'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "2 by 2 matrix:"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>mat_A</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>mat_A</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2]
@@ -793,21 +761,21 @@ d &amp; -b\\
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">'det(mat_A)='</span>,<span class="fu">det</span>(mat_A))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">'det(mat_A)='</span>,<span class="fu">det</span>(mat_A))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "det(mat_A)=4317"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'the inverse of mat_A:'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'the inverse of mat_A:'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "the inverse of mat_A:"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">det</span>(mat_A)<span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span><span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">14</span>,<span class="sc">-</span><span class="dv">65</span>,<span class="sc">-</span><span class="dv">20</span>,<span class="dv">63</span>),<span class="at">ncol=</span><span class="dv">2</span>,<span class="at">byrow =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">det</span>(mat_A)<span class="sc">^-</span><span class="dv">1</span><span class="sc">*</span><span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">14</span>,<span class="sc">-</span><span class="dv">65</span>,<span class="sc">-</span><span class="dv">20</span>,<span class="dv">63</span>),<span class="at">ncol=</span><span class="dv">2</span>,<span class="at">byrow =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>             [,1]        [,2]
@@ -816,14 +784,14 @@ d &amp; -b\\
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'the inverse of solve(mat_A):'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'the inverse of solve(mat_A):'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "the inverse of solve(mat_A):"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">solve</span>(mat_A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">solve</span>(mat_A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>             [,1]        [,2]
@@ -916,49 +884,49 @@ C_{31} &amp; C_{32} &amp; C_{33}
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>cofactor<span class="ot">&lt;-</span><span class="cf">function</span>(mat,i,j){</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  mat_sub<span class="ot">&lt;-</span>mat[<span class="sc">-</span>i,<span class="sc">-</span>j]</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>((<span class="sc">-</span><span class="dv">1</span>)<span class="sc">^</span>(i<span class="sc">+</span>j)<span class="sc">*</span><span class="fu">det</span>(mat_sub))</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>cofactor_matrix<span class="ot">&lt;-</span><span class="cf">function</span>(mat){</span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>  n<span class="ot">&lt;-</span><span class="fu">nrow</span>(mat)</span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(n<span class="sc">!=</span><span class="fu">ncol</span>(mat)){</span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">'the matrix is not a square matrix'</span>)</span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  cofactors<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="at">nrow=</span>n,<span class="at">ncol=</span>n)</span>
-<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n){</span>
-<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n){</span>
-<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>      cofactors[i,j]<span class="ot">&lt;-</span><span class="fu">cofactor</span>(mat,i,j)</span>
-<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(cofactors)</span>
-<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>cofactor_matrix2<span class="ot">&lt;-</span><span class="cf">function</span>(mat){</span>
-<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>  n<span class="ot">&lt;-</span><span class="fu">nrow</span>(mat)</span>
-<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(n<span class="sc">!=</span><span class="fu">ncol</span>(mat)){</span>
-<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">'the matrix is not a square matrix'</span>)</span>
-<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>  coordinate_set<span class="ot">&lt;-</span><span class="fu">expand.grid</span>(<span class="dv">1</span><span class="sc">:</span>n,<span class="dv">1</span><span class="sc">:</span>n)</span>
-<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>  cofactors<span class="ot">&lt;-</span><span class="fu">mapply</span>(cofactor,</span>
-<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">i=</span>coordinate_set[,<span class="dv">1</span>],</span>
-<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">j=</span>coordinate_set[,<span class="dv">2</span>],</span>
-<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">MoreArgs=</span><span class="fu">list</span>(<span class="at">mat=</span>A))</span>
-<span id="cb38-29"><a href="#cb38-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(</span>
-<span id="cb38-30"><a href="#cb38-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">matrix</span>(cofactors,<span class="at">ncol=</span>n)</span>
-<span id="cb38-31"><a href="#cb38-31" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb38-32"><a href="#cb38-32" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb38-33"><a href="#cb38-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-34"><a href="#cb38-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-35"><a href="#cb38-35" aria-hidden="true" tabindex="-1"></a>A<span class="ot">=</span><span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">0</span>), <span class="at">ncol=</span><span class="dv">3</span>, <span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
-<span id="cb38-36"><a href="#cb38-36" aria-hidden="true" tabindex="-1"></a><span class="fu">cofactor</span>(A,<span class="dv">1</span>,<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>cofactor<span class="ot">&lt;-</span><span class="cf">function</span>(mat,i,j){</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  mat_sub<span class="ot">&lt;-</span>mat[<span class="sc">-</span>i,<span class="sc">-</span>j]</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>((<span class="sc">-</span><span class="dv">1</span>)<span class="sc">^</span>(i<span class="sc">+</span>j)<span class="sc">*</span><span class="fu">det</span>(mat_sub))</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>cofactor_matrix<span class="ot">&lt;-</span><span class="cf">function</span>(mat){</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  n<span class="ot">&lt;-</span><span class="fu">nrow</span>(mat)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(n<span class="sc">!=</span><span class="fu">ncol</span>(mat)){</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">'the matrix is not a square matrix'</span>)</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  cofactors<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="at">nrow=</span>n,<span class="at">ncol=</span>n)</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n){</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n){</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>      cofactors[i,j]<span class="ot">&lt;-</span><span class="fu">cofactor</span>(mat,i,j)</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(cofactors)</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>cofactor_matrix2<span class="ot">&lt;-</span><span class="cf">function</span>(mat){</span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>  n<span class="ot">&lt;-</span><span class="fu">nrow</span>(mat)</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(n<span class="sc">!=</span><span class="fu">ncol</span>(mat)){</span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">'the matrix is not a square matrix'</span>)</span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>  coordinate_set<span class="ot">&lt;-</span><span class="fu">expand.grid</span>(<span class="dv">1</span><span class="sc">:</span>n,<span class="dv">1</span><span class="sc">:</span>n)</span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>  cofactors<span class="ot">&lt;-</span><span class="fu">mapply</span>(cofactor,</span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">i=</span>coordinate_set[,<span class="dv">1</span>],</span>
+<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a>  <span class="at">j=</span>coordinate_set[,<span class="dv">2</span>],</span>
+<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">MoreArgs=</span><span class="fu">list</span>(<span class="at">mat=</span>A))</span>
+<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(</span>
+<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">matrix</span>(cofactors,<span class="at">ncol=</span>n)</span>
+<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a>A<span class="ot">=</span><span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">0</span>), <span class="at">ncol=</span><span class="dv">3</span>, <span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
+<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a><span class="fu">cofactor</span>(A,<span class="dv">1</span>,<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] -24</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cofactor_matrix</span>(A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cofactor_matrix</span>(A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3]
@@ -968,7 +936,7 @@ C_{31} &amp; C_{32} &amp; C_{33}
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cofactor_matrix2</span>(A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cofactor_matrix2</span>(A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3]
@@ -978,7 +946,7 @@ C_{31} &amp; C_{32} &amp; C_{33}
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>(<span class="dv">1</span><span class="sc">/</span><span class="fu">det</span>(A))<span class="sc">*</span><span class="fu">t</span>(<span class="fu">cofactor_matrix2</span>(A))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>(<span class="dv">1</span><span class="sc">/</span><span class="fu">det</span>(A))<span class="sc">*</span><span class="fu">t</span>(<span class="fu">cofactor_matrix2</span>(A))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3]
@@ -988,7 +956,7 @@ C_{31} &amp; C_{32} &amp; C_{33}
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>(<span class="dv">1</span><span class="sc">/</span><span class="fu">det</span>(A))<span class="sc">*</span><span class="fu">t</span>(<span class="fu">cofactor_matrix</span>(A))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>(<span class="dv">1</span><span class="sc">/</span><span class="fu">det</span>(A))<span class="sc">*</span><span class="fu">t</span>(<span class="fu">cofactor_matrix</span>(A))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3]
@@ -998,7 +966,7 @@ C_{31} &amp; C_{32} &amp; C_{33}
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">solve</span>(A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">solve</span>(A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3]
@@ -1138,14 +1106,16 @@ x_2 \\
 <p>the determinant of <span class="math inline">\(\mathbf A\)</span> is <span class="math inline">\(0\)</span>, which means that <span class="math inline">\(\mathbf A\)</span> is a singular matrix and does not have an inverse.</p>
 </section>
 </section>
-<section id="independence-and-dependence" class="level3" data-number="2.10">
-<h3 data-number="2.10" class="anchored" data-anchor-id="independence-and-dependence"><span class="header-section-number">2.10</span> Independence and Dependence</h3>
-<section id="independence" class="level4" data-number="2.10.1">
-<h4 data-number="2.10.1" class="anchored" data-anchor-id="independence"><span class="header-section-number">2.10.1</span> Independence</h4>
-<p>a set of vectors is said to be linearly independent if none of the vectors in the set can be written as a linear combination of the other vectors in the set. . In other words, a set of vectors <span class="math inline">\({\mathbf{v_1},\mathbf{v_2},\dots,\mathbf{v_n}}\)</span> is linearly independent if the only solution to the linear equation <span class="math inline">\(c_1\mathbf{v_1}+c_2\mathbf{v_2}+\dots+c_n\mathbf{v_n}=0\)</span> is <span class="math inline">\(c_1=c_2=\dots=c_n=0\)</span>, where <span class="math inline">\(c_i\)</span> is a scalar.</p>
+<section id="linear-independence" class="level3" data-number="2.10">
+<h3 data-number="2.10" class="anchored" data-anchor-id="linear-independence"><span class="header-section-number">2.10</span> Linear Independence</h3>
+<div id="def-linear_independence" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 1 (Linear Independence) </strong></span>&nbsp;</p>
+<section id="independence" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="independence">Independence</h4>
+<p>A set of vectors is said to be linearly independent if none of the vectors in the set can be written as a linear combination of the other vectors in the set. In other words, a set of vectors <span class="math inline">\({\mathbf{v_1},\mathbf{v_2},\dots,\mathbf{v_n}}\)</span> is linearly independent if the only solution to the linear equation <span class="math inline">\(c_1\mathbf{v_1}+c_2\mathbf{v_2}+\dots+c_n\mathbf{v_n}=0\)</span> is <span class="math inline">\(c_1=c_2=\dots=c_n=0\)</span>, where <span class="math inline">\(c_i\)</span> is a scalar.</p>
 </section>
-<section id="dependence" class="level4" data-number="2.10.2">
-<h4 data-number="2.10.2" class="anchored" data-anchor-id="dependence"><span class="header-section-number">2.10.2</span> Dependence</h4>
+<section id="dependence" class="level4 unnumbered">
+<h4 class="unnumbered anchored" data-anchor-id="dependence">Dependence</h4>
 <p>A set of vectors is said to be linearly dependent if at least one vector in the set can be written as a linear combination of the other vectors in the set. In other words, a set of vectors <span class="math inline">\(\{v_1, v_2, \ldots, v_n\}\)</span> is linearly dependent if there exist scalars <span class="math inline">\(c_1, c_2, \ldots, c_n\)</span> (not all zero) such that <span class="math inline">\(c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \ldots + c_n\mathbf{v}_n = 0\)</span></p>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1164,17 +1134,269 @@ Important
 </div>
 </div>
 </section>
-<section id="example" class="level4" data-number="2.10.3">
-<h4 data-number="2.10.3" class="anchored" data-anchor-id="example"><span class="header-section-number">2.10.3</span> Example</h4>
-<p>Let <span class="math inline">\(\mathbf{v}_1=\begin{bmatrix}1\\0\end{bmatrix}, \quad \mathbf{v}_2=\begin{bmatrix}0\\1\end{bmatrix}\)</span>. These two vectors are linearly independent because no linear combination of and <span class="math inline">\(\mathbf{v}_1,\quad \mathbf{v}_2\)</span> can yield the zero vector, except when all the coefficients are zero. In other words, the only solution to the linear equation <span class="math display">\[
+</div>
+<p>If a set of columns are dependent, <span class="math inline">\(\mathbf{v_i}\)</span> can be represented as a linear combination of the other vectors: <span class="math display">\[
+\mathbf{v_i}=\frac{-c_1}{c_i}\mathbf{v_1}+\frac{-c_2}{c_i}\mathbf{v_2}+\dots+\frac{-c_n}{c_i}\mathbf{v_n}
+\]</span></p>
+<section id="properties-2" class="level4" data-number="2.10.1">
+<h4 data-number="2.10.1" class="anchored" data-anchor-id="properties-2"><span class="header-section-number">2.10.1</span> Properties</h4>
+<ul>
+<li><strong>Non-Trivial Linear Combination</strong>: a set of vectors is linearly independent if the only way to obtain the zero vector as a linear combination of these vectors is by setting all the scalar or coefficients to zero.</li>
+<li><strong>No Redundancy</strong>: If a vector can be expressed as a linear combination of other vectors in a set, then it is redundant and does not contribute to the linear independence of the set. Thus, a set of vectors is linearly independent if and only if no vector in the set can be written as a linear combination of the others.</li>
+<li><strong>Minimal Set</strong>: A linearly independent set of vectors is a minimal set, meaning that removing any vector from the set would result in a linearly dependent set.</li>
+<li><strong>Size</strong>: If a set of vectors contains more vectors than the dimension of the vector space in which they reside, then the set is necessarily linearly dependent. Conversely, if a set of vectors is linearly independent and contains exactly as many vectors as the dimension of the vector space, then it forms a basis for that vector space.</li>
+</ul>
+</section>
+<section id="example" class="level4" data-number="2.10.2">
+<h4 data-number="2.10.2" class="anchored" data-anchor-id="example"><span class="header-section-number">2.10.2</span> Example</h4>
+<p><strong>Example1</strong> Let <span class="math inline">\(\mathbf{v}_1=\begin{bmatrix}1\\0\end{bmatrix}, \quad \mathbf{v}_2=\begin{bmatrix}0\\1\end{bmatrix}\)</span>. These two vectors are linearly independent because no linear combination of and <span class="math inline">\(\mathbf{v}_1,\quad \mathbf{v}_2\)</span> can yield the zero vector, except when all the coefficients are zero. In other words, the only solution to the linear equation <span class="math display">\[
 c_1\mathbf v_1​ + c_2\mathbf v_2 = 0
 \]</span></p>
 <p>is <span class="math inline">\(c_1=c_2=0\)</span>.</p>
-<p>The more generalized case like the matrix <span class="math inline">\(\mathbf{A}_{m \times n}\)</span> is going to be dealt with in another blog for understanding <span class="math inline">\(\mathbf{Ax} = \mathbf{b}\)</span>.</p>
+<p><strong>Example2</strong> Computation example with dependent columns.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>v1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">4</span>,<span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">6</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>v2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">1</span>,<span class="sc">-</span><span class="dv">2</span>,<span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>v3 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">8</span>,<span class="dv">1</span>,<span class="dv">6</span>,<span class="dv">15</span>)</span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>dependent_matrix<span class="ot">&lt;-</span><span class="fu">cbind</span>(v1,v2,v3)</span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="sc">-</span><span class="dv">2</span><span class="sc">*</span>v1<span class="sc">+</span> <span class="dv">3</span><span class="sc">*</span>v2 <span class="sc">+</span> v3 <span class="co"># the coeffecients that makes the linear combiniation of the vectors zero are c(-2,3,1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0 0 0 0</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># then, how many possible to such coefficients are there?</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>dependent_function <span class="ot">&lt;-</span> <span class="cf">function</span>(input_matrix, vector1){</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(<span class="fu">sweep</span>(input_matrix,<span class="dv">2</span>,vector1, <span class="st">'*'</span>))</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sqrt</span>(<span class="fu">sum</span>(result<span class="sc">^</span><span class="dv">2</span>))</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="co"># find a=c(a1,a2,a3) such a != c(0,0,0) </span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>optimal_a <span class="ot">&lt;-</span> <span class="fu">optim</span>(<span class="fu">rep</span>(<span class="dv">0</span>,<span class="dv">3</span>),</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a> dependent_function,</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a> <span class="cn">NULL</span>, </span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a> <span class="at">method=</span><span class="st">'L-BFGS-B'</span>,</span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a> <span class="at">input_matrix=</span>dependent_matrix,</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a> <span class="at">lower=</span><span class="fu">c</span>(<span class="dv">1</span>,<span class="sc">-</span><span class="dv">5</span>,<span class="sc">-</span><span class="dv">5</span>), <span class="co"># c(a1_lower_bound,a2_lower_bound,a3_lower_bound)</span></span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a> <span class="at">upper=</span><span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">5</span>,<span class="dv">5</span>)) <span class="co"># c(a1_upper_bound,a2_upper_bound,a3_upper_bound)</span></span>
+<span id="cb44-16"><a href="#cb44-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>optimal_a<span class="sc">$</span>par</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  1.0032266 -1.5048399 -0.5016133</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(<span class="fu">sweep</span>(dependent_matrix,<span class="dv">2</span>,optimal_a<span class="sc">$</span>par, <span class="st">'*'</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  1.233218e-10 -2.503675e-11 -7.324852e-11 -2.216065e-10</code></pre>
+</div>
+</div>
+<p><strong>Example3</strong> rectangular data with dependent columns</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>temperature_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">celcius=</span><span class="fu">c</span>(<span class="dv">5</span>,<span class="dv">36</span>,<span class="dv">30</span>,<span class="sc">-</span><span class="dv">3</span>,<span class="dv">26</span>,<span class="dv">33</span>),</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="at">velocity=</span><span class="fu">c</span>(<span class="fl">2.35</span>,<span class="fl">11.5</span>,<span class="fl">8.62</span>,<span class="fl">5.37</span>,<span class="fl">11.8</span>,<span class="fl">12.20</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="fu">mutate</span>(<span class="at">fahrenheit=</span>celcius<span class="sc">*</span><span class="dv">9</span><span class="sc">/</span><span class="dv">5</span><span class="sc">+</span><span class="dv">32</span>,<span class="at">after=</span>celcius)</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>temperature_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+  celcius velocity fahrenheit after
+    &lt;dbl&gt;    &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;
+1       5     2.35       41       5
+2      36    11.5        96.8    36
+3      30     8.62       86      30
+4      -3     5.37       26.6    -3
+5      26    11.8        78.8    26
+6      33    12.2        91.4    33</code></pre>
+</div>
+</div>
+<p>The temperature data include 3 columns: celcius, velocity, fahrenheit, after. Since the fahrenheit column can be represented as <span class="math inline">\(\frac{9}{5}\text{celcius}+32\)</span>, the columns are not linearly independent. So, it is actually enought to reproduce the data with two columns: celcius and velocity. From the analysis perspective, the temperature data has a redundant column, <code>fahrenheit</code>.</p>
+<p>Since the fahrenheit and celcius are linearly dependent, the scattor plot is represented as a line like the below.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>mosaic<span class="sc">::</span><span class="fu">plotPoints</span>(fahrenheit<span class="sc">~</span>celcius,<span class="at">data=</span>temperature_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="02.basic_matrix_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>It indicates that to fit velocity on the temperature data, adding the fahrenheit columns does not influence and explain the variations of the velocity variable at all.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>result1 <span class="ot">&lt;-</span> <span class="fu">lm</span>(velocity<span class="sc">~</span>celcius, <span class="at">data=</span> temperature_data)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>result2 <span class="ot">&lt;-</span> <span class="fu">lm</span>(velocity<span class="sc">~</span>celcius<span class="sc">+</span>fahrenheit, <span class="at">data=</span> temperature_data)</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(result1<span class="sc">$</span>residuals<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 20.94949</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(result2<span class="sc">$</span>residuals<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 20.94949</code></pre>
+</div>
+</div>
+<p><strong>Example4</strong></p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>a<span class="ot">&lt;-</span><span class="fu">sample</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="dv">10</span>,<span class="dv">10</span>,<span class="at">by=</span><span class="fl">0.01</span>),<span class="dv">3</span>,<span class="at">replace=</span>T)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(<span class="fu">sweep</span>(dependent_matrix,<span class="dv">2</span>,a,<span class="st">'*'</span>)) <span class="co"># a[1]*v1+a[2]*v2+a[3]*v3 </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -7.24  1.74  3.76 12.74</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>independent_function<span class="ot">&lt;-</span><span class="cf">function</span>(matrix,vector1){</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a>  a<span class="ot">&lt;-</span><span class="fu">sample</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="dv">5</span>,<span class="dv">5</span>,<span class="at">by=</span><span class="fl">0.01</span>),<span class="dv">3</span>,<span class="at">replace=</span>T)</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="fu">rowSums</span>(<span class="fu">sweep</span>(matrix,<span class="dv">2</span>,a,<span class="st">'*'</span>))</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> <span class="fu">sum</span>(result<span class="sc">^</span><span class="dv">2</span>)<span class="sc">%&gt;%</span><span class="fu">sqrt</span>() <span class="co"># to get a zero vector of result, sum(result^2)%&gt;%squrt() must be 0, which means the rowSums(sweep(matrix,2,a,'*')) must become c(0,0,0).</span></span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">list</span>(<span class="at">coef=</span>a,<span class="at">vector_norm=</span>result)</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2023</span>)</span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span><span class="fu">replicate</span>(<span class="dv">5000</span>, <span class="fu">independent_function</span>(dependent_matrix), <span class="at">simplify=</span><span class="cn">FALSE</span>)</span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>linear_combo_sum<span class="ot">&lt;-</span>result <span class="sc">%&gt;%</span> <span class="fu">tibble</span>() <span class="sc">%&gt;%</span> <span class="fu">unnest_auto</span>(<span class="at">col=</span><span class="dv">1</span>) <span class="sc">%&gt;%</span> <span class="fu">unnest_wider</span>(coef,<span class="at">names_sep=</span><span class="st">'_'</span>)</span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>linear_combo_sum<span class="sc">%&gt;%</span><span class="fu">slice_min</span>(<span class="fu">abs</span>(vector_norm), <span class="at">n=</span><span class="dv">10</span>) <span class="co"># ceffecient converges to zero as vector_norm goes to zero</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 4
+   coef_1 coef_2 coef_3 vector_norm
+    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;
+ 1   1.02  -1.45  -0.49       0.293
+ 2   1.98  -2.7   -0.96       0.556
+ 3  -2.8    3.83   1.4        0.906
+ 4  -1.97   2.75   0.92       0.968
+ 5  -2.6    3.71   1.34       1.06 
+ 6   3.11  -4.09  -1.46       1.44 
+ 7   1     -1.36  -0.41       1.45 
+ 8   2.72  -4.89  -1.45       1.67 
+ 9  -2.4    4.14   1.17       1.70 
+10  -2.24   2.89   1.17       1.83 </code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rowSums</span>(<span class="fu">sweep</span>(dependent_matrix,<span class="dv">2</span>,<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>),<span class="st">'*'</span>))<span class="sc">^</span><span class="dv">2</span><span class="sc">%&gt;%</span><span class="fu">sum</span>()<span class="sc">%&gt;%</span><span class="fu">sqrt</span>() <span class="co"># thus, we can know the scalars or coefficients that make vector_norm zero are c(0,0,0)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0</code></pre>
+</div>
+</div>
 </section>
 </section>
-<section id="transpose" class="level3" data-number="2.11">
-<h3 data-number="2.11" class="anchored" data-anchor-id="transpose"><span class="header-section-number">2.11</span> Transpose</h3>
+<section id="gram-matrix" class="level3" data-number="2.11">
+<h3 data-number="2.11" class="anchored" data-anchor-id="gram-matrix"><span class="header-section-number">2.11</span> Gram Matrix</h3>
+<p>How to check whether the columns vectors are linear independent or not? : Gram Matrix</p>
+<div id="def-gram" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 2 </strong></span>The Gram matrix, also known as the covariance matrix or the autocovariance matrix, is a matrix that captures the inner products between vectors in a set. It is defined as follows:</p>
+<p>Given a set of vectors <span class="math inline">\(\{ \mathbf{v}_1, \mathbf{v}_2, \dots, \mathbf{v}_n \}\)</span>, for the matrix, <span class="math inline">\(\mathbf{V}=\begin{bmatrix} \mathbf{v}_1, \mathbf{v}_2, \dots, \mathbf{v}_n \end{bmatrix}\)</span>, the Gram matrix <span class="math inline">\(\mathbf{G}=\mathbf{V}^{T}\mathbf{V}\)</span> is an <span class="math inline">\(n \times n\)</span> matrix whose entries are given by <span class="math inline">\(\mathbf{G}_{ij}= \langle \mathbf{v}_i, \mathbf{v}_j \rangle\)</span>, where <span class="math inline">\(\langle , \rangle\)</span> represents the inner product between vectors.</p>
+<p><span class="math display">\[
+\mathbf{G} = \mathbf{V}^{T}\mathbf{V} = \begin{bmatrix}
+\langle \mathbf{v}_1, \mathbf{v}_1 \rangle &amp; \langle \mathbf{v}_1, \mathbf{v}_2 \rangle &amp; \cdots &amp; \langle \mathbf{v}_1, \mathbf{v}_n \rangle \\
+\langle \mathbf{v}_2, \mathbf{v}_1 \rangle &amp; \langle \mathbf{v}_2, \mathbf{v}_2 \rangle &amp; \cdots &amp; \langle \mathbf{v}_2, \mathbf{v}_n \rangle \\
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
+\langle \mathbf{v}_n, \mathbf{v}_1 \rangle &amp; \langle \mathbf{v}_n, \mathbf{v}_2 \rangle &amp; \cdots &amp; \langle \mathbf{v}_n, \mathbf{v}_n \rangle \\
+\end{bmatrix}
+\]</span></p>
+</div>
+<section id="properties-3" class="level4" data-number="2.11.1">
+<h4 data-number="2.11.1" class="anchored" data-anchor-id="properties-3"><span class="header-section-number">2.11.1</span> Properties</h4>
+<ul>
+<li>Symmetry: The Gram matrix is always symmetric, meaning that <span class="math inline">\(\mathbf{G}_{ij}=\mathbf{G}_{ji}\)</span> for all <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span></li>
+<li>The sample covariance matrix is ​​expressed in the form of the Gram matrix of the centering matrix because the sample covariance matrix is computed using <span class="math inline">\(\mathbf{X}^{T}\mathbf{X}\)</span>.</li>
+<li>Covariance interpretation: In statistics, the Gram matrix can represent the covariance matrix of a set of random variables. Each entry <span class="math inline">\({G}_{ij}\)</span> represents the covariance between the <span class="math inline">\(i\)</span> th and <span class="math inline">\(j\)</span> th random variables.</li>
+<li>Positive semi-definiteness: The Gram matrix is positive semi-definite, which means that all of its eigenvalues are non-negative. This property ensures that the Gram matrix is non-negative and preserves the positive definite inner product structure. <span class="math display">\[
+\mathbf{x}^{T}\mathbf{G}\mathbf{x} = \mathbf{x}^{T}\mathbf{V}^{T}\mathbf{V}\mathbf{x} \ge 0 \text{ for all }  \mathbf{x}
+\]</span></li>
+<li>Inner products: The entries of the Gram matrix represent the inner products between vectors.</li>
+<li><strong>Linear independence</strong>: The column vectors in <span class="math inline">\(\mathbf{V}\)</span> are linearly independent if and only if the Gram matrix is positive definite, meaning that all of its eigenvalues are strictly positive. <span class="math display">\[
+\mathbf{x}^{T}\mathbf{G}\mathbf{x} = \mathbf{x}^{T}\mathbf{V}^{T}\mathbf{V}\mathbf{x} &gt; 0 \text{ for all } \mathbf{x} \ne \mathbf{0}
+\]</span>
+<ul>
+<li>This property allows to determine linear independence of the column vectors of <span class="math inline">\(\mathbf{V}\)</span> by examining the eigenvalues of the Gram matrix.</li>
+</ul></li>
+<li>When <span class="math inline">\(\mathbf{V}\)</span> has independent columns, its Gram matrix is invertible. When <span class="math inline">\(\mathbf{V}\)</span> has dependent columns, its Gram matrix is not invertible because the trace of <span class="math inline">\(\mathbf{V}\)</span> can be computed using the product of the eigenvalues. If there is at least one zero in the list of the eigenvalues, the product becomes zero and the determinant of the gram matrix is zero, which results in the gram marix corresponding to <span class="math inline">\(\mathbf{V}\)</span> with the dependent columns is not invertible</li>
+</ul>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Multicolinearity Problem
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><span class="math display">\[
+\hat{\beta}=(\mathbf{X}^{T}\mathbf{X})^{-1}\mathbf{X}^{T}\mathbf{y}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{X}^{T}\mathbf{X}\)</span> is a Gram matrix.</p>
+<p>If there are linearly dependent columns, <span class="math inline">\(\operatorname{det}(\mathbf{X}^{T}\mathbf{X})\)</span> is zero. So, there is no inverse of <span class="math inline">\(\mathbf{X}^{T}\mathbf{X}\)</span>. If a scatter plot of two columns show not a perfect line but an almost perfect line, at least one of the eigenvalues is close to zero. Then, their product become so small that <span class="math inline">\(\frac{1}{\operatorname{det}(\mathbf{X}^{T}\mathbf{X})}\)</span> becomes very large and unstably computed, which causes unreliable values of <span class="math inline">\(\hat{\beta}\)</span> to be computed. The meaning of ‘unstable’ is that the estimates of <span class="math inline">\(\hat{\beta}\)</span> are very large or very small or greatly fluctuated to such an extent that it does not make sense whenever the number of the columns or variables change in the regression model.</p>
+</div>
+</div>
+</section>
+<section id="example-1" class="level4" data-number="2.11.2">
+<h4 data-number="2.11.2" class="anchored" data-anchor-id="example-1"><span class="header-section-number">2.11.2</span> Example</h4>
+<p><strong>Example1</strong> Simple Gram Matrix Example</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the set of vectors</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>v1 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>v2 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>)</span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>v3 <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>)</span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the Gram matrix</span></span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>column_vector_matrix <span class="ot">&lt;-</span> <span class="fu">t</span>(<span class="fu">matrix</span>(<span class="fu">c</span>(</span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crossprod</span>(v1), <span class="fu">crossprod</span>(v1, v2), <span class="fu">crossprod</span>(v1, v3),</span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crossprod</span>(v2, v1), <span class="fu">crossprod</span>(v2), <span class="fu">crossprod</span>(v2, v3),</span>
+<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">crossprod</span>(v3, v1), <span class="fu">crossprod</span>(v3, v2), <span class="fu">crossprod</span>(v3)</span>
+<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a>), <span class="at">nrow =</span> <span class="dv">3</span>))</span>
+<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-13"><a href="#cb61-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the Gram matrix</span></span>
+<span id="cb61-14"><a href="#cb61-14" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(column_vector_matrix)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]   14   32   50
+[2,]   32   77  122
+[3,]   50  122  194</code></pre>
+</div>
+</div>
+<p><strong>Example2</strong> Check if <span class="math inline">\(\mathbf{V}\)</span> is linearly independent using the linear independence property.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>gram_matrix <span class="ot">&lt;-</span> <span class="fu">t</span>(column_vector_matrix) <span class="sc">%*%</span> column_vector_matrix</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a><span class="fu">eigen</span>(gram_matrix)<span class="sc">$</span>values <span class="sc">%&gt;%</span> <span class="fu">round</span>(<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 80575.7     1.3     0.0</code></pre>
+</div>
+</div>
+<p>If the result eigenvalues of eigendecomposition of gram matrix are all positive, the columns of <span class="math inline">\(\mathbf{V}\)</span> are linearly independent. The number of eigen values <span class="math inline">\(&gt;0\)</span> is the number of the eigenvectors.</p>
+</section>
+</section>
+<section id="transpose" class="level3" data-number="2.12">
+<h3 data-number="2.12" class="anchored" data-anchor-id="transpose"><span class="header-section-number">2.12</span> Transpose</h3>
 <p>The transpose of an <span class="math inline">\(m \times n\)</span> matrix <span class="math inline">\(\mathbf{A}\)</span>, denoted by <span class="math inline">\(\mathbf{A}^T\)</span>, is the <span class="math inline">\(n \times m\)</span> matrix obtained by interchanging the rows and columns of <span class="math inline">\(\mathbf{A}\)</span>. Formally, if <span class="math inline">\(\mathbf{A} = [a_{ij}]\)</span> is an <span class="math inline">\(m \times n\)</span> matrix, then its transpose <span class="math inline">\(\mathbf{A}^T = [b_{ij}]\)</span> is an <span class="math inline">\(n x m\)</span> matrix where <span class="math inline">\(b_{ij}\)</span> = <span class="math inline">\(a_{ji}\)</span> for all <span class="math inline">\(i\)</span> and <span class="math inline">\(j\)</span>. In other words, the element in the <span class="math inline">\(i\)</span> th row and <span class="math inline">\(j\)</span> th column of <span class="math inline">\(A^T\)</span> is equal to the element in the <span class="math inline">\(j\)</span> th row and ith column of <span class="math inline">\(\mathbf{A}\)</span>.</p>
 <p>Given an <span class="math inline">\(m \times n\)</span> matrix <span class="math inline">\(\mathbf{A}\)</span>, its transpose <span class="math inline">\(\mathbf{A}^T\)</span> is an <span class="math inline">\(n \times m\)</span> matrix defined by: <span class="math display">\[
 (\mathbf{A^T})_{i,j} = \mathbf{A}_{j,i}
@@ -1197,8 +1419,8 @@ c_1\mathbf v_1​ + c_2\mathbf v_2 = 0
 3 &amp; 6
 \end{bmatrix}
 \]</span></p>
-<section id="properties-2" class="level4" data-number="2.11.1">
-<h4 data-number="2.11.1" class="anchored" data-anchor-id="properties-2"><span class="header-section-number">2.11.1</span> Properties</h4>
+<section id="properties-4" class="level4" data-number="2.12.1">
+<h4 data-number="2.12.1" class="anchored" data-anchor-id="properties-4"><span class="header-section-number">2.12.1</span> Properties</h4>
 <p>Let <span class="math inline">\(\mathbf A\)</span> be an <span class="math inline">\(m \times n\)</span> matrix and <span class="math inline">\(\mathbf B\)</span> be an <span class="math inline">\(n \times p\)</span> matrix, and let <span class="math inline">\(c\)</span> be a scalar. Then:</p>
 <ul>
 <li><span class="math inline">\((\mathbf{A}^T)^T = \mathbf{A}\)</span></li>
@@ -1220,8 +1442,8 @@ c_1\mathbf v_1​ + c_2\mathbf v_2 = 0
 </ul>
 </section>
 </section>
-<section id="trace" class="level3" data-number="2.12">
-<h3 data-number="2.12" class="anchored" data-anchor-id="trace"><span class="header-section-number">2.12</span> Trace</h3>
+<section id="trace" class="level3" data-number="2.13">
+<h3 data-number="2.13" class="anchored" data-anchor-id="trace"><span class="header-section-number">2.13</span> Trace</h3>
 <p>The trace of a square matrix <span class="math inline">\(\mathbf{A}\)</span>, denoted by <span class="math inline">\(\mathrm{tr}(\mathbf{A})\)</span>, is defined as the sum of the diagonal elements of <span class="math inline">\(\mathbf{A}\)</span>. In other words, if <span class="math inline">\(\mathbf{A}\)</span> is an <span class="math inline">\(n \times n\)</span> matrix, then its trace is given by:</p>
 <p><span class="math display">\[
 \mathrm{tr}(\mathbf{A})=\sum_{i=1}^{n}a_{ii}
@@ -1235,8 +1457,8 @@ c_1\mathbf v_1​ + c_2\mathbf v_2 = 0
 \end{bmatrix}
 \]</span></p>
 <p>Then, the trace of <span class="math inline">\(\mathbf{A}\)</span> is <span class="math inline">\(\mathrm{tr}(\mathbf{A}) = 2 + 5 + 4 = 11\)</span></p>
-<section id="properties-3" class="level4" data-number="2.12.1">
-<h4 data-number="2.12.1" class="anchored" data-anchor-id="properties-3"><span class="header-section-number">2.12.1</span> Properties</h4>
+<section id="properties-5" class="level4" data-number="2.13.1">
+<h4 data-number="2.13.1" class="anchored" data-anchor-id="properties-5"><span class="header-section-number">2.13.1</span> Properties</h4>
 <ul>
 <li><span class="math inline">\(\operatorname{tr}(k\mathbf A) =k \operatorname{tr}(\mathbf A)\)</span></li>
 <li><span class="math inline">\(\operatorname{tr}(\mathbf A+\mathbf B) =\operatorname{tr}(\mathbf A)+\operatorname{tr}(\mathbf B)\)</span></li>
@@ -1248,145 +1470,145 @@ c_1\mathbf v_1​ + c_2\mathbf v_2 = 0
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>tr<span class="ot">&lt;-</span><span class="cf">function</span>(mat){</span>
-<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">sum</span>(<span class="fu">diag</span>(mat)))</span>
-<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>A<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,<span class="dv">9</span>,<span class="at">replace=</span><span class="cn">TRUE</span>),<span class="at">ncol=</span><span class="dv">3</span>,<span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
-<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>B<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,<span class="dv">9</span>,<span class="at">replace=</span><span class="cn">TRUE</span>),<span class="at">ncol=</span><span class="dv">3</span>,<span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
-<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>C<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,<span class="dv">9</span>,<span class="at">replace=</span><span class="cn">TRUE</span>),<span class="at">ncol=</span><span class="dv">3</span>,<span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
-<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>k<span class="ot">&lt;-</span><span class="dv">3</span></span>
-<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">'k='</span>, k)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>tr<span class="ot">&lt;-</span><span class="cf">function</span>(mat){</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">sum</span>(<span class="fu">diag</span>(mat)))</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>A<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,<span class="dv">9</span>,<span class="at">replace=</span><span class="cn">TRUE</span>),<span class="at">ncol=</span><span class="dv">3</span>,<span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>B<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,<span class="dv">9</span>,<span class="at">replace=</span><span class="cn">TRUE</span>),<span class="at">ncol=</span><span class="dv">3</span>,<span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
+<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>C<span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>,<span class="dv">9</span>,<span class="at">replace=</span><span class="cn">TRUE</span>),<span class="at">ncol=</span><span class="dv">3</span>,<span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
+<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>k<span class="ot">&lt;-</span><span class="dv">3</span></span>
+<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">'k='</span>, k)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "k=3"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'matrix A:'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'matrix A:'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "matrix A:"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(A)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3]
-[1,]   98    7    7
-[2,]   55   43   82
-[3,]   61   12   99</code></pre>
+[1,]   83    7   37
+[2,]   84    3   69
+[3,]   33   10   16</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'matrix B:'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'matrix B:'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "matrix B:"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(B)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(B)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3]
-[1,]   51   72   18
-[2,]   25    2   51
-[3,]   68   68   52</code></pre>
+[1,]   98   66   85
+[2,]   54   73   96
+[3,]   45   24   50</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'matrix C:'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'matrix C:'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "matrix C:"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(C)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(C)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3]
-[1,]   48   32   85
-[2,]   91   39   16
-[3,]   75   66   70</code></pre>
+[1,]   90   46   11
+[2,]   26   78    7
+[3,]   54   17   33</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'Diagonal Elements of the matrix A:'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="st">'Diagonal Elements of the matrix A:'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Diagonal Elements of the matrix A:"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">diag</span>(A))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">diag</span>(A))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 98 43 99</code></pre>
+<pre><code>[1] 83  3 16</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">'trace(A) or tr(A):'</span>,<span class="fu">tr</span>(A))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste0</span>(<span class="st">'trace(A) or tr(A):'</span>,<span class="fu">tr</span>(A))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "trace(A) or tr(A):240"</code></pre>
+<pre><code>[1] "trace(A) or tr(A):102"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">'tr(kA)=ktr(A)'</span>,<span class="fu">tr</span>(k<span class="sc">*</span>A),k<span class="sc">*</span><span class="fu">tr</span>(A),<span class="at">sep=</span><span class="st">', '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">'tr(kA)=ktr(A)'</span>,<span class="fu">tr</span>(k<span class="sc">*</span>A),k<span class="sc">*</span><span class="fu">tr</span>(A),<span class="at">sep=</span><span class="st">', '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "tr(kA)=ktr(A), 720, 720"</code></pre>
+<pre><code>[1] "tr(kA)=ktr(A), 306, 306"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">'tr(A+B)=tr(A)+tr(B)'</span>,<span class="fu">tr</span>(A<span class="sc">+</span>B),<span class="fu">tr</span>(A)<span class="sc">+</span><span class="fu">tr</span>(B),<span class="at">sep=</span><span class="st">', '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">'tr(A+B)=tr(A)+tr(B)'</span>,<span class="fu">tr</span>(A<span class="sc">+</span>B),<span class="fu">tr</span>(A)<span class="sc">+</span><span class="fu">tr</span>(B),<span class="at">sep=</span><span class="st">', '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "tr(A+B)=tr(A)+tr(B), 345, 345"</code></pre>
+<pre><code>[1] "tr(A+B)=tr(A)+tr(B), 323, 323"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">'tr(A+B)=tr(B+A)'</span>,<span class="fu">tr</span>(A<span class="sc">+</span>B),<span class="fu">tr</span>(B<span class="sc">+</span>A),<span class="at">sep=</span><span class="st">', '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">'tr(A+B)=tr(B+A)'</span>,<span class="fu">tr</span>(A<span class="sc">+</span>B),<span class="fu">tr</span>(B<span class="sc">+</span>A),<span class="at">sep=</span><span class="st">', '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "tr(A+B)=tr(B+A), 345, 345"</code></pre>
+<pre><code>[1] "tr(A+B)=tr(B+A), 323, 323"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">'tr(AB)=tr(BA)'</span>,<span class="fu">tr</span>(A<span class="sc">%*%</span>B),<span class="fu">tr</span>(B<span class="sc">%*%</span>A),<span class="at">sep=</span><span class="st">', '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">'tr(AB)=tr(BA)'</span>,<span class="fu">tr</span>(A<span class="sc">%*%</span>B),<span class="fu">tr</span>(B<span class="sc">%*%</span>A),<span class="at">sep=</span><span class="st">', '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "tr(AB)=tr(BA), 22129, 22129"</code></pre>
+<pre><code>[1] "tr(AB)=tr(BA), 22161, 22161"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">'tr(ABC)=tr(BCA)=tr(CAB)!=tr(CBA)'</span>,<span class="fu">tr</span>(A<span class="sc">%*%</span>B<span class="sc">%*%</span>C),<span class="fu">tr</span>(B<span class="sc">%*%</span>C<span class="sc">%*%</span>A),<span class="fu">tr</span>(C<span class="sc">%*%</span>A<span class="sc">%*%</span>B),<span class="fu">tr</span>(C<span class="sc">%*%</span>B<span class="sc">%*%</span>A),<span class="at">sep=</span><span class="st">', '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">'tr(ABC)=tr(BCA)=tr(CAB)!=tr(CBA)'</span>,<span class="fu">tr</span>(A<span class="sc">%*%</span>B<span class="sc">%*%</span>C),<span class="fu">tr</span>(B<span class="sc">%*%</span>C<span class="sc">%*%</span>A),<span class="fu">tr</span>(C<span class="sc">%*%</span>A<span class="sc">%*%</span>B),<span class="fu">tr</span>(C<span class="sc">%*%</span>B<span class="sc">%*%</span>A),<span class="at">sep=</span><span class="st">', '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "tr(ABC)=tr(BCA)=tr(CAB)!=tr(CBA), 3834148, 3834148, 3834148, 3993263"</code></pre>
+<pre><code>[1] "tr(ABC)=tr(BCA)=tr(CAB)!=tr(CBA), 3127575, 3127575, 3127575, 3168452"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">'tr(A(B+C))=tr(AB)+tr(AC)'</span>,<span class="fu">tr</span>(A<span class="sc">%*%</span>(B<span class="sc">+</span>C)),<span class="fu">tr</span>(A<span class="sc">%*%</span>B)<span class="sc">+</span><span class="fu">tr</span>(A<span class="sc">%*%</span>C),<span class="at">sep=</span><span class="st">', '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">'tr(A(B+C))=tr(AB)+tr(AC)'</span>,<span class="fu">tr</span>(A<span class="sc">%*%</span>(B<span class="sc">+</span>C)),<span class="fu">tr</span>(A<span class="sc">%*%</span>B)<span class="sc">+</span><span class="fu">tr</span>(A<span class="sc">%*%</span>C),<span class="at">sep=</span><span class="st">', '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "tr(A(B+C))=tr(AB)+tr(AC), 49151, 49151"</code></pre>
+<pre><code>[1] "tr(A(B+C))=tr(AB)+tr(AC), 38043, 38043"</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">'tr(A^T)=tr(A)'</span>,<span class="fu">tr</span>(<span class="fu">t</span>(A)),<span class="fu">tr</span>(A),<span class="at">sep=</span><span class="st">', '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="st">'tr(A^T)=tr(A)'</span>,<span class="fu">tr</span>(<span class="fu">t</span>(A)),<span class="fu">tr</span>(A),<span class="at">sep=</span><span class="st">', '</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "tr(A^T)=tr(A), 240, 240"</code></pre>
+<pre><code>[1] "tr(A^T)=tr(A), 102, 102"</code></pre>
 </div>
 </div>
 </section>
 </section>
-<section id="rank" class="level3" data-number="2.13">
-<h3 data-number="2.13" class="anchored" data-anchor-id="rank"><span class="header-section-number">2.13</span> Rank</h3>
+<section id="rank" class="level3" data-number="2.14">
+<h3 data-number="2.14" class="anchored" data-anchor-id="rank"><span class="header-section-number">2.14</span> Rank</h3>
 <p>The rank of a matrix is the dimension of the vector space spanned by its columns (or rows). It is denoted by <span class="math inline">\(\text{rank}(\mathbf{A})\)</span>.</p>
 <p>For example, consider the following matrix:</p>
 <p><span class="math display">\[

@@ -858,6 +858,389 @@ Note
   <pubDate>Sat, 31 Dec 2089 15:00:00 GMT</pubDate>
 </item>
 <item>
+  <title>Eigenvalue</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/09.eigenvalues.html</link>
+  <description><![CDATA[ 
+
+
+
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyverse)</span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(mosaic)</span>
+<span id="cb1-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(mvtnorm)</span></code></pre></div>
+</details>
+</div>
+<section id="introduction" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
+<p>Eigenvalues could be used for understanding characteristics or properties of a square matrix and determining what type of a quadratic form the matrix belongs to.</p>
+<section id="definition" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="definition"><span class="header-section-number">1.1</span> Definition</h2>
+<div id="def-eigenvalue" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 1 (Eigenvalues and Eigenvectors) </strong></span>Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> be an <img src="https://latex.codecogs.com/png.latex?n%20%C3%97%20n"> square matrix. A scalar <img src="https://latex.codecogs.com/png.latex?%5Clambda"> is called an eigenvalue of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> if there exists a non-zero vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> such that <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BAv%7D=%5Clambda%5Cmathbf%7Bv%7D%0A"></p>
+<p>Such a vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> is called an eigenvector corresponding to <img src="https://latex.codecogs.com/png.latex?%5Clambda">.</p>
+</div>
+</section>
+<section id="properties" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="properties"><span class="header-section-number">1.2</span> Properties</h2>
+<ul>
+<li>Eigenvalues are scalar values: Eigenvalues are scalars and represent the scaling factor by which the corresponding eigenvectors are stretched or shrunk when multiplied by a matrix.</li>
+<li>When a matrix is ​​expressed in quadratic form, there exists a symmetric matrix that satisfies the uniqueness of the quadratic form and all eigenvalues ​​corresponding to the symmetric matrix having real numbers as elements are real numbers. Depending on the signs of the eigenvalues, a quadratic form can be classified into 5 types:
+<ul>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is said to be a positive definite (PD) matrix if the eigenvalues of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> are all positive. <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D%20%3E%200%20%5Ctext%7B%20iff%20%7D%20%5Clambda_%7B%5Ctext%7Bmin%7D%7D(%5Cmathbf%7BA%7D)%20%3E%200%0A"></li>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is said to be a positive semi-definite (PSD) matrix if the eigenvalues of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> are not negative. <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D%20%5Cge%200%20%5Ctext%7B%20iff%20%7D%20%5Clambda_%7B%5Ctext%7Bmin%7D%7D(%5Cmathbf%7BA%7D)%20%5Cge%200%0A"></li>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is said to be a negative definite (ND) matrix if the eigenvalues of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> are all negative. <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D%20%3C%200%20%5Ctext%7B%20iff%20%7D%20%5Clambda_%7B%5Ctext%7Bmax%7D%7D(%5Cmathbf%7BA%7D)%20%3C%200%0A"></li>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is said to be a negative semi-definite (NSD) matrix if the eigenvalues of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> are not positive. <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D%20%5Cle%200%20%5Ctext%7B%20iff%20%7D%20%5Clambda_%7B%5Ctext%7Bmax%7D%7D(%5Cmathbf%7BA%7D)%20%5Cle%200%0A"></li>
+<li><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is said to be a indefinite (NSD) matrix if the eigenvalues of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> have both signs. <img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D%20%5Clessgtr%200%20%5Ctext%7B%20iff%20%7D%20%5Clambda_%7B%5Ctext%7Bmax%7D%7D(%5Cmathbf%7BA%7D)%20%5Clessgtr%200%0A"></li>
+</ul></li>
+<li>Sum of eigenvalues: The sum of the eigenvalues of a matrix is equal to the trace of the matrix, where the trace is the sum of the diagonal elements. <img src="https://latex.codecogs.com/png.latex?%0A%5Csum_%7Bi=1%7D%5En%20%5Clambda_i%20=%20%5Ctext%7Btr%7D(%5Cmathbf%7BA%7D)%0A">.</li>
+<li>Product of eigenvalues: The product of the eigenvalues of a matrix is equal to the determinant of the matrix. <img src="https://latex.codecogs.com/png.latex?%0A%5Cprod_%7Bi=1%7D%5En%20%5Clambda_i%20=%20%5Cdet(%5Cmathbf%7BA%7D)=%7C%5Cmathbf%7BA%7D%7C%0A">.<br>
+</li>
+<li>Eigenvalues are solutions to the characteristic equation: For a square matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> of size <img src="https://latex.codecogs.com/png.latex?n%5Ctimes%20n">, the eigenvalues <img src="https://latex.codecogs.com/png.latex?%5Clambda"> satisfy the characteristic equation <img src="https://latex.codecogs.com/png.latex?%5Cdet(%5Cmathbf%7BA%7D%20-%20%5Clambda%5Cmathbf%7BI%7D)%20=%200">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BI%7D"> is the identity matrix of size <img src="https://latex.codecogs.com/png.latex?n%5Ctimes%20n">.
+<ul>
+<li>The characteristic equation is an equation associated with a square matrix that helps determine its eigenvalues, which are crucial for understanding the behavior and properties of the matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">. <img src="https://latex.codecogs.com/png.latex?%0A%5Cdet(%5Cmathbf%7BA%7D%20-%20%5Clambda%5Cmathbf%7BI%7D)%20=%200%0A"> The equation indicates that the matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20-%20%5Clambda%5Cmathbf%7BI%7D"> does not have full rank and has a nontrivial null space.</li>
+</ul></li>
+<li>Eigenvalues of similar matrices: Similar matrices have the same eigenvalues. If two matrices <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BB%7D"> are similar (i.e., <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cmathbf%7BPBP%7D%5E%7B-1%7D"> for some invertible matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BP%7D">), then they have the same eigenvalues.</li>
+<li>Eigenvalues of triangular matrices: The eigenvalues of a triangular matrix are equal to its diagonal entries. In other words, for an upper triangular matrix, the eigenvalues are the elements on its main diagonal.</li>
+</ul>
+</section>
+<section id="example" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="example"><span class="header-section-number">1.3</span> Example</h2>
+<p>Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> be the matrix</p>
+<p>To find the eigenvalues of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, we solve the characteristic equation <img src="https://latex.codecogs.com/png.latex?%5Ctext%7Bdet%7D(%5Cmathbf%20A%20-%20%5Clambda%20%5Cmathbf%20I%20)%20=%200">, where I is the n × n identity matrix.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A%20%20%5Ctext%7Bdet%7D(%5Cmathbf%20A%20-%20%5Clambda%20%5Cmathbf%20I%20)%0A%20%20&amp;=%0A%20%20%20%20%5Cbegin%7Bvmatrix%7D%0A%20%20%20%203%20-%20%5Clambda%20&amp;%201%20%5C%5C%0A%20%20%20%201%20&amp;%203%20-%20%5Clambda%0A%20%20%20%20%5Cend%7Bvmatrix%7D%20%5C%5C%0A%20%20&amp;=%0A%20%20(3%20-%20%5Clambda)(3%20-%20%5Clambda)%20-%201%20%5C%5C%0A%20%20&amp;=%20%5Clambda%5E2%20-%206%5Clambda%20+%208%20=%200%0A%5Cend%7Balign*%7D%0A"></p>
+<p>Solving this quadratic equation gives us the eigenvalues of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">: <img src="https://latex.codecogs.com/png.latex?%5Clambda_1%20=%202"> and <img src="https://latex.codecogs.com/png.latex?%5Clambda_2%20=%204">.</p>
+<p>To find the eigenvectors corresponding to <img src="https://latex.codecogs.com/png.latex?%5Clambda_1%20=%202">, we solve the equation <img src="https://latex.codecogs.com/png.latex?(%5Cmathbf%20A%20-%202%20%5Cmathbf%20I)%5Cmathbf%7Bv%7D%20=%20%5Cmathbf%7B0%7D">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20I"> is the <img src="https://latex.codecogs.com/png.latex?2%20%5Ctimes%202"> identity matrix.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A%20%20(%5Cmathbf%20A%20-%202%20%5Cmathbf%20I)%5Cmathbf%7Bv%7D%20=%0A%20%20%20%20%5Cbegin%7Bbmatrix%7D%0A%20%20%20%20%20%201%20&amp;%201%20%5C%5C%0A%20%20%20%20%20%201%20&amp;%201%0A%20%20%20%20%5Cend%7Bbmatrix%7D%0A%20%20%5Cbegin%7Bbmatrix%7D%0A%20%20%20%20x%20%5C%5C%0A%20%20%20%20y%0A%20%20%5Cend%7Bbmatrix%7D%20=%0A%20%20%5Cbegin%7Bbmatrix%7D%0A%20%20%20%200%20%5C%5C%0A%20%20%20%200%0A%20%20%5Cend%7Bbmatrix%7D%0A%5Cend%7Balign*%7D%0A"></p>
+<p>Solving this system of equations gives us the eigenvectors corresponding to <img src="https://latex.codecogs.com/png.latex?%5Clambda_1%20=%202">: <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv_1%7D%20=%20%5Cbegin%7Bbmatrix%7D%20-1%20%5C%5C%201%20%5Cend%7Bbmatrix%7D"></p>
+<p>Similarly, for <img src="https://latex.codecogs.com/png.latex?%5Clambda_2%20=%204">, we solve the equation <img src="https://latex.codecogs.com/png.latex?(%5Cmathbf%20A%20-%204%5Cmathbf%20I)%5Cmathbf%7Bv%7D"> = <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B0%7D"> to get the eigenvectors corresponding to <img src="https://latex.codecogs.com/png.latex?%5Clambda_2%20=%204">: <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv_2%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20%5C%5C%201%20%5Cend%7Bbmatrix%7D"></p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs"><li class="nav-item"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" aria-controls="tabset-1-1" aria-selected="true">R</a></li><li class="nav-item"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" aria-controls="tabset-1-2" aria-selected="false">Python</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">PD <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ncol=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">byrow =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>)</span>
+<span id="cb2-2">PSD <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ncol=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">byrow =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>)</span>
+<span id="cb2-3">ND <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ncol=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">byrow =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>)</span>
+<span id="cb2-4">NSD <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ncol=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">byrow =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>)</span>
+<span id="cb2-5">Ind <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ncol=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">byrow =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>)</span>
+<span id="cb2-6"></span>
+<span id="cb2-7">sym_mat <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ncol=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">byrow =</span> <span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>)</span>
+<span id="cb2-8"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eigen</span>(sym_mat)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>values</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 18.138954  4.556363 -7.695317</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># trace</span></span>
+<span id="cb4-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">diag</span>(sym_mat)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>()</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 15</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eigen</span>(sym_mat)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>values)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 15</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># product of eigenvalues : more convenient than using a for loop</span></span>
+<span id="cb8-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">exp</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">sum</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">log</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">eigen</span>(sym_mat)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>values)))</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NaN</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">det</span>(sym_mat)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -636</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb12-2"></span>
+<span id="cb12-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Define the matrix A</span></span>
+<span id="cb12-4">A <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.array([[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>]])</span>
+<span id="cb12-5"></span>
+<span id="cb12-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Calculate the eigenvalues and eigenvectors</span></span>
+<span id="cb12-7">eigenvalues, eigenvectors <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linalg.eig(A)</span>
+<span id="cb12-8"></span>
+<span id="cb12-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Print the eigenvalues</span></span>
+<span id="cb12-10"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Eigenvalues:"</span>)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Eigenvalues:</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">for</span> eigenvalue <span class="kw" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">in</span> eigenvalues:</span>
+<span id="cb14-2">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(eigenvalue)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>1.381966011250105
+3.618033988749895</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>Mathematics</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/09.eigenvalues.html</guid>
+  <pubDate>Fri, 26 May 2023 15:00:00 GMT</pubDate>
+</item>
+<item>
   <title>Measures of Risk: Relative Risk &amp; Odds Ratio</title>
   <dc:creator>Kwangmin Kim</dc:creator>
   <link>kmink3225.netlify.app/docs/blog/posts/Epidemilogy/relative_risk_odds_ratio.html</link>
@@ -4419,210 +4802,9 @@ Tip
   <pubDate>Tue, 04 Apr 2023 15:00:00 GMT</pubDate>
 </item>
 <item>
-  <title>Matrix Transformation (4) - Biinear Form</title>
-  <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/11.bilinear_form.html</link>
-  <description><![CDATA[ 
-
-
-
-<section id="binear-form" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="binear-form"><span class="header-section-number">1</span> Binear Form</h2>
-<p>A bilinear form of a matrix is a function that extends the linear form and takes two vectors as inputs and produces a scalar as output. It is linear in both of its arguments, meaning that it satisfies the following properties:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0AB(%5Cmathbf%20u+%5Cmathbf%20v)&amp;=B(%5Cmathbf%20u+%5Cmathbf%20w)+B(%5Cmathbf%20v+%5Cmathbf%20w)%5C%5C%0AB(%5Cmathbf%20u,%5Calpha%20%5Cmathbf%20v)&amp;=%5Calpha%20B(%5Cmathbf%20u,%5Cmathbf%20v)%5C%5C%0AB(%5Calpha%5Cmathbf%20u,%5Cmathbf%20v)&amp;=%5Calpha%20B(%5Cmathbf%20u,%5Cmathbf%20v)%0A%5Cend%7Baligned%7D%0A"></p>
-<p>for all vectors <img src="https://latex.codecogs.com/png.latex?u">, <img src="https://latex.codecogs.com/png.latex?v">, <img src="https://latex.codecogs.com/png.latex?w"> and scalars <img src="https://latex.codecogs.com/png.latex?%5Calpha">.</p>
-<p>A bilinear form can be represented by a matrix <img src="https://latex.codecogs.com/png.latex?B"> such that <img src="https://latex.codecogs.com/png.latex?B_%7Bi,j%7D"> is the coefficient of the product <img src="https://latex.codecogs.com/png.latex?u_i%20v_j"> in the expansion of <img src="https://latex.codecogs.com/png.latex?B(u,v)">. The bilinear form can then be written as:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0AB(%5Cmathbf%20u,%5Cmathbf%20v)=%5Cmathbf%20u%5ET%20B%20%5Cmathbf%20v%0A"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20u"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20v"> are column vectors and <img src="https://latex.codecogs.com/png.latex?B"> is a matrix.</p>
-<p>For example, consider the bilinear form <img src="https://latex.codecogs.com/png.latex?B(%5Cmathbf%20u,%5Cmathbf%20v)%20=%20u_1%20v_1%20+%20u_2%20v_2">. This bilinear form can be represented by the matrix:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0AB=%5Cbegin%7Bbmatrix%7D1&amp;0%5C%5C0&amp;1%5Cend%7Bbmatrix%7D%0A"></p>
-<p>and written as:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0AB(%5Cmathbf%20u,%5Cmathbf%20v)=%5Cbegin%7Bbmatrix%7Du_1&amp;%20u_2%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7D1&amp;0%5C%5C0&amp;1%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dv_1%5C%5Cv_2%5Cend%7Bbmatrix%7D=u_1v_1+u_2v_2%0A"></p>
-<p>This bilinear form computes the dot product of <img src="https://latex.codecogs.com/png.latex?u"> and <img src="https://latex.codecogs.com/png.latex?v">, which measures the similarity between the two vectors. Bilinear forms are commonly used in applications such as optimization, geometry, and physics, where they capture the interaction between two quantities or variables.</p>
-<p>The covariance matrix can be represented as a bilinear form using matrix multiplication. Let’s say we have a random vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20%5Bx_1,%20x_2,%20%5Cldots,%20x_n%5D%5ET"> with mean vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cmu%7D%20=%20%5B%5Cmu_1,%20%5Cmu_2,%20%5Cldots,%20%5Cmu_n%5D%5ET"> and covariance matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5CSigma%7D">. Then, we can represent the covariance matrix as a bilinear form in the following way:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5CSigma&amp;=%5Coperatorname%7BE%7D%5B(%5Cmathbf%20x-%5Cmathbf%20%5Cmu)(%5Cmathbf%20x-%5Cmathbf%20%5Cmu)%5ET%5D%5C%5C%0A&amp;=%5Cfrac%7B1%7D%7Bn-1%7D%5Csum_%7Bi=1%7D%5E%7Bn%7D(x_i-%5Cbar%7Bx%7D)(x_i-%5Cbar%7Bx%7D)%5ET%0A%5Cend%7Baligned%7D%0A"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BE%7D"> denotes the expectation operator. We can expand this expression as:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5CSigma&amp;=%5Coperatorname%7BE%7D%5B%5Cmathbf%20x%5Cmathbf%20x%5ET%5D-%5Cmathbf%20%5Cmu%5Cmathbf%20%5Cmu%5ET%0A%5Cend%7Baligned%7D%0A"></p>
-<p>Now, we can represent the covariance matrix as a bilinear form using matrix multiplication as:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5CSigma&amp;=%5Coperatorname%7BE%7D%5B(%5Cmathbf%20x-%5Cmathbf%20%5Cmu)(%5Cmathbf%20x-%5Cmathbf%20%5Cmu)%5ET%5D%5C%5C%0A&amp;=%5Csum_%7Bi=1%7D%5E%7Bn%7D%5Csum_%7Bj=1%7D%5E%7Bn%7D(%5Cmathbf%20x_i-%5Cmathbf%5Cmu_i)(%5Cmathbf%20x_i-%5Cmathbf%20%5Cmu_j)%0A%5Cend%7Baligned%7D%0A"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?%5B%5Cmathbf%7Bx%7D-%5Cmathbf%7B%5Cmu%7D%5D"> is the deviation of the random vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> from its mean vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cmu%7D">.</p>
-<p>covariance matrix, and correlation matrix</p>
-<p>One of the most famous examples is the use of bilinear forms in convolutional neural networks (CNNs), which are a type of deep learning model used for image and video recognition tasks.</p>
-<p>In a CNN, a bilinear form is used to compute the similarity between a filter and a local region of an input image. This similarity measure is used to determine how much the filter “matches” the local region of the image, and is used to produce an output feature map.</p>
-<p>More specifically, the bilinear form used in a CNN takes the form:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0Az_%7Bi,j%7D%20=%20%5Csum_%7Bm=1%7D%5E%7BM%7D%5Csum_%7Bn=1%7D%5E%7BN%7D%20w_%7Bm,n%7Dx_%7Bi+m-1,j+n-1%7D%0A"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?z_%7Bi,j%7D"> is the output feature map at location <img src="https://latex.codecogs.com/png.latex?(i,j)">, <img src="https://latex.codecogs.com/png.latex?x_%7Bi+m-1,j+n-1%7D"> is the input image pixel at location <img src="https://latex.codecogs.com/png.latex?(i+m-1,j+n-1)">, and <img src="https://latex.codecogs.com/png.latex?w_%7Bm,n%7D"> is the weight of the filter at position <img src="https://latex.codecogs.com/png.latex?(m,n)">. This computation is performed for each location <img src="https://latex.codecogs.com/png.latex?(i,j)"> in the output feature map.</p>
-<p>The bilinear form used in CNNs is a type of convolution operation, and is used to learn features such as edges, corners, and other patterns in the input image. CNNs with bilinear forms have achieved state-of-the-art performance on many image recognition tasks, including object detection, face recognition, and scene classification.</p>
-<p>Bilinear forms also have applications in other areas of machine learning, such as natural language processing (NLP). In NLP, bilinear forms can be used to compute the similarity between two word embeddings, which are vector representations of words. This similarity measure can be used for tasks such as sentiment analysis, text classification, and machine translation.</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0AB(%5Cmathbf%7Bu%7D,%5Cmathbf%7Bv%7D)=%5Cmathbf%7Bu%7D%5ET%20%5Cmathbf%7BW%7D%5Cmathbf%7Bv%7D%0A"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bu%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> are word embeddings, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BW%7D"> is a weight matrix, and <img src="https://latex.codecogs.com/png.latex?B(%5Cmathbf%7Bu%7D,%5Cmathbf%7Bv%7D)"> represents the bilinear form used to compute the similarity between the two embeddings.</p>
-<p>Overall, bilinear forms are a powerful tool for learning features from complex data such as images and text, and have many applications in deep learning and machine learning.</p>
-
-
-</section>
-
- ]]></description>
-  <category>Mathematics</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/11.bilinear_form.html</guid>
-  <pubDate>Sat, 01 Apr 2023 15:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Matrix Transformation (3) - Linear Form</title>
-  <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/11.linear_form.html</link>
-  <description><![CDATA[ 
-
-
-
-<section id="linear-form" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="linear-form"><span class="header-section-number">1</span> Linear Form</h2>
-<p>A linear form is a linear function that maps a vector space to its underlying field. Let <img src="https://latex.codecogs.com/png.latex?V"> be a vector space over a field <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BF%7D">, and let <img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BL%7D(V,%5Cmathbb%7BF%7D)"> denote the set of all linear functions from <img src="https://latex.codecogs.com/png.latex?V"> to <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BF%7D">. A linear form on <img src="https://latex.codecogs.com/png.latex?V"> is an element of <img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BL%7D(V,%5Cmathbb%7BF%7D)">.</p>
-<p>A linear form <img src="https://latex.codecogs.com/png.latex?%5Cvarphi"> can be represented by a row vector of dimension <img src="https://latex.codecogs.com/png.latex?1%5Ctimes%20n">, where <img src="https://latex.codecogs.com/png.latex?n"> is the dimension of <img src="https://latex.codecogs.com/png.latex?V">. Let <img src="https://latex.codecogs.com/png.latex?%7B%5Cmathbf%7Be%7D_1,%20%5Cmathbf%7Be%7D_2,%20%5Cdots,%20%5Cmathbf%7Be%7D_n%7D"> be a basis for <img src="https://latex.codecogs.com/png.latex?V">, and let <img src="https://latex.codecogs.com/png.latex?%7B%5Calpha_1,%20%5Calpha_2,%20%5Cdots,%20%5Calpha_n%7D"> be the corresponding dual basis for <img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BL%7D(V,%5Cmathbb%7BF%7D)">, such that <img src="https://latex.codecogs.com/png.latex?%5Calpha_i(%5Cmathbf%7Be%7Dj)%20=%20%5Cdelta%7Bij%7D"> (the Kronecker delta). Then, any linear form <img src="https://latex.codecogs.com/png.latex?%5Cvarphi%5Cin%5Cmathcal%7BL%7D(V,%5Cmathbb%7BF%7D)"> can be written as: <img src="https://latex.codecogs.com/png.latex?%0A%5Cvarphi(x)=%5Csum_%7Bi=1%7D%5E%7Bn%7Da_ix_i=%5Cmathbf%20a%20%5Cmathbf%20x%5ET=%5Cmathbf%20x%20%5Cmathbf%20a%0A"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5Cin%20V"> is a column vector of dimension <img src="https://latex.codecogs.com/png.latex?n%5Ctimes%201">, <img src="https://latex.codecogs.com/png.latex?%5B%5Cmathbf%7Ba%7D%5D"> is the row vector representing <img src="https://latex.codecogs.com/png.latex?%5Cvarphi">, and <img src="https://latex.codecogs.com/png.latex?%5B%5Cmathbf%7Bx%7D%5D"> is the column vector representing <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
-<p>For example, let <img src="https://latex.codecogs.com/png.latex?V%20=%20%5Cmathbb%7BR%7D%5E2"> be the vector space of 2-dimensional column vectors, and let <img src="https://latex.codecogs.com/png.latex?%5Cvarphi%5Cin%5Cmathcal%7BL%7D(V,%5Cmathbb%7BR%7D)"> be the linear form defined by <img src="https://latex.codecogs.com/png.latex?%5Cvarphi(%5Cbegin%7Bbmatrix%7Dx%5Cy%5Cend%7Bbmatrix%7D)%20=%203x%20-%202y">. Then, we can represent <img src="https://latex.codecogs.com/png.latex?%5Cvarphi"> as:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5B%5Cmathbf%20a%5D=%5Cbegin%7Bbmatrix%7D%203%20&amp;%20-2%5Cend%7Bbmatrix%7D%20%5B%5Cmathbf%20x%5D=%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%5C%20x_2%20%5Cend%7Bbmatrix%7D%20%5Cvarphi(x)=%5Csum_%7Bi=1%7D%5E%7Bn%7D%5Cmathbf%20a%5Cmathbf%20x%5ET=3x_1-2x_2%0A"></p>
-<p>which shows that <img src="https://latex.codecogs.com/png.latex?%5Cvarphi"> is a linear form on <img src="https://latex.codecogs.com/png.latex?V">.</p>
-<p>consider a linear regression model that predicts the price of a house based on its size and location. The model can be represented by the linear form:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cvarphi(x)=%5Cmathbf%20w%5Cmathbf%20x%5ET=%5Csum_%7Bi=1%7D%5E%7Bn%7Dw_ix_i=w_0+w_1x_1+w_2x_2%0A"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?%5Cvarphi(%5Cmathbf%7Bx%7D)"> is the predicted price, <img src="https://latex.codecogs.com/png.latex?x_1"> is the size of the house, <img src="https://latex.codecogs.com/png.latex?x_2"> is a measure of the location (such as the distance from the city center), and <img src="https://latex.codecogs.com/png.latex?w_0">, <img src="https://latex.codecogs.com/png.latex?w_1">, and <img src="https://latex.codecogs.com/png.latex?w_2"> are the model parameters that control the intercept and the weights of the features. This linear form can be written in matrix form as:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cvarphi(x)=%5Cmathbf%20x%5Cmathbf%20w=%5Cmathbf%20w%20%5Cmathbf%20x%5ET%0A"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?%5B%5Cmathbf%7Bw%7D%5D"> is a row vector of the model parameters and <img src="https://latex.codecogs.com/png.latex?%5B%5Cmathbf%7Bx%7D%5D"> is a row vector of the features.</p>
-<p>Linear forms can also be used in deep learning and machine learning models that involve linear transformations, such as fully connected layers in neural networks or linear classifiers. For example, consider a simple linear classifier that classifies images of digits into one of 10 classes. The classifier can be represented by the linear form:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cvarphi(x)=%5Cmathbf%20x%5Cmathbf%20w%20+%20b%20=%5Cmathbf%20w%20%5Cmathbf%20x%5ET%20+b%0A"></p>
-<p>where <img src="https://latex.codecogs.com/png.latex?%5Cvarphi(%5Cmathbf%7Bx%7D)"> is the predicted class score, <img src="https://latex.codecogs.com/png.latex?%5B%5Cmathbf%7Bx%7D%5D"> is a row vector of the pixel values of the image, <img src="https://latex.codecogs.com/png.latex?%5B%5Cmathbf%7Bw%7D%5D"> is a row vector of the weights of the classifier, and <img src="https://latex.codecogs.com/png.latex?b"> is the bias term. This linear form can be used to classify the image by selecting the class with the highest score.</p>
-<p>In both of these examples, linear forms are used to represent linear relationships between variables or features, and the model parameters are learned through training on a set of labeled examples.</p>
-
-
-</section>
-
- ]]></description>
-  <category>Mathematics</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/11.linear_form.html</guid>
-  <pubDate>Sat, 01 Apr 2023 15:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Matrix Calculus (1) - Matrix to Vector Derivatives</title>
-  <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/derivative_matrix_vector.html</link>
-  <description><![CDATA[ 
-
-
-
-<section id="matrix-to-vector-derivatives" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="matrix-to-vector-derivatives"><span class="header-section-number">1</span> Matrix to Vector Derivatives</h2>
-<p>Matrix-to-vector derivatives refer to the derivatives of a matrix function with respect to a vector argument. Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)"> be a matrix-valued function of a vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20%5Cin%20%5Cmathbb%7BR%7D%5En">. The matrix-to-vector derivative is denoted as follows:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20%5Cmathbf%7Bx%7D%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20x_1%7D%20&amp;%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20x_2%7D%20&amp;%20%5Ccdots%20&amp;%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20x_n%7D%0A%5Cend%7Bbmatrix%7D%0A"></p>
-<p>Here, the matrix-to-vector derivative is a matrix whose <img src="https://latex.codecogs.com/png.latex?i">th column is the partial derivative of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bf%7D"> with respect to the <img src="https://latex.codecogs.com/png.latex?i">th component of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
-<p>For example, let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> be matrices in <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E%7Bn%5Ctimes%20n%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E%7Bn%5Ctimes%201%7D">, respectively. Consider the function <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%20=%20%5Cmathbf%7BAx%7D">, which is a matrix-vector product. The matrix-to-vector derivative of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is given by: <img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20%5Cmathbf%7Bx%7D%7D%20=%20%5Cmathbf%7BA%7D%0A"> Here, the derivative is a matrix whose rows are the rows of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</p>
-<section id="differentiation-of-quadratic-form" class="level3" data-number="1.1">
-<h3 data-number="1.1" class="anchored" data-anchor-id="differentiation-of-quadratic-form"><span class="header-section-number">1.1</span> Differentiation of Quadratic Form</h3>
-<p>This is because the output of this differentiation is a vector (with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">), rather than a scalar.</p>
-<p>The differentiation of a quadratic form is the process of finding the gradient of a quadratic form with respect to its input vector.</p>
-<p>Given a quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is an <img src="https://latex.codecogs.com/png.latex?n">-dimensional column vector, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D%20%5Cin%20%5Cmathbb%7BR%7D%5En"> is a vector, and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is an <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> symmetric matrix, the derivative of <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is given by:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cnabla_%7B%5Cmathbf%20x%7D%20f(%5Cmathbf%20x)%20=%20(A%20+%20A%5ET)%5Cmathbf%20x%20+%20b%0A"></p>
-<p>In this expression, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET"> is the transpose of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</p>
-<p><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A+%5Cmathbf%20A%5ET"> is written instead of <img src="https://latex.codecogs.com/png.latex?2%5Cmathbf%20A"> when calculating the gradient of a quadratic form. It is because in general, the matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> might not be symmetric, so <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A%5Cneq%20%5Cmathbf%20A%5ET">. However, for any matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, we have <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A+%5Cmathbf%20A%5ET%20=%20(%5Cmathbf%20A+%5Cmathbf%20A%5ET)%5ET">, which is a symmetric matrix. Therefore, by writing the gradient as <img src="https://latex.codecogs.com/png.latex?%5Cnabla_x%20f(x)%20=%20(%5Cmathbf%20A+%5Cmathbf%20A%5ET)x">, we ensure that the gradient is always a symmetric matrix, even if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is not symmetric. This is useful in many applications where symmetric matrices are preferred. But if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is constrained to be a symmetric matrix, <img src="https://latex.codecogs.com/png.latex?2%5Cmathbf%20A"> can be written.</p>
-</section>
-<section id="when-mathbfa-is-symmetric" class="level3" data-number="1.2">
-<h3 data-number="1.2" class="anchored" data-anchor-id="when-mathbfa-is-symmetric"><span class="header-section-number">1.2</span> When <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is Symmetric</h3>
-<p>As an example, consider the quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=x_1%5E2+2x_1x_2+3x_2%5E2">, which can be written in the form <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D">, where:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20x=%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%20x_2%20%5Cend%7Bbmatrix%7D,%20%5Cmathbf%20A=%5Cbegin%7Bbmatrix%7D%201%20&amp;%201%20%5C%5C%201%20&amp;%203%20%5Cend%7Bbmatrix%7D%0A"></p>
-<p>The derivative of <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is then:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20f(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20%5Cmathbf%7Bx%7D%7D=(%5Cmathbf%7BA%7D+%5Cmathbf%7BA%7D%5ET)%5Cmathbf%7Bx%7D=%5Cbegin%7Bbmatrix%7D2%20&amp;%202%5C%5C2%20&amp;%206%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D=%5Cbegin%7Bbmatrix%7D2x_1+2x_2%5C%5C2x_1+6x_2%5Cend%7Bbmatrix%7D%0A"></p>
-<p>This represents the gradient vector of <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)"> at any point <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
-</section>
-<section id="when-mathbfa-is-not-symmetric" class="level3" data-number="1.3">
-<h3 data-number="1.3" class="anchored" data-anchor-id="when-mathbfa-is-not-symmetric"><span class="header-section-number">1.3</span> When <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is Not Symmetric</h3>
-<p>Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20%5C%5C%203%20&amp;%204%20%5Cend%7Bbmatrix%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%5C%20x_2%20%5Cend%7Bbmatrix%7D">.</p>
-<p>Then, we have <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20&amp;%20x_2%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20%5C%5C%203%20&amp;%204%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%5C%20x_2%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20&amp;%20x_2%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20x_1%20+%202x_2%20%5C%5C%203x_1%20+%204x_2%20%5Cend%7Bbmatrix%7D%20=%20x_1%5E2%20+%205x_1x_2%20+%204x_2%5E2">.</p>
-<p>To find the gradient of this quadratic form, we can take the partial derivatives of <img src="https://latex.codecogs.com/png.latex?x_1"> and <img src="https://latex.codecogs.com/png.latex?x_2"> with respect to each variable:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20x_1%7D%20(%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D)%20=%202x_1%20+%205x_2%0A"></p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20x_2%7D%20(%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D)%20=%205x_1%20+%208x_2%0A"></p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20f(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20%5Cmathbf%7Bx%7D%7D=(%5Cmathbf%7BA%7D+%5Cmathbf%7BA%7D%5ET)%5Cmathbf%7Bx%7D=%5Cbegin%7Bbmatrix%7D1+1%20&amp;%202+3%5C%5C3+2%20&amp;%204+4%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D=%5Cbegin%7Bbmatrix%7D2%20&amp;%205%5C%5C5%20&amp;%208%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%202x_1%20+%205x_2%20%5C%5C%205x_1%20+%208x_2%20%5Cend%7Bbmatrix%7D%0A"></p>
-<p>So the gradient of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D"> is <img src="https://latex.codecogs.com/png.latex?%5Cnabla_x%20f(x)%20=%20%5Cbegin%7Bbmatrix%7D%202x_1%20+%205x_2%20%5C%5C%205x_1%20+%208x_2%20%5Cend%7Bbmatrix%7D">.</p>
-</section>
-<section id="ordinary-least-square" class="level3" data-number="1.4">
-<h3 data-number="1.4" class="anchored" data-anchor-id="ordinary-least-square"><span class="header-section-number">1.4</span> Ordinary Least Square</h3>
-<p>For the <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%201"> vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D">, the <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20k"> matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D">, the <img src="https://latex.codecogs.com/png.latex?k%20%5Ctimes%201"> vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cbeta%7D">, when <img src="https://latex.codecogs.com/png.latex?L=(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%5ET(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)">, what is <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Cpartial%20L%7D%7B%5Cpartial%20%5Cmathbf%7B%5Cbeta%7D%7D">?</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0AL%20&amp;=%20(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%5ET(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%20%5C%5C%0A&amp;=%20%5Cmathbf%7By%7D%5ET%5Cmathbf%7By%7D%20-%20%5Cmathbf%7By%7D%5ET%5Cmathbf%7BA%7D%5Cmathbf%7B%5Cbeta%7D%20-%20%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%20%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D%20%5C%5C%0A&amp;=%20%5Cmathbf%7By%7D%5ET%5Cmathbf%7By%7D%20-%202%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%20%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D%0A%5Cend%7Baligned%7D%0A"></p>
-<p>Now, we can take the derivative of <img src="https://latex.codecogs.com/png.latex?L"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cbeta%7D">:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5Cfrac%7B%5Cpartial%20L%7D%7B%5Cpartial%20%5Cmathbf%7B%5Cbeta%7D%7D%20&amp;=%20%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20%5Cmathbf%7B%5Cbeta%7D%7D%20(%5Cmathbf%7By%7D%5ET%5Cmathbf%7By%7D%20-%202%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%20%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%20%5C%5C%0A&amp;=%20%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20%5Cmathbf%7B%5Cbeta%7D%7D%20(-%202%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%20%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%20%5C%5C%0A&amp;=%20-%202%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%202%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D%0A%5Cend%7Baligned%7D%0A"></p>
-<p><img src="https://latex.codecogs.com/png.latex?%5Chat%7B%5Cbeta%7D=(%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D)%5E%7B-1%7D%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D"> is the solution to the optimization problem by taking its derivative with respect to and setting it equal to zero.</p>
-<p>Starting with the expression for <img src="https://latex.codecogs.com/png.latex?L">:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0AL=(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%5ET(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%0A"></p>
-<p>Expanding the quadratic term gives:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0AL=%5Cmathbf%7By%7D%5ET%5Cmathbf%7By%7D-%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D-%5Cmathbf%7By%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D+%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D%0A"></p>
-<p>Taking the derivative of <img src="https://latex.codecogs.com/png.latex?L"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cbeta%7D"> and setting it to zero gives:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20L%7D%7B%5Cpartial%20%5Cmathbf%7B%5Cbeta%7D%7D%20=%20-2%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%202%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D%20=%200%0A"></p>
-<p>Solving for <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cbeta%7D"> gives:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D=%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%0A"></p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7B%5Cbeta%7D=(%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D)%5E%7B-1%7D%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%0A"> Multiplying both sides of the equation by <img src="https://latex.codecogs.com/png.latex?(%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D)"> gives:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A(%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D)%5Cmathbf%7B%5Cbeta%7D=%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%0A"></p>
-<p>Therefore, we have verified that <img src="https://latex.codecogs.com/png.latex?%0A%5Chat%7B%5Cbeta%7D=(%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D)%5E%7B-1%7D%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%0A"> is the solution to the optimization problem of OLS (Ordinary Least Square).</p>
-
-
-</section>
-</section>
-
- ]]></description>
-  <category>Mathematics</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/derivative_matrix_vector.html</guid>
-  <pubDate>Sat, 01 Apr 2023 15:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Matrix Calculus (1) - Matrix to Vector Derivatives</title>
-  <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/derivative_vector_matrix.html</link>
-  <description><![CDATA[ 
-
-
-
-<section id="matrix-to-vector-derivatives" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="matrix-to-vector-derivatives"><span class="header-section-number">1</span> Matrix to Vector Derivatives</h2>
-<p>The matrix-to-vector derivative is a derivative where a function <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7BX%7D)"> maps an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D"> to a <img src="https://latex.codecogs.com/png.latex?p">-dimensional vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D">, and we want to find the derivative of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D">. It is denoted by <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20%5Cmathbf%7BX%7D%7D">.</p>
-<p>Formally, let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bm%20%5Ctimes%20n%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D%20=%20f(%5Cmathbf%7BX%7D)%20%5Cin%20%5Cmathbb%7BR%7D%5Ep"> be a function that maps an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> matrix to a <img src="https://latex.codecogs.com/png.latex?p">-dimensional vector. Then, the matrix-to-vector derivative is defined as: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bbmatrix%7D%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7B11%7D%7D%20&amp;%20%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7B12%7D%7D%20&amp;%20%5Ccdots%20&amp;%20%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7B1n%7D%7D%20%5C%5C%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7B21%7D%7D%20&amp;%20%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7B22%7D%7D%20&amp;%20%5Ccdots%20&amp;%20%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7B2n%7D%7D%20%5C%5C%0A%5Cvdots%20&amp;%20%5Cvdots%20&amp;%20%5Cddots%20&amp;%20%5Cvdots%20%5C%5C%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7Bm1%7D%7D%20&amp;%20%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7Bm2%7D%7D%20&amp;%20%5Ccdots%20&amp;%20%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7Bmn%7D%7D%20%5C%5C%0A%5Cend%7Bbmatrix%7D%0A"></p>
-<p>where each element of the matrix is the derivative of the corresponding element of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D"> with respect to the corresponding element of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D">.</p>
-<p>For example, let <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7BX%7D)%20=%20%5Cmathbf%7BA%7D%5Cmathbf%7BX%7D+%5Cmathbf%7Bb%7D">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bp%20%5Ctimes%20m%7D">, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bm%20%5Ctimes%20n%7D">, and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D%20%5Cin%20%5Cmathbb%7BR%7D%5Ep">. Then, the matrix-to-vector derivative of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D%20=%20f(%5Cmathbf%7BX%7D)"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D"> is: <img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20%5Cmathbf%7BX%7D%7D%20=%20%5Cmathbf%7BA%7D%0A"></p>
-<section id="differentiation-of-quadratic-form" class="level3" data-number="1.1">
-<h3 data-number="1.1" class="anchored" data-anchor-id="differentiation-of-quadratic-form"><span class="header-section-number">1.1</span> Differentiation of Quadratic Form</h3>
-<p>This is because the output of this differentiation is a vector (with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">), rather than a scalar.</p>
-<p>The differentiation of a quadratic form is the process of finding the gradient of a quadratic form with respect to its input vector.</p>
-<p>Given a quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is an <img src="https://latex.codecogs.com/png.latex?n">-dimensional column vector, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D%20%5Cin%20%5Cmathbb%7BR%7D%5En"> is a vector, and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is an <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> symmetric matrix, the derivative of <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is given by:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cnabla_%7B%5Cmathbf%20x%7D%20f(%5Cmathbf%20x)%20=%20(A%20+%20A%5ET)%5Cmathbf%20x%20+%20b%0A"></p>
-<p>In this expression, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET"> is the transpose of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</p>
-<p><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A+%5Cmathbf%20A%5ET"> is written instead of <img src="https://latex.codecogs.com/png.latex?2%5Cmathbf%20A"> when calculating the gradient of a quadratic form. It is because in general, the matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> might not be symmetric, so <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A%5Cneq%20%5Cmathbf%20A%5ET">. However, for any matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, we have <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A+%5Cmathbf%20A%5ET%20=%20(%5Cmathbf%20A+%5Cmathbf%20A%5ET)%5ET">, which is a symmetric matrix. Therefore, by writing the gradient as <img src="https://latex.codecogs.com/png.latex?%5Cnabla_x%20f(x)%20=%20(%5Cmathbf%20A+%5Cmathbf%20A%5ET)x">, we ensure that the gradient is always a symmetric matrix, even if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is not symmetric. This is useful in many applications where symmetric matrices are preferred. But if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is constrained to be a symmetric matrix, <img src="https://latex.codecogs.com/png.latex?2%5Cmathbf%20A"> can be written.</p>
-</section>
-<section id="when-mathbfa-is-symmetric" class="level3" data-number="1.2">
-<h3 data-number="1.2" class="anchored" data-anchor-id="when-mathbfa-is-symmetric"><span class="header-section-number">1.2</span> When <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is Symmetric</h3>
-<p>As an example, consider the quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=x_1%5E2+2x_1x_2+3x_2%5E2">, which can be written in the form <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D">, where:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20x=%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%20x_2%20%5Cend%7Bbmatrix%7D,%20%5Cmathbf%20A=%5Cbegin%7Bbmatrix%7D%201%20&amp;%201%20%5C%5C%201%20&amp;%203%20%5Cend%7Bbmatrix%7D%0A"></p>
-<p>The derivative of <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is then:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20f(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20%5Cmathbf%7Bx%7D%7D=(%5Cmathbf%7BA%7D+%5Cmathbf%7BA%7D%5ET)%5Cmathbf%7Bx%7D=%5Cbegin%7Bbmatrix%7D2%20&amp;%202%5C%5C2%20&amp;%206%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D=%5Cbegin%7Bbmatrix%7D2x_1+2x_2%5C%5C2x_1+6x_2%5Cend%7Bbmatrix%7D%0A"></p>
-<p>This represents the gradient vector of <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)"> at any point <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
-</section>
-<section id="when-mathbfa-is-not-symmetric" class="level3" data-number="1.3">
-<h3 data-number="1.3" class="anchored" data-anchor-id="when-mathbfa-is-not-symmetric"><span class="header-section-number">1.3</span> When <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is Not Symmetric</h3>
-<p>Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20%5C%5C%203%20&amp;%204%20%5Cend%7Bbmatrix%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%5C%20x_2%20%5Cend%7Bbmatrix%7D">.</p>
-<p>Then, we have <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20&amp;%20x_2%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20%5C%5C%203%20&amp;%204%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%5C%20x_2%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20&amp;%20x_2%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20x_1%20+%202x_2%20%5C%5C%203x_1%20+%204x_2%20%5Cend%7Bbmatrix%7D%20=%20x_1%5E2%20+%205x_1x_2%20+%204x_2%5E2">.</p>
-<p>To find the gradient of this quadratic form, we can take the partial derivatives of <img src="https://latex.codecogs.com/png.latex?x_1"> and <img src="https://latex.codecogs.com/png.latex?x_2"> with respect to each variable:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20x_1%7D%20(%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D)%20=%202x_1%20+%205x_2%0A"></p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20x_2%7D%20(%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D)%20=%205x_1%20+%208x_2%0A"></p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20f(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20%5Cmathbf%7Bx%7D%7D=(%5Cmathbf%7BA%7D+%5Cmathbf%7BA%7D%5ET)%5Cmathbf%7Bx%7D=%5Cbegin%7Bbmatrix%7D1+1%20&amp;%202+3%5C%5C3+2%20&amp;%204+4%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D=%5Cbegin%7Bbmatrix%7D2%20&amp;%205%5C%5C5%20&amp;%208%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%202x_1%20+%205x_2%20%5C%5C%205x_1%20+%208x_2%20%5Cend%7Bbmatrix%7D%0A"></p>
-<p>So the gradient of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D"> is <img src="https://latex.codecogs.com/png.latex?%5Cnabla_x%20f(x)%20=%20%5Cbegin%7Bbmatrix%7D%202x_1%20+%205x_2%20%5C%5C%205x_1%20+%208x_2%20%5Cend%7Bbmatrix%7D">.</p>
-
-
-</section>
-</section>
-
- ]]></description>
-  <category>Mathematics</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/derivative_vector_matrix.html</guid>
-  <pubDate>Sat, 01 Apr 2023 15:00:00 GMT</pubDate>
-</item>
-<item>
   <title>Matrix Transformation (5) - Quadratic Form</title>
   <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form.html</link>
+  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/08.quadratic_form.html</link>
   <description><![CDATA[ 
 
 
@@ -4995,7 +5177,7 @@ background-color: null;
 font-style: inherit;">&amp;</span>x2)</span></code></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/08.quadratic_form_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
 </div>
 <details>
 <summary>Code</summary>
@@ -5029,7 +5211,7 @@ background-color: null;
 font-style: inherit;">&amp;</span>x2)</span></code></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid" width="672"></p>
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/08.quadratic_form_files/figure-html/unnamed-chunk-4-2.png" class="img-fluid" width="672"></p>
 </div>
 <details>
 <summary>Code</summary>
@@ -5057,7 +5239,7 @@ background-color: null;
 font-style: inherit;">&amp;</span>x2)</span></code></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-4-3.png" class="img-fluid" width="672"></p>
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/08.quadratic_form_files/figure-html/unnamed-chunk-4-3.png" class="img-fluid" width="672"></p>
 </div>
 <details>
 <summary>Code</summary>
@@ -5093,7 +5275,7 @@ background-color: null;
 font-style: inherit;">&amp;</span>x2)</span></code></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-4-4.png" class="img-fluid" width="672"></p>
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/08.quadratic_form_files/figure-html/unnamed-chunk-4-4.png" class="img-fluid" width="672"></p>
 </div>
 <details>
 <summary>Code</summary>
@@ -5119,7 +5301,7 @@ background-color: null;
 font-style: inherit;">&amp;</span>x2)</span></code></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-4-5.png" class="img-fluid" width="672"></p>
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/08.quadratic_form_files/figure-html/unnamed-chunk-4-5.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <ul>
@@ -5173,7 +5355,7 @@ background-color: null;
 font-style: inherit;">&amp;</span>x2)</span></code></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/08.quadratic_form_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <section id="how-to-tell-positive-definite-matrix-from-positive-semi-definite-matrix" class="level4" data-number="1.1.1">
@@ -5659,7 +5841,7 @@ background-color: null;
 font-style: inherit;">2</span>])))</span></code></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/08.quadratic_form_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 </section>
@@ -5882,7 +6064,7 @@ font-style: inherit;">'PCA, Part of the Total Variance of Iris Data Explained by
 <span id="cb35-17">plt.show()</span></code></pre></div>
 </details>
 <div class="cell-output-display">
-<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/08.quadratic_form_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <p>This representation is useful in many statistical and machine learning applications, where the covariance matrix provides information about the variability and dependencies between different features or variables. For example, in principal component analysis (PCA), the covariance matrix is used to identify the directions of maximum variability in a dataset, which can be used to reduce the dimensionality of the data while retaining as much information as possible.</p>
@@ -5900,285 +6082,209 @@ font-style: inherit;">'PCA, Part of the Total Variance of Iris Data Explained by
 
  ]]></description>
   <category>Mathematics</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/quadratic_form.html</guid>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/08.quadratic_form.html</guid>
   <pubDate>Sat, 01 Apr 2023 15:00:00 GMT</pubDate>
 </item>
 <item>
-  <title>Mosaic Package</title>
+  <title>Matrix Transformation (4) - Biinear Form</title>
   <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/Language/mosaic.html</link>
+  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/11.bilinear_form.html</link>
   <description><![CDATA[ 
 
 
 
-<ul class="nav nav-pills" id="language-tab">
-<li class="nav-item">
-<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
-Korean
-</button>
-</li>
-<li class="nav-item">
-<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
-English
-</button>
-</li>
-<div class="tab-content" id="language-tabcontent">
-
-<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
-<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
-<section id="plotfun" class="level2" data-number="0.1">
-<h2 data-number="0.1" class="anchored" data-anchor-id="plotfun"><span class="header-section-number">0.1</span> plotFun()</h2>
-<p>수식 base로 함수를 그릴 수 있는 package</p>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(tidyverse)</span></code></pre></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 패키지 'tidyverse'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 패키지 'ggplot2'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 패키지 'tibble'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 패키지 'readr'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 패키지 'dplyr'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 패키지 'lubridate'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
-✔ dplyr     1.1.2     ✔ readr     2.1.4
-✔ forcats   1.0.0     ✔ stringr   1.5.0
-✔ ggplot2   3.4.2     ✔ tibble    3.2.1
-✔ lubridate 1.9.2     ✔ tidyr     1.3.0
-✔ purrr     1.0.1     
-── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
-✖ dplyr::filter() masks stats::filter()
-✖ dplyr::lag()    masks stats::lag()
-ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
-</div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">library</span>(mosaic)</span></code></pre></div>
-</details>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: 패키지 'mosaic'는 R 버전 4.3.0에서 작성되었습니다</code></pre>
-</div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Registered S3 method overwritten by 'mosaic':
-  method                           from   
-  fortify.SpatialPolygonsDataFrame ggplot2
-
-The 'mosaic' package masks several functions from core packages in order to add 
-additional features.  The original behavior of these functions should not be affected by this.
-
-다음의 패키지를 부착합니다: 'mosaic'
-
-The following object is masked from 'package:Matrix':
-
-    mean
-
-The following objects are masked from 'package:dplyr':
-
-    count, do, tally
-
-The following object is masked from 'package:purrr':
-
-    cross
-
-The following object is masked from 'package:ggplot2':
-
-    stat
-
-The following objects are masked from 'package:stats':
-
-    binom.test, cor, cor.test, cov, fivenum, IQR, median, prop.test,
-    quantile, sd, t.test, var
-
-The following objects are masked from 'package:base':
-
-    max, mean, min, prod, range, sample, sum</code></pre>
-</div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">rm</span>(<span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">list=</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">ls</span>())</span></code></pre></div>
-</details>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">plotFun</span>(x1<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span>x1,</span>
-<span id="cb13-2"><span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">x1.lim=</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">range</span>(<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">10</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">10</span>),</span>
-<span id="cb13-3"><span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">x2.lim=</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">range</span>(<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">10</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">10</span>),</span>
-<span id="cb13-4"><span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">surface=</span><span class="cn" style="color: #8f5902;
-background-color: null;
-font-style: inherit;">TRUE</span>,</span>
-<span id="cb13-5"><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;"># surface=FALSE, # contour 를 보여줌</span></span>
-<span id="cb13-6"><span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">xlab=</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">expression</span>(x[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>]),</span>
-<span id="cb13-7"><span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">ylab=</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">expression</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">f</span>(x)))</span></code></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="kmink3225.netlify.app/docs/blog/posts/Language/mosaic_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
-</div>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">plotFun</span>(<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">5</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">*</span>x1<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">^</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span><span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">~</span>x1 <span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">&amp;</span> x2,</span>
-<span id="cb14-2"><span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">x1.lim=</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">range</span>(<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">10</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">10</span>),</span>
-<span id="cb14-3"><span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">x2.lim=</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">range</span>(<span class="sc" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">10</span>,<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">10</span>),</span>
-<span id="cb14-4"><span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">surface=</span><span class="cn" style="color: #8f5902;
-background-color: null;
-font-style: inherit;">TRUE</span>,</span>
-<span id="cb14-5"><span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">xlab=</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">expression</span>(x[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>]),</span>
-<span id="cb14-6"><span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">ylab=</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">expression</span>(x[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>]),</span>
-<span id="cb14-7"><span class="at" style="color: #657422;
-background-color: null;
-font-style: inherit;">zlab=</span><span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">expression</span>(<span class="fu" style="color: #4758AB;
-background-color: null;
-font-style: inherit;">f</span>(x[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">1</span>],x[<span class="dv" style="color: #AD0000;
-background-color: null;
-font-style: inherit;">2</span>])))</span></code></pre></div>
-</details>
-<div class="cell-output-display">
-<p><img src="kmink3225.netlify.app/docs/blog/posts/Language/mosaic_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<p>그려진 그래프를 R studio에선 plot의 톱니바퀴를 누르면 축별로 회전이 가능하지만 vs code에서는 지원이 안되는 것 같음</p>
-</section>
-</div>
-</div>
-<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
-<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
-
-</div>
-</div>
-<section id="go-to-project-content-list" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Go to Project Content List</h1>
-<p><a href="./docs/projects/index.qmd">Project Content List</a></p>
-</section>
-<section id="go-to-blog-content-list" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Go to Blog Content List</h1>
-<p><a href="../../content_list.qmd">Blog Content List</a></p>
+<section id="binear-form" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="binear-form"><span class="header-section-number">1</span> Binear Form</h2>
+<p>A bilinear form of a matrix is a function that extends the linear form and takes two vectors as inputs and produces a scalar as output. It is linear in both of its arguments, meaning that it satisfies the following properties:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0AB(%5Cmathbf%20u+%5Cmathbf%20v)&amp;=B(%5Cmathbf%20u+%5Cmathbf%20w)+B(%5Cmathbf%20v+%5Cmathbf%20w)%5C%5C%0AB(%5Cmathbf%20u,%5Calpha%20%5Cmathbf%20v)&amp;=%5Calpha%20B(%5Cmathbf%20u,%5Cmathbf%20v)%5C%5C%0AB(%5Calpha%5Cmathbf%20u,%5Cmathbf%20v)&amp;=%5Calpha%20B(%5Cmathbf%20u,%5Cmathbf%20v)%0A%5Cend%7Baligned%7D%0A"></p>
+<p>for all vectors <img src="https://latex.codecogs.com/png.latex?u">, <img src="https://latex.codecogs.com/png.latex?v">, <img src="https://latex.codecogs.com/png.latex?w"> and scalars <img src="https://latex.codecogs.com/png.latex?%5Calpha">.</p>
+<p>A bilinear form can be represented by a matrix <img src="https://latex.codecogs.com/png.latex?B"> such that <img src="https://latex.codecogs.com/png.latex?B_%7Bi,j%7D"> is the coefficient of the product <img src="https://latex.codecogs.com/png.latex?u_i%20v_j"> in the expansion of <img src="https://latex.codecogs.com/png.latex?B(u,v)">. The bilinear form can then be written as:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AB(%5Cmathbf%20u,%5Cmathbf%20v)=%5Cmathbf%20u%5ET%20B%20%5Cmathbf%20v%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20u"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20v"> are column vectors and <img src="https://latex.codecogs.com/png.latex?B"> is a matrix.</p>
+<p>For example, consider the bilinear form <img src="https://latex.codecogs.com/png.latex?B(%5Cmathbf%20u,%5Cmathbf%20v)%20=%20u_1%20v_1%20+%20u_2%20v_2">. This bilinear form can be represented by the matrix:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AB=%5Cbegin%7Bbmatrix%7D1&amp;0%5C%5C0&amp;1%5Cend%7Bbmatrix%7D%0A"></p>
+<p>and written as:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AB(%5Cmathbf%20u,%5Cmathbf%20v)=%5Cbegin%7Bbmatrix%7Du_1&amp;%20u_2%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7D1&amp;0%5C%5C0&amp;1%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dv_1%5C%5Cv_2%5Cend%7Bbmatrix%7D=u_1v_1+u_2v_2%0A"></p>
+<p>This bilinear form computes the dot product of <img src="https://latex.codecogs.com/png.latex?u"> and <img src="https://latex.codecogs.com/png.latex?v">, which measures the similarity between the two vectors. Bilinear forms are commonly used in applications such as optimization, geometry, and physics, where they capture the interaction between two quantities or variables.</p>
+<p>The covariance matrix can be represented as a bilinear form using matrix multiplication. Let’s say we have a random vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20%5Bx_1,%20x_2,%20%5Cldots,%20x_n%5D%5ET"> with mean vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cmu%7D%20=%20%5B%5Cmu_1,%20%5Cmu_2,%20%5Cldots,%20%5Cmu_n%5D%5ET"> and covariance matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5CSigma%7D">. Then, we can represent the covariance matrix as a bilinear form in the following way:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5CSigma&amp;=%5Coperatorname%7BE%7D%5B(%5Cmathbf%20x-%5Cmathbf%20%5Cmu)(%5Cmathbf%20x-%5Cmathbf%20%5Cmu)%5ET%5D%5C%5C%0A&amp;=%5Cfrac%7B1%7D%7Bn-1%7D%5Csum_%7Bi=1%7D%5E%7Bn%7D(x_i-%5Cbar%7Bx%7D)(x_i-%5Cbar%7Bx%7D)%5ET%0A%5Cend%7Baligned%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BE%7D"> denotes the expectation operator. We can expand this expression as:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5CSigma&amp;=%5Coperatorname%7BE%7D%5B%5Cmathbf%20x%5Cmathbf%20x%5ET%5D-%5Cmathbf%20%5Cmu%5Cmathbf%20%5Cmu%5ET%0A%5Cend%7Baligned%7D%0A"></p>
+<p>Now, we can represent the covariance matrix as a bilinear form using matrix multiplication as:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5CSigma&amp;=%5Coperatorname%7BE%7D%5B(%5Cmathbf%20x-%5Cmathbf%20%5Cmu)(%5Cmathbf%20x-%5Cmathbf%20%5Cmu)%5ET%5D%5C%5C%0A&amp;=%5Csum_%7Bi=1%7D%5E%7Bn%7D%5Csum_%7Bj=1%7D%5E%7Bn%7D(%5Cmathbf%20x_i-%5Cmathbf%5Cmu_i)(%5Cmathbf%20x_i-%5Cmathbf%20%5Cmu_j)%0A%5Cend%7Baligned%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5B%5Cmathbf%7Bx%7D-%5Cmathbf%7B%5Cmu%7D%5D"> is the deviation of the random vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> from its mean vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cmu%7D">.</p>
+<p>covariance matrix, and correlation matrix</p>
+<p>One of the most famous examples is the use of bilinear forms in convolutional neural networks (CNNs), which are a type of deep learning model used for image and video recognition tasks.</p>
+<p>In a CNN, a bilinear form is used to compute the similarity between a filter and a local region of an input image. This similarity measure is used to determine how much the filter “matches” the local region of the image, and is used to produce an output feature map.</p>
+<p>More specifically, the bilinear form used in a CNN takes the form:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Az_%7Bi,j%7D%20=%20%5Csum_%7Bm=1%7D%5E%7BM%7D%5Csum_%7Bn=1%7D%5E%7BN%7D%20w_%7Bm,n%7Dx_%7Bi+m-1,j+n-1%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?z_%7Bi,j%7D"> is the output feature map at location <img src="https://latex.codecogs.com/png.latex?(i,j)">, <img src="https://latex.codecogs.com/png.latex?x_%7Bi+m-1,j+n-1%7D"> is the input image pixel at location <img src="https://latex.codecogs.com/png.latex?(i+m-1,j+n-1)">, and <img src="https://latex.codecogs.com/png.latex?w_%7Bm,n%7D"> is the weight of the filter at position <img src="https://latex.codecogs.com/png.latex?(m,n)">. This computation is performed for each location <img src="https://latex.codecogs.com/png.latex?(i,j)"> in the output feature map.</p>
+<p>The bilinear form used in CNNs is a type of convolution operation, and is used to learn features such as edges, corners, and other patterns in the input image. CNNs with bilinear forms have achieved state-of-the-art performance on many image recognition tasks, including object detection, face recognition, and scene classification.</p>
+<p>Bilinear forms also have applications in other areas of machine learning, such as natural language processing (NLP). In NLP, bilinear forms can be used to compute the similarity between two word embeddings, which are vector representations of words. This similarity measure can be used for tasks such as sentiment analysis, text classification, and machine translation.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AB(%5Cmathbf%7Bu%7D,%5Cmathbf%7Bv%7D)=%5Cmathbf%7Bu%7D%5ET%20%5Cmathbf%7BW%7D%5Cmathbf%7Bv%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bu%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> are word embeddings, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BW%7D"> is a weight matrix, and <img src="https://latex.codecogs.com/png.latex?B(%5Cmathbf%7Bu%7D,%5Cmathbf%7Bv%7D)"> represents the bilinear form used to compute the similarity between the two embeddings.</p>
+<p>Overall, bilinear forms are a powerful tool for learning features from complex data such as images and text, and have many applications in deep learning and machine learning.</p>
 
 
 </section>
 
-</div></ul> ]]></description>
-  <category>Language</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/Language/mosaic.html</guid>
-  <pubDate>Thu, 30 Mar 2023 15:00:00 GMT</pubDate>
+ ]]></description>
+  <category>Mathematics</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/11.bilinear_form.html</guid>
+  <pubDate>Sat, 01 Apr 2023 15:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Matrix Transformation (3) - Linear Form</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/11.linear_form.html</link>
+  <description><![CDATA[ 
+
+
+
+<section id="linear-form" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="linear-form"><span class="header-section-number">1</span> Linear Form</h2>
+<p>A linear form is a linear function that maps a vector space to its underlying field. Let <img src="https://latex.codecogs.com/png.latex?V"> be a vector space over a field <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BF%7D">, and let <img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BL%7D(V,%5Cmathbb%7BF%7D)"> denote the set of all linear functions from <img src="https://latex.codecogs.com/png.latex?V"> to <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BF%7D">. A linear form on <img src="https://latex.codecogs.com/png.latex?V"> is an element of <img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BL%7D(V,%5Cmathbb%7BF%7D)">.</p>
+<p>A linear form <img src="https://latex.codecogs.com/png.latex?%5Cvarphi"> can be represented by a row vector of dimension <img src="https://latex.codecogs.com/png.latex?1%5Ctimes%20n">, where <img src="https://latex.codecogs.com/png.latex?n"> is the dimension of <img src="https://latex.codecogs.com/png.latex?V">. Let <img src="https://latex.codecogs.com/png.latex?%7B%5Cmathbf%7Be%7D_1,%20%5Cmathbf%7Be%7D_2,%20%5Cdots,%20%5Cmathbf%7Be%7D_n%7D"> be a basis for <img src="https://latex.codecogs.com/png.latex?V">, and let <img src="https://latex.codecogs.com/png.latex?%7B%5Calpha_1,%20%5Calpha_2,%20%5Cdots,%20%5Calpha_n%7D"> be the corresponding dual basis for <img src="https://latex.codecogs.com/png.latex?%5Cmathcal%7BL%7D(V,%5Cmathbb%7BF%7D)">, such that <img src="https://latex.codecogs.com/png.latex?%5Calpha_i(%5Cmathbf%7Be%7Dj)%20=%20%5Cdelta%7Bij%7D"> (the Kronecker delta). Then, any linear form <img src="https://latex.codecogs.com/png.latex?%5Cvarphi%5Cin%5Cmathcal%7BL%7D(V,%5Cmathbb%7BF%7D)"> can be written as: <img src="https://latex.codecogs.com/png.latex?%0A%5Cvarphi(x)=%5Csum_%7Bi=1%7D%5E%7Bn%7Da_ix_i=%5Cmathbf%20a%20%5Cmathbf%20x%5ET=%5Cmathbf%20x%20%5Cmathbf%20a%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5Cin%20V"> is a column vector of dimension <img src="https://latex.codecogs.com/png.latex?n%5Ctimes%201">, <img src="https://latex.codecogs.com/png.latex?%5B%5Cmathbf%7Ba%7D%5D"> is the row vector representing <img src="https://latex.codecogs.com/png.latex?%5Cvarphi">, and <img src="https://latex.codecogs.com/png.latex?%5B%5Cmathbf%7Bx%7D%5D"> is the column vector representing <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
+<p>For example, let <img src="https://latex.codecogs.com/png.latex?V%20=%20%5Cmathbb%7BR%7D%5E2"> be the vector space of 2-dimensional column vectors, and let <img src="https://latex.codecogs.com/png.latex?%5Cvarphi%5Cin%5Cmathcal%7BL%7D(V,%5Cmathbb%7BR%7D)"> be the linear form defined by <img src="https://latex.codecogs.com/png.latex?%5Cvarphi(%5Cbegin%7Bbmatrix%7Dx%5Cy%5Cend%7Bbmatrix%7D)%20=%203x%20-%202y">. Then, we can represent <img src="https://latex.codecogs.com/png.latex?%5Cvarphi"> as:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5B%5Cmathbf%20a%5D=%5Cbegin%7Bbmatrix%7D%203%20&amp;%20-2%5Cend%7Bbmatrix%7D%20%5B%5Cmathbf%20x%5D=%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%5C%20x_2%20%5Cend%7Bbmatrix%7D%20%5Cvarphi(x)=%5Csum_%7Bi=1%7D%5E%7Bn%7D%5Cmathbf%20a%5Cmathbf%20x%5ET=3x_1-2x_2%0A"></p>
+<p>which shows that <img src="https://latex.codecogs.com/png.latex?%5Cvarphi"> is a linear form on <img src="https://latex.codecogs.com/png.latex?V">.</p>
+<p>consider a linear regression model that predicts the price of a house based on its size and location. The model can be represented by the linear form:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cvarphi(x)=%5Cmathbf%20w%5Cmathbf%20x%5ET=%5Csum_%7Bi=1%7D%5E%7Bn%7Dw_ix_i=w_0+w_1x_1+w_2x_2%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cvarphi(%5Cmathbf%7Bx%7D)"> is the predicted price, <img src="https://latex.codecogs.com/png.latex?x_1"> is the size of the house, <img src="https://latex.codecogs.com/png.latex?x_2"> is a measure of the location (such as the distance from the city center), and <img src="https://latex.codecogs.com/png.latex?w_0">, <img src="https://latex.codecogs.com/png.latex?w_1">, and <img src="https://latex.codecogs.com/png.latex?w_2"> are the model parameters that control the intercept and the weights of the features. This linear form can be written in matrix form as:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cvarphi(x)=%5Cmathbf%20x%5Cmathbf%20w=%5Cmathbf%20w%20%5Cmathbf%20x%5ET%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5B%5Cmathbf%7Bw%7D%5D"> is a row vector of the model parameters and <img src="https://latex.codecogs.com/png.latex?%5B%5Cmathbf%7Bx%7D%5D"> is a row vector of the features.</p>
+<p>Linear forms can also be used in deep learning and machine learning models that involve linear transformations, such as fully connected layers in neural networks or linear classifiers. For example, consider a simple linear classifier that classifies images of digits into one of 10 classes. The classifier can be represented by the linear form:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cvarphi(x)=%5Cmathbf%20x%5Cmathbf%20w%20+%20b%20=%5Cmathbf%20w%20%5Cmathbf%20x%5ET%20+b%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5Cvarphi(%5Cmathbf%7Bx%7D)"> is the predicted class score, <img src="https://latex.codecogs.com/png.latex?%5B%5Cmathbf%7Bx%7D%5D"> is a row vector of the pixel values of the image, <img src="https://latex.codecogs.com/png.latex?%5B%5Cmathbf%7Bw%7D%5D"> is a row vector of the weights of the classifier, and <img src="https://latex.codecogs.com/png.latex?b"> is the bias term. This linear form can be used to classify the image by selecting the class with the highest score.</p>
+<p>In both of these examples, linear forms are used to represent linear relationships between variables or features, and the model parameters are learned through training on a set of labeled examples.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>Mathematics</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/11.linear_form.html</guid>
+  <pubDate>Sat, 01 Apr 2023 15:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Matrix Calculus (1) - Matrix to Vector Derivatives</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/derivative_matrix_vector.html</link>
+  <description><![CDATA[ 
+
+
+
+<section id="matrix-to-vector-derivatives" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="matrix-to-vector-derivatives"><span class="header-section-number">1</span> Matrix to Vector Derivatives</h2>
+<p>Matrix-to-vector derivatives refer to the derivatives of a matrix function with respect to a vector argument. Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)"> be a matrix-valued function of a vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20%5Cin%20%5Cmathbb%7BR%7D%5En">. The matrix-to-vector derivative is denoted as follows:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20%5Cmathbf%7Bx%7D%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20x_1%7D%20&amp;%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20x_2%7D%20&amp;%20%5Ccdots%20&amp;%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20x_n%7D%0A%5Cend%7Bbmatrix%7D%0A"></p>
+<p>Here, the matrix-to-vector derivative is a matrix whose <img src="https://latex.codecogs.com/png.latex?i">th column is the partial derivative of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bf%7D"> with respect to the <img src="https://latex.codecogs.com/png.latex?i">th component of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
+<p>For example, let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> be matrices in <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E%7Bn%5Ctimes%20n%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E%7Bn%5Ctimes%201%7D">, respectively. Consider the function <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%20=%20%5Cmathbf%7BAx%7D">, which is a matrix-vector product. The matrix-to-vector derivative of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is given by: <img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20%5Cmathbf%7Bx%7D%7D%20=%20%5Cmathbf%7BA%7D%0A"> Here, the derivative is a matrix whose rows are the rows of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</p>
+<section id="differentiation-of-quadratic-form" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="differentiation-of-quadratic-form"><span class="header-section-number">1.1</span> Differentiation of Quadratic Form</h3>
+<p>This is because the output of this differentiation is a vector (with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">), rather than a scalar.</p>
+<p>The differentiation of a quadratic form is the process of finding the gradient of a quadratic form with respect to its input vector.</p>
+<p>Given a quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is an <img src="https://latex.codecogs.com/png.latex?n">-dimensional column vector, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D%20%5Cin%20%5Cmathbb%7BR%7D%5En"> is a vector, and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is an <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> symmetric matrix, the derivative of <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is given by:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cnabla_%7B%5Cmathbf%20x%7D%20f(%5Cmathbf%20x)%20=%20(A%20+%20A%5ET)%5Cmathbf%20x%20+%20b%0A"></p>
+<p>In this expression, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET"> is the transpose of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A+%5Cmathbf%20A%5ET"> is written instead of <img src="https://latex.codecogs.com/png.latex?2%5Cmathbf%20A"> when calculating the gradient of a quadratic form. It is because in general, the matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> might not be symmetric, so <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A%5Cneq%20%5Cmathbf%20A%5ET">. However, for any matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, we have <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A+%5Cmathbf%20A%5ET%20=%20(%5Cmathbf%20A+%5Cmathbf%20A%5ET)%5ET">, which is a symmetric matrix. Therefore, by writing the gradient as <img src="https://latex.codecogs.com/png.latex?%5Cnabla_x%20f(x)%20=%20(%5Cmathbf%20A+%5Cmathbf%20A%5ET)x">, we ensure that the gradient is always a symmetric matrix, even if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is not symmetric. This is useful in many applications where symmetric matrices are preferred. But if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is constrained to be a symmetric matrix, <img src="https://latex.codecogs.com/png.latex?2%5Cmathbf%20A"> can be written.</p>
+</section>
+<section id="when-mathbfa-is-symmetric" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="when-mathbfa-is-symmetric"><span class="header-section-number">1.2</span> When <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is Symmetric</h3>
+<p>As an example, consider the quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=x_1%5E2+2x_1x_2+3x_2%5E2">, which can be written in the form <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D">, where:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20x=%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%20x_2%20%5Cend%7Bbmatrix%7D,%20%5Cmathbf%20A=%5Cbegin%7Bbmatrix%7D%201%20&amp;%201%20%5C%5C%201%20&amp;%203%20%5Cend%7Bbmatrix%7D%0A"></p>
+<p>The derivative of <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is then:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20f(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20%5Cmathbf%7Bx%7D%7D=(%5Cmathbf%7BA%7D+%5Cmathbf%7BA%7D%5ET)%5Cmathbf%7Bx%7D=%5Cbegin%7Bbmatrix%7D2%20&amp;%202%5C%5C2%20&amp;%206%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D=%5Cbegin%7Bbmatrix%7D2x_1+2x_2%5C%5C2x_1+6x_2%5Cend%7Bbmatrix%7D%0A"></p>
+<p>This represents the gradient vector of <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)"> at any point <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
+</section>
+<section id="when-mathbfa-is-not-symmetric" class="level3" data-number="1.3">
+<h3 data-number="1.3" class="anchored" data-anchor-id="when-mathbfa-is-not-symmetric"><span class="header-section-number">1.3</span> When <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is Not Symmetric</h3>
+<p>Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20%5C%5C%203%20&amp;%204%20%5Cend%7Bbmatrix%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%5C%20x_2%20%5Cend%7Bbmatrix%7D">.</p>
+<p>Then, we have <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20&amp;%20x_2%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20%5C%5C%203%20&amp;%204%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%5C%20x_2%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20&amp;%20x_2%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20x_1%20+%202x_2%20%5C%5C%203x_1%20+%204x_2%20%5Cend%7Bbmatrix%7D%20=%20x_1%5E2%20+%205x_1x_2%20+%204x_2%5E2">.</p>
+<p>To find the gradient of this quadratic form, we can take the partial derivatives of <img src="https://latex.codecogs.com/png.latex?x_1"> and <img src="https://latex.codecogs.com/png.latex?x_2"> with respect to each variable:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20x_1%7D%20(%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D)%20=%202x_1%20+%205x_2%0A"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20x_2%7D%20(%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D)%20=%205x_1%20+%208x_2%0A"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20f(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20%5Cmathbf%7Bx%7D%7D=(%5Cmathbf%7BA%7D+%5Cmathbf%7BA%7D%5ET)%5Cmathbf%7Bx%7D=%5Cbegin%7Bbmatrix%7D1+1%20&amp;%202+3%5C%5C3+2%20&amp;%204+4%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D=%5Cbegin%7Bbmatrix%7D2%20&amp;%205%5C%5C5%20&amp;%208%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%202x_1%20+%205x_2%20%5C%5C%205x_1%20+%208x_2%20%5Cend%7Bbmatrix%7D%0A"></p>
+<p>So the gradient of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D"> is <img src="https://latex.codecogs.com/png.latex?%5Cnabla_x%20f(x)%20=%20%5Cbegin%7Bbmatrix%7D%202x_1%20+%205x_2%20%5C%5C%205x_1%20+%208x_2%20%5Cend%7Bbmatrix%7D">.</p>
+</section>
+<section id="ordinary-least-square" class="level3" data-number="1.4">
+<h3 data-number="1.4" class="anchored" data-anchor-id="ordinary-least-square"><span class="header-section-number">1.4</span> Ordinary Least Square</h3>
+<p>For the <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%201"> vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D">, the <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20k"> matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D">, the <img src="https://latex.codecogs.com/png.latex?k%20%5Ctimes%201"> vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cbeta%7D">, when <img src="https://latex.codecogs.com/png.latex?L=(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%5ET(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)">, what is <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Cpartial%20L%7D%7B%5Cpartial%20%5Cmathbf%7B%5Cbeta%7D%7D">?</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0AL%20&amp;=%20(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%5ET(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%20%5C%5C%0A&amp;=%20%5Cmathbf%7By%7D%5ET%5Cmathbf%7By%7D%20-%20%5Cmathbf%7By%7D%5ET%5Cmathbf%7BA%7D%5Cmathbf%7B%5Cbeta%7D%20-%20%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%20%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D%20%5C%5C%0A&amp;=%20%5Cmathbf%7By%7D%5ET%5Cmathbf%7By%7D%20-%202%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%20%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D%0A%5Cend%7Baligned%7D%0A"></p>
+<p>Now, we can take the derivative of <img src="https://latex.codecogs.com/png.latex?L"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cbeta%7D">:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5Cfrac%7B%5Cpartial%20L%7D%7B%5Cpartial%20%5Cmathbf%7B%5Cbeta%7D%7D%20&amp;=%20%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20%5Cmathbf%7B%5Cbeta%7D%7D%20(%5Cmathbf%7By%7D%5ET%5Cmathbf%7By%7D%20-%202%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%20%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%20%5C%5C%0A&amp;=%20%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20%5Cmathbf%7B%5Cbeta%7D%7D%20(-%202%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%20%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%20%5C%5C%0A&amp;=%20-%202%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%202%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D%0A%5Cend%7Baligned%7D%0A"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Chat%7B%5Cbeta%7D=(%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D)%5E%7B-1%7D%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D"> is the solution to the optimization problem by taking its derivative with respect to and setting it equal to zero.</p>
+<p>Starting with the expression for <img src="https://latex.codecogs.com/png.latex?L">:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AL=(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%5ET(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%0A"></p>
+<p>Expanding the quadratic term gives:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AL=%5Cmathbf%7By%7D%5ET%5Cmathbf%7By%7D-%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D-%5Cmathbf%7By%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D+%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D%0A"></p>
+<p>Taking the derivative of <img src="https://latex.codecogs.com/png.latex?L"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cbeta%7D"> and setting it to zero gives:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20L%7D%7B%5Cpartial%20%5Cmathbf%7B%5Cbeta%7D%7D%20=%20-2%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%202%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D%20=%200%0A"></p>
+<p>Solving for <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cbeta%7D"> gives:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D=%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%0A"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7B%5Cbeta%7D=(%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D)%5E%7B-1%7D%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%0A"> Multiplying both sides of the equation by <img src="https://latex.codecogs.com/png.latex?(%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D)"> gives:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A(%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D)%5Cmathbf%7B%5Cbeta%7D=%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%0A"></p>
+<p>Therefore, we have verified that <img src="https://latex.codecogs.com/png.latex?%0A%5Chat%7B%5Cbeta%7D=(%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D)%5E%7B-1%7D%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%0A"> is the solution to the optimization problem of OLS (Ordinary Least Square).</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>Mathematics</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/derivative_matrix_vector.html</guid>
+  <pubDate>Sat, 01 Apr 2023 15:00:00 GMT</pubDate>
+</item>
+<item>
+  <title>Matrix Calculus (1) - Matrix to Vector Derivatives</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/derivative_vector_matrix.html</link>
+  <description><![CDATA[ 
+
+
+
+<section id="matrix-to-vector-derivatives" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="matrix-to-vector-derivatives"><span class="header-section-number">1</span> Matrix to Vector Derivatives</h2>
+<p>The matrix-to-vector derivative is a derivative where a function <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7BX%7D)"> maps an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D"> to a <img src="https://latex.codecogs.com/png.latex?p">-dimensional vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D">, and we want to find the derivative of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D">. It is denoted by <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20%5Cmathbf%7BX%7D%7D">.</p>
+<p>Formally, let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bm%20%5Ctimes%20n%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D%20=%20f(%5Cmathbf%7BX%7D)%20%5Cin%20%5Cmathbb%7BR%7D%5Ep"> be a function that maps an <img src="https://latex.codecogs.com/png.latex?m%20%5Ctimes%20n"> matrix to a <img src="https://latex.codecogs.com/png.latex?p">-dimensional vector. Then, the matrix-to-vector derivative is defined as: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Bbmatrix%7D%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7B11%7D%7D%20&amp;%20%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7B12%7D%7D%20&amp;%20%5Ccdots%20&amp;%20%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7B1n%7D%7D%20%5C%5C%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7B21%7D%7D%20&amp;%20%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7B22%7D%7D%20&amp;%20%5Ccdots%20&amp;%20%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7B2n%7D%7D%20%5C%5C%0A%5Cvdots%20&amp;%20%5Cvdots%20&amp;%20%5Cddots%20&amp;%20%5Cvdots%20%5C%5C%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7Bm1%7D%7D%20&amp;%20%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7Bm2%7D%7D%20&amp;%20%5Ccdots%20&amp;%20%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20x_%7Bmn%7D%7D%20%5C%5C%0A%5Cend%7Bbmatrix%7D%0A"></p>
+<p>where each element of the matrix is the derivative of the corresponding element of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D"> with respect to the corresponding element of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D">.</p>
+<p>For example, let <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7BX%7D)%20=%20%5Cmathbf%7BA%7D%5Cmathbf%7BX%7D+%5Cmathbf%7Bb%7D">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bp%20%5Ctimes%20m%7D">, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D%20%5Cin%20%5Cmathbb%7BR%7D%5E%7Bm%20%5Ctimes%20n%7D">, and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D%20%5Cin%20%5Cmathbb%7BR%7D%5Ep">. Then, the matrix-to-vector derivative of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D%20=%20f(%5Cmathbf%7BX%7D)"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D"> is: <img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7By%7D%7D%7B%5Cpartial%20%5Cmathbf%7BX%7D%7D%20=%20%5Cmathbf%7BA%7D%0A"></p>
+<section id="differentiation-of-quadratic-form" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="differentiation-of-quadratic-form"><span class="header-section-number">1.1</span> Differentiation of Quadratic Form</h3>
+<p>This is because the output of this differentiation is a vector (with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">), rather than a scalar.</p>
+<p>The differentiation of a quadratic form is the process of finding the gradient of a quadratic form with respect to its input vector.</p>
+<p>Given a quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is an <img src="https://latex.codecogs.com/png.latex?n">-dimensional column vector, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D%20%5Cin%20%5Cmathbb%7BR%7D%5En"> is a vector, and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is an <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> symmetric matrix, the derivative of <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is given by:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cnabla_%7B%5Cmathbf%20x%7D%20f(%5Cmathbf%20x)%20=%20(A%20+%20A%5ET)%5Cmathbf%20x%20+%20b%0A"></p>
+<p>In this expression, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET"> is the transpose of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A+%5Cmathbf%20A%5ET"> is written instead of <img src="https://latex.codecogs.com/png.latex?2%5Cmathbf%20A"> when calculating the gradient of a quadratic form. It is because in general, the matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> might not be symmetric, so <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A%5Cneq%20%5Cmathbf%20A%5ET">. However, for any matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, we have <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A+%5Cmathbf%20A%5ET%20=%20(%5Cmathbf%20A+%5Cmathbf%20A%5ET)%5ET">, which is a symmetric matrix. Therefore, by writing the gradient as <img src="https://latex.codecogs.com/png.latex?%5Cnabla_x%20f(x)%20=%20(%5Cmathbf%20A+%5Cmathbf%20A%5ET)x">, we ensure that the gradient is always a symmetric matrix, even if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is not symmetric. This is useful in many applications where symmetric matrices are preferred. But if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is constrained to be a symmetric matrix, <img src="https://latex.codecogs.com/png.latex?2%5Cmathbf%20A"> can be written.</p>
+</section>
+<section id="when-mathbfa-is-symmetric" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="when-mathbfa-is-symmetric"><span class="header-section-number">1.2</span> When <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is Symmetric</h3>
+<p>As an example, consider the quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=x_1%5E2+2x_1x_2+3x_2%5E2">, which can be written in the form <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D">, where:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20x=%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%20x_2%20%5Cend%7Bbmatrix%7D,%20%5Cmathbf%20A=%5Cbegin%7Bbmatrix%7D%201%20&amp;%201%20%5C%5C%201%20&amp;%203%20%5Cend%7Bbmatrix%7D%0A"></p>
+<p>The derivative of <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is then:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20f(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20%5Cmathbf%7Bx%7D%7D=(%5Cmathbf%7BA%7D+%5Cmathbf%7BA%7D%5ET)%5Cmathbf%7Bx%7D=%5Cbegin%7Bbmatrix%7D2%20&amp;%202%5C%5C2%20&amp;%206%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D=%5Cbegin%7Bbmatrix%7D2x_1+2x_2%5C%5C2x_1+6x_2%5Cend%7Bbmatrix%7D%0A"></p>
+<p>This represents the gradient vector of <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)"> at any point <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
+</section>
+<section id="when-mathbfa-is-not-symmetric" class="level3" data-number="1.3">
+<h3 data-number="1.3" class="anchored" data-anchor-id="when-mathbfa-is-not-symmetric"><span class="header-section-number">1.3</span> When <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is Not Symmetric</h3>
+<p>Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20%5C%5C%203%20&amp;%204%20%5Cend%7Bbmatrix%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%5C%20x_2%20%5Cend%7Bbmatrix%7D">.</p>
+<p>Then, we have <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20&amp;%20x_2%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20%5C%5C%203%20&amp;%204%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%5C%20x_2%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20&amp;%20x_2%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20x_1%20+%202x_2%20%5C%5C%203x_1%20+%204x_2%20%5Cend%7Bbmatrix%7D%20=%20x_1%5E2%20+%205x_1x_2%20+%204x_2%5E2">.</p>
+<p>To find the gradient of this quadratic form, we can take the partial derivatives of <img src="https://latex.codecogs.com/png.latex?x_1"> and <img src="https://latex.codecogs.com/png.latex?x_2"> with respect to each variable:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20x_1%7D%20(%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D)%20=%202x_1%20+%205x_2%0A"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20x_2%7D%20(%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D)%20=%205x_1%20+%208x_2%0A"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20f(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20%5Cmathbf%7Bx%7D%7D=(%5Cmathbf%7BA%7D+%5Cmathbf%7BA%7D%5ET)%5Cmathbf%7Bx%7D=%5Cbegin%7Bbmatrix%7D1+1%20&amp;%202+3%5C%5C3+2%20&amp;%204+4%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D=%5Cbegin%7Bbmatrix%7D2%20&amp;%205%5C%5C5%20&amp;%208%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%202x_1%20+%205x_2%20%5C%5C%205x_1%20+%208x_2%20%5Cend%7Bbmatrix%7D%0A"></p>
+<p>So the gradient of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D"> is <img src="https://latex.codecogs.com/png.latex?%5Cnabla_x%20f(x)%20=%20%5Cbegin%7Bbmatrix%7D%202x_1%20+%205x_2%20%5C%5C%205x_1%20+%208x_2%20%5Cend%7Bbmatrix%7D">.</p>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>Mathematics</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/derivative_vector_matrix.html</guid>
+  <pubDate>Sat, 01 Apr 2023 15:00:00 GMT</pubDate>
 </item>
 </channel>
 </rss>

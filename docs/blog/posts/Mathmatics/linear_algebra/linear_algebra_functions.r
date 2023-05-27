@@ -37,3 +37,15 @@ cofactor_matrix2<-function(mat){
   )
 }
 
+independent_function<-function(matrix,vector1){
+  result <- rowSums(sweep(matrix,2,vector1,'*'))
+  sqrt(sum(result^2))
+}
+
+optimal_a <- optim(rep(0,3),
+ indepedent_function,
+ NULL, 
+ method='L-BFGS-B',
+ matrix=dependent_matrix,
+ lower=c(1,-5,-5),
+ upper=c(5,5,5))

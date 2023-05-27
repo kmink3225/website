@@ -1,0 +1,28 @@
+```{r}
+library(tidyverse)
+v1 <- c(-4,2,0,6)
+v2 <- c(0,1,-2,-1)
+v3 <- c(-8,1,6,15)
+
+dependent_matrix<-cbind(v1,v2,v3)
+-2*v1+ 3*v2 + v3 # the coeffecients that makes the linear combiniation of the vectors zero are c(-2,3,1)
+
+# then, how many possible to such coefficients are there?
+
+dependent_function <- function(input_matrix, vector1){
+  result <- rowSums(sweep(input_matrix,2,vector1, '*'))
+  sqrt(sum(result^2))
+}
+
+# find a=c(a1,a2,a3) such a != c(0,0,0) 
+optimal_a <- optim(rep(0,3),
+ dependent_function,
+ NULL, 
+ method='L-BFGS-B',
+ matrix=dependent_matrix,
+ lower=c(1,-5,-5), # c(a1_lower_bound,a2_lower_bound,a3_lower_bound)
+ upper=c(5,5,5)) # c(a1_upper_bound,a2_upper_bound,a3_upper_bound)
+
+optimal_a$par
+rowSums(sweep(dependent_matrix,2,optimal_a$par, '*')) 
+```

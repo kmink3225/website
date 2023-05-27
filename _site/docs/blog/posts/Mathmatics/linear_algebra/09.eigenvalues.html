@@ -8,7 +8,7 @@
 
 <meta name="author" content="Kwangmin Kim">
 <meta name="dcterms.date" content="2023-05-27">
-<meta name="description" content="template">
+<meta name="description" content="Eigenvalues could be used for understanding characteristics or properties of a square matrix and determining what type of a quadratic form the matrix belongs to.">
 
 <title>Kwangmin Kim - Eigenvalue</title>
 <style>
@@ -175,7 +175,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#eigenvalues-and-eigenvectors" id="toc-eigenvalues-and-eigenvectors" class="nav-link active" data-scroll-target="#eigenvalues-and-eigenvectors"><span class="header-section-number">1</span> Eigenvalues and Eigenvectors</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a>
+  <ul class="collapse">
+  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition"><span class="header-section-number">1.1</span> Definition</a></li>
+  <li><a href="#properties" id="toc-properties" class="nav-link" data-scroll-target="#properties"><span class="header-section-number">1.2</span> Properties</a></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">1.3</span> Example</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -185,7 +190,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Eigenvalue</h1>
-<p class="subtitle lead">sdfsd</p>
+<p class="subtitle lead">Eigenvalue, Eigenvector, Eigendecomposition, Quadratic Form</p>
   <div class="quarto-categories">
     <div class="quarto-category">Mathematics</div>
   </div>
@@ -193,7 +198,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div>
   <div class="description">
-    <p>template</p>
+    <p>Eigenvalues could be used for understanding characteristics or properties of a square matrix and determining what type of a quadratic form the matrix belongs to.</p>
   </div>
 </div>
 
@@ -220,14 +225,68 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
-<section id="eigenvalues-and-eigenvectors" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="eigenvalues-and-eigenvectors"><span class="header-section-number">1</span> Eigenvalues and Eigenvectors</h2>
-<p>Let A be an <span class="math inline">\(n × n\)</span> square matrix. A scalar <span class="math inline">\(\lambda\)</span> is called an eigenvalue of <span class="math inline">\(\mathbf A\)</span> if there exists a non-zero vector <span class="math inline">\(\mathbf{v}\)</span> such that <span class="math display">\[
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mosaic)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mvtnorm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="introduction" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
+<p>Eigenvalues could be used for understanding characteristics or properties of a square matrix and determining what type of a quadratic form the matrix belongs to.</p>
+<section id="definition" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="definition"><span class="header-section-number">1.1</span> Definition</h2>
+<div id="def-eigenvalue" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 1 (Eigenvalues and Eigenvectors) </strong></span>Let <span class="math inline">\(\mathbf{A}\)</span> be an <span class="math inline">\(n × n\)</span> square matrix. A scalar <span class="math inline">\(\lambda\)</span> is called an eigenvalue of <span class="math inline">\(\mathbf{A}\)</span> if there exists a non-zero vector <span class="math inline">\(\mathbf{v}\)</span> such that <span class="math display">\[
 \mathbf{Av}=\lambda\mathbf{v}
 \]</span></p>
 <p>Such a vector <span class="math inline">\(\mathbf{v}\)</span> is called an eigenvector corresponding to <span class="math inline">\(\lambda\)</span>.</p>
-<p>Example:</p>
-<p>Let <span class="math inline">\(\mathbf A\)</span> be the matrix</p>
+</div>
+</section>
+<section id="properties" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="properties"><span class="header-section-number">1.2</span> Properties</h2>
+<ul>
+<li>Eigenvalues are scalar values: Eigenvalues are scalars and represent the scaling factor by which the corresponding eigenvectors are stretched or shrunk when multiplied by a matrix.</li>
+<li>When a matrix is ​​expressed in quadratic form, there exists a symmetric matrix that satisfies the uniqueness of the quadratic form and all eigenvalues ​​corresponding to the symmetric matrix having real numbers as elements are real numbers. Depending on the signs of the eigenvalues, a quadratic form can be classified into 5 types:
+<ul>
+<li><span class="math inline">\(\mathbf{A}\)</span> is said to be a positive definite (PD) matrix if the eigenvalues of <span class="math inline">\(\mathbf{A}\)</span> are all positive. <span class="math display">\[
+\mathbf{A} &gt; 0 \text{ iff } \lambda_{\text{min}}(\mathbf{A}) &gt; 0
+\]</span></li>
+<li><span class="math inline">\(\mathbf{A}\)</span> is said to be a positive semi-definite (PSD) matrix if the eigenvalues of <span class="math inline">\(\mathbf{A}\)</span> are not negative. <span class="math display">\[
+\mathbf{A} \ge 0 \text{ iff } \lambda_{\text{min}}(\mathbf{A}) \ge 0
+\]</span></li>
+<li><span class="math inline">\(\mathbf{A}\)</span> is said to be a negative definite (ND) matrix if the eigenvalues of <span class="math inline">\(\mathbf{A}\)</span> are all negative. <span class="math display">\[
+\mathbf{A} &lt; 0 \text{ iff } \lambda_{\text{max}}(\mathbf{A}) &lt; 0
+\]</span></li>
+<li><span class="math inline">\(\mathbf{A}\)</span> is said to be a negative semi-definite (NSD) matrix if the eigenvalues of <span class="math inline">\(\mathbf{A}\)</span> are not positive. <span class="math display">\[
+\mathbf{A} \le 0 \text{ iff } \lambda_{\text{max}}(\mathbf{A}) \le 0
+\]</span></li>
+<li><span class="math inline">\(\mathbf{A}\)</span> is said to be a indefinite (NSD) matrix if the eigenvalues of <span class="math inline">\(\mathbf{A}\)</span> have both signs. <span class="math display">\[
+\mathbf{A} \lessgtr 0 \text{ iff } \lambda_{\text{max}}(\mathbf{A}) \lessgtr 0
+\]</span></li>
+</ul></li>
+<li>Sum of eigenvalues: The sum of the eigenvalues of a matrix is equal to the trace of the matrix, where the trace is the sum of the diagonal elements. <span class="math display">\[
+\sum_{i=1}^n \lambda_i = \text{tr}(\mathbf{A})
+\]</span>.</li>
+<li>Product of eigenvalues: The product of the eigenvalues of a matrix is equal to the determinant of the matrix. <span class="math display">\[
+\prod_{i=1}^n \lambda_i = \det(\mathbf{A})=|\mathbf{A}|
+\]</span>.<br>
+</li>
+<li>Eigenvalues are solutions to the characteristic equation: For a square matrix <span class="math inline">\(\mathbf{A}\)</span> of size <span class="math inline">\(n\times n\)</span>, the eigenvalues <span class="math inline">\(\lambda\)</span> satisfy the characteristic equation <span class="math inline">\(\det(\mathbf{A} - \lambda\mathbf{I}) = 0\)</span>, where <span class="math inline">\(\mathbf{I}\)</span> is the identity matrix of size <span class="math inline">\(n\times n\)</span>.
+<ul>
+<li>The characteristic equation is an equation associated with a square matrix that helps determine its eigenvalues, which are crucial for understanding the behavior and properties of the matrix <span class="math inline">\(\mathbf{A}\)</span>. <span class="math display">\[
+\det(\mathbf{A} - \lambda\mathbf{I}) = 0
+\]</span> The equation indicates that the matrix <span class="math inline">\(\mathbf{A} - \lambda\mathbf{I}\)</span> does not have full rank and has a nontrivial null space.</li>
+</ul></li>
+<li>Eigenvalues of similar matrices: Similar matrices have the same eigenvalues. If two matrices <span class="math inline">\(\mathbf{A}\)</span> and <span class="math inline">\(\mathbf{B}\)</span> are similar (i.e., <span class="math inline">\(\mathbf{A} = \mathbf{PBP}^{-1}\)</span> for some invertible matrix <span class="math inline">\(\mathbf{P}\)</span>), then they have the same eigenvalues.</li>
+<li>Eigenvalues of triangular matrices: The eigenvalues of a triangular matrix are equal to its diagonal entries. In other words, for an upper triangular matrix, the eigenvalues are the elements on its main diagonal.</li>
+</ul>
+</section>
+<section id="example" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="example"><span class="header-section-number">1.3</span> Example</h2>
+<p>Let <span class="math inline">\(\mathbf{A}\)</span> be the matrix</p>
 <p>To find the eigenvalues of <span class="math inline">\(\mathbf A\)</span>, we solve the characteristic equation <span class="math inline">\(\text{det}(\mathbf A - \lambda \mathbf I ) = 0\)</span>, where I is the n × n identity matrix.</p>
 <p><span class="math display">\[
 \begin{align*}
@@ -270,32 +329,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">3</span>),<span class="at">ncol=</span><span class="dv">2</span>,<span class="at">byrow =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>PD <span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>),<span class="at">ncol=</span><span class="dv">2</span>,<span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>PSD <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>),<span class="at">ncol=</span><span class="dv">2</span>,<span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>ND <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="sc">-</span><span class="dv">1</span>),<span class="at">ncol=</span><span class="dv">2</span>,<span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>NSD <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>),<span class="at">ncol=</span><span class="dv">2</span>,<span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>Ind <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>),<span class="at">ncol=</span><span class="dv">2</span>,<span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>sym_mat <span class="ot">&lt;-</span><span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">6</span>,<span class="sc">-</span><span class="dv">4</span>,<span class="dv">12</span>,<span class="sc">-</span><span class="dv">4</span>,<span class="dv">6</span>,<span class="sc">-</span><span class="dv">2</span>,<span class="dv">12</span>,<span class="sc">-</span><span class="dv">2</span>,<span class="dv">3</span>),<span class="at">ncol=</span><span class="dv">3</span>,<span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="fu">eigen</span>(sym_mat)<span class="sc">$</span>values</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 18.138954  4.556363 -7.695317</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># trace</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(sym_mat)<span class="sc">%&gt;%</span><span class="fu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 15</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">eigen</span>(sym_mat)<span class="sc">$</span>values)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 15</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># product of eigenvalues : more convenient than using a for loop</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">exp</span>(<span class="fu">sum</span>(<span class="fu">log</span>(<span class="fu">eigen</span>(sym_mat)<span class="sc">$</span>values)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] NaN</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">det</span>(sym_mat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -636</code></pre>
+</div>
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the matrix A</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">2</span>, <span class="dv">1</span>], [<span class="dv">1</span>, <span class="dv">3</span>]])</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the eigenvalues and eigenvectors</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>eigenvalues, eigenvectors <span class="op">=</span> np.linalg.eig(A)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the eigenvalues</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Eigenvalues:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the matrix A</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="dv">2</span>, <span class="dv">1</span>], [<span class="dv">1</span>, <span class="dv">3</span>]])</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the eigenvalues and eigenvectors</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>eigenvalues, eigenvectors <span class="op">=</span> np.linalg.eig(A)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the eigenvalues</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Eigenvalues:"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Eigenvalues:</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> eigenvalue <span class="kw">in</span> eigenvalues:</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(eigenvalue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> eigenvalue <span class="kw">in</span> eigenvalues:</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(eigenvalue)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>1.381966011250105
@@ -307,6 +406,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

@@ -827,11 +827,13 @@ https://chbe241.github.io/Module-0-Introduction/MATH-152/Unique%20Solution,%20No
 
 ```
 
-### Independence and Dependence
+### Linear Independence
+:::{#def-linear_independence}
+## Linear Independence
 
 #### Independence
 
-a set of vectors is said to be linearly independent if none of the vectors in the set can be written as a linear combination of the other vectors in the set. . In other words, a set of vectors ${\mathbf{v_1},\mathbf{v_2},\dots,\mathbf{v_n}}$ is linearly independent if the only solution to the linear equation $c_1\mathbf{v_1}+c_2\mathbf{v_2}+\dots+c_n\mathbf{v_n}=0$ is $c_1=c_2=\dots=c_n=0$, where $c_i$ is a scalar.
+A set of vectors is said to be linearly independent if none of the vectors in the set can be written as a linear combination of the other vectors in the set. In other words, a set of vectors ${\mathbf{v_1},\mathbf{v_2},\dots,\mathbf{v_n}}$ is linearly independent if the only solution to the linear equation $c_1\mathbf{v_1}+c_2\mathbf{v_2}+\dots+c_n\mathbf{v_n}=0$ is $c_1=c_2=\dots=c_n=0$, where $c_i$ is a scalar.
 
 #### Dependence
 
@@ -842,16 +844,175 @@ A set of vectors is said to be linearly dependent if at least one vector in the 
 * Dependent columns: $\mathbf{Ax} = \mathbf{0}$ has many solutions. $\mathbf{A}$ is a singular matrix.
 :::
 
+:::
+
+If a set of columns are dependent, $\mathbf{v_i}$ can be represented as a linear combination of the other vectors:
+$$
+\mathbf{v_i}=\frac{-c_1}{c_i}\mathbf{v_1}+\frac{-c_2}{c_i}\mathbf{v_2}+\dots+\frac{-c_n}{c_i}\mathbf{v_n}
+$$
+
+#### Properties
+
+* **Non-Trivial Linear Combination**: a set of vectors is linearly independent if the only way to obtain the zero vector as a linear combination of these vectors is by setting all the scalar or coefficients to zero.
+* **No Redundancy**: If a vector can be expressed as a linear combination of other vectors in a set, then it is redundant and does not contribute to the linear independence of the set. Thus, a set of vectors is linearly independent if and only if no vector in the set can be written as a linear combination of the others.
+* **Minimal Set**: A linearly independent set of vectors is a minimal set, meaning that removing any vector from the set would result in a linearly dependent set.
+* **Size**: If a set of vectors contains more vectors than the dimension of the vector space in which they reside, then the set is necessarily linearly dependent. Conversely, if a set of vectors is linearly independent and contains exactly as many vectors as the dimension of the vector space, then it forms a basis for that vector space.
+
+
 #### Example
 
-Let $\mathbf{v}_1=\begin{bmatrix}1\\0\end{bmatrix}, \quad \mathbf{v}_2=\begin{bmatrix}0\\1\end{bmatrix}$. These two vectors are linearly independent because no linear combination of and $\mathbf{v}_1,\quad \mathbf{v}_2$ can yield the zero vector, except when all the coefficients are zero. In other words, the only solution to the linear equation
+**Example1** Let $\mathbf{v}_1=\begin{bmatrix}1\\0\end{bmatrix}, \quad \mathbf{v}_2=\begin{bmatrix}0\\1\end{bmatrix}$. These two vectors are linearly independent because no linear combination of and $\mathbf{v}_1,\quad \mathbf{v}_2$ can yield the zero vector, except when all the coefficients are zero. In other words, the only solution to the linear equation
 $$
 c_1\mathbf v_1​ + c_2\mathbf v_2 = 0
 $$  
 
 is $c_1=c_2=0$.
 
-The more generalized case like the matrix $\mathbf{A}_{m \times n}$ is going to be dealt with in another blog for understanding $\mathbf{Ax} = \mathbf{b}$. 
+**Example2** Computation example with dependent columns.
+
+```{r}
+v1 <- c(-4,2,0,6)
+v2 <- c(0,1,-2,-1)
+v3 <- c(-8,1,6,15)
+
+dependent_matrix<-cbind(v1,v2,v3)
+-2*v1+ 3*v2 + v3 # the coeffecients that makes the linear combiniation of the vectors zero are c(-2,3,1)
+
+# then, how many possible to such coefficients are there?
+
+dependent_function <- function(input_matrix, vector1){
+  result <- rowSums(sweep(input_matrix,2,vector1, '*'))
+  sqrt(sum(result^2))
+}
+
+# find a=c(a1,a2,a3) such a != c(0,0,0) 
+optimal_a <- optim(rep(0,3),
+ dependent_function,
+ NULL, 
+ method='L-BFGS-B',
+ matrix=dependent_matrix,
+ lower=c(1,-5,-5), # c(a1_lower_bound,a2_lower_bound,a3_lower_bound)
+ upper=c(5,5,5)) # c(a1_upper_bound,a2_upper_bound,a3_upper_bound)
+
+optimal_a$par
+rowSums(sweep(dependent_matrix,2,optimal_a$par, '*')) 
+```
+
+**Example3** rectangular data with dependent columns
+
+```{r}
+temperature_data <- tibble(celcius=c(5,36,30,-3,26,33),
+velocity=c(2.35,11.5,8.62,5.37,11.8,12.20))%>%
+mutate(fahrenheit=celcius*9/5+32,after=celcius)
+
+temperature_data
+```
+
+The temperature data include 3 columns: `r names(temperature_data)`. Since the fahrenheit column can be represented as $\frac{9}{5}\text{celcius}+32$, the columns are not linearly independent. So, it is actually enought to reproduce the data with two columns: celcius and velocity. From the analysis perspective, the temperature data has a redundant column, `fahrenheit`.
+
+Since the fahrenheit and celcius are linearly dependent, the scattor plot is represented as a line like the below. 
+
+```{r}
+mosaic::plotPoints(fahrenheit~celcius,data=temperature_data)
+```
+It indicates that to fit velocity on the temperature data, adding the fahrenheit columns does not influence and explain the variations of the velocity variable at all. 
+
+```{r}
+result1 <- lm(velocity~celcius, data= temperature_data)
+result2 <- lm(velocity~celcius+fahrenheit, data= temperature_data)
+
+sum(result1$residuals^2)
+sum(result2$residuals^2)
+```
+
+**Example4**
+
+```{r}
+a<-sample(seq(-10,10,by=0.01),3,replace=T)
+
+rowSums(sweep(dependent_matrix,2,a,'*')) # a[1]*v1+a[2]*v2+a[3]*v3 
+
+independent_function<-function(matrix,vector1){
+  a<-sample(seq(-5,5,by=0.01),3,replace=T)
+  result <- rowSums(sweep(matrix,2,a,'*'))
+  result <- sum(result^2)%>%squrt() # to get a zero vector of result, sum(result^2)%>%squrt() must be 0, which means the rowSums(sweep(matrix,2,a,'*')) must become c(0,0,0).
+  list(coef=a,vector_norm=result)
+}
+
+set.seed(2023)
+
+result <-replicate(50000, independent_function(dependent_matrix), simplify=FALSE)
+linear_combo_sum<-result %>% tibble() %>% unnest_auto(col=result) %>% unnest_wider(coef,names_sep='_')
+linear_combo_sum%>%slice_min(abs(vec_norm), n=10) # ceffecient converges to zero as vector_norm goes to zero
+
+
+rowSums(sweep(dependent_matrix,2,c(0,0,0),'*'))^2%>%sum()%>%sqrt() # thus, we can know the scalars or coefficients that make vector_norm zero are c(0,0,0)
+```
+
+### Gram Matrix
+
+How to check whether the columns vectors are linear independent or not? : Gram Matrix
+
+:::{#def-gram}
+The Gram matrix, also known as the covariance matrix or the autocovariance matrix, is a matrix that captures the inner products between vectors in a set. It is defined as follows:
+
+Given a set of vectors $\{ \mathbf{v}_1, \mathbf{v}_2, \dots, \mathbf{v}_n \}$, for the matrix, $\mathbf{V}=\begin{bmatrix} \mathbf{v}_1, \mathbf{v}_2, \dots, \mathbf{v}_n \end{bmatrix}$, the Gram matrix $\mathbf{G}=\mathbf{V}^{T}\mathbf{V}$ is an $n \times n$ matrix whose entries are given by $\mathbf{G}_{ij}= \langle \mathbf{v}_i, \mathbf{v}_j \rangle$, where $\langle , \rangle$ represents the inner product between vectors.
+
+$$
+\mathbf{G} = \mathbf{V}^{T}\mathbf{V} = \begin{bmatrix}
+\langle \mathbf{v}_1, \mathbf{v}_1 \rangle & \langle \mathbf{v}_1, \mathbf{v}_2 \rangle & \cdots & \langle \mathbf{v}_1, \mathbf{v}_n \rangle \\
+\langle \mathbf{v}_2, \mathbf{v}_1 \rangle & \langle \mathbf{v}_2, \mathbf{v}_2 \rangle & \cdots & \langle \mathbf{v}_2, \mathbf{v}_n \rangle \\
+\vdots & \vdots & \ddots & \vdots \\
+\langle \mathbf{v}_n, \mathbf{v}_1 \rangle & \langle \mathbf{v}_n, \mathbf{v}_2 \rangle & \cdots & \langle \mathbf{v}_n, \mathbf{v}_n \rangle \\
+\end{bmatrix}
+$$
+:::
+
+#### Properties
+
+* Symmetry: The Gram matrix is always symmetric, meaning that $\mathbf{G}_{ij}=\mathbf{G}_{ji}$ for all $i$ and $j$
+* The sample covariance matrix is ​​expressed in the form of the Gram matrix of the centering matrix.
+* Positive semi-definiteness: The Gram matrix is positive semi-definite, which means that all of its eigenvalues are non-negative. This property ensures that the Gram matrix is non-negative and preserves the positive definite inner product structure.
+  $$
+  \mathbf{x}^{T}\mathbf{G}\mathbf{x} = \mathbf{x}^{T}\mathbf{V}^{T}\mathbf{V}\mathbf{x} \ge 0 for all \mathbf{x} 
+  $$
+* Inner products: The entries of the Gram matrix represent the inner products between vectors.
+* **Linear independence**: The column vectors in $\mathbf{V}$ are linearly independent if and only if the Gram matrix is positive definite, meaning that all of its eigenvalues are strictly positive. 
+  $$
+  \mathbf{x}^{T}\mathbf{G}\mathbf{x} = \mathbf{x}^{T}\mathbf{V}^{T}\mathbf{V}\mathbf{x} > 0 for all \mathbf{x} \ne \mathbf{0}
+  $$
+  * This property allows to determine linear independence of the column vectors of $\mathbf{V}$ by examining the eigenvalues of the Gram matrix.
+* Covariance interpretation: In statistics, the Gram matrix can represent the covariance matrix of a set of random variables. Each entry ${G}_{ij}$ represents the covariance between the $i$ th and $j$ th random variables.
+
+
+
+#### Example
+
+**Example1** Simple Gram Matrix Example
+```{r}
+# Define the set of vectors
+v1 <- c(1, 2, 3)
+v2 <- c(4, 5, 6)
+v3 <- c(7, 8, 9)
+
+# Compute the Gram matrix
+G <- t(matrix(c(
+  crossprod(v1), crossprod(v1, v2), crossprod(v1, v3),
+  crossprod(v2, v1), crossprod(v2), crossprod(v2, v3),
+  crossprod(v3, v1), crossprod(v3, v2), crossprod(v3)
+), nrow = 3))
+
+# Print the Gram matrix
+print(G)
+```
+
+**Example2** Check if $\mathbf{V}$ is linearly independent using the linear independence property.
+```{r}
+gram_matrix <- t(column_vector_matrix) %*% column_vector_matrix
+eigen(gram_matrix) %>% round(1)
+```
+
+If the result eigenvalues of eigendecomposition of gram matrix are all positive, the columns of $\mathbf{V}$ are linearly independent.
 
 ### Transpose
 
@@ -981,61 +1142,6 @@ The columns of $\mathbf{A}$ are linearly dependent since the third column is equ
 
 
 
-### Eigenvalues and Eigenvectors
-
-Let A be an $n × n$ square matrix. A scalar $\lambda$ is called an eigenvalue of $\mathbf A$ if there exists a non-zero vector $\mathbf{v}$ such that
-$$
-\mathbf{Av}=\lambda\mathbf{v}
-$$
-
-Such a vector $\mathbf{v}$ is called an eigenvector corresponding to $\lambda$.
-
-Example:
-
-Let $\mathbf A$ be the matrix
-
-
-To find the eigenvalues of $\mathbf A$, we solve the characteristic equation $\text{det}(\mathbf A - \lambda \mathbf I ) = 0$, where I is the n × n identity matrix.
-
-$$
-\begin{align*}
-  \text{det}(\mathbf A - \lambda \mathbf I ) 
-  &= 
-    \begin{vmatrix} 
-    3 - \lambda & 1 \\ 
-    1 & 3 - \lambda 
-    \end{vmatrix} \\
-  &= 
-  (3 - \lambda)(3 - \lambda) - 1 \\
-  &= \lambda^2 - 6\lambda + 8 = 0
-\end{align*}
-$$
-
-Solving this quadratic equation gives us the eigenvalues of $\mathbf A$: $\lambda_1 = 2$ and $\lambda_2 = 4$.
-
-To find the eigenvectors corresponding to $\lambda_1 = 2$, we solve the equation $(\mathbf A - 2 \mathbf I)\mathbf{v} = \mathbf{0}$, where $\mathbf I$ is the $2 \times 2$ identity matrix.
-
-$$
-\begin{align*}
-  (\mathbf A - 2 \mathbf I)\mathbf{v} = 
-    \begin{bmatrix} 
-      1 & 1 \\ 
-      1 & 1 
-    \end{bmatrix}
-  \begin{bmatrix} 
-    x \\ 
-    y 
-  \end{bmatrix} = 
-  \begin{bmatrix} 
-    0 \\ 
-    0 
-  \end{bmatrix}
-\end{align*}
-$$
-
-Solving this system of equations gives us the eigenvectors corresponding to $\lambda_1 = 2$: $\mathbf{v_1} = \begin{bmatrix} -1 \\ 1 \end{bmatrix}$
-
-Similarly, for $\lambda_2 = 4$, we solve the equation $(\mathbf A - 4\mathbf I)\mathbf{v}$ = $\mathbf{0}$ to get the eigenvectors corresponding to $\lambda_2 = 4$: $\mathbf{v_2} = \begin{bmatrix} 1 \\ 1 \end{bmatrix}$
 
 
 

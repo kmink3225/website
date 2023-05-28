@@ -26,6 +26,194 @@ library(mosaic)
 library(mvtnorm)
 ```
 
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+```
+
+
+## Background Knowledge
+
+### Linear Transformation
+
+A linear transformation is a function $T$ that maps vectors from one vector space to another, and it satisfies the following two properties:
+
+* Additivity: For any two vectors $\mathbf{u}$ and $\mathbf{v}$ in the domain of $T$, $T(\mathbf{u} + \mathbf{v}) = T(\mathbf{u}) + T(\mathbf{v})$.
+* Homogeneity: For any vector $\mathbf{u}$ in the domain of $T$ and any scalar $c$, $T(c\mathbf{u}) = cT(\mathbf{u})$.
+
+Typical transformations that satisfies the linear transformation are
+
+* rotation, 
+* scaling, 
+* shear, 
+* reflection, and 
+* projection, etc 
+
+#### Example
+
+**Example1**
+A linear transformation $T: \mathbb{R}^2 -> \mathbb{R}^2$ defined as $T(\mathbf{x}, \mathbf{y}) = (2\mathbf{x} + \mathbf{y}, 3\mathbf{x} - \mathbf{y})$.
+
+The transformation $T$ satisfies the additivity property:
+$$
+\begin{align*}
+T((\mathbf{x}_1, \mathbf{y}_1) + (\mathbf{x}_1, \mathbf{y}_2)) 
+&= T(\mathbf{x}_1 + \mathbf{x}_2, \mathbf{y}_1 + \mathbf{y}_2) \\
+&= (2(\mathbf{x}_1 + \mathbf{x}_2) + (\mathbf{y}_1 + \mathbf{y}_1), 3(\mathbf{x}_1 + \mathbf{x}_2) - (\mathbf{y}_1 + \mathbf{y}_2)) \\
+&= (2\mathbf{x}_1 + \mathbf{y}_1, 3\mathbf{x}_1 - \mathbf{y}_1) + (2\mathbf{x}_2 + \mathbf{y}_1, 3\mathbf{x}_2 - \mathbf{y}_2) \\
+&= T(\mathbf{x}_1, \mathbf{y}_1) + T(\mathbf{x}_2, \mathbf{y}_2)
+\end{align*}
+$$
+
+The transformation $T$ also satisfies the homogeneity property:
+$$
+\begin{align*}
+T(c(\mathbf{x}, \mathbf{y})) &= T(c\mathbf{x}, c\mathbf{y}) \\ 
+&= (2(c\mathbf{x}) + c\mathbf{y}, 3(c\mathbf{x}) - c\mathbf{y}) \\
+&= c(2\mathbf{x} + \mathbf{y}, 3\mathbf{x} - \mathbf{y}) \\
+&= cT(\mathbf{x}, \mathbf{y})
+\end{align*}
+$$
+
+Thus, T is a linear transformation.
+
+**Example2**
+Rotation
+
+* Additivity: Let's consider a rotation transformation $R$ that rotates vectors in the plane counterclockwise by an angle $\theta$. For any two vectors $\mathbf{u}$ and $\mathbf{v}$ in the domain of $R$, we want to show that $R(\mathbf{u} + \mathbf{v}) = R(\mathbf{u}) + R(\mathbf{v})$.
+
+When we rotate $\mathbf{u}$ and $\mathbf{v}$ individually, we obtain $R(\mathbf{u})$ and $R(\mathbf{v})$ respectively. To find $R(\mathbf{u} + \mathbf{v})$, we rotate the sum of $\mathbf{u}$ and $\mathbf{v}$ by the same angle $\theta$. The result will be $R(\mathbf{u} + \mathbf{v})$. Geometrically, the sum of two vectors $\mathbf{u}$ and $\mathbf{v}$ can be represented by placing the initial point of $\mathbf{v}$ at the terminal point of $\mathbf{u}$. When we rotate this combined vector, we obtain the same result as rotating $\mathbf{u}$ and $\mathbf{v}$ individually and adding their rotated versions.
+
+Therefore, $R(\mathbf{u} + \mathbf{v}) = R(\mathbf{u}) + R(\mathbf{v})$, satisfying the additivity property.
+
+* Homogeneity: Geometrically, scaling a vector $\mathbf{u}$ by a scalar c does not affect the angle of rotation. Thus, rotating cu will give us the same result as rotating $\mathbf{u}$ and scaling the result by $c$. Therefore, $R(c\mathbf{u}) = cR(\mathbf{u})$, satisfying the homogeneity property. 
+
+Since rotation satisfies both the additivity and homogeneity properties, we can conclude that rotation is a linear transformation.
+
+Let $\mathbf{u}=(1,0)$ and $\mathbf{v}=(0,1)$. If the two vectors are rotated by $\theta$ using the rotation matrix R
+$$
+\begin{bmatrix}
+\cos\theta & -\sin\theta \\
+\sin\theta & \cos\theta
+\end{bmatrix}
+$$,
+
+$$
+\begin{align*}
+R\begin{bmatrix}
+x \\
+y
+\end{bmatrix}
+&= R\begin{bmatrix}
+x\\
+0 \end{bmatrix} +
+R\begin{bmatrix}
+0\\
+y \end{bmatrix}\\
+&= R\begin{bmatrix}
+1\\
+0 \end{bmatrix}x +
+R\begin{bmatrix}
+0\\
+1 \end{bmatrix}y\\
+&= \begin{bmatrix}
+\cos\theta \\
+\sin\theta
+\end{bmatrix}x +
+\begin{bmatrix}
+-\sin\theta \\
+\cos\theta
+\end{bmatrix}y \\
+&=
+\begin{bmatrix}
+\cos\theta & -\sin\theta \\
+\sin\theta & \cos\theta
+\end{bmatrix}
+\begin{bmatrix}
+x \\
+y
+\end{bmatrix}
+
+
+\end{align*}
+$$
+
+```{python}
+# Define the rotation angle
+theta = np.pi/4
+
+# Define the original vector
+u = np.array([1, 0])
+v = np.array([0, 1])
+
+# Define the transformation matrix for rotation
+rotation_matrix = np.array([[np.cos(theta), -np.sin(theta)],
+                            [np.sin(theta), np.cos(theta)]])
+
+# Apply the rotation transformation to the vector
+rotated_u = np.dot(rotation_matrix, u)
+rotated_v = np.dot(rotation_matrix, v)
+
+# Plot the original vector and its rotated version
+plt.figure(figsize=(6, 6))
+plt.axhline(0, color='black', linewidth=0.5)
+plt.axvline(0, color='black', linewidth=0.5)
+
+plt.quiver(0, 0, u[0], u[1], angles='xy', scale_units='xy', scale=1, color='black', label='Original Vector (1,0)')
+plt.quiver(0, 0, v[0], v[1], angles='xy', scale_units='xy', scale=1, color='gray', label='Original Vector (0,1)')
+
+plt.quiver(0, 0, rotated_u[0], rotated_u[1], angles='xy', scale_units='xy', scale=1, color='blue', label='Rotated Vector')
+plt.quiver(0, 0, rotated_v[0], rotated_v[1], angles='xy', scale_units='xy', scale=1, color='red', label='Rotated Vector')
+
+# Plot settings
+plt.xlim(-2, 2)
+plt.ylim(-2, 2)
+plt.xlabel('x-axis')
+plt.ylabel('y-axis')
+plt.title('Rotation Transformation')
+plt.legend()
+plt.grid(True)
+plt.show()
+```
+
+### Conic Equation
+
+A conic equation is a second-degree polynomial equation in two variables ($x$ and $y$) that represents a conic section in the Cartesian coordinate system. It can be written in the general form as:
+
+$$
+Ax^2+Bxy+Cy^2+Dx+Ey+F=0
+$$
+
+where A,B,C,D,E, and F are constants.
+
+* the first degree term $Dx$, $Ey$: indicating the quadratic form is trnaslated (except for a parabola). If $D,E=0$, the quadratic form is called a central conic. 
+* the $xy$ term, $Bxy$: indicating the quadratic form is rotated. If $B=0$, it is said the conic equation is in a standard position.
+
+#### Parabola
+
+A parabola is a conic section defined as the locus of points that are equidistant from a fixed point called the focus ($F$) and a fixed line called the directrix (that does not pass through the focus point). It can be represented by the equation:
+
+* $y^2=4px$ with $F(p,0)$ and directrix $x=-p$
+* $x^2=4py$ with $F(0,p)$ and directrix $y=-p$
+
+#### Eliipse
+
+An ellipse is a conic section defined as the locus of points such that the sum of the distances from any point on the ellipse to two fixed points, called the foci ($F,F'$), is constant. It can be represented by the equation:
+
+$$
+\frac{{(x-h)^2}}{{a^2}} + \frac{{(y-k)^2}}{{b^2}} = 1
+$$
+
+*$\frac{{(x-h)^2}}{{a^2}} + \frac{{(y-k)^2}}{{b^2}} = 1 \text{ } (b<a)$ with the sum of the distances from $F,F'$ equal to $2a$ and $F,F'=(\pm \sqrt{a^2-b^2},0)$   
+*$\frac{{(x-h)^2}}{{a^2}} + \frac{{(y-k)^2}}{{b^2}} = 1 \text{ } (a<b)$ with the sum of the distances from $F,F'$ equal to $2b$ and $F,F'=(0,\pm \sqrt{a^2-b^2})$
+
+#### Hyperbola
+
+A hyperbola is a conic section defined as the locus of points such that the absolute value of the difference of the distances from any point on the hyperbola to two fixed points, called the foci ($F,F'$), is constant. It can be represented by the equation depending on the orientation of the hyperbola:
+
+* $\frac{{(x-h)^2}}{{a^2}} - \frac{{(y-k)^2}}{{b^2}} = 1$ with the difference of the distances from $F,F'$ equal to $2a$, $F,F'=(\pm \sqrt{a^2+b^2},0)$, and the asymptotic line $y=\pm\frac{b}{a}(x-h)+k$    
+* $\frac{{(x-h)^2}}{{a^2}} - \frac{{(y-k)^2}}{{b^2}} = -1$ with the difference of the distances from $F,F'$ equal to $2b$, $F,F'=(0,\pm \sqrt{a^2+b^2})$, and the asymptotic line $y=\pm\frac{b}{a}(x-h)+k$
+
 ## Quadratic Form
 
 :::{#def-quadratic}
@@ -114,11 +302,11 @@ $$
 $$
 
 ```{r}
-B<-matrix(c(6,65,98,5),ncol=2)
-A<-0.5*(B+t(B))
-print('B=')
+B <- matrix(c(6, 65, 98, 5), ncol = 2)
+A <- 0.5 * (B + t(B))
+print("B=")
 print(B)
-print('A=')
+print("A=")
 print(A)
 ```
 :::
@@ -136,15 +324,15 @@ print(A)
   1. Indefinite: $Q(\mathbf{x})$ takes both positive and negative values for some nonzero vector $\mathbf{x}$.
 
 ```{r}
-plot_quadratic_form<-function(formula){
-  plotFun(formula,
-  x1.lim=range(-10,10),
-  x2.lim=range(-10,10),
-  surface=TRUE,
-  xlab=expression(x[1]),
-  ylab=expression(x[2]),
-  zlab=expression(Q(x[1],x[2]))
-  )
+plot_quadratic_form <- function(formula) {
+    plotFun(formula,
+        x1.lim = range(-10, 10),
+        x2.lim = range(-10, 10),
+        surface = TRUE,
+        xlab = expression(x[1]),
+        ylab = expression(x[2]),
+        zlab = expression(Q(x[1], x[2]))
+    )
 }
 ```
 
@@ -155,22 +343,22 @@ plot_quadratic_form<-function(formula){
 ## NSDM: negative semi-definite matrix
 ## IDM: indefinte matrix
 
-PDM <-matrix(c(1,0,0,1),2,2)
-PSDM <-matrix(c(1,1,1,1),2,2)
-NDM <-matrix(c(-1,0,0,-1),2,2)
-NSDM <-matrix(c(-1,-1,-1,-1),2,2)
-IDM<- matrix(c(1,0,0,-1),2,2)
+PDM <- matrix(c(1, 0, 0, 1), 2, 2)
+PSDM <- matrix(c(1, 1, 1, 1), 2, 2)
+NDM <- matrix(c(-1, 0, 0, -1), 2, 2)
+NSDM <- matrix(c(-1, -1, -1, -1), 2, 2)
+IDM <- matrix(c(1, 0, 0, -1), 2, 2)
 
 # positive definite
-plot_quadratic_form(x1^2 + x2^2 ~x1&x2)
+plot_quadratic_form(x1^2 + x2^2 ~ x1 & x2)
 # positive semi-definite
-plot_quadratic_form(x1^2 +2*x1*x2+x2^2~x1 &x2)
+plot_quadratic_form(x1^2 + 2 * x1 * x2 + x2^2 ~ x1 & x2)
 # negative definite
-plot_quadratic_form(-x1^2 - x2^2 ~x1&x2)
+plot_quadratic_form(-x1^2 - x2^2 ~ x1 & x2)
 # negative semi-definite
-plot_quadratic_form(-x1^2 -2*x1*x2-x2^2~x1 &x2)
+plot_quadratic_form(-x1^2 - 2 * x1 * x2 - x2^2 ~ x1 & x2)
 # indefinite matrix
-plot_quadratic_form(x1^2 -x2^2~x1 &x2)
+plot_quadratic_form(x1^2 - x2^2 ~ x1 & x2)
 
 ```
 
@@ -183,7 +371,7 @@ plot_quadratic_form(x1^2 -x2^2~x1 &x2)
 
 ```{r}
 # c(3,3,3,7)
-plot_quadratic_form(3*x1^2 +6*x1*x2+7*x2^2~x1 &x2)
+plot_quadratic_form(3 * x1^2 + 6 * x1 * x2 + 7 * x2^2 ~ x1 & x2)
 ```
 
 #### How to Tell Positive Definite Matrix from Positive Semi-Definite Matrix?
@@ -209,7 +397,7 @@ If eigen values are all positive and the matrix is positive definite, the matrix
 :::
 
 ```{r}
-A<-matrix(c(3,3,3,7), nrow=2)
+A <- matrix(c(3, 3, 3, 7), nrow = 2)
 eigen(A)
 eigen(PDM)
 eigen(PSDM)
@@ -335,33 +523,34 @@ The inverse of a diagonal matrix is the inverse of each entry
 **Exmaple2** $9x_1^2+6x_1x_2+4x_2^2$
 
 ```{r}
-mu<-c(1,2)
-mu1<-1
-mu2<-2
-sigma1<-3
-sigma2<-2
-rho<-0.5
-sigma<-matrix(c(sigma1^2,rho*sigma1*sigma2,rho*sigma1*sigma2,sigma2^2),2)
+mu <- c(1, 2)
+mu1 <- 1
+mu2 <- 2
+sigma1 <- 3
+sigma2 <- 2
+rho <- 0.5
+sigma <- matrix(c(sigma1^2, rho * sigma1 * sigma2, rho * sigma1 * sigma2, sigma2^2), 2)
 
-dmvnorm(x=c(1,1),mean=mu,sigma=sigma) # a pdf value at (1,1)
+dmvnorm(x = c(1, 1), mean = mu, sigma = sigma) # a pdf value at (1,1)
 # 1/((2*pi)*sqrt(det(sigma)))*exp(-0.5*t(c(1,1)-mu) %*% solve(sigma) %*% (c(1,1)-mu))
 ```
 
 This value is the same as $f(\mathbf{x})=\frac{1}{(2\pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}}\operatorname{exp}\left[ -\frac{1}{2}(\mathbf{x}-\mathbf{\mu})^{T}\mathbf{\Sigma}^{-1}(\mathbf{x}-\mathbf{\mu})\right]=$ `r 1/((2*pi)*sqrt(det(sigma)))*exp(-0.5*t(c(1,1)-mu) %*% solve(sigma) %*% (c(1,1)-mu))`
 
 ```{r}
-plotFun(1/(2*pi*sigma1*sigma2*sqrt(1-rho^2))*exp(-1/(2*(1-rho^2))*((x1-mu1)^2/sigma1^2+(x2-mu2)^2-2*rho*(x1-mu1)*(x2-mu2))/(sigma1*sigma2))~x1 & x2,
-  mu1=1,
-  mu2=2,
-  sigma1=3,
-  sigma2=2,
-  rho=0.5,
-  x1.lim=range(-5,5),
-  x2.lim=range(-5,5),
-  surface=TRUE,
-  xlab=expression(x[1]),
-  ylab=expression(x[2]),
-  zlab=expression(f(x[1],x[2])))
+plotFun(1 / (2 * pi * sigma1 * sigma2 * sqrt(1 - rho^2)) * exp(-1 / (2 * (1 - rho^2)) * ((x1 - mu1)^2 / sigma1^2 + (x2 - mu2)^2 - 2 * rho * (x1 - mu1) * (x2 - mu2)) / (sigma1 * sigma2)) ~ x1 & x2,
+    mu1 = 1,
+    mu2 = 2,
+    sigma1 = 3,
+    sigma2 = 2,
+    rho = 0.5,
+    x1.lim = range(-5, 5),
+    x2.lim = range(-5, 5),
+    surface = TRUE,
+    xlab = expression(x[1]),
+    ylab = expression(x[2]),
+    zlab = expression(f(x[1], x[2]))
+)
 ```
 
 #### Multivariate Distributions
@@ -553,5 +742,3 @@ $$
 $$
 
 where $\mathbf{x}$ is a column vector of centered data, and $\mathbf{A}$ is a symmetric positive semi-definite matrix (the covariance matrix). Diagonalizing $\mathbf{A}$ gives us the eigenvalues and eigenvectors, which are used to transform the original data into a new coordinate system, where the first axis (the first principal component) corresponds to the direction of greatest variance, the second axis (the second principal component) corresponds to the direction of second greatest variance, and so on. This new coordinate system is called the principal component space.
-
-In summary, PCA can be seen as a method for finding the principal components of a dataset by diagonalizing the covariance matrix, which can be expressed as a quadratic form.

@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kwangmin Kim">
-<meta name="dcterms.date" content="2023-04-23">
+<meta name="dcterms.date" content="2023-05-01">
 <meta name="description" content="template">
 
-<title>Kwangmin Kim - LDA - EDA</title>
+<title>Kwangmin Kim - Airflow Introduction</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -63,8 +63,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="../../../../../styles.css">
 </head>
@@ -142,7 +140,19 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#go-to-project-content-list" id="toc-go-to-project-content-list" class="nav-link active" data-scroll-target="#go-to-project-content-list"><span class="header-section-number">1</span> Go to Project Content List</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a>
+  <ul class="collapse">
+  <li><a href="#characteristics" id="toc-characteristics" class="nav-link" data-scroll-target="#characteristics"><span class="header-section-number">1.1</span> Characteristics</a>
+  <ul class="collapse">
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">1.1.1</span> Example</a></li>
+  </ul></li>
+  <li><a href="#motivation" id="toc-motivation" class="nav-link" data-scroll-target="#motivation"><span class="header-section-number">1.2</span> Motivation</a>
+  <ul class="collapse">
+  <li><a href="#why-to-learn-airflow" id="toc-why-to-learn-airflow" class="nav-link" data-scroll-target="#why-to-learn-airflow"><span class="header-section-number">1.2.1</span> Why to Learn Airflow?</a></li>
+  </ul></li>
+  <li><a href="#strength" id="toc-strength" class="nav-link" data-scroll-target="#strength"><span class="header-section-number">1.3</span> Strength</a></li>
+  <li><a href="#weakness" id="toc-weakness" class="nav-link" data-scroll-target="#weakness"><span class="header-section-number">1.4</span> Weakness</a></li>
+  </ul></li>
   <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link" data-scroll-target="#go-to-blog-content-list"><span class="header-section-number">2</span> Go to Blog Content List</a></li>
   </ul>
 </nav>
@@ -152,10 +162,10 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">LDA - EDA</h1>
-<p class="subtitle lead">Exploratory Data Analysis</p>
+<h1 class="title">Airflow Introduction</h1>
+<p class="subtitle lead">Template</p>
   <div class="quarto-categories">
-    <div class="quarto-category">Statistics</div>
+    <div class="quarto-category">Engineering</div>
   </div>
   </div>
 
@@ -178,7 +188,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 23, 2023</p>
+      <p class="date">May 1, 2023</p>
     </div>
   </div>
   
@@ -203,160 +213,126 @@ English
 
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
-<p>In EDA of longitudinal data, mean function, covariance structure, and variogram are estimated and visualized to capture the characteristics of the data and to support the statistical inference results.</p>
-<section id="mean-function-estimation-using-smoothing-methods" class="level2" data-number="0.1">
-<h2 data-number="0.1" class="anchored" data-anchor-id="mean-function-estimation-using-smoothing-methods"><span class="header-section-number">0.1</span> Mean Function Estimation Using Smoothing Methods</h2>
-<p>To show a trend of a response variable, smoothing methods are used to estimate the trend or mean funtion.</p>
+<section id="introduction" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
 <ul>
-<li>시간에 따라 변화하는 반응 변수의 평균 패턴 인식</li>
-<li>시간에 따라 변화하는 개인별 패턴 인식</li>
-<li>그룹간의 반응 변수와의 관계 인식</li>
-<li>이상점 또는 특이치를 판독</li>
+<li>파이썬을 이용해 워크플로우를 만들고 관리할 수 있는 오픈소스 기반 워크플로우 관리 도구</li>
+<li>2014년 에어비앤비에서 만든 워크플로우 관리 솔루션</li>
+<li>Airflow는 워크플로우를 DAG을 사용하여 정의하고, 관리하는 프로그램
+<ul>
+<li>자유도가 크고, 확장성이 좋은 워크플로우 관리 프로그램</li>
+</ul></li>
 </ul>
-<section id="recognition-of-average-patterns-in-response-variables-changing-over-time" class="level3" data-number="0.1.1">
-<h3 data-number="0.1.1" class="anchored" data-anchor-id="recognition-of-average-patterns-in-response-variables-changing-over-time"><span class="header-section-number">0.1.1</span> Recognition of Average Patterns in Response Variables Changing over Time</h3>
-<section id="spaghetti-plot" class="level4" data-number="0.1.1.1">
-<h4 data-number="0.1.1.1" class="anchored" data-anchor-id="spaghetti-plot"><span class="header-section-number">0.1.1.1</span> Spaghetti Plot</h4>
-<p>Spaghetti Plot: individual trends of a response variable</p>
-</section>
-<section id="spaghetti-plot-with-smoothing" class="level4" data-number="0.1.1.2">
-<h4 data-number="0.1.1.2" class="anchored" data-anchor-id="spaghetti-plot-with-smoothing"><span class="header-section-number">0.1.1.2</span> Spaghetti Plot with Smoothing</h4>
-<p>Spaghetti plots with mean functions are used to make them more informative.</p>
-<p><span class="math display">\[
-Y(t)=\mu(t)+\epsilon
-\]</span></p>
-<section id="kernel-estimation" class="level5" data-number="0.1.1.2.1">
-<h5 data-number="0.1.1.2.1" class="anchored" data-anchor-id="kernel-estimation"><span class="header-section-number">0.1.1.2.1</span> Kernel Estimation</h5>
-<p>Kernel estimation is a nonparametric method used to estimate the underlying probability density function of a random variable. In kernel estimation, the density estimate is calculated at each point by placing a kernel function around that point, and the values of all kernel functions are added up to estimate the density.</p>
-<p>In the case of estimating the conditional mean function <span class="math inline">\(\mu(t)=\operatorname{E}(Y|T=t)\)</span>, we can use kernel estimation with a smoothing kernel function to estimate the mean at each point <span class="math inline">\(t\)</span>. The kernel function is used to assign weights to the data points near each point <span class="math inline">\(t\)</span> based on their distance from <span class="math inline">\(t\)</span>, and the weighted average of the <span class="math inline">\(Y\)</span> values for these nearby data points gives the estimated value of <span class="math inline">\(\mu(t)\)</span>.</p>
-<p>t시점을 중심으로 window에 포함된 반응변수 값에 대해 적절한 가중치를 적용하여 mean function을 추정.</p>
-<p><span class="math display">\[
-\mu(t)=\operatorname{E}(Y|T=t)=\int y f(y|t)dy=\int y \frac{f(t.y)}{f_{T}(t)}dy
-\]</span></p>
-<p><span class="math display">\[
-\begin{aligned}
-\hat{\mu}(t) &amp;= \frac{\sum_{i=1}^n K\left(\frac{t-t_i}{h}\right) y_i}{\sum_{i=1}^n K\left(\frac{t-t_i}{h}\right)} \\
-&amp;=\frac{\sum\limits_{i=1}^n y_i K_h(t-t_i)}{\sum\limits_{i=1}^n K_h(t-t_i)} \\
-&amp;=\frac{\sum\limits_{i=1}^n y_iw(t,t_i,h)}{\sum\limits_{i=1}^n w(t,t_i,h)} \\
-&amp;=\hat{\mu}_{NW}(t)
-\end{aligned}
-\]</span></p>
-<p>where <span class="math inline">\(\hat{\mu}(t)\)</span> is the estimate of the mean function at time point <span class="math inline">\(t\)</span>, <span class="math inline">\(y_i\)</span> is the response variable for the <span class="math inline">\(i\)</span> th observation, <span class="math inline">\(t_i\)</span> is the time point for the <span class="math inline">\(i\)</span> th observation, <span class="math inline">\(K_h\)</span> is the kernel function with bandwidth parameter <span class="math inline">\(h\)</span>, <span class="math inline">\(n\)</span> is the number of observations, <span class="math inline">\(\hat{\mu}_{NW}(t)\)</span> is the Nadarian-Watson estimator, and <span class="math inline">\(w(t,t_i,h)=\frac{K(t-t_i)}{h}\)</span>.</p>
-<p>The smaller the bandwith parameter <span class="math inline">\(h\)</span>, the more wiggly the smoothing line .</p>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
+<section id="characteristics" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="characteristics"><span class="header-section-number">1.1</span> Characteristics</h2>
+<ul>
+<li>파이썬으로 제작된 도구이며 이용자가 워크플로우 생성시에도 파이썬으로 구현해야 함</li>
+<li>하나의 워크플로우는 DAG(Directed Acyclic Graph) 이라 부르며 DAG 안에는 1개 이상의 Task가 존재</li>
+<li>Task간 선후행 연결이 가능하되 순환되지 않고 방향성을 가짐(=DAG)</li>
+<li>Cron 기반의 스케줄링</li>
+<li>모니터링 및 실패 작업에 대한 재실행 기능이 간편</li>
+</ul>
+<section id="example" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="example"><span class="header-section-number">1.1.1</span> Example</h3>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-workflow" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<div>
+<svg width="672" height="480" viewbox="0.00 0.00 343.92 169.48" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 165.48)">
+<title>
+G
+</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-165.48 339.92,-165.48 339.92,4 -4,4"></polygon> <!-- REST API를 사용한 데이터를 받아 전처리 --> <g id="node1" class="node">
+<title>
+REST API를 사용한 데이터를 받아 전처리
+</title>
+<ellipse fill="none" stroke="black" cx="156.43" cy="-143.48" rx="156.37" ry="18"></ellipse> <text text-anchor="middle" x="156.43" y="-139.28" font-family="Times,serif" font-size="14.00">REST API를 사용한 데이터를 받아 전처리</text> </g> <!-- 기존 DB의 데이터 삭제 --> <g id="node2" class="node">
+<title>
+기존 DB의 데이터 삭제
+</title>
+<ellipse fill="none" stroke="black" cx="200.45" cy="-86.15" rx="89.77" ry="18"></ellipse> <text text-anchor="middle" x="200.45" y="-81.95" font-family="Times,serif" font-size="14.00">기존 DB의 데이터 삭제</text> </g> <!-- REST API를 사용한 데이터를 받아 전처리&#45;&#45;기존 DB의 데이터 삭제 --> <g id="edge1" class="edge">
+<title>
+REST API를 사용한 데이터를 받아 전처리–기존 DB의 데이터 삭제
+</title>
+<path fill="none" stroke="black" d="M170.36,-125.34C175.6,-118.52 181.55,-110.77 186.77,-103.98"></path> </g> <!-- 전처리한 데이터를 DB에 삽입 --> <g id="node3" class="node">
+<title>
+전처리한 데이터를 DB에 삽입
+</title>
+<ellipse fill="none" stroke="black" cx="224.56" cy="-18" rx="111.23" ry="18"></ellipse> <text text-anchor="middle" x="224.56" y="-13.8" font-family="Times,serif" font-size="14.00">전처리한 데이터를 DB에 삽입</text> </g> <!-- 기존 DB의 데이터 삭제&#45;&#45;전처리한 데이터를 DB에 삽입 --> <g id="edge2" class="edge">
+<title>
+기존 DB의 데이터 삭제–전처리한 데이터를 DB에 삽입
+</title>
+<path fill="none" stroke="black" d="M206.91,-67.89C210.37,-58.11 214.62,-46.1 218.08,-36.31"></path> </g> </g>
+</svg>
 </div>
-<div class="callout-title-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>A kernel is a mathematical function that weights data points in a certain way to estimate a target function, such as a pdf or a regression function. The idea is to assign weights to neighboring data points based on their distance to the target point, with the weights determined by the kernel function. The kernel function, <span class="math inline">\(K(\cdot)\)</span> is typically a symmetric, non-negative function that integrates to 1, such as the Gaussian or Epanechnikov kernel.</p>
-</div>
-</div>
-<p>The Gassuian kernel is most commonly chosen:</p>
-<p><strong>Gaussian kernel</strong> <span class="math display">\[
-K(u) = \frac{1}{\sqrt{2\pi}}\exp{\left(-\frac{u^2}{2}\right)}
-\]</span></p>
-<p><strong>Epanechnikov kernel</strong></p>
-<p><span class="math display">\[
-K(u) = \begin{cases}
-\dfrac{3}{4}(1-u^2), &amp; \text{if } |u|&lt;1 \\
-0, &amp; \text{otherwise}
-\end{cases}
-\]</span></p>
-</section>
-<section id="tuning-hyperparameter-h" class="level5" data-number="0.1.1.2.2">
-<h5 data-number="0.1.1.2.2" class="anchored" data-anchor-id="tuning-hyperparameter-h"><span class="header-section-number">0.1.1.2.2</span> Tuning Hyperparameter <code>h</code></h5>
-<p>To tune the hyperparameter <code>h</code>, we can use and estimate PSE (average predicted squared error) reflecting both bias and variance using cross-validation.</p>
-<p><span class="math display">\[
-\operatorname{PSE}(h)=\frac{1}{n}\sum_{i=1}^{n}\operatorname{E}(Y_i^{*}-\hat{\mu}(t,h))^2
-\]</span></p>
-<p><span class="math inline">\(Y_i^{*}\)</span> typically denotes a transformed version of the response variable <span class="math inline">\(Y_i\)</span>. It is used to make the distribution of <span class="math inline">\(Y_i^{*}\)</span> more symmetric or more normal, which can be helpful in some statistical analyses.</p>
-<p><span class="math display">\[
-\operatorname{CV}(h)=\sum_{i=1}^{n}\operatorname{E}(y_i-\hat{\mu}^{-i}(t,h))^2
-\]</span></p>
-<p>where <span class="math inline">\(\hat{\mu}^{-i}\)</span> is the mean estimator estimated excluding the ith observation.</p>
-<section id="loess" class="level6" data-number="0.1.1.2.2.1">
-<h6 data-number="0.1.1.2.2.1" class="anchored" data-anchor-id="loess"><span class="header-section-number">0.1.1.2.2.1</span> LOESS</h6>
-<p>LOESS (locally estimated scatterplot smoothing or LOcal regrESSion) is a nonparametric regression method used for modeling the relationship between a response variable <span class="math inline">\(Y\)</span> and a predictor variable <span class="math inline">\(T\)</span>. The goal of LOESS is to estimate the conditional mean function <span class="math inline">\(\mu(t) = \mathbb{E}(Y|T = t)\)</span> using a weighted polynomial regression model.</p>
-<p>LOESS involves fitting a separate polynomial regression model to the data in each local neighborhood of the predictor variable <span class="math inline">\(T\)</span>. The size of the local neighborhood is controlled by a tuning parameter called the smoothing parameter. For each observation <span class="math inline">\(i\)</span>, the model is fit using a weighted least squares method, with weights given by a kernel function that assigns higher weights to observations closer to <span class="math inline">\(i\)</span> in the predictor variable <span class="math inline">\(T\)</span>. The polynomial order of the regression model is chosen by the user, with a typical choice being a second-order polynomial.</p>
-<p>The loess method first selects a subset of data points near a target point <span class="math inline">\(t\)</span> using a kernel function. A weighted linear regression model is then fit to the data points in the subset, giving more weight to points closer to the target point <span class="math inline">\(t\)</span>. The degree of smoothing is controlled by a bandwidth parameter, which determines the size of the subset of data points used in the regression.</p>
-<p>The estimated mean function <span class="math inline">\(\hat{\mu}(t)\)</span> is obtained by repeating this process at a large number of target points along the range of <span class="math inline">\(t\)</span> values. The final smooth function is obtained by connecting these estimated mean values.</p>
-<p>Loess is particularly useful for estimating smooth nonlinear functions and can handle heteroscedasticity (non-constant variance) and nonlinearity in the data. It is commonly used in applications such as time series analysis, epidemiology, and environmental science.</p>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Tip
+<figcaption class="figure-caption">Figure&nbsp;1: Airflow Workflow Simple Example</figcaption>
+</figure>
 </div>
 </div>
-<div class="callout-body-container callout-body">
-<p><strong>weighted least square</strong></p>
-<p>The weighted least squares (WLS) solution can be obtained by minimizing the sum of squared weighted residuals, given by:</p>
-<p><span class="math display">\[
-\operatorname{minimize} \sum_{i=1}^{n} w_i(y_i - f(x_i))^2
-\]</span></p>
-<p>The WLS solution is given by: $$ _{WLS} = (X<sup>TWX)</sup>{-1}X^TWy</p>
-<p>$$</p>
-<p>where <span class="math inline">\(X\)</span> is the design matrix, <span class="math inline">\(W\)</span> is a diagonal weight matrix with <span class="math inline">\(w_i\)</span> on the <span class="math inline">\(i\)</span>th diagonal element, and <span class="math inline">\(y\)</span> is the vector of responses. The predicted response <span class="math inline">\(\hat{y}\)</span> can be obtained as <span class="math inline">\(\hat{y} = X\hat{\beta}\)</span>.</p>
-<p>Note that the OLS solution is a special case of WLS when all weights are equal to 1.</p>
-<ol type="1">
-<li>Define the weighted design matrix, <span class="math inline">\(\mathbf{W}\)</span>, as a diagonal matrix of weights, where each diagonal element corresponds to the weight for the corresponding observation.</li>
-<li>Define the weighted response vector, <span class="math inline">\(\mathbf{y}_{w}\)</span>, as a vector of the response values multiplied by the square root of the corresponding weight.</li>
-<li>Define the weighted parameter estimates, <span class="math inline">\(\hat{\beta}_{w}\)</span>, as the solution to the weighted least squares problem: <span class="math display">\[
-\hat{\beta}_w = \operatorname*{arg\,min}_{\beta} (y_w - X\beta)^T W (y_w - X\beta)
-\]</span> where <span class="math inline">\(\mathbf{X}\)</span> is the design matrix of predictor variables.</li>
-<li>The estimated model can be obtained by substituting the weighted parameter estimates, <span class="math inline">\(\hat{\beta}_{w}\)</span>, into the regression equation:</li>
-</ol>
-<p><span class="math display">\[
-\hat{y}=\mathbf{X}\hat{\beta}_w
-\]</span></p>
-<p>Let’s start by defining the problem: we have a set of m data points, represented as a matrix X with dimensions m x p, where p is the number of independent variables. We also have a corresponding vector y with m elements, representing the dependent variable. We want to fit a linear function of the form y = Xβ + ε to the data points, where β is a vector of coefficients to be determined and ε is the residual error.</p>
-<p>To perform weighted least squares, we define a weight matrix W with dimensions m x m, where the diagonal elements w(i) are the weights for each data point i. Weights are typically chosen to be proportional to the inverse of the variance of the data point, so that data points with smaller variances are given more weight.</p>
-Using this weight matrix, the objective function for weighted least squares is defined as follows: $$
-<span class="math display">\[\begin{aligned}
-\text{minimize } S &amp;= (y - X\beta)^TW(y - X\beta) \\
-&amp;= y^TWy - \beta^TX^TWy - y^TWX\beta + \beta^TX^TWX\beta \\
-\frac{\partial S}{\partial \beta} &amp;= -2X^TWy + 2X^TWX\beta = 0 \\
-X^TWX\beta &amp;= X^TWy \\
-\beta &amp;= (X^TWX)^{-1}X^TWy
-\end{aligned}\]</span>
-<p>$$</p>
 </div>
+<div id="fig-DAG_example" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="../../../../../images/airflow/intro_dag-example.PNG" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Figure&nbsp;2: DAG Simple Example</figcaption>
+</figure>
 </div>
-<p>the LOESS model can be expressed as: <span class="math display">\[
-\hat{\mu}(t_i)=\sum_{j=1}^{n}w_{ij}(t_i)y_j
-\]</span></p>
-<p>where <span class="math inline">\(\hat{\mu}(t_i)\)</span> is the estimated mean response at predictor value <span class="math inline">\(t_i\)</span>, <span class="math inline">\(y_j\)</span> is the response value at predictor value <span class="math inline">\(t_j\)</span>, and <span class="math inline">\(w_{ij}(t_i)\)</span> is the weight assigned to the <span class="math inline">\(j\)</span>th observation in the local neighborhood of <span class="math inline">\(t_i\)</span>. The weights are defined by a kernel function <span class="math inline">\(K\)</span>, such that:</p>
-<p><span class="math display">\[
-w_{ij}(t_i)=K\left(\frac{t_i-t_j}{h}\right)
-\]</span></p>
-<p>where <span class="math inline">\(h\)</span> is the smoothing parameter, controlling the size of the local neighborhood. A common choice for the kernel function is the tri-cube kernel:</p>
-<p><span class="math display">\[
-K(x) = \begin{cases}
-         \left(1 - |x|^3\right)^3, &amp; \text{if } |x| &lt; 1 \\
-         0, &amp; \text{otherwise}
-      \end{cases}
-\]</span></p>
-<p>ggplot(data=milk_data,aes(x=time,y=protein,group=id))+ geom_line()+ geom_smooth(aes(group=1),method=‘loess’,formula=y~x)+ st at_summary(aes(x = 19, yintercept = ..y.., group = 1), fun = “median”, color = “red”, geom = “hline”)</p>
-<p>gg plot(data=milk_data,aes(x=time,y=protein,group=id,col=factor(trt)))+ geom_line()+ geom_smooth(aes(group=1),method=‘loess’,formula=y~x,color=‘black’)+ stat_summary(aes(x = 19, yintercept = ..y.., group = 1), fun = “median”, color = “red”, geom = “hline”)+ fa cet_wrap(.~trt,ncol=3) `<code></code></p>
+<p>In <a href="#fig-DAG_example">Figure&nbsp;2</a>, 초록색 테두리의 node는 성공한 task를 의미하고 분홍색 테두리의 node는 실패한 task를 의미한다. 위의 그림에는 없지만 회색 테두리는 queue (준비) 상태를 의미한다. Airflow에는 DAG이 일련의 task로 구성되어 있기 때문에 실행 상태도 성공, 실패 및 준비 상태같은 여러 종류가 있다. 나머지 상태는 뒷 부분에서 차차 다뤄보기로 한다.</p>
 </section>
 </section>
+<section id="motivation" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="motivation"><span class="header-section-number">1.2</span> Motivation</h2>
+<section id="why-to-learn-airflow" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="why-to-learn-airflow"><span class="header-section-number">1.2.1</span> Why to Learn Airflow?</h3>
+<div id="fig-comparison" class="quarto-layout-panel">
+<figure class="figure">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 100.0%;justify-content: center;">
+<div id="fig-workflowDemand" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="../../../../../images/airflow/intro_airflow-demand.PNG" class="img-fluid figure-img" data-ref-parent="fig-comparison"></p>
+<figcaption class="figure-caption">(a) Orchestrating Task Tools (a.k.a Data Workflows) Demand Comparison</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 100.0%;justify-content: center;">
+<div id="fig-workflowComputation" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="../../../../../images/airflow/intro_airflow-comparison.PNG" class="img-fluid figure-img" data-ref-parent="fig-comparison"></p>
+<figcaption class="figure-caption">(b) Orchestrating Task Tools Computation Comparison</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p></p><figcaption class="figure-caption">Figure&nbsp;3: <a href="https://towardsdatascience.com/airflow-vs-luigi-vs-argo-vs-mlflow-vs-kubeflow-b3785dd1ed0c">Airflow Figure Reference: Airflow vs.&nbsp;Luigi vs.&nbsp;Argo vs.&nbsp;MLFlow vs.&nbsp;KubeFlow by Markus Schmitt</a></figcaption><p></p>
+</figure>
+</div>
+<p><a href="#fig-comparison">Figure&nbsp;3</a> 을 보면, <a href="#fig-workflowDemand">Figure&nbsp;3 (a)</a> 에서 볼수 있듯이 최근 들어 airflow의 인기가 급증하는 것을 볼 수 있다. <a href="#fig-workflowComputation">Figure&nbsp;3 (b)</a> 에서 그 이유를 짐작할 수 있는데 airflow가 simplicity가 C 사용하기는 어렵지만 구현할 수 있는 폭 breadth가 높다 (Breadth: A). 즉, 다른 workflows에 비해 복잡한 코딩을 요구하는 만큼 그 자유도가 높다는 것을 짐작할 수 있다.</p>
 </section>
 </section>
-<section id="recognition-of-individual-patterns-changing-over-time" class="level3" data-number="0.1.2">
-<h3 data-number="0.1.2" class="anchored" data-anchor-id="recognition-of-individual-patterns-changing-over-time"><span class="header-section-number">0.1.2</span> Recognition of Individual Patterns Changing over Time</h3>
+<section id="strength" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="strength"><span class="header-section-number">1.3</span> Strength</h2>
+<ul>
+<li>파이썬에 익숙하다면 러닝 커브 빠르게 극복 가능</li>
+<li>대규모 워크플로우 환경에서 부하 증가시 수평적 확장 가능한 Kubenetes 등 아키텍처 지원</li>
+<li>파이썬에서 지원되는 라이브러리 활용하여 다양한 도구 컨트롤 가능 (GCP, AWS등 대다수 클라우드에서 제공하는 서비스)
+<ul>
+<li>GCP: Google Cloud Platform</li>
+<li>AWS: Amazon Web Services</li>
+</ul></li>
+<li>Airflow에서 제공하는 파이썬 소스 기반으로 원하는 작업을 위한 커스터마이징이 가능 (오퍼레이터, Hook, 센서 등)</li>
+</ul>
 </section>
-<section id="recognition-of-relationships-with-response-variables-between-groups" class="level3" data-number="0.1.3">
-<h3 data-number="0.1.3" class="anchored" data-anchor-id="recognition-of-relationships-with-response-variables-between-groups"><span class="header-section-number">0.1.3</span> Recognition of Relationships with Response Variables between Groups</h3>
-</section>
-<section id="recognition-of-outliers-or-anomaly-data" class="level3" data-number="0.1.4">
-<h3 data-number="0.1.4" class="anchored" data-anchor-id="recognition-of-outliers-or-anomaly-data"><span class="header-section-number">0.1.4</span> Recognition of Outliers or Anomaly Data</h3>
+<section id="weakness" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="weakness"><span class="header-section-number">1.4</span> Weakness</h2>
+<ul>
+<li>실시간 워크플로우 관리에 적합치 않음 (최소 분 단위 실행)</li>
+<li>워크플로우(DAG) 개수가 많아질 경우 모니터링이 쉽지 않음</li>
+<li>워크플로우를 GUI환경에서 만들지 않기에 파이썬에 익숙하지 않다면 다루기 쉽지 않음 협업 환경에서 프로그래밍 표준이 없으면 유지관리가 쉽지 않음</li>
+</ul>
 </section>
 </section>
 </div>
@@ -366,10 +342,6 @@ K(x) = \begin{cases}
 
 </div>
 </div>
-<section id="go-to-project-content-list" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Go to Project Content List</h1>
-<p><a href="./docs/projects/index.qmd">Project Content List</a></p>
-</section>
 <section id="go-to-blog-content-list" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Go to Blog Content List</h1>
 <p><a href="../../../../../docs/blog/posts/content_list.html">Blog Content List</a></p>
@@ -610,6 +582,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
+</script>
+<script src="https://utteranc.es/client.js" repo="./docs/comments" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
 </script>
 </div> <!-- /content -->
 

@@ -1623,6 +1623,237 @@ REST API를 사용한 데이터를 받아 전처리–기존 DB의 데이터 삭
   <pubDate>Sun, 30 Apr 2023 15:00:00 GMT</pubDate>
 </item>
 <item>
+  <title>Environment Setting for Airflow</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/Engineering/airflow/02.env_setting.html</link>
+  <description><![CDATA[ 
+
+
+
+<ul class="nav nav-pills" id="language-tab">
+<li class="nav-item">
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
+Korean
+</button>
+</li>
+<li class="nav-item">
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
+English
+</button>
+</li>
+<div class="tab-content" id="language-tabcontent">
+
+<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
+<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
+<section id="wsl-installment" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> WSL Installment</h1>
+<section id="wsl-windows-subsystem-for-linux" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="wsl-windows-subsystem-for-linux"><span class="header-section-number">1.1</span> WSL (Windows Subsystem for Linux)</h2>
+<p>Windows Subsystem for Linux은 Windows에서 리눅스 실행환경을 지원하는 Windows의 확장 기능</p>
+<ul>
+<li>Windows에서 바로 리눅스 명령어를 실행할 수 있어서, Windows와 리눅스를 함께 사용하는 개발자들에게 편리</li>
+</ul>
+</section>
+<section id="why-to-install-wsl" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="why-to-install-wsl"><span class="header-section-number">1.2</span> Why to install WSL?</h2>
+<ul>
+<li>Airflow는 Windows에 직접 설치 불가</li>
+<li>Windows에서 리눅스 작업환경을 만들기 위해서 WSL 설치가 필수</li>
+<li>여유가 된다면 가상화 VM 또는 Public Cloud의 컴퓨팅 서비스에서 Airflow 설치 가능</li>
+</ul>
+</section>
+<section id="how-to-install-wsl" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="how-to-install-wsl"><span class="header-section-number">1.3</span> How to install WSL?</h2>
+<ul>
+<li>설치 전 체크사항 (시작버튼 → 시스템 정보에서 확인)
+<ul>
+<li>Windows 10 버전 2004 이상</li>
+<li>Windows 11</li>
+</ul></li>
+<li>PowerShell 명령어로 설치
+<ul>
+<li>wsl –install</li>
+</ul></li>
+</ul>
+</section>
+<section id="frequently-used-linux-commands" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="frequently-used-linux-commands"><span class="header-section-number">1.4</span> Frequently Used Linux Commands</h2>
+<ul>
+<li><code>pwd</code> : (print working directory) 현재 디렉토리 경로 출력</li>
+<li><code>ls</code> : (list) 현재 디렉토리의 파일 목록 출력
+<ul>
+<li><code>ls -a</code></li>
+<li><code>ls -l</code></li>
+<li><code>ls -al</code></li>
+</ul></li>
+<li><code>cd</code> : (change directory) 디렉토리 변경</li>
+<li><code>mkdir</code> : (make directory) 디렉토리 변경</li>
+<li><code>touch</code> : (touch) 새로운 파일 생성</li>
+<li><code>rm</code> : (remove) 파일 삭제 (디렉토리 포함: 옵션 r)</li>
+<li><code>cp</code> : (copy) vkdlf qhrtk</li>
+<li><code>mv</code> : (move) 파일 이동 및 이름 변경</li>
+<li><code>tar</code> : (Tape ARchiver) 파일 및 디렉토리를 압축 해제</li>
+</ul>
+</section>
+</section>
+<section id="docker-installment" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Docker Installment</h1>
+<section id="docker" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="docker"><span class="header-section-number">2.1</span> Docker</h2>
+<p>리눅스내 가상화 관련 커널을 활용하여 어플리케이션을 독립적 환경에서 실행시키는 기술 가상화 서버(VM) 대비 Guest OS가 없어 경량화된 가상화 서버로 볼 수 있음</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="kmink3225.netlify.app/images/airflow/docker-installment.PNG" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Docker Compoenent Architecture</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="airflow-installment" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Airflow Installment</h1>
+<ul>
+<li>Airflow 설치 방법은 여러가지가 존재하며 그 중 하나가 도커 설치임
+<ul>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/howto/docker-compose/index.html">Docker 설치 링크</a></li>
+</ul></li>
+<li>도커 컴포즈 (docker compose)를 이용하여 한번에 쉽게 설치 가능
+<ul>
+<li>docker compose: 여러 개의 도커 컨테이너 설정을 한방에 관리하기 위한 도커 확장 기술로 에어플로우를 설치하기 위한 도커 컨테이너 세팅 내용이 들어있음</li>
+</ul></li>
+</ul>
+</section>
+<section id="development-environment-setting" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Development Environment Setting</h1>
+<section id="개발-환경-권장-사양" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="개발-환경-권장-사양"><span class="header-section-number">4.1</span> 개발 환경 권장 사양</h2>
+<ul>
+<li>CPU: 4Core 이상</li>
+<li>Memory: 16GB (권장-문제없음) / 8GB (최소-약간 버벅 거림)</li>
+<li>WSL에서 컨테이너 다수 실행시 메모리 점유율 상승</li>
+</ul>
+</section>
+<section id="개발-환경-workflow" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="개발-환경-workflow"><span class="header-section-number">4.2</span> 개발 환경 workflow</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="kmink3225.netlify.app/images/airflow/development-workflow.PNG" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">개발 환경 workflow</figcaption>
+</figure>
+</div>
+<ul>
+<li>개발환경 세팅의 목표
+<ul>
+<li>로컬 환경에서 만든 dag을 컨테이너까지 배포하는 것</li>
+</ul></li>
+<li>Actions
+<ol type="1">
+<li>로컬 컴퓨터에 파이썬 인터프리터 설치</li>
+<li>IDE(VScode) 개발환경 설정</li>
+<li>Github 레파지토리 생성</li>
+<li>로컬 컴퓨터에 Airflow 라이브러리 설치</li>
+<li>WSL에 Git 설치 및 git pull이 가능한 환경구성</li>
+</ol></li>
+</ul>
+</section>
+<section id="python-interpreter-installment" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="python-interpreter-installment"><span class="header-section-number">4.3</span> Python Interpreter Installment</h2>
+<ul>
+<li>Actions
+<ol type="1">
+<li>컨테이너에서 사용하는 파이썬 버전 확인</li>
+<li>파이썬 인터프리터 다운로드 (https://www.python.org/downloads/)</li>
+<li>로컬 컴퓨터에 파이썬 설치</li>
+</ol></li>
+</ul>
+</section>
+<section id="vscode-installment" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="vscode-installment"><span class="header-section-number">4.4</span> VScode Installment</h2>
+<ul>
+<li>VScode란?
+<ul>
+<li>Microsoft사에서 2015년에 제작, 다양한 언어 개발을 돕는 IDE 툴</li>
+<li>Visual Studio 라는 IDE 툴과는 엄연히 다른 툴</li>
+</ul></li>
+<li>Actions
+<ol type="1">
+<li>VScode 다운로드 (https://code.visualstudio.com/download)</li>
+<li>VScode 설치, 파이썬 확장팩 설치</li>
+<li>프로젝트 생성, 파이썬 가상환경 설정</li>
+</ol></li>
+<li>파이썬 가상환경
+<ul>
+<li>라이브러리 버전 충돌 방지를 위해 설치/사용되는 파이썬 인터프리터 환경을 격리시키는 기술</li>
+<li>파이썬은 라이브러리 설치 시점에 따라서도 설치되는 버전이 상이한 경우가 많음</li>
+</ul></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="kmink3225.netlify.app/images/airflow/virtual-environment.PNG" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">가상 환경의 필요성</figcaption>
+</figure>
+</div>
+</section>
+<section id="git-environment-setting" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="git-environment-setting"><span class="header-section-number">4.5</span> Git Environment Setting</h2>
+<ul>
+<li>Github Repository 생성
+<ul>
+<li>Git vs Github
+<ul>
+<li>Git: 오픈소스 분산형 버전관리 시스템 또는 프로그램</li>
+<li>Github: Git을 기반으로 소스를 공유할 수 있도록 만들어진 웹 서비스</li>
+</ul></li>
+<li>Git 레파지토리: Github 에서 생성(https://github.com)</li>
+</ul></li>
+<li>Git Push &amp; Pull</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="kmink3225.netlify.app/images/airflow/git-docker.PNG" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Git Workflow</figcaption>
+</figure>
+</div>
+</section>
+<section id="airflow-library-installment" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="airflow-library-installment"><span class="header-section-number">4.6</span> Airflow Library Installment</h2>
+<ul>
+<li>Airflow 라이브러리 설치 대상과 설치 이유
+<ul>
+<li>로컬 컴퓨터의 파이썬 가상환경(venv)</li>
+<li>Why? Airflow DAG 개발을 위해 Airflow의 라이브러리들이 필요</li>
+</ul></li>
+<li>Airflow 라이브러리 설치 가이드
+<ul>
+<li>https://airflow.apache.org/docs/apache-airflow/stable/installation/installing-frompypi.html</li>
+</ul></li>
+<li>리눅스에서 파이썬 Airflow 라이브러리 설치시 그 자체로 Airflow 서비스 사용 가능
+<ul>
+<li>WSL에서 pip install 명령으로 Airflow를 설치하지 않는 이유?</li>
+<li>pip install 로 Airflow 설치시 저사양의 아키텍처로 설치되며 여러 제약이 존재함 (Task를 한번에 1개씩만 실행 가능 등)</li>
+</ul></li>
+</ul>
+</section>
+</section>
+</div>
+</div>
+<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
+<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
+
+</div>
+</div>
+<section id="go-to-blog-content-list" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Go to Blog Content List</h1>
+<p><a href="../../../../../docs/blog/posts/content_list.html">Blog Content List</a></p>
+
+
+</section>
+
+</div></ul> ]]></description>
+  <category>Engineering</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Engineering/airflow/02.env_setting.html</guid>
+  <pubDate>Sun, 30 Apr 2023 15:00:00 GMT</pubDate>
+</item>
+<item>
   <title>Important Concepts in Data Science</title>
   <dc:creator>Kwangmin Kim</dc:creator>
   <link>kmink3225.netlify.app/docs/blog/posts/concepts/concepts.html</link>
@@ -6681,75 +6912,6 @@ font-style: inherit;">'PCA, Part of the Total Variance of Iris Data Explained by
  ]]></description>
   <category>Mathematics</category>
   <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/11.linear_form.html</guid>
-  <pubDate>Sat, 01 Apr 2023 15:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Matrix Calculus (1) - Matrix to Vector Derivatives</title>
-  <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/derivative_matrix_vector.html</link>
-  <description><![CDATA[ 
-
-
-
-<section id="matrix-to-vector-derivatives" class="level2" data-number="1">
-<h2 data-number="1" class="anchored" data-anchor-id="matrix-to-vector-derivatives"><span class="header-section-number">1</span> Matrix to Vector Derivatives</h2>
-<p>Matrix-to-vector derivatives refer to the derivatives of a matrix function with respect to a vector argument. Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)"> be a matrix-valued function of a vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20%5Cin%20%5Cmathbb%7BR%7D%5En">. The matrix-to-vector derivative is denoted as follows:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20%5Cmathbf%7Bx%7D%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20x_1%7D%20&amp;%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20x_2%7D%20&amp;%20%5Ccdots%20&amp;%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20x_n%7D%0A%5Cend%7Bbmatrix%7D%0A"></p>
-<p>Here, the matrix-to-vector derivative is a matrix whose <img src="https://latex.codecogs.com/png.latex?i">th column is the partial derivative of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bf%7D"> with respect to the <img src="https://latex.codecogs.com/png.latex?i">th component of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
-<p>For example, let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> be matrices in <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E%7Bn%5Ctimes%20n%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbb%7BR%7D%5E%7Bn%5Ctimes%201%7D">, respectively. Consider the function <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%20=%20%5Cmathbf%7BAx%7D">, which is a matrix-vector product. The matrix-to-vector derivative of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is given by: <img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20%5Cmathbf%7Bf%7D(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20%5Cmathbf%7Bx%7D%7D%20=%20%5Cmathbf%7BA%7D%0A"> Here, the derivative is a matrix whose rows are the rows of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</p>
-<section id="differentiation-of-quadratic-form" class="level3" data-number="1.1">
-<h3 data-number="1.1" class="anchored" data-anchor-id="differentiation-of-quadratic-form"><span class="header-section-number">1.1</span> Differentiation of Quadratic Form</h3>
-<p>This is because the output of this differentiation is a vector (with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">), rather than a scalar.</p>
-<p>The differentiation of a quadratic form is the process of finding the gradient of a quadratic form with respect to its input vector.</p>
-<p>Given a quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D">, where <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is an <img src="https://latex.codecogs.com/png.latex?n">-dimensional column vector, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bb%7D%20%5Cin%20%5Cmathbb%7BR%7D%5En"> is a vector, and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is an <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> symmetric matrix, the derivative of <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is given by:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cnabla_%7B%5Cmathbf%20x%7D%20f(%5Cmathbf%20x)%20=%20(A%20+%20A%5ET)%5Cmathbf%20x%20+%20b%0A"></p>
-<p>In this expression, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%5ET"> is the transpose of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D">.</p>
-<p><img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A+%5Cmathbf%20A%5ET"> is written instead of <img src="https://latex.codecogs.com/png.latex?2%5Cmathbf%20A"> when calculating the gradient of a quadratic form. It is because in general, the matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> might not be symmetric, so <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A%5Cneq%20%5Cmathbf%20A%5ET">. However, for any matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A">, we have <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A+%5Cmathbf%20A%5ET%20=%20(%5Cmathbf%20A+%5Cmathbf%20A%5ET)%5ET">, which is a symmetric matrix. Therefore, by writing the gradient as <img src="https://latex.codecogs.com/png.latex?%5Cnabla_x%20f(x)%20=%20(%5Cmathbf%20A+%5Cmathbf%20A%5ET)x">, we ensure that the gradient is always a symmetric matrix, even if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is not symmetric. This is useful in many applications where symmetric matrices are preferred. But if <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%20A"> is constrained to be a symmetric matrix, <img src="https://latex.codecogs.com/png.latex?2%5Cmathbf%20A"> can be written.</p>
-</section>
-<section id="when-mathbfa-is-symmetric" class="level3" data-number="1.2">
-<h3 data-number="1.2" class="anchored" data-anchor-id="when-mathbfa-is-symmetric"><span class="header-section-number">1.2</span> When <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is Symmetric</h3>
-<p>As an example, consider the quadratic form <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)=x_1%5E2+2x_1x_2+3x_2%5E2">, which can be written in the form <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D">, where:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%20x=%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%20x_2%20%5Cend%7Bbmatrix%7D,%20%5Cmathbf%20A=%5Cbegin%7Bbmatrix%7D%201%20&amp;%201%20%5C%5C%201%20&amp;%203%20%5Cend%7Bbmatrix%7D%0A"></p>
-<p>The derivative of <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> is then:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20f(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20%5Cmathbf%7Bx%7D%7D=(%5Cmathbf%7BA%7D+%5Cmathbf%7BA%7D%5ET)%5Cmathbf%7Bx%7D=%5Cbegin%7Bbmatrix%7D2%20&amp;%202%5C%5C2%20&amp;%206%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D=%5Cbegin%7Bbmatrix%7D2x_1+2x_2%5C%5C2x_1+6x_2%5Cend%7Bbmatrix%7D%0A"></p>
-<p>This represents the gradient vector of <img src="https://latex.codecogs.com/png.latex?f(%5Cmathbf%7Bx%7D)"> at any point <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D">.</p>
-</section>
-<section id="when-mathbfa-is-not-symmetric" class="level3" data-number="1.3">
-<h3 data-number="1.3" class="anchored" data-anchor-id="when-mathbfa-is-not-symmetric"><span class="header-section-number">1.3</span> When <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> is Not Symmetric</h3>
-<p>Let <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D%20=%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20%5C%5C%203%20&amp;%204%20%5Cend%7Bbmatrix%7D"> and <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%5C%20x_2%20%5Cend%7Bbmatrix%7D">.</p>
-<p>Then, we have <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20&amp;%20x_2%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%201%20&amp;%202%20%5C%5C%203%20&amp;%204%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20x_1%20%5C%5C%20x_2%20%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%20x_1%20&amp;%20x_2%20%5Cend%7Bbmatrix%7D%20%5Cbegin%7Bbmatrix%7D%20x_1%20+%202x_2%20%5C%5C%203x_1%20+%204x_2%20%5Cend%7Bbmatrix%7D%20=%20x_1%5E2%20+%205x_1x_2%20+%204x_2%5E2">.</p>
-<p>To find the gradient of this quadratic form, we can take the partial derivatives of <img src="https://latex.codecogs.com/png.latex?x_1"> and <img src="https://latex.codecogs.com/png.latex?x_2"> with respect to each variable:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20x_1%7D%20(%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D)%20=%202x_1%20+%205x_2%0A"></p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20x_2%7D%20(%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D)%20=%205x_1%20+%208x_2%0A"></p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20f(%5Cmathbf%7Bx%7D)%7D%7B%5Cpartial%20%5Cmathbf%7Bx%7D%7D=(%5Cmathbf%7BA%7D+%5Cmathbf%7BA%7D%5ET)%5Cmathbf%7Bx%7D=%5Cbegin%7Bbmatrix%7D1+1%20&amp;%202+3%5C%5C3+2%20&amp;%204+4%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D=%5Cbegin%7Bbmatrix%7D2%20&amp;%205%5C%5C5%20&amp;%208%5Cend%7Bbmatrix%7D%5Cbegin%7Bbmatrix%7Dx_1%20%5C%5C%20x_2%5Cend%7Bbmatrix%7D%20=%20%5Cbegin%7Bbmatrix%7D%202x_1%20+%205x_2%20%5C%5C%205x_1%20+%208x_2%20%5Cend%7Bbmatrix%7D%0A"></p>
-<p>So the gradient of <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D%5ET%20%5Cmathbf%7BA%7D%20%5Cmathbf%7Bx%7D"> is <img src="https://latex.codecogs.com/png.latex?%5Cnabla_x%20f(x)%20=%20%5Cbegin%7Bbmatrix%7D%202x_1%20+%205x_2%20%5C%5C%205x_1%20+%208x_2%20%5Cend%7Bbmatrix%7D">.</p>
-</section>
-<section id="ordinary-least-square" class="level3" data-number="1.4">
-<h3 data-number="1.4" class="anchored" data-anchor-id="ordinary-least-square"><span class="header-section-number">1.4</span> Ordinary Least Square</h3>
-<p>For the <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%201"> vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D">, the <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20k"> matrix <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BX%7D">, the <img src="https://latex.codecogs.com/png.latex?k%20%5Ctimes%201"> vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cbeta%7D">, when <img src="https://latex.codecogs.com/png.latex?L=(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%5ET(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)">, what is <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Cpartial%20L%7D%7B%5Cpartial%20%5Cmathbf%7B%5Cbeta%7D%7D">?</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0AL%20&amp;=%20(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%5ET(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%20%5C%5C%0A&amp;=%20%5Cmathbf%7By%7D%5ET%5Cmathbf%7By%7D%20-%20%5Cmathbf%7By%7D%5ET%5Cmathbf%7BA%7D%5Cmathbf%7B%5Cbeta%7D%20-%20%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%20%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D%20%5C%5C%0A&amp;=%20%5Cmathbf%7By%7D%5ET%5Cmathbf%7By%7D%20-%202%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%20%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D%0A%5Cend%7Baligned%7D%0A"></p>
-<p>Now, we can take the derivative of <img src="https://latex.codecogs.com/png.latex?L"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cbeta%7D">:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Baligned%7D%0A%5Cfrac%7B%5Cpartial%20L%7D%7B%5Cpartial%20%5Cmathbf%7B%5Cbeta%7D%7D%20&amp;=%20%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20%5Cmathbf%7B%5Cbeta%7D%7D%20(%5Cmathbf%7By%7D%5ET%5Cmathbf%7By%7D%20-%202%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%20%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%20%5C%5C%0A&amp;=%20%5Cfrac%7B%5Cpartial%7D%7B%5Cpartial%20%5Cmathbf%7B%5Cbeta%7D%7D%20(-%202%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%20%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%20%5C%5C%0A&amp;=%20-%202%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%202%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D%0A%5Cend%7Baligned%7D%0A"></p>
-<p><img src="https://latex.codecogs.com/png.latex?%5Chat%7B%5Cbeta%7D=(%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D)%5E%7B-1%7D%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D"> is the solution to the optimization problem by taking its derivative with respect to and setting it equal to zero.</p>
-<p>Starting with the expression for <img src="https://latex.codecogs.com/png.latex?L">:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0AL=(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%5ET(%5Cmathbf%7By%7D-%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D)%0A"></p>
-<p>Expanding the quadratic term gives:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0AL=%5Cmathbf%7By%7D%5ET%5Cmathbf%7By%7D-%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D-%5Cmathbf%7By%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D+%5Cmathbf%7B%5Cbeta%7D%5ET%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D%0A"></p>
-<p>Taking the derivative of <img src="https://latex.codecogs.com/png.latex?L"> with respect to <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cbeta%7D"> and setting it to zero gives:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20L%7D%7B%5Cpartial%20%5Cmathbf%7B%5Cbeta%7D%7D%20=%20-2%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%20+%202%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D%20=%200%0A"></p>
-<p>Solving for <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7B%5Cbeta%7D"> gives:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D%5Cmathbf%7B%5Cbeta%7D=%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%0A"></p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7B%5Cbeta%7D=(%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D)%5E%7B-1%7D%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%0A"> Multiplying both sides of the equation by <img src="https://latex.codecogs.com/png.latex?(%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D)"> gives:</p>
-<p><img src="https://latex.codecogs.com/png.latex?%0A(%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D)%5Cmathbf%7B%5Cbeta%7D=%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%0A"></p>
-<p>Therefore, we have verified that <img src="https://latex.codecogs.com/png.latex?%0A%5Chat%7B%5Cbeta%7D=(%5Cmathbf%7BX%7D%5ET%5Cmathbf%7BX%7D)%5E%7B-1%7D%5Cmathbf%7BX%7D%5ET%5Cmathbf%7By%7D%0A"> is the solution to the optimization problem of OLS (Ordinary Least Square).</p>
-
-
-</section>
-</section>
-
- ]]></description>
-  <category>Mathematics</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/derivative_matrix_vector.html</guid>
   <pubDate>Sat, 01 Apr 2023 15:00:00 GMT</pubDate>
 </item>
 </channel>

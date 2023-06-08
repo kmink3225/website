@@ -36,19 +36,12 @@ draft: False
 # Introduction
 
 * 파이썬을 이용해 워크플로우를 만들고 관리할 수 있는 오픈소스 기반 워크플로우 관리 도구
-* 2014년 에어비앤비에서 만든 워크플로우 관리 솔루션
+* 2014년 에어비앤비에서 만든 워크플로우 관리 솔루션으로 현재는 Apache Open Source 재단에서 관리되고 있는 프로젝트
 * Airflow는 워크플로우를 DAG을 사용하여 정의하고, 관리하는 프로그램
     * 자유도가 크고, 확장성이 좋은 워크플로우 관리 프로그램
 
 ## Characteristics
 
-* 파이썬으로 제작된 도구이며 이용자가 워크플로우 생성시에도 파이썬으로 구현해야 함
-* 하나의 워크플로우는 DAG(Directed Acyclic Graph) 이라 부르며 DAG 안에는 1개 이상의 Task가 존재
-* Task간 선후행 연결이 가능하되 순환되지 않고 방향성을 가짐(=DAG)
-* Cron 기반의 스케줄링
-* 모니터링 및 실패 작업에 대한 재실행 기능이 간편
-
-### Example
 
 ```{dot}
 //| label: fig-workflow
@@ -56,14 +49,27 @@ draft: False
 
 graph G {
   layout=neato
-  "REST API를 사용한 데이터를 받아 전처리" -- "기존 DB의 데이터 삭제" ;
-  "기존 DB의 데이터 삭제" -- "전처리한 데이터를 DB에 삽입";
+  "REST API를 사용한 데이터를 받아 전처리" -- "기존 DB의 데이터 삭제 (중복 제거)" ;
+  "기존 DB의 데이터 삭제 (중복 제거)" -- "전처리한 데이터를 DB에 삽입";
 }
 ```
 
-![DAG Simple Example](../../../../../images/airflow/intro_dag-example.PNG){#fig-DAG_example}
 
-In @fig-DAG_example, 초록색 테두리의 node는 성공한 task를 의미하고 분홍색 테두리의 node는 실패한 task를 의미한다. 위의 그림에는 없지만 회색 테두리는 queue (준비) 상태를 의미한다. Airflow에는 DAG이 일련의 task로 구성되어 있기 때문에 실행 상태도 성공, 실패 및 준비 상태같은 여러 종류가 있다. 나머지 상태는 뒷 부분에서 차차 다뤄보기로 한다.
+* 파이썬으로 제작된 도구이며 이용자가 워크플로우 생성시에도 파이썬으로 구현해야 함
+* 하나의 워크플로우는 DAG(Directed Acyclic Graph) 이라 부르며 DAG 안에는 1개 이상의 Task가 존재
+  * 예를 들어, REST API로부터 데이터를 내려 받아 DB에 insert하려는 과제를 수행하기 위해 @fig-workflow 와 같은 단계들이 필요하다. 
+  * 각 각의 단계를 task라 하고 각 각 선/후행 단계가 있다. (1번 task $\rightarrow$ 2번 task $\rightarrow$ 3번 task)
+  * 이 tasks의 집합을 DAG이라고 한다.
+  * Task간 선후행 연결이 가능하되 순환되지 않고 방향성을 가짐(=DAG)
+* Cron 기반의 스케줄링
+  * Linux에서 사용되는 스케쥴링으로 task들이 시작되어야 하는 시작 시간이나 주기를 설정
+* 모니터링 및 실패 작업에 대한 재실행 기능이 간편
+
+![DAG Simple Example](../../../../../images/airflow/intro_dag-example.PNG){#fig-DAG_example}  
+
+  * In @fig-DAG_example, 초록색 테두리의 node는 성공한 task를 의미하고 분홍색 테두리의 node는 실패한 task를 의미한다. 위의 그림에는 없지만 회색 테두리는 queue (준비) 상태를 의미한다. Airflow에는 DAG이 일련의 task로 구성되어 있기 때문에 실행 상태도 성공, 실패 및 준비 상태같은 여러 종류가 있다. 나머지 상태는 뒷 부분에서 차차 다뤄보기로 한다.
+
+![Task Status](../../../../../images/airflow/task-status.PNG)
 
 
 ## Motivation
@@ -79,9 +85,12 @@ In @fig-DAG_example, 초록색 테두리의 node는 성공한 task를 의미하�
 [Airflow Figure Reference: Airflow vs. Luigi vs. Argo vs. MLFlow vs. KubeFlow by Markus Schmitt](https://towardsdatascience.com/airflow-vs-luigi-vs-argo-vs-mlflow-vs-kubeflow-b3785dd1ed0c)
 :::
 
+* Maturity: 성숙도로서 github에서 얼마나 많은 사람들이 관리하고 있는지 즉 community의 활성도를 나타내는 지표. 유료 서비스의 경우 user 가 제작사에게 패치를 요청할 수 있지만 open source에 경우 제작사가 없어 community의 활성도가 중요하다.
+* Popularity: github starts의 개수
+* Simplicity: workflow를 얼마나 쉽게 사용할 수 있는지에 대한 난이도로 airflow는 사용하기에 어려운 난이도를 보여준다.
+* Breadth: 확장성. 즉 얼마나 customizing할 수 있는지 보여주는 척도
+
 @fig-comparison 을 보면, @fig-workflowDemand 에서 볼수 있듯이 최근 들어 airflow의 인기가 급증하는 것을 볼 수 있다. @fig-workflowComputation 에서 그 이유를 짐작할 수 있는데 airflow가 simplicity가 C 사용하기는 어렵지만 구현할 수 있는 폭 breadth가 높다 (Breadth: A). 즉, 다른 workflows에 비해 복잡한 코딩을 요구하는 만큼 그 자유도가 높다는 것을 짐작할 수 있다.
-
-
 
 ## Strength
 

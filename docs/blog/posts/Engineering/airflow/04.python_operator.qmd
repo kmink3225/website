@@ -1,0 +1,117 @@
+---
+title: "Python Operator"
+subtitle: DAG Creation, Bash Operator, Task Performance Subject, 
+description: |
+  template
+categories:
+  - Engineering
+author: Kwangmin Kim
+date: 05/01/2023
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    toc: true
+    number-sections: true
+comments: 
+  utterances: 
+    repo: ./docs/comments
+draft: False
+---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+
+# Python Operator
+
+* import libraries
+    * `from {package name} import {operator or class name}` $\rightarrow$ `from airflow.operators.python import PythonOperator`
+* 정의된 파이썬 함수를 실행시키는 오퍼레이터
+* 가장 많이 쓰이는 오퍼레이터 
+
+## Python Operator Types
+
+|Package|Operator|Importance|Description|
+|:-:|:--:|:-:|-------------|
+|airflow.operators.python|PythonOperator|***|어떤 파이썬함수를실행시키기 위한오퍼레이터|
+||BranchPythonOperator|*|파이썬 함수 실행 결과에 따라 task를 선택적으로 실행시킬 때 사용되는 오퍼레이터|
+||ShortCircuitOperator||파이썬 함수 실행 결과에 따라 후행 Task를 실행하지 않고 종료시킬 수 있는 오퍼레이터|
+||PythonVirtualenvOperator||파이썬 가상환경 생성후 Job 수행하고 마무리되면 가상환경을 삭제해주는 오퍼레이터|
+||ExternalPythonOperator||기존에 존재하는 파이썬가상환경에서 Job 수행하게 하는 오퍼레이터|
+
+# Import Python External Module
+
+## Python Module Path
+
+* `from airflow.operators.python import PythonOperator`
+    * Airflow 폴더 아래 operators 폴더 아래 python 파일 아래에서 PythonOperator 클래스를 호출하라는 의미
+* python이 경로 찾는 방식을 알아놔야 함
+    * dag에서 우리가 만든 외부 함수를 import 해와야 하는데
+    * import 경로를 python이 찾을 수 있도록 그 문법에 맞게 작성해야함
+        1. 파이썬은 sys.path 변수에서 모듈의 위치를 검색
+
+![Python의 sys.path를 이용한 모듈 검색](../.././../../../images/airflow/python-path-search.PNG)
+
+        2. sys.path 에 값을 추가하는 방법
+            1. 명시적으로 추가 (ex: sys.path.append(‘/home/hjkim’) )
+            2. OS 환경변수 PYTHONPATH 에 값을 추가
+    * Airflow는 자동적으로 dags 폴더와 plugins 폴더를 sys.path에 추가함
+        * (컨테이너에서 airflow info 명령을 수행해보자)
+
+![Airflow Path Info](../../../../../images/airflow/container-airflow-info.PNG)
+
+
+## plugins directory 이용
+
+* plugins 폴더 이용하기
+
+![Airflow plugin Folder](../../../../../images/airflow/plugin-folder.PNG)
+
+
+## Python External Module Execution
+
+
+# Task Decorator
+
+* 데커레이터(Decorator): 장식하다, 꾸미다
+* What: 함수를 장식하다
+* 원래의 함수를 감싸서 (Wrapping) 바깥에 추가 기능을 덧붙이는 방법
+    * 파이썬은 함수 안에 함수를 선언하는 것이 가능하고
+    * 함수의 인자로 함수를 전달하는 것이 가능하며
+    * 함수 자체를 리턴하는 것이 가능하다.
+
+![함수 감싸기](../../../../../images/airflow/function-encompassion.PNG)
+![함수 감싸기2](../../../../../images/airflow/function-encompassion2.PNG)
+![Decorator](../../../../../images/airflow/function-decorator.PNG)
+![Decorator2](../../../../../images/airflow/function-decorator2.PNG)
+![Decorator3](../../../../../images/airflow/function-decorator3.PNG)
+
+* 파이썬 함수 정의만으로 쉽게 Task 생성
+
+:::
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
+
+:::
+
+
+</div>
+
+
+# Go to Blog Content List
+
+[Blog Content List](../../content_list.qmd)

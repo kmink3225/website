@@ -99,6 +99,180 @@ draft: False
 
 * 파이썬 함수 정의만으로 쉽게 Task 생성
 
+# Python Operator with op_args Parameter
+
+## Python Function Parameter
+
+* 일반적인 함수 인자 작성 방법
+```
+def regist(name, sex):
+    print(name)
+    print(sex)
+
+regist('kkm','man')
+```
+* But, 호출하는 로직에서 몇 개의 파라미터를 넘길지 모를 때는?
+* 또는 선택적으로 변수를 받을 수도 있을 때는? (가령 주소, 전화번호)
+
+## Arguement: *arg
+
+```
+def regist(name, sex, *args):
+    print(type(args))
+    country = args[0] if len(args)>=1 else None
+    city = args[1] if len(args)>=2 else None
+
+regist('gdhong','man','korea','seoul')
+```
+
+* `args`로 들어온 값은 tuple 저장된다.
+* `args`에서 값을 꺼낼 때는 인덱스를 이용한다 (ex: `args[0]` , `args[1]`)
+* `args`라는 이름 외 다른 이름으로 받아도 됨 (ex: `some_func(*kk):`)
+
+## Argument: **kwargs
+
+```
+def some_func(**kwargs):
+    print(type(kwargs))
+    print(kwargs)
+    name = kwargs.get('name') or ''
+    country = kwargs.get('country') or ''
+    print(f'name:{name}, country:{country}')
+
+some_func(name=’hjkim’, country=’kr’)
+```
+
+:::{.callout-tip}
+딕셔너리에서 `dict['name']` 시도시 `name` 이라는 키가 없을 때 에러가 발생합니다.
+이 때 `dict.get('name')` 으로 시도하면 `name` 이라는 키가 없을 때 에러나지 않고 `None`이 반환되어 상대적으로 안전합니다.
+`dict.get('name')` or `''` 의 의미는 `name` 이라는 키가 있으면 `value`를 꺼내오고 키가 없으면 빈 문자 열(`''`)을 받는다는 의미합니다.
+:::
+
+## Mixed Usage: *arg & **kwargs
+
+```
+def regist(name, sex, *args, **kwargs):
+    print(name)
+    print(sex)
+    print(args)
+    print(kwargs)
+
+regist('hjkim', 'man', 'korea', 'seoul', phone=010, email='hjkim_sun@naver.com')
+```
+
+## Python Operator op_args Usage
+
+### 함수에 일반 변수만 있을 경우
+
+```
+def regist(name, sex):
+    print(f'이름은 {name}이고 성별은 {sex}입니다')
+
+python_task = PythonOperator(
+    task_id='python_task',
+    python_callable=regist,
+    op_args=['hjkim','man']
+)
+```
+
+### 함수에 일반 변수 + *args도 있을 경우
+
+```
+def regist(name, sex, *args):
+    print(name)
+    print(sex)
+    print(args)
+
+python_task = PythonOperator(
+    task_id='python_task',
+    python_callable=regist,
+    op_args=[‘hjkim’,’man’,’kr’,’seoul’]
+)
+```
+
+### 함수에 *args도 있을 경우
+
+```
+def regist(*args):
+    print(args)
+
+python_task = PythonOperator(
+    task_id='python_task',
+    python_callable=regist,
+    op_args=['hjkim','man','kr','seoul']
+)
+```
+
+### Python Operator op_kwargs Usage
+
+### 함수에 일반 변수만 있을 경우
+
+```
+def regist(name, sex):
+    print(f'이름은 {name}이고 성별은 {sex}입니다')
+
+python_task = PythonOperator(
+    task_id='python_task',
+    python_callable=regist,
+    op_kwargs={'name':'hjkim','sex':'man'}
+)
+```
+
+### 함수에 일반 변수 + *kwargs도 있을 경우
+
+```
+def regist(name, sex, **kwargs):
+    print(name)
+    print(sex)
+    print(kwargs)
+
+python_task = PythonOperator(
+    task_id='python_task',
+    python_callable=regist,
+    op_kwargs={'name':'hjkim','sex':'man',\
+    'country':'kr','city':'seoul'}
+)
+```
+
+### 함수에 *kwargs도 있을 경우
+
+```
+def regist(**kwargs):
+    name=kwargs['name'] or ''
+    sex=kwargs['sex'] or ''
+    country = kwargs['country'] or ''
+    city = kwargs['city'] or ''
+    print(f'name은 {name}이고, \
+        성별은 {sex}이고, \
+        국가는 {country} 이고, \
+        도시는 {city} 입니다.')
+
+python_task = PythonOperator(
+    task_id='python_task',
+    python_callable=regist,
+    op_kwargs={'name':'hjkim','sex':'man',\
+    'country':'kr',city:'seoul'}
+)
+```
+
+### 함수에 *args,*kwargs 모두 있을 경우
+
+```
+def regist(name, sex, *args, **kwargs):
+    print(name)
+    print(sex)
+    print(args)
+    print(kwargs)
+
+python_task_2 = PythonOperator(
+    task_id='python_task_2',
+    python_callable=regist,
+    op_args=['hjkim','man','kr','seoul'],
+    op_kwargs={'phone’:010,'email':'hjkim_sun@naver.com'}
+)
+```
+
+
 :::
 </div>
 

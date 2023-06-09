@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2023-05-01">
 <meta name="description" content="template">
 
-<title>Kwangmin Kim - Python Operator</title>
+<title>Kwangmin Kim - Template Variabler</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -63,8 +63,6 @@ ul.task-list li input[type="checkbox"] {
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="../../../../../styles.css">
 </head>
@@ -142,7 +140,7 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link active" data-scroll-target="#go-to-blog-content-list"><span class="header-section-number">5</span> Go to Blog Content List</a></li>
+  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link active" data-scroll-target="#go-to-blog-content-list"><span class="header-section-number">7</span> Go to Blog Content List</a></li>
   </ul>
 </nav>
     </div>
@@ -151,7 +149,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Python Operator</h1>
+<h1 class="title">Template Variabler</h1>
 <p class="subtitle lead">DAG Creation, Bash Operator, Task Performance Subject,</p>
   <div class="quarto-categories">
     <div class="quarto-category">Engineering</div>
@@ -202,302 +200,323 @@ English
 
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
-<section id="python-operator" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Python Operator</h1>
+<section id="jinja-template" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Jinja Template</h1>
 <ul>
-<li>import libraries
-<ul>
-<li><code>from {package name} import {operator or class name}</code> <span class="math inline">\(\rightarrow\)</span> <code>from airflow.operators.python import PythonOperator</code></li>
-</ul></li>
-<li>정의된 파이썬 함수를 실행시키는 오퍼레이터</li>
-<li>가장 많이 쓰이는 오퍼레이터</li>
+<li>문서(파일)에서 특정 양식으로 작성된 값을 런타임시 실제 값으로 치환해주는 처리 엔진</li>
+<li>템플릿 엔진은 여러 솔루션이 존재하며 그 중 Jinja 템플릿은 파이썬 언어에서 사용하는 엔진</li>
 </ul>
-<section id="python-operator-types" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="python-operator-types"><span class="header-section-number">1.1</span> Python Operator Types</h2>
+<pre><code>from jinja2 import Template
+
+template = Template('my name is {{name}}')
+new_template = template.render('name=hjkim')
+print(new_template)</code></pre>
+<ul>
+<li>Jinja 템플릿, 어디서 쓰이나?
+<ul>
+<li>파이썬 기반 웹 프레임워크인 Flask, Django에서 주로 사용 (주로 HTML 템플릿 저장 후 화면에 보여질 때 실제 값으로 변환해서 출력)</li>
+<li>SQL작성시에도 활용 가능</li>
+</ul></li>
+</ul>
+<section id="airflow에서-사용법" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="airflow에서-사용법"><span class="header-section-number">1.1</span> Airflow에서 사용법</h2>
+<ul>
+<li>오퍼레이터 파라미터 입력시 중괄호 {} 2개를 이용하면 Airflow에서 기본적으로 제공하는 변수들을 치환된 값으로 입력할 수 있음. (ex: 수행 날짜, DAG_ID)
+<ul>
+<li>https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html</li>
+</ul></li>
+<li>모든 오퍼레이터, 모든 파라미터에 Template 변수 적용이 가능한가? No!</li>
+<li>Airflow 문서에서 어떤 파라미터에 Template 변수 적용 가능한지 확인 필요
+<ul>
+<li>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/index.html</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="bashoperator-with-template" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> BashOperator with Template</h1>
+<section id="bashoperator" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="bashoperator"><span class="header-section-number">2.1</span> BashOperator</h2>
+<ul>
+<li>Bash 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?</li>
+<li>파라미터
+<ul>
+<li>bash_command (str)</li>
+<li>env (dict[str, str] | None)</li>
+<li>append_env (bool)</li>
+<li>output_encoding (str)</li>
+<li>skip_exit_code (int)</li>
+<li>cwd (str | None)</li>
+</ul></li>
+<li>https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/bash/index.html</li>
+</ul>
+<pre><code>bash_t1 = BashOperator(
+    task_id='bash_t1',
+    bash_command='echo "End date is {{ data_interval_end }}"'
+)
+bash_t2 = BashOperator(
+    task_id='bash_t2',
+    env={'START_DATE': '{{ data_interval_start | ds}}','END_DATE':'{{ data_interval_end | ds }}'},
+    bash_command='echo "Start date is $START_DATE " &amp;&amp; ''echo "End date is $END_DATE"'
+)
+</code></pre>
+</section>
+</section>
+<section id="airflow-date" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Airflow Date</h1>
+<section id="데이터-추출-예시" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="데이터-추출-예시"><span class="header-section-number">3.1</span> 데이터 추출 예시</h2>
+<ul>
+<li>Daily ETL 처리를 위한 조회 쿼리(2023/02/25 0시 실행)</li>
+<li>example: 등록 테이블</li>
+</ul>
 <table class="table">
-<colgroup>
-<col style="width: 13%">
-<col style="width: 17%">
-<col style="width: 13%">
-<col style="width: 56%">
-</colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: center;">Package</th>
-<th style="text-align: center;">Operator</th>
-<th style="text-align: center;">Importance</th>
+<th>REG_DATE</th>
+<th style="text-align: center;">NAME</th>
+<th style="text-align: center;">ADDRESS</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>2023-02-24 15:34:35</td>
+<td style="text-align: center;">홍길동</td>
+<td style="text-align: center;">Busan</td>
+</tr>
+<tr class="even">
+<td>2023-02-24 19:14:42</td>
+<td style="text-align: center;">김태희</td>
+<td style="text-align: center;">Seoul</td>
+</tr>
+<tr class="odd">
+<td>2023-02-24 23:52:19</td>
+<td style="text-align: center;">조인성</td>
+<td style="text-align: center;">Daejeon</td>
+</tr>
+</tbody>
+</table>
+<pre><code>SELECT NAME, ADDRESS
+FROM TBL_REG
+WHERE REG_DATE BETWEEN TIMESTAMP('2023-02-24 00:00:00')
+AND TIMESTAMP('2023-02-24 23:59:59')</code></pre>
+<p>데이터 관점의 시작일: 2023-02-24 데이터 관점의 종료일: 2023-02-25</p>
+</section>
+<section id="airflow-날짜-template-변수" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="airflow-날짜-template-변수"><span class="header-section-number">3.2</span> Airflow 날짜 Template 변수</h2>
+<ul>
+<li>예시: 일 배치
+<ul>
+<li>ex. 2023-02-24 이전 배치일 (논리적 기준일)
+<ul>
+<li>= data_interval_start</li>
+<li>= dag_run.logical_date</li>
+<li>= ds (yyyy-mm-dd 형식)</li>
+<li>= ts (타임스탬프)</li>
+<li>= execution_date (과거버전)</li>
+</ul></li>
+<li>ex. 2023-02-25 배치일
+<ul>
+<li>= data_interval_end</li>
+<li>=</li>
+<li>=</li>
+<li>=</li>
+<li>= next_execution_date (과거버전)</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="python-operator-with-template" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Python Operator with Template</h1>
+<section id="python-오퍼레이터에서-template-변수-사용" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="python-오퍼레이터에서-template-변수-사용"><span class="header-section-number">4.1</span> Python 오퍼레이터에서 Template 변수 사용</h2>
+<ul>
+<li>Python 오퍼레이터는 어떤 파라미터에 Template을 쓸 수 있는가?</li>
+<li>파라미터
+<ul>
+<li>python_callable</li>
+<li>op_kwargs</li>
+<li>op_args</li>
+<li>templates_dict</li>
+<li>templates_exts</li>
+<li>show_return_value_in_logs</li>
+</ul></li>
+<li>https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html</li>
+</ul>
+<pre><code>def python_function1(start_date, end_date, **kwargs):
+    print(start_date)
+    print(end_date)
+
+python_t1 = PythonOperator(
+    task_id='python_t1',
+    python_callable=python_function,
+    op_kwargs={'start_date':'{{data_interval_start | ds}}', 'end_date':'{{data_interval_end | ds}}'}
+)</code></pre>
+<ul>
+<li>파이썬 오퍼레이터는 **kwargs에 Template 변수들을 자동으로 제공해주고 있음</li>
+</ul>
+<pre><code>@task(task_id='python_t2')
+def python_function2(**kwargs):
+    print(kwargs)
+    print('ds:' + kwargs['ds'])
+    print('ts:' + str(kwargs['ts']))
+    print('data_interval_start:' + str(kwargs['data_interval_start']))
+    print('data_interval_end:' + str(kwargs['data_interval_end']))
+    print('task_instance': + str(kwargs['ti']))
+python_function2()</code></pre>
+</section>
+</section>
+<section id="bash-operator-with-macro" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Bash Operator with Macro</h1>
+<section id="macro-변수의-이해" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="macro-변수의-이해"><span class="header-section-number">5.1</span> Macro 변수의 이해</h2>
+<ul>
+<li>Macro 변수의 필요성</li>
+</ul>
+<pre><code>sql = f'''
+SELECT NAME, ADDRESS
+FROM TBL_REG
+WHERE REG_DATE BETWEEN ?? AND ??
+'''</code></pre>
+<p>DAG 스케줄은 매일 말일에 도는 스케줄인데 BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고 싶은데 어떻게 하지? 예를 들어 배치일이 1월 31일이면 12월 31일부터 1월 30일 까지 배치일이 2월 28일이면 1월 31일부터 2월 27일까지 BETWEEN 이 설정되었으면 좋겠어. DAG 스케줄이 월 단위이니까 Template 변수에서 data_interval_start 값은 한달 전 말일 이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들 지? data_interval_end 에서 하루 뺀 값이 나와야 하는데…</p>
+<ul>
+<li><p>Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음</p>
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Variable</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: center;">airflow.operators.python</td>
-<td style="text-align: center;">PythonOperator</td>
-<td style="text-align: center;">***</td>
-<td>어떤 파이썬함수를실행시키기 위한오퍼레이터</td>
+<td style="text-align: center;">macros.datetime</td>
+<td>The standard lib’s datetime.datetime</td>
 </tr>
 <tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">BranchPythonOperator</td>
-<td style="text-align: center;">*</td>
-<td>파이썬 함수 실행 결과에 따라 task를 선택적으로 실행시킬 때 사용되는 오퍼레이터</td>
+<td style="text-align: center;">macros.timedelta</td>
+<td>The standard lib’s datetime.timedelta</td>
 </tr>
 <tr class="odd">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">ShortCircuitOperator</td>
-<td style="text-align: center;"></td>
-<td>파이썬 함수 실행 결과에 따라 후행 Task를 실행하지 않고 종료시킬 수 있는 오퍼레이터</td>
+<td style="text-align: center;">macros.dateutil</td>
+<td>A reference to the dateutil package</td>
 </tr>
 <tr class="even">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">PythonVirtualenvOperator</td>
-<td style="text-align: center;"></td>
-<td>파이썬 가상환경 생성후 Job 수행하고 마무리되면 가상환경을 삭제해주는 오퍼레이터</td>
+<td style="text-align: center;">macros.time</td>
+<td>The standard lib’s time</td>
 </tr>
 <tr class="odd">
-<td style="text-align: center;"></td>
-<td style="text-align: center;">ExternalPythonOperator</td>
-<td style="text-align: center;"></td>
-<td>기존에 존재하는 파이썬가상환경에서 Job 수행하게 하는 오퍼레이터</td>
+<td style="text-align: center;">macros.uuid</td>
+<td>The standard lib’s uuid</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">macros.random</td>
+<td>The standard lib’s random</td>
 </tr>
 </tbody>
 </table>
-</section>
-</section>
-<section id="import-python-external-module" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Import Python External Module</h1>
-<section id="python-module-path" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="python-module-path"><span class="header-section-number">2.1</span> Python Module Path</h2>
 <ul>
-<li><code>from airflow.operators.python import PythonOperator</code>
-<ul>
-<li>Airflow 폴더 아래 operators 폴더 아래 python 파일 아래에서 PythonOperator 클래스를 호출하라는 의미</li>
+<li>macros.datetime &amp; macros.dateutil: 날짜 연산에 유용한 파이썬 라이브러리</li>
 </ul></li>
-<li>python이 경로 찾는 방식을 알아놔야 함
+<li><p>Macro를 잘 쓰려면 파이썬 datetime 및 dateutil 라이브러리에 익숙해져야 함.</p></li>
+</ul>
+</section>
+<section id="파이썬-datetime-dateutil-라이브러리-이해" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="파이썬-datetime-dateutil-라이브러리-이해"><span class="header-section-number">5.2</span> 파이썬 datetime + dateutil 라이브러리 이해</h2>
+<pre><code>from datetime import datetime
+from dateutil import relativedelta
+
+now = datetime(year=2003, month=3, day=30)
+print('current time:'+str(now))
+print('-------------month operation-------------')
+print(now+relativedelta.relativedelta(month=1)) # 1월로 변경
+print(now.replace(month=1)) # 1월로 변경
+print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기
+print('-------------day operation-------------')
+print(now+relativedelta.relativedelta(day=1)) #1일로 변경
+print(now.replace(day=1)) #1일로 변경
+print(now+relativedelta.relativedelta(days=-1)) #1일 빼기
+print('-------------multiple operations-------------')
+print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기</code></pre>
+</section>
+<section id="bash-오퍼레이터에서-macro-변수-활용하기" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="bash-오퍼레이터에서-macro-변수-활용하기"><span class="header-section-number">5.3</span> Bash 오퍼레이터에서 Macro 변수 활용하기</h2>
 <ul>
-<li>dag에서 우리가 만든 외부 함수를 import 해와야 하는데</li>
-<li>import 경로를 python이 찾을 수 있도록 그 문법에 맞게 작성해야함
-<ol type="1">
-<li>파이썬은 sys.path 변수에서 모듈의 위치를 검색</li>
-</ol></li>
+<li>예시1. 매월 말일 수행되는 Dag에서 변수 START_DATE: 전월 말일, 변수 END_DATE: 어제로 env 셋팅하기</li>
+<li>예시2. 매월 둘째주 토요일에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기</li>
+<li>변수는 YYYY-MM-DD 형식으로 나오도록 할 것</li>
+</ul>
+<pre><code>t1 = BashOperator(
+    task_id='t1',
+    env={'START_DATE':''},
+)</code></pre>
+<p>이 부분에 template + macro 활용</p>
+</section>
+</section>
+<section id="python-오퍼레이터-with-macro" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Python 오퍼레이터 with macro</h1>
+<ul>
+<li>어떤 파라미터가 Template 변수를 지원할까?</li>
+<li>패러미터
+<ul>
+<li>python_callable (Callable | None)</li>
+<li>op_kwargs</li>
+<li>op_args</li>
+<li>templates_dict</li>
+<li>templates_exts</li>
+<li>show_return_value_in_logs</li>
 </ul></li>
+<li>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/python/index.html#airflow.operators.python.PythonOperator</li>
 </ul>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../.././../../../images/airflow/python-path-search.PNG" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Python의 sys.path를 이용한 모듈 검색</figcaption>
-</figure>
-</div>
-<pre><code>    2. sys.path 에 값을 추가하는 방법
-        1. 명시적으로 추가 (ex: sys.path.append(‘/home/hjkim’) )
-        2. OS 환경변수 PYTHONPATH 에 값을 추가
-* Airflow는 자동적으로 dags 폴더와 plugins 폴더를 sys.path에 추가함
-    * (컨테이너에서 airflow info 명령을 수행해보자)</code></pre>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../../../../../images/airflow/container-airflow-info.PNG" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Airflow Path Info</figcaption>
-</figure>
-</div>
-</section>
-<section id="plugins-directory-이용" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="plugins-directory-이용"><span class="header-section-number">2.2</span> plugins directory 이용</h2>
+<pre><code>@task(task_id='task_using_macros',
+    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")
++ macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',
+'end_date': '{{
+(data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +
+macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'
+    }
+)
+
+def get_datetime_macro(**kwargs):
+    templates_dict = kwargs.get('templates_dict') or {}
+    if templates_dict:
+    start_date = templates_dict.get('start_date') or 'start_date없음'
+    end_date = templates_dict.get('end_date') or 'end_date없음'
+    print(start_date)
+    print(end_date)</code></pre>
 <ul>
-<li>plugins 폴더 이용하기</li>
+<li>그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 DAG안에서 직접 할 수 있다면?
+<ul>
+<li>macro 사용</li>
 </ul>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../../../../../images/airflow/plugin-folder.PNG" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Airflow plugin Folder</figcaption>
-</figure>
-</div>
-</section>
-<section id="python-external-module-execution" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="python-external-module-execution"><span class="header-section-number">2.3</span> Python External Module Execution</h2>
-</section>
-</section>
-<section id="task-decorator" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> Task Decorator</h1>
+<pre><code>@task(task_id='task_using_macros',
+    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',
+    'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +
+    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'
+    }
+)
+
+def get_datetime_macro(**kwargs):
+    templates_dict = kwargs.get('templates_dict') or {}
+    if templates_dict:
+        start_date = templates_dict.get('start_date') or 'start_date없음'
+        end_date = templates_dict.get('end_date') or 'end_date없음'
+        print(start_date)
+        print(end_date)
+
+@task(task_id='task_direct_calc')
+def get_datetime_calc(**kwargs):
+    from dateutil.relativedelta import relativedelta
+    data_interval_end = kwargs['data_interval_end']</code></pre>
 <ul>
-<li>데커레이터(Decorator): 장식하다, 꾸미다</li>
-<li>What: 함수를 장식하다</li>
-<li>원래의 함수를 감싸서 (Wrapping) 바깥에 추가 기능을 덧붙이는 방법
-<ul>
-<li>파이썬은 함수 안에 함수를 선언하는 것이 가능하고</li>
-<li>함수의 인자로 함수를 전달하는 것이 가능하며</li>
-<li>함수 자체를 리턴하는 것이 가능하다.</li>
-</ul></li>
+<li>직접 연산</li>
 </ul>
-<p><img src="../../../../../images/airflow/function-encompassion.PNG" class="img-fluid" alt="함수 감싸기"> <img src="../../../../../images/airflow/function-encompassion2.PNG" class="img-fluid" alt="함수 감싸기2"> <img src="../../../../../images/airflow/function-decorator.PNG" class="img-fluid" alt="Decorator"> <img src="../../../../../images/airflow/function-decorator2.PNG" class="img-fluid" alt="Decorator2"> <img src="../../../../../images/airflow/function-decorator3.PNG" class="img-fluid" alt="Decorator3"></p>
-<ul>
-<li>파이썬 함수 정의만으로 쉽게 Task 생성</li>
+<pre><code>prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)
+prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)
+print(prev_month_day_first.strftime('%Y-%m-%d'))
+print(prev_month_day_last.strftime('%Y-%m-%d'))</code></pre></li>
 </ul>
-</section>
-<section id="python-operator-with-op_args-parameter" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Python Operator with op_args Parameter</h1>
-<section id="python-function-parameter" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="python-function-parameter"><span class="header-section-number">4.1</span> Python Function Parameter</h2>
-<ul>
-<li>일반적인 함수 인자 작성 방법</li>
-</ul>
-<pre><code>def regist(name, sex):
-    print(name)
-    print(sex)
-
-regist('kkm','man')</code></pre>
-<ul>
-<li>But, 호출하는 로직에서 몇 개의 파라미터를 넘길지 모를 때는?</li>
-<li>또는 선택적으로 변수를 받을 수도 있을 때는? (가령 주소, 전화번호)</li>
-</ul>
-</section>
-<section id="arguement-arg" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="arguement-arg"><span class="header-section-number">4.2</span> Arguement: *arg</h2>
-<pre><code>def regist(name, sex, *args):
-    print(type(args))
-    country = args[0] if len(args)&gt;=1 else None
-    city = args[1] if len(args)&gt;=2 else None
-
-regist('gdhong','man','korea','seoul')</code></pre>
-<ul>
-<li><code>args</code>로 들어온 값은 tuple 저장된다.</li>
-<li><code>args</code>에서 값을 꺼낼 때는 인덱스를 이용한다 (ex: <code>args[0]</code> , <code>args[1]</code>)</li>
-<li><code>args</code>라는 이름 외 다른 이름으로 받아도 됨 (ex: <code>some_func(*kk):</code>)</li>
-</ul>
-</section>
-<section id="argument-kwargs" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="argument-kwargs"><span class="header-section-number">4.3</span> Argument: **kwargs</h2>
-<pre><code>def some_func(**kwargs):
-    print(type(kwargs))
-    print(kwargs)
-    name = kwargs.get('name') or ''
-    country = kwargs.get('country') or ''
-    print(f'name:{name}, country:{country}')
-
-some_func(name=’hjkim’, country=’kr’)</code></pre>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Tip
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>딕셔너리에서 <code>dict['name']</code> 시도시 <code>name</code> 이라는 키가 없을 때 에러가 발생합니다. 이 때 <code>dict.get('name')</code> 으로 시도하면 <code>name</code> 이라는 키가 없을 때 에러나지 않고 <code>None</code>이 반환되어 상대적으로 안전합니다. <code>dict.get('name')</code> or <code>''</code> 의 의미는 <code>name</code> 이라는 키가 있으면 <code>value</code>를 꺼내오고 키가 없으면 빈 문자 열(<code>''</code>)을 받는다는 의미합니다.</p>
-</div>
-</div>
-</section>
-<section id="mixed-usage-arg-kwargs" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="mixed-usage-arg-kwargs"><span class="header-section-number">4.4</span> Mixed Usage: *arg &amp; **kwargs</h2>
-<pre><code>def regist(name, sex, *args, **kwargs):
-    print(name)
-    print(sex)
-    print(args)
-    print(kwargs)
-
-regist('hjkim', 'man', 'korea', 'seoul', phone=010, email='hjkim_sun@naver.com')</code></pre>
-</section>
-<section id="python-operator-op_args-usage" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="python-operator-op_args-usage"><span class="header-section-number">4.5</span> Python Operator op_args Usage</h2>
-<section id="함수에-일반-변수만-있을-경우" class="level3" data-number="4.5.1">
-<h3 data-number="4.5.1" class="anchored" data-anchor-id="함수에-일반-변수만-있을-경우"><span class="header-section-number">4.5.1</span> 함수에 일반 변수만 있을 경우</h3>
-<pre><code>def regist(name, sex):
-    print(f'이름은 {name}이고 성별은 {sex}입니다')
-
-python_task = PythonOperator(
-    task_id='python_task',
-    python_callable=regist,
-    op_args=['hjkim','man']
-)</code></pre>
-</section>
-<section id="함수에-일반-변수-args도-있을-경우" class="level3" data-number="4.5.2">
-<h3 data-number="4.5.2" class="anchored" data-anchor-id="함수에-일반-변수-args도-있을-경우"><span class="header-section-number">4.5.2</span> 함수에 일반 변수 + *args도 있을 경우</h3>
-<pre><code>def regist(name, sex, *args):
-    print(name)
-    print(sex)
-    print(args)
-
-python_task = PythonOperator(
-    task_id='python_task',
-    python_callable=regist,
-    op_args=[‘hjkim’,’man’,’kr’,’seoul’]
-)</code></pre>
-</section>
-<section id="함수에-args도-있을-경우" class="level3" data-number="4.5.3">
-<h3 data-number="4.5.3" class="anchored" data-anchor-id="함수에-args도-있을-경우"><span class="header-section-number">4.5.3</span> 함수에 *args도 있을 경우</h3>
-<pre><code>def regist(*args):
-    print(args)
-
-python_task = PythonOperator(
-    task_id='python_task',
-    python_callable=regist,
-    op_args=['hjkim','man','kr','seoul']
-)</code></pre>
-</section>
-<section id="python-operator-op_kwargs-usage" class="level3" data-number="4.5.4">
-<h3 data-number="4.5.4" class="anchored" data-anchor-id="python-operator-op_kwargs-usage"><span class="header-section-number">4.5.4</span> Python Operator op_kwargs Usage</h3>
-</section>
-<section id="함수에-일반-변수만-있을-경우-1" class="level3" data-number="4.5.5">
-<h3 data-number="4.5.5" class="anchored" data-anchor-id="함수에-일반-변수만-있을-경우-1"><span class="header-section-number">4.5.5</span> 함수에 일반 변수만 있을 경우</h3>
-<pre><code>def regist(name, sex):
-    print(f'이름은 {name}이고 성별은 {sex}입니다')
-
-python_task = PythonOperator(
-    task_id='python_task',
-    python_callable=regist,
-    op_kwargs={'name':'hjkim','sex':'man'}
-)</code></pre>
-</section>
-<section id="함수에-일반-변수-kwargs도-있을-경우" class="level3" data-number="4.5.6">
-<h3 data-number="4.5.6" class="anchored" data-anchor-id="함수에-일반-변수-kwargs도-있을-경우"><span class="header-section-number">4.5.6</span> 함수에 일반 변수 + *kwargs도 있을 경우</h3>
-<pre><code>def regist(name, sex, **kwargs):
-    print(name)
-    print(sex)
-    print(kwargs)
-
-python_task = PythonOperator(
-    task_id='python_task',
-    python_callable=regist,
-    op_kwargs={'name':'hjkim','sex':'man',\
-    'country':'kr','city':'seoul'}
-)</code></pre>
-</section>
-<section id="함수에-kwargs도-있을-경우" class="level3" data-number="4.5.7">
-<h3 data-number="4.5.7" class="anchored" data-anchor-id="함수에-kwargs도-있을-경우"><span class="header-section-number">4.5.7</span> 함수에 *kwargs도 있을 경우</h3>
-<pre><code>def regist(**kwargs):
-    name=kwargs['name'] or ''
-    sex=kwargs['sex'] or ''
-    country = kwargs['country'] or ''
-    city = kwargs['city'] or ''
-    print(f'name은 {name}이고, \
-        성별은 {sex}이고, \
-        국가는 {country} 이고, \
-        도시는 {city} 입니다.')
-
-python_task = PythonOperator(
-    task_id='python_task',
-    python_callable=regist,
-    op_kwargs={'name':'hjkim','sex':'man',\
-    'country':'kr',city:'seoul'}
-)</code></pre>
-</section>
-<section id="함수에-argskwargs-모두-있을-경우" class="level3" data-number="4.5.8">
-<h3 data-number="4.5.8" class="anchored" data-anchor-id="함수에-argskwargs-모두-있을-경우"><span class="header-section-number">4.5.8</span> 함수에 <em>args,</em>kwargs 모두 있을 경우</h3>
-<pre><code>def regist(name, sex, *args, **kwargs):
-    print(name)
-    print(sex)
-    print(args)
-    print(kwargs)
-
-python_task_2 = PythonOperator(
-    task_id='python_task_2',
-    python_callable=regist,
-    op_args=['hjkim','man','kr','seoul'],
-    op_kwargs={'phone’:010,'email':'hjkim_sun@naver.com'}
-)</code></pre>
-</section>
-</section>
 </section>
 </div>
 </div>
@@ -506,8 +525,8 @@ python_task_2 = PythonOperator(
 
 </div>
 </div>
-<section id="go-to-blog-content-list" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Go to Blog Content List</h1>
+<section id="go-to-blog-content-list" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Go to Blog Content List</h1>
 <p><a href="../../../../../docs/blog/posts/content_list.html">Blog Content List</a></p>
 
 

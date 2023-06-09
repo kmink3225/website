@@ -1,5 +1,5 @@
 ---
-title: "Operator Baisc"
+title: "Operator Baisc (Bash Operator)"
 subtitle: DAG Creation, Bash Operator, Task Performance Subject, 
 description: |
   template
@@ -57,41 +57,146 @@ digraph G {
 }
 ```
 
-* 오퍼레이터
-  * 특정 행위를 할 수 있는 기능을 모아 놓은 클래스, 설계도
+* workflow = DAG
+* Opeartor
+  * 특정 행위를 할 수 있는 기능을 모아 놓은 클래스 또는 설계도
 * Task
-  * 오퍼레이터에서 객체화(인스턴스화)되어 DAG에서 실행 가능한 오브젝트
-* Bash 오퍼레이터
-  * 쉘 스크립트 명령을 수행하는 오퍼레이터
+  * operator 객체화(instantiation)되어 DAG에서 실행 가능한 object
+  * 방향성을 갖고 순환되지 않음 (DAG)
+* Bash Operator
+  * Linux에서 shell script 명령을 수행하는 operator
+* Python Operator
+  * python 함수를 실행하는 operator
+* S3 Operator
+  * AWS의 S3 solution (object storage)을 control할 수 있는 operator
+* GCS Operator
+  * GCP의 GCS solution (object storage)을 control할 수 있는 operator
+* operators을 사용하여 dags을 작성하여 git을 통해 배포한다.
+* dag 작성 및 배포
+
+  ```markdown
+    from __future__ import annotations
+
+    import datetime # python에는 datatime이라는 data type이 있음
+    import pendulum # datetime data type을 처리하는 library
+
+    from airflow import DAG
+    from airflow.operators.bash import BashOperator
+    from airflow.operators.empty import EmptyOperator
+
+    with DAG(
+        dag_id="dags_bash_operator", 
+        # airflow service web 상에서 보여지는 이름, python file명과는 무관하지만 
+        # 실무에서는 일반적으로 python 파일명과 dag_id는 일치시키는 것이 다수의 dags 관리에 편리하다.
+        schedule="0 0 * * *", # "분 시 일 월 요일", cron schedule
+        start_date=pendulum.datetime(2023, 6, 9, tz="Asia/Seoul"), #dags이 언제 실행될지 설정
+        # UTC: 세계 표준시로 한국 보다 9시간이 느림. Asia/Seoul로 변경
+        catchup=False, # start_date를 현재보다 과거로 설정하게 될 경우 
+        # catchup=True면 과거 부터 현재까지 소급해서 실행. 
+        # 시간 순서대로 실행하는게 아니라 병렬로 한번에 실행하기 때문에 메모리를 많이 잡아먹을 수 있음. 
+        # 그래서 보통 False로 처리. catchup=False면 현재부터만 실행
+        # dagrun_timeout=datetime.timedelta(minutes=60), # dag이 60분 이상 구동시 실패가 되도록 설정
+        # tags=["example", "example2"], #airflow service web browser상 dag의 tag를 의미
+        ## dags 이 수 백개가 될 때 tag로 filtering 하면 용이함 
+        # params={"example_key": "example_value"}, # as dag: 이하 tasks를 정의할 때, 
+        ## tasks에 공통 passing parameters가 있을 때 씀
+    ) as dag:
+        # [START howto_operator_bash]
+        bash_task1 = BashOperator(
+            task_id="bash_task1", # airflow web service의 dag graph에 표시될 task명
+            # task역시 task object name과 task_id를 일치시키는 것이 좋음
+            bash_command="echo this task works well!",
+        )
+        # [END howto_operator_bash]
+        bash_task2 = BashOperator(
+            task_id="bash_task2", 
+            bash_command="echo $HOSTNAME", #$HOSTNAME: HOSTNAME 환경변수 호출
+            # WSL terminal 이름이 출력된다.
+        )
+        bash_task1 >> bash_task2 # 수행될 tasks의 관계 설정
+  ```
+
+* 배포된 dags을 airflow containers과 연결 시키기 위해 `docker-compose.yaml` 실행
+  * `vi docker-compose.yaml` 실행 후 `docker-compose.yaml` 안에서 `Volumns` 항목이 wsl의 directory와 container directory를 연결(mount)해주는 요소
+   ```markdown
+   Volumes
+     - ${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags
+     - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
+     - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
+     - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
+   ```
+  * 위와 같이 Volumns 항목이 뜨는데 `:`을 기준으로 왼쪽이 WSL directories(volumns), 오른쪽이 Docker container directories(volumns)
+  * 다른 WSL창을 열어 `echo ${AIRFLOW_PROJ_DIR:-.}` 실행하면 `AIRFLOW_PROJ_DIR`에 값이 없기 때문에 `.` 출력됨
+    * `AIRFLOW_PROJ_DIR:-.` : shell script문법으로 `AIRFLOW_PROJ_DIR`에 값이 있으면 출력하고 없으면 `.`을 출력하라는 의미
+    * `echo AIRFLOW_PROJ_DIR`: 아무것도 출력 안됨
+  * `${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags`는 `./dags`를 `/opt/airflow/dags`에 연결시키라는 의미
+    * `./`: `docker-compose.yaml`이 위치하고있는 현재 directory를 의미 
+  * 배포된 dags를 자동으로 docker container에 연동시키기 위해 `Volumns`을 다음과 같이 편집
+    ```markdown
+      volumes:
+        - ${AIRFLOW_PROJ_DIR:-.}/airflow/dags:/opt/airflow/dags
+        - ${AIRFLOW_PROJ_DIR:-.}/airflow/logs:/opt/airflow/logs
+        - ${AIRFLOW_PROJ_DIR:-.}/airflow/config:/opt/airflow/config
+        - ${AIRFLOW_PROJ_DIR:-.}/airflow//plugins:/opt/airflow/plugins
+    ```
+  * 새로운 dags 배포할 때마다 airflow service 껐다가 켜야 한다.
+* airflow service 껐다 켜서 잘 반영됐는지 확인
+  * docker가 설치된 wsl directory이동 먼저 할 것
+  * airflow service 끄기: `sudo docker compose down`
+  * airflow service 켜기: `sudo docker compose up`
+* airflow web service상에서 dags이 잘 mount 되었는지 확인
+  * 기존적으로 dags은 airflow web service상에 올라올 때 unpaused 상태로 올라옴
+  * 하지만 schedule이 걸려있는 dags은 unpaused상태에서 한번 돌고 올라옴
+  * dag을 클릭하면 긴 녹색 막대기를 누르면 수행된 schedule내용이 나오고
+  * 각 각의 task에 대응되는 녹색 네모 박스를 누르면 결과들을 조회할 수 있다.
+    * 네모 박스를 누르고 log를 누르면 결과가 자세히 조회된다.
+    * `bash_task2` 의 `bash_command="echo $HOSTNAME"` 의 결과값으로 조회된 값은 docker worker container id 를 의미한다. 
+      * 하지만 본인의 경우, airflow web service에서 `794f3b56824a`가 출력된 것을 확인했고
+      * `sudo docker ps`로 container ID를 확인한 결과 `airflow-airflow-worker-1` 의 `32092b201878` 로 달랐다.
+    * 실제 worker container로 들어가 `echo $HOSTNAME` 실행하면 worker container id 출력되어야 함
+      * worker container로 들어가기: `sudo docker exec -it container-name bash` $\rightarrow$ 본인의 경우: `sudo docker exec -it airflow-airflow-worker-1 bash` 이 과정이 dag을 돌린과정과 같은 mechanism임
+      * `echo $HOSTNAME` 실행 : `32092b201878` 출력됨 (어쨌든 airflow web service상의 `794f3b56824a`와 달랐음)
+      * `sudo docker exec -it 794f3b56824a bash` 결과 Error response from daemon: No such container: 794f3b56824a 라는 에러메세지 뜸
+    * 즉, worker container가 실제 `task`를 처리하는 것을 볼 수 있었다.
 
 ## Subject of Task Performance
 
 ```{dot}
+
 digraph G {
   compound=true;
-  rankdir=LR;
+  rankdir=TB;
   subgraph cluster0 {
     rankdir=TB;
     Scheduler [shape=box];
     DAG_file [shape=box];
-    Worker [shape=box];
+    Worker [shape=box, style=filled, fillcolor=yellow];
+    Queue [shape=box];
     Meta_DB [shape=box];
     label= "Task Process";
   }
 
   Scheduler -> DAG_file [label="1.parsing"];
   Scheduler -> Meta_DB [label="2.save information"];
-  Scheduler -> Worker [label="4.start instruction"];
+  Scheduler -> Scheduler [label="3.check start time"];
+  Scheduler -> Queue;
+  Queue -> Worker [label="4.start instruction"];
   DAG_file -> Worker [label="5.Processing after reading"];
   Worker -> Meta_DB [label="6.Results update"];
 }
 ```
 
-* 스케줄러
-  * DAG Parsing 후 DB에 정보저장
-  * DAG 시작시간 결정
-* 워커
-  * 실제 작업 수행
+* scheduler
+  * airflow에서 brain역할 
+    1. parsing: a user가 만든 dag 파일을 읽어들여 문법적 오류 여부와 tasks 간의 관계를 분석
+    2. save information: DAG Parsing 후 DB에 정보저장 (tasks, task relations, schedule, etc.)
+    3. check start time: DAG 시작 실행 시간 확인
+    4. start instruction: DAG 시작 실행 시간마다 worker에 실행 지시
+      * scheduler와 workder 사이에 queue 상태가 있을 수 있음
+* worker (Worker Container)
+  * airflow 처리 주체 (subject)
+    5. Processing after reading: scheduler가 시킨 DAG 파일을 찾아 읽고 처리
+    6. Results update: 처리가 되기 전/후를 Meta DB에 update함
 
 # Cron Schedule
 
@@ -102,7 +207,7 @@ digraph G {
 `{minutes} {hour} {day} {month} {weekday}`
 
 |Number|Special Characters|Description|
-|:-:|:-:|-------------|
+|:-:|:----:|-------------|
 |1|*|모든 값 |
 |2|-|범위 지정|
 |3|,|여러 값 지정|
@@ -158,23 +263,21 @@ digraph G {
   * 컨테이너 안에 파일을 만들어주면 컨테이너 재시작시 파일이 사라진다.
 * 해결방법
 
-![](../../../../../images/airflow/worker-container-shell-operation.PNG)
+  ![](../../../../../images/airflow/worker-container-shell-operation.PNG)
 
   * 빨간 네모박스의 plugins에 shell script를 저장한다.
 
 # Email Operator 
 
 * 이메일 전송해주는 오퍼레이터
-
-```
-email_t1 = EmailOperator(
-  task_id='email_t1',
-  to='hjkim_sun@naver.com',
-  subject='Airflow 처리결과',
-  html_content=’정상 처리되었습니다.<br/>’
-)
-```
-
+  ```markdown
+  email_t1 = EmailOperator(
+    task_id='email_t1',
+    to='hjkim_sun@naver.com',
+    subject='Airflow 처리결과',
+    html_content='정상 처리되었습니다.'
+  )
+  ```
 * 이메일 전송을 위해 사전 셋팅 작업 필요
 
 ## Presetting 
@@ -188,14 +291,13 @@ email_t1 = EmailOperator(
 ### Airflow
 
 * Docker-compose.yaml 편집 (environment 항목에 추가)
-
-```
-AIRFLOW__SMTP__SMTP_HOST: 'smtp.gmail.com'
-AIRFLOW__SMTP__SMTP_USER: '{gmail 계정}'
-AIRFLOW__SMTP__SMTP_PASSWORD: '{앱비밀번호}'
-AIRFLOW__SMTP__SMTP_PORT: 587
-AIRFLOW__SMTP__SMTP_MAIL_FROM: '{gmail 계정}'
-```
+  ```markdown
+  AIRFLOW__SMTP__SMTP_HOST: 'smtp.gmail.com'
+  AIRFLOW__SMTP__SMTP_USER: '{gmail 계정}'
+  AIRFLOW__SMTP__SMTP_PASSWORD: '{앱비밀번호}'
+  AIRFLOW__SMTP__SMTP_PORT: 587
+  AIRFLOW__SMTP__SMTP_MAIL_FROM: '{gmail 계정}'
+  ```
 
 :::
 </div>

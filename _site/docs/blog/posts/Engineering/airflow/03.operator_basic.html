@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2023-05-01">
 <meta name="description" content="template">
 
-<title>Kwangmin Kim - Operator Baisc</title>
+<title>Kwangmin Kim - Operator Baisc (Bash Operator)</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,6 +22,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -151,7 +185,7 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Operator Baisc</h1>
+<h1 class="title">Operator Baisc (Bash Operator)</h1>
 <p class="subtitle lead">DAG Creation, Bash Operator, Task Performance Subject,</p>
   <div class="quarto-categories">
     <div class="quarto-category">Engineering</div>
@@ -274,17 +308,128 @@ GCS_Operator-&gt;Task4
 </div>
 </div>
 <ul>
-<li>오퍼레이터
+<li><p>workflow = DAG</p></li>
+<li><p>Opeartor</p>
 <ul>
-<li>특정 행위를 할 수 있는 기능을 모아 놓은 클래스, 설계도</li>
+<li>특정 행위를 할 수 있는 기능을 모아 놓은 클래스 또는 설계도</li>
 </ul></li>
-<li>Task
+<li><p>Task</p>
 <ul>
-<li>오퍼레이터에서 객체화(인스턴스화)되어 DAG에서 실행 가능한 오브젝트</li>
+<li>operator 객체화(instantiation)되어 DAG에서 실행 가능한 object</li>
+<li>방향성을 갖고 순환되지 않음 (DAG)</li>
 </ul></li>
-<li>Bash 오퍼레이터
+<li><p>Bash Operator</p>
 <ul>
-<li>쉘 스크립트 명령을 수행하는 오퍼레이터</li>
+<li>Linux에서 shell script 명령을 수행하는 operator</li>
+</ul></li>
+<li><p>Python Operator</p>
+<ul>
+<li>python 함수를 실행하는 operator</li>
+</ul></li>
+<li><p>S3 Operator</p>
+<ul>
+<li>AWS의 S3 solution (object storage)을 control할 수 있는 operator</li>
+</ul></li>
+<li><p>GCS Operator</p>
+<ul>
+<li>GCP의 GCS solution (object storage)을 control할 수 있는 operator</li>
+</ul></li>
+<li><p>operators을 사용하여 dags을 작성하여 git을 통해 배포한다.</p></li>
+<li><p>dag 작성 및 배포</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>  from __future__ import annotations</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  import datetime # python에는 datatime이라는 data type이 있음</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  import pendulum # datetime data type을 처리하는 library</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  from airflow import DAG</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  from airflow.operators.bash import BashOperator</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  from airflow.operators.empty import EmptyOperator</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  with DAG(</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>      dag_id="dags_bash_operator", </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>      # airflow service web 상에서 보여지는 이름, python file명과는 무관하지만 </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>      # 실무에서는 일반적으로 python 파일명과 dag_id는 일치시키는 것이 다수의 dags 관리에 편리하다.</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>      schedule="0 0 * * *", # "분 시 일 월 요일", cron schedule</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>      start_date=pendulum.datetime(2023, 6, 9, tz="Asia/Seoul"), #dags이 언제 실행될지 설정</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>      # UTC: 세계 표준시로 한국 보다 9시간이 느림. Asia/Seoul로 변경</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>      catchup=False, # start_date를 현재보다 과거로 설정하게 될 경우 </span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>      # catchup=True면 과거 부터 현재까지 소급해서 실행. </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>      # 시간 순서대로 실행하는게 아니라 병렬로 한번에 실행하기 때문에 메모리를 많이 잡아먹을 수 있음. </span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>      # 그래서 보통 False로 처리. catchup=False면 현재부터만 실행</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>      # dagrun_timeout=datetime.timedelta(minutes=60), # dag이 60분 이상 구동시 실패가 되도록 설정</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>      # tags=<span class="co">[</span><span class="ot">"example", "example2"</span><span class="co">]</span>, #airflow service web browser상 dag의 tag를 의미</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>      ## dags 이 수 백개가 될 때 tag로 filtering 하면 용이함 </span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>      # params={"example_key": "example_value"}, # as dag: 이하 tasks를 정의할 때, </span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>      ## tasks에 공통 passing parameters가 있을 때 씀</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  ) as dag:</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>      # <span class="co">[</span><span class="ot">START howto_operator_bash</span><span class="co">]</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>      bash_task1 = BashOperator(</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>          task_id="bash_task1", # airflow web service의 dag graph에 표시될 task명</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>          # task역시 task object name과 task_id를 일치시키는 것이 좋음</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>          bash_command="echo this task works well!",</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>      # <span class="co">[</span><span class="ot">END howto_operator_bash</span><span class="co">]</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>      bash_task2 = BashOperator(</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>          task_id="bash_task2", </span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>          bash_command="echo $HOSTNAME", #$HOSTNAME: HOSTNAME 환경변수 호출</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>          # WSL terminal 이름이 출력된다.</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>      bash_task1 &gt;&gt; bash_task2 # 수행될 tasks의 관계 설정</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>배포된 dags을 airflow containers과 연결 시키기 위해 <code>docker-compose.yaml</code> 실행</p>
+<ul>
+<li><code>vi docker-compose.yaml</code> 실행 후 <code>docker-compose.yaml</code> 안에서 <code>Volumns</code> 항목이 wsl의 directory와 container directory를 연결(mount)해주는 요소</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Volumes</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><p>위와 같이 Volumns 항목이 뜨는데 <code>:</code>을 기준으로 왼쪽이 WSL directories(volumns), 오른쪽이 Docker container directories(volumns)</p></li>
+<li><p>다른 WSL창을 열어 <code>echo ${AIRFLOW_PROJ_DIR:-.}</code> 실행하면 <code>AIRFLOW_PROJ_DIR</code>에 값이 없기 때문에 <code>.</code> 출력됨</p>
+<ul>
+<li><code>AIRFLOW_PROJ_DIR:-.</code> : shell script문법으로 <code>AIRFLOW_PROJ_DIR</code>에 값이 있으면 출력하고 없으면 <code>.</code>을 출력하라는 의미</li>
+<li><code>echo AIRFLOW_PROJ_DIR</code>: 아무것도 출력 안됨</li>
+</ul></li>
+<li><p><code>${AIRFLOW_PROJ_DIR:-.}/dags:/opt/airflow/dags</code>는 <code>./dags</code>를 <code>/opt/airflow/dags</code>에 연결시키라는 의미</p>
+<ul>
+<li><code>./</code>: <code>docker-compose.yaml</code>이 위치하고있는 현재 directory를 의미</li>
+</ul></li>
+<li><p>배포된 dags를 자동으로 docker container에 연동시키기 위해 <code>Volumns</code>을 다음과 같이 편집</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  volumes:</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>${AIRFLOW_PROJ_DIR:-.}/airflow/dags:/opt/airflow/dags</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>${AIRFLOW_PROJ_DIR:-.}/airflow/logs:/opt/airflow/logs</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>${AIRFLOW_PROJ_DIR:-.}/airflow/config:/opt/airflow/config</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>${AIRFLOW_PROJ_DIR:-.}/airflow//plugins:/opt/airflow/plugins</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>새로운 dags 배포할 때마다 airflow service 껐다가 켜야 한다.</p></li>
+</ul></li>
+<li><p>airflow service 껐다 켜서 잘 반영됐는지 확인</p>
+<ul>
+<li>docker가 설치된 wsl directory이동 먼저 할 것</li>
+<li>airflow service 끄기: <code>sudo docker compose down</code></li>
+<li>airflow service 켜기: <code>sudo docker compose up</code></li>
+</ul></li>
+<li><p>airflow web service상에서 dags이 잘 mount 되었는지 확인</p>
+<ul>
+<li>기존적으로 dags은 airflow web service상에 올라올 때 unpaused 상태로 올라옴</li>
+<li>하지만 schedule이 걸려있는 dags은 unpaused상태에서 한번 돌고 올라옴</li>
+<li>dag을 클릭하면 긴 녹색 막대기를 누르면 수행된 schedule내용이 나오고</li>
+<li>각 각의 task에 대응되는 녹색 네모 박스를 누르면 결과들을 조회할 수 있다.
+<ul>
+<li>네모 박스를 누르고 log를 누르면 결과가 자세히 조회된다.</li>
+<li><code>bash_task2</code> 의 <code>bash_command="echo $HOSTNAME"</code> 의 결과값으로 조회된 값은 docker worker container id 를 의미한다.
+<ul>
+<li>하지만 본인의 경우, airflow web service에서 <code>794f3b56824a</code>가 출력된 것을 확인했고</li>
+<li><code>sudo docker ps</code>로 container ID를 확인한 결과 <code>airflow-airflow-worker-1</code> 의 <code>32092b201878</code> 로 달랐다.</li>
+</ul></li>
+<li>실제 worker container로 들어가 <code>echo $HOSTNAME</code> 실행하면 worker container id 출력되어야 함
+<ul>
+<li>worker container로 들어가기: <code>sudo docker exec -it container-name bash</code> <span class="math inline">\(\rightarrow\)</span> 본인의 경우: <code>sudo docker exec -it airflow-airflow-worker-1 bash</code> 이 과정이 dag을 돌린과정과 같은 mechanism임</li>
+<li><code>echo $HOSTNAME</code> 실행 : <code>32092b201878</code> 출력됨 (어쨌든 airflow web service상의 <code>794f3b56824a</code>와 달랐음)</li>
+<li><code>sudo docker exec -it 794f3b56824a bash</code> 결과 Error response from daemon: No such container: 794f3b56824a 라는 에러메세지 뜸</li>
+</ul></li>
+<li>즉, worker container가 실제 <code>task</code>를 처리하는 것을 볼 수 있었다.</li>
+</ul></li>
 </ul></li>
 </ul>
 </section>
@@ -294,66 +439,90 @@ GCS_Operator-&gt;Task4
 <div class="cell-output-display">
 <div>
 <div>
-<svg width="672" height="480" viewbox="0.00 0.00 737.97 174.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
-<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 170)">
+<svg width="672" height="480" viewbox="0.00 0.00 453.00 367.20" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 363.2)">
 <title>
 G
 </title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-170 733.97,-170 733.97,4 -4,4"></polygon> <g id="clust1" class="cluster">
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-363.2 449,-363.2 449,4 -4,4"></polygon> <g id="clust1" class="cluster">
 <title>
 cluster0
 </title>
-<polygon fill="none" stroke="black" points="8,-8 8,-158 721.97,-158 721.97,-8 8,-8"></polygon> <text text-anchor="middle" x="364.99" y="-141.4" font-family="Times,serif" font-size="14.00">Task Process</text> </g> <!-- Scheduler --> <g id="node1" class="node">
+<polygon fill="none" stroke="black" points="8,-8 8,-351.2 437,-351.2 437,-8 8,-8"></polygon> <text text-anchor="middle" x="222.5" y="-334.6" font-family="Times,serif" font-size="14.00">Task Process</text> </g> <!-- Scheduler --> <g id="node1" class="node">
 <title>
 Scheduler
 </title>
-<polygon fill="none" stroke="black" points="87.97,-106 16.01,-106 16.01,-70 87.97,-70 87.97,-106"></polygon> <text text-anchor="middle" x="51.99" y="-83.8" font-family="Times,serif" font-size="14.00">Scheduler</text> </g> <!-- DAG_file --> <g id="node2" class="node">
+<polygon fill="none" stroke="black" points="238.98,-318.4 167.02,-318.4 167.02,-282.4 238.98,-282.4 238.98,-318.4"></polygon> <text text-anchor="middle" x="203" y="-296.2" font-family="Times,serif" font-size="14.00">Scheduler</text> </g> <!-- Scheduler&#45;&gt;Scheduler --> <g id="edge3" class="edge">
+<title>
+Scheduler-&gt;Scheduler
+</title>
+<path fill="none" stroke="black" d="M239.08,-308.61C249.21,-308.25 256.99,-305.51 256.99,-300.4 256.99,-297.2 253.95,-294.94 249.2,-293.6"></path> <polygon fill="black" stroke="black" points="249.47,-290.1 239.08,-292.19 248.5,-297.03 249.47,-290.1"></polygon> <text text-anchor="middle" x="306.55" y="-296.2" font-family="Times,serif" font-size="14.00">3.check start time</text> </g> <!-- DAG_file --> <g id="node2" class="node">
 <title>
 DAG_file
 </title>
-<polygon fill="none" stroke="black" points="260.67,-52 188.7,-52 188.7,-16 260.67,-16 260.67,-52"></polygon> <text text-anchor="middle" x="224.69" y="-29.8" font-family="Times,serif" font-size="14.00">DAG_file</text> </g> <!-- Scheduler&#45;&gt;DAG_file --> <g id="edge1" class="edge">
+<polygon fill="none" stroke="black" points="122.99,-229.6 51.01,-229.6 51.01,-193.6 122.99,-193.6 122.99,-229.6"></polygon> <text text-anchor="middle" x="87" y="-207.4" font-family="Times,serif" font-size="14.00">DAG_file</text> </g> <!-- Scheduler&#45;&gt;DAG_file --> <g id="edge1" class="edge">
 <title>
 Scheduler-&gt;DAG_file
 </title>
-<path fill="none" stroke="black" d="M88.1,-72.85C94.02,-70.5 100.14,-68.19 105.98,-66.2 129.72,-58.11 156.67,-50.61 178.79,-44.89"></path> <polygon fill="black" stroke="black" points="179.75,-48.26 188.58,-42.4 178.02,-41.48 179.75,-48.26"></polygon> <text text-anchor="middle" x="131.84" y="-70.2" font-family="Times,serif" font-size="14.00">1.parsing</text> </g> <!-- Worker --> <g id="node3" class="node">
+<path fill="none" stroke="black" d="M174.11,-282.39C165.32,-276.91 155.74,-270.64 147.29,-264.4 135.6,-255.79 123.34,-245.51 112.95,-236.38"></path> <polygon fill="black" stroke="black" points="115.21,-233.71 105.41,-229.68 110.56,-238.94 115.21,-233.71"></polygon> <text text-anchor="middle" x="172.86" y="-251.8" font-family="Times,serif" font-size="14.00">1.parsing</text> </g> <!-- Queue --> <g id="node4" class="node">
 <title>
-Worker
+Queue
 </title>
-<polygon fill="none" stroke="black" points="514.09,-89 455.59,-89 455.59,-53 514.09,-53 514.09,-89"></polygon> <text text-anchor="middle" x="484.84" y="-66.8" font-family="Times,serif" font-size="14.00">Worker</text> </g> <!-- Scheduler&#45;&gt;Worker --> <g id="edge3" class="edge">
+<polygon fill="none" stroke="black" points="230,-229.6 176,-229.6 176,-193.6 230,-193.6 230,-229.6"></polygon> <text text-anchor="middle" x="203" y="-207.4" font-family="Times,serif" font-size="14.00">Queue</text> </g> <!-- Scheduler&#45;&gt;Queue --> <g id="edge4" class="edge">
 <title>
-Scheduler-&gt;Worker
+Scheduler-&gt;Queue
 </title>
-<path fill="none" stroke="black" d="M88.08,-88.9C155.81,-90.26 309.21,-91.49 437.46,-79 440.02,-78.75 442.66,-78.44 445.31,-78.09"></path> <polygon fill="black" stroke="black" points="446.1,-81.51 455.48,-76.57 445.07,-74.59 446.1,-81.51"></polygon> <text text-anchor="middle" x="224.69" y="-93.2" font-family="Times,serif" font-size="14.00">4.start instruction</text> </g> <!-- Meta_DB --> <g id="node4" class="node">
+<path fill="none" stroke="black" d="M203,-282.25C203,-270.12 203,-253.62 203,-239.72"></path> <polygon fill="black" stroke="black" points="206.5,-239.71 203,-229.71 199.5,-239.71 206.5,-239.71"></polygon> </g> <!-- Meta_DB --> <g id="node5" class="node">
 <title>
 Meta_DB
 </title>
-<polygon fill="none" stroke="black" points="714.08,-107 642.65,-107 642.65,-71 714.08,-71 714.08,-107"></polygon> <text text-anchor="middle" x="678.37" y="-84.8" font-family="Times,serif" font-size="14.00">Meta_DB</text> </g> <!-- Scheduler&#45;&gt;Meta_DB --> <g id="edge2" class="edge">
+<polygon fill="none" stroke="black" points="309.71,-52 238.29,-52 238.29,-16 309.71,-16 309.71,-52"></polygon> <text text-anchor="middle" x="274" y="-29.8" font-family="Times,serif" font-size="14.00">Meta_DB</text> </g> <!-- Scheduler&#45;&gt;Meta_DB --> <g id="edge2" class="edge">
 <title>
 Scheduler-&gt;Meta_DB
 </title>
-<path fill="none" stroke="black" d="M88.2,-96.03C112.61,-101.17 145.94,-107.35 175.69,-110 276.33,-118.95 469.56,-124.87 624.76,-103 627.3,-102.64 629.89,-102.2 632.49,-101.7"></path> <polygon fill="black" stroke="black" points="633.49,-105.07 642.52,-99.53 632,-98.23 633.49,-105.07"></polygon> <text text-anchor="middle" x="364.57" y="-122.2" font-family="Times,serif" font-size="14.00">2.save information</text> </g> <!-- DAG_file&#45;&gt;Worker --> <g id="edge4" class="edge">
+<path fill="none" stroke="black" d="M221.58,-282.05C244.31,-259.7 282.19,-218.59 302,-175.6 321.9,-132.43 339.89,-112.7 319,-70 317.09,-66.1 314.52,-62.51 311.56,-59.23"></path> <polygon fill="black" stroke="black" points="313.76,-56.5 304.09,-52.17 308.95,-61.59 313.76,-56.5"></polygon> <text text-anchor="middle" x="362.49" y="-163" font-family="Times,serif" font-size="14.00">2.save information</text> </g> <!-- Worker --> <g id="node3" class="node">
+<title>
+Worker
+</title>
+<polygon fill="yellow" stroke="black" points="232.25,-140.8 173.75,-140.8 173.75,-104.8 232.25,-104.8 232.25,-140.8"></polygon> <text text-anchor="middle" x="203" y="-118.6" font-family="Times,serif" font-size="14.00">Worker</text> </g> <!-- DAG_file&#45;&gt;Worker --> <g id="edge6" class="edge">
 <title>
 DAG_file-&gt;Worker
 </title>
-<path fill="none" stroke="black" d="M261,-38.1C303.11,-43.12 375.58,-52.22 437.46,-62.2 440.1,-62.63 442.82,-63.09 445.56,-63.56"></path> <polygon fill="black" stroke="black" points="444.97,-67.01 455.43,-65.35 446.22,-60.13 444.97,-67.01"></polygon> <text text-anchor="middle" x="364.57" y="-66.2" font-family="Times,serif" font-size="14.00">5.Processing after reading</text> </g> <!-- Worker&#45;&gt;Meta_DB --> <g id="edge5" class="edge">
+<path fill="none" stroke="black" d="M64.45,-193.49C53.53,-183.12 44.48,-169.82 53.22,-158.8 66.74,-141.76 123.73,-132.23 163.37,-127.56"></path> <polygon fill="black" stroke="black" points="163.99,-131.01 173.54,-126.42 163.21,-124.05 163.99,-131.01"></polygon> <text text-anchor="middle" x="125.89" y="-163" font-family="Times,serif" font-size="14.00">5.Processing after reading</text> </g> <!-- Worker&#45;&gt;Meta_DB --> <g id="edge7" class="edge">
 <title>
 Worker-&gt;Meta_DB
 </title>
-<path fill="none" stroke="black" d="M514.1,-73.66C545.16,-76.58 595.51,-81.31 632.09,-84.74"></path> <polygon fill="black" stroke="black" points="632.2,-88.27 642.49,-85.72 632.86,-81.3 632.2,-88.27"></polygon> <text text-anchor="middle" x="578.49" y="-87.2" font-family="Times,serif" font-size="14.00">6.Results update</text> </g> </g>
+<path fill="none" stroke="black" d="M208.23,-104.72C212.09,-93.99 218.13,-80.28 226.46,-70 229.76,-65.92 233.64,-62.08 237.74,-58.53"></path> <polygon fill="black" stroke="black" points="240.16,-61.08 245.79,-52.11 235.79,-55.61 240.16,-61.08"></polygon> <text text-anchor="middle" x="272.27" y="-74.2" font-family="Times,serif" font-size="14.00">6.Results update</text> </g> <!-- Queue&#45;&gt;Worker --> <g id="edge5" class="edge">
+<title>
+Queue-&gt;Worker
+</title>
+<path fill="none" stroke="black" d="M203,-193.45C203,-181.32 203,-164.82 203,-150.92"></path> <polygon fill="black" stroke="black" points="206.5,-150.91 203,-140.91 199.5,-150.91 206.5,-150.91"></polygon> <text text-anchor="middle" x="251.99" y="-163" font-family="Times,serif" font-size="14.00">4.start instruction</text> </g> </g>
 </svg>
 </div>
 </div>
 </div>
 </div>
 <ul>
-<li>스케줄러
+<li>scheduler
 <ul>
-<li>DAG Parsing 후 DB에 정보저장</li>
-<li>DAG 시작시간 결정</li>
+<li>airflow에서 brain역할
+<ol type="1">
+<li>parsing: a user가 만든 dag 파일을 읽어들여 문법적 오류 여부와 tasks 간의 관계를 분석</li>
+<li>save information: DAG Parsing 후 DB에 정보저장 (tasks, task relations, schedule, etc.)</li>
+<li>check start time: DAG 시작 실행 시간 확인</li>
+<li>start instruction: DAG 시작 실행 시간마다 worker에 실행 지시</li>
+</ol>
+<ul>
+<li>scheduler와 workder 사이에 queue 상태가 있을 수 있음</li>
 </ul></li>
-<li>워커
+</ul></li>
+<li>worker (Worker Container)
 <ul>
-<li>실제 작업 수행</li>
+<li>airflow 처리 주체 (subject)
+<ol start="5" type="1">
+<li>Processing after reading: scheduler가 시킨 DAG 파일을 찾아 읽고 처리</li>
+<li>Results update: 처리가 되기 전/후를 Meta DB에 update함</li>
+</ol></li>
 </ul></li>
 </ul>
 </section>
@@ -368,9 +537,9 @@ Worker-&gt;Meta_DB
 <p><code>{minutes} {hour} {day} {month} {weekday}</code></p>
 <table class="table">
 <colgroup>
-<col style="width: 15%">
-<col style="width: 15%">
-<col style="width: 68%">
+<col style="width: 13%">
+<col style="width: 27%">
+<col style="width: 59%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -537,32 +706,30 @@ Worker-&gt;Meta_DB
 <section id="worker-컨테이너가-쉘-스크립트를-수행하려면" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="worker-컨테이너가-쉘-스크립트를-수행하려면"><span class="header-section-number">4.3</span> Worker 컨테이너가 쉘 스크립트를 수행하려면?</h2>
 <ul>
-<li>문제점
+<li><p>문제점</p>
 <ul>
 <li>컨테이너는 외부의 파일을 인식할 수 없다.</li>
 <li>컨테이너 안에 파일을 만들어주면 컨테이너 재시작시 파일이 사라진다.</li>
 </ul></li>
-<li>해결방법</li>
-</ul>
+<li><p>해결방법</p>
 <p><img src="../../../../../images/airflow/worker-container-shell-operation.PNG" class="img-fluid"></p>
 <ul>
 <li>빨간 네모박스의 plugins에 shell script를 저장한다.</li>
+</ul></li>
 </ul>
 </section>
 </section>
 <section id="email-operator" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> Email Operator</h1>
 <ul>
-<li>이메일 전송해주는 오퍼레이터</li>
-</ul>
-<pre><code>email_t1 = EmailOperator(
-  task_id='email_t1',
-  to='hjkim_sun@naver.com',
-  subject='Airflow 처리결과',
-  html_content=’정상 처리되었습니다.&lt;br/&gt;’
-)</code></pre>
-<ul>
-<li>이메일 전송을 위해 사전 셋팅 작업 필요</li>
+<li><p>이메일 전송해주는 오퍼레이터</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>email_t1 = EmailOperator(</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  task_id='email_t1',</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  to='hjkim_sun@naver.com',</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  subject='Airflow 처리결과',</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  html_content='정상 처리되었습니다.'</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>이메일 전송을 위해 사전 셋팅 작업 필요</p></li>
 </ul>
 <section id="presetting" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="presetting"><span class="header-section-number">5.1</span> Presetting</h2>
@@ -577,13 +744,13 @@ Worker-&gt;Meta_DB
 <section id="airflow" class="level3" data-number="5.1.2">
 <h3 data-number="5.1.2" class="anchored" data-anchor-id="airflow"><span class="header-section-number">5.1.2</span> Airflow</h3>
 <ul>
-<li>Docker-compose.yaml 편집 (environment 항목에 추가)</li>
+<li><p>Docker-compose.yaml 편집 (environment 항목에 추가)</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_HOST:</span><span class="co"> 'smtp.gmail.com'</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_USER:</span><span class="co"> '{gmail 계정}'</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_PASSWORD:</span><span class="co"> '{앱비밀번호}'</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_PORT:</span><span class="co"> 587</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_MAIL_FROM:</span><span class="co"> '{gmail 계정}'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 </ul>
-<pre><code>AIRFLOW__SMTP__SMTP_HOST: 'smtp.gmail.com'
-AIRFLOW__SMTP__SMTP_USER: '{gmail 계정}'
-AIRFLOW__SMTP__SMTP_PASSWORD: '{앱비밀번호}'
-AIRFLOW__SMTP__SMTP_PORT: 587
-AIRFLOW__SMTP__SMTP_MAIL_FROM: '{gmail 계정}'</code></pre>
 </section>
 </section>
 </section>

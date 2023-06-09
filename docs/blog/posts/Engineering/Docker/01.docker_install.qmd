@@ -1,0 +1,87 @@
+---
+title: "Introduction"
+subtitle: "Docker Introduction, Docker Installation" 
+description: |
+  template
+categories:
+  - Engineering
+author: Kwangmin Kim
+date: 05/01/2023
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    toc: true
+    number-sections: true
+comments: 
+  utterances: 
+    repo: ./docs/comments
+draft: False
+---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+
+# Docker
+
+* 리눅스내 가상화 관련 커널을 활용하여 어플리케이션을 독립적 환경에서 실행시키는 기술
+* 가상화 서버(VM) 대비 Guest OS가 없어 경량화된 가상화 서버로 볼 수 있음
+    * VM의 hypervisor요소가 다수의 VM의 Guest OS와 App을 독립적으로 운영될 수 있도록 관리해줌
+    * 하지만 VM은 HOST OS의 자원을 할당을 해줘야하는 overhead문제가 있음
+    * Docker는 Hypervisor와 Guest OS가 필요없이 Apps을 독립적으로 구동 시킬 수 있음
+    * Docker에서는 하나의 App을 container라 부르고 container를 경량화된 가상화 서버라고 생각하면 됨
+    * container는 VM만큼 완전히 독립적으로 운영할 수는 없지만 overhead를 최소화한 VM이라고 생각할 수 있음
+
+![Docker Compoenent Architecture](../../../../../images/airflow/docker-installation.PNG)
+
+# Docker Installation
+
+* [Docker 설치 링크](https://docs.docker.com/engine/install/ubuntu/)
+   * Uninstall old versions: `for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done` 실행
+   * Install using the apt repository
+       * Set up the repository
+           * repository update: `sudo apt-get update`
+           * Docker 설치에 필요한 사전 libraries: `sudo apt-get install ca-certificates curl gnupg` 실행
+           * Add Docker’s official GPG key
+               * `sudo install -m 0755 -d /etc/apt/keyrings`
+               * `curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg`
+               * `sudo chmod a+r /etc/apt/keyrings/docker.gpg`
+           * Use the following command to set up the repository:
+               * `echo \ "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \ "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \ sudo tee /etc/apt/sources.list.d/docker.list > /dev/null`
+   * Install Docker Engine
+       * Update the apt package index: `sudo apt-get update`
+       * To install the latest version of community edition (ce), run: `sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin` docker-compose-plugin은 docker-compose 기능을 사용할 수 있게함
+   * Verify that the Docker Engine Installation is successful by running the hello-world image.
+       * `sudo docker run hello-world` : hello world image 다운로드 받음
+           * `docker: Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?.` 라고 뜨면 docker demon이 시작이 안되어 있기 때문에 발생하는 에러창. docker demon 띄우면 됨
+       * docker demon 실행: `sudo service docker start` WSL2킬때마다 실행해야줘야함
+       * 그래도 에러창 뜨면 `sudo service docker status` 실행 시켜 docker demon 켜져있는지 확인
+
+
+:::
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
+
+:::
+
+
+</div>
+
+
+# Go to Blog Content List
+
+[Blog Content List](../../content_list.qmd)

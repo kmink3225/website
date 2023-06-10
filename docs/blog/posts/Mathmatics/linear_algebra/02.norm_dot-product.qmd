@@ -1,0 +1,614 @@
+---
+title: "Basics (1) - Vector Norm and Dot Product"
+subtitle: Introduction, Inner Product, Dot Product
+description: |
+  Basic Linear Algebra 
+categories:
+  - Mathematics
+author: Kwangmin Kim
+date: 03/30/2023
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    toc: true
+    number-sections: true
+execute:
+  echo: false
+draft: False
+---
+
+# Introduction
+
+## Norm
+
+The norm of a vector $\mathbf{x}$ is a non-negative scalar value that represents **the size or length** of the vector. The norm is denoted by $||\mathbf{x}||$ and satisfies the following properties:
+
+### Properties
+
+* Non-negativity: $||\mathbf{x}||\geq 0$, with equality if and only if $\mathbf{x}=\mathbf{0}$.
+* Definiteness: The norm of a vector $\mathbf{v}$ is zero if and only if the vector itself is the zero vector:
+  $$
+  \|\mathbf{v}\| = 0 \text{ if and only if } \mathbf{v} = \mathbf{0}
+  $$
+* Scalar Multiplication: The norm of a scalar multiple of a vector $\mathbf{v}$ is equal to the absolute value of the scalar multiplied by the norm of the vector:
+  $$
+  \|c\mathbf{v}\| = |c|\|\mathbf{v}\|
+  $$
+* Homogeneity: $||\alpha\mathbf{x}||=|\alpha| \quad ||\mathbf{x}||$ for any scalar $\alpha$.
+* Triangle Inequality: $||\mathbf{x}+\mathbf{y}||\leq ||\mathbf{x}||+||\mathbf{y}||$.
+
+
+Suppose we have a vector $\mathbf{x}=\begin{bmatrix}1 \\ -2 \\ 2\end{bmatrix}$. We can find its Euclidean norm as follows:
+
+$$
+||\mathbf x||=\sqrt{1^2+(-2)^2+2^2}=\sqrt{9}=3
+$$
+
+Therefore, the norm of $\mathbf{x}$ is 3.
+
+### Norm Types
+
+There are several types of norms:
+
+* Manhattan Norm or Absolute Norm or $l_1$-norm
+$$
+\begin{equation*}
+||\mathbf{x}||_{l_1} = \sum_{i=1}^{n} |x_i|
+\end{equation*}
+$$
+where $\mathbf{x}$ is a vector of length $n$.
+Example: For $\mathbf{x} = [1, -2, 3]$, $||\mathbf{x}||_{l_1} = |1| + |-2| + |3| = 6$.
+
+
+* Euclidean Norm or $l_2$-norm
+$$
+\begin{equation*}
+||\mathbf{x}||_{l_2} = \sqrt{\sum_{i=1}^{n} x_i^2}
+\end{equation*}
+$$
+where $\mathbf{x}$ is a vector of length $n$.
+Example: For $\mathbf{x} = [1, 2, 3]$, $||\mathbf{x}||_{l_2} = \sqrt{1^2 + 2^2 + 3^2} = \sqrt{14}$.
+
+![$l_2$-norm](images/chap02_05.PNG)
+
+* p-norm($l_2$-norm) 
+
+For $p \geq 1$, 
+$$
+\begin{equation*}
+||\mathbf{x}||_p = (\sum_{i=1}^n |x_i|^p)^{\frac{1}{p}}
+\end{equation*}
+$$
+where $\mathbf{x}$ is a vector of length $n$.
+Example: For $\mathbf{x} = [1, 2, 3]$, $||\mathbf{x}||_{l_p} = \sqrt{1^p + 2^p + 3^p}$.
+
+* Maximum Norm
+$$
+\begin{equation*}
+||\mathbf{x}||_{\infty} = \max_{1 \leq i \leq n} |x_i|
+\end{equation*}
+$$
+where $\mathbf{x}$ is a vector of length $n$.
+Example: For $\mathbf{x} = [1, -2, 3]$, $||\mathbf{x}||_{\infty} = \max{(1, |-2|, 3)} = 3$.
+
+![$l_1$-norm vs $l_2$-norm vs $\max$-norm](images/chap02_06.PNG)
+
+* Frobenius Norm:
+$$
+\begin{equation*}
+||\mathbf{a}||_{F} = \sqrt{\sum_{i=1}^{m} \sum_{j=1}^{n} |a_{ij}|^2}
+\end{equation*}
+$$
+where $\mathbf{A}$ is an $m \times n$ matrix.
+Example: For $\mathbf{A} = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}$, $||\mathbf{A}||_{F} = \sqrt{1^2 + 2^2 + 3^2 + 4^2} = \sqrt{30}$.
+
+## Unit Vector
+
+A unit vector is a vector that has a magnitude of 1. A unit vector can be obtained by dividing a non-zero vector $\mathbf{v}$ by its magnitude $||\mathbf{v}||$, 
+
+$$
+\begin{equation*}
+  \mathbf{\hat{v}} = \frac{\mathbf{v}}{||\mathbf{v}||}
+\end{equation*}
+$$
+
+where $\mathbf{\hat{v}}$ is the unit vector in the direction of $\mathbf{v}$.
+
+A unit vector can be used to focus on a direction with no interest in the size of the vector.
+
+For example, let $\mathbf{v} = \begin{bmatrix} 1 \ 2 \end{bmatrix}$ be a non-zero vector in $\mathbb{R}^2$. The magnitude of $\mathbf{v}$ is $||\mathbf{v}|| = \sqrt{1^2 + 2^2} = \sqrt{5}$. Therefore, a unit vector in the direction of $\mathbf{v}$ is:
+
+$$
+\begin{equation*}
+\mathbf{\hat{v}} = \frac{\mathbf{v}}{||\mathbf{v}||} = \frac{1}{\sqrt{5}}\begin{bmatrix} 1 \\ 2 \end{bmatrix} = \begin{bmatrix} \frac{1}{\sqrt{5}} \\ \frac{2}{\sqrt{5}} \end{bmatrix}
+\end{equation*}
+$$
+
+Thus, $\begin{bmatrix} \frac{1}{\sqrt{5}} \\ \frac{2}{\sqrt{5}} \end{bmatrix}$ is a unit vector in the direction of $\mathbf{v}$.
+
+### Properteis
+
+1. Normalization: $\|\mathbf{u}\| = 1$
+2. Direction: A unit vector represents a direction in space.
+3. Scaling: Multiplying a unit vector by a scalar does not change its direction, but it may change its magnitude.
+4. Orthogonality: Unit vectors in different directions are orthogonal (perpendicular) to each other.
+
+### Standard Unit Vectors
+
+A standard unit vector is denoted as $\mathbf{e}_i$, where $i$ represents the coordinate axis. For example, in 2D space, we have $\mathbf{e}_1$ representing the unit vector along the $x$-axis and $\mathbf{e}_2$ representing the unit vector along the $y$-axis.
+
+
+## Distance
+
+The distance between two vectors can be computed using a distance metric, such as the Euclidean distance or the Manhattan distance. 
+
+* Euclidean Distance:
+
+The Euclidean distance between two vectors $\mathbf{v}$ and $\mathbf{w}$ of length $n$ can be calculated using the following formula:
+
+$$
+\begin{aligned}
+  \text{distance}(\mathbf{v}, \mathbf{w}) &= d(\mathbf{v},\mathbf{w})=||\mathbf{v}-\mathbf{w}||= \sqrt{\sum_{i=1}^{n} (v_i - w_i)^2}\\
+\end{aligned}
+$$
+
+```{python}
+import numpy as np
+
+v = np.array([1, 2, 3])
+w = np.array([4, 5, 6])
+
+distance = np.linalg.norm(v - w)
+print(distance)
+
+```
+
+* Manhattan Distance:
+
+The Manhattan distance (also known as the city block distance or L1 distance) between two vectors $\mathbf{v}$ and $\mathbf{w}$ of length $n$ can be calculated using the following formula:
+
+$$
+\text{distance}(\mathbf{v}, \mathbf{w}) = \sum_{i=1}^{n} |v_i - w_i|
+$$
+
+```{python}
+distance = np.sum(np.abs(v - w))
+print(distance)
+```
+
+## Dot Product
+
+Dot product is also known as scalar product or inner product.
+
+The dot product of two vectors is the sum of the products of their corresponding components (a.k.a inner product & scalar product). If $\textbf{a}$ and $\textbf{b}$ are two vectors of the same dimension, then their dot product $c = \textbf{a} \cdot \textbf{b}$ is a scalar given by the formula:
+
+$$
+\begin{align*}
+  c&=\textbf{a}\cdot \textbf{b}\\
+  &= \sum_{i=1}^{n}a_ib_i
+\end{align*}
+$$
+
+* Dot product can be used to measure the similarity between two vectors.
+* For the two vectors, $\mathbf{a} = [a_1, a_2, \cdots a_n]$ , $\mathbf{b} = [b_1, b_2, \cdots b_n]$, dot product can be defined as
+$$
+\mathbf{a} \cdot \mathbf{b} = \mathbf{a}^{T} \mathbf{b} = ||\mathbf{a}||\text{ } ||\mathbf{b}|| \cos \theta 
+$$
+* When two vectors are orthogonal, $\cos 90^{\circ} = 0$, the similarity of the two vectors is 0.
+* In the Euclidean space, dot product is often called inner product (inner product is a generalization of dot product)
+
+### Properties
+
+* Commutativity: $\mathbf{v} \cdot \mathbf{w} = \mathbf{w} \cdot \mathbf{v}$
+* Distributivity over vector addition: $\mathbf{v} \cdot (\mathbf{w} + \mathbf{u}) = \mathbf{v} \cdot \mathbf{w} + \mathbf{v} \cdot \mathbf{u}$
+* Scalar associativity: $(c \mathbf{v}) \cdot \mathbf{w} = c (\mathbf{v} \cdot \mathbf{w}) = \mathbf{v} \cdot (c \mathbf{w})$
+* Linearity: $(c \mathbf{v} + d \mathbf{w}) \cdot \mathbf{u} = c (\mathbf{v} \cdot \mathbf{u}) + d (\mathbf{w} \cdot \mathbf{u})$
+* Orthogonality: $\mathbf{v} \cdot \mathbf{w} = 0 \text{ if and only if } \mathbf{v} \perp \mathbf{w}$
+* simmilarity
+
+  ::: {.callout-note}
+  ### the Law of Cosines
+
+  The second cosine rule in linear algebra, also known as the Law of Cosines, relates the dot product of vectors to their magnitudes and the angle between them.
+
+  $$
+  \begin{align*}
+    \cos\theta &= \frac{b^2+c^2-a^2}{2bc} \rightarrow 
+    \mathbf{v} \cdot \mathbf{w} &= \|\mathbf{v}\| \|\mathbf{w}\| \cos(\theta)
+  \end{align*}
+  $$
+  
+The geometric meaning of the dot product can be explained using the Law of Cosines. The Law of Cosines relates the lengths of the sides of a triangle to the cosine of one of its angles. In the context of vectors, we can interpret the dot product in terms of the Law of Cosines as follows:
+
+Consider two vectors $\mathbf{v}$ and $\mathbf{w}$ in a vector space. The magnitude (length) of $\mathbf{v}$ is denoted as $\|\mathbf{v}\|$, and the magnitude of $\mathbf{w}$ is denoted as $\|\mathbf{w}\|$. The angle between the vectors is denoted as $\theta$.
+
+According to the Law of Cosines, in a triangle with sides of length $a$, $b$, and $c$, and an angle opposite to side $c$ denoted as $\theta$, the following relation holds:
+
+$c^2 = a^2 + b^2 - 2ab \cos(\theta)$
+
+Now, let's relate this to the dot product of vectors $\mathbf{v}$ and $\mathbf{w}$:
+
+$\mathbf{v} \cdot \mathbf{w} = \|\mathbf{v}\| \|\mathbf{w}\| \cos(\theta)$
+
+Comparing this equation with the Law of Cosines, we can see that the dot product $\mathbf{v} \cdot \mathbf{w}$ is related to the lengths of the vectors $\mathbf{v}$ and $\mathbf{w}$ and the angle $\theta$ between them.
+
+The geometric interpretation of the dot product is that it measures the "projection" of one vector onto another. When the dot product is positive, it means the vectors are pointing in a similar direction, and when it is negative, it means they are pointing in opposite directions. The magnitude of the dot product provides a measure of how "aligned" the vectors are.
+
+In summary, the dot product can be understood geometrically using the Law of Cosines as a measure of alignment or projection between vectors, based on their lengths and the angle between them.
+
+The dot product has a geometric interpretation that relates to the angle between two vectors and their lengths. The dot product of two vectors measures the degree of alignment or "parallelness" between them. Here are the geometric meanings of the dot product:
+
+Orthogonality: If the dot product of two vectors is zero (\mathbf{v} \cdot \mathbf{w} = 0), it means the vectors are orthogonal or perpendicular to each other. The angle between them is 90 degrees.
+
+Alignment: If the dot product of two vectors is positive (\mathbf{v} \cdot \mathbf{w} > 0), it indicates that the vectors have a similar direction or are pointing in the same general direction. The angle between them is less than 90 degrees.
+
+Antialignment: If the dot product of two vectors is negative (\mathbf{v} \cdot \mathbf{w} < 0), it implies that the vectors have opposite directions or are pointing in opposite directions. The angle between them is greater than 90 degrees.
+
+In summary, the dot product provides a geometric measure of the alignment or perpendicularity between vectors, giving insights into their relationship in terms of direction and angle.
+
+
+  :::
+
+* projection
+
+:::{.callout-note}
+
+#### Projection
+
+Let $\mathbf{u}$ and $\mathbf{v}$ be two vectors. The projection of $\mathbf{u}$ onto $\mathbf{v}$ is defined as the vector:
+
+This vector is the closest vector to $\mathbf{u}$ that lies on the line spanned by $\mathbf{v}$.
+$$
+\mathbf w=\text{proj}_{\mathbf v}\mathbf u =\frac{\mathbf u \mathbf v}{||\mathbf v||^2} \mathbf v
+$$
+![Projection](images/chap02_04.PNG)
+
+* $\mathbf{w} = ||\mathbf{w}||\mathbf{v} = ||\mathbf{u}|| \cos \theta \mathbf{v}$
+* $\mathbf{u}^T \mathbf{u} = ||\mathbf{u}|| ||\mathbf{u}|| = ||\mathbf{u}||^2$
+* the magnitude of $\mathbf{u}$  = $||\mathbf{u}|| = \sqrt{\mathbf{u}^T \mathbf{u}}$ 
+* unit vector: a normalized vector by dividing it by its magnitude, so the magnitude of a unit vector is 1
+$$
+  \hat{\mathbf{u}} = \frac{\mathbf{u}}{||\mathbf{u}||} = \frac{\mathbf{u}}{\sqrt{\mathbf{u}^T \mathbf{u}}}
+$$
+* Projected vector, $\mathbf{w}$
+  * the product of $\frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||}$ and a unit vector of $\mathbf{v}$
+$$
+\frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||} \frac{\mathbf{v}}{||\mathbf{v}||} = \frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||^2}\mathbf{v}
+$$
+
+For example, let $\mathbf{u} = \begin{bmatrix}2 \\ 3\end{bmatrix}$ and $\mathbf{v} = \begin{bmatrix}1 \\ 1\end{bmatrix}$. Then, the projection of $\mathbf{u}$ onto $\mathbf{v}$ is:
+
+$$
+\text{proj}_{\mathbf v}\mathbf u =\frac{\mathbf u^{T} \mathbf v}{||\mathbf v||^2} \mathbf v =\frac{\begin{bmatrix}2 \\ 3\end{bmatrix}\begin{bmatrix}1 \\ 1\end{bmatrix}}{\bigg{|}\bigg{|}\begin{bmatrix}1 \\ 1\end{bmatrix}\bigg{|}\bigg{|}^2}=\frac{5}{2}\begin{bmatrix}1 \\ 1\end{bmatrix}=\begin{bmatrix}5 \\ 2\end{bmatrix}
+$$
+
+This vector is the closest vector to $\mathbf{u}$ that lies on the line spanned by $\mathbf{v} = \begin{bmatrix}1 \\ 1\end{bmatrix}$.
+
+[Reference: Read This Article with Interactive Visualization - Projection](http://immersivemath.com/ila/ch03_dotproduct/ch03.html#auto_label_107)
+:::
+
+
+:::{.callout-note}
+#### Cauchy-Schwarz Inequality
+
+a fundamental result in mathematics that relates to inner products and norms. It states that for any vectors $\mathbf{u}$ and $\mathbf{v}$ in an inner product space, the following inequality holds:
+$$
+  |\langle \mathbf u,\mathbf v\rangle|\le ||\mathbf u|| ||\mathbf v ||
+$$
+
+where $\langle \mathbf{u}, \mathbf{v}\rangle$ denotes the inner product of vectors $\mathbf{u}$ and $\mathbf{v}$, and $|\mathbf{u}|$ and $|\mathbf{v}|$ denote their respective norms.
+In terms of the cosine formula, the Schwarz inequality can be written as:
+$$
+\cos \theta \le 1
+$$
+
+where $\theta$ is the angle between vectors $\mathbf{u}$ and $\mathbf{v}$, and $\cos{\theta} = \frac{\langle \mathbf{u}, \mathbf{v}\rangle}{|\mathbf{u}| |\mathbf{v}|}$.
+
+Geometrically, the Schwarz inequality states that the magnitude of the projection of one vector onto the other cannot exceed the length of the vector being projected. In other words, it bounds the correlation between two vectors and ensures that their inner product is always less than or equal to the product of their norms.
+:::
+
+:::{.callout-note}
+#### Triangle Inequality
+
+The triangle inequality states that for any two vectors $\mathbf{u}$ and $\mathbf{v}$, the length of the sum of the vectors is less than or equal to the sum of the lengths of the vectors themselves. In terms of the cosine formula, this can be expressed as:
+$$
+ ||\mathbf u + \mathbf v||^2 \le ||\mathbf u||^2 + 2||\mathbf u ||||\mathbf v || + ||\mathbf v ||^2
+$$
+
+equivalently,
+
+$$
+ ||\mathbf u + \mathbf v|| \le ||\mathbf u|| + ||\mathbf v ||
+$$
+
+this inequality means that the distance between two points in a space, represented by vectors, is always shorter than or equal to the sum of the distances between the two vectors. In other words, it is impossible to make a straight line from one point to another that is shorter than the distance represented by the two vectors.
+
+```{python}
+
+u = [3, 4]
+v = [-1, 2]
+
+
+# Plot the vectors
+plt.quiver(0, 0, u[0], u[1], angles='xy', scale_units='xy', scale=1, color='r')
+plt.quiver(0, 0, v[0], v[1], angles='xy', scale_units='xy', scale=1, color='g')
+plt.quiver(u[0], u[1], -1, 2, angles='xy', scale_units='xy', scale=1, color='g')
+plt.quiver(0, 0, u[0]+v[0], u[1]+v[1], angles='xy', scale_units='xy', scale=1, color='b')
+
+plt.text(u[0]+0.2, u[1], 'u', fontsize=12)
+plt.text(u[0]+v[0], u[1]+v[1], 'v', fontsize=12)
+plt.text(u[0]+v[0]-0.8, u[1]+v[1], 'u+v', fontsize=12)
+
+plt.xlabel('x')
+plt.ylabel('y')
+plt.xlim(-2, 7)
+plt.ylim(-2, 7)
+
+plt.plot([0, u[0], u[0]+v[0], v[0], 0], [0, u[1], u[1]+v[1], v[1], 0], 'k--')
+
+plt.text((u[0]+v[0])/2, (u[1]+v[1])/2+0.5, '||u+v||', fontsize=12)
+
+plt.show()
+```
+
+:::
+
+
+
+:::{.callout-note}
+
+#### Inner Product vs Dot Product
+
+In general, an inner product is a mathematical operation that takes two vectors and produces a scalar. It satisfies certain properties, such as being linear in the first argument, conjugate linear in the second argument, and positive-definite.
+In other words, an inner product is a bilinear form that satisfies the following properties for all vectors $\mathbf{x}$, $\mathbf{y}$, and $\mathbf{z}$, and all scalars $a$ and $b$:
+
+* "Linear in the first argument" means that for any fixed vector $\mathbf u$, the function $f$ defined by $f(\mathbf v) = \langle\mathbf u, \mathbf v\rangle$ is a linear function of $\mathbf v$, i.e., $f(a\mathbf x + b\mathbf y) = af(\mathbf x) + bf(\mathbf y)$ for any scalars $a$, $b$, and vectors $\mathbf{x}$, $\mathbf{y}$.
+  * $\langle a\mathbf{x} + b\mathbf{y}, \mathbf{z}\rangle = a\langle\mathbf{x}, \mathbf{z}\rangle + b\langle\mathbf{y}, \mathbf{z}\rangle$, the inner product is linear with respect to the first argument. If we multiply a vector by a scalar and add it to another vector, the resulting inner product is the same as if we had calculated the inner product of each vector separately and then added them.
+* "Conjugate linear in the second argument" means that for any fixed vector $\mathbf v$, the function $g$ defined by $g(\mathbf u) = \langle\mathbf u, \mathbf v\rangle$ is a conjugate linear function of $\mathbf u$, i.e., $g(a \mathbf x + b \mathbf y) = \bar{a} g(\mathbf x) + \bar{b} * g(\mathbf y)$ for any scalars $a$, $b$, and vectors $\mathbf x$, $\mathbf y$, where $\bar{a}$ denotes the complex conjugate of $a$.
+  * $\langle \mathbf{x}, a\mathbf{y}, b\mathbf{z}\rangle = a\langle\mathbf{x}, \mathbf{y}\rangle + b\langle\mathbf{x}, \mathbf{z}\rangle$. this property says that the inner product is linear with respect to the second argument, but with complex conjugation. If we multiply a vector by a scalar and add it to another vector, the resulting inner product is the same as if we had calculated the inner product of each vector separately, complex-conjugated the second vector, and then added them.
+* "Symmetry" means $\langle \mathbf{x},\mathbf{y}\rangle= \langle \mathbf{y},\mathbf{x}\rangle$
+  * the order of the vectors doesn't matter when calculating the inner product.  
+* "Positive-definite" means that for any nonzero vector v, the inner product $\langle\mathbf u, \mathbf v\rangle$ is a positive real number. In other words, the inner product of a vector with itself is always positive, except when the vector is the zero vector.
+  * $\langle \mathbf{x},\mathbf{x}\rangle\ge 0, \langle \mathbf{x},\mathbf{x}\rangle=0$ only if $\mathbf{x}=0$
+
+:::{.callout-note}
+
+#### Linear Transformation
+
+A function is said to be linear if it satisfies two properties: **additivity** and **homogeneity**.
+
+1. Additivity means that for any two inputs, the output of the function applied to their sum is equal to the sum of the outputs applied to each input separately. In other words, if we have a function $f$ and vectors $\mathbf x$ and $\mathbf y$, then
+
+$$
+f(\mathbf x + \mathbf y) = f(\mathbf x) + f(\mathbf y)
+$$
+
+2. Homogeneity means that for any input and scalar $c$, the output of the function applied to the input scaled by $c$ is equal to the output applied to the unscaled input multiplied by $c$. In other words,
+
+$$
+f(c\mathbf x) = c f(\mathbf x)
+$$
+These two properties together are what we mean when we say a function is linear.
+
+Try to compare $y=2x$ for liniearity vs $y=2x^2$ for non-linearity and which one satisfies the linear properties?
+
+:::
+
+Let's consider the standard inner product of two vectors in $\mathbb R^2$, given by $\langle \mathbf x, \mathbf y\rangle$ = $x_1y_1 + x_2y_2$, where $\mathbf x = [x_1, x_2]^T$ and $\mathbf y = [y_1, y_2]^T$.
+
+1. Linearity in the first argument:
+
+$$
+\langle 2 \mathbf x + 3\mathbf y, \mathbf z\rangle = (2x_1 + 3y_1)z_1 + (2x_2 + 3y_2)z_2 = 2\langle \mathbf x, \mathbf z \rangle + 3\langle \mathbf y, \mathbf z \rangle
+$$
+
+2. Conjugate linearity in the second argument:
+
+$$
+\langle \mathbf x, 2\mathbf y+3\mathbf z\rangle = x_1(2y_1 + 3z_1) + x_2(2y_2 + 3z_2) = 2\langle \mathbf x, \mathbf y \rangle + 3\langle \mathbf x, \mathbf z \rangle
+$$
+
+3. Symmetry:
+
+$$
+\langle \mathbf x,\mathbf y\rangle = x_1y_1 + x_2y_2 = y_1x_1 + y_2x_2 = \langle \mathbf y, \mathbf x \rangle
+$$
+
+4. Positive-definite:
+
+$$
+\langle \mathbf x,\mathbf x\rangle =  x_1^2 + x_2^2 \ge 0 = \langle \mathbf x, \mathbf x \rangle \text{ only if } \mathbf x = [0, 0]^T
+$$
+
+
+Let's see another example of two complex vectors for *2. Conjugate linearity in the second argument*, $\mathbf{u}=\begin{bmatrix} 1+i \\ 2 \end{bmatrix}$ and $\mathbf{v}=\begin{bmatrix} 3-2i \\ 1 \end{bmatrix}$.
+
+Their inner product would be:
+$$
+\begin{aligned}
+\langle \mathbf{u}, \mathbf{v} \rangle &= \begin{bmatrix} 1+i \\ 2 \end{bmatrix}^H \begin{bmatrix} 3-2i \\ 1 \end{bmatrix} \\
+&= \begin{bmatrix} 1-i & 2 \end{bmatrix} \begin{bmatrix} 3-2i \\ 1 \end{bmatrix} \\
+&= (1-i)(3-2i) + 2(1) \\
+&= 1 + i + 6 - 4i + 2 \\
+&= 9 - 3i.
+\end{aligned}
+$$
+
+where $H$ is the Hermitian transpose, also known as the conjugate transpose, which is similar to the transpose operation, but also involves taking the complex conjugate of each element. For a matrix $\mathbf A$, the Hermitian transpose is denoted by $\mathbf A^H$ or $A^\dagger$ and is defined as the transpose of the complex conjugate of $\mathbf A$. Mathematically, for a matrix $\mathbf A$ with elements $a_{i,j}$, the Hermitian transpose $\mathbf A^H$ is defined as:
+
+$$
+(\mathbf A^H)_{i,j} = \overline{a_{j,i}}
+$$
+
+where $\overline{a_{j,i}}$ denotes the complex conjugate of $a_{j,i}$.
+
+In the case of a real-valued matrix, the Hermitian transpose reduces to the ordinary transpose, denoted by $\mathbf A^T$.
+
+Now let's see the conjugate linearity property in the second argument:
+
+$$
+\begin{aligned}
+\langle \mathbf{u}, c \mathbf{v} \rangle &= \begin{bmatrix} 1+i \\2 \end{bmatrix}^H \left(c \begin{bmatrix} 3-2i \\ 1 \end{bmatrix}\right) \\
+&= \begin{bmatrix} 1-i & 2 \end{bmatrix} \begin{bmatrix} 3c-2ci \\ c \end{bmatrix} \\
+&= (1-i)(3c-2ci) + 2(c) \\
+&= 3c - 2ci + 2c - 2ci \\
+&= (3+2)c - 4ci \\
+&= c(3+2i) - 4i\overline{c}.
+\end{aligned}
+$$
+
+We can see that the second component of the result is $-4i\overline{c}$, which is the conjugate of $4ic$. Therefore, we can say that the inner product is conjugate linear in the second argument.
+
+A dot product is a specific type of inner product that is defined for Euclidean spaces, which are spaces with a notion of distance or length. The dot product of two vectors is defined as the sum of the products of their corresponding components. In other words, if $\mathbf a = [a_1, a_2, ..., a_n]$ and $\mathbf b = [b_1, b_2, ..., b_n]$ are two vectors in $\mathbb R^n$, then their dot product is given by:
+
+$$
+\mathbf a \cdot \mathbf b = a_1b_1 + a_2b_2 + ... + a_nb_n
+$$
+
+The dot product satisfies some of the properties of an inner product, such as being linear in the first argument and symmetric. However, it is not conjugate linear in the second argument, and it is not positive-definite in general.
+
+So, while a dot product is a specific type of inner product, not all inner products are dot products.
+:::
+
+For example, if $\textbf{a} = [1, 2, 3]$ and $\textbf{b} = [4, 5, 6]$, then their dot product $c = 1\cdot 4 + 2\cdot 5 + 3\cdot 6 = 32$.
+
+
+
+
+
+
+
+### Cross Product of Vectors
+
+The cross product of two vectors is a vector that is perpendicular to both of them. If $\textbf{a}$ and $\textbf{b}$ are two vectors in $\mathbb{R}^3$, then their cross product $\textbf{c} = \textbf{a} \times \textbf{b}$ is a vector given by the formula
+
+$$
+\textbf{c} = \textbf{a} \times \textbf{b} \\
+          = ||\textbf{a}|| ||\textbf{b}||\sin(\theta) \mathbf n           
+$$
+
+where:
+
+* $\theta$ is the angle between $\textbf{a}$ and $\textbf{b}$ in the plane containing them (hence, it $0 \le \theta \le \pi$)
+* $||\textbf{a}||$ and $||\textbf{b}||$ are the magnitudes of vectors $||\textbf{a}||$ and $||\textbf{b}||$
+* and $||\textbf{n}||$ is a unit vector perpendicular to the plane containing $||\textbf{a}||$ and $||\textbf{a}||$, with direction such that the ordered set ($||\textbf{a}||$, $||\textbf{b}||$, $||\textbf{n}||$) is positively-oriented.
+
+If the vectors $\textbf{a}$ and $\textbf{b}$ are parallel (that is, $\theta$ between them is either $0$ or $\pi$), by the above formula, the cross product of $\textbf{a}$ and $\textbf{b}$ is the zero vector 0.
+
+[Reference: read the explanations in wiki](https://en.wikipedia.org/wiki/Cross_product)
+
+::: {layout-ncol=2}
+![By User:Acdx - Self-made, based on Image:Crossproduct.png, Public Domain](../linear_algebra/images/Cross_product_vector.svg.png)
+![Right_hand_rule_cross_product](../linear_algebra/images/Right_hand_rule_cross_product.svg)
+:::
+
+For example, 
+$$
+\textbf{c} = \textbf{a} \times \textbf{b} = [a_2b_3 - a_3b_2, a_3b_1 - a_1b_3, a_1b_2 - a_2b_1]           
+$$
+
+If $\textbf{a} = [1, 2, 3]$ and $\textbf{b} = [4, 5, 6]$, then their cross product $\textbf{c} = [-3, 6, -3]$.
+
+### Column Vector & Row Vector
+
+A column vector $\mathbf{u}$ with $n$ elements is an $m \times 1$ matrix, which can be represented as:
+$$
+\mathbf{u} =
+\begin{bmatrix}
+u_{1} \\
+u_{2} \\
+\vdots \\
+u_{m}
+\end{bmatrix}
+$$
+
+In an $m \times n$ matrix, the column vectors can be represented as:
+
+$$
+\mathbf U  = \begin{bmatrix}  \mathbf u_{1} &\mathbf u_{2} & \dots &\mathbf u_{n} \end{bmatrix} \\
+=
+\begin{bmatrix} 
+  u_{11} & u_{12} & \cdots & u_{1n} \\
+  u_{21} & u_{22} & \cdots & u_{2n} \\
+  \vdots & \vdots & \ddots & \vdots \\
+  u_{m1} & u_{m2} & \cdots & u_{mn}
+\end{bmatrix} 
+$$
+
+
+where $u_i$ is the $i$-th element of the column vector $\mathbf{u}$, $n$ is the number of columns, and $m$ is the number of rows in the matrices.
+
+
+A row vector $\mathbf{u}$ with $m$ elements is a $1 \times n$ matrix, which can be represented as:
+$$
+\mathbf{u} = 
+\begin{bmatrix}
+u_{1} & u_{2} & \cdots & u_{m}
+\end{bmatrix}
+$$
+
+In an $m \times n$ matrix, the row vectors can be represented as:
+
+$$
+\mathbf U  = \begin{bmatrix}  \mathbf u_{1} \\\mathbf u_{2} \\ \vdots \\\mathbf u_{m} \end{bmatrix} \\
+=
+\begin{bmatrix} 
+  u_{11} & u_{12} & \cdots & u_{1n} \\
+  u_{21} & u_{22} & \cdots & u_{2n} \\
+  \vdots & \vdots & \ddots & \vdots \\
+  u_{m1} & u_{m2} & \cdots & u_{mn}
+\end{bmatrix} 
+$$
+
+
+where $u_i$ is the $i$-th element of the row vector $\mathbf{u}$ and $n$ is the number of columns in the matrix.
+
+### Linear Combination of vectors
+
+A linear combination of vectors $\mathbf{v}_1,\mathbf{v}_2,\dots,\mathbf{v}_n$ in a vector space $V$ over a field $\mathbb{F}$ is a vector of the form:
+$$
+a_1\mathbf{v_1}+a_2\mathbf{v_2}+\dots+a_n\mathbf{v_n}
+$$
+
+where $a_1,a_2,\dots,a_n\in\mathbb{F}$.
+
+For example, suppose we have two vectors $\mathbf{v}_1=\begin{bmatrix} 1 \ 2 \ 3 \end{bmatrix}$ and $\mathbf{v}_2=\begin{bmatrix} 4 \ 5 \ 6 \end{bmatrix}$ in $\mathbb{R}^3$. Then, a linear combination of $\mathbf{v}_1$ and $\mathbf{v}_2$ is of the form:
+
+$$
+a_1\begin{bmatrix}1\\2\\3\end{bmatrix}+a_2\begin{bmatrix}4\\5\\6\end{bmatrix}=\begin{bmatrix}a_1+4a_2\\2a_1+5a_2\\3a_1+6a_2\end{bmatrix}
+$$
+
+Here, $a_1$ and $a_2$ are scalar coefficients that determine the resulting linear combination vector.
+
+### Outer Product
+
+The outer product of two vectors $\mathbf{u} = [u_1, u_2, \dots, u_m]^T$ and $\mathbf{v} = [v_1, v_2, \dots, v_n]^T$ is a matrix $\mathbf{u} \mathbf{v}^T$ of size $m \times n$, defined by:
+
+$$
+\begin{aligned}
+\mathbf{u} \otimes \mathbf{v} &= 
+\begin{bmatrix}
+u_1v_1 &u_1v_2& \dots & u_1v_n \\
+u_2v_1 &u_2v_2& \dots & u_2v_n \\
+\vdots &\vdots& \ddots & u_1v_n \\
+u_mv_1 &u_mv_2& \dots & u_mv_n \\
+
+\end{bmatrix} 
+\end{aligned}
+$$
+
+$$
+(\mathbf{u} \otimes \mathbf{v})_{i,j} = u_i v_j
+$$
+
+where $\mathbf{u} = [u_1, u_2, \dots, u_m]$ and $\mathbf{v} = [v_1, v_2, \dots, v_n]$.
+
+The outer product is also called the tensor product, and it is a type of binary operation between two vectors that results in a matrix. It is important in linear algebra and other fields such as physics and engineering.
+
+Here is an example: Let $\mathbf{u} = [2, 4, 6]^T$ and $\mathbf{v} = [1, 3]^T$. The outer product of $\mathbf{u}$ and $\mathbf{v}$ is:
+
+
+So the outer product of $\mathbf{u}$ and $\mathbf{v}$ is a $3 \times 2$ matrix.
+
+[What is a matrix? Go to the Next Blog](../linear_algebra/02.basic_matrix.qmd)

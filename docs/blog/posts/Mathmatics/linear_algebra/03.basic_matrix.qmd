@@ -76,6 +76,7 @@ Given a scalar $k$ and an $m \times n$ matrix $\mathbf{A}$, their product $k\mat
 $$
 (k\mathbf{A})_{i,j} = k(a_{i,j})
 $$
+
 for $1 \leq i \leq m$ and $1 \leq j \leq n$.
 
 Example:
@@ -400,7 +401,8 @@ $$
 1 & 2 \\ 
 3 & 4 
 \end{bmatrix}
-$$.
+$$
+
 The inverse of $\mathbf{A}$ or $\mathbf{A}^{-1}$ is given by:
 
 $$
@@ -1138,25 +1140,668 @@ paste('tr(A^T)=tr(A)',tr(t(A)),tr(A),sep=', ')
 
 ### Rank
 
-The rank of a matrix is the dimension of the vector space spanned by its columns (or rows). It is denoted by $\text{rank}(\mathbf{A})$.
 
-For example, consider the following matrix:
+:::{#def-rank}
+The rank of a matrix is the maximum number of linearly independent rows or columns in the matrix. It is denoted by $\text{rank}(\mathbf{A})$.
+:::
+
+The rank of matrix $\mathbf{A}$ is the dimension of the space that matrix $\mathbf{A}$ can create.
+Since the variables of real high-dimensional data have high correlation with each other, the number of variables and the number of ranks can be different.
+Rank is one of the important measures of the amount of information a matrix contains. In practice, the concept of rank is widely used in various computational techniques in data analysis.
+
+:::{.callout-tip}
+1. Determinant: The determinant of a square matrix provides information about the scaling factor of the linear transformation represented by the matrix. It can indicate whether the transformation stretches or compresses space and whether it changes orientation.
+2. Trace: It provides information about the sum of the eigenvalues of the matrix and is often used in various matrix decompositions and calculations.
+3. Eigenvalues and Eigenvectors: The eigenvalues and eigenvectors of a matrix represent the characteristic values and corresponding vectors that describe the matrix's behavior under linear transformations. They can provide insights into the stretching, shearing, or rotating effects of the matrix.
+4. Singular Value Decomposition (SVD): SVD decomposes a matrix into three components: U, Σ, and V. The singular values in Σ represent the scaling factors, and the matrices U and V describe the transformations. The singular values indicate the amount of information carried by each dimension of the matrix.
+5. Principal Component Analysis (PCA): It identifies the principal components, which are linear combinations of the original variables that capture the maximum variance in the data.
+
+:::
+Knowing the rank can help us in various data analysis tasks, such as:
+
+* Feature selection: We can prioritize the selection of the most informative variables by considering their contribution to the rank. Variables with a higher rank tend to carry more unique information and are less likely to be redundant.
+* Dimensionality reduction: If we find that the rank is lower than the total number of variables, we can use dimensionality reduction techniques, such as Principal Component Analysis (PCA), to transform the data into a lower-dimensional space while preserving the most important information.
+* Linear regression: The rank of the design matrix is essential in linear regression modeling. If the rank is less than the number of variables, it indicates the presence of multicollinearity, which can affect the model's stability and interpretation.
+
+#### Properties
+
+1. The rank of a matrix is always less than or equal to the minimum of the number of rows and the number of columns:
 
 $$
-\begin{equation*}
-  \mathbf{A} = \begin{bmatrix}
-    1 & 2 & 3\\
-    4 & 5 & 6 \\
-    7 & 8 & 9\\
-  \end{bmatrix}
-\end{equation*}
+\text{rank}(\mathbf{A}) \leq \min(\text{rows}(\mathbf{A}), \text{cols}(\mathbf{A}))
 $$
 
-The columns of $\mathbf{A}$ are linearly dependent since the third column is equal to the sum of the first two columns. Therefore, the dimension of the vector space spanned by the columns is 2, so the rank of $\mathbf{A}$ is 2.
+$\mathbf{A}$ is said to be a full rank matrix if $\text{rank}(\mathbf{A}) = \min(\text{rows}(\mathbf{A}), \text{cols}(\mathbf{A}))$. 
+
+It is said that the vectors are linearly indpendent if $\mathbf{A}$ is said to be a full rank matrix.
+
+```{r}
+library(Matrix)
+A <- matrix(1:6,nrow=2)
+rankMatrix(A)
+```
+
+1. The rank of a matrix is equal to the rank of its transpose
+
+$$
+\text{rank}(\mathbf{A}) =\text{rank}(\mathbf{A}^T)
+$$
+
+```{r}
+rank_A <-rankMatrix(A)
+rank_A_transpose <-rankMatrix(t(A))
+rank_A == rank_A_transpose
+```
+
+1. The determinant of a square matrix is zero if and only if the rank of the matrix is less than the number of columns (or rows) in the matrix.
+$$
+|\mathbf{A_{n \times n}}|=0 \text{ if and only if } \text{rank}(\mathbf{A}) < n
+$$
+
+```{r}
+A<-matrix(1:9,nrow=3)
+det_A <- det(A)
+rank_A <- rankMatrix(A)
+n<-nrow(A)
+
+rank_A < n
+det_A == 0
+```
 
 
+1. For $\mathbf{C}_{m\times n}$, invertible $\mathbf{A}_{m\times m}$, and invertible $\mathbf{B}_{n\times n}$, $\text{rank}(\mathbf{C})$ is preserved. This property highlights that the rank of a matrix remains unchanged when multiplied by an invertible matrix on either side.
+
+$$
+\text{rank}(\mathbf{C}) =\text{rank}(\mathbf{AC})=\text{rank}(\mathbf{CB}) =\text{rank}(\mathbf{ACB})
+$$
+
+```{r}
+
+A<-matrix(c(2,0,0,1), nrow=2)
+B<-matrix(c(1,4,3,3,1,0,0,0,1), nrow=3)
+C<-matrix(c(1:3,2,4,6), nrow=2, byrow=T)
+
+det(A)
+det(B)
+
+rank_C<-rankMatrix(C)
+rank_AC<-rankMatrix(A%*%C)
+rank_CB<-rankMatrix(C%*%B)
+rank_ACB<-rankMatrix(A%*%C%*%B)
+
+(rank_C==rank_AC)&(rank_C==rank_CB)&(rank_C==rank_ACB)
+
+```
+
+1. For $\text{rank}(\mathbf{A}_{m\times n}) =r$, there exists $\mathbf{P}_{m\times m}$ and $\mathbf{Q}_{n\times n}$ such that
+
+$$
+\mathbf{PAQ}= \begin{bmatrix} \mathbf{I_{r\times r}} & \mathbf{0} \\ \mathbf{0} & \mathbf{0} \end{bmatrix}
+$$
+
+This property, known as the rank factorization theorem, states that any matrix with a given rank $r$ can be transformed into a canonical form using suitable row and column operations represented by the invertible matrices $\mathbf{P}$ and $\mathbf{Q}$, respectively. In this canonical form, the non-zero elements are confined to the top-left $r \times r$ submatrix, while the remaining elements are all zeros. ( Canonical forms are often used to simplify the analysis and study of matrices by providing a standard or standardized form that exhibits specific characteristics.)
+
+:::{.callout-tip}
+## Generalized Inverse (Pseudoinverse)
+
+For a given matrix $\mathbf{A}$, its generalized inverse is denoted as $\mathbf{A}^\dagger$, and it satisfies the following properties:
+
+* $\mathbf{A}\mathbf{A}^\dagger\mathbf{A} = \mathbf{A}$: The product of $\mathbf{A}$ with its generalized inverse from the left is equal to $\mathbf{A}$ itself.
+* $\mathbf{A}^\dagger\mathbf{A}\mathbf{A}^\dagger = \mathbf{A}^\dagger$: The product of $\mathbf{A}^\dagger$ with $\mathbf{A}$ from the right is equal to $\mathbf{A}^\dagger$ itself.
+
+A generalized inverse, also known as a pseudoinverse, is a concept in linear algebra that extends the notion of inverse to matrices that may not have a unique or traditional inverse. It is used to solve systems of equations involving matrices that are not necessarily square or invertible. It provides a way to "undo" the effect of a non-invertible or underdetermined matrix.
+
+There are several methods to compute the generalized inverse of a matrix, such as the Moore-Penrose pseudoinverse, the Drazin inverse, and the singular value decomposition (SVD) method.
+
+:::
+
+1. For any $\mathbf{A}$, the rank of a gram matrix $\mathbf{A}^T\mathbf{A}$ is the same as the rank of $\mathbf{A}$
+
+$$
+\text{rank}(\mathbf{A}^T\mathbf{A}) =\text{rank}(\mathbf{A})
+$$
+
+```{r}
+A<-matrix(1:6,nrow=2)
+rankMatrix(A)
+```
+
+When performing hypothesis tests or fitting models, the $\chi^2$ distribution is commonly used to assess the goodness of fit or test the significance of certain parameters. The test statistic follows a $\chi^2$ distribution under the null hypothesis.
+
+In the case of linear regression, for example, the degrees of freedom associated with the $\chi^2$ distribution can be related to the difference between the number of observations and the rank of the design matrix. Specifically, if you have a linear regression model with $n$ observations and $p$ predictors, the degrees of freedom for the $\chi^2$ distribution would be $n - p$. Here, $p$ represents the rank of the design matrix.
+
+This relationship arises because the rank of the design matrix determines the effective number of parameters or independent components in the model. Subtracting the rank from the total number of observations yields the degrees of freedom associated with the $\chi^2$ distribution in this specific context.
+
+1. The rank of a matrix is equal to the number of non-zero singular values in its singular value decomposition (SVD):
+
+$$
+\text{rank}(\mathbf{A}) = \text{number of non-zero singular values}
+$$
+
+1. The rank of a matrix is equal to the dimension of the column space (or row space) of the matrix: 
+
+$$
+\text{rank}(\mathbf{A}) = \text{dimension of column space} = \text{dimension of row space}
+$$
+
+1. For two matrices $\mathbf{A}$ and $\mathbf{B}$ of compatible sizes, the rank of their matrix product is at most the minimum of their individual ranks:
+
+$$
+\text{rank}(\mathbf{AB}) \leq \min(\text{rank}(\mathbf{A}), \text{rank}(\mathbf{B}))\\
+$$
+
+```{r}
+A<-matrix(c(1,2,3,6,5,10),nrow=2)
+B<-matrix(c(7,8,9,10,11,12),ncol=2)
+
+rank_A<-rankMatrix(A)
+rank_B<-rankMatrix(B)
+rank_AB<-rankMatrix(A%*%B)
+rank_AB<=min(rank_A,rank_B)
+```
+
+$$
+\text{rank}(\mathbf{A+B}) \leq \text{rank}(\mathbf{A}) + \text{rank}(\mathbf{B})\\
+$$
+
+```{r}
+A<-matrix(c(1,2,3,6,5,10),nrow=2)
+B<-matrix(c(7,8,9,10,11,12),nrow=2)
+
+rank_A<-rankMatrix(A)
+rank_B<-rankMatrix(B)
+rank_A_plus_B<-rankMatrix(A+B)
+rank_A_plus_B<=rank_A+rank_B
+```
 
 
+1. If a matrix is invertible (i.e., has full rank), its rank is equal to its number of rows (or columns):
+
+$$
+\text{rank}(\mathbf{A}) = \text{rows}(\mathbf{A}) = \text{cols}(\mathbf{A})
+$$
+
+
+#### Examples
+
+**Example1**
+Consider the following matrix:
+
+$$
+\mathbf{A} = \begin{bmatrix}
+1 & 2 & 3 \\
+4 & 5 & 6 \\
+7 & 8 & 9 
+\end{bmatrix}
+$$
+
+
+To find the rank of $\mathbf{A}$, we can row reduce the matrix to its echelon form or perform other operations to determine the linearly independent rows or columns. Let's compute the rank of $\mathbf{A}$:
+
+$$
+\mathbf{A} = \begin{bmatrix}
+1 & 2 & 3 \\
+4 & 5 & 6 \\
+7 & 8 & 9 \\
+\end{bmatrix} \sim \begin{bmatrix}
+1 & 2 & 3 \\
+0 & -3 & -6 \\
+0 & -6 & -12 \\
+\end{bmatrix} \sim \begin{bmatrix}
+1 & 2 & 3 \\
+0 & -3 & -6 \\
+0 & 0 & 0 \\
+\end{bmatrix} \sim \begin{bmatrix}
+1 & 2 & 3 \\
+0 & -3 & -6 \\
+0 & 0 & 0 \\
+\end{bmatrix}
+$$
+
+Applying the row operations $(R2\leftarrow R2-4R1)$ and $(R3\leftarrow R3-7R1)$, we get:
+
+$$
+\begin{bmatrix}
+1 & 2 & 3 \\
+0 & -3 & -6 \\
+0 & 0 & 0 \\
+\end{bmatrix} \sim \begin{bmatrix}
+1 & 2 & 3 \\
+0 & -3 & -6 \\
+0 & 0 & 0 \\
+\end{bmatrix}
+$$
+
+Further applying the row operation $(R3\leftarrow R3-2R2)$, we obtain:
+
+$$
+\begin{bmatrix}
+1 & 2 & 3 \\
+0 & -3 & -6 \\
+0 & 0 & 0 \\
+\end{bmatrix} \sim \begin{bmatrix}
+1 & 2 & 3 \\
+0 & -3 & -6 \\
+0 & 0 & 0 \\
+\end{bmatrix}
+$$
+
+We have reached the echelon form of $\mathbf{A}$. Notice that there are two linearly independent rows (row 1 and row 2) and one zero row. Therefore, the rank of $\mathbf{A}$ is 2.
+
+Hence, the rank of $\mathbf{A}$ is 2.
+
+```{python}
+import numpy as np
+
+# Example data matrix
+data = np.array([[1, 2, 3, 4, 5],
+                 [2, 4, 6, 8, 10],
+                 [3, 6, 9, 12, 15]])
+
+# Compute the rank of the data matrix
+rank = np.linalg.matrix_rank(data)
+
+print("Rank of the data matrix:", rank)
+
+```
+
+## Expectation
+
+**Expectation**
+
+The expectation (also known as the expected value) of a random variable is a measure of its central tendency. For a discrete random variable $X$ with probability mass function $P(X)$, the expectation is defined as:
+
+$$
+E(X) = \sum_{x} x \cdot P(X = x)
+$$
+
+where $x$ represents the possible values of $X$.
+
+For a continuous random variable $Y$ with probability density function $f(Y)$, the expectation is defined as:
+
+$$
+E(Y) = \int_{-\infty}^{\infty} y \cdot f(Y = y) \, dy
+$$
+
+where $y$ represents the possible values of $Y$.
+
+
+### Properties
+
+For constants $a$ and $b$, matrix $\mathbf{A}_{m\times n}$, vector $\mathbf{b}_{m \times 1}$, random variables $X$ and $Y$, and random vector $\mathbf{x}_{m\times 1}$ and $\mathbf{y}_{m\times 1}$
+
+* Linearity of Expectation*
+
+The expectation is a linear operator, which means it follows the rules of linearity. 
+
+$$
+E(aX + bY) = aE(X) + bE(Y)
+$$
+
+$$
+E(\mathbf{Ax} + \mathbf{b}) = \mathbf{A}_{m \times n}E(\mathbf{x}_{m\times 1})_{n\times 1} + \mathbf{b}_{m\times 1}
+$$
+
+
+**Example:**
+
+Let's consider two random variables $X$ and $Y$ with the following probability distributions:
+
+$$
+P(X = 1) = \frac{1}{3}, \quad P(X = 2) = \frac{1}{3}, \quad P(X = 3) = \frac{1}{3}
+$$
+
+$$
+P(Y = 0) = \frac{1}{2}, \quad P(Y = 1) = \frac{1}{2}
+$$
+
+We want to find $E(2X + 3Y)$, the expectation of $2X + 3Y$.
+
+Using the linearity property of expectation, we can calculate it as:
+
+$$
+\begin{aligned}
+  E(2X + 3Y) &= 2E(X) + 3E(Y) \\
+  E(X) &= 1 \cdot \frac{1}{3} + 2 \cdot \frac{1}{3} + 3 \cdot \frac{1}{3} = 2 \\
+  E(Y) &= 0 \cdot \frac{1}{2} + 1 \cdot \frac{1}{2} = \frac{1}{2} \\
+  E(2X + 3Y) &= 2 \cdot 2 + 3 \cdot \frac{1}{2} = 5
+\end{aligned}
+$$
+
+Let $X,Y$ be $X_1,X_2$, independent with each other, and $\mathbf{x}=\begin{bmatrix} X_1 \\ X_2 \end{bmatrix}$.
+
+$$
+\begin{aligned}
+  E(\mathbf{x}) &= \mathbf{\mu} = \begin{bmatrix} 1 \\ 2 \end{bmatrix} \\
+  E(2X+3Y) &= E(\mathbf{A}\mathbf{x}+\mathbf{b}) = E(\begin{bmatrix} 2 & 3 \end{bmatrix}\mathbf{x} + \mathbf{0}) \\
+  &= \begin{bmatrix} 2 & 3 \end{bmatrix}\mathbf{\mu} + \mathbf{0} \\
+  &= \begin{bmatrix} 2 & 3 \end{bmatrix}\begin{bmatrix} \mu_1 \\ \mu_2 \end{bmatrix} \\
+  &= \begin{bmatrix} 2 & 3 \end{bmatrix}\begin{bmatrix} 2 \\ \frac{1}{2} \end{bmatrix} = 1 \\
+
+  Var(\mathbf{x}) &= \mathbf{\Sigma} = \begin{bmatrix} Var(X_1) & Cov(X_1,X_2) \\ Cov(X_2,X_1) & Var(X_2)\end{bmatrix} =  \begin{bmatrix} Var(X_1) & 0 \\ 0 & Var(X_2)\end{bmatrix} \\
+
+  Var(2X_1+3X_2+3) &= Var(\begin{bmatrix} 2 & 3 \end{bmatrix} \mathbf{X} +3) = \begin{bmatrix} 2 & 3 \end{bmatrix} Var( \mathbf{X}) \begin{bmatrix} 2 \\ 3 \end{bmatrix} \\
+    &= \begin{bmatrix} 2 & 3 \end{bmatrix} \begin{bmatrix} Var(X_1) & 0 \\ 0 & Var(X_2)\end{bmatrix} \begin{bmatrix} 2 \\ 3 \end{bmatrix} 
+\end{aligned}
+$$
+
+Let $Cov(X,Y)=1$.
+Let $X,Y$ be $X_1,X_2$, dependent with each other.
+Let $\mathbf{x}=\begin{bmatrix} X_1 \\ X_2 \end{bmatrix}$. 
+The expected value is the same as that of the independent one.
+
+$$
+\begin{aligned}
+  Var(\mathbf{x}) &= \mathbf{\Sigma} = \begin{bmatrix} Var(X_1) & Cov(X_1,X_2) \\ Cov(X_2,X_1) & Var(X_2)\end{bmatrix} =  \begin{bmatrix} Var(X_1) & 1 \\ 1 & Var(X_2)\end{bmatrix} \\
+  Var(2X_1-3X_2+3) &= Var(\begin{bmatrix} 2 & -3 \end{bmatrix} \mathbf{X} +3) = \begin{bmatrix} 2 & -3 \end{bmatrix} Var( \mathbf{X}) \begin{bmatrix} 2 \\ -3 \end{bmatrix} \\
+  &= \begin{bmatrix} 2 & -3 \end{bmatrix} \begin{bmatrix} Var(X_1) & 1 \\ 1 & Var(X_2)\end{bmatrix} \begin{bmatrix} 2 \\ -3 \end{bmatrix}
+\end{aligned}
+$$
+
+* Monotonicity of Expectation
+
+If $X$ and $Y$ are random variables such that $X \leq Y$ almost surely, then:
+
+$$
+E(X) \leq E(Y)
+$$
+
+In other words, if one random variable is always less than or equal to another, then their expectations follow the same order.
+
+**Example:**
+
+Let's consider two random variables $X$ and $Y$ with the following probability distribution:
+
+$$
+P(X = 1) = \frac{1}{2}, \quad P(X = 2) = \frac{1}{2}
+$$
+
+$$
+P(Y = 2) = \frac{1}{2}, \quad P(Y = 3) = \frac{1}{2}
+$$
+
+We can observe that $X \leq Y$ almost surely since the largest value of $X$ is 2, which is less than the smallest value of $Y$ which is 3.
+
+To compare their expectations, we calculate:
+
+$$
+E(X) = 1 \cdot \frac{1}{2} + 2 \cdot \frac{1}{2} = \frac{3}{2}
+$$
+
+$$
+E(Y) = 2 \cdot \frac{1}{2} + 3 \cdot \frac{1}{2} = \frac{5}{2}
+$$
+
+Therefore, we have $E(X) = \frac{3}{2} \leq E(Y) = \frac{5}{2}$, confirming the monotonicity property of expectation.
+
+* Linearity of Expectation of random variables
+
+For any two random variables $X$ and $Y$, we have:
+
+$E(X + Y) = E(X) + E(Y)$
+
+In other words, the expectation of the sum of two random variables is equal to the sum of their individual expectations.
+
+**Example:**
+
+Consider two fair six-sided dice. Let $X$ be the outcome of the first die, and $Y$ be the outcome of the second die.
+
+The probability distribution of each die roll is:
+
+$$
+P(X = i) = \frac{1}{6} \quad \text{for } i = 1, 2, 3, 4, 5, 6
+$$
+
+$$
+P(Y = j) = \frac{1}{6} \quad \text{for } j = 1, 2, 3, 4, 5, 6
+$$
+
+We want to calculate the expected value of the sum $X + Y$.
+
+Using the linearity of expectation property, we can compute:
+
+$$
+E(X) = \sum_{i=1}^{6} i \cdot P(X = i) = \frac{1}{6} \left(1 + 2 + 3 + 4 + 5 + 6\right) = \frac{7}{2}
+$$
+
+$$
+E(Y) = \sum_{j=1}^{6} j \cdot P(Y = j) = \frac{1}{6} \left(1 + 2 + 3 + 4 + 5 + 6\right) = \frac{7}{2}
+$$
+
+Now, we can calculate the expectation of their sum:
+
+$$
+E(X + Y) = E(X) + E(Y) = \frac{7}{2} + \frac{7}{2} = 7
+$$
+
+Therefore, we have $E(X + Y) = 7$.
+
+The linearity of expectation property holds, and we see that the expectation of the sum $X + Y$ is equal to the sum of their individual expectations.
+
+## Variance
+
+**Definition: Variance**
+
+The variance of a random variable $X$ is a measure of the spread or dispersion of the values of $X$. It quantifies how much the values of $X$ deviate from their expected value.
+
+For a random variable $X$ with expected value $E(X)$, the variance is denoted by $\text{Var}(X)$ and is defined as the average of the squared differences between each value $x$ of $X$ and the expected value, weighted by their probabilities:
+
+$$
+\text{Var}(X) = E\left[(X - E(X))^2\right]
+$$
+
+Alternatively, the variance can be expressed as:
+
+$$
+\text{Var}(X) = E(X^2) - (E(X))^2
+$$
+
+**Example:**
+
+Consider a random variable $X$ representing the number obtained when rolling a fair six-sided die. The possible values of $X$ are $1, 2, 3, 4, 5, \text{ and } 6$, each with a probability of $\frac{1}{6}$.
+
+To find the variance $\text{Var}(X)$, we need to compute the expected value $E(X)$ and the expected value of the square $E(X^2)$.
+
+The expected value $E(X)$ is the average value of $X$ and can be calculated as:
+
+$$
+E(X) = 1 \cdot P(X = 1) + 2 \cdot P(X = 2) + 3 \cdot P(X = 3) + 4 \cdot P(X = 4) + 5 \cdot P(X = 5) + 6 \cdot P(X = 6)
+$$
+
+Substituting the probabilities, we have:
+
+$$
+E(X) = 1 \cdot \frac{1}{6} + 2 \cdot \frac{1}{6} + 3 \cdot \frac{1}{6} + 4 \cdot \frac{1}{6} + 5 \cdot \frac{1}{6} + 6 \cdot \frac{1}{6}
+$$
+
+Simplifying the expression gives us:
+
+$$
+E(X) = \frac{21}{6} = \frac{7}{2}
+$$
+
+Next, we need to compute the expected value of the square $$E(X^2)$$:
+
+$$
+E(X^2) = 1^2 \cdot P(X = 1) + 2^2 \cdot P(X = 2) + 3^2 \cdot P(X = 3) + 4^2 \cdot P(X = 4) + 5^2 \cdot P(X = 5) + 6^2 \cdot P(X = 6)
+$$
+
+Substituting the probabilities, we have:
+
+$$
+E(X^2) = 1^2 \cdot \frac{1}{6} + 2^2 \cdot \frac{1}{6} + 3^2 \cdot \frac{1}{6} + 4^2 \cdot \frac{1}{6} + 5^2 \cdot \frac{1}{6} + 6^2 \cdot \frac{1}{6}
+$$
+
+Simplifying the expression gives us:
+
+$$
+E(X^2) = \frac{91}{6}
+$$
+
+Finally, we can compute the variance $\text{Var}(X)$ using the formula:
+
+$$
+\text{Var}(X) = E(X^2) - (E(X))^2
+$$
+
+Substituting the values, we have:
+
+$$
+\text{Var}(X) = \frac{91}{6} - \left(\frac{7}{2}\right)^2
+$$
+
+Simplifying the expression gives us:
+
+$$
+\text{Var}(X) = \frac{35}{12}
+$$
+
+Therefore, the variance $\text{Var}(X)$ of the random variable $X$ is $\frac{35}{12}$.
+
+### Properties
+For constants $a$ and $b$, matrix $\mathbf{A}_{m\times n}$, vector $\mathbf{b}_{m \times 1}$, random variables $X$ and $Y$, and random vector $\mathbf{x}_{m\times 1}$ and $\mathbf{y}_{m\times 1}$
+
+1. Non-Negativity: The variance is always non-negative.
+   $$
+   \text{Var}(X) \geq 0
+   $$
+
+2. Variance of a Constant: The variance of a constant is zero.
+   $$
+   \text{Var}(c) = 0
+   $$
+   where $c$ is a constant.
+
+3. Linearity: The variance of a linear transformation of a random variable can be obtained by multiplying the variance of the original random variable by the square of the constant factor.
+   $$
+   \text{Var}(aX) = a^2\text{Var}(X)
+   $$
+
+   where $a$ is a constant.
+
+   $$
+   \text{Var}(\mathbf{A}X+\mathbf{b}) = \mathbf{A}\text{Var}(X)\mathbf{A}^T
+   $$
+
+
+4. Additivity of Independent Variables: The variance of the sum (or difference) of independent random variables is equal to the sum of their variances.
+   $$
+   \text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y)
+   $$
+   where $X$ and $Y$ are independent random variables.
+
+   $$
+   \text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y) + 2\text{Cov}(X,Y)
+   $$
+   where $X$ and $Y$ are dependent random variables.
+
+**Example:**
+
+Consider two independent random variables $$X$$ and $$Y$$ with variances $$\text{Var}(X) = 4$$ and $$\text{Var}(Y) = 9$$.
+
+1. Non-Negativity:
+   $\text{Var}(X) = 4 \geq 0$, $\text{Var}(Y) = 9 \geq 0$
+
+2. Variance of a Constant:
+   Let $c = 5$ be a constant. $\text{Var}(c) = \text{Var}(5) = 0$
+
+3. Linearity:
+   Let $a = 2$ be a constant. $\text{Var}(aX) = \text{Var}(2X) = 4(2^2) = 16$
+
+4. Additivity of Independent Variables:
+   $\text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y) = 4 + 9 = 13$
+
+## Covariance
+
+**Definition:**
+The covariance between two random variables $X$ and $Y$ is a measure of how they vary together. It is defined as the expected value of the product of the deviations of $X$ and $Y$ from their respective means.
+
+The covariance between $X$ and $Y$ is denoted as $Cov(X, Y)$ and can be calculated as:
+$$
+\text{Cov}(X, Y) = E[(X - E(X))(Y - E(Y))]
+$$
+
+**Example:**
+Let's consider two random variables $X$ and $Y$ with the following data:
+
+$$
+\begin{align*}
+X & : 1, 2, 3, 4, 5 \\
+Y & : 2, 4, 6, 8, 10 \\
+\end{align*}
+$$
+
+We first calculate the means of $X$ and $Y$:
+$$
+\begin{align*}
+E(X) &= \frac{1 + 2 + 3 + 4 + 5}{5} = 3 \\
+E(Y) &= \frac{2 + 4 + 6 + 8 + 10}{5} = 6 \\
+\end{align*}
+$$
+
+Next, we calculate the deviations of $X$ and $Y$ from their means:
+$$
+\begin{align*}
+X - E(X) & : -2, -1, 0, 1, 2 \\
+Y - E(Y) & : -4, -2, 0, 2, 4 \\
+\end{align*}
+$$
+
+Then, we calculate the product of these deviations and take their expected value:
+$$
+\text{Cov}(X, Y) = E[(X - E(X))(Y - E(Y))]
+$$
+
+Finally, we substitute the values and calculate the covariance.
+
+The resulting covariance will give us an indication of the relationship between the two variables.
+
+### Properties
+
+1. **Bilinearity:** Covariance is a bilinear function, meaning it satisfies the following properties:
+   - Linearity in the first argument: $Cov(aX, Y) = a * Cov(X, Y)$
+   - Linearity in the second argument: $Cov(X, bY) = b * Cov(X, Y)$
+   - Additivity: $Cov(X1 + X2, Y) = Cov(X1, Y) + Cov(X2, Y)$
+   - $Cov(aX+b+cY+d)=acCov(X,Y)$
+2. **Symmetry:** Covariance is symmetric, which means $Cov(X, Y) = Cov(Y, X)$.
+3. **Covariance with Constant:** $Cov(X, c) = 0$, where $c$ is a constant.
+4.  $Cov(X,Y)=0$ if the two random variables are independent.
+
+**Example:**
+Let's consider two random variables $X$ and $Y$ with the following data:
+
+$$
+\begin{align*}
+X & : 1, 2, 3, 4, 5 \\
+Y & : 2, 4, 6, 8, 10 \\
+\end{align*}
+$$
+
+1. **Bilinearity:**
+   - Linearity in the first argument:
+   $$
+   \text{Cov}(2X, Y) = 2 \cdot \text{Cov}(X, Y)
+   $$
+   
+   - Linearity in the second argument:
+   $$
+   \text{Cov}(X, 3Y) = 3 \cdot \text{Cov}(X, Y)
+   $$
+   
+   - Additivity:
+   $$
+   \text{Cov}(X_1 + X_2, Y) = \text{Cov}(X_1, Y) + \text{Cov}(X_2, Y)
+   $$
+
+2. **Symmetry:**
+   $$
+   \text{Cov}(X, Y) = \text{Cov}(Y, X)
+   $$
+
+3. **Covariance with Constant:**
+   $$
+   \text{Cov}(X, c) = 0
+   $$
 
 
 

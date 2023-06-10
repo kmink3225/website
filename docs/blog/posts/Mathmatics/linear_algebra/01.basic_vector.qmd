@@ -1,6 +1,6 @@
 ---
 title: "Basics (1) - Vector Operations"
-subtitle: Motivation, Scalr, Vector, Addition, Scalar Multiplication, Inner Product, Dot Product, Linear Transformation, Hermitian Transpose, Norm, Unit Vector, Projection, Cross Product, Column Vector, Row Vector, Linear Combination of Vectors, Outer Product
+subtitle: Introduction, Scalr, Vector, Addition, Scalar Multiplication
 description: |
   Basic Linear Algebra 
 categories:
@@ -18,7 +18,245 @@ execute:
 draft: False
 ---
 
-# Introduction Linear Algebra to Deep Learning
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
+
+<div class="tab-content" id="language-tabcontent">
+
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+
+# Introduction
+
+딥러닝은 상호 연결된 노드 또는 뉴런들의 계층으로 이루어진 신경망의 집합이며, 이들 간의 연결 가중치는 역전파라는 과정을 통해 학습된다
+
+선형 대수학은 딥러닝에 있어서 근본이 되는 역할을 하는데, 신경망의 학습에 관련된 많은 계산은 선형 대수 연산으로 표현될 수 있다. 예를 들어, 행렬 곱셈은 신경망의 각 계층의 출력을 계산하는 데 사용되며, 가중치에 대한 손실 함수의 그래디언트는 행렬 곱셈과 벡터 연산을 포함한 미분의 연쇄 법칙을 사용하여 계산된다.
+
+행렬 곱셈 외에도, 고유벡터, 고유값, 특이값 분해(SVD)와 같은 다른 선형 대수학적 개념들도 딥러닝에서 중요하다. 예를 들어, SVD는 데이터셋의 차원을 축소하거나 주성분을 계산하는 데 사용된다. 이는 데이터 시각화와 특징 추출에 유용하다.
+
+Numpy, Scipy, PyTorch와 같은 선형 대수학 라이브러리들은 이러한 연산의 효율적인 구현을 제공하여 GPU에서 대규모 신경망을 훈련하는 데 필수적이다. 이러한 라이브러리 없이 딥러닝 알고리즘을 구현하는 것은 훨씬 어렵고 시간이 많이 소요된다.
+
+[Reference: Motivation to Learn Linear Algebra](https://nbviewer.org/github/fastai/numerical-linear-algebra/blob/master/nbs/1.%20Why%20are%20we%20here.ipynb)
+
+# Physical Quantity
+
+## Scalar
+
+* 스칼라는 일반적으로 실수인 하나의 수학적인 양으로, 단일 값으로 나타낼 수 있습니다. 스칼라는 일반적으로 $a, b, c$와 같은 소문자로 표기된다.
+* 간단히 말해서, 스칼라는 온도나 높이와 같은 특정 물리적 양의 크기를 의미한다.
+
+## Vector
+
+* 벡터 $\textbf{v}$ 는 속도와 힘과 같은 크기와 방향을 모두 가진 수학적 개체이다.
+* $n$ 차원 유클리드 공간 $\mathbb{R}^n$ 에서, 벡터 $\textbf{v}$ 는 일반적으로 $n$ 개의 실수로 이루어진 순서가 있는 리스트로 표현된다
+* $\mathbf{v} =\begin{bmatrix} x\ y \end{bmatrix}$ 일 때, $\mathbf{v}$ 의 크기는 $||\mathbf{v}|| = \sqrt{x^{2} + y^{2}}$ 이다.
+* $\mathbf{v}$ 의 방향은 $x$ 축과 이루는 각도로 표현되며, $\theta=\tan^{-1}(\frac{y}{x})$ 이다. 만약 크기와 벡터가 같다면, 그들은 같은 벡터이다.
+
+::: {.callout-note}
+
+## Vector in Mathematics vs Physics
+
+### Vecotr in Mathematics
+
+* 벡터는 크기와 방향을 함께 나타내는 추상적인 수학적 객체이다.
+* 벡터는 일반적으로 순서가 있는 숫자들의 집합으로 표현된다(프로그래밍에서의 리스트와 유사한 형태), 종종 열 또는 행으로 배열되며 이를 벡터 구성 요소라고 한다.
+* 수학에서 벡터는 유클리드 공간이나 추상적인 벡터 공간과 같은 다양한 벡터 공간에서 정의되며, 덧셈, 스칼라 곱셈, 내적과 같은 특정 대수적 규칙을 따른다.
+
+### Vecotr in Physics
+
+* 벡터는 물리적인 양과 현상을 나타내고 분석하는 데 사용된다.
+* 벡터는 이동, 속도, 가속도, 힘, 운동량과 같이 크기와 방향을 모두 갖는 물리적인 양을 설명하는 데 사용된다.
+* 물리학에서 벡터는 종종 화살표로 표현되며, 화살표의 길이는 벡터의 크기를 나타내고, 화살표의 방향은 벡터의 방향을 나타낸다.
+* 물리학에서의 벡터는 벡터 덧셈과 스칼라 곱셈의 법칙을 따르며, 벡터 대수와 미적분을 사용하여 다양한 물리학 분야에서 문제를 분석하고 해결하는 데 활용될 수 있다.
+
+이 블로그는 벡터의 수학적인 관점에 초점을 맞춘다.
+:::
+
+$$
+\textbf{v}=
+\begin{bmatrix}
+  v_1 \\
+  v_2 \\
+  \vdots \\
+  v_n
+\end{bmatrix}
+$$
+
+여기서 $v_1, v_2, \ldots, v_n$ 은 벡터 $\textbf{v}$ 의 구성 요소이다.
+
+### Plotting Vectors on the Coordinate Plane
+
+Map $\begin{bmatrix} 3\\  2 \end{bmatrix}$ into $x=3$, $y=2$ on the Coordinate Plane
+```{python}
+import numpy as np
+import matplotlib.pyplot as plt
+
+plt.quiver(0, 0, 3, 2, color='b', angles='xy', scale_units='xy', scale=1)
+plt.xlim(-0.5, 3.5)
+plt.ylim(-0.5, 2.5)
+plt.grid()
+plt.show()
+
+```
+
+[Reference: Read This Article with Interactive Visualization - Points and Vectors](http://immersivemath.com/ila/ch02_vectors/ch02.html#auto_label_33)
+
+# Basic Vector Operations
+
+## Addition of Vectors
+
+두 벡터의 덧셈은 해당하는 구성 요소들을 더하는 과정입니다. 만약 $\textbf{a}$ 와 $\textbf{b}$ 가 같은 차원의 두 벡터라면, 그들의 합인 $\textbf{c} = \textbf{a} + \textbf{b}$ 는 $\textbf{a}$ 와 $\textbf{b}$ 의 $i$ 번째 구성 요소를 더한 값으로 이루어진 벡터이다.
+
+$$
+\begin{align*}
+  \textbf{c}&=\textbf{a}+\textbf{b}\\
+  c_i &= a_i + b_i
+\end{align*}
+$$
+
+예를 들어, 만약 $\textbf{a} = [3, 2]$ 이고 $\textbf{b} = [-2, 1]$ 이라면, 그들의 합인 $\textbf{c} = [1, 3]$ 이 된다.
+
+::: {layout-ncol=3}
+![](images/chap02_01.PNG)
+
+![](images/chap02_02.PNG)
+
+![](images/chap02_03.PNG)
+:::
+
+### Properties
+
+* 교환 법칙(Commutative Property): 덧셈의 순서는 결과에 영향을 주지 않는다.
+  $$ 
+  \mathbf{u} + \mathbf{v} = \mathbf{v} + \mathbf{u}
+  $$
+* 결합 법칙(Associative Property): 덧셈에서 벡터들의 그룹화는 결과에 영향을 주지 않는다.
+  $$ 
+  \mathbf{u} + (\mathbf{v} + \mathbf{w}) = (\mathbf{u} + \mathbf{v}) + \mathbf{w}
+  $$
+* 항등 원소(Identity Element): $\mathbf{0}$ 로 표시되는 항등 벡터가 존재하여, 어떤 벡터에 더해져도 동일한 벡터를 얻을 수 있다. 
+  $$ 
+  \mathbf{v} + \mathbf{0} = \mathbf{v}
+  $$
+* 역원소(Inverse Element): 모든 벡터 $\mathbf{v}$ 에 대해, $−\mathbf{v}$ 로 표시되는 덧셈 역원소가 존재하며, 이를 $\mathbf{v}$ 에 더하면 항등 벡터를 얻을 수 있다.
+  $$
+  \mathbf{v} + (-\mathbf{v}) = \mathbf{0}
+  $$
+
+::: {.callout-tip}
+## Why to check properties of definitions?
+
+특정 연산과 특정 집합이 정의되었을 때, 그들의 속성을 알아야 하는 것이 중요하다. 예를 들어, 만약 그것이 우리가 알고 있는 실수 집합의 속성과 완전히 동일하다는 것이 증명된다면, 실수 집합에서 증명된 모든 규칙과 정리를 새로 정의된 집합에도 적용할 수 있다.
+
+연산과 집합의 속성을 이해하는 것은 우리가 기존 도메인에서 얻은 지식과 정리를 다른 도메인에 적용할 수 있도록 해준다. 이는 특히 새로운 수학적 구조나 실수와 유사한 속성을 갖는 집합과 함께 작업할 때 유용하다. 이러한 연결을 확립함으로써, 우리는 기존의 이론과 결과를 활용하여 새로운 문맥에서 문제를 분석하고 해결하는 데 활용할 수 있다. 이는 수학적 개념을 확장하고 기존의 원칙을 새로운 도메인에 적용하는 강력한 프레임워크를 제공한다.
+:::
+
+## Subtraction of Vectors
+
+두 벡터의 뺄셈은 해당하는 구성 요소들을 빼는 과정이다. 만약 $\textbf{a}$ 와 $\textbf{b}$ 가 같은 차원의 두 벡터라면, 그들의 차인 $\textbf{c} = \textbf{a} - \textbf{b}$ 는 $\textbf{a}$ 와 $\textbf{b}$ 의 $i$ 번째 구성 요소를 빼서 얻은 값으로 이루어진 벡터이다. 형식적인 정의는 다음과 같다:
+
+$$
+\begin{align*}
+  \textbf{c}&=\textbf{a} - \textbf{b}\\
+  c_i &= a_i - b_i
+\end{align*}
+$$
+
+예를 들어, 만약 $\textbf{a} = [1, 2, 3]$ 이고 $\textbf{b} = [4, 5, 6]$ 라면, 그들의 차인 $\textbf{c} = [-3, -3, -3]$ 이다.
+
+### Properties
+
+* 폐쇄성(Closure): 벡터 뺄셈은 주어진 벡터 공간에서 폐쇄됩니다. 만약 두 벡터가 주어진 벡터 공간에 속한다면, $\mathbf{u} - \mathbf{v}$ 도 벡터이다.
+* 가감 역원의 존재(Existence of Additive Inverse): 모든 벡터 $\mathbf{u}$ 에 대해, $-\mathbf{u}$ 라는 가감 역원이 존재하여 $\mathbf{u} + (-\mathbf{u}) = \mathbf{0}$ 이다.
+* 교환 법칙(Commutativity): $\mathbf{u} - \mathbf{v} = \mathbf{v} - \mathbf{u}$.
+* 결합 법칙(Associativity): $(\mathbf{u} - \mathbf{v}) - \mathbf{w} = \mathbf{u} - (\mathbf{v} + \mathbf{w})$.
+
+## Scalar Multiplication of Vectors
+
+벡터의 스칼라 곱은 벡터의 각 구성 요소를 스칼라 값으로 곱하는 과정이다. 만약 $\textbf{a}$ 가 벡터이고 $k$ 가 스칼라라면, 스칼라 곱 $\textbf{c} = k\textbf{a}$ 는 $\textbf{a}$ 의 $i$ 번째 구성 요소를 $k$ 배한 값으로 이루어진 벡터입니다. 형식적인 정의는 다음과 같다:
+
+$$
+\begin{align*}
+  \textbf{c}&=k\textbf{a}\\
+  c_i &= ka_i
+\end{align*}
+$$
+
+예를 들어, 만약 $\textbf{a} = [1, 2, 3]$ 이고 $k = 2$ 라면, 그들의 스칼라 곱인 $\textbf{c} = [2, 4, 6]$ 이다.
+
+[Reference: Read This Article with Interactive Visualization - Properties of Vector Arithmetic](http://immersivemath.com/ila/ch02_vectors/ch02.html#sec_vec_arithmetic)
+
+### Properteis
+
+* Closure: 스칼라 $c$ 와 벡터 $\mathbf{v}$ 에 대해, 스칼라 곱 $c\mathbf{v}$ 역시 벡터이다.
+* 스칼라와의 결합법칙: 스칼라 $c$ 와 $d$ 와 벡터 $\mathbf{v}$ 에 대해, $(cd)\mathbf{v} = c(d\mathbf{v})$ 이다.
+* 스칼라와의 분배법칙: 스칼라 $c$ 와 $d$ 와 벡터 $\mathbf{v}$ 에 대해, $(c+d)\mathbf{v} = c\mathbf{v} + d\mathbf{v}$ 이다.
+* 벡터와의 분배법칙: 스칼라 $c$와 벡터 $\mathbf{u}$, $\mathbf{v}$에 대해, $c(\mathbf{u}+\mathbf{v}) = c\mathbf{u} + c\mathbf{v}$ 이다.
+* 곱의 항등원: 벡터 $\mathbf{v}$ 에 대해, $1\mathbf{v} = \mathbf{v}$ 이며, 여기서 $1$ 은 곱의 항등원이다.
+
+## Location Vector
+
+점 $P$ 에 대한 원점에 상대적인 위치 벡터는 벡터 $\mathbf{OP}$ 로 정의될 수 있으며, 여기서 $\mathbf{O}$ 는 원점을 나타낸다. 이는 원점의 위치 벡터 ($\mathbf{O}$)를 점의 위치 벡터 ($\mathbf{P}$)에서 빼는 것으로 계산할 수 있다:
+
+$$ 
+\mathbf{OP} = \mathbf{P} - \mathbf{O}
+$$
+
+$$
+P_1=(x_1,y_1)$, $P_2=(x_2,y_2)$, $P_1P_2=(x_2-x_1,y_2-y_1)
+$$
+
+위치 벡터는 벡터를 한 점으로 표현한다.
+
+예를 들어, 두 벡터 $ \mathbf{v} = \begin{bmatrix} 2 \ 3 \ -1 \end{bmatrix} $ 와 $ \mathbf{w} = \begin{bmatrix} -4 \ 1 \ 5 \end{bmatrix} $ 를 고려할 때 원점에 대한 점 $ P $ 의 위치 벡터는 다음과 같이 계산된다:
+
+$$ 
+\mathbf{OP} = \mathbf{P} - \mathbf{O} = \mathbf{w} - \mathbf{v} = \begin{bmatrix} -4 \\ 1 \\ 5 \end{bmatrix} - \begin{bmatrix} 2 \\ 3 \\ -1 \end{bmatrix} = \begin{bmatrix} -6 \\ -2 \\ 6 \end{bmatrix} 
+$$
+
+따라서, 위치 벡터 $ \mathbf{OP}$ 는 실제로 $\begin{bmatrix} -6 \ -2 \ 6 \end{bmatrix}$ 이다.
+
+### Properties
+
+1. Identity Element: 원점의 위치 벡터를 나타내는 $ \mathbf{0} $ 은 벡터 덧셈에 대한 항등원 역할을 한다.
+  $$
+  \mathbf{v} + \mathbf{0} = \mathbf{v}
+  $$
+2. Additive Inverse: 모든 위치 벡터 $ \mathbf{v} $ 에 대해, $ -\mathbf{v} $ 라는 벡터가 존재하여 그들의 합이 영 벡터가 된다.
+  $$
+  \mathbf{v} + (-\mathbf{v}) = \mathbf{0}
+  $$
+3. Scalar Multiplication: 위치 벡터 $\mathbf{v}$ 의 스칼라 곱은 스칼라 $c$ 와의 곱셈이 벡터 덧셈과 스칼라 덧셈에 대해 분배 법칙을 따른다:
+  $$
+  c(\mathbf{v} + \mathbf{w}) = c\mathbf{v} + c\mathbf{w} and (c + d)\mathbf{v} = c\mathbf{v} + d\mathbf{v}
+  $$
+4. Scalar Identity: 위치 벡터 $\mathbf{v}$ 를 스칼라 1로 곱하면 벡터는 변경되지 않는다.
+  $$
+  1 \cdot \mathbf{v} = \mathbf{v}
+  $$
+5. Associativity of Vector Addition: 벡터 덧셈은 결합법칙을 따른다. 즉, 위치 벡터 $\mathbf{u}$, $\mathbf{v}$, $\mathbf{w}$ 에 대하여 다음이 성립한다.
+  $$
+  (\mathbf{u} + \mathbf{v}) + \mathbf{w} = \mathbf{u} + (\mathbf{v} + \mathbf{w})
+  $$
+6. Commutativity of Vector Addition: 벡터 덧셈은 교환법칙을 따른다. 즉, 위치 벡터 $\mathbf{u}$ 와 $\mathbf{v}$ 에 대하여 다음이 성립한다:
+  $$
+  \mathbf{u} + \mathbf{v} = \mathbf{v} + \mathbf{u}
+  $$
+
+:::
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
+
+# Introduction
 
 Deep learning is a pile of neural networks that are made up of layers of interconnected nodes or neurons, and the weights of the connections between them are learned through a process called backpropagation.
 
@@ -30,17 +268,41 @@ Linear algebra libraries such as Numpy, Scipy, and PyTorch provide efficient imp
 
 [Reference: Motivation to Learn Linear Algebra](https://nbviewer.org/github/fastai/numerical-linear-algebra/blob/master/nbs/1.%20Why%20are%20we%20here.ipynb)
 
+# Physical Quantity
+
 ## Scalar
 
-A scalar is a single mathematical quantity, usually a real number, which can be represented by a single value. Scalars are typically denoted by lowercase letters, such as $a, b, c,$ and so on.
+* A scalar is a single mathematical quantity, usually a real number, which can be represented by a single value. Scalars are typically denoted by lowercase letters, such as $a, b, c,$ and so on.
+* Simply, a scalar means a magnitude of a certain physical quantity such as temperature and height.
 
 ## Vector
 
-A vector $\textbf{v}$ is a mathematical object that represents a quantity with both a magnitude and a direction. In $n$-dimensional Euclidean space $\mathbb{R}^n$, a vector $\textbf{v}$ is typically represented as an ordered list of $n$ real numbers:
+* A vector $\textbf{v}$ is a mathematical object that represents a quantity with both a magnitude and a direction such as velocity and force.
+* In $n$-dimensional Euclidean space $\mathbb{R}^n$, a vector $\textbf{v}$ is typically represented as an ordered list of $n$ real numbers:
 
 * the magnitude of $\mathbf{v} =\begin{bmatrix} x\\  y \end{bmatrix}$ is $||\mathbf{v}|| = \sqrt{x^{2} + y^{2}}$
 * the direction of it is the angle with the x axis, $\theta=\tan^{-1}(\frac{y}{x})$
 * If magnitude and vector are equal, then they are equal vectors
+
+::: {.callout-note}
+
+## Vector in Mathematics vs Physics
+
+### Vecotr in Mathematics
+
+* A vector is an abstract mathematical object that represents a quantity with both magnitude and direction. 
+* Vectors are typically represented as ordered sets of numbers (a list in programming), often arranged in a column or row, known as vector components. 
+* Vectors in mathematics can be defined in various vector spaces, such as Euclidean space or abstract vector spaces, and they follow specific algebraic rules for addition, scalar multiplication, and dot product.
+
+### Vecotr in Physics
+
+* Vectors are used to represent and analyze physical quantities and phenomena.
+* Vectors are used to describe physical quantities that have both magnitude and direction such as displacement, velocity, acceleration, force, and momentum. 
+* Vectors in physics are often represented by **arrows**, where the length of the arrow represents the **magnitude** of the vector, and the **direction** of the arrow represents the direction of the vector. 
+* Vectors in physics obey the laws of vector addition and scalar multiplication, and they can be combined and manipulated using vector algebra and calculus to analyze and solve problems in various branches of physics.
+
+This blog focuses on the mathematical perspective of a vector.
+:::
 
 $$
 \textbf{v}=
@@ -73,9 +335,9 @@ plt.show()
 
 [Reference: Read This Article with Interactive Visualization - Points and Vectors](http://immersivemath.com/ila/ch02_vectors/ch02.html#auto_label_33)
 
-## Basic Vector Operations
+# Basic Vector Operations
 
-### Addition of Vectors
+## Addition of Vectors
 
 The addition of two vectors is the process of adding their corresponding components. If $\textbf{a}$ and $\textbf{b}$ are two vectors of the same dimension, then their sum $\textbf{c} = \textbf{a} + \textbf{b}$ is a vector whose $i$-th component is the sum of the $i$-th components of $\textbf{a}$ and $\textbf{b}$. 
 
@@ -96,7 +358,34 @@ For example, if $\textbf{a} = [3, 2]$ and $\textbf{b} = [-2,1]$, then their sum 
 ![](images/chap02_03.PNG)
 :::
 
-### Subtraction of Vectors
+### Properties
+
+* Commutative Property:  The order of addition does not affect the result
+  $$ 
+  \mathbf{u} + \mathbf{v} = \mathbf{v} + \mathbf{u}
+  $$
+* Associative Property: The grouping of vectors in an addition does not affect the result.
+  $$ 
+  \mathbf{u} + (\mathbf{v} + \mathbf{w}) = (\mathbf{u} + \mathbf{v}) + \mathbf{w}
+  $$
+* Identity Element: There exists an identity vector, denoted as $\mathbf{0}$ such that adding it to any vector yields the same vector. 
+  $$ 
+  \mathbf{v} + \mathbf{0} = \mathbf{v}
+  $$
+* Inverse Element: For every vector $\mathbf{v}$, there exists an additive inverse vector, denoted as $−\mathbf{v}$, such that adding it to $\mathbf{v}$ yields the identity vector. 
+  $$
+  \mathbf{v} + (-\mathbf{v}) = \mathbf{0}
+  $$
+
+::: {.callout-tip}
+## Why to check properties of definitions?
+
+When certain operations and particular sets are defined, it is important to know their properties. For example, if it is proven that it is exactly the same as the properties of the real set we know, all the rules and theorems proved in the real set can be applied to the newly defined set.
+
+Understanding the properties of operations and sets allows us to apply existing knowledge and theorems from one domain to another, as long as the properties align. This is particularly useful when working with new mathematical structures or sets that have similar properties to well-known sets like the real numbers. By establishing these connections, we can leverage existing theories and results to analyze and solve problems in the new context. It provides a powerful framework for extending mathematical concepts and applying established principles to new domains.
+:::
+
+## Subtraction of Vectors
 
 The subtraction of two vectors is the process of subtracting their corresponding components. If $\textbf{a}$ and $\textbf{b}$ are two vectors of the same dimension, then their difference $\textbf{c} = \textbf{a} - \textbf{b}$ is a vector whose $i$-th component is the difference between the $i$-th components of $\textbf{a}$ and $\textbf{b}$. The formal definition is:
 
@@ -109,7 +398,14 @@ $$
 
 For example, if $\textbf{a} = [1, 2, 3]$ and $\textbf{b} = [4, 5, 6]$, then their difference $\textbf{c} = [-3, -3, -3]$.
 
-### Scalar Multiplication of Vectors
+### Properties
+
+* Closure: Vector subtraction is closed under the vector space. If two vectors are in the given vector space, then $\mathbf{u} - \mathbf{v}$ is a vector.
+* Existence of Additive Inverse: For every vector $\mathbf{u}$, there exists an additive inverse $-\mathbf{u}$ such that $\mathbf{u} + (-\mathbf{u}) = \mathbf{0}$.
+* Commutativity: $\mathbf{u} - \mathbf{v} = \mathbf{v} - \mathbf{u}$.
+* Associativity: $(\mathbf{u} - \mathbf{v}) - \mathbf{w} = \mathbf{u} - (\mathbf{v} + \mathbf{w})$.
+
+## Scalar Multiplication of Vectors
 
 The scalar multiplication of a vector is the process of multiplying each component of the vector by a scalar. If $\textbf{a}$ is a vector and $k$ is a scalar, then the scalar multiple $\textbf{c} = k\textbf{a}$ is a vector whose $i$-th component is $k$ times the $i$-th component of $\textbf{a}$. The formal definition is:
 
@@ -124,473 +420,64 @@ For example, if $\textbf{a} = [1, 2, 3]$ and $k = 2$, then their scalar multiple
 
 [Reference: Read This Article with Interactive Visualization - Properties of Vector Arithmetic](http://immersivemath.com/ila/ch02_vectors/ch02.html#sec_vec_arithmetic)
 
-### Inner Product of Vectors
+### Properteis
 
-The dot product of two vectors is the sum of the products of their corresponding components (a.k.a dot product & scalar product). If $\textbf{a}$ and $\textbf{b}$ are two vectors of the same dimension, then their dot product $c = \textbf{a} \cdot \textbf{b}$ is a scalar given by the formula:
+* Closure: For a scalar $c$ and a vector $\mathbf{v}$, the scalar multiple $c\mathbf{v}$ is also a vector.
+* Associativity with Scalars: For scalars $c$ and $d$ and a vector $\mathbf{v}$, $(cd)\mathbf{v} = c(d\mathbf{v})$.
+* Distributivity with Scalars: For scalars $c$ and $d$ and a vector $\mathbf{v}$, $(c+d)\mathbf{v} = c\mathbf{v} + d\mathbf{v}$.
+* Distributivity with Vectors: For a scalar $c$ and vectors $\mathbf{u}$ and $\mathbf{v}$, $c(\mathbf{u}+\mathbf{v}) = c\mathbf{u} + c\mathbf{v}$.
+* Multiplicative Identity: For a vector $\mathbf{v}$, $1\mathbf{v} = \mathbf{v}$, where $1$ is the multiplicative identity.
 
-$$
-\begin{align*}
-  c&=\textbf{a}\cdot \textbf{b}\\
-  &= \sum_{i=1}^{n}a_ib_i
-\end{align*}
-$$
+## Location Vector
 
-* Dot product can be used to measure the similarity between two vectors.
-* For the two vectors, $\mathbf{a} = [a_1, a_2, \cdots a_n]$ , $\mathbf{b} = [b_1, b_2, \cdots b_n]$, dot product can be defined as
-$$
-\mathbf{a} \cdot \mathbf{b} = \mathbf{a}^{T} \mathbf{b} = ||\mathbf{a}||\text{ } ||\mathbf{b}|| \cos \theta 
-$$
-* When two vectors are orthogonal, $\cos 90^{\circ} = 0$, the similarity of the two vectors is 0.
-* In the Euclidean space, dot product is often called inner product (inner product is a generalization of dot product)
+The location vector of a point $P$ relative to the origin can be defined as the vector $\mathbf{OP}$, where $ \mathbf{O}$ is the origin. It can be calculated by subtracting the position vector of the origin ($ \mathbf{O} $) from the position vector of the point ($ \mathbf{P}$). Mathematically, it is represented as:
 
-:::{.callout-note}
-
-#### Inner Product vs Dot Product
-
-In general, an inner product is a mathematical operation that takes two vectors and produces a scalar. It satisfies certain properties, such as being linear in the first argument, conjugate linear in the second argument, and positive-definite.
-In other words, an inner product is a bilinear form that satisfies the following properties for all vectors $\mathbf{x}$, $\mathbf{y}$, and $\mathbf{z}$, and all scalars $a$ and $b$:
-
-* "Linear in the first argument" means that for any fixed vector $\mathbf u$, the function $f$ defined by $f(\mathbf v) = \langle\mathbf u, \mathbf v\rangle$ is a linear function of $\mathbf v$, i.e., $f(a\mathbf x + b\mathbf y) = af(\mathbf x) + bf(\mathbf y)$ for any scalars $a$, $b$, and vectors $\mathbf{x}$, $\mathbf{y}$.
-  * $\langle a\mathbf{x} + b\mathbf{y}, \mathbf{z}\rangle = a\langle\mathbf{x}, \mathbf{z}\rangle + b\langle\mathbf{y}, \mathbf{z}\rangle$, the inner product is linear with respect to the first argument. If we multiply a vector by a scalar and add it to another vector, the resulting inner product is the same as if we had calculated the inner product of each vector separately and then added them.
-* "Conjugate linear in the second argument" means that for any fixed vector $\mathbf v$, the function $g$ defined by $g(\mathbf u) = \langle\mathbf u, \mathbf v\rangle$ is a conjugate linear function of $\mathbf u$, i.e., $g(a \mathbf x + b \mathbf y) = \bar{a} g(\mathbf x) + \bar{b} * g(\mathbf y)$ for any scalars $a$, $b$, and vectors $\mathbf x$, $\mathbf y$, where $\bar{a}$ denotes the complex conjugate of $a$.
-  * $\langle \mathbf{x}, a\mathbf{y}, b\mathbf{z}\rangle = a\langle\mathbf{x}, \mathbf{y}\rangle + b\langle\mathbf{x}, \mathbf{z}\rangle$. this property says that the inner product is linear with respect to the second argument, but with complex conjugation. If we multiply a vector by a scalar and add it to another vector, the resulting inner product is the same as if we had calculated the inner product of each vector separately, complex-conjugated the second vector, and then added them.
-* "Symmetry" means $\langle \mathbf{x},\mathbf{y}\rangle= \langle \mathbf{y},\mathbf{x}\rangle$
-  * the order of the vectors doesn't matter when calculating the inner product.  
-* "Positive-definite" means that for any nonzero vector v, the inner product $\langle\mathbf u, \mathbf v\rangle$ is a positive real number. In other words, the inner product of a vector with itself is always positive, except when the vector is the zero vector.
-  * $\langle \mathbf{x},\mathbf{x}\rangle\ge 0, \langle \mathbf{x},\mathbf{x}\rangle=0$ only if $\mathbf{x}=0$
-
-:::{.callout-note}
-
-#### Linear Transformation
-
-A function is said to be linear if it satisfies two properties: **additivity** and **homogeneity**.
-
-1. Additivity means that for any two inputs, the output of the function applied to their sum is equal to the sum of the outputs applied to each input separately. In other words, if we have a function $f$ and vectors $\mathbf x$ and $\mathbf y$, then
-
-$$
-f(\mathbf x + \mathbf y) = f(\mathbf x) + f(\mathbf y)
+$$ 
+\mathbf{OP} = \mathbf{P} - \mathbf{O}
 $$
 
-2. Homogeneity means that for any input and scalar $c$, the output of the function applied to the input scaled by $c$ is equal to the output applied to the unscaled input multiplied by $c$. In other words,
+a location vector represent a vector as a point.
 
+For example, let's consider two vectors $ \mathbf{v} = \begin{bmatrix} 2 \\ 3 \\ -1 \end{bmatrix} $ and $ \mathbf{w} = \begin{bmatrix} -4 \\ 1 \\ 5 \end{bmatrix} $. The location vector of point $ P $ relative to the origin can be calculated as:
+
+$$ 
+\mathbf{OP} = \mathbf{P} - \mathbf{O} = \mathbf{w} - \mathbf{v} = \begin{bmatrix} -4 \\ 1 \\ 5 \end{bmatrix} - \begin{bmatrix} 2 \\ 3 \\ -1 \end{bmatrix} = \begin{bmatrix} -6 \\ -2 \\ 6 \end{bmatrix} 
 $$
-f(c\mathbf x) = c f(\mathbf x)
-$$
-These two properties together are what we mean when we say a function is linear.
 
-Try to compare $y=2x$ for liniearity vs $y=2x^2$ for non-linearity and which one satisfies the linear properties?
+So, the location vector $ \mathbf{OP} $ is $ \begin{bmatrix} -6 \\ -2 \\ 6 \end{bmatrix} $.
 
+### Properties
+
+1. Identity Element: The location vector of the origin, denoted as $\mathbf{0}$, acts as the identity element for vector addition
+  $$
+  \mathbf{v} + \mathbf{0} = \mathbf{v}
+  $$
+2. Additive Inverse: For every location vector $\mathbf{v}$, there exists a vector $-\mathbf{v}$ such that their sum is the zero vector:
+  $$
+  \mathbf{v} + (-\mathbf{v}) = \mathbf{0}
+  $$
+3. Scalar Multiplication: Scalar multiplication of a location vector $\mathbf{v}$ by a scalar $c$ distributes over vector addition and scalar addition:
+  $$
+  c(\mathbf{v} + \mathbf{w}) = c\mathbf{v} + c\mathbf{w} and (c + d)\mathbf{v} = c\mathbf{v} + d\mathbf{v}
+  $$
+4. Scalar Identity: Multiplying a location vector $\mathbf{v}$ by a scalar 1 leaves the vector unchanged:
+  $$
+  1 \cdot \mathbf{v} = \mathbf{v}
+  $$
+5. Associativity of Vector Addition: Vector addition is associative, meaning that for location vectors $\mathbf{u}$, $\mathbf{v}$, and $\mathbf{w}$:
+  $$
+  (\mathbf{u} + \mathbf{v}) + \mathbf{w} = \mathbf{u} + (\mathbf{v} + \mathbf{w})
+  $$
+6. Commutativity of Vector Addition: Vector addition is commutative, meaning that for location vectors $\mathbf{u}$ and $\mathbf{v}$:
+  $$
+  \mathbf{u} + \mathbf{v} = \mathbf{v} + \mathbf{u}
+  $$
+
+:::{#thm-locationVector}
+$P_1=(x_1,y_1)$, $P_2=(x_2,y_2)$, $P_1P_2=(x_2-x_1,y_2-y_1)$
 :::
-
-Let's consider the standard inner product of two vectors in $\mathbb R^2$, given by $\langle \mathbf x, \mathbf y\rangle$ = $x_1y_1 + x_2y_2$, where $\mathbf x = [x_1, x_2]^T$ and $\mathbf y = [y_1, y_2]^T$.
-
-1. Linearity in the first argument:
-
-$$
-\langle 2 \mathbf x + 3\mathbf y, \mathbf z\rangle = (2x_1 + 3y_1)z_1 + (2x_2 + 3y_2)z_2 = 2\langle \mathbf x, \mathbf z \rangle + 3\langle \mathbf y, \mathbf z \rangle
-$$
-
-2. Conjugate linearity in the second argument:
-
-$$
-\langle \mathbf x, 2\mathbf y+3\mathbf z\rangle = x_1(2y_1 + 3z_1) + x_2(2y_2 + 3z_2) = 2\langle \mathbf x, \mathbf y \rangle + 3\langle \mathbf x, \mathbf z \rangle
-$$
-
-3. Symmetry:
-
-$$
-\langle \mathbf x,\mathbf y\rangle = x_1y_1 + x_2y_2 = y_1x_1 + y_2x_2 = \langle \mathbf y, \mathbf x \rangle
-$$
-
-4. Positive-definite:
-
-$$
-\langle \mathbf x,\mathbf x\rangle =  x_1^2 + x_2^2 \ge 0 = \langle \mathbf x, \mathbf x \rangle \text{ only if } \mathbf x = [0, 0]^T
-$$
-
-
-Let's see another example of two complex vectors for *2. Conjugate linearity in the second argument*, $\mathbf{u}=\begin{bmatrix} 1+i \\ 2 \end{bmatrix}$ and $\mathbf{v}=\begin{bmatrix} 3-2i \\ 1 \end{bmatrix}$.
-
-Their inner product would be:
-$$
-\begin{aligned}
-\langle \mathbf{u}, \mathbf{v} \rangle &= \begin{bmatrix} 1+i \\ 2 \end{bmatrix}^H \begin{bmatrix} 3-2i \\ 1 \end{bmatrix} \\
-&= \begin{bmatrix} 1-i & 2 \end{bmatrix} \begin{bmatrix} 3-2i \\ 1 \end{bmatrix} \\
-&= (1-i)(3-2i) + 2(1) \\
-&= 1 + i + 6 - 4i + 2 \\
-&= 9 - 3i.
-\end{aligned}
-$$
-
-where $H$ is the Hermitian transpose, also known as the conjugate transpose, which is similar to the transpose operation, but also involves taking the complex conjugate of each element. For a matrix $\mathbf A$, the Hermitian transpose is denoted by $\mathbf A^H$ or $A^\dagger$ and is defined as the transpose of the complex conjugate of $\mathbf A$. Mathematically, for a matrix $\mathbf A$ with elements $a_{i,j}$, the Hermitian transpose $\mathbf A^H$ is defined as:
-
-$$
-(\mathbf A^H)_{i,j} = \overline{a_{j,i}}
-$$
-
-where $\overline{a_{j,i}}$ denotes the complex conjugate of $a_{j,i}$.
-
-In the case of a real-valued matrix, the Hermitian transpose reduces to the ordinary transpose, denoted by $\mathbf A^T$.
-
-Now let's see the conjugate linearity property in the second argument:
-
-$$
-\begin{aligned}
-\langle \mathbf{u}, c \mathbf{v} \rangle &= \begin{bmatrix} 1+i \\2 \end{bmatrix}^H \left(c \begin{bmatrix} 3-2i \\ 1 \end{bmatrix}\right) \\
-&= \begin{bmatrix} 1-i & 2 \end{bmatrix} \begin{bmatrix} 3c-2ci \\ c \end{bmatrix} \\
-&= (1-i)(3c-2ci) + 2(c) \\
-&= 3c - 2ci + 2c - 2ci \\
-&= (3+2)c - 4ci \\
-&= c(3+2i) - 4i\overline{c}.
-\end{aligned}
-$$
-
-We can see that the second component of the result is $-4i\overline{c}$, which is the conjugate of $4ic$. Therefore, we can say that the inner product is conjugate linear in the second argument.
-
-A dot product is a specific type of inner product that is defined for Euclidean spaces, which are spaces with a notion of distance or length. The dot product of two vectors is defined as the sum of the products of their corresponding components. In other words, if $\mathbf a = [a_1, a_2, ..., a_n]$ and $\mathbf b = [b_1, b_2, ..., b_n]$ are two vectors in $\mathbb R^n$, then their dot product is given by:
-
-$$
-\mathbf a \cdot \mathbf b = a_1b_1 + a_2b_2 + ... + a_nb_n
-$$
-
-The dot product satisfies some of the properties of an inner product, such as being linear in the first argument and symmetric. However, it is not conjugate linear in the second argument, and it is not positive-definite in general.
-
-So, while a dot product is a specific type of inner product, not all inner products are dot products.
-:::
-
-For example, if $\textbf{a} = [1, 2, 3]$ and $\textbf{b} = [4, 5, 6]$, then their dot product $c = 1\cdot 4 + 2\cdot 5 + 3\cdot 6 = 32$.
-
-
-:::{.callout-note}
-#### Norm
-
-The norm of a vector $\mathbf{x}$ is a non-negative scalar value that represents **the size or length** of the vector. The norm is denoted by $||\mathbf{x}||$ and satisfies the following properties:
-
-* Non-negativity: $||\mathbf{x}||\geq 0$, with equality if and only if $\mathbf{x}=\mathbf{0}$.
-* Homogeneity: $||\alpha\mathbf{x}||=|\alpha| \text{ }||\mathbf{x}||$ for any scalar $\alpha$.
-* Triangle Inequality: $||\mathbf{x}+\mathbf{y}||\leq ||\mathbf{x}||+||\mathbf{y}||$.
-
-Here is an example of finding the Euclidean norm of a vector:
-Suppose we have a vector $\mathbf{x}=\begin{bmatrix}1 \\ -2 \\ 2\end{bmatrix}$. We can find its norm as follows:
-
-$$
-||\mathbf x||=\sqrt{1^2+(-2)^2+2^2}=\sqrt{9}=3
-$$
-
-Therefore, the norm of $\mathbf{x}$ is 3.
-
-There are several types of norms:
-
-* Manhattan Norm or Absolute Norm or $l_1$-norm
-$$
-\begin{equation*}
-||\mathbf{x}||_{l_1} = \sum_{i=1}^{n} |x_i|
-\end{equation*}
-$$
-where $\mathbf{x}$ is a vector of length $n$.
-Example: For $\mathbf{x} = [1, -2, 3]$, $||\mathbf{x}||_{l_1} = |1| + |-2| + |3| = 6$.
-
-
-* Euclidean Norm or $l_2$-norm
-$$
-\begin{equation*}
-||\mathbf{x}||_{l_2} = \sqrt{\sum_{i=1}^{n} x_i^2}
-\end{equation*}
-$$
-where $\mathbf{x}$ is a vector of length $n$.
-Example: For $\mathbf{x} = [1, 2, 3]$, $||\mathbf{x}||_{l_2} = \sqrt{1^2 + 2^2 + 3^2} = \sqrt{14}$.
-
-![$l_2$-norm](images/chap02_05.PNG)
-
-* p-norm($l_2$-norm) 
-
-For $p \geq 1$, 
-$$
-\begin{equation*}
-||\mathbf{x}||_p = (\sum_{i=1}^n |x_i|^p)^{\frac{1}{p}}
-\end{equation*}
-$$
-where $\mathbf{x}$ is a vector of length $n$.
-Example: For $\mathbf{x} = [1, 2, 3]$, $||\mathbf{x}||_{l_p} = \sqrt{1^p + 2^p + 3^p}$.
-
-* Maximum Norm
-$$
-\begin{equation*}
-||\mathbf{x}||_{\infty} = \max_{1 \leq i \leq n} |x_i|
-\end{equation*}
-$$
-where $\mathbf{x}$ is a vector of length $n$.
-Example: For $\mathbf{x} = [1, -2, 3]$, $||\mathbf{x}||_{\infty} = \max{(1, |-2|, 3)} = 3$.
-
-![$l_1$-norm vs $l_2$-norm vs $\max$-norm](images/chap02_06.PNG)
-
-* Frobenius Norm:
-$$
-\begin{equation*}
-||\mathbf{a}||_{F} = \sqrt{\sum_{i=1}^{m} \sum_{j=1}^{n} |a_{ij}|^2}
-\end{equation*}
-$$
-where $\mathbf{A}$ is an $m \times n$ matrix.
-Example: For $\mathbf{A} = \begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}$, $||\mathbf{A}||_{F} = \sqrt{1^2 + 2^2 + 3^2 + 4^2} = \sqrt{30}$.
 
 :::
 
 
-:::{.callout-note}
-
-#### Projection
-
-Let $\mathbf{u}$ and $\mathbf{v}$ be two vectors. The projection of $\mathbf{u}$ onto $\mathbf{v}$ is defined as the vector:
-
-This vector is the closest vector to $\mathbf{u}$ that lies on the line spanned by $\mathbf{v}$.
-$$
-\mathbf w=\text{proj}_{\mathbf v}\mathbf u =\frac{\mathbf u \mathbf v}{||\mathbf v||^2} \mathbf v
-$$
-![Projection](images/chap02_04.PNG)
-
-* $\mathbf{w} = ||\mathbf{w}||\mathbf{v} = ||\mathbf{u}|| \cos \theta \mathbf{v}$
-* $\mathbf{u}^T \mathbf{u} = ||\mathbf{u}|| ||\mathbf{u}|| = ||\mathbf{u}||^2$
-* the magnitude of $\mathbf{u}$  = $||\mathbf{u}|| = \sqrt{\mathbf{u}^T \mathbf{u}}$ 
-* unit vector: a normalized vector by dividing it by its magnitude, so the magnitude of a unit vector is 1
-$$
-  \hat{\mathbf{u}} = \frac{\mathbf{u}}{||\mathbf{u}||} = \frac{\mathbf{u}}{\sqrt{\mathbf{u}^T \mathbf{u}}}
-$$
-* Projected vector, $\mathbf{w}$
-  * the product of $\frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||}$ and a unit vector of $\mathbf{v}$
-$$
-\frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||} \frac{\mathbf{v}}{||\mathbf{v}||} = \frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||^2}\mathbf{v}
-$$
-
-For example, let $\mathbf{u} = \begin{bmatrix}2 \\ 3\end{bmatrix}$ and $\mathbf{v} = \begin{bmatrix}1 \\ 1\end{bmatrix}$. Then, the projection of $\mathbf{u}$ onto $\mathbf{v}$ is:
-
-$$
-\text{proj}_{\mathbf v}\mathbf u =\frac{\mathbf u^{T} \mathbf v}{||\mathbf v||^2} \mathbf v =\frac{\begin{bmatrix}2 \\ 3\end{bmatrix}\begin{bmatrix}1 \\ 1\end{bmatrix}}{\bigg{|}\bigg{|}\begin{bmatrix}1 \\ 1\end{bmatrix}\bigg{|}\bigg{|}^2}=\frac{5}{2}\begin{bmatrix}1 \\ 1\end{bmatrix}=\begin{bmatrix}5 \\ 2\end{bmatrix}
-$$
-
-This vector is the closest vector to $\mathbf{u}$ that lies on the line spanned by $\mathbf{v} = \begin{bmatrix}1 \\ 1\end{bmatrix}$.
-
-[Reference: Read This Article with Interactive Visualization - Projection](http://immersivemath.com/ila/ch03_dotproduct/ch03.html#auto_label_107)
-:::
-
-
-:::{.callout-note}
-#### Cauchy-Schwarz Inequality
-
-a fundamental result in mathematics that relates to inner products and norms. It states that for any vectors $\mathbf{u}$ and $\mathbf{v}$ in an inner product space, the following inequality holds:
-$$
-  |\langle \mathbf u,\mathbf v\rangle|\le ||\mathbf u|| ||\mathbf v ||
-$$
-
-where $\langle \mathbf{u}, \mathbf{v}\rangle$ denotes the inner product of vectors $\mathbf{u}$ and $\mathbf{v}$, and $|\mathbf{u}|$ and $|\mathbf{v}|$ denote their respective norms.
-In terms of the cosine formula, the Schwarz inequality can be written as:
-$$
-\cos \theta \le 1
-$$
-
-where $\theta$ is the angle between vectors $\mathbf{u}$ and $\mathbf{v}$, and $\cos{\theta} = \frac{\langle \mathbf{u}, \mathbf{v}\rangle}{|\mathbf{u}| |\mathbf{v}|}$.
-
-Geometrically, the Schwarz inequality states that the magnitude of the projection of one vector onto the other cannot exceed the length of the vector being projected. In other words, it bounds the correlation between two vectors and ensures that their inner product is always less than or equal to the product of their norms.
-:::
-
-:::{.callout-note}
-#### Triangle Inequality
-
-The triangle inequality states that for any two vectors $\mathbf{u}$ and $\mathbf{v}$, the length of the sum of the vectors is less than or equal to the sum of the lengths of the vectors themselves. In terms of the cosine formula, this can be expressed as:
-$$
- ||\mathbf u + \mathbf v||^2 \le ||\mathbf u||^2 + 2||\mathbf u ||||\mathbf v || + ||\mathbf v ||^2
-$$
-
-equivalently,
-
-$$
- ||\mathbf u + \mathbf v|| \le ||\mathbf u|| + ||\mathbf v ||
-$$
-
-this inequality means that the distance between two points in a space, represented by vectors, is always shorter than or equal to the sum of the distances between the two vectors. In other words, it is impossible to make a straight line from one point to another that is shorter than the distance represented by the two vectors.
-
-```{python}
-
-u = [3, 4]
-v = [-1, 2]
-
-
-# Plot the vectors
-plt.quiver(0, 0, u[0], u[1], angles='xy', scale_units='xy', scale=1, color='r')
-plt.quiver(0, 0, v[0], v[1], angles='xy', scale_units='xy', scale=1, color='g')
-plt.quiver(u[0], u[1], -1, 2, angles='xy', scale_units='xy', scale=1, color='g')
-plt.quiver(0, 0, u[0]+v[0], u[1]+v[1], angles='xy', scale_units='xy', scale=1, color='b')
-
-plt.text(u[0]+0.2, u[1], 'u', fontsize=12)
-plt.text(u[0]+v[0], u[1]+v[1], 'v', fontsize=12)
-plt.text(u[0]+v[0]-0.8, u[1]+v[1], 'u+v', fontsize=12)
-
-plt.xlabel('x')
-plt.ylabel('y')
-plt.xlim(-2, 7)
-plt.ylim(-2, 7)
-
-plt.plot([0, u[0], u[0]+v[0], v[0], 0], [0, u[1], u[1]+v[1], v[1], 0], 'k--')
-
-plt.text((u[0]+v[0])/2, (u[1]+v[1])/2+0.5, '||u+v||', fontsize=12)
-
-plt.show()
-```
-
-:::
-
-
-### Unit Vector
-
-A unit vector is a vector that has a magnitude of 1. A unit vector can be obtained by dividing a non-zero vector $\mathbf{v}$ by its magnitude $||\mathbf{v}||$, 
-
-$$
-\begin{equation*}
-  \mathbf{\hat{v}} = \frac{\mathbf{v}}{||\mathbf{v}||}
-\end{equation*}
-$$
-
-where $\mathbf{\hat{v}}$ is the unit vector in the direction of $\mathbf{v}$.
-
-For example, let $\mathbf{v} = \begin{bmatrix} 1 \ 2 \end{bmatrix}$ be a non-zero vector in $\mathbb{R}^2$. The magnitude of $\mathbf{v}$ is $||\mathbf{v}|| = \sqrt{1^2 + 2^2} = \sqrt{5}$. Therefore, a unit vector in the direction of $\mathbf{v}$ is:
-
-$$
-\begin{equation*}
-\mathbf{\hat{v}} = \frac{\mathbf{v}}{||\mathbf{v}||} = \frac{1}{\sqrt{5}}\begin{bmatrix} 1 \\ 2 \end{bmatrix} = \begin{bmatrix} \frac{1}{\sqrt{5}} \\ \frac{2}{\sqrt{5}} \end{bmatrix}
-\end{equation*}
-$$
-
-Thus, $\begin{bmatrix} \frac{1}{\sqrt{5}} \\ \frac{2}{\sqrt{5}} \end{bmatrix}$ is a unit vector in the direction of $\mathbf{v}$.
-
-### Cross Product of Vectors
-
-The cross product of two vectors is a vector that is perpendicular to both of them. If $\textbf{a}$ and $\textbf{b}$ are two vectors in $\mathbb{R}^3$, then their cross product $\textbf{c} = \textbf{a} \times \textbf{b}$ is a vector given by the formula
-
-$$
-\textbf{c} = \textbf{a} \times \textbf{b} \\
-          = ||\textbf{a}|| ||\textbf{b}||\sin(\theta) \mathbf n           
-$$
-
-where:
-
-* $\theta$ is the angle between $\textbf{a}$ and $\textbf{b}$ in the plane containing them (hence, it $0 \le \theta \le \pi$)
-* $||\textbf{a}||$ and $||\textbf{b}||$ are the magnitudes of vectors $||\textbf{a}||$ and $||\textbf{b}||$
-* and $||\textbf{n}||$ is a unit vector perpendicular to the plane containing $||\textbf{a}||$ and $||\textbf{a}||$, with direction such that the ordered set ($||\textbf{a}||$, $||\textbf{b}||$, $||\textbf{n}||$) is positively-oriented.
-
-If the vectors $\textbf{a}$ and $\textbf{b}$ are parallel (that is, $\theta$ between them is either $0$ or $\pi$), by the above formula, the cross product of $\textbf{a}$ and $\textbf{b}$ is the zero vector 0.
-
-[Reference: read the explanations in wiki](https://en.wikipedia.org/wiki/Cross_product)
-
-::: {layout-ncol=2}
-![By User:Acdx - Self-made, based on Image:Crossproduct.png, Public Domain](../linear_algebra/images/Cross_product_vector.svg.png)
-![Right_hand_rule_cross_product](../linear_algebra/images/Right_hand_rule_cross_product.svg)
-:::
-
-For example, 
-$$
-\textbf{c} = \textbf{a} \times \textbf{b} = [a_2b_3 - a_3b_2, a_3b_1 - a_1b_3, a_1b_2 - a_2b_1]           
-$$
-
-If $\textbf{a} = [1, 2, 3]$ and $\textbf{b} = [4, 5, 6]$, then their cross product $\textbf{c} = [-3, 6, -3]$.
-
-### Column Vector & Row Vector
-
-A column vector $\mathbf{u}$ with $n$ elements is an $m \times 1$ matrix, which can be represented as:
-$$
-\mathbf{u} =
-\begin{bmatrix}
-u_{1} \\
-u_{2} \\
-\vdots \\
-u_{m}
-\end{bmatrix}
-$$
-
-In an $m \times n$ matrix, the column vectors can be represented as:
-
-$$
-\mathbf U  = \begin{bmatrix}  \mathbf u_{1} &\mathbf u_{2} & \dots &\mathbf u_{n} \end{bmatrix} \\
-=
-\begin{bmatrix} 
-  u_{11} & u_{12} & \cdots & u_{1n} \\
-  u_{21} & u_{22} & \cdots & u_{2n} \\
-  \vdots & \vdots & \ddots & \vdots \\
-  u_{m1} & u_{m2} & \cdots & u_{mn}
-\end{bmatrix} 
-$$
-
-
-where $u_i$ is the $i$-th element of the column vector $\mathbf{u}$, $n$ is the number of columns, and $m$ is the number of rows in the matrices.
-
-
-A row vector $\mathbf{u}$ with $m$ elements is a $1 \times n$ matrix, which can be represented as:
-$$
-\mathbf{u} = 
-\begin{bmatrix}
-u_{1} & u_{2} & \cdots & u_{m}
-\end{bmatrix}
-$$
-
-In an $m \times n$ matrix, the row vectors can be represented as:
-
-$$
-\mathbf U  = \begin{bmatrix}  \mathbf u_{1} \\\mathbf u_{2} \\ \vdots \\\mathbf u_{m} \end{bmatrix} \\
-=
-\begin{bmatrix} 
-  u_{11} & u_{12} & \cdots & u_{1n} \\
-  u_{21} & u_{22} & \cdots & u_{2n} \\
-  \vdots & \vdots & \ddots & \vdots \\
-  u_{m1} & u_{m2} & \cdots & u_{mn}
-\end{bmatrix} 
-$$
-
-
-where $u_i$ is the $i$-th element of the row vector $\mathbf{u}$ and $n$ is the number of columns in the matrix.
-
-### Linear Combination of vectors
-
-A linear combination of vectors $\mathbf{v}_1,\mathbf{v}_2,\dots,\mathbf{v}_n$ in a vector space $V$ over a field $\mathbb{F}$ is a vector of the form:
-$$
-a_1\mathbf{v_1}+a_2\mathbf{v_2}+\dots+a_n\mathbf{v_n}
-$$
-
-where $a_1,a_2,\dots,a_n\in\mathbb{F}$.
-
-For example, suppose we have two vectors $\mathbf{v}_1=\begin{bmatrix} 1 \ 2 \ 3 \end{bmatrix}$ and $\mathbf{v}_2=\begin{bmatrix} 4 \ 5 \ 6 \end{bmatrix}$ in $\mathbb{R}^3$. Then, a linear combination of $\mathbf{v}_1$ and $\mathbf{v}_2$ is of the form:
-
-$$
-a_1\begin{bmatrix}1\\2\\3\end{bmatrix}+a_2\begin{bmatrix}4\\5\\6\end{bmatrix}=\begin{bmatrix}a_1+4a_2\\2a_1+5a_2\\3a_1+6a_2\end{bmatrix}
-$$
-
-Here, $a_1$ and $a_2$ are scalar coefficients that determine the resulting linear combination vector.
-
-### Outer Product
-
-The outer product of two vectors $\mathbf{u} = [u_1, u_2, \dots, u_m]^T$ and $\mathbf{v} = [v_1, v_2, \dots, v_n]^T$ is a matrix $\mathbf{u} \mathbf{v}^T$ of size $m \times n$, defined by:
-
-$$
-\begin{aligned}
-\mathbf{u} \otimes \mathbf{v} &= 
-\begin{bmatrix}
-u_1v_1 &u_1v_2& \dots & u_1v_n \\
-u_2v_1 &u_2v_2& \dots & u_2v_n \\
-\vdots &\vdots& \ddots & u_1v_n \\
-u_mv_1 &u_mv_2& \dots & u_mv_n \\
-
-\end{bmatrix} 
-\end{aligned}
-$$
-
-$$
-(\mathbf{u} \otimes \mathbf{v})_{i,j} = u_i v_j
-$$
-
-where $\mathbf{u} = [u_1, u_2, \dots, u_m]$ and $\mathbf{v} = [v_1, v_2, \dots, v_n]$.
-
-The outer product is also called the tensor product, and it is a type of binary operation between two vectors that results in a matrix. It is important in linear algebra and other fields such as physics and engineering.
-
-Here is an example: Let $\mathbf{u} = [2, 4, 6]^T$ and $\mathbf{v} = [1, 3]^T$. The outer product of $\mathbf{u}$ and $\mathbf{v}$ is:
-
-
-So the outer product of $\mathbf{u}$ and $\mathbf{v}$ is a $3 \times 2$ matrix.
-
-[What is a matrix? Go to the Next Blog](../linear_algebra/02.basic_matrix.qmd)
+</div>

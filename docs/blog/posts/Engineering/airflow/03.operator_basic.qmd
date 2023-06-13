@@ -135,9 +135,9 @@ digraph G {
     ```markdown
       volumes:
         - ${AIRFLOW_PROJ_DIR:-.}/airflow/dags:/opt/airflow/dags
-        - ${AIRFLOW_PROJ_DIR:-.}/airflow/logs:/opt/airflow/logs
-        - ${AIRFLOW_PROJ_DIR:-.}/airflow/config:/opt/airflow/config
-        - ${AIRFLOW_PROJ_DIR:-.}/airflow//plugins:/opt/airflow/plugins
+        - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
+        - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
+        - ${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins
     ```
   * 새로운 dags 배포할 때마다 airflow service 껐다가 켜야 한다.
 * airflow service 껐다 켜서 잘 반영됐는지 확인
@@ -468,8 +468,31 @@ with DAG(
 
   ![](../../../../../images/airflow/worker-container-shell-operation.PNG)
 
-  * 빨간 네모박스의 plugins에 shell script를 저장한다. airflow document에서는 customized python and shell script를 plugins에 저장하는 것을 권고
+  * 빨간 네모박스의 plugins에 shell script를 저장한다. airflow document에서는 customized python and shell script를 plugins에 저장하는 것을 권장
+* example
 
+```markdown
+cd github-repository/plugins/shell
+vi select_fruit.sh #i 누르면 편집가능하고 편집 후 esc+wq! 입력하고 enter치면 저장하고 나감
+chmod +x select_fruit.sh #실행 권한을 부여
+./select_fruit.sh kmkim # ./test2.sh 는 test2.sh을 실행한다는 의미 출력물: kmkim 출력됨
+git add -A
+git commit -m "shell script example"
+git push
+```
+
+```select_fruit.sh
+echo $1 #첫 번째 인수 출력
+```
+* container에서 github repository에 있는 plugins/shell에 있는 shell script 인식하게 하기
+  * `vi docker-compose.yaml` 에서 67line 수정
+    ```markdown
+    volumes:
+      - ${AIRFLOW_PROJ_DIR:-.}/airflow/dags:/opt/airflow/dags
+      - ${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs
+      - ${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config
+      - ${AIRFLOW_PROJ_DIR:-.}/airflow//plugins:/opt/airflow/plugins
+    ```
 # Email Operator 
 
 * 이메일 전송해주는 오퍼레이터

@@ -176,7 +176,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link active" data-scroll-target="#go-to-blog-content-list"><span class="header-section-number">6</span> Go to Blog Content List</a></li>
+  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link active" data-scroll-target="#go-to-blog-content-list"><span class="header-section-number">5</span> Go to Blog Content List</a></li>
   </ul>
 </nav>
     </div>
@@ -980,42 +980,49 @@ task7-&gt;task6
 <li><p>해결방법</p>
 <p><img src="../../../../../images/airflow/worker-container-shell-operation.PNG" class="img-fluid"></p>
 <ul>
-<li>빨간 네모박스의 plugins에 shell script를 저장한다. airflow document에서는 customized python and shell script를 plugins에 저장하는 것을 권고</li>
+<li>빨간 네모박스의 plugins에 shell script를 저장한다. airflow document에서는 customized python and shell script를 plugins에 저장하는 것을 권장</li>
 </ul></li>
+<li><p>example</p></li>
 </ul>
-</section>
-</section>
-<section id="email-operator" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Email Operator</h1>
+<div class="sourceCode" id="cb14"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>vi test2.sh #i 누르면 편집가능하고 편집 후 esc+wq! 입력하고 enter치면 저장하고 나감</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="in">```test2.sh</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="in">  echo $1 #첫 번째 인수 출력</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>chmod +x test2.sh #편집 권한을 부여 ./test2.sh kmkim #kmkim 출력됨</p>
+<pre><code>
+
+# Email Operator 
+
+* 이메일 전송해주는 오퍼레이터
+  ```markdown
+  email_t1 = EmailOperator(
+    task_id='email_t1',
+    to='hjkim_sun@naver.com',
+    subject='Airflow 처리결과',
+    html_content='정상 처리되었습니다.'
+  )</code></pre>
 <ul>
-<li><p>이메일 전송해주는 오퍼레이터</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>email_t1 = EmailOperator(</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  task_id='email_t1',</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  to='hjkim_sun@naver.com',</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  subject='Airflow 처리결과',</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  html_content='정상 처리되었습니다.'</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p>이메일 전송을 위해 사전 셋팅 작업 필요</p></li>
+<li>이메일 전송을 위해 사전 셋팅 작업 필요</li>
 </ul>
-<section id="presetting" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="presetting"><span class="header-section-number">5.1</span> Presetting</h2>
-<section id="google-setting" class="level3" data-number="5.1.1">
-<h3 data-number="5.1.1" class="anchored" data-anchor-id="google-setting"><span class="header-section-number">5.1.1</span> Google Setting</h3>
+</section>
+<section id="presetting" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="presetting"><span class="header-section-number">4.4</span> Presetting</h2>
+<section id="google-setting" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="google-setting"><span class="header-section-number">4.4.1</span> Google Setting</h3>
 <ul>
 <li>구글 메일 서버 사용</li>
 <li>G-mail <span class="math inline">\(\rightarrow\)</span> 설정 <span class="math inline">\(\rightarrow\)</span> 모든 설정보기 <span class="math inline">\(\rightarrow\)</span> 전달및POP/IMAP <span class="math inline">\(\rightarrow\)</span> IMAP사용</li>
 <li>구글 계정관리 <span class="math inline">\(\rightarrow\)</span> 보안 <span class="math inline">\(\rightarrow\)</span> 2단계 인증 <span class="math inline">\(\rightarrow\)</span> 앱비밀번호 셋팅</li>
 </ul>
 </section>
-<section id="airflow" class="level3" data-number="5.1.2">
-<h3 data-number="5.1.2" class="anchored" data-anchor-id="airflow"><span class="header-section-number">5.1.2</span> Airflow</h3>
+<section id="airflow" class="level3" data-number="4.4.2">
+<h3 data-number="4.4.2" class="anchored" data-anchor-id="airflow"><span class="header-section-number">4.4.2</span> Airflow</h3>
 <ul>
 <li><p>Docker-compose.yaml 편집 (environment 항목에 추가)</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_HOST:</span><span class="co"> 'smtp.gmail.com'</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_USER:</span><span class="co"> '{gmail 계정}'</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_PASSWORD:</span><span class="co"> '{앱비밀번호}'</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_PORT:</span><span class="co"> 587</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_MAIL_FROM:</span><span class="co"> '{gmail 계정}'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<div class="sourceCode" id="cb16"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_HOST:</span><span class="co"> 'smtp.gmail.com'</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_USER:</span><span class="co"> '{gmail 계정}'</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_PASSWORD:</span><span class="co"> '{앱비밀번호}'</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_PORT:</span><span class="co"> 587</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_MAIL_FROM:</span><span class="co"> '{gmail 계정}'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 </ul>
 </section>
 </section>
@@ -1027,8 +1034,8 @@ task7-&gt;task6
 
 </div>
 </div>
-<section id="go-to-blog-content-list" class="level1" data-number="6">
-<h1 data-number="6"><span class="header-section-number">6</span> Go to Blog Content List</h1>
+<section id="go-to-blog-content-list" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Go to Blog Content List</h1>
 <p><a href="../../../../../docs/blog/posts/content_list.html">Blog Content List</a></p>
 
 

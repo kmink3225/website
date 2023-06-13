@@ -23,6 +23,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -158,10 +192,6 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#dot-product" id="toc-dot-product" class="nav-link" data-scroll-target="#dot-product"><span class="header-section-number">1.4</span> Dot Product</a>
   <ul class="collapse">
   <li><a href="#properties-1" id="toc-properties-1" class="nav-link" data-scroll-target="#properties-1"><span class="header-section-number">1.4.1</span> Properties</a></li>
-  <li><a href="#cross-product-of-vectors" id="toc-cross-product-of-vectors" class="nav-link" data-scroll-target="#cross-product-of-vectors"><span class="header-section-number">1.4.2</span> Cross Product of Vectors</a></li>
-  <li><a href="#column-vector-row-vector" id="toc-column-vector-row-vector" class="nav-link" data-scroll-target="#column-vector-row-vector"><span class="header-section-number">1.4.3</span> Column Vector &amp; Row Vector</a></li>
-  <li><a href="#linear-combination-of-vectors" id="toc-linear-combination-of-vectors" class="nav-link" data-scroll-target="#linear-combination-of-vectors"><span class="header-section-number">1.4.4</span> Linear Combination of vectors</a></li>
-  <li><a href="#outer-product" id="toc-outer-product" class="nav-link" data-scroll-target="#outer-product"><span class="header-section-number">1.4.5</span> Outer Product</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -327,6 +357,16 @@ ul.task-list li input[type="checkbox"] {
 \end{aligned}
 \]</span></p>
 <div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>v <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>])</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> np.array([<span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">6</span>])</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>distance <span class="op">=</span> np.linalg.norm(v <span class="op">-</span> w)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(distance)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>5.196152422706632</code></pre>
 </div>
@@ -339,6 +379,13 @@ ul.task-list li input[type="checkbox"] {
 \text{distance}(\mathbf{v}, \mathbf{w}) = \sum_{i=1}^{n} |v_i - w_i|
 \]</span></p>
 <div class="cell" data-execution_count="3">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>distance <span class="op">=</span> np.<span class="bu">sum</span>(np.<span class="bu">abs</span>(v <span class="op">-</span> w))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(distance)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>9</code></pre>
 </div>
@@ -371,112 +418,124 @@ ul.task-list li input[type="checkbox"] {
 <li><p>Linearity: <span class="math inline">\((c \mathbf{v} + d \mathbf{w}) \cdot \mathbf{u} = c (\mathbf{v} \cdot \mathbf{u}) + d (\mathbf{w} \cdot \mathbf{u})\)</span></p></li>
 <li><p>Orthogonality: <span class="math inline">\(\mathbf{v} \cdot \mathbf{w} = 0 \text{ if and only if } \mathbf{v} \perp \mathbf{w}\)</span></p></li>
 <li><p>simmilarity</p>
-<p>::: {.callout-note} ### the Law of Cosines</p>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+the Law of Cosines
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>The second cosine rule in linear algebra, also known as the Law of Cosines, relates the dot product of vectors to their magnitudes and the angle between them.</p>
 <p><span class="math display">\[
 \begin{align*}
   \cos\theta &amp;= \frac{b^2+c^2-a^2}{2bc} \rightarrow
-  \mathbf{v} \cdot \mathbf{w} &amp;= \|\mathbf{v}\| \|\mathbf{w}\| \cos(\theta)
+  \mathbf{v} \cdot \mathbf{w} = \|\mathbf{v}\| \|\mathbf{w}\| \cos\theta
 \end{align*}
-\]</span></p></li>
+\]</span></p>
+</div>
+</div></li>
+<li><p>The geometric meaning of the dot product</p>
+<ul>
+<li><span class="math inline">\(\mathbf{v}_1=(x_1,y_1), \mathbf{v}_2=(x_2,y_2), \mathbf{v}_2-\mathbf{v}_1=(x_2-x_1,y_2-y_1)\)</span></li>
 </ul>
-<p>The geometric meaning of the dot product can be explained using the Law of Cosines. The Law of Cosines relates the lengths of the sides of a triangle to the cosine of one of its angles. In the context of vectors, we can interpret the dot product in terms of the Law of Cosines as follows:</p>
-<p>Consider two vectors <span class="math inline">\(\mathbf{v}\)</span> and <span class="math inline">\(\mathbf{w}\)</span> in a vector space. The magnitude (length) of <span class="math inline">\(\mathbf{v}\)</span> is denoted as <span class="math inline">\(\|\mathbf{v}\|\)</span>, and the magnitude of <span class="math inline">\(\mathbf{w}\)</span> is denoted as <span class="math inline">\(\|\mathbf{w}\|\)</span>. The angle between the vectors is denoted as <span class="math inline">\(\theta\)</span>.</p>
-<p>According to the Law of Cosines, in a triangle with sides of length <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span>, and <span class="math inline">\(c\)</span>, and an angle opposite to side <span class="math inline">\(c\)</span> denoted as <span class="math inline">\(\theta\)</span>, the following relation holds:</p>
-<p><span class="math inline">\(c^2 = a^2 + b^2 - 2ab \cos(\theta)\)</span></p>
-<p>Now, let’s relate this to the dot product of vectors <span class="math inline">\(\mathbf{v}\)</span> and <span class="math inline">\(\mathbf{w}\)</span>:</p>
-<p><span class="math inline">\(\mathbf{v} \cdot \mathbf{w} = \|\mathbf{v}\| \|\mathbf{w}\| \cos(\theta)\)</span></p>
-<p>Comparing this equation with the Law of Cosines, we can see that the dot product <span class="math inline">\(\mathbf{v} \cdot \mathbf{w}\)</span> is related to the lengths of the vectors <span class="math inline">\(\mathbf{v}\)</span> and <span class="math inline">\(\mathbf{w}\)</span> and the angle <span class="math inline">\(\theta\)</span> between them.</p>
-<p>The geometric interpretation of the dot product is that it measures the “projection” of one vector onto another. When the dot product is positive, it means the vectors are pointing in a similar direction, and when it is negative, it means they are pointing in opposite directions. The magnitude of the dot product provides a measure of how “aligned” the vectors are.</p>
-<p>In summary, the dot product can be understood geometrically using the Law of Cosines as a measure of alignment or projection between vectors, based on their lengths and the angle between them.</p>
-<p>The dot product has a geometric interpretation that relates to the angle between two vectors and their lengths. The dot product of two vectors measures the degree of alignment or “parallelness” between them. Here are the geometric meanings of the dot product:</p>
-<p>Orthogonality: If the dot product of two vectors is zero ( = 0), it means the vectors are orthogonal or perpendicular to each other. The angle between them is 90 degrees.</p>
-<p>Alignment: If the dot product of two vectors is positive ( &gt; 0), it indicates that the vectors have a similar direction or are pointing in the same general direction. The angle between them is less than 90 degrees.</p>
-<p>Antialignment: If the dot product of two vectors is negative ( &lt; 0), it implies that the vectors have opposite directions or are pointing in opposite directions. The angle between them is greater than 90 degrees.</p>
-<p>In summary, the dot product provides a geometric measure of the alignment or perpendicularity between vectors, giving insights into their relationship in terms of direction and angle.</p>
-<p>:::</p>
+<p><span class="math display">\[
+\begin{aligned}
+  \cos\theta&amp;=\frac{||\mathbf{v}_2||^2+||\mathbf{v}_1||^2-||\mathbf{v}_2-\mathbf{v}_1||}{2||\mathbf{v}_2||||\mathbf{v}_1||} \\
+  ||\mathbf{v}||&amp;=\sqrt{\mathbf{v}\cdot \mathbf{v}}\\
+  ||\mathbf{v}_2||^2+||\mathbf{v}_1||^2-||\mathbf{v}_2-\mathbf{v}_1||&amp;=(\sqrt{\mathbf{v}_2\cdot \mathbf{v}_2})^2+(\sqrt{\mathbf{v}_1\cdot \mathbf{v}_1})^2-(\sqrt{(\mathbf{v}_2-\mathbf{v}_1)\cdot (\mathbf{v}_2-\mathbf{v}_1)})^2\\
+  &amp;=\mathbf{v}_2\cdot \mathbf{v}_2+\mathbf{v}_1\cdot \mathbf{v}_1-(\mathbf{v}_2-\mathbf{v}_1)\cdot (\mathbf{v}_2-\mathbf{v}_1)\\
+  &amp;=\mathbf{v}_2\cdot \mathbf{v}_2+\mathbf{v}_1\cdot \mathbf{v}_1-\mathbf{v}_2\cdot \mathbf{v}_2+2\mathbf{v}_1\cdot \mathbf{v}_2-\mathbf{v}_1\cdot \mathbf{v}_1\\
+  &amp;=2\mathbf{v}_1\cdot \mathbf{v}_2 \\
+  \cos\theta&amp;=\frac{\mathbf{v}_1\cdot \mathbf{v}_2}{||\mathbf{v}_2||||\mathbf{v}_1||}\\
+  \mathbf{v}_1\cdot \mathbf{v}_2&amp;=||\mathbf{v}_1||||\mathbf{v}_2||\cos\theta
+\end{aligned}
+\]</span></p>
 <ul>
-<li>projection</li>
-</ul>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Projection
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>Let <span class="math inline">\(\mathbf{u}\)</span> and <span class="math inline">\(\mathbf{v}\)</span> be two vectors. The projection of <span class="math inline">\(\mathbf{u}\)</span> onto <span class="math inline">\(\mathbf{v}\)</span> is defined as the vector:</p>
-<p>This vector is the closest vector to <span class="math inline">\(\mathbf{u}\)</span> that lies on the line spanned by <span class="math inline">\(\mathbf{v}\)</span>. <span class="math display">\[
-\mathbf w=\text{proj}_{\mathbf v}\mathbf u =\frac{\mathbf u \mathbf v}{||\mathbf v||^2} \mathbf v
-\]</span> <img src="images/chap02_04.PNG" class="img-fluid" alt="Projection"></p>
+<li>the dot product <span class="math inline">\(\ge 0\)</span> if <span class="math inline">\(0\le \theta\le \frac{\pi}{2}\)</span></li>
+<li>the dot product <span class="math inline">\(&lt; 0\)</span> if <span class="math inline">\(\frac{\pi}{2}&lt; \theta\le \pi\)</span></li>
+<li>The geometric interpretation of the dot product is that it measures the <em>projection</em> of one vector onto another. When the dot product is positive, it means the vectors are pointing in a similar direction, and when it is negative, it means they are pointing in opposite directions. The magnitude of the dot product provides a measure of how <em>parallelness</em>, <em>aligned</em> or <em>similar</em> the vectors are.</li>
+<li>Projection
 <ul>
-<li><span class="math inline">\(\mathbf{w} = ||\mathbf{w}||\mathbf{v} = ||\mathbf{u}|| \cos \theta \mathbf{v}\)</span></li>
-<li><span class="math inline">\(\mathbf{u}^T \mathbf{u} = ||\mathbf{u}|| ||\mathbf{u}|| = ||\mathbf{u}||^2\)</span></li>
-<li>the magnitude of <span class="math inline">\(\mathbf{u}\)</span> = <span class="math inline">\(||\mathbf{u}|| = \sqrt{\mathbf{u}^T \mathbf{u}}\)</span></li>
-<li>unit vector: a normalized vector by dividing it by its magnitude, so the magnitude of a unit vector is 1 <span class="math display">\[
-\hat{\mathbf{u}} = \frac{\mathbf{u}}{||\mathbf{u}||} = \frac{\mathbf{u}}{\sqrt{\mathbf{u}^T \mathbf{u}}}
-\]</span></li>
-<li>Projected vector, <span class="math inline">\(\mathbf{w}\)</span>
-<ul>
-<li>the product of <span class="math inline">\(\frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||}\)</span> and a unit vector of <span class="math inline">\(\mathbf{v}\)</span> <span class="math display">\[
-\frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||} \frac{\mathbf{v}}{||\mathbf{v}||} = \frac{\mathbf{u}^T \mathbf{v}}{||\mathbf{v}||^2}\mathbf{v}
-\]</span></li>
+<li><p>Let <span class="math inline">\(\mathbf{v}_1\)</span> and <span class="math inline">\(\mathbf{v}_2\)</span> be two vectors. The projection of <span class="math inline">\(\mathbf{v}_1\)</span> onto <span class="math inline">\(\mathbf{v}_2\)</span> is defined as the vector, <span class="math inline">\(\mathbf{w}\)</span> :</p>
+<p>$$</p>
+<span class="math display">\[\begin{aligned}
+  \mathbf{v_1}\cdot \mathbf{v_2}&amp;=||\mathbf{w}||||\mathbf{v_2}||\\
+  \mathbf w&amp;=\text{proj}_{\mathbf v_2}\mathbf v_1\\
+  &amp;=||\mathbf{w}||\mathbf{u}_\mathbf{w} \quad (\because \text{the univt vector of } \mathbf{w} = \mathbf{u}_w)\\
+
+  \text{the unit vector of } \mathbf{w} &amp;= \frac{\mathbf{v}_2}{||\mathbf{v}_2||}  \quad(\because \text{the direction of } \mathbf{w} = \text{the direction of } \mathbf{v_2}) \\
+  \mathbf w&amp;=\text{proj}_{\mathbf v_2}\mathbf v_1\\
+  &amp;=\frac{\mathbf v_1 \cdot \mathbf v_2}{||\mathbf v_2||} \frac{\mathbf v_2}{||\mathbf v_2||} \\
+  &amp;=\frac{\mathbf v_1 \cdot \mathbf v_2}{||\mathbf v_2||^2} \mathbf v_2 \\
+  &amp;=\frac{\mathbf v_1 \cdot \mathbf v_2}{\mathbf{v}_2\cdot \mathbf{v}_2}\mathbf{v}_2 \quad (\because ||\mathbf v_2||=\sqrt{\mathbf{v}_2\cdot \mathbf{v}_2})
+\end{aligned}\]</span>
+<p>$$</p></li>
+<li><p>This projected vector is the closest vector to <span class="math inline">\(\mathbf{v}_1\)</span> that lies on the line spanned by <span class="math inline">\(\mathbf{v}_2\)</span>. It means that a vector that is parallel to <span class="math inline">\(\mathbf{v}_2\)</span> and is the closest possible approximation of <span class="math inline">\(\mathbf{v}_1\)</span> along that line.</p></li>
+<li><p><a href="http://immersivemath.com/ila/ch03_dotproduct/ch03.html#auto_label_107">Reference: Read This Article with Interactive Visualization - Projection</a></p></li>
 </ul></li>
+</ul></li>
+<li><p>Cauchy-Schwarz Inequality</p></li>
 </ul>
-<p>For example, let <span class="math inline">\(\mathbf{u} = \begin{bmatrix}2 \\ 3\end{bmatrix}\)</span> and <span class="math inline">\(\mathbf{v} = \begin{bmatrix}1 \\ 1\end{bmatrix}\)</span>. Then, the projection of <span class="math inline">\(\mathbf{u}\)</span> onto <span class="math inline">\(\mathbf{v}\)</span> is:</p>
+$$
+<span class="math display">\[\begin{aligned}
+  (ax+by)^2 &amp;\le (a^2+b^2)(x^2+y^2)\\
+  |\langle \mathbf u,\mathbf v\rangle| = |\mathbf{u}\cdot\mathbf{v}| &amp;\le ||\mathbf{u}|| ||\mathbf{v} || \quad (\text{where }\mathbf{u}=(a,b), \quad \mathbf{v}=(x,y))\\
+  &amp;\text{putting the absolute value is because the dot product could be negative} \\
+
+  \text{Proof} \\
+  \mathbf{u}\cdot\mathbf{v}&amp;= ||\mathbf{u}|| ||\mathbf{v} ||\cos\theta \\
+  -1 \le \mathbf{u}\cdot\mathbf{v}&amp;= ||\mathbf{u}|| ||\mathbf{v} || \le 1 \\
+  -||\mathbf{u}|| ||\mathbf{v} || \le \mathbf{u}\cdot\mathbf{v}&amp;  \le ||\mathbf{u}|| ||\mathbf{v} || \\
+  |\mathbf{u}\cdot\mathbf{v}| &amp;  \le ||\mathbf{u}|| ||\mathbf{v}||
+\end{aligned}\]</span>
+<p>$$</p>
+<ul>
+<li>Geometrically, the Schwarz inequality states that the magnitude of the projection of one vector onto the other cannot exceed the length of the vector being projected. In other words, it bounds the correlation between two vectors and ensures that their inner product is always less than or equal to the product of their norms.</li>
+<li>Triangle Inequality</li>
+</ul>
 <p><span class="math display">\[
-\text{proj}_{\mathbf v}\mathbf u =\frac{\mathbf u^{T} \mathbf v}{||\mathbf v||^2} \mathbf v =\frac{\begin{bmatrix}2 \\ 3\end{bmatrix}\begin{bmatrix}1 \\ 1\end{bmatrix}}{\bigg{|}\bigg{|}\begin{bmatrix}1 \\ 1\end{bmatrix}\bigg{|}\bigg{|}^2}=\frac{5}{2}\begin{bmatrix}1 \\ 1\end{bmatrix}=\begin{bmatrix}5 \\ 2\end{bmatrix}
+\begin{aligned}
+  ||\mathbf{u} + \mathbf{v}|| &amp;\le ||\mathbf{u}|| + ||\mathbf{v}|| \\
+  ||\mathbf{u} + \mathbf{v}||^2 &amp;= (\mathbf{u}+\mathbf{v})\cdot(\mathbf{u}+\mathbf{v}) \\
+  &amp;= \mathbf{u}\cdot\mathbf{u}+2\mathbf{u}\cdot\mathbf{v}+\mathbf{v}\cdot\mathbf{v}\\
+  &amp;\le \mathbf{u}\cdot\mathbf{u}+2|\mathbf{u}\cdot\mathbf{v}|+\mathbf{v}\cdot\mathbf{v} \\ &amp;(\because \mathbf{u}\cdot\mathbf{v} \text{ is a scalar and could be negative})
+\end{aligned}
 \]</span></p>
-<p>This vector is the closest vector to <span class="math inline">\(\mathbf{u}\)</span> that lies on the line spanned by <span class="math inline">\(\mathbf{v} = \begin{bmatrix}1 \\ 1\end{bmatrix}\)</span>.</p>
-<p><a href="http://immersivemath.com/ila/ch03_dotproduct/ch03.html#auto_label_107">Reference: Read This Article with Interactive Visualization - Projection</a></p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Cauchy-Schwarz Inequality
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>a fundamental result in mathematics that relates to inner products and norms. It states that for any vectors <span class="math inline">\(\mathbf{u}\)</span> and <span class="math inline">\(\mathbf{v}\)</span> in an inner product space, the following inequality holds: <span class="math display">\[
-  |\langle \mathbf u,\mathbf v\rangle|\le ||\mathbf u|| ||\mathbf v ||
-\]</span></p>
-<p>where <span class="math inline">\(\langle \mathbf{u}, \mathbf{v}\rangle\)</span> denotes the inner product of vectors <span class="math inline">\(\mathbf{u}\)</span> and <span class="math inline">\(\mathbf{v}\)</span>, and <span class="math inline">\(|\mathbf{u}|\)</span> and <span class="math inline">\(|\mathbf{v}|\)</span> denote their respective norms. In terms of the cosine formula, the Schwarz inequality can be written as: <span class="math display">\[
-\cos \theta \le 1
-\]</span></p>
-<p>where <span class="math inline">\(\theta\)</span> is the angle between vectors <span class="math inline">\(\mathbf{u}\)</span> and <span class="math inline">\(\mathbf{v}\)</span>, and <span class="math inline">\(\cos{\theta} = \frac{\langle \mathbf{u}, \mathbf{v}\rangle}{|\mathbf{u}| |\mathbf{v}|}\)</span>.</p>
-<p>Geometrically, the Schwarz inequality states that the magnitude of the projection of one vector onto the other cannot exceed the length of the vector being projected. In other words, it bounds the correlation between two vectors and ensures that their inner product is always less than or equal to the product of their norms.</p>
-</div>
-</div>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Triangle Inequality
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>The triangle inequality states that for any two vectors <span class="math inline">\(\mathbf{u}\)</span> and <span class="math inline">\(\mathbf{v}\)</span>, the length of the sum of the vectors is less than or equal to the sum of the lengths of the vectors themselves. In terms of the cosine formula, this can be expressed as: <span class="math display">\[
-||\mathbf u + \mathbf v||^2 \le ||\mathbf u||^2 + 2||\mathbf u ||||\mathbf v || + ||\mathbf v ||^2
-\]</span></p>
-<p>equivalently,</p>
-<p><span class="math display">\[
-||\mathbf u + \mathbf v|| \le ||\mathbf u|| + ||\mathbf v ||
-\]</span></p>
-<p>this inequality means that the distance between two points in a space, represented by vectors, is always shorter than or equal to the sum of the distances between the two vectors. In other words, it is impossible to make a straight line from one point to another that is shorter than the distance represented by the two vectors.</p>
+<ul>
+<li>this inequality means that the distance between two points in a space, represented by vectors, is always shorter than or equal to the sum of the distances between the two vectors. In other words, it is impossible to make a straight line from one point to another that is shorter than the distance represented by the two vectors.</li>
+</ul>
 <div class="cell" data-execution_count="4">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> [<span class="dv">3</span>, <span class="dv">4</span>]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>v <span class="op">=</span> [<span class="op">-</span><span class="dv">1</span>, <span class="dv">2</span>]</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the vectors</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>plt.quiver(<span class="dv">0</span>, <span class="dv">0</span>, u[<span class="dv">0</span>], u[<span class="dv">1</span>], angles<span class="op">=</span><span class="st">'xy'</span>, scale_units<span class="op">=</span><span class="st">'xy'</span>, scale<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'r'</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>plt.quiver(<span class="dv">0</span>, <span class="dv">0</span>, v[<span class="dv">0</span>], v[<span class="dv">1</span>], angles<span class="op">=</span><span class="st">'xy'</span>, scale_units<span class="op">=</span><span class="st">'xy'</span>, scale<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'g'</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>plt.quiver(u[<span class="dv">0</span>], u[<span class="dv">1</span>], <span class="op">-</span><span class="dv">1</span>, <span class="dv">2</span>, angles<span class="op">=</span><span class="st">'xy'</span>, scale_units<span class="op">=</span><span class="st">'xy'</span>, scale<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'g'</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>plt.quiver(<span class="dv">0</span>, <span class="dv">0</span>, u[<span class="dv">0</span>]<span class="op">+</span>v[<span class="dv">0</span>], u[<span class="dv">1</span>]<span class="op">+</span>v[<span class="dv">1</span>], angles<span class="op">=</span><span class="st">'xy'</span>, scale_units<span class="op">=</span><span class="st">'xy'</span>, scale<span class="op">=</span><span class="dv">1</span>, color<span class="op">=</span><span class="st">'b'</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>plt.text(u[<span class="dv">0</span>]<span class="op">+</span><span class="fl">0.2</span>, u[<span class="dv">1</span>], <span class="st">'u'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>plt.text(u[<span class="dv">0</span>]<span class="op">+</span>v[<span class="dv">0</span>], u[<span class="dv">1</span>]<span class="op">+</span>v[<span class="dv">1</span>], <span class="st">'v'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>plt.text(u[<span class="dv">0</span>]<span class="op">+</span>v[<span class="dv">0</span>]<span class="op">-</span><span class="fl">0.8</span>, u[<span class="dv">1</span>]<span class="op">+</span>v[<span class="dv">1</span>], <span class="st">'u+v'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'x'</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'y'</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>plt.xlim(<span class="op">-</span><span class="dv">2</span>, <span class="dv">7</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>plt.ylim(<span class="op">-</span><span class="dv">2</span>, <span class="dv">7</span>)</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>plt.plot([<span class="dv">0</span>, u[<span class="dv">0</span>], u[<span class="dv">0</span>]<span class="op">+</span>v[<span class="dv">0</span>], v[<span class="dv">0</span>], <span class="dv">0</span>], [<span class="dv">0</span>, u[<span class="dv">1</span>], u[<span class="dv">1</span>]<span class="op">+</span>v[<span class="dv">1</span>], v[<span class="dv">1</span>], <span class="dv">0</span>], <span class="st">'k--'</span>)</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>plt.text((u[<span class="dv">0</span>]<span class="op">+</span>v[<span class="dv">0</span>])<span class="op">/</span><span class="dv">2</span>, (u[<span class="dv">1</span>]<span class="op">+</span>v[<span class="dv">1</span>])<span class="op">/</span><span class="dv">2</span><span class="op">+</span><span class="fl">0.5</span>, <span class="st">'||u+v||'</span>, fontsize<span class="op">=</span><span class="dv">12</span>)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <p><img src="02.norm_dot-product_files/figure-html/cell-5-output-1.png" width="592" height="434"></p>
-</div>
-</div>
 </div>
 </div>
 <div class="callout callout-style-default callout-note callout-titled">
@@ -509,199 +568,8 @@ Inner Product vs Dot Product
 <li><span class="math inline">\(\langle \mathbf{x},\mathbf{x}\rangle\ge 0, \langle \mathbf{x},\mathbf{x}\rangle=0\)</span> only if <span class="math inline">\(\mathbf{x}=0\)</span></li>
 </ul></li>
 </ul>
-<div class="callout callout-style-default callout-note callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Linear Transformation
 </div>
 </div>
-<div class="callout-body-container callout-body">
-<p>A function is said to be linear if it satisfies two properties: <strong>additivity</strong> and <strong>homogeneity</strong>.</p>
-<ol type="1">
-<li>Additivity means that for any two inputs, the output of the function applied to their sum is equal to the sum of the outputs applied to each input separately. In other words, if we have a function <span class="math inline">\(f\)</span> and vectors <span class="math inline">\(\mathbf x\)</span> and <span class="math inline">\(\mathbf y\)</span>, then</li>
-</ol>
-<p><span class="math display">\[
-f(\mathbf x + \mathbf y) = f(\mathbf x) + f(\mathbf y)
-\]</span></p>
-<ol start="2" type="1">
-<li>Homogeneity means that for any input and scalar <span class="math inline">\(c\)</span>, the output of the function applied to the input scaled by <span class="math inline">\(c\)</span> is equal to the output applied to the unscaled input multiplied by <span class="math inline">\(c\)</span>. In other words,</li>
-</ol>
-<p><span class="math display">\[
-f(c\mathbf x) = c f(\mathbf x)
-\]</span> These two properties together are what we mean when we say a function is linear.</p>
-<p>Try to compare <span class="math inline">\(y=2x\)</span> for liniearity vs <span class="math inline">\(y=2x^2\)</span> for non-linearity and which one satisfies the linear properties?</p>
-</div>
-</div>
-<p>Let’s consider the standard inner product of two vectors in <span class="math inline">\(\mathbb R^2\)</span>, given by <span class="math inline">\(\langle \mathbf x, \mathbf y\rangle\)</span> = <span class="math inline">\(x_1y_1 + x_2y_2\)</span>, where <span class="math inline">\(\mathbf x = [x_1, x_2]^T\)</span> and <span class="math inline">\(\mathbf y = [y_1, y_2]^T\)</span>.</p>
-<ol type="1">
-<li>Linearity in the first argument:</li>
-</ol>
-<p><span class="math display">\[
-\langle 2 \mathbf x + 3\mathbf y, \mathbf z\rangle = (2x_1 + 3y_1)z_1 + (2x_2 + 3y_2)z_2 = 2\langle \mathbf x, \mathbf z \rangle + 3\langle \mathbf y, \mathbf z \rangle
-\]</span></p>
-<ol start="2" type="1">
-<li>Conjugate linearity in the second argument:</li>
-</ol>
-<p><span class="math display">\[
-\langle \mathbf x, 2\mathbf y+3\mathbf z\rangle = x_1(2y_1 + 3z_1) + x_2(2y_2 + 3z_2) = 2\langle \mathbf x, \mathbf y \rangle + 3\langle \mathbf x, \mathbf z \rangle
-\]</span></p>
-<ol start="3" type="1">
-<li>Symmetry:</li>
-</ol>
-<p><span class="math display">\[
-\langle \mathbf x,\mathbf y\rangle = x_1y_1 + x_2y_2 = y_1x_1 + y_2x_2 = \langle \mathbf y, \mathbf x \rangle
-\]</span></p>
-<ol start="4" type="1">
-<li>Positive-definite:</li>
-</ol>
-<p><span class="math display">\[
-\langle \mathbf x,\mathbf x\rangle =  x_1^2 + x_2^2 \ge 0 = \langle \mathbf x, \mathbf x \rangle \text{ only if } \mathbf x = [0, 0]^T
-\]</span></p>
-<p>Let’s see another example of two complex vectors for <em>2. Conjugate linearity in the second argument</em>, <span class="math inline">\(\mathbf{u}=\begin{bmatrix} 1+i \\ 2 \end{bmatrix}\)</span> and <span class="math inline">\(\mathbf{v}=\begin{bmatrix} 3-2i \\ 1 \end{bmatrix}\)</span>.</p>
-<p>Their inner product would be: <span class="math display">\[
-\begin{aligned}
-\langle \mathbf{u}, \mathbf{v} \rangle &amp;= \begin{bmatrix} 1+i \\ 2 \end{bmatrix}^H \begin{bmatrix} 3-2i \\ 1 \end{bmatrix} \\
-&amp;= \begin{bmatrix} 1-i &amp; 2 \end{bmatrix} \begin{bmatrix} 3-2i \\ 1 \end{bmatrix} \\
-&amp;= (1-i)(3-2i) + 2(1) \\
-&amp;= 1 + i + 6 - 4i + 2 \\
-&amp;= 9 - 3i.
-\end{aligned}
-\]</span></p>
-<p>where <span class="math inline">\(H\)</span> is the Hermitian transpose, also known as the conjugate transpose, which is similar to the transpose operation, but also involves taking the complex conjugate of each element. For a matrix <span class="math inline">\(\mathbf A\)</span>, the Hermitian transpose is denoted by <span class="math inline">\(\mathbf A^H\)</span> or <span class="math inline">\(A^\dagger\)</span> and is defined as the transpose of the complex conjugate of <span class="math inline">\(\mathbf A\)</span>. Mathematically, for a matrix <span class="math inline">\(\mathbf A\)</span> with elements <span class="math inline">\(a_{i,j}\)</span>, the Hermitian transpose <span class="math inline">\(\mathbf A^H\)</span> is defined as:</p>
-<p><span class="math display">\[
-(\mathbf A^H)_{i,j} = \overline{a_{j,i}}
-\]</span></p>
-<p>where <span class="math inline">\(\overline{a_{j,i}}\)</span> denotes the complex conjugate of <span class="math inline">\(a_{j,i}\)</span>.</p>
-<p>In the case of a real-valued matrix, the Hermitian transpose reduces to the ordinary transpose, denoted by <span class="math inline">\(\mathbf A^T\)</span>.</p>
-<p>Now let’s see the conjugate linearity property in the second argument:</p>
-<p><span class="math display">\[
-\begin{aligned}
-\langle \mathbf{u}, c \mathbf{v} \rangle &amp;= \begin{bmatrix} 1+i \\2 \end{bmatrix}^H \left(c \begin{bmatrix} 3-2i \\ 1 \end{bmatrix}\right) \\
-&amp;= \begin{bmatrix} 1-i &amp; 2 \end{bmatrix} \begin{bmatrix} 3c-2ci \\ c \end{bmatrix} \\
-&amp;= (1-i)(3c-2ci) + 2(c) \\
-&amp;= 3c - 2ci + 2c - 2ci \\
-&amp;= (3+2)c - 4ci \\
-&amp;= c(3+2i) - 4i\overline{c}.
-\end{aligned}
-\]</span></p>
-<p>We can see that the second component of the result is <span class="math inline">\(-4i\overline{c}\)</span>, which is the conjugate of <span class="math inline">\(4ic\)</span>. Therefore, we can say that the inner product is conjugate linear in the second argument.</p>
-<p>A dot product is a specific type of inner product that is defined for Euclidean spaces, which are spaces with a notion of distance or length. The dot product of two vectors is defined as the sum of the products of their corresponding components. In other words, if <span class="math inline">\(\mathbf a = [a_1, a_2, ..., a_n]\)</span> and <span class="math inline">\(\mathbf b = [b_1, b_2, ..., b_n]\)</span> are two vectors in <span class="math inline">\(\mathbb R^n\)</span>, then their dot product is given by:</p>
-<p><span class="math display">\[
-\mathbf a \cdot \mathbf b = a_1b_1 + a_2b_2 + ... + a_nb_n
-\]</span></p>
-<p>The dot product satisfies some of the properties of an inner product, such as being linear in the first argument and symmetric. However, it is not conjugate linear in the second argument, and it is not positive-definite in general.</p>
-<p>So, while a dot product is a specific type of inner product, not all inner products are dot products.</p>
-</div>
-</div>
-<p>For example, if <span class="math inline">\(\textbf{a} = [1, 2, 3]\)</span> and <span class="math inline">\(\textbf{b} = [4, 5, 6]\)</span>, then their dot product <span class="math inline">\(c = 1\cdot 4 + 2\cdot 5 + 3\cdot 6 = 32\)</span>.</p>
-</section>
-<section id="cross-product-of-vectors" class="level3" data-number="1.4.2">
-<h3 data-number="1.4.2" class="anchored" data-anchor-id="cross-product-of-vectors"><span class="header-section-number">1.4.2</span> Cross Product of Vectors</h3>
-<p>The cross product of two vectors is a vector that is perpendicular to both of them. If <span class="math inline">\(\textbf{a}\)</span> and <span class="math inline">\(\textbf{b}\)</span> are two vectors in <span class="math inline">\(\mathbb{R}^3\)</span>, then their cross product <span class="math inline">\(\textbf{c} = \textbf{a} \times \textbf{b}\)</span> is a vector given by the formula</p>
-<p><span class="math display">\[
-\textbf{c} = \textbf{a} \times \textbf{b} \\
-          = ||\textbf{a}|| ||\textbf{b}||\sin(\theta) \mathbf n           
-\]</span></p>
-<p>where:</p>
-<ul>
-<li><span class="math inline">\(\theta\)</span> is the angle between <span class="math inline">\(\textbf{a}\)</span> and <span class="math inline">\(\textbf{b}\)</span> in the plane containing them (hence, it <span class="math inline">\(0 \le \theta \le \pi\)</span>)</li>
-<li><span class="math inline">\(||\textbf{a}||\)</span> and <span class="math inline">\(||\textbf{b}||\)</span> are the magnitudes of vectors <span class="math inline">\(||\textbf{a}||\)</span> and <span class="math inline">\(||\textbf{b}||\)</span></li>
-<li>and <span class="math inline">\(||\textbf{n}||\)</span> is a unit vector perpendicular to the plane containing <span class="math inline">\(||\textbf{a}||\)</span> and <span class="math inline">\(||\textbf{a}||\)</span>, with direction such that the ordered set (<span class="math inline">\(||\textbf{a}||\)</span>, <span class="math inline">\(||\textbf{b}||\)</span>, <span class="math inline">\(||\textbf{n}||\)</span>) is positively-oriented.</li>
-</ul>
-<p>If the vectors <span class="math inline">\(\textbf{a}\)</span> and <span class="math inline">\(\textbf{b}\)</span> are parallel (that is, <span class="math inline">\(\theta\)</span> between them is either <span class="math inline">\(0\)</span> or <span class="math inline">\(\pi\)</span>), by the above formula, the cross product of <span class="math inline">\(\textbf{a}\)</span> and <span class="math inline">\(\textbf{b}\)</span> is the zero vector 0.</p>
-<p><a href="https://en.wikipedia.org/wiki/Cross_product">Reference: read the explanations in wiki</a></p>
-<div class="quarto-layout-panel">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<p><img src="../linear_algebra/images/Cross_product_vector.svg.png" class="img-fluid" alt="By User:Acdx - Self-made, based on Image:Crossproduct.png, Public Domain"> <img src="../linear_algebra/images/Right_hand_rule_cross_product.svg" class="img-fluid" alt="Right_hand_rule_cross_product"></p>
-</div>
-</div>
-</div>
-<p>For example, <span class="math display">\[
-\textbf{c} = \textbf{a} \times \textbf{b} = [a_2b_3 - a_3b_2, a_3b_1 - a_1b_3, a_1b_2 - a_2b_1]           
-\]</span></p>
-<p>If <span class="math inline">\(\textbf{a} = [1, 2, 3]\)</span> and <span class="math inline">\(\textbf{b} = [4, 5, 6]\)</span>, then their cross product <span class="math inline">\(\textbf{c} = [-3, 6, -3]\)</span>.</p>
-</section>
-<section id="column-vector-row-vector" class="level3" data-number="1.4.3">
-<h3 data-number="1.4.3" class="anchored" data-anchor-id="column-vector-row-vector"><span class="header-section-number">1.4.3</span> Column Vector &amp; Row Vector</h3>
-<p>A column vector <span class="math inline">\(\mathbf{u}\)</span> with <span class="math inline">\(n\)</span> elements is an <span class="math inline">\(m \times 1\)</span> matrix, which can be represented as: <span class="math display">\[
-\mathbf{u} =
-\begin{bmatrix}
-u_{1} \\
-u_{2} \\
-\vdots \\
-u_{m}
-\end{bmatrix}
-\]</span></p>
-<p>In an <span class="math inline">\(m \times n\)</span> matrix, the column vectors can be represented as:</p>
-<p><span class="math display">\[
-\mathbf U  = \begin{bmatrix}  \mathbf u_{1} &amp;\mathbf u_{2} &amp; \dots &amp;\mathbf u_{n} \end{bmatrix} \\
-=
-\begin{bmatrix}
-  u_{11} &amp; u_{12} &amp; \cdots &amp; u_{1n} \\
-  u_{21} &amp; u_{22} &amp; \cdots &amp; u_{2n} \\
-  \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-  u_{m1} &amp; u_{m2} &amp; \cdots &amp; u_{mn}
-\end{bmatrix}
-\]</span></p>
-<p>where <span class="math inline">\(u_i\)</span> is the <span class="math inline">\(i\)</span>-th element of the column vector <span class="math inline">\(\mathbf{u}\)</span>, <span class="math inline">\(n\)</span> is the number of columns, and <span class="math inline">\(m\)</span> is the number of rows in the matrices.</p>
-<p>A row vector <span class="math inline">\(\mathbf{u}\)</span> with <span class="math inline">\(m\)</span> elements is a <span class="math inline">\(1 \times n\)</span> matrix, which can be represented as: <span class="math display">\[
-\mathbf{u} =
-\begin{bmatrix}
-u_{1} &amp; u_{2} &amp; \cdots &amp; u_{m}
-\end{bmatrix}
-\]</span></p>
-<p>In an <span class="math inline">\(m \times n\)</span> matrix, the row vectors can be represented as:</p>
-<p><span class="math display">\[
-\mathbf U  = \begin{bmatrix}  \mathbf u_{1} \\\mathbf u_{2} \\ \vdots \\\mathbf u_{m} \end{bmatrix} \\
-=
-\begin{bmatrix}
-  u_{11} &amp; u_{12} &amp; \cdots &amp; u_{1n} \\
-  u_{21} &amp; u_{22} &amp; \cdots &amp; u_{2n} \\
-  \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\
-  u_{m1} &amp; u_{m2} &amp; \cdots &amp; u_{mn}
-\end{bmatrix}
-\]</span></p>
-<p>where <span class="math inline">\(u_i\)</span> is the <span class="math inline">\(i\)</span>-th element of the row vector <span class="math inline">\(\mathbf{u}\)</span> and <span class="math inline">\(n\)</span> is the number of columns in the matrix.</p>
-</section>
-<section id="linear-combination-of-vectors" class="level3" data-number="1.4.4">
-<h3 data-number="1.4.4" class="anchored" data-anchor-id="linear-combination-of-vectors"><span class="header-section-number">1.4.4</span> Linear Combination of vectors</h3>
-<p>A linear combination of vectors <span class="math inline">\(\mathbf{v}_1,\mathbf{v}_2,\dots,\mathbf{v}_n\)</span> in a vector space <span class="math inline">\(V\)</span> over a field <span class="math inline">\(\mathbb{F}\)</span> is a vector of the form: <span class="math display">\[
-a_1\mathbf{v_1}+a_2\mathbf{v_2}+\dots+a_n\mathbf{v_n}
-\]</span></p>
-<p>where <span class="math inline">\(a_1,a_2,\dots,a_n\in\mathbb{F}\)</span>.</p>
-<p>For example, suppose we have two vectors <span class="math inline">\(\mathbf{v}_1=\begin{bmatrix} 1 \ 2 \ 3 \end{bmatrix}\)</span> and <span class="math inline">\(\mathbf{v}_2=\begin{bmatrix} 4 \ 5 \ 6 \end{bmatrix}\)</span> in <span class="math inline">\(\mathbb{R}^3\)</span>. Then, a linear combination of <span class="math inline">\(\mathbf{v}_1\)</span> and <span class="math inline">\(\mathbf{v}_2\)</span> is of the form:</p>
-<p><span class="math display">\[
-a_1\begin{bmatrix}1\\2\\3\end{bmatrix}+a_2\begin{bmatrix}4\\5\\6\end{bmatrix}=\begin{bmatrix}a_1+4a_2\\2a_1+5a_2\\3a_1+6a_2\end{bmatrix}
-\]</span></p>
-<p>Here, <span class="math inline">\(a_1\)</span> and <span class="math inline">\(a_2\)</span> are scalar coefficients that determine the resulting linear combination vector.</p>
-</section>
-<section id="outer-product" class="level3" data-number="1.4.5">
-<h3 data-number="1.4.5" class="anchored" data-anchor-id="outer-product"><span class="header-section-number">1.4.5</span> Outer Product</h3>
-<p>The outer product of two vectors <span class="math inline">\(\mathbf{u} = [u_1, u_2, \dots, u_m]^T\)</span> and <span class="math inline">\(\mathbf{v} = [v_1, v_2, \dots, v_n]^T\)</span> is a matrix <span class="math inline">\(\mathbf{u} \mathbf{v}^T\)</span> of size <span class="math inline">\(m \times n\)</span>, defined by:</p>
-$$
-<span class="math display">\[\begin{aligned}
-\mathbf{u} \otimes \mathbf{v} &amp;=
-\begin{bmatrix}
-u_1v_1 &amp;u_1v_2&amp; \dots &amp; u_1v_n \\
-u_2v_1 &amp;u_2v_2&amp; \dots &amp; u_2v_n \\
-\vdots &amp;\vdots&amp; \ddots &amp; u_1v_n \\
-u_mv_1 &amp;u_mv_2&amp; \dots &amp; u_mv_n \\
-
-\end{bmatrix}
-\end{aligned}\]</span>
-<p>$$</p>
-<p><span class="math display">\[
-(\mathbf{u} \otimes \mathbf{v})_{i,j} = u_i v_j
-\]</span></p>
-<p>where <span class="math inline">\(\mathbf{u} = [u_1, u_2, \dots, u_m]\)</span> and <span class="math inline">\(\mathbf{v} = [v_1, v_2, \dots, v_n]\)</span>.</p>
-<p>The outer product is also called the tensor product, and it is a type of binary operation between two vectors that results in a matrix. It is important in linear algebra and other fields such as physics and engineering.</p>
-<p>Here is an example: Let <span class="math inline">\(\mathbf{u} = [2, 4, 6]^T\)</span> and <span class="math inline">\(\mathbf{v} = [1, 3]^T\)</span>. The outer product of <span class="math inline">\(\mathbf{u}\)</span> and <span class="math inline">\(\mathbf{v}\)</span> is:</p>
-<p>So the outer product of <span class="math inline">\(\mathbf{u}\)</span> and <span class="math inline">\(\mathbf{v}\)</span> is a <span class="math inline">\(3 \times 2\)</span> matrix.</p>
-<p><a href="../linear_algebra/02.basic_matrix.qmd">What is a matrix? Go to the Next Blog</a></p>
 
 
 </section>

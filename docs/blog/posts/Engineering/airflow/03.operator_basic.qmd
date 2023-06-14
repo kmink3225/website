@@ -504,27 +504,60 @@ echo $1 #첫 번째 인수 출력
     html_content='정상 처리되었습니다.'
   )
   ```
-* 이메일 전송을 위해 사전 셋팅 작업 필요
+* 구글 메일 서버 사용
+
 
 ## Presetting 
 
-### Google Setting
+### Google Settings
 
-* 구글 메일 서버 사용
-* G-mail $\rightarrow$ 설정 $\rightarrow$ 모든 설정보기 $\rightarrow$ 전달및POP/IMAP $\rightarrow$ IMAP사용
-* 구글 계정관리 $\rightarrow$ 보안 $\rightarrow$ 2단계 인증 $\rightarrow$ 앱비밀번호 셋팅
+* 이메일 전송을 위해 사전 셋팅 작업 필요(Google)
+  * google mail server사용
+  * gmail >> settings(설정) >> See all settings (모든 설정 보기) >> Forwarding and POP/IMAP (전달 및 POP/IMAP) >> IMAP access (IMAP 접근): Enable IMAP (IMAP  사용)
+  * Manage Your Google Acccount (구글 계정 관리) >> Security (보안) >> 2-Step Verification (2단계 인증) >> App Passwords: 앱비밀번호 setting >> select app: Mail , Select device: Windows Computer >> Generate app pasword message window popped up
 
-### Airflow
+### Airflow Settings
 
-* Docker-compose.yaml 편집 (environment 항목에 추가)
-  ```markdown
-  AIRFLOW__SMTP__SMTP_HOST: 'smtp.gmail.com'
+* 사전 설정 작업 (airflow)
+  * docker-compose.yaml 편집 (environment 항목에 추가)
+  ```markdown 
+  # 띄어쓰기 주의
+  AIRFLOW__SMTP__SMTP_HOST: 'smtp.gmail.com'  
   AIRFLOW__SMTP__SMTP_USER: '{gmail 계정}'
   AIRFLOW__SMTP__SMTP_PASSWORD: '{앱비밀번호}'
   AIRFLOW__SMTP__SMTP_PORT: 587
   AIRFLOW__SMTP__SMTP_MAIL_FROM: '{gmail 계정}'
   ```
 
+## EmailOperator 작성
+
+```markdown
+
+from airflow import DAG
+import pendulum
+import datetime
+from airflow.operators.email import EmailOperator
+
+with DAG(
+    dag_id="dags_email_operator",
+    schedule="0 8 1 * *", #montly batch: 매월 1일 08:00에 시작
+    start_date=pendulum.datetime(2023, 6, 13, tz="Asia/Seoul"),
+    catchup=False
+) as dag:
+    sending_email_task=EmailOperator(
+        task_id='sending_email_task',
+        to='sdf@naver.com',
+        cc=['sdf2@gmail.com', 'sdf3@gmail.com'],
+        subject='Airflow Test',
+        html_content= """
+            this is a test for airflow.<br/><br/>
+            
+            {{ ds }}<br/>
+        """
+    )
+
+```
+ 
 :::
 </div>
 

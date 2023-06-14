@@ -23,6 +23,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -240,19 +274,19 @@ English
 <td style="text-align: center;"></td>
 <td style="text-align: center;">BranchPythonOperator</td>
 <td style="text-align: center;">*</td>
-<td>파이썬 함수 실행 결과에 따라 task를 선택적으로 실행시킬 때 사용되는 오퍼레이터</td>
+<td>파이썬 함수 실행 결과에 따라 task를 <strong>선택적</strong>으로 실행시킬 때 사용되는 오퍼레이터. task1 &gt;&gt; [task2, task3] 와 같은 상황에서 BranchOperator에서 task1을 실행시키고 task2와 task3 중 하나를 택하여 실행시킬 수 있는 operator</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;"></td>
 <td style="text-align: center;">ShortCircuitOperator</td>
 <td style="text-align: center;"></td>
-<td>파이썬 함수 실행 결과에 따라 후행 Task를 실행하지 않고 종료시킬 수 있는 오퍼레이터</td>
+<td>파이썬 함수 실행 결과에 따라 후행 Task를 실행하지 않고 dag자체를 종료시킬 수 있는 오퍼레이터</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;"></td>
 <td style="text-align: center;">PythonVirtualenvOperator</td>
 <td style="text-align: center;"></td>
-<td>파이썬 가상환경 생성후 Job 수행하고 마무리되면 가상환경을 삭제해주는 오퍼레이터</td>
+<td>파이썬 가상환경 생성후 Job 수행하고 마무리되면 가상환경을 삭제해주는 3개의 과정을 실행시켜 주는 오퍼레이터</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;"></td>
@@ -278,59 +312,169 @@ English
 <li>dag에서 우리가 만든 외부 함수를 import 해와야 하는데</li>
 <li>import 경로를 python이 찾을 수 있도록 그 문법에 맞게 작성해야함
 <ol type="1">
-<li>파이썬은 sys.path 변수에서 모듈의 위치를 검색</li>
+<li><p>파이썬은 sys.path 변수에서 모듈의 위치를 검색</p>
+<ul>
+<li>pip install로 설치된 libraries <img src="../.././../../../images/airflow/python-path-search.PNG" class="img-fluid" alt="Python의 sys.path를 이용한 모듈 검색"></li>
+<li>conda 환경에 설치된 libraries</li>
+</ul>
+<p>::: {.cell execution_count=1} <code>{.python .cell-code}  #import sys  #pprint(sys.path)</code> :::</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>['c:<span class="sc">\\</span>Users<span class="sc">\\</span>kmkim<span class="sc">\\</span>Desktop<span class="sc">\\</span>projects<span class="sc">\\</span>website<span class="sc">\\</span>docs<span class="sc">\\</span>blog<span class="sc">\\</span>posts<span class="sc">\\</span>Engineering<span class="sc">\\</span>airflow', </span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>'c:<span class="sc">\\</span>Users<span class="sc">\\</span>kmkim<span class="sc">\\</span>.conda<span class="sc">\\</span>envs<span class="sc">\\</span>study<span class="sc">\\</span>python39.zip',             </span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>'c:<span class="sc">\\</span>Users<span class="sc">\\</span>kmkim<span class="sc">\\</span>.conda<span class="sc">\\</span>envs<span class="sc">\\</span>study<span class="sc">\\</span>DLLs', </span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>'c:<span class="sc">\\</span>Users<span class="sc">\\</span>kmkim<span class="sc">\\</span>.conda<span class="sc">\\</span>envs<span class="sc">\\</span>study<span class="sc">\\</span>lib', </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>'c:<span class="sc">\\</span>Users<span class="sc">\\</span>kmkim<span class="sc">\\</span>.conda<span class="sc">\\</span>envs<span class="sc">\\</span>study', </span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>'', # 실행하는 파이썬 파일과 동일 디렉토리에 있는 파이썬 파일, 이것에 한해서 그냥 모듈명으로만 호출 가능</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    # 예를 들어, a.py 와 b.py와 동일한 디렉토리안에 있다면 a.py안에서 <span class="in">`import b`</span> 라고 해도 호출 가능</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>'c:<span class="sc">\\</span>Users<span class="sc">\\</span>kmkim<span class="sc">\\</span>.conda<span class="sc">\\</span>envs<span class="sc">\\</span>study<span class="sc">\\</span>lib<span class="sc">\\</span>site-packages', </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>'c:<span class="sc">\\</span>Users<span class="sc">\\</span>kmkim<span class="sc">\\</span>.conda<span class="sc">\\</span>envs<span class="sc">\\</span>study<span class="sc">\\</span>lib<span class="sc">\\</span>site-packages<span class="sc">\\</span>win32', </span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>'c:<span class="sc">\\</span>Users<span class="sc">\\</span>kmkim<span class="sc">\\</span>.conda<span class="sc">\\</span>envs<span class="sc">\\</span>study<span class="sc">\\</span>lib<span class="sc">\\</span>site-packages<span class="sc">\\</span>win32<span class="sc">\\</span>lib', </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>'c:<span class="sc">\\</span>Users<span class="sc">\\</span>kmkim<span class="sc">\\</span>.conda<span class="sc">\\</span>envs<span class="sc">\\</span>study<span class="sc">\\</span>lib<span class="sc">\\</span>site-packages<span class="sc">\\</span>Pythonwin']</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>sys.path 에 값을 추가하는 방법</p>
+<ol type="1">
+<li>명시적으로 추가 (ex: <code>sys.path.append(‘/home/hjkim’)</code> )</li>
+<li>OS 환경변수 PYTHONPATH 에 값을 추가</li>
+</ol></li>
 </ol></li>
 </ul></li>
 </ul>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../.././../../../images/airflow/python-path-search.PNG" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Python의 sys.path를 이용한 모듈 검색</figcaption>
-</figure>
-</div>
-<pre><code>    2. sys.path 에 값을 추가하는 방법
-        1. 명시적으로 추가 (ex: sys.path.append(‘/home/hjkim’) )
-        2. OS 환경변수 PYTHONPATH 에 값을 추가
-* Airflow는 자동적으로 dags 폴더와 plugins 폴더를 sys.path에 추가함
-    * (컨테이너에서 airflow info 명령을 수행해보자)</code></pre>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../../../../../images/airflow/container-airflow-info.PNG" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Airflow Path Info</figcaption>
-</figure>
-</div>
 </section>
 <section id="plugins-directory-이용" class="level2" data-number="2.2">
 <h2 data-number="2.2" class="anchored" data-anchor-id="plugins-directory-이용"><span class="header-section-number">2.2</span> plugins directory 이용</h2>
 <ul>
-<li>plugins 폴더 이용하기</li>
+<li><p>다행히, 파이썬에서와 같이 귀찮은 방식보다는 Airflow에서는 자동적으로 dags 폴더와 plugins 폴더를 sys.path에 추가함</p>
+<ul>
+<li>컨테이너에서 <code>airflow info</code> 명령을 수행해보면 아래 그림과 같은 정보를 확인할 수 있다. <img src="../../../../../images/airflow/container-airflow-info.PNG" class="img-fluid" alt="Airflow Path Info"></li>
+</ul></li>
+<li><p>plugins 폴더 이용하기 <img src="../../../../../images/airflow/plugin-folder.PNG" class="img-fluid" alt="Airflow plugin Folder"></p>
+<ul>
+<li>plugins까지는 airflow에서 기본적으로 인식하고 있기 때문에 <code>from common.common_func import get_sftp</code>에서와 같이 <code>common</code>부터 경로 써주면 됨.</li>
+</ul></li>
+<li><p>파이썬 스크립트를 이용하면 좋은 점</p>
+<ul>
+<li>공통함수 작성이 가능해지고</li>
+<li>재활용성이 증가하고</li>
+<li>DAG의 가독성이 올라가고</li>
+<li>디버깅에도 용이하다.</li>
+</ul></li>
+<li><p>PythonOperator 예시</p>
+<ul>
+<li>dags_python_import_func.py</li>
 </ul>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../../../../../images/airflow/plugin-folder.PNG" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Airflow plugin Folder</figcaption>
-</figure>
-</div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>import datetime</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>from airflow.operators.python import PythonOperator</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>from common.common_func import get_sftp # 여기서 path 가 맞지 않아 local에서 error가 발생</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    # .env 파일을 만들어서 workspace 경로 설정을 해줘야 한다.</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>import random</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    dag_id="dags_python_import_func",</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    schedule="30 6 * * *", #montly batch: 매월 1일 08:00에 시작</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 6, 13, tz="Asia/Seoul"),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    catchup=False</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="in">    get_sftp_task = PythonOperator(</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id ='get_sftp_task',</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=get_sftp</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="in">    get_sftp_task</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>.env: wsl airflow directory에는 배포될 필요없는 파일이기 때문에 .gitignore에 추가해도 됨</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>WORKSPACE_FOLDER=C:\Users\kmkim\Desktop\projects\airflow #'airflow' directory path입력</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>PYTHONPATH=${WORKSPACE_FOLDER}/plugins #'plugins' directory추가</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ul>
 </section>
-<section id="python-external-module-execution" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="python-external-module-execution"><span class="header-section-number">2.3</span> Python External Module Execution</h2>
+<section id="execute-python-external-modules" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="execute-python-external-modules"><span class="header-section-number">2.3</span> Execute Python External Modules</h2>
 </section>
 </section>
 <section id="task-decorator" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Task Decorator</h1>
 <ul>
+<li>python에 있는 기능</li>
 <li>데커레이터(Decorator): 장식하다, 꾸미다</li>
 <li>What: 함수를 장식하다</li>
+<li>python 함수를 좀 더 쉽게 사용할 수 있다.</li>
 <li>원래의 함수를 감싸서 (Wrapping) 바깥에 추가 기능을 덧붙이는 방법
 <ul>
 <li>파이썬은 함수 안에 함수를 선언하는 것이 가능하고</li>
 <li>함수의 인자로 함수를 전달하는 것이 가능하며</li>
 <li>함수 자체를 리턴하는 것이 가능하다.</li>
 </ul></li>
-</ul>
-<p><img src="../../../../../images/airflow/function-encompassion.PNG" class="img-fluid" alt="함수 감싸기"> <img src="../../../../../images/airflow/function-encompassion2.PNG" class="img-fluid" alt="함수 감싸기2"> <img src="../../../../../images/airflow/function-decorator.PNG" class="img-fluid" alt="Decorator"> <img src="../../../../../images/airflow/function-decorator2.PNG" class="img-fluid" alt="Decorator2"> <img src="../../../../../images/airflow/function-decorator3.PNG" class="img-fluid" alt="Decorator3"></p>
+<li>warpping (함수 감싸기 )
 <ul>
-<li>파이썬 함수 정의만으로 쉽게 Task 생성</li>
+<li>파이썬은 함수 안에 함수를 선언하는 것이 가능</li>
+<li>함수의 인자로 함수를 전달하는 것이 가능</li>
+<li>함수 자체를 리턴하는 것이 가능 <img src="../../../../../images/airflow/function-encompassion.PNG" class="img-fluid" alt="함수 감싸기1"></li>
+<li>함수 감싸기 예시<br>
+<img src="../../../../../images/airflow/function-encompassion2.PNG" class="img-fluid" alt="함수 감싸기2">
+<ul>
+<li><code>get_data()</code> 함수 안에 log를 쌓아야하는 상황</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>def get_data()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    print('function starts working')</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>log는 간단하게 여기서 <code>print('target 함수 실행 전 입니다.')</code> 와 <code>print('target 함수 실행 후 입니다.')</code> 라고 설정</li>
+<li><code>get_data()</code> 함수 안에 log를 쌓는 python code를 작성하는 것이 아니라 <code>get_data()</code> 를 인수로 받는 warpping function, <code>outer_func(target_func)</code>을 만든다</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>def outer_func(target_func):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    def inner_func():</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        print('target 함수 실행 전 입니다.')</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        print('function starts working')</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        print('target 함수 실행 후 입니다.')</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    return inner_func</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>a=outer_func(get_data) </span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>a() # get_data()을 인수로 받은 inner_func()이 출력된다.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li>wrapping 함수의 장점
+<ul>
+<li><code>get_data()</code>와 같은 target function이 수 백개가 되면 수 백개의 log정보를 수 백개의 target functions에 기입해야한다. wrapping 함수를 사용하면 코드의 재사용이 가능해진다.</li>
+</ul></li>
+<li>wrapping 함수의 장점
+<ul>
+<li><code>get_data()</code>와 같은 target function이 수 백개가 되면 <code>a=outer_func(get_data1);a()</code>, <code>a=outer_func(get_data2);a()</code>, <span class="math inline">\(\dots\)</span>,<code>a=outer_func(get_data100);a()</code> 이런식으로 만들어야 함.</li>
+</ul></li>
+<li>이런 상황을 보완한 것이 decorator</li>
+</ul></li>
+<li>decorator <img src="../../../../../images/airflow/function-decorator.PNG" class="img-fluid" alt="Decorator">
+<ul>
+<li><code>@outer_func</code> 을 target function위에 작성</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>@outer_func</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>def get_data()</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    print('function starts working')</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>이렇게, decoration을 하게 되면 <code>get_data1();get_data2();get_data3()</code> 만 실행하면 자동으로 <code>outer_func()</code>이 실행됨 <img src="../../../../../images/airflow/function-decorator2.PNG" class="img-fluid" alt="Decorator2"></li>
+</ul></li>
+<li>task decorator in airflow
+<ul>
+<li>airflow에도 비슷한 기능이 있는데 파이썬 함수 정의만으로 쉽게 Task 생성 <img src="../../../../../images/airflow/function-decorator3.PNG" class="img-fluid" alt="Decorator3"></li>
+</ul></li>
+<li>airflow official document에서는 PythonOperator Import해서 DAG을 만드는 것 보다 task decorator를 사용하는 것을 더 권장
+<ul>
+<li>실제로, airflow web service에서 <code>example_python_operator</code> DAG을 보면 <code>example_python_deocartor</code>라고 이름이 안지어졌는데도 decorator 예시가 바로 나옴.</li>
+<li>왜냐면, 나중에 task간에 data를 공유할 때 task decorator를 사용하면 PythonOperator를 사용하면 data 공유가 한결 더 쉬워진다.</li>
+<li>task decorator를 사용하면 task connection 을 작성할 필요가 없어짐</li>
+<li>task decorator dag 예시</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>from airflow.decorators import task</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    dag_id="dags_python_decorator",</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    schedule='0 2 * * 1', #매주 월요일 2시 실행</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 6, 13, tz="Asia/Seoul"),</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    catchup=False,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="in">    @task(task_id="python_task1")</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="in">    def print_context(some_input):</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="in">        print(some_input)</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="in">    python_task1 = print_context('task decorator execution!')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 </ul>
 </section>
 <section id="python-operator-with-op_args-parameter" class="level1" data-number="4">

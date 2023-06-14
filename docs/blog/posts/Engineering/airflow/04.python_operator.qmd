@@ -45,9 +45,9 @@ draft: False
 |Package|Operator|Importance|Description|
 |:-:|:--:|:-:|-------------|
 |airflow.operators.python|PythonOperator|***|어떤 파이썬함수를실행시키기 위한오퍼레이터|
-||BranchPythonOperator|*|파이썬 함수 실행 결과에 따라 task를 선택적으로 실행시킬 때 사용되는 오퍼레이터|
-||ShortCircuitOperator||파이썬 함수 실행 결과에 따라 후행 Task를 실행하지 않고 종료시킬 수 있는 오퍼레이터|
-||PythonVirtualenvOperator||파이썬 가상환경 생성후 Job 수행하고 마무리되면 가상환경을 삭제해주는 오퍼레이터|
+||BranchPythonOperator|*|파이썬 함수 실행 결과에 따라 task를 **선택적**으로 실행시킬 때 사용되는 오퍼레이터. task1 >> [task2, task3] 와 같은 상황에서 BranchOperator에서 task1을 실행시키고 task2와 task3 중 하나를 택하여 실행시킬 수 있는 operator|
+||ShortCircuitOperator||파이썬 함수 실행 결과에 따라 후행 Task를 실행하지 않고 dag자체를 종료시킬 수 있는 오퍼레이터|
+||PythonVirtualenvOperator||파이썬 가상환경 생성후 Job 수행하고 마무리되면 가상환경을 삭제해주는 3개의 과정을 실행시켜 주는 오퍼레이터|
 ||ExternalPythonOperator||기존에 존재하는 파이썬가상환경에서 Job 수행하게 하는 오퍼레이터|
 
 # Import Python External Module
@@ -60,44 +60,156 @@ draft: False
     * dag에서 우리가 만든 외부 함수를 import 해와야 하는데
     * import 경로를 python이 찾을 수 있도록 그 문법에 맞게 작성해야함
         1. 파이썬은 sys.path 변수에서 모듈의 위치를 검색
+            * pip install로 설치된 libraries
+              ![Python의 sys.path를 이용한 모듈 검색](../.././../../../images/airflow/python-path-search.PNG)
+            * conda 환경에 설치된 libraries
+            ```{python}
+            #import sys
+            #pprint(sys.path)
+            ```
 
-![Python의 sys.path를 이용한 모듈 검색](../.././../../../images/airflow/python-path-search.PNG)
-
+            ```markdown
+            ['c:\\Users\\kmkim\\Desktop\\projects\\website\\docs\\blog\\posts\\Engineering\\airflow', 
+            'c:\\Users\\kmkim\\.conda\\envs\\study\\python39.zip',             
+            'c:\\Users\\kmkim\\.conda\\envs\\study\\DLLs', 
+            'c:\\Users\\kmkim\\.conda\\envs\\study\\lib', 
+            'c:\\Users\\kmkim\\.conda\\envs\\study', 
+            '', # 실행하는 파이썬 파일과 동일 디렉토리에 있는 파이썬 파일, 이것에 한해서 그냥 모듈명으로만 호출 가능
+                # 예를 들어, a.py 와 b.py와 동일한 디렉토리안에 있다면 a.py안에서 `import b` 라고 해도 호출 가능
+            'c:\\Users\\kmkim\\.conda\\envs\\study\\lib\\site-packages', 
+            'c:\\Users\\kmkim\\.conda\\envs\\study\\lib\\site-packages\\win32', 
+            'c:\\Users\\kmkim\\.conda\\envs\\study\\lib\\site-packages\\win32\\lib', 
+            'c:\\Users\\kmkim\\.conda\\envs\\study\\lib\\site-packages\\Pythonwin']
+            ```
         2. sys.path 에 값을 추가하는 방법
-            1. 명시적으로 추가 (ex: sys.path.append(‘/home/hjkim’) )
+            1. 명시적으로 추가 (ex: `sys.path.append(‘/home/hjkim’)` )
             2. OS 환경변수 PYTHONPATH 에 값을 추가
-    * Airflow는 자동적으로 dags 폴더와 plugins 폴더를 sys.path에 추가함
-        * (컨테이너에서 airflow info 명령을 수행해보자)
-
-![Airflow Path Info](../../../../../images/airflow/container-airflow-info.PNG)
-
 
 ## plugins directory 이용
 
+* 다행히, 파이썬에서와 같이 귀찮은 방식보다는 Airflow에서는 자동적으로 dags 폴더와 plugins 폴더를 sys.path에 추가함
+    * 컨테이너에서 `airflow info` 명령을 수행해보면 아래 그림과 같은 정보를 확인할 수 있다.
+    ![Airflow Path Info](../../../../../images/airflow/container-airflow-info.PNG)
 * plugins 폴더 이용하기
+    ![Airflow plugin Folder](../../../../../images/airflow/plugin-folder.PNG)
+    
+    * plugins까지는 airflow에서 기본적으로 인식하고 있기 때문에 `from common.common_func import get_sftp`에서와 같이 `common`부터 경로 써주면 됨.
+* 파이썬 스크립트를 이용하면 좋은 점
+    * 공통함수 작성이 가능해지고
+    * 재활용성이 증가하고
+    * DAG의 가독성이 올라가고
+    * 디버깅에도 용이하다.
+* PythonOperator 예시
+    * dags_python_import_func.py
+    ```markdown
+    from airflow import DAG
+    import pendulum
+    import datetime
+    from airflow.operators.python import PythonOperator
+    from common.common_func import get_sftp # 여기서 path 가 맞지 않아 local에서 error가 발생
+        # .env 파일을 만들어서 workspace 경로 설정을 해줘야 한다.
+    import random
+    
+    with DAG(
+        dag_id="dags_python_import_func",
+        schedule="30 6 * * *", #montly batch: 매월 1일 08:00에 시작
+        start_date=pendulum.datetime(2023, 6, 13, tz="Asia/Seoul"),
+        catchup=False
+    ) as dag:
+        
+        get_sftp_task = PythonOperator(
+            task_id ='get_sftp_task',
+            python_callable=get_sftp
+        )
+        get_sftp_task
+    ```
+    * .env: wsl airflow directory에는 배포될 필요없는 파일이기 때문에 .gitignore에 추가해도 됨
+    ```markdown
+    WORKSPACE_FOLDER=C:\Users\kmkim\Desktop\projects\airflow #'airflow' directory path입력
+    PYTHONPATH=${WORKSPACE_FOLDER}/plugins #'plugins' directory추가
+    ```
 
-![Airflow plugin Folder](../../../../../images/airflow/plugin-folder.PNG)
-
-
-## Python External Module Execution
+## Execute Python External Modules
 
 
 # Task Decorator
 
+* python에 있는 기능
 * 데커레이터(Decorator): 장식하다, 꾸미다
 * What: 함수를 장식하다
+* python 함수를 좀 더 쉽게 사용할 수 있다.
 * 원래의 함수를 감싸서 (Wrapping) 바깥에 추가 기능을 덧붙이는 방법
     * 파이썬은 함수 안에 함수를 선언하는 것이 가능하고
     * 함수의 인자로 함수를 전달하는 것이 가능하며
     * 함수 자체를 리턴하는 것이 가능하다.
+* warpping (함수 감싸기 )
+    * 파이썬은 함수 안에 함수를 선언하는 것이 가능
+    * 함수의 인자로 함수를 전달하는 것이 가능
+    * 함수 자체를 리턴하는 것이 가능
+    ![함수 감싸기1](../../../../../images/airflow/function-encompassion.PNG)
+    * 함수 감싸기 예시    
+        ![함수 감싸기2](../../../../../images/airflow/function-encompassion2.PNG)
+        * `get_data()` 함수 안에 log를 쌓아야하는 상황
+        ```markdown
+        def get_data()
+            print('function starts working')
+        ```
+        * log는 간단하게 여기서 `print('target 함수 실행 전 입니다.')` 와 `print('target 함수 실행 후 입니다.')` 라고 설정
+        * `get_data()` 함수 안에 log를 쌓는 python code를 작성하는 것이 아니라 `get_data()` 를 인수로 받는 warpping function, `outer_func(target_func)`을 만든다
+        ```markdown
+        def outer_func(target_func):
+            def inner_func():
+                print('target 함수 실행 전 입니다.')
+                print('function starts working')
+                print('target 함수 실행 후 입니다.')
+            return inner_func
+        ```
+        ```markdown
+        a=outer_func(get_data) 
+        a() # get_data()을 인수로 받은 inner_func()이 출력된다.
+        ```        
+    * wrapping 함수의 장점
+        * `get_data()`와 같은 target function이 수 백개가 되면 수 백개의 log정보를 수 백개의 target functions에 기입해야한다. wrapping 함수를 사용하면 코드의 재사용이 가능해진다.
+    * wrapping 함수의 장점 
+        * `get_data()`와 같은 target function이 수 백개가 되면 `a=outer_func(get_data1);a()`, `a=outer_func(get_data2);a()`, $\dots$,`a=outer_func(get_data100);a()` 이런식으로 만들어야 함.
+    * 이런 상황을 보완한 것이 decorator
+* decorator
+    ![Decorator](../../../../../images/airflow/function-decorator.PNG)
+    * `@outer_func` 을 target function위에 작성
+    ```markdown
+    @outer_func
+    def get_data()
+        print('function starts working')
+    ```
+    * 이렇게, decoration을 하게 되면 `get_data1();get_data2();get_data3()` 만 실행하면 자동으로 `outer_func()`이 실행됨
+    ![Decorator2](../../../../../images/airflow/function-decorator2.PNG)
+* task decorator in airflow
+    * airflow에도 비슷한 기능이 있는데 파이썬 함수 정의만으로 쉽게 Task 생성
+    ![Decorator3](../../../../../images/airflow/function-decorator3.PNG)
+* airflow official document에서는 PythonOperator Import해서 DAG을 만드는 것 보다 task decorator를 사용하는 것을 더 권장
+    * 실제로, airflow web service에서 `example_python_operator` DAG을 보면 `example_python_deocartor`라고 이름이 안지어졌는데도 decorator 예시가 바로 나옴.
+    * 왜냐면, 나중에 task간에 data를 공유할 때 task decorator를 사용하면 PythonOperator를 사용하면 data 공유가 한결 더 쉬워진다.
+    * task decorator를 사용하면 task connection 을 작성할 필요가 없어짐
+    * task decorator dag 예시
+    ```markdown
+    from airflow import DAG
+    import pendulum
+    from airflow.decorators import task
 
-![함수 감싸기](../../../../../images/airflow/function-encompassion.PNG)
-![함수 감싸기2](../../../../../images/airflow/function-encompassion2.PNG)
-![Decorator](../../../../../images/airflow/function-decorator.PNG)
-![Decorator2](../../../../../images/airflow/function-decorator2.PNG)
-![Decorator3](../../../../../images/airflow/function-decorator3.PNG)
+    with DAG(
+        dag_id="dags_python_decorator",
+        schedule='0 2 * * 1', #매주 월요일 2시 실행
+        start_date=pendulum.datetime(2023, 6, 13, tz="Asia/Seoul"),
+        catchup=False,
+    ) as dag:
 
-* 파이썬 함수 정의만으로 쉽게 Task 생성
+        @task(task_id="python_task1")
+        def print_context(some_input):
+            print(some_input)
+
+        python_task1 = print_context('task decorator execution!')
+    ```
+
 
 # Python Operator with op_args Parameter
 

@@ -176,7 +176,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link active" data-scroll-target="#go-to-blog-content-list"><span class="header-section-number">5</span> Go to Blog Content List</a></li>
+  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link active" data-scroll-target="#go-to-blog-content-list"><span class="header-section-number">6</span> Go to Blog Content List</a></li>
   </ul>
 </nav>
     </div>
@@ -398,9 +398,9 @@ GCS_Operator-&gt;Task4
 <li><p>배포된 dags를 자동으로 docker container에 연동시키기 위해 <code>Volumns</code>을 다음과 같이 편집</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  volumes:</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>${AIRFLOW_PROJ_DIR:-.}/airflow/dags:/opt/airflow/dags</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>${AIRFLOW_PROJ_DIR:-.}/airflow/logs:/opt/airflow/logs</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>${AIRFLOW_PROJ_DIR:-.}/airflow/config:/opt/airflow/config</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>${AIRFLOW_PROJ_DIR:-.}/airflow//plugins:/opt/airflow/plugins</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="ss">    - </span>${AIRFLOW_PROJ_DIR:-.}/plugins:/opt/airflow/plugins</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 <li><p>새로운 dags 배포할 때마다 airflow service 껐다가 켜야 한다.</p></li>
 </ul></li>
 <li><p>airflow service 껐다 켜서 잘 반영됐는지 확인</p>
@@ -984,47 +984,89 @@ task7-&gt;task6
 </ul></li>
 <li><p>example</p></li>
 </ul>
-<div class="sourceCode" id="cb14"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>vi test2.sh #i 누르면 편집가능하고 편집 후 esc+wq! 입력하고 enter치면 저장하고 나감</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="in">```test2.sh</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="in">  echo $1 #첫 번째 인수 출력</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>chmod +x test2.sh #편집 권한을 부여 ./test2.sh kmkim #kmkim 출력됨</p>
-<pre><code>
-
-# Email Operator 
-
-* 이메일 전송해주는 오퍼레이터
-  ```markdown
-  email_t1 = EmailOperator(
-    task_id='email_t1',
-    to='hjkim_sun@naver.com',
-    subject='Airflow 처리결과',
-    html_content='정상 처리되었습니다.'
-  )</code></pre>
+<div class="sourceCode" id="cb14"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>cd github-repository/plugins/shell</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>vi select_fruit.sh #i 누르면 편집가능하고 편집 후 esc+wq! 입력하고 enter치면 저장하고 나감</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>chmod +x select_fruit.sh #실행 권한을 부여</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>./select_fruit.sh kmkim # ./test2.sh 는 test2.sh을 실행한다는 의미 출력물: kmkim 출력됨</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>git add -A</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>git commit -m "shell script example"</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>git push</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode select_fruit.sh code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="va">$1</span> <span class="co">#첫 번째 인수 출력</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
-<li>이메일 전송을 위해 사전 셋팅 작업 필요</li>
+<li><p>container에서 github repository에 있는 plugins/shell에 있는 shell script 인식하게 하기</p>
+<ul>
+<li><p><code>vi docker-compose.yaml</code> 에서 67line 수정</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="an">volumes:</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>${AIRFLOW_PROJ_DIR:-.}/airflow/dags:/opt/airflow/dags</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="ss">  - </span>${AIRFLOW_PROJ_DIR:-.}/airflow//plugins:/opt/airflow/plugins</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<h1 id="email-operator" data-number="5"><span class="header-section-number">5</span> Email Operator</h1></li>
+</ul></li>
+<li><p>이메일 전송해주는 오퍼레이터</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>email_t1 = EmailOperator(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  task_id='email_t1',</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  to='hjkim_sun@naver.com',</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  subject='Airflow 처리결과',</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  html_content='정상 처리되었습니다.'</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>구글 메일 서버 사용</p></li>
 </ul>
 </section>
-<section id="presetting" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="presetting"><span class="header-section-number">4.4</span> Presetting</h2>
-<section id="google-setting" class="level3" data-number="4.4.1">
-<h3 data-number="4.4.1" class="anchored" data-anchor-id="google-setting"><span class="header-section-number">4.4.1</span> Google Setting</h3>
+<section id="presetting" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="presetting"><span class="header-section-number">5.1</span> Presetting</h2>
+<section id="google-settings" class="level3" data-number="5.1.1">
+<h3 data-number="5.1.1" class="anchored" data-anchor-id="google-settings"><span class="header-section-number">5.1.1</span> Google Settings</h3>
 <ul>
-<li>구글 메일 서버 사용</li>
-<li>G-mail <span class="math inline">\(\rightarrow\)</span> 설정 <span class="math inline">\(\rightarrow\)</span> 모든 설정보기 <span class="math inline">\(\rightarrow\)</span> 전달및POP/IMAP <span class="math inline">\(\rightarrow\)</span> IMAP사용</li>
-<li>구글 계정관리 <span class="math inline">\(\rightarrow\)</span> 보안 <span class="math inline">\(\rightarrow\)</span> 2단계 인증 <span class="math inline">\(\rightarrow\)</span> 앱비밀번호 셋팅</li>
+<li>이메일 전송을 위해 사전 셋팅 작업 필요(Google)
+<ul>
+<li>google mail server사용</li>
+<li>gmail &gt;&gt; settings(설정) &gt;&gt; See all settings (모든 설정 보기) &gt;&gt; Forwarding and POP/IMAP (전달 및 POP/IMAP) &gt;&gt; IMAP access (IMAP 접근): Enable IMAP (IMAP 사용)</li>
+<li>Manage Your Google Acccount (구글 계정 관리) &gt;&gt; Security (보안) &gt;&gt; 2-Step Verification (2단계 인증) &gt;&gt; App Passwords: 앱비밀번호 setting &gt;&gt; select app: Mail , Select device: Windows Computer &gt;&gt; Generate app pasword message window popped up</li>
+</ul></li>
 </ul>
 </section>
-<section id="airflow" class="level3" data-number="4.4.2">
-<h3 data-number="4.4.2" class="anchored" data-anchor-id="airflow"><span class="header-section-number">4.4.2</span> Airflow</h3>
+<section id="airflow-settings" class="level3" data-number="5.1.2">
+<h3 data-number="5.1.2" class="anchored" data-anchor-id="airflow-settings"><span class="header-section-number">5.1.2</span> Airflow Settings</h3>
 <ul>
-<li><p>Docker-compose.yaml 편집 (environment 항목에 추가)</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_HOST:</span><span class="co"> 'smtp.gmail.com'</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_USER:</span><span class="co"> '{gmail 계정}'</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_PASSWORD:</span><span class="co"> '{앱비밀번호}'</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_PORT:</span><span class="co"> 587</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="an">AIRFLOW__SMTP__SMTP_MAIL_FROM:</span><span class="co"> '{gmail 계정}'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li>사전 설정 작업 (airflow)
+<ul>
+<li>docker-compose.yaml 편집 (environment 항목에 추가)</li>
+</ul>
+<div class="sourceCode" id="cb18"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># 띄어쓰기 주의</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>AIRFLOW__SMTP__SMTP_HOST: 'smtp.gmail.com'  </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>AIRFLOW__SMTP__SMTP_USER: '{gmail 계정}'</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>AIRFLOW__SMTP__SMTP_PASSWORD: '{앱비밀번호}'</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>AIRFLOW__SMTP__SMTP_PORT: 587</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>AIRFLOW__SMTP__SMTP_MAIL_FROM: '{gmail 계정}'</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 </ul>
 </section>
+</section>
+<section id="emailoperator-작성" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="emailoperator-작성"><span class="header-section-number">5.2</span> EmailOperator 작성</h2>
+<div class="sourceCode" id="cb19"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>import datetime</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>from airflow.operators.email import EmailOperator</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    dag_id="dags_email_operator",</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    schedule="0 8 1 * *", #montly batch: 매월 1일 08:00에 시작</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 6, 13, tz="Asia/Seoul"),</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    catchup=False</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    sending_email_task=EmailOperator(</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>        task_id='sending_email_task',</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>        to='sdf@naver.com',</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>        cc=<span class="co">[</span><span class="ot">'sdf2@gmail.com', 'sdf3@gmail.com'</span><span class="co">]</span>,</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>        subject='Airflow Test',</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>        html_content= """</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>            this is a test for airflow.<span class="kw">&lt;br/&gt;&lt;br/&gt;</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a><span class="in">            {{ ds }}&lt;br/&gt;</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a><span class="in">        """</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 </div>
@@ -1034,8 +1076,8 @@ task7-&gt;task6
 
 </div>
 </div>
-<section id="go-to-blog-content-list" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Go to Blog Content List</h1>
+<section id="go-to-blog-content-list" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Go to Blog Content List</h1>
 <p><a href="../../../../../docs/blog/posts/content_list.html">Blog Content List</a></p>
 
 

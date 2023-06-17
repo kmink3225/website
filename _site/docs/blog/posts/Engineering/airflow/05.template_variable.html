@@ -237,30 +237,64 @@ English
 <section id="jinja-template" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Jinja Template</h1>
 <ul>
-<li><p>문서(파일)에서 특정 양식으로 작성된 값을 런타임시 실제 값으로 치환해주는 처리 엔진</p></li>
-<li><p>템플릿 엔진은 여러 솔루션이 존재하며 그 중 Jinja 템플릿은 파이썬 언어에서 사용하는 엔진</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>from jinja2 import Template</span>
+<li><p>template engine: 문서 또는 파일 (template)에서 특정 양식으로 작성된 값 (즉, 특정 양식으로 어떤 변수 값을 만듦)을 런타임시 실제 값으로 치환해주는 처리 엔진이 있음</p></li>
+<li><p>template engine은 여러 솔루션이 존재하며 그 중 Jinja 템플릿은 파이썬 언어에서 사용하는 엔진</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>from jinja2 import Template #jinja2 library는 airflow 설치시 자동 설치됨</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>template = Template('my name is {{name}}')</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>template = Template('my name is {{name}}') #Template은 class, {{name}}은 변수</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>new_template = template.render('name=hjkim')</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>print(new_template)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 <li><p>Jinja 템플릿, 어디서 쓰이나?</p>
 <ul>
-<li>파이썬 기반 웹 프레임워크인 Flask, Django에서 주로 사용 (주로 HTML 템플릿 저장 후 화면에 보여질 때 실제 값으로 변환해서 출력)</li>
-<li>SQL작성시에도 활용 가능</li>
+<li>파이썬 기반 웹 프레임워크인 Flask, Django(장고)에서 주로 사용
+<ul>
+<li>예를 들어, HTML 형태의 정적 template 문서를 만들어 놓고 back end server의 처리 결과에 따라 값을 바꾸어 보여줄 때 jinja template engine이 사용될 수 있다. (주로 HTML 템플릿 저장 후 화면에 보여질 때 실제 값으로 변환해서 출력)</li>
+</ul></li>
+<li>SQL작성시에도 활용 가능
+<ul>
+<li>예를 들어, <code>select * from tables where base_dt = {{}}</code> 라는 SQL template을 만들어 넣고 jinja template engine을 이용해서 날짜 변수 <code>{{}}</code>에 runtime시 발생하는 실제 값을 할당할 수 있다.</li>
+</ul></li>
 </ul></li>
 </ul>
 <section id="airflow에서-사용법" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="airflow에서-사용법"><span class="header-section-number">1.1</span> Airflow에서 사용법</h2>
 <ul>
-<li>오퍼레이터 파라미터 입력시 중괄호 {} 2개를 이용하면 Airflow에서 기본적으로 제공하는 변수들을 치환된 값으로 입력할 수 있음. (ex: 수행 날짜, DAG_ID)
+<li>오퍼레이터 파라미터 입력시 중괄호 {} 2개(<code>{{}}</code>)를 이용하면 Airflow에서 기본적으로 제공하는 변수들(ex: 수행 날짜, DAG_ID)을 치환된 값으로 입력할 수 있음.
 <ul>
-<li>https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html</li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html">airflow에서 제공하는 기본 variable list</a> or google ‘airflow templates reference’</li>
+<li><code>{{ data_interval_start }}</code>: schedule 구간의 시작점을 반환, <code>pendulum.DateTime</code>는 timestamped type <strong>(중요)</strong></li>
+<li><code>{{ data_interval_end }}</code>: schedule 구간의 끝점을 반환 <strong>(중요)</strong></li>
+<li><code>{{ ds }}</code>: <code>{{ data_interval_start }}</code>의 value를 string 형태(‘YYYY-MM-DD’)로 반환 <strong>(중요)</strong></li>
+<li><code>{{ ds_nodash }}</code>: <code>{{ds}}</code>를 string 형태(‘YYYYMMDD’) 로 반환</li>
+<li><code>{{ ts }}</code>: timestamped 의 약자로 <code>{{ data_interval_start }}</code>를 string 형태(‘YYYY-MM-DD T00:00:00+00:00’) 로 반환</li>
+<li><code>{{ ts_nodash_with_tz }}</code>: timestamped 의 약자로 <code>{{ ts }}</code>를 string 형태(‘YYYYMMDDT000000+0000’) 로 반환</li>
+<li><code>{{ ts_nodash  }}</code>: timestamped 의 약자로 <code>{{ts}}</code>를 string 형태(‘YYYYMMDDT000000’) 로 반환</li>
 </ul></li>
 <li>모든 오퍼레이터, 모든 파라미터에 Template 변수 적용이 가능한가? No!</li>
-<li>Airflow 문서에서 어떤 파라미터에 Template 변수 적용 가능한지 확인 필요
+<li><a href="https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/index.html">Airflow 문서에서 어떤 파라미터에 Template 변수 적용 가능한지 확인 필요</a> or google airflow operators
 <ul>
-<li>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/index.html</li>
+<li>operator 설명란에 parameters 란에 각 parameter의 설명 부분 맨 끝에 (templated) 라고 적혀 있는 parameter는 jinja template 사용 가능. template_fields에 요약되어 있음</li>
+<li>예를 들어, airflow.operators.bash 에서 <code>Parameters</code>를 보면
+<ul>
+<li>bash_command (str) – The command, set of commands or reference to a bash script (must be ‘.sh’) to be executed. <strong>(templated)</strong> - 사용 가능</li>
+<li>env (dict[str, str] | None) – If env is not None, it must be a dict that defines the environment variables for the new process; these are used instead of inheriting the current process environment, which is the default behavior. <strong>(templated)</strong> - 사용 가능</li>
+<li>append_env (bool) – If False(default) uses the environment variables passed in env params and does not inherit the current process environment. If True, inherits the environment variables from current passes and then environment variable passed by the user will either update the existing inherited environment variables or the new variables gets appended to it - 사용 불가</li>
+<li>output_encoding (str) – Output encoding of bash command - 사용 불가</li>
+<li>skip_on_exit_code (int | Container[int] | None) – If task exits with this exit code, leave the task in skipped state (default: 99). If set to None, any non-zero exit code will be treated as a failure. - 사용 불가</li>
+<li>cwd (str | None) – Working directory to execute the command in. If None (default), the command is run in a temporary directory. - 사용 불가</li>
+<li>template_fields: Sequence[str]= (‘bash_command’, ‘env’)[source]</li>
+</ul></li>
+<li>하지만, parameter 설명란과 template_fields에 template 변수가 일치하지 않을 수 있음. 그럴 땐 template_fiedls가 정답</li>
+<li>예를 들어, airflow.operators.python에서 <code>Parameters</code>를 보면 아래와 같이 <code>templates_dict</code>만 사용 가능한 것 처럼 보이지만 template_fields를 보면 <code>op_kwargs</code> 와 <code>op_args</code>도 사용 가능한 것을 알 수 있다.
+<ul>
+<li>python_callable (Callable) – A reference to an object that is callable</li>
+<li>op_kwargs (Mapping[str, Any] | None) – a dictionary of keyword arguments that will get unpacked in your function</li>
+<li>op_args (Collection[Any] | None) – a list of positional arguments that will get unpacked when calling your callable</li>
+<li>templates_dict (dict[str, Any] | None) – a dictionary where the values are templates that will get templated by the Airflow engine sometime between <code>__init__</code>and execute takes place and are made available in your callable’s context after the template has been applied. <strong>(templated)</strong> - 사용 가능</li>
+<li>templates_exts (Sequence[str] | None) – a list of file extensions to resolve while processing templated fields, for examples [‘.sql’, ‘.hql’]</li>
+<li>show_return_value_in_logs (bool) – a bool value whether to show return_value logs. Defaults to True, which allows return value log output. It can be set to False to prevent log output of return value when you return huge data such as transmission a large amount of XCom to TaskAPI.</li>
+<li>template_fields: Sequence[str]= (‘templates_dict’, ‘op_args’, ‘op_kwargs’)[source]</li>
+</ul></li>
 </ul></li>
 </ul>
 </section>
@@ -270,17 +304,20 @@ English
 <section id="bashoperator" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="bashoperator"><span class="header-section-number">2.1</span> BashOperator</h2>
 <ul>
-<li>Bash 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?</li>
+<li><blockquote class="blockquote">
+<blockquote class="blockquote">
+<p>recap) Bash 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?</p>
+</blockquote>
+</blockquote></li>
 <li>파라미터
 <ul>
-<li>bash_command (str)</li>
-<li>env (dict[str, str] | None)</li>
+<li>bash_command (str) (templated)</li>
+<li>env (dict[str, str] | None) (templated)</li>
 <li>append_env (bool)</li>
 <li>output_encoding (str)</li>
 <li>skip_exit_code (int)</li>
 <li>cwd (str | None)</li>
 </ul></li>
-<li>https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/bash/index.html</li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>bash_t1 = BashOperator(</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    task_id='bash_t1',</span>
@@ -291,14 +328,62 @@ English
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    env={'START_DATE': '{{ data_interval_start | ds}}','END_DATE':'{{ data_interval_end | ds }}'},</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    bash_command='echo "Start date is $START_DATE " &amp;&amp; ''echo "End date is $END_DATE"'</span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Full example
+<ul>
+<li>DAG</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>import datetime</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>from airflow.operators.bash import BashOperator</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    dag_id="dags_bash_with_template",</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    schedule="10 0 * * *",</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 3, 1, tz="Asia/Seoul"),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    catchup=False</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    bash_t1 = BashOperator(</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        task_id='bash_t1',</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        bash_command='echo "data_interval_end: {{ data_interval_end }}  "'</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="in">    bash_t2 = BashOperator(</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='bash_t2',</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="in">        env={</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="in">            'START_DATE':'{{data_interval_start | ds }}', #| ds: time stamped type을 YYYY-MM-DD로 변환</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="in">            'END_DATE':'{{data_interval_end | ds }}' #| ds: time stamped type을 YYYY-MM-DD로 변환</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="in">        },</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='echo $START_DATE &amp;&amp; echo $END_DATE' #shell script syntax: statement1 &amp;&amp; statement2</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="in">        # statment1이 성공하면 statement2를 실행한다.</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="in">    bash_t1 &gt;&gt; bash_t2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Airflow Web Service Result
+<ul>
+<li><code>[2023-06-17, 01:00:00 UTC] {taskinstance.py:1327} INFO - Executing &lt;Task(BashOperator): bash_t1&gt; on 2023-06-15 15:10:00+00:00</code> 에서 <code>2023-06-15 15:10:00+00:00</code>의 <code>+</code>뒤는 time zone을 의미. <code>00:00</code> 이면 utc를 의미. 한국 시간으로 변환하려면 9시간을 더해야한다. 즉, <code>2023-06-16 00:10:00</code>이 한국 서울 시간임</li>
+<li></li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">2023-06-17, 01:00:02 UTC</span><span class="co">]</span> {subprocess.py:75} INFO - Running command: <span class="co">[</span><span class="ot">'/bin/bash', '-c', 'echo $START_DATE &amp;&amp; echo $END_DATE'</span><span class="co">]</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">2023-06-17, 01:00:02 UTC</span><span class="co">]</span> {subprocess.py:86} INFO - Output:</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">2023-06-17, 01:00:02 UTC</span><span class="co">]</span> {subprocess.py:93} INFO - 2023-06-15</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">2023-06-17, 01:00:02 UTC</span><span class="co">]</span> {subprocess.py:93} INFO - 2023-06-16`</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ul></li>
+</ul>
 </section>
 </section>
-<section id="airflow-date" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> Airflow Date</h1>
+<section id="airflow-date-concept" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Airflow Date Concept</h1>
 <section id="데이터-추출-예시" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="데이터-추출-예시"><span class="header-section-number">3.1</span> 데이터 추출 예시</h2>
 <ul>
-<li>Daily ETL 처리를 위한 조회 쿼리(2023/02/25 0시 실행)</li>
+<li>상황
+<ul>
+<li>Daily ETL 처리를 위한 조회 쿼리(2023/02/25 0시 실행- 매일 00:00에 데이터 가져오기)</li>
+<li>전체 data는 너무 많기 때문에 증분된 데이터만 가져오기. 즉 오늘이 2023/02/25 라면 2023/02/24 와 2023/02/25 사이에 있는 data만 가져온다.</li>
+</ul></li>
 <li>example: 등록 테이블</li>
 </ul>
 <table class="table">
@@ -327,11 +412,19 @@ English
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>SELECT NAME, ADDRESS</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>FROM TBL_REG</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>WHERE REG_DATE BETWEEN TIMESTAMP('2023-02-24 00:00:00')</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>AND TIMESTAMP('2023-02-24 23:59:59')</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>데이터 관점의 시작일: 2023-02-24 데이터 관점의 종료일: 2023-02-25</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>SELECT NAME, ADDRESS</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>FROM TBL_REG</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>WHERE REG_DATE BETWEEN TIMESTAMP('2023-02-24 00:00:00')</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>AND TIMESTAMP('2023-02-24 23:59:59')</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>생각해볼 point: 각 관점에 따라 날짜가 다름
+<ul>
+<li>데이터 관점의 시작일: 2023-02-24</li>
+<li>데이터 관점의 종료일: 2023-02-25</li>
+<li>DAG이 실행되는 시점: 2023-02-25</li>
+<li>airflow는 ETL을 위한 도구로 만들어졌기 때문에 data관점에서 전처리를 하는 사상이 담겨져 있다.</li>
+</ul></li>
+</ul>
 </section>
 <section id="airflow-날짜-template-변수" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="airflow-날짜-template-변수"><span class="header-section-number">3.2</span> Airflow 날짜 Template 변수</h2>
@@ -340,20 +433,95 @@ English
 <ul>
 <li>ex. 2023-02-24 이전 배치일 (논리적 기준일)
 <ul>
-<li>= data_interval_start</li>
+<li>= data_interval_start (airflow new version - from 2.5.2 version)</li>
 <li>= dag_run.logical_date</li>
 <li>= ds (yyyy-mm-dd 형식)</li>
 <li>= ts (타임스탬프)</li>
-<li>= execution_date (과거버전)</li>
+<li>= execution_date (airflow old version - until 2.5.1 version)</li>
+<li>위와 같이 airflow의 대부분의 변수들이 논리적 기준일을 데이터 관점의 시작일을 기준으로 한다.</li>
+<li>execution_date 라는 명명법이 너무 혼란스러웠음 실행 날짜란 의미는 대부분의 사람들이 dag이 실행되는 날로 인식을 하는데 data관점에서 날짜를 출력함. 그래서 data_interval_start로 변수명을 바꿈</li>
 </ul></li>
-<li>ex. 2023-02-25 배치일
+<li>ex. 2023-02-25 배치일 (DAG이 실행되는 날짜)
 <ul>
-<li>= data_interval_end</li>
+<li>= data_interval_end (airflow new version - from 2.5.2 version)</li>
 <li>=</li>
 <li>=</li>
 <li>=</li>
-<li>= next_execution_date (과거버전)</li>
+<li>= next_execution_date (airflow old version - until 2.5.1 version)</li>
+<li>next execution_date 라는 명명법은 대부분의 사람들이 dag이 실행되는 날로 인식을 하기 때문에 혼란스러워서 data_interval_end로 바꿈. 왜냐면 현재 dag 실행 날짜가 next execution_date로 표시되고 그 이전 실행 날짜를 execution_date로 표기해서 실제 실행날짜와 변수 이름이 맞지가 않음.</li>
+<li>그러므로, 배치가 돌고있는 현재 날짜를 출력하고 싶으면 data_interval_end에 접근해야하고 그 이전 배치의 날짜를 출력하고 싶으면 data_interval_start에 접근해야한다.</li>
 </ul></li>
+</ul></li>
+<li>Full Exmaple
+<ul>
+<li>DAG</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># dags_bash_with_template.py</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>import datetime</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>from airflow.decorators import task</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    dag_id="dags_python_show_templates",</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    schedule="30 9 * * *",</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 6, 10, tz="Asia/Seoul"),</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    catchup=True #catchup 할때 task 순서를 유념해서 연결시키지 않으면 dags실행을 pause/unpuase시 task들이 꼬일 수 있다.</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="in">    @task(task_id='python_task')</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="in">    def show_templates(**kwargs):</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="in">        from pprint import pprint </span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="in">        pprint(kwargs) #pprint는 리스트나 딕셔너리를 줄넘김으로 이쁘게 출력해줌</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="in">    show_templates()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Airflow Web Service Result</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">2023-06-17, 01:40:17 UTC</span><span class="co">]</span> {logging_mixin.py:149} INFO - {'conf': &lt;***.configuration.AirflowConfigParser object at 0x7f668aeec910&gt;,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>'conn': None,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>'dag': <span class="kw">&lt;DAG:</span> <span class="er">dags_python_show_templates</span><span class="kw">&gt;</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>'dag_run': <span class="kw">&lt;DagRun</span> <span class="er">dags_python_show_templates</span> <span class="er">@</span> <span class="er">2023-06-09</span> <span class="er">00:30:00+00:00:</span> <span class="er">scheduled__2023-06-09T00:30:00+00:00,</span> <span class="er">state:running,</span> <span class="er">queued_at:</span> <span class="er">2023-06-17</span> <span class="er">01:40:15.833772+00:00.</span> <span class="er">externally</span> <span class="er">triggered:</span> <span class="er">False</span><span class="kw">&gt;</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>**'data_interval_end': DateTime(2023, 6, 10, 0, 30, 0, tzinfo=Timezone('UTC')),**</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>**'data_interval_start': DateTime(2023, 6, 9, 0, 30, 0, tzinfo=Timezone('UTC')),**</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>**'ds': '2023-06-09',**</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>**'ds_nodash': '20230609',**</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>*'execution_date': &lt;Proxy at 0x7f665d530640 with factory functools.partial(&lt;function lazy_mapping_from_context.&lt;locals&gt;._deprecated_proxy_factory at 0x7f665d577e60&gt;, 'execution_date', DateTime(2023, 6, 9, 0, 30, 0, tzinfo=Timezone('UTC')))&gt;*,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>'expanded_ti_count': None,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>'inlets': [],</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>**'logical_date': DateTime(2023, 6, 9, 0, 30, 0, tzinfo=Timezone('UTC')),**</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>'macros': <span class="kw">&lt;module</span> <span class="er">'***.macros'</span> <span class="er">from</span> <span class="er">'/home/***/.local/lib/python3.7/site-packages/***/macros/__init__.py'</span><span class="kw">&gt;</span>,</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>*'next_ds': &lt;Proxy at 0x7f665d530690 with factory functools.partial(&lt;function lazy_mapping_from_context.&lt;locals&gt;._deprecated_proxy_factory at 0x7f665d577e60&gt;, 'next_ds', '2023-06-10')&gt;*,</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>*'next_ds_nodash': &lt;Proxy at 0x7f665d5306e0 with factory functools.partial(&lt;function lazy_mapping_from_context.&lt;locals&gt;._deprecated_proxy_factory at 0x7f665d577e60&gt;, 'next_ds_nodash', '20230610')&gt;*,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>*'next_execution_date': &lt;Proxy at 0x7f665d530780 with factory functools.partial*(&lt;function lazy_mapping_from_context.&lt;locals&gt;._deprecated_proxy_factory at 0x7f665d577e60&gt;, 'next_execution_date', DateTime(2023, 6, 10, 0, 30, 0, tzinfo=Timezone('UTC')))&gt;*,</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>'outlets': [],</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>'params': {},</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>'prev_data_interval_end_success': DateTime(2023, 6, 6, 0, 30, 0, tzinfo=Timezone('UTC')),</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>'prev_data_interval_start_success': DateTime(2023, 6, 5, 0, 30, 0, tzinfo=Timezone('UTC')),</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>*'prev_ds': &lt;Proxy at 0x7f665d5307d0 with factory functools.partial(&lt;function lazy_mapping_from_context.&lt;locals&gt;._deprecated_proxy_factory at 0x7f665d577e60&gt;, 'prev_ds', '2023-06-08')&gt;*,</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>*'prev_ds_nodash': &lt;Proxy at 0x7f665d530820 with factory functools.partial(&lt;function lazy_mapping_from_context.&lt;locals&gt;._deprecated_proxy_factory at 0x7f665d577e60&gt;, 'prev_ds_nodash', '20230608')&gt;*,</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>*'prev_execution_date': &lt;Proxy at 0x7f665d530870 with factory functools.partial(&lt;function lazy_mapping_from_context.&lt;locals&gt;._deprecated_proxy_factory at 0x7f665d577e60&gt;, 'prev_execution_date', DateTime(2023, 6, 8, 0, 30, 0, tzinfo=Timezone('UTC')))&gt;*,</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>*'prev_execution_date_success': &lt;Proxy at 0x7f665d5308c0 with factory functools.partial(&lt;function lazy_mapping_from_context.&lt;locals&gt;._deprecated_proxy_factory at 0x7f665d577e60&gt;, 'prev_execution_date_success', DateTime(2023, 6, 5, 0, 30, 0, tzinfo=Timezone('UTC')))&gt;*,</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>'prev_start_date_success': DateTime(2023, 6, 17, 1, 40, 15, 103936, tzinfo=Timezone('UTC')),</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>'run_id': 'scheduled__2023-06-09T00:30:00+00:00',</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>'task': &lt;Task(_PythonDecoratedOperator): python_task&gt;,</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>'task_instance': <span class="kw">&lt;TaskInstance:</span> <span class="er">dags_python_show_templates.python_task</span> <span class="er">scheduled__2023-06-09T00:30:00+00:00</span> <span class="er">[running]</span><span class="kw">&gt;</span>,</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>'task_instance_key_str': 'dags_python_show_templates__python_task__20230609',</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>'templates_dict': None,</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>'test_mode': False,</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>'ti': <span class="kw">&lt;TaskInstance:</span> <span class="er">dags_python_show_templates.python_task</span> <span class="er">scheduled__2023-06-09T00:30:00+00:00</span> <span class="er">[running]</span><span class="kw">&gt;</span>,</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>*'tomorrow_ds': &lt;Proxy at 0x7f665d530910 with factory functools.partial(&lt;function lazy_mapping_from_context.&lt;locals&gt;._deprecated_proxy_factory at 0x7f665d577e60&gt;, 'tomorrow_ds', '2023-06-10')&gt;*,</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>*'tomorrow_ds_nodash': &lt;Proxy at 0x7f665d530960 with factory functools.partial(&lt;function lazy_mapping_from_context.&lt;locals&gt;._deprecated_proxy_factory at 0x7f665d577e60&gt;, 'tomorrow_ds_nodash', '20230610')&gt;*,</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>'triggering_dataset_events': {},</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>**'ts': '2023-06-09T00:30:00+00:00',**</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>**'ts_nodash': '20230609T003000',**</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>**'ts_nodash_with_tz': '20230609T003000+0000',**</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>'var': {'json': None, 'value': None},</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>*'yesterday_ds': &lt;Proxy at 0x7f665d5309b0 with factory functools.partial(&lt;function lazy_mapping_from_context.&lt;locals&gt;._deprecated_proxy_factory at 0x7f665d577e60&gt;, 'yesterday_ds', '2023-06-08')&gt;*,</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>*'yesterday_ds_nodash': &lt;Proxy at 0x7f665d530a00 with factory functools.partial(&lt;function lazy_mapping_from_context.&lt;locals&gt;._deprecated_proxy_factory at 0x7f665d577e60&gt;, 'yesterday_ds_nodash', '20230608')&gt;}*</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>위에서, 과거 혼란을 주는 변수들은 italic채로 표시를 했고 출력물을 보면 depreacted될 예정이라고 적혀져 있어 곧 안쓰일 예정이라고 적혀져 있다.</li>
+<li>bold채로 쓰여진 출력물이 개선된 명명법으로 이름 붙여진 변수들인데 대부분의 시간들이 data관점에서 logical date를 선정한 것을 알 수 있다. dag 배치 실행 날짜를 보기 위해선 <code>data_interval_end</code>를 보면 2023-06-10이 실행 날짜인 것을 알 수 있다. logical date의 2023-06-10 이전 배치 실행 날짜이다.</li>
 </ul></li>
 </ul>
 </section>
@@ -367,46 +535,97 @@ English
 <li><p>파라미터</p>
 <ul>
 <li>python_callable</li>
-<li>op_kwargs</li>
-<li>op_args</li>
-<li>templates_dict</li>
+<li>op_kwargs (templated)</li>
+<li>op_args (templated)</li>
+<li>templates_dict (templated)</li>
 <li>templates_exts</li>
 <li>show_return_value_in_logs</li>
 </ul></li>
-<li><p>https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>def python_function1(start_date, end_date, **kwargs):</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    print(start_date)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    print(end_date)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>python_t1 = PythonOperator(</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    task_id='python_t1',</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    python_callable=python_function,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    op_kwargs={'start_date':'{{data_interval_start | ds}}', 'end_date':'{{data_interval_end | ds}}'}</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p>파이썬 오퍼레이터는 **kwargs에 Template 변수들을 자동으로 제공해주고 있음</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='python_t2')</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>def python_function2(**kwargs):</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    print(kwargs)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    print('ds:' + kwargs<span class="co">[</span><span class="ot">'ds'</span><span class="co">]</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    print('ts:' + str(kwargs<span class="co">[</span><span class="ot">'ts'</span><span class="co">]</span>))</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    print('data_interval_start:' + str(kwargs<span class="co">[</span><span class="ot">'data_interval_start'</span><span class="co">]</span>))</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    print('data_interval_end:' + str(kwargs<span class="co">[</span><span class="ot">'data_interval_end'</span><span class="co">]</span>))</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    print('task_instance': + str(kwargs<span class="co">[</span><span class="ot">'ti'</span><span class="co">]</span>))</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>python_function2()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p><a href="https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html">Operator Template</a></p>
+<ul>
+<li>jinja template을 이용하여 runtime date를 얻을 때 2가지 방식이 있음
+<ol type="1">
+<li>함수를 만들어 op_kwargs에 jinja template 변수를 만들고 이 변수에 저장된 값을 꺼내 쓰는 법</li>
+<li>**kwargs로부터 얻음 - 2번째 방법이 더 편한것 같지만 개인 취향에 따름</li>
+</ol></li>
+<li>함수를 만들어 jinja template를 이용해 연산<br>
+</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>def python_function1(start_date, end_date, **kwargs):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    print(start_date)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    print(end_date)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>python_t1 = PythonOperator(</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    task_id='python_t1',</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    python_callable=python_function,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    op_kwargs={'start_date':'{{data_interval_start | ds}}', 'end_date':'{{data_interval_end | ds}}'}</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>파이썬 오퍼레이터는 **kwargs에 Template 변수들을 자동으로 제공해주고 있음</li>
+</ul>
+<div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='python_t2')</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>def python_function2(**kwargs):</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    print(kwargs)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    print('ds:' + kwargs<span class="co">[</span><span class="ot">'ds'</span><span class="co">]</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    print('ts:' + str(kwargs<span class="co">[</span><span class="ot">'ts'</span><span class="co">]</span>))</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    print('data_interval_start:' + str(kwargs<span class="co">[</span><span class="ot">'data_interval_start'</span><span class="co">]</span>))</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    print('data_interval_end:' + str(kwargs<span class="co">[</span><span class="ot">'data_interval_end'</span><span class="co">]</span>))</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    print('task_instance': + str(kwargs<span class="co">[</span><span class="ot">'ti'</span><span class="co">]</span>))</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>python_function2()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Full Example</p>
+<ul>
+<li>DAGS</li>
+</ul>
+<div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>import datetime</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>from airflow.operators.python import PythonOperator</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>from airflow.decorators import task</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    dag_id="dags_python_template",</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    schedule="30 9 * * *",</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 3, 10, tz="Asia/Seoul"),</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    catchup=False</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="in">    def python_function1(start_date, end_date, **kwargs):</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="in">        print(start_date)</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="in">        print(end_date)</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="in">    python_t1 = PythonOperator(</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='python_t1',</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=python_function1,</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="in">        op_kwargs={'start_date':'{{data_interval_start | ds}}', 'end_date':'{{data_interval_end | ds}}'}</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="in">    @task(task_id='python_t2')</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="in">    def python_function2(**kwargs):</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="in">        print(kwargs)</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="in">        print('ds:' + kwargs['ds'])</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="in">        print('ts:' + kwargs['ts'])</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="in">        print('data_interval_start:' + str(kwargs['data_interval_start']))</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="in">        print('data_interval_end:' + str(kwargs['data_interval_end']))</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="in">        print('task_instance:' + str(kwargs['ti']))</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="in">    python_t1 &gt;&gt; python_function2() #decorator사용시 함수를 실행주기만 해도 task가 생성되기 때문에 함수를 task로 연결할 수 있다.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Airflow Web Service Result</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<h1 id="bash-operator-with-macro" data-number="5"><span class="header-section-number">5</span> Bash Operator with Macro</h1></li>
 </ul>
 </section>
-</section>
-<section id="bash-operator-with-macro" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Bash Operator with Macro</h1>
 <section id="macro-변수의-이해" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="macro-변수의-이해"><span class="header-section-number">5.1</span> Macro 변수의 이해</h2>
 <ul>
 <li><p>Macro 변수의 필요성</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sql = f'''</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>SELECT NAME, ADDRESS</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>FROM TBL_REG</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>WHERE REG_DATE BETWEEN ?? AND ??</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>'''</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>sql = f'''</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>SELECT NAME, ADDRESS</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>FROM TBL_REG</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>WHERE REG_DATE BETWEEN ?? AND ??</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>'''</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>DAG 스케줄은 매일 말일에 도는 스케줄인데 BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고 싶은데 어떻게 하지? 예를 들어 배치일이 1월 31일이면 12월 31일부터 1월 30일 까지 배치일이 2월 28일이면 1월 31일부터 2월 27일까지 BETWEEN 이 설정되었으면 좋겠어. DAG 스케줄이 월 단위이니까 Template 변수에서 data_interval_start 값은 한달 전 말일 이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들지? data_interval_end 에서 하루 뺀 값이 나와야 하는데…</p></li>
 <li><p>Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음</p>
 <table class="table">
@@ -451,21 +670,21 @@ English
 </section>
 <section id="파이썬-datetime-dateutil-라이브러리-이해" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="파이썬-datetime-dateutil-라이브러리-이해"><span class="header-section-number">5.2</span> 파이썬 datetime + dateutil 라이브러리 이해</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>from datetime import datetime</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>from dateutil import relativedelta</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>now = datetime(year=2003, month=3, day=30)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>print('current time:'+str(now))</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>print('-------------month operation-------------')</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(month=1)) # 1월로 변경</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>print(now.replace(month=1)) # 1월로 변경</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>print('-------------day operation-------------')</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(day=1)) #1일로 변경</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>print(now.replace(day=1)) #1일로 변경</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(days=-1)) #1일 빼기</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>print('-------------multiple operations-------------')</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>from datetime import datetime</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>from dateutil import relativedelta</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>now = datetime(year=2003, month=3, day=30)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>print('current time:'+str(now))</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>print('-------------month operation-------------')</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(month=1)) # 1월로 변경</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>print(now.replace(month=1)) # 1월로 변경</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>print('-------------day operation-------------')</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(day=1)) #1일로 변경</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>print(now.replace(day=1)) #1일로 변경</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(days=-1)) #1일 빼기</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>print('-------------multiple operations-------------')</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="bash-오퍼레이터에서-macro-변수-활용하기" class="level2" data-number="5.3">
 <h2 data-number="5.3" class="anchored" data-anchor-id="bash-오퍼레이터에서-macro-변수-활용하기"><span class="header-section-number">5.3</span> Bash 오퍼레이터에서 Macro 변수 활용하기</h2>
@@ -473,10 +692,10 @@ English
 <li><p>예시1. 매월 말일 수행되는 Dag에서 변수 START_DATE: 전월 말일, 변수 END_DATE: 어제로 env 셋팅하기</p></li>
 <li><p>예시2. 매월 둘째주 토요일에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기</p></li>
 <li><p>변수는 YYYY-MM-DD 형식으로 나오도록 할 것</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>t1 = BashOperator(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    task_id='t1',</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    env={'START_DATE':''},</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<div class="sourceCode" id="cb14"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>t1 = BashOperator(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    task_id='t1',</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    env={'START_DATE':''},</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 </ul>
 <p>이 부분에 template + macro 활용</p>
 </section>
@@ -495,52 +714,52 @@ English
 <li>show_return_value_in_logs</li>
 </ul></li>
 <li><p>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/python/index.html#airflow.operators.python.PythonOperator</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='task_using_macros',</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>'end_date': '{{</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>(data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>def get_datetime_macro(**kwargs):</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    templates_dict = kwargs.get('templates_dict') or {}</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    if templates_dict:</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    start_date = templates_dict.get('start_date') or 'start_date없음'</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    end_date = templates_dict.get('end_date') or 'end_date없음'</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    print(start_date)</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    print(end_date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<div class="sourceCode" id="cb15"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='task_using_macros',</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>'end_date': '{{</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>(data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>def get_datetime_macro(**kwargs):</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    templates_dict = kwargs.get('templates_dict') or {}</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    if templates_dict:</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    start_date = templates_dict.get('start_date') or 'start_date없음'</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    end_date = templates_dict.get('end_date') or 'end_date없음'</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    print(start_date)</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    print(end_date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 <li><p>그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 DAG안에서 직접 할 수 있다면?</p>
 <ul>
 <li>macro 사용</li>
 </ul>
-<div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='task_using_macros',</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>def get_datetime_macro(**kwargs):</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    templates_dict = kwargs.get('templates_dict') or {}</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    if templates_dict:</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        start_date = templates_dict.get('start_date') or 'start_date없음'</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        end_date = templates_dict.get('end_date') or 'end_date없음'</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        print(start_date)</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        print(end_date)</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>@task(task_id='task_direct_calc')</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>def get_datetime_calc(**kwargs):</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    from dateutil.relativedelta import relativedelta</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    data_interval_end = kwargs<span class="co">[</span><span class="ot">'data_interval_end'</span><span class="co">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='task_using_macros',</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>def get_datetime_macro(**kwargs):</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    templates_dict = kwargs.get('templates_dict') or {}</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    if templates_dict:</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>        start_date = templates_dict.get('start_date') or 'start_date없음'</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>        end_date = templates_dict.get('end_date') or 'end_date없음'</span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>        print(start_date)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>        print(end_date)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>@task(task_id='task_direct_calc')</span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>def get_datetime_calc(**kwargs):</span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    from dateutil.relativedelta import relativedelta</span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    data_interval_end = kwargs<span class="co">[</span><span class="ot">'data_interval_end'</span><span class="co">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li>직접 연산</li>
 </ul>
-<div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>print(prev_month_day_first.strftime('%Y-%m-%d'))</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>print(prev_month_day_last.strftime('%Y-%m-%d'))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<div class="sourceCode" id="cb17"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>print(prev_month_day_first.strftime('%Y-%m-%d'))</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>print(prev_month_day_last.strftime('%Y-%m-%d'))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 </ul>
 </section>
 </div>

@@ -358,8 +358,10 @@ AND TIMESTAMP('2023-02-24 23:59:59')
 
 ## Macro 변수의 이해
 
+* jinja template 안에서 날짜 연산을 가능하게 해주는 기능
 * Macro 변수의 필요성
-
+    * 가령, 어떤 DAG의 스케줄은 매일 말일에 도는 스케줄 (0 0 L * *)인데 BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고 싶은 상황. 즉, 
+    
     ```markdown
     sql = f'''
     SELECT NAME, ADDRESS
@@ -367,100 +369,176 @@ AND TIMESTAMP('2023-02-24 23:59:59')
     WHERE REG_DATE BETWEEN ?? AND ??
     '''
     ```
+    날짜 구간을 hard coding 해놓는게 아니라 DAG이 도는 시점에 따라 알맞게 들어가야 함.
 
-    DAG 스케줄은 매일 말일에 도는 스케줄인데
-    BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고
-    싶은데 어떻게 하지?
-    예를 들어
-    배치일이 1월 31일이면 12월 31일부터 1월 30일 까지
-    배치일이 2월 28일이면 1월 31일부터 2월 27일까지
-    BETWEEN 이 설정되었으면 좋겠어.
-    DAG 스케줄이 월 단위이니까
-    Template 변수에서 data_interval_start 값은 한달 전 말일
-    이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들지? 
-    data_interval_end 에서 하루 뺀 값이 나와야 하는데…
+    예를 들어, 배치일이 1월 31일이면 12월 31일부터 1월 30일 까지 
+    배치일이 2월 28일이면 1월 31일부터 2월 27일까지 BETWEEN 이 설정되어야함
+    DAG 스케줄이 월 단위이니까 Template 변수에서 data_interval_start 값은 한달 전 말일
+    이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들지 생각해봐야함 
+    (반드시, data_interval_end 에서 하루 뺀 값이 나와야 하는데)
 
-* Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음
+    ```markdown
+    sql = f'''
+    SELECT NAME, ADDRESS
+    FROM TBL_REG
+    WHERE REG_DATE BETWEEN {{ data_interval_start }} AND {{ data_interval_start }} - 1day
+    '''
+    ```
+    `{{ data_interval_start }} - 1day ` 이 부분 연산을 하는데 macro 변수가 쓰임
+
+* [Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음](https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html#macros)
 
     |Variable|Description|
     |:--:|------|
-    |macros.datetime|The standard lib's datetime.datetime|
-    |macros.timedelta|The standard lib's datetime.timedelta|
-    |macros.dateutil|A reference to the dateutil package|
-    |macros.time|The standard lib's time|
-    |macros.uuid|The standard lib's uuid|
-    |macros.random|The standard lib's random|
+    |**macros.datetime**|The standard lib's datetime.datetime, python의 datetime library 를 이용가능하게 하거나 datetime library를 template 변수내에서  날짜 연산 기능|
+    |macros.timedelta|The standard lib's datetime.timedelta, 날짜 연산 기능|
+    |**macros.dateutil**|A reference to the dateutil package, python의 dateutil library를 이용가능하게 하거나 dateutil library를 template 변수내에서 이용가능하게 하여 날짜 연산 기능|
+    |macros.time|The standard lib's time, 날짜 연산 기능|
+    |macros.uuid|The standard lib's uuid, 고유 ID 부여|
+    |macros.random|The standard lib's random, python rand() 사용가능하게 해줌|
 
-    * macros.datetime & macros.dateutil: 날짜 연산에 유용한 파이썬 라이브러리
-* Macro를 잘 쓰려면 파이썬 datetime 및 dateutil 라이브러리에 익숙해져야 함.
+    * macros.datetime & macros.dateutil: 날짜 연산에 유용한 파이썬 라이브러리, 매우 빈번하게 쓰임
+    * 예를 들어, `macros.dateutil`에서 relativedelta.relativedelta() 함수를 쓸수 있도록 해줌.
+        `macros.dateutil.relativedelta.relativedelta()`
+* Macro를 잘 쓰려면 python의 datetime 및 dateutil library에 익숙해져야 함.
 
 ## 파이썬 datetime + dateutil 라이브러리 이해
 
+* 만약, jupyter notebook (대화형 입력창)이 없는 환경인데 jupyter notebook에서 python을 실행하고 싶으면 terminal에 다음 명령어를 실행해서 설치
+    * 대화형 입력창: 일련의 명령어들을 한번에 실행시키는 script code 형식이 아니라 명령어 한줄마다 결과값을 볼 수 있는 창
+
 ```markdown
+pip install jupyter
+python -m notebook
+```
+
+```{python}
 from datetime import datetime
 from dateutil import relativedelta
 
 now = datetime(year=2003, month=3, day=30)
 print('current time:'+str(now))
 print('-------------month operation-------------')
-print(now+relativedelta.relativedelta(month=1)) # 1월로 변경
-print(now.replace(month=1)) # 1월로 변경
-print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기
+print(now+relativedelta.relativedelta(month=1)) # 1월로 변경, relativedelta library 사용
+print(now.replace(month=1)) # 1월로 변경, datetime library 사용
+print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기: 먼저 month 값에서 1을 빼고 그 결과 값(month)의 가장 가까운 말일을 자동으로 선택해줌
 print('-------------day operation-------------')
 print(now+relativedelta.relativedelta(day=1)) #1일로 변경
 print(now.replace(day=1)) #1일로 변경
 print(now+relativedelta.relativedelta(days=-1)) #1일 빼기
 print('-------------multiple operations-------------')
-print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기
+print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기. relativedelta library장점이 연산 연러개를 이어 붙일 수 있음
 ```
 
 ## Bash 오퍼레이터에서 Macro 변수 활용하기
 
 * 예시1. 매월 말일 수행되는 Dag에서 변수 START_DATE: 전월 말일, 변수 END_DATE: 어제로 env 셋팅하기
-* 예시2. 매월 둘째주 토요일에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기
+* 예시2. 매월 둘째주 토요일 (6#2)에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기
 * 변수는 YYYY-MM-DD 형식으로 나오도록 할 것
 
     ```markdown
     t1 = BashOperator(
         task_id='t1',
-        env={'START_DATE':''},
+        env={'START_DATE':''}, #env 변수에 template 변수를 작성
     )
     ```
 
 이 부분에 template + macro 활용
 
+* 예시1. DAG full Exmaple
+```markdown
+from airflow import DAG
+import pendulum
+from airflow.operators.bash import BashOperator
+
+with DAG(
+    dag_id="dags_bash_with_macro_eg1",
+    schedule="10 0 L * *", #매월 말일날 도는 DAG
+    start_date=pendulum.datetime(2023, 3, 1, tz="Asia/Seoul"),
+    catchup=False
+) as dag:
+    # START_DATE: 전월 말일, END_DATE: 1일 전
+    bash_task_1 = BashOperator(
+        task_id='bash_task_1',
+        env={'START_DATE':'{{ data_interval_start.in_timezone("Asia/Seoul") | ds }}',
+             #template 변수에 꺼내쓰는 모든 날짜 변수는 default로 timezone이 UTC로 맞춰져있기 때문에 현지에 맞게 고쳐줘야한다.
+             #data_interval_start.in_timezone("Asia/Seoul")는 timestamp형식으로 출력되기 때문에 yyyy-mm-dd로 출력하기위해 ds 연산 붙임
+             'END_DATE':'{{ (data_interval_end.in_timezone("Asia/Seoul") - macros.dateutil.relativedelta.relativedelta(days=1)) | ds}}'
+        },
+        bash_command='echo "START_DATE: $START_DATE" && echo "END_DATE: $END_DATE"'
+    )
+```
+* 예시2. DAG full Exmaple
+```
+from airflow import DAG
+import pendulum
+from airflow.operators.bash import BashOperator
+
+with DAG(
+    dag_id="dags_bash_with_macro_eg2",
+    schedule="10 0 * * 6#2",
+    start_date=pendulum.datetime(2023, 3, 1, tz="Asia/Seoul"),
+    catchup=False
+) as dag:
+    # START_DATE: 2주전 월요일, END_DATE: 2주전 토요일
+    # 예를 들어, 2023-04-01 토요일은 첫째 주 토요일로 인식
+    # 2023-04-08 토요일은 둘째 주 토요일로 인식 (군대에서 순서를 세는 방식과 다름)
+    # 2023-04-08 토요일을 START_DATE(배치일)로 정하면 END_DATE는 배치일 기준으로부터 2 주를 뺀 토요일은 2023-03-25가 된다.
+    # 배치일 기준 (2023-04-08 토요일)으로 그 전 배치의 START_DATE를 구하려면 END_DATE로부터 5일을 뺀 날짜인 2023-03-20 (월요일)이 START_DATE가 된다.
+    # 이는 즉, 배치일 기준 (2023-04-08 토요일) 19일을 빼준 날짜와 같다.
+    bash_task_2 = BashOperator(
+        task_id='bash_task_2',
+        env={'START_DATE':'{{ (data_interval_end.in_timezone("Asia/Seoul") - macros.dateutil.relativedelta.relativedelta(days=19)) | ds}}', #2주전 월요일
+             'END_DATE':'{{ (data_interval_end.in_timezone("Asia/Seoul") - macros.dateutil.relativedelta.relativedelta(days=14)) | ds}}' #2주전 툐요일
+        },
+        bash_command='echo "START_DATE: $START_DATE" && echo "END_DATE: $END_DATE"'
+    )
+```
 # Python 오퍼레이터 with macro
 
-* 어떤 파라미터가 Template 변수를 지원할까?
+* [Template 변수를 지원하는 parameters](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html)
 * 패러미터
     * python_callable (Callable | None)
-    * op_kwargs
-    * op_args
-    * templates_dict
+    * op_kwargs (Templated)
+    * op_args (Templated)
+    * templates_dict (Templated)
     * templates_exts
     * show_return_value_in_logs
-* https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/python/index.html#airflow.operators.python.PythonOperator
 
     ```markdown
     @task(task_id='task_using_macros',
         templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")
+        #templates 변수를 꺼내온 값들을 key:value 형태로 꺼내온 뒤
+        #get_datetime_macro(**kwargs)의 **kwargs에 전달된다. 
     + macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',
+    # 배치일로 부터 한달을 빼고 일 1로 함. 즉, 전월 1일
+    # 예를 들어, 배치일이 3월 15일이라면 2월 1일로 end_date를 설정한다.
     'end_date': '{{
     (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +
     macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'
         }
+    # end_date는 배치일이 3월 15일이라면 2월 28일로 된다.
+        
     )
     
     def get_datetime_macro(**kwargs):
-        templates_dict = kwargs.get('templates_dict') or {}
+        templates_dict = kwargs.get('templates_dict') or {} # kwargs.get('templates_dict')이 빈값이면 {}로 할당
         if templates_dict:
         start_date = templates_dict.get('start_date') or 'start_date없음'
         end_date = templates_dict.get('end_date') or 'end_date없음'
         print(start_date)
         print(end_date)
     ```
-* 그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 DAG안에서 직접 할 수 있다면?
-    * macro 사용
+    * get_datetime_macro(**kwargs)의 templates_dict에는 {'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")
+        #templates 변수를 꺼내온 값들을 key:value 형태로 꺼내온 뒤
+        #get_datetime_macro(**kwargs)의 **kwargs에 전달된다. 
+    + macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',
+    'end_date': '{{
+    (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +
+    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'
+        } 전체가 들어감
+* 그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 python 문법을 이용해서 DAG 안에서 직접 연산하면 macro 변수를 사용안해도 날짜를 계산할 수 있음. 
+    * macro 사용 : template 변수 내에서 macro를 이용해 날짜를 반환 후에 start_date에 할당
     ```markdown
     @task(task_id='task_using_macros',
         templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',
@@ -476,21 +554,68 @@ print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(day
             end_date = templates_dict.get('end_date') or 'end_date없음'
             print(start_date)
             print(end_date)
+    ```
 
+    * python 문법을 사용하여 직접 연산: 라이브러리를 이용해 날짜를 연산
+    ```markdown
     @task(task_id='task_direct_calc')
     def get_datetime_calc(**kwargs):
-        from dateutil.relativedelta import relativedelta
-        data_interval_end = kwargs['data_interval_end']
-    ```
-
-    * 직접 연산
-
-    ```markdown
-    prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)
+        from dateutil.relativedelta import relativedelta #relativedelta함수 직접 import
+        data_interval_end = kwargs['data_interval_end'] #data_interval_end는 datetime type
+    prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1) #data_interval_end는 datetime type에는 in_timezone() method가 있음
     prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)
-    print(prev_month_day_first.strftime('%Y-%m-%d'))
-    print(prev_month_day_last.strftime('%Y-%m-%d'))
+    print(prev_month_day_first.strftime('%Y-%m-%d')) # | ds 구현
+    print(prev_month_day_last.strftime('%Y-%m-%d'))  # | ds 구현
     ```
+* 예시: Dags full example
+
+```markdown
+from airflow import DAG
+import pendulum
+from airflow.decorators import task
+
+
+
+with DAG(
+    dag_id="dags_python_with_macro",
+    schedule="10 0 * * *",
+    start_date=pendulum.datetime(2023, 3, 1, tz="Asia/Seoul"),
+    catchup=False
+) as dag:
+    
+    # macro 이용
+    @task(task_id='task_using_macros',
+      templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',
+                      'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) + macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'
+     }
+    )
+    
+    def get_datetime_macro(**kwargs):
+        
+        templates_dict = kwargs.get('templates_dict') or {}
+        if templates_dict:
+            start_date = templates_dict.get('start_date') or 'start_date없음'
+            end_date = templates_dict.get('end_date') or 'end_date없음'
+            print(start_date)
+            print(end_date)
+
+
+    # python 이용
+    @task(task_id='task_direct_calc')
+    def get_datetime_calc(**kwargs):
+        from dateutil.relativedelta import relativedelta # 스케쥴러 부하 경감을 위해 task안에다가 library호출
+        # 다시 말해서, scheduler는 dag이 실행되지 않더라도 사용자가 작성한 dag을 주기적으로 문법적인 오류가 있는지를 검사하기 위해 parsing함
+        # DAG이 시작하기 이전 code (즉, `with DAG` 이전 부분) 와 task가 시작하기 이전 code (`as dag:` 이후 부분과 task 선언 이전 부분)를 parsing 및 검사
+        # 하지만 operator 안 과 task decorator안에 있는 부분은 parsing 및 검사하지 않음.
+        # 실제로 대형 프로젝트에서 겪는 scheduluer부하 문제를 해결하는 팁이 될 수 있음
+        data_interval_end = kwargs['data_interval_end']
+        prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)
+        prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) +  relativedelta(days=-1)
+        print(prev_month_day_first.strftime('%Y-%m-%d'))
+        print(prev_month_day_last.strftime('%Y-%m-%d'))
+
+    get_datetime_macro() >> get_datetime_calc()
+```
 :::
 </div>
 

@@ -4220,15 +4220,30 @@ font-style: inherit;">    python_t1 &gt;&gt; python_function2() #decorator사용
 <section id="macro-변수의-이해" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="macro-변수의-이해"><span class="header-section-number">5.1</span> Macro 변수의 이해</h2>
 <ul>
+<li><p>jinja template 안에서 날짜 연산을 가능하게 해주는 기능</p></li>
 <li><p>Macro 변수의 필요성</p>
+<ul>
+<li>가령, 어떤 DAG의 스케줄은 매일 말일에 도는 스케줄 (0 0 L * *)인데 BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고 싶은 상황. 즉,</li>
+</ul>
 <div class="sourceCode" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1">sql = f'''</span>
 <span id="cb12-2">SELECT NAME, ADDRESS</span>
 <span id="cb12-3">FROM TBL_REG</span>
 <span id="cb12-4">WHERE REG_DATE BETWEEN ?? AND ??</span>
 <span id="cb12-5">'''</span></code></pre></div>
-<p>DAG 스케줄은 매일 말일에 도는 스케줄인데 BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고 싶은데 어떻게 하지? 예를 들어 배치일이 1월 31일이면 12월 31일부터 1월 30일 까지 배치일이 2월 28일이면 1월 31일부터 2월 27일까지 BETWEEN 이 설정되었으면 좋겠어. DAG 스케줄이 월 단위이니까 Template 변수에서 data_interval_start 값은 한달 전 말일 이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들지? data_interval_end 에서 하루 뺀 값이 나와야 하는데…</p></li>
-<li><p>Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음</p>
+<p>날짜 구간을 hard coding 해놓는게 아니라 DAG이 도는 시점에 따라 알맞게 들어가야 함.</p>
+<p>예를 들어, 배치일이 1월 31일이면 12월 31일부터 1월 30일 까지 배치일이 2월 28일이면 1월 31일부터 2월 27일까지 BETWEEN 이 설정되어야함 DAG 스케줄이 월 단위이니까 Template 변수에서 data_interval_start 값은 한달 전 말일 이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들지 생각해봐야함 (반드시, data_interval_end 에서 하루 뺀 값이 나와야 하는데)</p>
+<div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1">sql = f'''</span>
+<span id="cb13-2">SELECT NAME, ADDRESS</span>
+<span id="cb13-3">FROM TBL_REG</span>
+<span id="cb13-4">WHERE REG_DATE BETWEEN {{ data_interval_start }} AND {{ data_interval_start }} - 1day</span>
+<span id="cb13-5">'''</span></code></pre></div>
+<p><code>{{ data_interval_start }} - 1day</code> 이 부분 연산을 하는데 macro 변수가 쓰임</p></li>
+<li><p><a href="https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html#macros">Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음</a></p>
 <table class="table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 60%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: center;">Variable</th>
@@ -4237,138 +4252,446 @@ font-style: inherit;">    python_t1 &gt;&gt; python_function2() #decorator사용
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: center;">macros.datetime</td>
-<td>The standard lib’s datetime.datetime</td>
+<td style="text-align: center;"><strong>macros.datetime</strong></td>
+<td>The standard lib’s datetime.datetime, python의 datetime library 를 이용가능하게 하거나 datetime library를 template 변수내에서 날짜 연산 기능</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">macros.timedelta</td>
-<td>The standard lib’s datetime.timedelta</td>
+<td>The standard lib’s datetime.timedelta, 날짜 연산 기능</td>
 </tr>
 <tr class="odd">
-<td style="text-align: center;">macros.dateutil</td>
-<td>A reference to the dateutil package</td>
+<td style="text-align: center;"><strong>macros.dateutil</strong></td>
+<td>A reference to the dateutil package, python의 dateutil library를 이용가능하게 하거나 dateutil library를 template 변수내에서 이용가능하게 하여 날짜 연산 기능</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">macros.time</td>
-<td>The standard lib’s time</td>
+<td>The standard lib’s time, 날짜 연산 기능</td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">macros.uuid</td>
-<td>The standard lib’s uuid</td>
+<td>The standard lib’s uuid, 고유 ID 부여</td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">macros.random</td>
-<td>The standard lib’s random</td>
+<td>The standard lib’s random, python rand() 사용가능하게 해줌</td>
 </tr>
 </tbody>
 </table>
 <ul>
-<li>macros.datetime &amp; macros.dateutil: 날짜 연산에 유용한 파이썬 라이브러리</li>
+<li>macros.datetime &amp; macros.dateutil: 날짜 연산에 유용한 파이썬 라이브러리, 매우 빈번하게 쓰임</li>
+<li>예를 들어, <code>macros.dateutil</code>에서 relativedelta.relativedelta() 함수를 쓸수 있도록 해줌. <code>macros.dateutil.relativedelta.relativedelta()</code></li>
 </ul></li>
-<li><p>Macro를 잘 쓰려면 파이썬 datetime 및 dateutil 라이브러리에 익숙해져야 함.</p></li>
+<li><p>Macro를 잘 쓰려면 python의 datetime 및 dateutil library에 익숙해져야 함.</p></li>
 </ul>
 </section>
 <section id="파이썬-datetime-dateutil-라이브러리-이해" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="파이썬-datetime-dateutil-라이브러리-이해"><span class="header-section-number">5.2</span> 파이썬 datetime + dateutil 라이브러리 이해</h2>
-<div class="sourceCode" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1">from datetime import datetime</span>
-<span id="cb13-2">from dateutil import relativedelta</span>
-<span id="cb13-3"></span>
-<span id="cb13-4">now = datetime(year=2003, month=3, day=30)</span>
-<span id="cb13-5">print('current time:'+str(now))</span>
-<span id="cb13-6">print('-------------month operation-------------')</span>
-<span id="cb13-7">print(now+relativedelta.relativedelta(month=1)) # 1월로 변경</span>
-<span id="cb13-8">print(now.replace(month=1)) # 1월로 변경</span>
-<span id="cb13-9">print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기</span>
-<span id="cb13-10">print('-------------day operation-------------')</span>
-<span id="cb13-11">print(now+relativedelta.relativedelta(day=1)) #1일로 변경</span>
-<span id="cb13-12">print(now.replace(day=1)) #1일로 변경</span>
-<span id="cb13-13">print(now+relativedelta.relativedelta(days=-1)) #1일 빼기</span>
-<span id="cb13-14">print('-------------multiple operations-------------')</span>
-<span id="cb13-15">print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기</span></code></pre></div>
+<ul>
+<li>만약, jupyter notebook (대화형 입력창)이 없는 환경인데 jupyter notebook에서 python을 실행하고 싶으면 terminal에 다음 명령어를 실행해서 설치
+<ul>
+<li>대화형 입력창: 일련의 명령어들을 한번에 실행시키는 script code 형식이 아니라 명령어 한줄마다 결과값을 볼 수 있는 창</li>
+</ul></li>
+</ul>
+<div class="sourceCode" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1">pip install jupyter</span>
+<span id="cb14-2">python -m notebook</span></code></pre></div>
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> datetime <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> datetime</span>
+<span id="cb15-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> dateutil <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> relativedelta</span>
+<span id="cb15-3"></span>
+<span id="cb15-4">now <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> datetime(year<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2003</span>, month<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>, day<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">30</span>)</span>
+<span id="cb15-5"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'current time:'</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>(now))</span>
+<span id="cb15-6"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'-------------month operation-------------'</span>)</span>
+<span id="cb15-7"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(now<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>relativedelta.relativedelta(month<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 1월로 변경, relativedelta library 사용</span></span>
+<span id="cb15-8"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(now.replace(month<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 1월로 변경, datetime library 사용</span></span>
+<span id="cb15-9"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(now<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>relativedelta.relativedelta(months<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 1개월 빼기: 먼저 month 값에서 1을 빼고 그 결과 값(month)의 가장 가까운 말일을 자동으로 선택해줌</span></span>
+<span id="cb15-10"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'-------------day operation-------------'</span>)</span>
+<span id="cb15-11"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(now<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>relativedelta.relativedelta(day<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#1일로 변경</span></span>
+<span id="cb15-12"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(now.replace(day<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#1일로 변경</span></span>
+<span id="cb15-13"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(now<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>relativedelta.relativedelta(days<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#1일 빼기</span></span>
+<span id="cb15-14"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'-------------multiple operations-------------'</span>)</span>
+<span id="cb15-15"><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(now<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>relativedelta.relativedelta(months<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>relativedelta.relativedelta(days<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#1개월, 1일 빼기. relativedelta library장점이 연산 연러개를 이어 붙일 수 있음</span></span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>current time:2003-03-30 00:00:00
+-------------month operation-------------
+2003-01-30 00:00:00
+2003-01-30 00:00:00
+2003-02-28 00:00:00
+-------------day operation-------------
+2003-03-01 00:00:00
+2003-03-01 00:00:00
+2003-03-29 00:00:00
+-------------multiple operations-------------
+2003-02-27 00:00:00</code></pre>
+</div>
+</div>
 </section>
 <section id="bash-오퍼레이터에서-macro-변수-활용하기" class="level2" data-number="5.3">
 <h2 data-number="5.3" class="anchored" data-anchor-id="bash-오퍼레이터에서-macro-변수-활용하기"><span class="header-section-number">5.3</span> Bash 오퍼레이터에서 Macro 변수 활용하기</h2>
 <ul>
 <li><p>예시1. 매월 말일 수행되는 Dag에서 변수 START_DATE: 전월 말일, 변수 END_DATE: 어제로 env 셋팅하기</p></li>
-<li><p>예시2. 매월 둘째주 토요일에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기</p></li>
+<li><p>예시2. 매월 둘째주 토요일 (6#2)에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기</p></li>
 <li><p>변수는 YYYY-MM-DD 형식으로 나오도록 할 것</p>
-<div class="sourceCode" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1">t1 = BashOperator(</span>
-<span id="cb14-2">    task_id='t1',</span>
-<span id="cb14-3">    env={'START_DATE':''},</span>
-<span id="cb14-4">)</span></code></pre></div></li>
+<div class="sourceCode" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb17-1">t1 = BashOperator(</span>
+<span id="cb17-2">    task_id='t1',</span>
+<span id="cb17-3">    env={'START_DATE':''}, #env 변수에 template 변수를 작성</span>
+<span id="cb17-4">)</span></code></pre></div></li>
 </ul>
 <p>이 부분에 template + macro 활용</p>
+<ul>
+<li>예시1. DAG full Exmaple</li>
+</ul>
+<div class="sourceCode" id="cb18" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb18-1">from airflow import DAG</span>
+<span id="cb18-2">import pendulum</span>
+<span id="cb18-3">from airflow.operators.bash import BashOperator</span>
+<span id="cb18-4"></span>
+<span id="cb18-5">with DAG(</span>
+<span id="cb18-6">    dag_id="dags_bash_with_macro_eg1",</span>
+<span id="cb18-7">    schedule="10 0 L * *", #매월 말일날 도는 DAG</span>
+<span id="cb18-8">    start_date=pendulum.datetime(2023, 3, 1, tz="Asia/Seoul"),</span>
+<span id="cb18-9">    catchup=False</span>
+<span id="cb18-10">) as dag:</span>
+<span id="cb18-11">    # START_DATE: 전월 말일, END_DATE: 1일 전</span>
+<span id="cb18-12">    bash_task_1 = BashOperator(</span>
+<span id="cb18-13">        task_id='bash_task_1',</span>
+<span id="cb18-14">        env={'START_DATE':'{{ data_interval_start.in_timezone("Asia/Seoul") | ds }}',</span>
+<span id="cb18-15">             #template 변수에 꺼내쓰는 모든 날짜 변수는 default로 timezone이 UTC로 맞춰져있기 때문에 현지에 맞게 고쳐줘야한다.</span>
+<span id="cb18-16">             #data_interval_start.in_timezone("Asia/Seoul")는 timestamp형식으로 출력되기 때문에 yyyy-mm-dd로 출력하기위해 ds 연산 붙임</span>
+<span id="cb18-17">             'END_DATE':'{{ (data_interval_end.in_timezone("Asia/Seoul") - macros.dateutil.relativedelta.relativedelta(days=1)) | ds}}'</span>
+<span id="cb18-18">        },</span>
+<span id="cb18-19">        bash_command='echo "START_DATE: $START_DATE" &amp;&amp; echo "END_DATE: $END_DATE"'</span>
+<span id="cb18-20">    )</span></code></pre></div>
+<ul>
+<li>예시2. DAG full Exmaple</li>
+</ul>
+<pre><code>from airflow import DAG
+import pendulum
+from airflow.operators.bash import BashOperator
+
+with DAG(
+    dag_id="dags_bash_with_macro_eg2",
+    schedule="10 0 * * 6#2",
+    start_date=pendulum.datetime(2023, 3, 1, tz="Asia/Seoul"),
+    catchup=False
+) as dag:
+    # START_DATE: 2주전 월요일, END_DATE: 2주전 토요일
+    # 예를 들어, 2023-04-01 토요일은 첫째 주 토요일로 인식
+    # 2023-04-08 토요일은 둘째 주 토요일로 인식 (군대에서 순서를 세는 방식과 다름)
+    # 2023-04-08 토요일을 START_DATE(배치일)로 정하면 END_DATE는 배치일 기준으로부터 2 주를 뺀 토요일은 2023-03-25가 된다.
+    # 배치일 기준 (2023-04-08 토요일)으로 그 전 배치의 START_DATE를 구하려면 END_DATE로부터 5일을 뺀 날짜인 2023-03-20 (월요일)이 START_DATE가 된다.
+    # 이는 즉, 배치일 기준 (2023-04-08 토요일) 19일을 빼준 날짜와 같다.
+    bash_task_2 = BashOperator(
+        task_id='bash_task_2',
+        env={'START_DATE':'{{ (data_interval_end.in_timezone("Asia/Seoul") - macros.dateutil.relativedelta.relativedelta(days=19)) | ds}}', #2주전 월요일
+             'END_DATE':'{{ (data_interval_end.in_timezone("Asia/Seoul") - macros.dateutil.relativedelta.relativedelta(days=14)) | ds}}' #2주전 툐요일
+        },
+        bash_command='echo "START_DATE: $START_DATE" &amp;&amp; echo "END_DATE: $END_DATE"'
+    )</code></pre>
 </section>
 </section>
 <section id="python-오퍼레이터-with-macro" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Python 오퍼레이터 with macro</h1>
 <ul>
-<li><p>어떤 파라미터가 Template 변수를 지원할까?</p></li>
-<li><p>패러미터</p>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html">Template 변수를 지원하는 parameters</a></li>
+<li>패러미터
 <ul>
 <li>python_callable (Callable | None)</li>
-<li>op_kwargs</li>
-<li>op_args</li>
-<li>templates_dict</li>
+<li>op_kwargs (Templated)</li>
+<li>op_args (Templated)</li>
+<li>templates_dict (Templated)</li>
 <li>templates_exts</li>
 <li>show_return_value_in_logs</li>
-</ul></li>
-<li><p>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/python/index.html#airflow.operators.python.PythonOperator</p>
-<div class="sourceCode" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1">@task(task_id='task_using_macros',</span>
-<span id="cb15-2">    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")</span>
-<span id="cb15-3"><span class="ss" style="color: #20794D;
+</ul>
+<div class="sourceCode" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb20-1">@task(task_id='task_using_macros',</span>
+<span id="cb20-2">    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")</span>
+<span id="cb20-3">    #templates 변수를 꺼내온 값들을 key:value 형태로 꺼내온 뒤</span>
+<span id="cb20-4">    #get_datetime_macro(**kwargs)의 **kwargs에 전달된다. </span>
+<span id="cb20-5"><span class="ss" style="color: #20794D;
 background-color: null;
 font-style: inherit;">+ </span>macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',</span>
-<span id="cb15-4">'end_date': '{{</span>
-<span id="cb15-5">(data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
-<span id="cb15-6">macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
-<span id="cb15-7">    }</span>
-<span id="cb15-8">)</span>
-<span id="cb15-9"></span>
-<span id="cb15-10">def get_datetime_macro(**kwargs):</span>
-<span id="cb15-11">    templates_dict = kwargs.get('templates_dict') or {}</span>
-<span id="cb15-12">    if templates_dict:</span>
-<span id="cb15-13">    start_date = templates_dict.get('start_date') or 'start_date없음'</span>
-<span id="cb15-14">    end_date = templates_dict.get('end_date') or 'end_date없음'</span>
-<span id="cb15-15">    print(start_date)</span>
-<span id="cb15-16">    print(end_date)</span></code></pre></div></li>
-<li><p>그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 DAG안에서 직접 할 수 있다면?</p>
+<span id="cb20-6"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"># 배치일로 부터 한달을 빼고 일 1로 함. 즉, 전월 1일</span></span>
+<span id="cb20-7"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"># 예를 들어, 배치일이 3월 15일이라면 2월 1일로 end_date를 설정한다.</span></span>
+<span id="cb20-8">'end_date': '{{</span>
+<span id="cb20-9">(data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
+<span id="cb20-10">macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
+<span id="cb20-11">    }</span>
+<span id="cb20-12"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"># end_date는 배치일이 3월 15일이라면 2월 28일로 된다.</span></span>
+<span id="cb20-13"></span>
+<span id="cb20-14">)</span>
+<span id="cb20-15"></span>
+<span id="cb20-16">def get_datetime_macro(**kwargs):</span>
+<span id="cb20-17">    templates_dict = kwargs.get('templates_dict') or {} # kwargs.get('templates_dict')이 빈값이면 {}로 할당</span>
+<span id="cb20-18">    if templates_dict:</span>
+<span id="cb20-19">    start_date = templates_dict.get('start_date') or 'start_date없음'</span>
+<span id="cb20-20">    end_date = templates_dict.get('end_date') or 'end_date없음'</span>
+<span id="cb20-21">    print(start_date)</span>
+<span id="cb20-22">    print(end_date)</span></code></pre></div>
 <ul>
-<li>macro 사용</li>
+<li>get_datetime_macro(<strong>kwargs)의 templates_dict에는 {‘start_date’:’{{ (data_interval_end.in_timezone(“Asia/Seoul”) #templates 변수를 꺼내온 값들을 key:value 형태로 꺼내온 뒤 #get_datetime_macro(</strong>kwargs)의 **kwargs에 전달된다.</li>
+<li>macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}‘, ’end_date’: ‘{{ (data_interval_end.in_timezone(“Asia/Seoul”).replace(day=1) + macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}’ } 전체가 들어감</li>
+</ul></li>
+<li>그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 python 문법을 이용해서 DAG 안에서 직접 연산하면 macro 변수를 사용안해도 날짜를 계산할 수 있음.
+<ul>
+<li>macro 사용 : template 변수 내에서 macro를 이용해 날짜를 반환 후에 start_date에 할당</li>
 </ul>
-<div class="sourceCode" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1">@task(task_id='task_using_macros',</span>
-<span id="cb16-2">    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',</span>
-<span id="cb16-3">    'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
-<span id="cb16-4">    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
-<span id="cb16-5">    }</span>
-<span id="cb16-6">)</span>
-<span id="cb16-7"></span>
-<span id="cb16-8">def get_datetime_macro(**kwargs):</span>
-<span id="cb16-9">    templates_dict = kwargs.get('templates_dict') or {}</span>
-<span id="cb16-10">    if templates_dict:</span>
-<span id="cb16-11">        start_date = templates_dict.get('start_date') or 'start_date없음'</span>
-<span id="cb16-12">        end_date = templates_dict.get('end_date') or 'end_date없음'</span>
-<span id="cb16-13">        print(start_date)</span>
-<span id="cb16-14">        print(end_date)</span>
-<span id="cb16-15"></span>
-<span id="cb16-16">@task(task_id='task_direct_calc')</span>
-<span id="cb16-17">def get_datetime_calc(**kwargs):</span>
-<span id="cb16-18">    from dateutil.relativedelta import relativedelta</span>
-<span id="cb16-19">    data_interval_end = kwargs<span class="co" style="color: #5E5E5E;
+<div class="sourceCode" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb21-1">@task(task_id='task_using_macros',</span>
+<span id="cb21-2">    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',</span>
+<span id="cb21-3">    'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
+<span id="cb21-4">    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
+<span id="cb21-5">    }</span>
+<span id="cb21-6">)</span>
+<span id="cb21-7"></span>
+<span id="cb21-8">def get_datetime_macro(**kwargs):</span>
+<span id="cb21-9">    templates_dict = kwargs.get('templates_dict') or {}</span>
+<span id="cb21-10">    if templates_dict:</span>
+<span id="cb21-11">        start_date = templates_dict.get('start_date') or 'start_date없음'</span>
+<span id="cb21-12">        end_date = templates_dict.get('end_date') or 'end_date없음'</span>
+<span id="cb21-13">        print(start_date)</span>
+<span id="cb21-14">        print(end_date)</span></code></pre></div>
+<ul>
+<li>python 문법을 사용하여 직접 연산: 라이브러리를 이용해 날짜를 연산</li>
+</ul>
+<div class="sourceCode" id="cb22" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb22-1">@task(task_id='task_direct_calc')</span>
+<span id="cb22-2">def get_datetime_calc(**kwargs):</span>
+<span id="cb22-3">    from dateutil.relativedelta import relativedelta #relativedelta함수 직접 import</span>
+<span id="cb22-4">    data_interval_end = kwargs<span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">'data_interval_end'</span><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">]</span></span></code></pre></div>
-<ul>
-<li>직접 연산</li>
+font-style: inherit;">]</span> #data_interval_end는 datetime type</span>
+<span id="cb22-5">prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1) #data_interval_end는 datetime type에는 in_timezone() method가 있음</span>
+<span id="cb22-6">prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)</span>
+<span id="cb22-7">print(prev_month_day_first.strftime('%Y-%m-%d')) # | ds 구현</span>
+<span id="cb22-8">print(prev_month_day_last.strftime('%Y-%m-%d'))  # | ds 구현</span></code></pre></div></li>
+<li>예시: Dags full example</li>
 </ul>
-<div class="sourceCode" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb17-1">prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)</span>
-<span id="cb17-2">prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)</span>
-<span id="cb17-3">print(prev_month_day_first.strftime('%Y-%m-%d'))</span>
-<span id="cb17-4">print(prev_month_day_last.strftime('%Y-%m-%d'))</span></code></pre></div></li>
-</ul>
+<div class="sourceCode" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb23-1">from airflow import DAG</span>
+<span id="cb23-2">import pendulum</span>
+<span id="cb23-3">from airflow.decorators import task</span>
+<span id="cb23-4"></span>
+<span id="cb23-5"></span>
+<span id="cb23-6"></span>
+<span id="cb23-7">with DAG(</span>
+<span id="cb23-8">    dag_id="dags_python_with_macro",</span>
+<span id="cb23-9">    schedule="10 0 * * *",</span>
+<span id="cb23-10">    start_date=pendulum.datetime(2023, 3, 1, tz="Asia/Seoul"),</span>
+<span id="cb23-11">    catchup=False</span>
+<span id="cb23-12">) as dag:</span>
+<span id="cb23-13">    </span>
+<span id="cb23-14"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    # macro 이용</span></span>
+<span id="cb23-15"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    @task(task_id='task_using_macros',</span></span>
+<span id="cb23-16"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">      templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',</span></span>
+<span id="cb23-17"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">                      'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) + macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span></span>
+<span id="cb23-18"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">     }</span></span>
+<span id="cb23-19"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    )</span></span>
+<span id="cb23-20"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    </span></span>
+<span id="cb23-21"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    def get_datetime_macro(**kwargs):</span></span>
+<span id="cb23-22"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        </span></span>
+<span id="cb23-23"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        templates_dict = kwargs.get('templates_dict') or {}</span></span>
+<span id="cb23-24"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        if templates_dict:</span></span>
+<span id="cb23-25"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            start_date = templates_dict.get('start_date') or 'start_date없음'</span></span>
+<span id="cb23-26"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            end_date = templates_dict.get('end_date') or 'end_date없음'</span></span>
+<span id="cb23-27"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            print(start_date)</span></span>
+<span id="cb23-28"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            print(end_date)</span></span>
+<span id="cb23-29"></span>
+<span id="cb23-30"></span>
+<span id="cb23-31"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    # python 이용</span></span>
+<span id="cb23-32"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    @task(task_id='task_direct_calc')</span></span>
+<span id="cb23-33"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    def get_datetime_calc(**kwargs):</span></span>
+<span id="cb23-34"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        from dateutil.relativedelta import relativedelta # 스케쥴러 부하 경감을 위해 task안에다가 library호출</span></span>
+<span id="cb23-35"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        # 다시 말해서, scheduler는 dag이 실행되지 않더라도 사용자가 작성한 dag을 주기적으로 문법적인 오류가 있는지를 검사하기 위해 parsing함</span></span>
+<span id="cb23-36"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        # DAG이 시작하기 이전 code (즉, `with DAG` 이전 부분) 와 task가 시작하기 이전 code (`as dag:` 이후 부분과 task 선언 이전 부분)를 parsing 및 검사</span></span>
+<span id="cb23-37"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        # 하지만 operator 안 과 task decorator안에 있는 부분은 parsing 및 검사하지 않음.</span></span>
+<span id="cb23-38"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        # 실제로 대형 프로젝트에서 겪는 scheduluer부하 문제를 해결하는 팁이 될 수 있음</span></span>
+<span id="cb23-39"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        data_interval_end = kwargs['data_interval_end']</span></span>
+<span id="cb23-40"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)</span></span>
+<span id="cb23-41"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) +  relativedelta(days=-1)</span></span>
+<span id="cb23-42"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        print(prev_month_day_first.strftime('%Y-%m-%d'))</span></span>
+<span id="cb23-43"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        print(prev_month_day_last.strftime('%Y-%m-%d'))</span></span>
+<span id="cb23-44"></span>
+<span id="cb23-45"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    get_datetime_macro() &gt;&gt; get_datetime_calc()</span></span></code></pre></div>
 </section>
 </div>
 </div>

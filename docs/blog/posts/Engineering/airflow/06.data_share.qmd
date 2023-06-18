@@ -1,5 +1,5 @@
 ---
-title: "Template Variabler"
+title: "Data Share"
 subtitle: DAG Creation, Bash Operator, Task Performance Subject, 
 description: |
   template
@@ -32,277 +32,193 @@ draft: False
 <div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
 
 ::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
-
-# Jinja Template
-
-* 문서(파일)에서 특정 양식으로 작성된 값을 런타임시 실제 값으로 치환해주는 처리 엔진
-* 템플릿 엔진은 여러 솔루션이 존재하며 그 중 Jinja 템플릿은 파이썬 언어에서 사용하는 엔진
-
-    ```markdown
-    from jinja2 import Template
-
-    template = Template('my name is {{name}}')
-    new_template = template.render('name=hjkim')
-    print(new_template)
+# Python 오퍼레이터 With Xcom
+## Xcom(Cross Communication)
+* Airflow DAG 안 Task 간 데이터 공유를 위해 사용되는 기술
+ex) Task1의 수행 중 내용이나 결과를 Task2에서 사용 또는 입력으로 주고 싶은 경우
+* 주로 작은 규모의 데이터 공유를 위해 사용
+(Xcom 내용은 메타 DB의 xcom 테이블에 값이 저장됨)
+1GB 이상의 대용량 데이터 공유를 위해서는 외부 솔루션 사용 필요 (AWS S3, HDFS 등)
+# Python 오퍼레이터에서 Xcom 사용하기
+* 크게 두 가지 방법으로 Xcom 사용 가능
+    1. **kwargs에 존재하는 ti (task_instance) 객체 활용
     ```
+    @task(task_id='python_xcom_push_task')
+    def xcom_push(**kwargs):
+        ti = kwargs['ti']
+        ti.xcom_push(key="result1", value="value_1")
+        ti.xcom_push(key="result2", value=[1,2,3])
+        #template 변수에서 task_instance 라는 객체를 얻을 수 있으며 task_instance 객체가 가진 xcom_push 메서드를 활용할 수 있음
 
-* Jinja 템플릿, 어디서 쓰이나?
-    - 파이썬 기반 웹 프레임워크인 Flask, Django에서 주로 사용
-    (주로 HTML 템플릿 저장 후 화면에 보여질 때 실제 값으로 변환해서 출력)
-    - SQL작성시에도 활용 가능
+    @task(task_id='python_xcom_pull_task')
+    def xcom_pull(**kwargs):
+        ti = kwargs['ti']
+        value_key1 = ti.xcom_pull(key="result1")
+        value_key2 = ti.xcom_pull(key="result2",
+        task_ids='python_xcom_push_task')
+        print(value_key1)
+        print(value_key2)
+    ```
+    2. 파이썬 함수의 return 값 활용 (1안)
+    ```
+    @task(task_id='xcom_push_by_return')
+    def xcom_push_by_return(**kwargs):
+        transaction_value = 'status Good'
+        return transaction_value
+    @task(task_id='xcom_pull_by_return')
+    def xcom_pull_by_return(status, **kwargs):
+        print(status)
+    xcom_pull_by_return(xcom_push_by_return())
+    # 참고) Task 데커레이터 사용시 함수 입력/출력 관계만으로 Task flow 정의가 됨
 
-## Airflow에서 사용법
+    @task(task_id='xcom_push_by_return')
+    def xcom_push_return(**kwargs):
+        transaction_value = 'status Good'
+        return transaction_value
+        # return 한 값은 자동으로 xcom에 key='return_value', task_ids=task_id 로 저장됨
+    @task(task_id='xcom_pull_by_return')
+    def xcom_pull_return_by_method(**kwargs):
+        ti = kwargs['ti']
+        pull_value = ti.xcom_pull(key='return_value', task_ids='xcom_push_by_return')
+        # return 한 값을 꺼낼 때는 key를 명시하지 않아도 됨. (자동으로 key=return_value 를 찾음)
+        # task_ids='xcom_push_by_return' return한 Task가 여러개 있을 때는 task_ids 를 지정
+        print(pull_value)
+    xcom_push_by_return() >> xcom_pull_by_return()
+    ```
+## Summary 
+* Xcom push 방법: ti.xcom_push 명시적 사용 + 함수 return
+* Xcom pull 방법: ti.xcom_pull 명시적 사용 + return 값을 input으로 사용
 
-* 오퍼레이터 파라미터 입력시 중괄호 {} 2개를 이용하면 Airflow에서 기본적으로 제공하는 변수들을 치환된 값으로 입력할 수 있음. (ex: 수행 날짜, DAG_ID)
-    - https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html
-* 모든 오퍼레이터, 모든 파라미터에 Template 변수 적용이 가능한가? No!
-* Airflow 문서에서 어떤 파라미터에 Template 변수 적용 가능한지 확인 필요
-    - https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/index.html
+# Bash 오퍼레이터 With Xcom
 
-# BashOperator with Template
+## Bash 오퍼레이터에서 Xcom 사용하기 
 
-## BashOperator
+* Bash 오퍼레이터는 env, bash_command 파라미터에서 Template 이용하여 push/pull
 
-* Bash 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?
-* 파라미터
-    * bash_command (str)
-    * env (dict[str, str] | None)
-    * append_env (bool)
-    * output_encoding (str)
-    * skip_exit_code (int)
-    * cwd (str | None)
-* https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/bash/index.html
-
-
-```markdown
-bash_t1 = BashOperator(
-    task_id='bash_t1',
-    bash_command='echo "End date is {{ data_interval_end }}"'
+```
+bash_push = BashOperator(
+    task_id='bash_push',
+    bash_command="echo START && "
+                "echo XCOM_PUSHED "
+                "{{ ti.xcom_push(key='bash_pushed',value='first_bash_message') }} && "
+                "echo COMPLETE" 
+                # 마지막 출력문은 자동으로 return_value 에 저장됨
 )
-bash_t2 = BashOperator(
-    task_id='bash_t2',
-    env={'START_DATE': '{{ data_interval_start | ds}}','END_DATE':'{{ data_interval_end | ds }}'},
-    bash_command='echo "Start date is $START_DATE " && ''echo "End date is $END_DATE"'
+bash_pull = BashOperator(
+    task_id='bash_pull',
+    env={'PUSHED_VALUE':"{{ ti.xcom_pull(key='bash_pushed') }}",
+        'RETURN_VALUE':"{{ ti.xcom_pull(task_ids='bash_push') }}"}, 
+        # task_ids 만 지정하면 key='return_value' 를 의미함
+    bash_command="echo $PUSHED_VALUE && echo $RETURN_VALUE ",
+    do_xcom_push=False
+)
+
+
+```
+
+## Summary
+
+* Bash_command에 의해 출력된 값은 자동으로 return_value로 저장된다 (마지막 출력 문장만)
+* return_value를 꺼낼 때는 xcom_pull에서 task_ids 값만 줘도 된다.
+* 키가 지정된 xcom 값을 꺼낼 때는 key 값만 줘도 된다 (단, 다른 task에서 동일 key로 push 하지 않았을 때만)
+
+# Python & Bash 오퍼레이터 With Xcom
+## Python $\rightarrow$ Bash 오퍼레이터 Xcom 전달
+
+```
+@task task_id =='python push'
+def python_push_xcom
+    result_dict = {'status':' Good','data':[1,2,3],'options_cnt': 100}
+    return result_dict
+bash_pull = BashOperator(
+    task_id='bash_pull',
+    env={
+        'STATUS': '{{ti.xcom_pull(task ids="python push")["status"]}}',
+        'DATA': '{{ti.xcom_pull(task ids="python push")["data"]}}',
+        'OPTIONS_CNT': '{{ti.xcom_pull(task_ids="python_push")["options_cnt"]}}'
+    },
+    bash_command = 'echo $STATUS && echo $DATA && echo $OPTIONS_CNT'
+)
+ 
+python_push_xcom() >> bash_pull
+```
+## 2. Bash $\rightarrow$ Python 오퍼레이터 Xcom 전달
+
+```
+bash_push = BashOperator(
+task_id ='bash_push',
+bash_command='echo PUSH_START'
+    '{{ti.xcom_push(key="bash_pushed",value=200) }}&& 'echo PUSH_COMPLETE'
+)
+
+@task(task_id =='python_pull')
+def python_pull_xcom(**kwargs): 
+    ti = kwargs ['ti']
+    status_value= ti.xcom_pull(key ='bash_pushed')
+    return_value= ti.xcom_pull(task_ids ='bash_push')
+    print('status_value:'+ str (status_value))
+    print('return_value:'+ return_value)
+    bash_push>> python_pull_xcom()
+```
+# Python & Email 오퍼레이터 With Xcom
+
+## Python → Email 오퍼레이터 Xcom 전달
+* Email 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?
+* 파라미터
+    * to
+    * subject
+    * html_content
+    * files
+    * cc
+    * bcc
+    * nime_subtype
+    * mime_charset
+    * custom_headers
+```
+@task(task_id='something_task')
+def some_logic(**kwargs):
+    from random import choice
+    return choice(['Success','Fail'])
+send_email = EmailOperator(
+    task_id='send_email',
+    to='hjkim_sun@naver.com',
+    subject='{{ data_interval_end.in_timezone("Asia/Seoul") | ds }} some_logic 처리결과',
+    html_content='{{ data_interval_end.in_timezone("Asia/Seoul") | ds }} 처리 결과는 <br> \
+        {{ti.xcom_pull(task_ids="something_task")}} 했습니다 <br>'
 )
 
 ```
+# 전역변수 Variable 이용하기
 
-# Airflow Date
+* Xcom: 특정 DAG, 특정 schedule 에 수행되는 Task 간에만 공유
+* 모든 DAG 이 공유할 수 있는 전역 변수는 없을까 ?
+* Variable 등록하기
+    * 실제 Variable 의 Key, Value 값 은 메타 DB 에 저장됨 (variable 테이블)
+        1. Variable 라이브러리 이용 , 파이썬 문법을 이용해 미리 가져오기
+        ```
+        from airflow operators bash import BashOperator
+        from airflow models import Variable 
+        var_value = Variable.get('sample_key')
+        bash_var_1= BashOperator(
+            task_id = "bash_var_1",
+            bash_command = f "echo variable:{var_value}"" 
+        )
 
-## 데이터 추출 예시
-
-* Daily ETL 처리를 위한 조회 쿼리(2023/02/25 0시 실행)
-* example: 등록 테이블
-
-|REG_DATE|NAME|ADDRESS|
-|-----|:-:|:-:|
-|2023-02-24 15:34:35|홍길동|Busan|
-|2023-02-24 19:14:42|김태희|Seoul|
-|2023-02-24 23:52:19|조인성|Daejeon|
-
-```markdown
-SELECT NAME, ADDRESS
-FROM TBL_REG
-WHERE REG_DATE BETWEEN TIMESTAMP('2023-02-24 00:00:00')
-AND TIMESTAMP('2023-02-24 23:59:59')
-```
-데이터 관점의 시작일: 2023-02-24
-데이터 관점의 종료일: 2023-02-25
-
-
-## Airflow 날짜 Template 변수
-
-* 예시: 일 배치
-    * ex. 2023-02-24 이전 배치일 (논리적 기준일)
-        * = data_interval_start
-        * = dag_run.logical_date
-        * = ds (yyyy-mm-dd 형식)
-        * = ts (타임스탬프)
-        * = execution_date (과거버전)
-    * ex. 2023-02-25 배치일
-        * = data_interval_end
-        * = 
-        * = 
-        * = 
-        * = next_execution_date (과거버전)
-
-# Python Operator with Template
-
-## Python 오퍼레이터에서 Template 변수 사용
-
-* Python 오퍼레이터는 어떤 파라미터에 Template을 쓸 수 있는가?
-* 파라미터
-    * python_callable
-    * op_kwargs
-    * op_args
-    * templates_dict
-    * templates_exts
-    * show_return_value_in_logs
-* https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html
-
-    ```markdown
-    def python_function1(start_date, end_date, **kwargs):
-        print(start_date)
-        print(end_date)
-
-    python_t1 = PythonOperator(
-        task_id='python_t1',
-        python_callable=python_function,
-        op_kwargs={'start_date':'{{data_interval_start | ds}}', 'end_date':'{{data_interval_end | ds}}'}
-    )
-    ```
-
-* 파이썬 오퍼레이터는 **kwargs에 Template 변수들을 자동으로 제공해주고 있음
-
-    ```markdown
-    @task(task_id='python_t2')
-    def python_function2(**kwargs):
-        print(kwargs)
-        print('ds:' + kwargs['ds'])
-        print('ts:' + str(kwargs['ts']))
-        print('data_interval_start:' + str(kwargs['data_interval_start']))
-        print('data_interval_end:' + str(kwargs['data_interval_end']))
-        print('task_instance': + str(kwargs['ti']))
-    python_function2()
-    ```
-
-# Bash Operator with Macro
-
-## Macro 변수의 이해
-
-* Macro 변수의 필요성
-
-    ```markdown
-    sql = f'''
-    SELECT NAME, ADDRESS
-    FROM TBL_REG
-    WHERE REG_DATE BETWEEN ?? AND ??
-    '''
-    ```
-
-    DAG 스케줄은 매일 말일에 도는 스케줄인데
-    BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고
-    싶은데 어떻게 하지?
-    예를 들어
-    배치일이 1월 31일이면 12월 31일부터 1월 30일 까지
-    배치일이 2월 28일이면 1월 31일부터 2월 27일까지
-    BETWEEN 이 설정되었으면 좋겠어.
-    DAG 스케줄이 월 단위이니까
-    Template 변수에서 data_interval_start 값은 한달 전 말일
-    이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들지? 
-    data_interval_end 에서 하루 뺀 값이 나와야 하는데…
-
-* Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음
-
-    |Variable|Description|
-    |:--:|------|
-    |macros.datetime|The standard lib's datetime.datetime|
-    |macros.timedelta|The standard lib's datetime.timedelta|
-    |macros.dateutil|A reference to the dateutil package|
-    |macros.time|The standard lib's time|
-    |macros.uuid|The standard lib's uuid|
-    |macros.random|The standard lib's random|
-
-    * macros.datetime & macros.dateutil: 날짜 연산에 유용한 파이썬 라이브러리
-* Macro를 잘 쓰려면 파이썬 datetime 및 dateutil 라이브러리에 익숙해져야 함.
-
-## 파이썬 datetime + dateutil 라이브러리 이해
-
-```markdown
-from datetime import datetime
-from dateutil import relativedelta
-
-now = datetime(year=2003, month=3, day=30)
-print('current time:'+str(now))
-print('-------------month operation-------------')
-print(now+relativedelta.relativedelta(month=1)) # 1월로 변경
-print(now.replace(month=1)) # 1월로 변경
-print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기
-print('-------------day operation-------------')
-print(now+relativedelta.relativedelta(day=1)) #1일로 변경
-print(now.replace(day=1)) #1일로 변경
-print(now+relativedelta.relativedelta(days=-1)) #1일 빼기
-print('-------------multiple operations-------------')
-print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기
-```
-
-## Bash 오퍼레이터에서 Macro 변수 활용하기
-
-* 예시1. 매월 말일 수행되는 Dag에서 변수 START_DATE: 전월 말일, 변수 END_DATE: 어제로 env 셋팅하기
-* 예시2. 매월 둘째주 토요일에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기
-* 변수는 YYYY-MM-DD 형식으로 나오도록 할 것
-
-    ```markdown
-    t1 = BashOperator(
-        task_id='t1',
-        env={'START_DATE':''},
-    )
-    ```
-
-이 부분에 template + macro 활용
-
-# Python 오퍼레이터 with macro
-
-* 어떤 파라미터가 Template 변수를 지원할까?
-* 패러미터
-    * python_callable (Callable | None)
-    * op_kwargs
-    * op_args
-    * templates_dict
-    * templates_exts
-    * show_return_value_in_logs
-* https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/python/index.html#airflow.operators.python.PythonOperator
-
-    ```markdown
-    @task(task_id='task_using_macros',
-        templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")
-    + macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',
-    'end_date': '{{
-    (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +
-    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'
-        }
-    )
-    
-    def get_datetime_macro(**kwargs):
-        templates_dict = kwargs.get('templates_dict') or {}
-        if templates_dict:
-        start_date = templates_dict.get('start_date') or 'start_date없음'
-        end_date = templates_dict.get('end_date') or 'end_date없음'
-        print(start_date)
-        print(end_date)
-    ```
-* 그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 DAG안에서 직접 할 수 있다면?
-    * macro 사용
-    ```markdown
-    @task(task_id='task_using_macros',
-        templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',
-        'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +
-        macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'
-        }
-    )
-
-    def get_datetime_macro(**kwargs):
-        templates_dict = kwargs.get('templates_dict') or {}
-        if templates_dict:
-            start_date = templates_dict.get('start_date') or 'start_date없음'
-            end_date = templates_dict.get('end_date') or 'end_date없음'
-            print(start_date)
-            print(end_date)
-
-    @task(task_id='task_direct_calc')
-    def get_datetime_calc(**kwargs):
-        from dateutil.relativedelta import relativedelta
-        data_interval_end = kwargs['data_interval_end']
-    ```
-
-    * 직접 연산
-
-    ```markdown
-    prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)
-    prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)
-    print(prev_month_day_first.strftime('%Y-%m-%d'))
-    print(prev_month_day_last.strftime('%Y-%m-%d'))
-    ```
+        ```
+        * 스케줄러의 주기적 DAG 파싱시 Variable.get 개수만큼 DB 연결을 일으켜 불필요한 부하 발생 스케줄러 과부하 원인 중 하나
+        2. Jinja 템플릿 이용 , 오퍼레이터 내부에서 가져오기 (권고)
+        ```
+        from airflow operators bash import BashOperator
+        bash_var_2= BashOperator(
+            task_id="bash_var_2",
+            bash_command= f "echo variable: {{var.value.sample_key}}"
+        )
+        ```
+* 그런데 이 전역변수는 언제 , 어떻게 쓰면 좋을까
+    * 협업 환경에서 표준화된 dag 을 만들기 위해 주로 사용. 주로 상수 (CONST) 로 지정해서 사용할 변수들 셋팅
+    * 예) base_sh_dir = /opt/airflow/plugins/shell
+    * 예) base_file_dir = /opt/airflow/plugins/files
+    * 예) email, Alert 메시지를 받을 담당자의 email 주소 정보
 :::
 </div>
 

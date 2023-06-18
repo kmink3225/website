@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2023-05-01">
 <meta name="description" content="template">
 
-<title>Kwangmin Kim - Template Variabler</title>
+<title>Kwangmin Kim - Data Share</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,40 +22,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -97,6 +63,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="../../../../../styles.css">
 </head>
@@ -174,7 +142,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link active" data-scroll-target="#go-to-blog-content-list"><span class="header-section-number">7</span> Go to Blog Content List</a></li>
+  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link active" data-scroll-target="#go-to-blog-content-list"><span class="header-section-number">5</span> Go to Blog Content List</a></li>
   </ul>
 </nav>
     </div>
@@ -183,7 +151,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Template Variabler</h1>
+<h1 class="title">Data Share</h1>
 <p class="subtitle lead">DAG Creation, Bash Operator, Task Performance Subject,</p>
   <div class="quarto-categories">
     <div class="quarto-category">Engineering</div>
@@ -234,314 +202,196 @@ English
 
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
-<section id="jinja-template" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Jinja Template</h1>
+<section id="python-오퍼레이터-with-xcom" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Python 오퍼레이터 With Xcom</h1>
+<section id="xcomcross-communication" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="xcomcross-communication"><span class="header-section-number">1.1</span> Xcom(Cross Communication)</h2>
 <ul>
-<li><p>문서(파일)에서 특정 양식으로 작성된 값을 런타임시 실제 값으로 치환해주는 처리 엔진</p></li>
-<li><p>템플릿 엔진은 여러 솔루션이 존재하며 그 중 Jinja 템플릿은 파이썬 언어에서 사용하는 엔진</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>from jinja2 import Template</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>template = Template('my name is {{name}}')</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>new_template = template.render('name=hjkim')</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>print(new_template)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p>Jinja 템플릿, 어디서 쓰이나?</p>
-<ul>
-<li>파이썬 기반 웹 프레임워크인 Flask, Django에서 주로 사용 (주로 HTML 템플릿 저장 후 화면에 보여질 때 실제 값으로 변환해서 출력)</li>
-<li>SQL작성시에도 활용 가능</li>
-</ul></li>
-</ul>
-<section id="airflow에서-사용법" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="airflow에서-사용법"><span class="header-section-number">1.1</span> Airflow에서 사용법</h2>
-<ul>
-<li>오퍼레이터 파라미터 입력시 중괄호 {} 2개를 이용하면 Airflow에서 기본적으로 제공하는 변수들을 치환된 값으로 입력할 수 있음. (ex: 수행 날짜, DAG_ID)
-<ul>
-<li>https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html</li>
-</ul></li>
-<li>모든 오퍼레이터, 모든 파라미터에 Template 변수 적용이 가능한가? No!</li>
-<li>Airflow 문서에서 어떤 파라미터에 Template 변수 적용 가능한지 확인 필요
-<ul>
-<li>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/index.html</li>
-</ul></li>
+<li>Airflow DAG 안 Task 간 데이터 공유를 위해 사용되는 기술 ex) Task1의 수행 중 내용이나 결과를 Task2에서 사용 또는 입력으로 주고 싶은 경우</li>
+<li>주로 작은 규모의 데이터 공유를 위해 사용 (Xcom 내용은 메타 DB의 xcom 테이블에 값이 저장됨) 1GB 이상의 대용량 데이터 공유를 위해서는 외부 솔루션 사용 필요 (AWS S3, HDFS 등) # Python 오퍼레이터에서 Xcom 사용하기</li>
+<li>크게 두 가지 방법으로 Xcom 사용 가능
+<ol type="1">
+<li>**kwargs에 존재하는 ti (task_instance) 객체 활용</li>
+</ol>
+<pre><code>@task(task_id='python_xcom_push_task')
+def xcom_push(**kwargs):
+    ti = kwargs['ti']
+    ti.xcom_push(key="result1", value="value_1")
+    ti.xcom_push(key="result2", value=[1,2,3])
+    #template 변수에서 task_instance 라는 객체를 얻을 수 있으며 task_instance 객체가 가진 xcom_push 메서드를 활용할 수 있음
+
+@task(task_id='python_xcom_pull_task')
+def xcom_pull(**kwargs):
+    ti = kwargs['ti']
+    value_key1 = ti.xcom_pull(key="result1")
+    value_key2 = ti.xcom_pull(key="result2",
+    task_ids='python_xcom_push_task')
+    print(value_key1)
+    print(value_key2)</code></pre>
+<ol start="2" type="1">
+<li>파이썬 함수의 return 값 활용 (1안)</li>
+</ol>
+<pre><code>@task(task_id='xcom_push_by_return')
+def xcom_push_by_return(**kwargs):
+    transaction_value = 'status Good'
+    return transaction_value
+@task(task_id='xcom_pull_by_return')
+def xcom_pull_by_return(status, **kwargs):
+    print(status)
+xcom_pull_by_return(xcom_push_by_return())
+# 참고) Task 데커레이터 사용시 함수 입력/출력 관계만으로 Task flow 정의가 됨
+
+@task(task_id='xcom_push_by_return')
+def xcom_push_return(**kwargs):
+    transaction_value = 'status Good'
+    return transaction_value
+    # return 한 값은 자동으로 xcom에 key='return_value', task_ids=task_id 로 저장됨
+@task(task_id='xcom_pull_by_return')
+def xcom_pull_return_by_method(**kwargs):
+    ti = kwargs['ti']
+    pull_value = ti.xcom_pull(key='return_value', task_ids='xcom_push_by_return')
+    # return 한 값을 꺼낼 때는 key를 명시하지 않아도 됨. (자동으로 key=return_value 를 찾음)
+    # task_ids='xcom_push_by_return' return한 Task가 여러개 있을 때는 task_ids 를 지정
+    print(pull_value)
+xcom_push_by_return() &gt;&gt; xcom_pull_by_return()</code></pre>
+<h2 id="summary" data-number="1.2" class="anchored"><span class="header-section-number">1.2</span> Summary</h2></li>
+<li>Xcom push 방법: ti.xcom_push 명시적 사용 + 함수 return</li>
+<li>Xcom pull 방법: ti.xcom_pull 명시적 사용 + return 값을 input으로 사용</li>
 </ul>
 </section>
 </section>
-<section id="bashoperator-with-template" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> BashOperator with Template</h1>
-<section id="bashoperator" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="bashoperator"><span class="header-section-number">2.1</span> BashOperator</h2>
+<section id="bash-오퍼레이터-with-xcom" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Bash 오퍼레이터 With Xcom</h1>
+<section id="bash-오퍼레이터에서-xcom-사용하기" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="bash-오퍼레이터에서-xcom-사용하기"><span class="header-section-number">2.1</span> Bash 오퍼레이터에서 Xcom 사용하기</h2>
 <ul>
-<li>Bash 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?</li>
+<li>Bash 오퍼레이터는 env, bash_command 파라미터에서 Template 이용하여 push/pull</li>
+</ul>
+<pre><code>bash_push = BashOperator(
+    task_id='bash_push',
+    bash_command="echo START &amp;&amp; "
+                "echo XCOM_PUSHED "
+                "{{ ti.xcom_push(key='bash_pushed',value='first_bash_message') }} &amp;&amp; "
+                "echo COMPLETE" 
+                # 마지막 출력문은 자동으로 return_value 에 저장됨
+)
+bash_pull = BashOperator(
+    task_id='bash_pull',
+    env={'PUSHED_VALUE':"{{ ti.xcom_pull(key='bash_pushed') }}",
+        'RETURN_VALUE':"{{ ti.xcom_pull(task_ids='bash_push') }}"}, 
+        # task_ids 만 지정하면 key='return_value' 를 의미함
+    bash_command="echo $PUSHED_VALUE &amp;&amp; echo $RETURN_VALUE ",
+    do_xcom_push=False
+)
+
+</code></pre>
+</section>
+<section id="summary-1" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="summary-1"><span class="header-section-number">2.2</span> Summary</h2>
+<ul>
+<li>Bash_command에 의해 출력된 값은 자동으로 return_value로 저장된다 (마지막 출력 문장만)</li>
+<li>return_value를 꺼낼 때는 xcom_pull에서 task_ids 값만 줘도 된다.</li>
+<li>키가 지정된 xcom 값을 꺼낼 때는 key 값만 줘도 된다 (단, 다른 task에서 동일 key로 push 하지 않았을 때만)</li>
+</ul>
+</section>
+</section>
+<section id="python-bash-오퍼레이터-with-xcom" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Python &amp; Bash 오퍼레이터 With Xcom</h1>
+<section id="python-rightarrow-bash-오퍼레이터-xcom-전달" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="python-rightarrow-bash-오퍼레이터-xcom-전달"><span class="header-section-number">3.1</span> Python <span class="math inline">\(\rightarrow\)</span> Bash 오퍼레이터 Xcom 전달</h2>
+<pre><code>@task task_id =='python push'
+def python_push_xcom
+    result_dict = {'status':' Good','data':[1,2,3],'options_cnt': 100}
+    return result_dict
+bash_pull = BashOperator(
+    task_id='bash_pull',
+    env={
+        'STATUS': '{{ti.xcom_pull(task ids="python push")["status"]}}',
+        'DATA': '{{ti.xcom_pull(task ids="python push")["data"]}}',
+        'OPTIONS_CNT': '{{ti.xcom_pull(task_ids="python_push")["options_cnt"]}}'
+    },
+    bash_command = 'echo $STATUS &amp;&amp; echo $DATA &amp;&amp; echo $OPTIONS_CNT'
+)
+ 
+python_push_xcom() &gt;&gt; bash_pull</code></pre>
+</section>
+<section id="bash-rightarrow-python-오퍼레이터-xcom-전달" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="bash-rightarrow-python-오퍼레이터-xcom-전달"><span class="header-section-number">3.2</span> 2. Bash <span class="math inline">\(\rightarrow\)</span> Python 오퍼레이터 Xcom 전달</h2>
+<pre><code>bash_push = BashOperator(
+task_id ='bash_push',
+bash_command='echo PUSH_START'
+    '{{ti.xcom_push(key="bash_pushed",value=200) }}&amp;&amp; 'echo PUSH_COMPLETE'
+)
+
+@task(task_id =='python_pull')
+def python_pull_xcom(**kwargs): 
+    ti = kwargs ['ti']
+    status_value= ti.xcom_pull(key ='bash_pushed')
+    return_value= ti.xcom_pull(task_ids ='bash_push')
+    print('status_value:'+ str (status_value))
+    print('return_value:'+ return_value)
+    bash_push&gt;&gt; python_pull_xcom()</code></pre>
+</section>
+</section>
+<section id="python-email-오퍼레이터-with-xcom" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Python &amp; Email 오퍼레이터 With Xcom</h1>
+<section id="python-email-오퍼레이터-xcom-전달" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="python-email-오퍼레이터-xcom-전달"><span class="header-section-number">4.1</span> Python → Email 오퍼레이터 Xcom 전달</h2>
+<ul>
+<li>Email 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?</li>
 <li>파라미터
 <ul>
-<li>bash_command (str)</li>
-<li>env (dict[str, str] | None)</li>
-<li>append_env (bool)</li>
-<li>output_encoding (str)</li>
-<li>skip_exit_code (int)</li>
-<li>cwd (str | None)</li>
+<li>to</li>
+<li>subject</li>
+<li>html_content</li>
+<li>files</li>
+<li>cc</li>
+<li>bcc</li>
+<li>nime_subtype</li>
+<li>mime_charset</li>
+<li>custom_headers ``` <span class="citation" data-cites="task">@task</span>(task_id=‘something_task’) def some_logic(**kwargs): from random import choice return choice([‘Success’,‘Fail’]) send_email = EmailOperator( task_id=‘send_email’, to=‘hjkim_sun@naver.com’, subject=‘{{ data_interval_end.in_timezone(“Asia/Seoul”) | ds }} some_logic 처리결과’, html_content=‘{{ data_interval_end.in_timezone(“Asia/Seoul”) | ds }} 처리 결과는 <br><br>
+{{ti.xcom_pull(task_ids=“something_task”)}} 했습니다 <br>’ )</li>
 </ul></li>
-<li>https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/bash/index.html</li>
 </ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>bash_t1 = BashOperator(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    task_id='bash_t1',</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    bash_command='echo "End date is {{ data_interval_end }}"'</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>bash_t2 = BashOperator(</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    task_id='bash_t2',</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    env={'START_DATE': '{{ data_interval_start | ds}}','END_DATE':'{{ data_interval_end | ds }}'},</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    bash_command='echo "Start date is $START_DATE " &amp;&amp; ''echo "End date is $END_DATE"'</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-</section>
-<section id="airflow-date" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> Airflow Date</h1>
-<section id="데이터-추출-예시" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="데이터-추출-예시"><span class="header-section-number">3.1</span> 데이터 추출 예시</h2>
+<p>``` # 전역변수 Variable 이용하기</p>
 <ul>
-<li>Daily ETL 처리를 위한 조회 쿼리(2023/02/25 0시 실행)</li>
-<li>example: 등록 테이블</li>
+<li>Xcom: 특정 DAG, 특정 schedule 에 수행되는 Task 간에만 공유</li>
+<li>모든 DAG 이 공유할 수 있는 전역 변수는 없을까 ?</li>
+<li>Variable 등록하기
+<ul>
+<li>실제 Variable 의 Key, Value 값 은 메타 DB 에 저장됨 (variable 테이블)
+<ol type="1">
+<li>Variable 라이브러리 이용 , 파이썬 문법을 이용해 미리 가져오기</li>
+</ol>
+<pre><code>from airflow operators bash import BashOperator
+from airflow models import Variable 
+var_value = Variable.get('sample_key')
+bash_var_1= BashOperator(
+    task_id = "bash_var_1",
+    bash_command = f "echo variable:{var_value}"" 
+)
+</code></pre>
+<ul>
+<li>스케줄러의 주기적 DAG 파싱시 Variable.get 개수만큼 DB 연결을 일으켜 불필요한 부하 발생 스케줄러 과부하 원인 중 하나</li>
 </ul>
-<table class="table">
-<thead>
-<tr class="header">
-<th>REG_DATE</th>
-<th style="text-align: center;">NAME</th>
-<th style="text-align: center;">ADDRESS</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>2023-02-24 15:34:35</td>
-<td style="text-align: center;">홍길동</td>
-<td style="text-align: center;">Busan</td>
-</tr>
-<tr class="even">
-<td>2023-02-24 19:14:42</td>
-<td style="text-align: center;">김태희</td>
-<td style="text-align: center;">Seoul</td>
-</tr>
-<tr class="odd">
-<td>2023-02-24 23:52:19</td>
-<td style="text-align: center;">조인성</td>
-<td style="text-align: center;">Daejeon</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>SELECT NAME, ADDRESS</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>FROM TBL_REG</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>WHERE REG_DATE BETWEEN TIMESTAMP('2023-02-24 00:00:00')</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>AND TIMESTAMP('2023-02-24 23:59:59')</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>데이터 관점의 시작일: 2023-02-24 데이터 관점의 종료일: 2023-02-25</p>
-</section>
-<section id="airflow-날짜-template-변수" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="airflow-날짜-template-변수"><span class="header-section-number">3.2</span> Airflow 날짜 Template 변수</h2>
-<ul>
-<li>예시: 일 배치
-<ul>
-<li>ex. 2023-02-24 이전 배치일 (논리적 기준일)
-<ul>
-<li>= data_interval_start</li>
-<li>= dag_run.logical_date</li>
-<li>= ds (yyyy-mm-dd 형식)</li>
-<li>= ts (타임스탬프)</li>
-<li>= execution_date (과거버전)</li>
+<ol start="2" type="1">
+<li>Jinja 템플릿 이용 , 오퍼레이터 내부에서 가져오기 (권고)</li>
+</ol>
+<pre><code>from airflow operators bash import BashOperator
+bash_var_2= BashOperator(
+    task_id="bash_var_2",
+    bash_command= f "echo variable: {{var.value.sample_key}}"
+)</code></pre></li>
 </ul></li>
-<li>ex. 2023-02-25 배치일
+<li>그런데 이 전역변수는 언제 , 어떻게 쓰면 좋을까
 <ul>
-<li>= data_interval_end</li>
-<li>=</li>
-<li>=</li>
-<li>=</li>
-<li>= next_execution_date (과거버전)</li>
-</ul></li>
+<li>협업 환경에서 표준화된 dag 을 만들기 위해 주로 사용. 주로 상수 (CONST) 로 지정해서 사용할 변수들 셋팅</li>
+<li>예) base_sh_dir = /opt/airflow/plugins/shell</li>
+<li>예) base_file_dir = /opt/airflow/plugins/files</li>
+<li>예) email, Alert 메시지를 받을 담당자의 email 주소 정보</li>
 </ul></li>
 </ul>
 </section>
-</section>
-<section id="python-operator-with-template" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Python Operator with Template</h1>
-<section id="python-오퍼레이터에서-template-변수-사용" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="python-오퍼레이터에서-template-변수-사용"><span class="header-section-number">4.1</span> Python 오퍼레이터에서 Template 변수 사용</h2>
-<ul>
-<li><p>Python 오퍼레이터는 어떤 파라미터에 Template을 쓸 수 있는가?</p></li>
-<li><p>파라미터</p>
-<ul>
-<li>python_callable</li>
-<li>op_kwargs</li>
-<li>op_args</li>
-<li>templates_dict</li>
-<li>templates_exts</li>
-<li>show_return_value_in_logs</li>
-</ul></li>
-<li><p>https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>def python_function1(start_date, end_date, **kwargs):</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    print(start_date)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    print(end_date)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>python_t1 = PythonOperator(</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    task_id='python_t1',</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    python_callable=python_function,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    op_kwargs={'start_date':'{{data_interval_start | ds}}', 'end_date':'{{data_interval_end | ds}}'}</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p>파이썬 오퍼레이터는 **kwargs에 Template 변수들을 자동으로 제공해주고 있음</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='python_t2')</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>def python_function2(**kwargs):</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    print(kwargs)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    print('ds:' + kwargs<span class="co">[</span><span class="ot">'ds'</span><span class="co">]</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    print('ts:' + str(kwargs<span class="co">[</span><span class="ot">'ts'</span><span class="co">]</span>))</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    print('data_interval_start:' + str(kwargs<span class="co">[</span><span class="ot">'data_interval_start'</span><span class="co">]</span>))</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    print('data_interval_end:' + str(kwargs<span class="co">[</span><span class="ot">'data_interval_end'</span><span class="co">]</span>))</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    print('task_instance': + str(kwargs<span class="co">[</span><span class="ot">'ti'</span><span class="co">]</span>))</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>python_function2()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-</ul>
-</section>
-</section>
-<section id="bash-operator-with-macro" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Bash Operator with Macro</h1>
-<section id="macro-변수의-이해" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="macro-변수의-이해"><span class="header-section-number">5.1</span> Macro 변수의 이해</h2>
-<ul>
-<li><p>Macro 변수의 필요성</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sql = f'''</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>SELECT NAME, ADDRESS</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>FROM TBL_REG</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>WHERE REG_DATE BETWEEN ?? AND ??</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>'''</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>DAG 스케줄은 매일 말일에 도는 스케줄인데 BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고 싶은데 어떻게 하지? 예를 들어 배치일이 1월 31일이면 12월 31일부터 1월 30일 까지 배치일이 2월 28일이면 1월 31일부터 2월 27일까지 BETWEEN 이 설정되었으면 좋겠어. DAG 스케줄이 월 단위이니까 Template 변수에서 data_interval_start 값은 한달 전 말일 이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들지? data_interval_end 에서 하루 뺀 값이 나와야 하는데…</p></li>
-<li><p>Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음</p>
-<table class="table">
-<thead>
-<tr class="header">
-<th style="text-align: center;">Variable</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">macros.datetime</td>
-<td>The standard lib’s datetime.datetime</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">macros.timedelta</td>
-<td>The standard lib’s datetime.timedelta</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">macros.dateutil</td>
-<td>A reference to the dateutil package</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">macros.time</td>
-<td>The standard lib’s time</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">macros.uuid</td>
-<td>The standard lib’s uuid</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">macros.random</td>
-<td>The standard lib’s random</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>macros.datetime &amp; macros.dateutil: 날짜 연산에 유용한 파이썬 라이브러리</li>
-</ul></li>
-<li><p>Macro를 잘 쓰려면 파이썬 datetime 및 dateutil 라이브러리에 익숙해져야 함.</p></li>
-</ul>
-</section>
-<section id="파이썬-datetime-dateutil-라이브러리-이해" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="파이썬-datetime-dateutil-라이브러리-이해"><span class="header-section-number">5.2</span> 파이썬 datetime + dateutil 라이브러리 이해</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>from datetime import datetime</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>from dateutil import relativedelta</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>now = datetime(year=2003, month=3, day=30)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>print('current time:'+str(now))</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>print('-------------month operation-------------')</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(month=1)) # 1월로 변경</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>print(now.replace(month=1)) # 1월로 변경</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>print('-------------day operation-------------')</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(day=1)) #1일로 변경</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>print(now.replace(day=1)) #1일로 변경</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(days=-1)) #1일 빼기</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>print('-------------multiple operations-------------')</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="bash-오퍼레이터에서-macro-변수-활용하기" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="bash-오퍼레이터에서-macro-변수-활용하기"><span class="header-section-number">5.3</span> Bash 오퍼레이터에서 Macro 변수 활용하기</h2>
-<ul>
-<li><p>예시1. 매월 말일 수행되는 Dag에서 변수 START_DATE: 전월 말일, 변수 END_DATE: 어제로 env 셋팅하기</p></li>
-<li><p>예시2. 매월 둘째주 토요일에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기</p></li>
-<li><p>변수는 YYYY-MM-DD 형식으로 나오도록 할 것</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>t1 = BashOperator(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    task_id='t1',</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    env={'START_DATE':''},</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-</ul>
-<p>이 부분에 template + macro 활용</p>
-</section>
-</section>
-<section id="python-오퍼레이터-with-macro" class="level1" data-number="6">
-<h1 data-number="6"><span class="header-section-number">6</span> Python 오퍼레이터 with macro</h1>
-<ul>
-<li><p>어떤 파라미터가 Template 변수를 지원할까?</p></li>
-<li><p>패러미터</p>
-<ul>
-<li>python_callable (Callable | None)</li>
-<li>op_kwargs</li>
-<li>op_args</li>
-<li>templates_dict</li>
-<li>templates_exts</li>
-<li>show_return_value_in_logs</li>
-</ul></li>
-<li><p>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/python/index.html#airflow.operators.python.PythonOperator</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='task_using_macros',</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>'end_date': '{{</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>(data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>def get_datetime_macro(**kwargs):</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    templates_dict = kwargs.get('templates_dict') or {}</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    if templates_dict:</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    start_date = templates_dict.get('start_date') or 'start_date없음'</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    end_date = templates_dict.get('end_date') or 'end_date없음'</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    print(start_date)</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    print(end_date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p>그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 DAG안에서 직접 할 수 있다면?</p>
-<ul>
-<li>macro 사용</li>
-</ul>
-<div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='task_using_macros',</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>def get_datetime_macro(**kwargs):</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    templates_dict = kwargs.get('templates_dict') or {}</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    if templates_dict:</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        start_date = templates_dict.get('start_date') or 'start_date없음'</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        end_date = templates_dict.get('end_date') or 'end_date없음'</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        print(start_date)</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        print(end_date)</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>@task(task_id='task_direct_calc')</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>def get_datetime_calc(**kwargs):</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    from dateutil.relativedelta import relativedelta</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    data_interval_end = kwargs<span class="co">[</span><span class="ot">'data_interval_end'</span><span class="co">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>직접 연산</li>
-</ul>
-<div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>print(prev_month_day_first.strftime('%Y-%m-%d'))</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>print(prev_month_day_last.strftime('%Y-%m-%d'))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-</ul>
 </section>
 </div>
 </div>
@@ -550,8 +400,8 @@ English
 
 </div>
 </div>
-<section id="go-to-blog-content-list" class="level1" data-number="7">
-<h1 data-number="7"><span class="header-section-number">7</span> Go to Blog Content List</h1>
+<section id="go-to-blog-content-list" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Go to Blog Content List</h1>
 <p><a href="../../../../../docs/blog/posts/content_list.html">Blog Content List</a></p>
 
 

@@ -23,6 +23,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -142,7 +176,7 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link active" data-scroll-target="#go-to-blog-content-list"><span class="header-section-number">5</span> Go to Blog Content List</a></li>
+  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link active" data-scroll-target="#go-to-blog-content-list"><span class="header-section-number">7</span> Go to Blog Content List</a></li>
   </ul>
 </nav>
     </div>
@@ -204,90 +238,256 @@ English
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
 <section id="python-오퍼레이터-with-xcom" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Python 오퍼레이터 With Xcom</h1>
-<section id="xcomcross-communication" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="xcomcross-communication"><span class="header-section-number">1.1</span> Xcom(Cross Communication)</h2>
+<section id="xcom-definition" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="xcom-definition"><span class="header-section-number">1.1</span> Xcom Definition</h2>
 <ul>
-<li>Airflow DAG 안 Task 간 데이터 공유를 위해 사용되는 기술 ex) Task1의 수행 중 내용이나 결과를 Task2에서 사용 또는 입력으로 주고 싶은 경우</li>
-<li>주로 작은 규모의 데이터 공유를 위해 사용 (Xcom 내용은 메타 DB의 xcom 테이블에 값이 저장됨) 1GB 이상의 대용량 데이터 공유를 위해서는 외부 솔루션 사용 필요 (AWS S3, HDFS 등) # Python 오퍼레이터에서 Xcom 사용하기</li>
+<li>Xcom stands for Cross Communication.</li>
+<li>Airflow DAG 안 Task 간 데이터 공유를 위해 사용되는 기술 (Dag 안에 있는 task끼리만 data 공유)
+<ul>
+<li>예를 들여, Task1의 수행 중 내용이나 결과를 Task2에서 사용 또는 입력으로 주고 싶은 경우</li>
+</ul></li>
+<li>주로 작은 규모의 데이터 공유를 위해 사용
+<ul>
+<li>Xcom 내용은 메타 DB의 xcom 테이블에 값이 저장됨</li>
+<li>1GB 이상의 대용량 데이터 공유를 위해서는 외부 솔루션 사용 필요 (AWS의 S3, GCP의 GCS, HDFS (Hadoop File System) 등)</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="python-오퍼레이터에서-xcom-사용하기" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Python 오퍼레이터에서 Xcom 사용하기</h1>
+<ul>
 <li>크게 두 가지 방법으로 Xcom 사용 가능
 <ol type="1">
 <li>**kwargs에 존재하는 ti (task_instance) 객체 활용</li>
 </ol>
-<pre><code>@task(task_id='python_xcom_push_task')
-def xcom_push(**kwargs):
-    ti = kwargs['ti']
-    ti.xcom_push(key="result1", value="value_1")
-    ti.xcom_push(key="result2", value=[1,2,3])
-    #template 변수에서 task_instance 라는 객체를 얻을 수 있으며 task_instance 객체가 가진 xcom_push 메서드를 활용할 수 있음
-
-@task(task_id='python_xcom_pull_task')
-def xcom_pull(**kwargs):
-    ti = kwargs['ti']
-    value_key1 = ti.xcom_pull(key="result1")
-    value_key2 = ti.xcom_pull(key="result2",
-    task_ids='python_xcom_push_task')
-    print(value_key1)
-    print(value_key2)</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='python_xcom_push_task')</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>def xcom_push(**kwargs):</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    ti = kwargs<span class="co">[</span><span class="ot">'ti'</span><span class="co">]</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    ti.xcom_push(key="result1", value="value_1") </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    ti.xcom_push(key="result2", value=<span class="co">[</span><span class="ot">1,2,3</span><span class="co">]</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    #xcom_push: xcom에다가 data를 올릴 수 있음</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    #data를 올릴 때는 key:value 형태로 올리기</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    #template 변수에서 task_instance 라는 객체를 얻을 수 있으며 task_instance 객체가 가진 xcom_push 메서드를 활용할 수 있음</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>@task(task_id='python_xcom_pull_task')</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>def xcom_pull(**kwargs):</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    ti = kwargs<span class="co">[</span><span class="ot">'ti'</span><span class="co">]</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    value_key1 = ti.xcom_pull(key="result1") # value_1이 value_key1에 저장됨</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    value_key2 = ti.xcom_pull(key="result2",</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    task_ids='python_xcom_push_task') # <span class="co">[</span><span class="ot">1,2,3</span><span class="co">]</span>이 value_key2에 저장됨</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    #xcom_pull: xcom으로부터 data를 내려 받을 수 있음</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    #data를 올릴 때는 key:value 형태로 올리기</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    print(value_key1)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    print(value_key2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>xcome_pull()을 할때 key값만 줘도 되고 key값과 task_ids값을 둘다 줘도 된다.
+<ul>
+<li>key값만 줘도 될때
+<ul>
+<li>xcom_push를 한 task가 1개 밖에 없을 때 사용 가능</li>
+<li>혹은, key값이 중복될 때 xcom_push를 한 task가 여러 개 있을 때도 사용 가능한데 가장 마지막 (최신) task의 key값을 호출 한다.</li>
+<li>만약, key값이 중복이 되지 않는 다면 key값만으로도 data를 내려 받을 수 있다.</li>
+</ul></li>
+<li>key값과 task_ids둘다 줘야할 때
+<ul>
+<li>key값이 중복되는 xcom_push를 한 task가 여러 개 있을 때 선택적으로 원하는 task의 data를 가지고 오고 싶으면 해당 task의 task_ids를 명시적으로 적어줘야한다.</li>
+</ul></li>
+</ul></li>
+</ul>
 <ol start="2" type="1">
-<li>파이썬 함수의 return 값 활용 (1안)</li>
-</ol>
-<pre><code>@task(task_id='xcom_push_by_return')
-def xcom_push_by_return(**kwargs):
-    transaction_value = 'status Good'
-    return transaction_value
-@task(task_id='xcom_pull_by_return')
-def xcom_pull_by_return(status, **kwargs):
-    print(status)
-xcom_pull_by_return(xcom_push_by_return())
-# 참고) Task 데커레이터 사용시 함수 입력/출력 관계만으로 Task flow 정의가 됨
-
-@task(task_id='xcom_push_by_return')
-def xcom_push_return(**kwargs):
-    transaction_value = 'status Good'
-    return transaction_value
-    # return 한 값은 자동으로 xcom에 key='return_value', task_ids=task_id 로 저장됨
-@task(task_id='xcom_pull_by_return')
-def xcom_pull_return_by_method(**kwargs):
-    ti = kwargs['ti']
-    pull_value = ti.xcom_pull(key='return_value', task_ids='xcom_push_by_return')
-    # return 한 값을 꺼낼 때는 key를 명시하지 않아도 됨. (자동으로 key=return_value 를 찾음)
-    # task_ids='xcom_push_by_return' return한 Task가 여러개 있을 때는 task_ids 를 지정
-    print(pull_value)
-xcom_push_by_return() &gt;&gt; xcom_pull_by_return()</code></pre>
-<h2 id="summary" data-number="1.2" class="anchored"><span class="header-section-number">1.2</span> Summary</h2></li>
-<li>Xcom push 방법: ti.xcom_push 명시적 사용 + 함수 return</li>
-<li>Xcom pull 방법: ti.xcom_pull 명시적 사용 + return 값을 input으로 사용</li>
+<li>파이썬 함수의 return 값 활용
+<ul>
+<li>(1안)</li>
+</ul>
+<div class="sourceCode" id="cb2"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='xcom_push_by_return')</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>def xcom_push_by_return(**kwargs):</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    transaction_value = 'status Good'</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    return transaction_value</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>@task(task_id='xcom_pull_by_return')</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>def xcom_pull_by_return(status, **kwargs):</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    print(status)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>xcom_pull_by_return(xcom_push_by_return()) </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="fu"># xcom을 이용한 task의 flow 정해주는 또 다른 방식</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu"># 암묵적인 task의 순서: xcom_push_by_return() &gt;&gt; xcom_pull_by_return()</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu"># 위의 스크립트에서 xcom_pull() 또는 xcom_push()가 명시적으로 쓰이진 않았지만</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu"># airflow에서는 **Task 데커레이터 사용시** 함수 입력/출력 관계만으로 </span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu"># Task flow 정의가 되고 custom 함수가 return을 하게 되면 자동으로 xcom에 data가 올라가게 된다.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>(2안)</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='xcom_push_by_return')</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>def xcom_push_return(**kwargs):</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    transaction_value = 'status Good'</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    return transaction_value</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    # return 한 값은 자동으로 xcom에 key='return_value', task_ids=task_id 로 저장됨</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>@task(task_id='xcom_pull_by_return')</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>def xcom_pull_return_by_method(**kwargs):</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    ti = kwargs<span class="co">[</span><span class="ot">'ti'</span><span class="co">]</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    pull_value = ti.xcom_pull(key='return_value', task_ids='xcom_push_by_return')</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    # ti.xcom_pull()을 이용하여 return 한 값을 꺼낼 때는 key를 명시하지 않아도 됨. (자동으로 key=return_value 를 찾음)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    # task_ids='xcom_push_by_return' return한 Task가 여러개 있을 때는 task_ids 를 지정</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    print(pull_value)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>xcom_push_by_return() &gt;&gt; xcom_pull_by_return() # 2안에서는 task flow를 명시적으로 적어줘야함.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>1안 DAG Full Exmaple</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>import datetime</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>from airflow.decorators import task</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    dag_id="dags_python_with_xcom_eg2",</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    schedule="30 6 * * *",</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 3, 1, tz="Asia/Seoul"),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    catchup=False</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="in">    @task(task_id='python_xcom_push_by_return')</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="in">    def xcom_push_result(**kwargs):</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="in">        return 'Success'</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="in">    @task(task_id='python_xcom_pull_1')</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="in">    def xcom_pull_1(**kwargs):</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="in">        ti = kwargs['ti']</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="in">        value1 = ti.xcom_pull(task_ids='python_xcom_push_by_return')</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="in">        print('xcom_pull 메서드로 직접 찾은 리턴 값:' + value1)</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="in">    @task(task_id='python_xcom_pull_2')</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="in">    def xcom_pull_2(status, **kwargs):</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="in">        print('함수 입력값으로 받은 값:' + status)</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="in">    python_xcom_push_by_return = xcom_push_result() </span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="in">    # airflow의 task decorator가 쓰였기 때문에 python_xcom_push_by_return에 </span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="in">    # 단순한 'Sucess' 스트링이 할당되는게 아니라 decorator object가 할당된다.</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="in">    xcom_pull_2(python_xcom_push_by_return)</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="in">    python_xcom_push_by_return &gt;&gt; xcom_pull_1()</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="in">    # 암묵적인 task flow는</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="in">    # xcom_push_result &gt;&gt;[xcom_pull_2, xcom_pull_1] 형태임</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>2안 DAG Full Example</li>
+</ul>
+<div class="sourceCode" id="cb5"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>import datetime</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>from airflow.decorators import task</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    dag_id="dags_python_with_xcom_eg1",</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    schedule="30 6 * * *",</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 3, 1, tz="Asia/Seoul"),</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    catchup=False</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="in">    @task(task_id='python_xcom_push_task1')</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="in">    def xcom_push1(**kwargs):</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="in">        ti = kwargs['ti']</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="in">        ti.xcom_push(key="result1", value="value_1")</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="in">        ti.xcom_push(key="result2", value=[1,2,3])</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="in">    @task(task_id='python_xcom_push_task2')</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="in">    def xcom_push2(**kwargs):</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="in">        ti = kwargs['ti']</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="in">        ti.xcom_push(key="result1", value="value_2") </span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="in">        # python_xcom_push_task1의 key값은 같지만 value는 다름</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="in">        ti.xcom_push(key="result2", value=[1,2,3,4])</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="in">    @task(task_id='python_xcom_pull_task')</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="in">    def xcom_pull(**kwargs):</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="in">        ti = kwargs['ti']</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="in">        value1 = ti.xcom_pull(key="result1")</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="in">        value2 = ti.xcom_pull(key="result2", task_ids='python_xcom_push_task1')</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="in">        print(value1)</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="in">        print(value2)</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="in">    xcom_push1() &gt;&gt; xcom_push2() &gt;&gt; xcom_pull()</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="in">    # xcom_pull()에서 key값이 result1으로만 명시되었기 때문에 value1에는 xcom_push2()의 'value_2'가 들어감    </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ol></li>
+<li>airflow web service에서 log 대신 xcom을 사용해 결과값을 확인</li>
+</ul>
+<section id="summary" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="summary"><span class="header-section-number">2.1</span> Summary</h2>
+<ul>
+<li>Xcom push 방법
+<ul>
+<li>ti.xcom_push 명시적 사용</li>
+<li>함수 return</li>
+</ul></li>
+<li>Xcom pull 방법
+<ul>
+<li>ti.xcom_pull 명시적 사용</li>
+<li>return 값을 input으로 사용</li>
+</ul></li>
 </ul>
 </section>
 </section>
-<section id="bash-오퍼레이터-with-xcom" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> Bash 오퍼레이터 With Xcom</h1>
-<section id="bash-오퍼레이터에서-xcom-사용하기" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="bash-오퍼레이터에서-xcom-사용하기"><span class="header-section-number">2.1</span> Bash 오퍼레이터에서 Xcom 사용하기</h2>
+<section id="bash-오퍼레이터-with-xcom" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Bash 오퍼레이터 With Xcom</h1>
+<section id="bash-오퍼레이터에서-xcom-사용하기" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="bash-오퍼레이터에서-xcom-사용하기"><span class="header-section-number">3.1</span> Bash 오퍼레이터에서 Xcom 사용하기</h2>
 <ul>
 <li>Bash 오퍼레이터는 env, bash_command 파라미터에서 Template 이용하여 push/pull</li>
 </ul>
-<pre><code>bash_push = BashOperator(
-    task_id='bash_push',
-    bash_command="echo START &amp;&amp; "
-                "echo XCOM_PUSHED "
-                "{{ ti.xcom_push(key='bash_pushed',value='first_bash_message') }} &amp;&amp; "
-                "echo COMPLETE" 
-                # 마지막 출력문은 자동으로 return_value 에 저장됨
-)
-bash_pull = BashOperator(
-    task_id='bash_pull',
-    env={'PUSHED_VALUE':"{{ ti.xcom_pull(key='bash_pushed') }}",
-        'RETURN_VALUE':"{{ ti.xcom_pull(task_ids='bash_push') }}"}, 
-        # task_ids 만 지정하면 key='return_value' 를 의미함
-    bash_command="echo $PUSHED_VALUE &amp;&amp; echo $RETURN_VALUE ",
-    do_xcom_push=False
-)
-
-</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>bash_push = BashOperator(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    task_id='bash_push',</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    bash_command="echo START &amp;&amp; "</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                "echo XCOM_PUSHED "</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                "{{ ti.xcom_push(key='bash_pushed',value='first_bash_message') }} &amp;&amp; "</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                "echo COMPLETE" </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                # bash 같은 경우엔 출력하는 값이 return값으로 간주됨. </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                # 위의 경우와 같이 여러 출력문이 있을 경우 마지막 출력문은 자동으로 return_value 에 저장됨</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>bash_pull = BashOperator(</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    task_id='bash_pull',</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    env={'PUSHED_VALUE':"{{ ti.xcom_pull(key='bash_pushed') }}",</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        'RETURN_VALUE':"{{ ti.xcom_pull(task_ids='bash_push') }}"}, </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        # env 는 key: value 형태로 데이터를 받음</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        # task_ids 만 지정하면 key='return_value' 를 의미함</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        # RETURN_VALUE에 'complete'이 들어감</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    bash_command="echo $PUSHED_VALUE &amp;&amp; echo $RETURN_VALUE ",</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    do_xcom_push=False </span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    # bash_command에서 출력되는 "echo $PUSHED_VALUE &amp;&amp; echo $RETURN_VALUE "의 </span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    # 출력문을 자동으로 xcom에 올리지 말라는 의미</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Dags Full Example</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>import datetime</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>from airflow.operators.bash import BashOperator</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    dag_id="dags_bash_with_xcom",</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    schedule="10 0 * * *",</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 3, 1, tz="Asia/Seoul"),</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    catchup=False</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    bash_push = BashOperator(</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    task_id='bash_push',</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    bash_command="echo START &amp;&amp; "</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>                 "echo XCOM_PUSHED "</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>                 "{{ ti.xcom_push(key='bash_pushed',value='first_bash_message') }} &amp;&amp; "</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>                 "echo COMPLETE"</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="in">    bash_pull = BashOperator(</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='bash_pull',</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="in">        env={'PUSHED_VALUE':"{{ ti.xcom_pull(key='bash_pushed') }}",</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="in">            'RETURN_VALUE':"{{ ti.xcom_pull(task_ids='bash_push') }}"},</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command="echo $PUSHED_VALUE &amp;&amp; echo $RETURN_VALUE ",</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="in">        do_xcom_push=False</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="in">    bash_push &gt;&gt; bash_pull</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="summary-1" class="level2" data-number="2.2">
-<h2 data-number="2.2" class="anchored" data-anchor-id="summary-1"><span class="header-section-number">2.2</span> Summary</h2>
+<section id="summary-1" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="summary-1"><span class="header-section-number">3.2</span> Summary</h2>
 <ul>
 <li>Bash_command에 의해 출력된 값은 자동으로 return_value로 저장된다 (마지막 출력 문장만)</li>
 <li>return_value를 꺼낼 때는 xcom_pull에서 task_ids 값만 줘도 된다.</li>
@@ -295,49 +495,98 @@ bash_pull = BashOperator(
 </ul>
 </section>
 </section>
-<section id="python-bash-오퍼레이터-with-xcom" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> Python &amp; Bash 오퍼레이터 With Xcom</h1>
-<section id="python-rightarrow-bash-오퍼레이터-xcom-전달" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="python-rightarrow-bash-오퍼레이터-xcom-전달"><span class="header-section-number">3.1</span> Python <span class="math inline">\(\rightarrow\)</span> Bash 오퍼레이터 Xcom 전달</h2>
-<pre><code>@task task_id =='python push'
-def python_push_xcom
-    result_dict = {'status':' Good','data':[1,2,3],'options_cnt': 100}
-    return result_dict
-bash_pull = BashOperator(
-    task_id='bash_pull',
-    env={
-        'STATUS': '{{ti.xcom_pull(task ids="python push")["status"]}}',
-        'DATA': '{{ti.xcom_pull(task ids="python push")["data"]}}',
-        'OPTIONS_CNT': '{{ti.xcom_pull(task_ids="python_push")["options_cnt"]}}'
-    },
-    bash_command = 'echo $STATUS &amp;&amp; echo $DATA &amp;&amp; echo $OPTIONS_CNT'
-)
- 
-python_push_xcom() &gt;&gt; bash_pull</code></pre>
+<section id="python-bash-오퍼레이터-with-xcom" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Python &amp; Bash 오퍼레이터 With Xcom</h1>
+<section id="python-rightarrow-bash-오퍼레이터-xcom-전달" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="python-rightarrow-bash-오퍼레이터-xcom-전달"><span class="header-section-number">4.1</span> Python <span class="math inline">\(\rightarrow\)</span> Bash 오퍼레이터 Xcom 전달</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>@task task_id =='python push'</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>def python_push_xcom</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    result_dict = {'status':' Good','data':<span class="co">[</span><span class="ot">1,2,3</span><span class="co">]</span>,'options_cnt': 100}</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    return result_dict</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>bash_pull = BashOperator(</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    task_id='bash_pull',</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    env={</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        'STATUS': '{{ti.xcom_pull(task ids="python push")<span class="co">[</span><span class="ot">"status"</span><span class="co">]</span>}}',</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        'DATA': '{{ti.xcom_pull(task ids="python push")<span class="co">[</span><span class="ot">"data"</span><span class="co">]</span>}}',</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        'OPTIONS_CNT': '{{ti.xcom_pull(task_ids="python_push")<span class="co">[</span><span class="ot">"options_cnt"</span><span class="co">]</span>}}'</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    },</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    bash_command = 'echo $STATUS &amp;&amp; echo $DATA &amp;&amp; echo $OPTIONS_CNT'</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>python_push_xcom() &gt;&gt; bash_pull</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="bash-rightarrow-python-오퍼레이터-xcom-전달" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="bash-rightarrow-python-오퍼레이터-xcom-전달"><span class="header-section-number">3.2</span> 2. Bash <span class="math inline">\(\rightarrow\)</span> Python 오퍼레이터 Xcom 전달</h2>
-<pre><code>bash_push = BashOperator(
-task_id ='bash_push',
-bash_command='echo PUSH_START'
-    '{{ti.xcom_push(key="bash_pushed",value=200) }}&amp;&amp; 'echo PUSH_COMPLETE'
-)
-
-@task(task_id =='python_pull')
-def python_pull_xcom(**kwargs): 
-    ti = kwargs ['ti']
-    status_value= ti.xcom_pull(key ='bash_pushed')
-    return_value= ti.xcom_pull(task_ids ='bash_push')
-    print('status_value:'+ str (status_value))
-    print('return_value:'+ return_value)
-    bash_push&gt;&gt; python_pull_xcom()</code></pre>
-</section>
-</section>
-<section id="python-email-오퍼레이터-with-xcom" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Python &amp; Email 오퍼레이터 With Xcom</h1>
-<section id="python-email-오퍼레이터-xcom-전달" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="python-email-오퍼레이터-xcom-전달"><span class="header-section-number">4.1</span> Python → Email 오퍼레이터 Xcom 전달</h2>
+<section id="bash-rightarrow-python-오퍼레이터-xcom-전달" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="bash-rightarrow-python-오퍼레이터-xcom-전달"><span class="header-section-number">4.2</span> Bash <span class="math inline">\(\rightarrow\)</span> Python 오퍼레이터 Xcom 전달</h2>
+<div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>bash_push = BashOperator(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>task_id ='bash_push',</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>bash_command='echo PUSH_START'</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    '{{ti.xcom_push(key="bash_pushed",value=200) }}&amp;&amp; 'echo PUSH_COMPLETE'</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>@task(task_id =='python_pull')</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>def python_pull_xcom(**kwargs): </span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    ti = kwargs <span class="co">[</span><span class="ot">'ti'</span><span class="co">]</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    status_value= ti.xcom_pull(key ='bash_pushed')</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    return_value= ti.xcom_pull(task_ids ='bash_push')</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    print('status_value:'+ str (status_value))</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    print('return_value:'+ return_value)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    bash_push&gt;&gt; python_pull_xcom()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
+<li>DAG Full Example</li>
+</ul>
+<div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>from airflow.decorators import task</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>from airflow.operators.bash import BashOperator</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    dag_id="dags_bash_python_with_xcom",</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    schedule="30 9 * * *",</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 4, 1, tz="Asia/Seoul"),</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    catchup=False</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="in">    @task(task_id='python_push')</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="in">    def python_push_xcom():</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="in">        result_dict = {'status':'Good','data':[1,2,3],'options_cnt':100}</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="in">        return result_dict</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="in">    bash_pull = BashOperator(</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='bash_pull',</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="in">        env={</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="in">            'STATUS':'{{ti.xcom_pull(task_ids="python_push")["status"]}}',</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="in">            'DATA':'{{ti.xcom_pull(task_ids="python_push")["data"]}}',</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="in">            'OPTIONS_CNT':'{{ti.xcom_pull(task_ids="python_push")["options_cnt"]}}'</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="in">        },</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='echo $STATUS &amp;&amp; echo $DATA &amp;&amp; echo $OPTIONS_CNT'</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="in">    python_push_xcom() &gt;&gt; bash_pull</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="in">    bash_push = BashOperator(</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="in">    task_id='bash_push',</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="in">    bash_command='echo PUSH_START '</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="in">                 '{{ti.xcom_push(key="bash_pushed",value=200)}} &amp;&amp; '</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="in">                 'echo PUSH_COMPLETE'</span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="in">    @task(task_id='python_pull')</span></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="in">    def python_pull_xcom(**kwargs):</span></span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="in">        ti = kwargs['ti']</span></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a><span class="in">        status_value = ti.xcom_pull(key='bash_pushed')</span></span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a><span class="in">        return_value = ti.xcom_pull(task_ids='bash_push')</span></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a><span class="in">        print('status_value:' + str(status_value))</span></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a><span class="in">        print('return_value:' + return_value)</span></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a><span class="in">    bash_push &gt;&gt; python_pull_xcom()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="python-email-오퍼레이터-with-xcom" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Python &amp; Email 오퍼레이터 With Xcom</h1>
+<section id="python-email-오퍼레이터-xcom-전달" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="python-email-오퍼레이터-xcom-전달"><span class="header-section-number">5.1</span> Python → Email 오퍼레이터 Xcom 전달</h2>
+<ul>
+<li>Email 오퍼레이터를 이용하여 Xcom을 받아와야함</li>
 <li>Email 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?</li>
 <li>파라미터
 <ul>
@@ -349,49 +598,105 @@ def python_pull_xcom(**kwargs):
 <li>bcc</li>
 <li>nime_subtype</li>
 <li>mime_charset</li>
-<li>custom_headers ``` <span class="citation" data-cites="task">@task</span>(task_id=‘something_task’) def some_logic(**kwargs): from random import choice return choice([‘Success’,‘Fail’]) send_email = EmailOperator( task_id=‘send_email’, to=‘hjkim_sun@naver.com’, subject=‘{{ data_interval_end.in_timezone(“Asia/Seoul”) | ds }} some_logic 처리결과’, html_content=‘{{ data_interval_end.in_timezone(“Asia/Seoul”) | ds }} 처리 결과는 <br><br>
-{{ti.xcom_pull(task_ids=“something_task”)}} 했습니다 <br>’ )</li>
+<li>custom_headers</li>
 </ul></li>
 </ul>
-<p>``` # 전역변수 Variable 이용하기</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='something_task') # python operator를 task decorator로 만듦</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>def some_logic(**kwargs):</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    from random import choice </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    #choice module은 list, tuple, string 중 아무 값이나 꺼낼 수 있게 해주는 함수</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    return choice(<span class="co">[</span><span class="ot">'Success','Fail'</span><span class="co">]</span>) # either Success or Fail is return됨</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>send_email = EmailOperator(</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    task_id='send_email',</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    to='hjkim_sun@naver.com',</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    subject='{{ data_interval_end.in_timezone("Asia/Seoul") | ds }} some_logic 처리결과',</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    html_content='{{ data_interval_end.in_timezone("Asia/Seoul") | ds }} 처리 결과는 <span class="kw">&lt;br&gt;</span> \ {{ti.xcom_pull(task_ids="something_task")}} 했습니다 <span class="kw">&lt;br&gt;</span>'</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>DAG Full Example</li>
+</ul>
+<div class="sourceCode" id="cb12"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>import datetime</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>from airflow.decorators import task</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>from airflow.operators.email import EmailOperator</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    dag_id="dags_python_email_operator",</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    schedule="0 8 1 * *",</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 3, 1, tz="Asia/Seoul"),</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    catchup=False</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="in">    @task(task_id='something_task')</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="in">    def some_logic(**kwargs):</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="in">        from random import choice </span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="in">        return choice(['Success','Fail'])</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="in">    send_email = EmailOperator(</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='send_email',</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="in">        to='hjkim_sun@naver.com',</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="in">        subject='{{ data_interval_end.in_timezone("Asia/Seoul") | ds }} some_logic 처리결과',</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="in">        html_content='{{ data_interval_end.in_timezone("Asia/Seoul") | ds }} 처리 결과는 &lt;br&gt; \</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="in">                    {{ti.xcom_pull(task_ids="something_task")}} 했습니다 &lt;br&gt;'</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="in">    some_logic() &gt;&gt; send_email</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="전역변수-variable-이용하기" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> 전역변수 Variable 이용하기</h1>
 <ul>
 <li>Xcom: 특정 DAG, 특정 schedule 에 수행되는 Task 간에만 공유</li>
-<li>모든 DAG 이 공유할 수 있는 전역 변수는 없을까 ?</li>
+<li>variable: 모든 DAG 이 공유할 수 있는 전역 변수 사용</li>
 <li>Variable 등록하기
 <ul>
-<li>실제 Variable 의 Key, Value 값 은 메타 DB 에 저장됨 (variable 테이블)
+<li>airflow web service에서 전역 변수 등록 가능
+<ul>
+<li>airflow web service의 Admin &gt;&gt; Variables &gt;&gt; Plus Button &gt;&gt; Key, Val, Description 작성 &gt;&gt; save</li>
+</ul></li>
+<li>실제 Variable 의 Key, Value 값은 메타 DB 에 저장됨 (variable 테이블)
 <ol type="1">
 <li>Variable 라이브러리 이용 , 파이썬 문법을 이용해 미리 가져오기</li>
 </ol>
-<pre><code>from airflow operators bash import BashOperator
-from airflow models import Variable 
-var_value = Variable.get('sample_key')
-bash_var_1= BashOperator(
-    task_id = "bash_var_1",
-    bash_command = f "echo variable:{var_value}"" 
-)
-</code></pre>
+<div class="sourceCode" id="cb13"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>from airflow operators bash import BashOperator</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>from airflow models import Variable </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>var_value = Variable.get('sample_key')</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>bash_var_1= BashOperator(</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    task_id = "bash_var_1",</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    bash_command = f "echo variable:{var_value}"" </span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
-<li>스케줄러의 주기적 DAG 파싱시 Variable.get 개수만큼 DB 연결을 일으켜 불필요한 부하 발생 스케줄러 과부하 원인 중 하나</li>
+<li>스케줄러의 주기적 DAG 파싱시 Variable.get 개수만큼 DB 연결을 일으켜 불필요한 부하 발생 스케줄러 과부하 원인 중 하나
+<ul>
+<li>주기적으로 아래 코드를 실행함</li>
+</ul>
+<div class="sourceCode" id="cb14"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>from airflow models import Variable </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>var_value = Variable.get('sample_key')</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 </ul>
 <ol start="2" type="1">
-<li>Jinja 템플릿 이용 , 오퍼레이터 내부에서 가져오기 (권고)</li>
-</ol>
-<pre><code>from airflow operators bash import BashOperator
-bash_var_2= BashOperator(
-    task_id="bash_var_2",
-    bash_command= f "echo variable: {{var.value.sample_key}}"
-)</code></pre></li>
+<li>Jinja 템플릿 이용 , 오퍼레이터 내부에서 가져오기 (권고)
+<ul>
+<li>스케쥴러는 Operator 안에 작성된 내용은 parsing 및 실행해보지 않음</li>
+</ul>
+<div class="sourceCode" id="cb15"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>from airflow operators bash import BashOperator</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>bash_var_2= BashOperator(</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>task_id="bash_var_2",</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>bash_command= f "echo variable: {{var.value.sample_key}}"</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ol></li>
 </ul></li>
 <li>그런데 이 전역변수는 언제 , 어떻게 쓰면 좋을까
 <ul>
-<li>협업 환경에서 표준화된 dag 을 만들기 위해 주로 사용. 주로 상수 (CONST) 로 지정해서 사용할 변수들 셋팅</li>
-<li>예) base_sh_dir = /opt/airflow/plugins/shell</li>
+<li>협업 환경에서 표준화된 dag 을 만들기 위해 주로 사용. 개발자들마다 서로 다르게 사용하지 말아야할 주로 상수 (CONST) 로 지정해서 사용할 변수들 셋팅</li>
+<li>예) base_sh_dir = /opt/airflow/plugins/shell. shell file 의 위치를 고정</li>
 <li>예) base_file_dir = /opt/airflow/plugins/files</li>
 <li>예) email, Alert 메시지를 받을 담당자의 email 주소 정보</li>
 </ul></li>
 </ul>
-</section>
 </section>
 </div>
 </div>
@@ -400,8 +705,8 @@ bash_var_2= BashOperator(
 
 </div>
 </div>
-<section id="go-to-blog-content-list" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Go to Blog Content List</h1>
+<section id="go-to-blog-content-list" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Go to Blog Content List</h1>
 <p><a href="../../../../../docs/blog/posts/content_list.html">Blog Content List</a></p>
 
 

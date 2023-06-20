@@ -33,277 +33,384 @@ draft: False
 
 ::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
 
-# Jinja Template
+# Task 분기 처리하기 With BranchPythonOperator
 
-* 문서(파일)에서 특정 양식으로 작성된 값을 런타임시 실제 값으로 치환해주는 처리 엔진
-* 템플릿 엔진은 여러 솔루션이 존재하며 그 중 Jinja 템플릿은 파이썬 언어에서 사용하는 엔진
+## Task 분기 처리 유형
 
-    ```markdown
-    from jinja2 import Template
+* Task 분기처리가 필요한 이유
+    * task1의 결과에 따라 task2-x 중 하나만 수행하도록 구성해야 할 때
+    * eg) Task1 의 결과로 ‘Good’,’Bad’,’Pending’ 이라는 결과 3 개 중 하나가 나오고 
+    그에 따라 ask2 1 ~ task2 3 중 하나가 실행되도록 해야 할 경우
 
-    template = Template('my name is {{name}}')
-    new_template = template.render('name=hjkim')
-    print(new_template)
-    ```
+## Task 분기처리 방법
 
-* Jinja 템플릿, 어디서 쓰이나?
-    - 파이썬 기반 웹 프레임워크인 Flask, Django에서 주로 사용
-    (주로 HTML 템플릿 저장 후 화면에 보여질 때 실제 값으로 변환해서 출력)
-    - SQL작성시에도 활용 가능
+* Task 분기처리 방법
+    * BranchPythonOperator
+    * task.branch 데커레이터 이용
+    * BaseBranchOperator 상속하여 직접 개발
 
-## Airflow에서 사용법
-
-* 오퍼레이터 파라미터 입력시 중괄호 {} 2개를 이용하면 Airflow에서 기본적으로 제공하는 변수들을 치환된 값으로 입력할 수 있음. (ex: 수행 날짜, DAG_ID)
-    - https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html
-* 모든 오퍼레이터, 모든 파라미터에 Template 변수 적용이 가능한가? No!
-* Airflow 문서에서 어떤 파라미터에 Template 변수 적용 가능한지 확인 필요
-    - https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/index.html
-
-# BashOperator with Template
-
-## BashOperator
-
-* Bash 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?
-* 파라미터
-    * bash_command (str)
-    * env (dict[str, str] | None)
-    * append_env (bool)
-    * output_encoding (str)
-    * skip_exit_code (int)
-    * cwd (str | None)
-* https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/bash/index.html
-
+### BranchPythonOperator
 
 ```markdown
-bash_t1 = BashOperator(
-    task_id='bash_t1',
-    bash_command='echo "End date is {{ data_interval_end }}"'
-)
-bash_t2 = BashOperator(
-    task_id='bash_t2',
-    env={'START_DATE': '{{ data_interval_start | ds}}','END_DATE':'{{ data_interval_end | ds }}'},
-    bash_command='echo "Start date is $START_DATE " && ''echo "End date is $END_DATE"'
+
+def select_random():
+import random
+
+item_lst= ['A','B','C']
+selected_item = random.choice(item_lst)
+if selected_item == 'A';
+    return 'task_a'
+elif selected_item in ['B','C] 
+    return ['task_b','task_c']
+
+python_branch_task = BranchPythonOperator(
+    task_id ='python_branch_task',
+    python_callable=select_random
 )
 
+python_branch_task >> [task_a , task_b , task_c]
+
 ```
 
-# Airflow Date
 
-## 데이터 추출 예시
+```{dot}
 
-* Daily ETL 처리를 위한 조회 쿼리(2023/02/25 0시 실행)
-* example: 등록 테이블
-
-|REG_DATE|NAME|ADDRESS|
-|-----|:-:|:-:|
-|2023-02-24 15:34:35|홍길동|Busan|
-|2023-02-24 19:14:42|김태희|Seoul|
-|2023-02-24 23:52:19|조인성|Daejeon|
-
-```markdown
-SELECT NAME, ADDRESS
-FROM TBL_REG
-WHERE REG_DATE BETWEEN TIMESTAMP('2023-02-24 00:00:00')
-AND TIMESTAMP('2023-02-24 23:59:59')
-```
-데이터 관점의 시작일: 2023-02-24
-데이터 관점의 종료일: 2023-02-25
-
-
-## Airflow 날짜 Template 변수
-
-* 예시: 일 배치
-    * ex. 2023-02-24 이전 배치일 (논리적 기준일)
-        * = data_interval_start
-        * = dag_run.logical_date
-        * = ds (yyyy-mm-dd 형식)
-        * = ts (타임스탬프)
-        * = execution_date (과거버전)
-    * ex. 2023-02-25 배치일
-        * = data_interval_end
-        * = 
-        * = 
-        * = 
-        * = next_execution_date (과거버전)
-
-# Python Operator with Template
-
-## Python 오퍼레이터에서 Template 변수 사용
-
-* Python 오퍼레이터는 어떤 파라미터에 Template을 쓸 수 있는가?
-* 파라미터
-    * python_callable
-    * op_kwargs
-    * op_args
-    * templates_dict
-    * templates_exts
-    * show_return_value_in_logs
-* https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html
-
-    ```markdown
-    def python_function1(start_date, end_date, **kwargs):
-        print(start_date)
-        print(end_date)
-
-    python_t1 = PythonOperator(
-        task_id='python_t1',
-        python_callable=python_function,
-        op_kwargs={'start_date':'{{data_interval_start | ds}}', 'end_date':'{{data_interval_end | ds}}'}
-    )
-    ```
-
-* 파이썬 오퍼레이터는 **kwargs에 Template 변수들을 자동으로 제공해주고 있음
-
-    ```markdown
-    @task(task_id='python_t2')
-    def python_function2(**kwargs):
-        print(kwargs)
-        print('ds:' + kwargs['ds'])
-        print('ts:' + str(kwargs['ts']))
-        print('data_interval_start:' + str(kwargs['data_interval_start']))
-        print('data_interval_end:' + str(kwargs['data_interval_end']))
-        print('task_instance': + str(kwargs['ti']))
-    python_function2()
-    ```
-
-# Bash Operator with Macro
-
-## Macro 변수의 이해
-
-* Macro 변수의 필요성
-
-    ```markdown
-    sql = f'''
-    SELECT NAME, ADDRESS
-    FROM TBL_REG
-    WHERE REG_DATE BETWEEN ?? AND ??
-    '''
-    ```
-
-    DAG 스케줄은 매일 말일에 도는 스케줄인데
-    BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고
-    싶은데 어떻게 하지?
-    예를 들어
-    배치일이 1월 31일이면 12월 31일부터 1월 30일 까지
-    배치일이 2월 28일이면 1월 31일부터 2월 27일까지
-    BETWEEN 이 설정되었으면 좋겠어.
-    DAG 스케줄이 월 단위이니까
-    Template 변수에서 data_interval_start 값은 한달 전 말일
-    이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들지? 
-    data_interval_end 에서 하루 뺀 값이 나와야 하는데…
-
-* Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음
-
-    |Variable|Description|
-    |:--:|------|
-    |macros.datetime|The standard lib's datetime.datetime|
-    |macros.timedelta|The standard lib's datetime.timedelta|
-    |macros.dateutil|A reference to the dateutil package|
-    |macros.time|The standard lib's time|
-    |macros.uuid|The standard lib's uuid|
-    |macros.random|The standard lib's random|
-
-    * macros.datetime & macros.dateutil: 날짜 연산에 유용한 파이썬 라이브러리
-* Macro를 잘 쓰려면 파이썬 datetime 및 dateutil 라이브러리에 익숙해져야 함.
-
-## 파이썬 datetime + dateutil 라이브러리 이해
-
-```markdown
-from datetime import datetime
-from dateutil import relativedelta
-
-now = datetime(year=2003, month=3, day=30)
-print('current time:'+str(now))
-print('-------------month operation-------------')
-print(now+relativedelta.relativedelta(month=1)) # 1월로 변경
-print(now.replace(month=1)) # 1월로 변경
-print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기
-print('-------------day operation-------------')
-print(now+relativedelta.relativedelta(day=1)) #1일로 변경
-print(now.replace(day=1)) #1일로 변경
-print(now+relativedelta.relativedelta(days=-1)) #1일 빼기
-print('-------------multiple operations-------------')
-print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기
-```
-
-## Bash 오퍼레이터에서 Macro 변수 활용하기
-
-* 예시1. 매월 말일 수행되는 Dag에서 변수 START_DATE: 전월 말일, 변수 END_DATE: 어제로 env 셋팅하기
-* 예시2. 매월 둘째주 토요일에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기
-* 변수는 YYYY-MM-DD 형식으로 나오도록 할 것
-
-    ```markdown
-    t1 = BashOperator(
-        task_id='t1',
-        env={'START_DATE':''},
-    )
-    ```
-
-이 부분에 template + macro 활용
-
-# Python 오퍼레이터 with macro
-
-* 어떤 파라미터가 Template 변수를 지원할까?
-* 패러미터
-    * python_callable (Callable | None)
-    * op_kwargs
-    * op_args
-    * templates_dict
-    * templates_exts
-    * show_return_value_in_logs
-* https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/python/index.html#airflow.operators.python.PythonOperator
-
-    ```markdown
-    @task(task_id='task_using_macros',
-        templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")
-    + macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',
-    'end_date': '{{
-    (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +
-    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'
-        }
-    )
+digraph G {
+  compound=true;
+  rankdir=LR;
+  subgraph cluster0 {
+    rankdir=TB;
+    task1 [shape=box];
+    task2_1 [shape=box];
+    task2_2 [shape=box];
+    task2_3 [shape=box];
     
-    def get_datetime_macro(**kwargs):
-        templates_dict = kwargs.get('templates_dict') or {}
-        if templates_dict:
-        start_date = templates_dict.get('start_date') or 'start_date없음'
-        end_date = templates_dict.get('end_date') or 'end_date없음'
-        print(start_date)
-        print(end_date)
-    ```
-* 그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 DAG안에서 직접 할 수 있다면?
-    * macro 사용
-    ```markdown
-    @task(task_id='task_using_macros',
-        templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',
-        'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +
-        macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'
-        }
+    label= "Task Flow";
+  }
+
+  task1 -> task2_1;
+  task1 -> task2_2;
+  task1 -> task2_3;
+  
+}
+```
+
+# Task 분기처리하기 with task.branch
+
+## Task.branch 이해
+
+```markdown
+from airflow.operators.python import
+BranchPythonOperator
+def select_random(): 
+    import random
+    item_lst = ['A','B','C']
+    selected_item = random.choice(item_lst)
+    if selected_item == 'A':
+        return 'task_a'
+    elif selected_item in ['B','C']
+        return ['task_b','task_c']
+
+python_branch_task = BranchPythonOperator(
+    task_id= 'branching',
+    python_callable = select_random
+)
+python_branch_task >> [task_a , task_b , task_c]
+
+```
+
+```markdown
+from airflow.operators.python import
+
+@task.branch(task_id='python_branch_task')
+def select_random(): 
+    import random
+    item_lst = ['A','B','C']
+    selected_item = random.choice(item_lst)
+    if selected_item == 'A':
+        return 'task_a'
+    elif selected_item in ['B','C']
+        return ['task_b','task_c']
+
+select_random() >> [task_a , task_b , task_c]
+
+```
+
+# Task 분기처리하기 With BaseBranchOperator
+
+## BaseBranchOperator 이해 요약
+
+```markdown
+from airflow.operators.branch import BaseBranchOperator
+with DAG(...
+) as dag:
+    class CustomBranchOperator(BaseBranchOperator):
+        def choose_branch(self,context):
+            import random
+            
+            item_lst = ['A', 'B','C]
+            selected_item = random.choice(item_lst)
+            if selected_item == 'A':
+                return 'task_a'
+            elif selected_item in ['B','C']:
+                return ['task_b','task_c']
+
+custom_branch_operator = CustomBranchOperator(task_id ='python_branch_task')
+custom_branch_operator >> [task_a , task_b , task_c]
+```
+
+* 클래스 상속 BaseBranchOperator 상속시 choose_branch 함수를 구현해 줘야 함
+
+## Summary
+
+* Task 분기처리 방법
+    1. BranchPythonOperator
+    1. task.branch 데커레이터 이용
+    1. BaseBranchOperator 상속 , choose_branch 를 재정의해야 함
+* 공통적으로 리턴 값으로 후행 Task 의 id 를 str 또는 list 로 리턴해야 함
+* 3가지 분기처리 방법은 방법만 다를 뿐 결과는 동일함
+* 3 보다는 1 또는 2를 주로 사용함
+
+# Trigger Rule
+
+## Trigger Rule 종류
+
+```{dot}
+digraph G {
+  compound=true;
+  rankdir=LR;
+  subgraph cluster0 {
+    rankdir=TB;
+    task1 [shape=box];
+    task2 [shape=box];
+    task3 [shape=box];
+    task4 [shape=box];
+    
+    label= "Task Flow";
+  }
+
+  task1 -> task4;
+  task2 -> task4;
+  task3 -> task4; 
+}
+```
+
+* 상위 Task 들의 상태에 따라 수행여부 결정하고 싶은데 (기본 값 : 상위 Task 모두 성공시에만 수행)
+
+| Default                       | Left      |
+|:------------------------------|:----------|
+| all_success (default)         | 상위 task 가 모두 성공하면 실행  |
+| all_failed                    | 상위 task 가 모두 실패하면 실행  |
+| all_done                      | 상위 task 가 모두 수행되면 실행 (실패도 수행된것에 포함)  |
+| all_skipped                   | 상위 task 가 모두 Skipped 상태면 실행  |
+| one_failed                    | 상위 task 중 하나 이상 실패하면 실행 (모든 상위 Task 완료를 기다리지 않음) |
+| one_success                   | 상위 task 중 하나 이상 성공하면 실행 (모든 상위 Task 완료를 기다리지 않음) |
+| one_done                      | 상위 task 중 하나 이상 성공 또는 실패 하면 실행|
+| none_failed                   | 상위 task 중 실패가 없는 경우 실행 (성공 또는 Skipped 상태) |
+| none_failed_min_one_success   | 상위 task 중 실패가 없고 성공한 Task가 적어도 1개 이상이면 실행 |
+| none_skipped                  | Skip된 상위 Task가 없으면 실행 (상위 Task가 성공, 실패하여도 무방)   |
+| always                        | 언제나 실행 |
+
+
+## 2. Trigger Rule 실습) all_done
+
+```markdown
+
+bash_upstream_1 = BashOperator(
+    task_id = 'bash_upstream_1',
+    bash_command = 'echo upstream1'
+)
+
+@task(task_id =='python_upstream_1')
+def python_upstream_1():
+    AirflowException('downstream_1 Exception!')
+
+@task(task_id =='python_upstream_2')
+def python_upstream_2():
+    print('정상 처리')
+
+@task(task_id ='python_downstream_1', trigger_rule =='all_done')
+def python_downstream_1():
+    print('정상 처리')
+
+[bash_upstream_1 , python_upstream_1(), python_upstream_2()] >> python_downstream_1()
+
+```
+
+## 2. Trigger Rule 실습) none_skipped
+
+```markdown
+@task.branch(task_id ='branching')
+def random_branch():
+    import random
+    item_lst = [' A', ' B', 'C']
+    selected_item = random.choice(item_lst)
+    if selected_item == 'A':
+        return 'task_a'
+    elif selected_item == 'B':
+        return 'task_b'
+    elif selected_item == 'C':
+        return 'task_c'
+
+task_a = BashOperator(
+    task_id ='task_a',
+    bash_command = 'echo upstream1'
     )
 
-    def get_datetime_macro(**kwargs):
-        templates_dict = kwargs.get('templates_dict') or {}
-        if templates_dict:
-            start_date = templates_dict.get('start_date') or 'start_date없음'
-            end_date = templates_dict.get('end_date') or 'end_date없음'
-            print(start_date)
-            print(end_date)
+@task(task_id ='task_b')
+def task_b():
+    print('정상 처리')
 
-    @task(task_id='task_direct_calc')
-    def get_datetime_calc(**kwargs):
-        from dateutil.relativedelta import relativedelta
-        data_interval_end = kwargs['data_interval_end']
-    ```
+@task(task_id =='task_c')
+def task_c():
+    print('정상 처리')
 
-    * 직접 연산
+@task(task_id =='task_d', trigger_rule ='none_skipped')
+def task_d():
+    print('정상 처리')
 
-    ```markdown
-    prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)
-    prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)
-    print(prev_month_day_first.strftime('%Y-%m-%d'))
-    print(prev_month_day_last.strftime('%Y-%m-%d'))
-    ```
+random_branch() >> [task_a , task_b(), task_c()] >> task_d()
+
+```
+
+# Task Group
+
+## Task Group 개념
+
+* Task들의 모음
+* [UI Graph탭에서 Task 들을 Group 화하여 보여줌](https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html#taskgroups)
+* Task Group 안에 Task Group 을 중첩하여 구성 가능
+
+## Task Group 실습 (task_group 데커레이터 이용)
+
+```markdown
+from airflow.decorators import task_group
+with DAG(...
+) as dag:
+    @task_group(group_id ='first_group')
+    def group_1():
+    ''' task_group 데커레이터를 이용한 첫 번째 그룹입니다. '''
+
+    @task(task_id ='inner_function1')
+    def inner_func1(**kwargs):
+        print('첫 번째 TaskGroup 내 첫 번째 task 입니다')
+
+    inner_function2 = PythonOperator(
+        task_id ='inner_function2',
+        python_callable = inner_func,
+        op_kwargs={'msg':'첫 번째 TaskGroup 내 두 번쨰 task 입니다.'}
+    )
+    inner_func1() >> inner_function2
+```
+
+## Task Group 실습 (클래스 이용)
+
+```markdown
+from airflow.utils.task_group import TaskGroup
+    with TaskGroup(group_id ='second_group', tooltip='두 번째 그룹입니다.') as group_2:
+        @task(task_id ='inner_function1')
+        def inner_func1 (**kwargs):
+            print('두 번째 TaskGroup 내 첫 번째 task 입니다.')
+
+        inner_function2 = PythonOperator(
+            task_id = 'inner_function2',
+            python_collable = inner_func,
+            op_kwargs = {'msg': '두 번째 TaskGroup 내 두 번째 task 입니다'}
+        )
+inner_func1() >> inner_function2
+```
+
+## 요약
+
+* Task Group 작성 방법은 2 가지가 존재함
+    (데커레이터 & 클래스)
+* Task Group 안에 Task Group 중첩하여 정의 가능
+* Task Group 간에도 Flow 정의 가능
+* Group이 다르면 task_id 가 같아도 무방
+* Tooltip 파라미터를 이용해 UI 화면에서 Task group 에 대한 설명 제공 가능
+    (데커레이터 활용시 docstring 으로도 가능)
+
+# Edge label
+
+## Edge Label 개념
+
+* Task 연결에 대한 설명 (Comment)
+
+## Edge Label 만들기
+
+```{dot}
+digraph G {
+  compound=true;
+  rankdir=LR;
+  subgraph cluster0 {
+    rankdir=TB;
+    ingest [shape=box];
+    analyze [shape=box];
+    check_integrity [shape=box];
+    describe_integrity [shape=box];
+    email_error [shape=box];
+    report [shape=box];
+    save [shape=box];
+    label= "Task Flow";
+  }
+
+  ingest -> analyze ;
+  analyze -> check_integrity ;
+  check_integrity -> describe_integrity[label="Errors Found"];
+  describe_integrity -> email_error;
+  email_error -> report;
+  check_integrity -> save[label="No Errors"];
+  save -> report;
+  
+  
+}
+```
+
+## Edge Label 실습 1
+
+```markdown
+
+from airflow.utils.edgemodifier import Label
+empty_1 = EmptyOperator(
+    task_id ='empty_1'
+)
+
+empty_2 = EmptyOperator(
+    task_id='empty_2'
+)
+empty_1 >> Label ('1 과 2 사이') >> empty_2
+```
+
+## Edge Label 실습 2
+
+```markdown
+
+from airflow.utils.edgemodifier import Label
+empty_2 = EmptyOperator(
+    task_id = 'empty_2'
+)
+
+empty_3 = EmptyOperator(
+    task_id ='empty_3'
+)
+
+empty_4 = EmptyOperator(
+    task_id ='empty_4'
+)
+
+empty_5 = EmptyOperator(
+    task_id ='empty_5'
+)
+
+empty_6 = EmptyOperator(
+    task_id ='empty_6'
+)
+
+empty_2 >> Label('Start Branch') >> [empty_3, empty_4, empty_5 ] >> Label('End Branch') >> empty_6
+```
+
 :::
+
 </div>
 
 <div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">

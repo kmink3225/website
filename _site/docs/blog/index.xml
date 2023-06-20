@@ -701,12 +701,13 @@ Note
 <section id="apache-airflow" class="level2" data-number="8">
 <h2 data-number="8" class="anchored" data-anchor-id="apache-airflow"><span class="header-section-number">8</span> Apache Airflow</h2>
 <ul>
-<li>2023-05-01, <a href="../../../../../docs/blog/posts/Engineering/airflow/01.intro.html">introduction</a></li>
+<li>2023-05-01, <a href="../../../../../docs/blog/posts/Engineering/airflow/01.intro.html">Introduction</a></li>
 <li>2023-05-01, <a href="../../../../../docs/blog/posts/Engineering/airflow/02.env_setting.html">Airflow Environment Setting</a></li>
 <li>2023-05-01, <a href="../../../../../docs/blog/posts/Engineering/airflow/03.operator_basic.html">Operator Basics</a></li>
 <li>2023-05-01, <a href="../../../../../docs/blog/posts/Engineering/airflow/04.python_operator.html">Python Operators</a></li>
 <li>2023-05-01, <a href="../../../../../docs/blog/posts/Engineering/airflow/05.template_variable.html">Template Variable</a></li>
 <li>2023-05-01, <a href="../../../../../docs/blog/posts/Engineering/airflow/06.data_share.html">Data Share</a></li>
+<li>2023-05-01, <a href="../../../../../docs/blog/posts/Engineering/airflow/07.task_handling.html">Task Handling - Advanced</a></li>
 </ul>
 </section>
 <section id="apache-spark" class="level2" data-number="9">
@@ -5492,352 +5493,663 @@ English
 
 <div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
 <div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
-<section id="jinja-template" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Jinja Template</h1>
+<section id="task-분기-처리하기-with-branchpythonoperator" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Task 분기 처리하기 With BranchPythonOperator</h1>
+<section id="task-분기-처리-유형" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="task-분기-처리-유형"><span class="header-section-number">1.1</span> Task 분기 처리 유형</h2>
 <ul>
-<li><p>문서(파일)에서 특정 양식으로 작성된 값을 런타임시 실제 값으로 치환해주는 처리 엔진</p></li>
-<li><p>템플릿 엔진은 여러 솔루션이 존재하며 그 중 Jinja 템플릿은 파이썬 언어에서 사용하는 엔진</p>
-<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1">from jinja2 import Template</span>
-<span id="cb1-2"></span>
-<span id="cb1-3">template = Template('my name is {{name}}')</span>
-<span id="cb1-4">new_template = template.render('name=hjkim')</span>
-<span id="cb1-5">print(new_template)</span></code></pre></div></li>
-<li><p>Jinja 템플릿, 어디서 쓰이나?</p>
+<li>Task 분기처리가 필요한 이유
 <ul>
-<li>파이썬 기반 웹 프레임워크인 Flask, Django에서 주로 사용 (주로 HTML 템플릿 저장 후 화면에 보여질 때 실제 값으로 변환해서 출력)</li>
-<li>SQL작성시에도 활용 가능</li>
-</ul></li>
-</ul>
-<section id="airflow에서-사용법" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="airflow에서-사용법"><span class="header-section-number">1.1</span> Airflow에서 사용법</h2>
-<ul>
-<li>오퍼레이터 파라미터 입력시 중괄호 {} 2개를 이용하면 Airflow에서 기본적으로 제공하는 변수들을 치환된 값으로 입력할 수 있음. (ex: 수행 날짜, DAG_ID)
-<ul>
-<li>https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html</li>
-</ul></li>
-<li>모든 오퍼레이터, 모든 파라미터에 Template 변수 적용이 가능한가? No!</li>
-<li>Airflow 문서에서 어떤 파라미터에 Template 변수 적용 가능한지 확인 필요
-<ul>
-<li>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/index.html</li>
+<li>task1의 결과에 따라 task2-x 중 하나만 수행하도록 구성해야 할 때</li>
+<li>eg) Task1 의 결과로 ‘Good’,’Bad’,’Pending’ 이라는 결과 3 개 중 하나가 나오고 그에 따라 ask2 1 ~ task2 3 중 하나가 실행되도록 해야 할 경우</li>
 </ul></li>
 </ul>
 </section>
-</section>
-<section id="bashoperator-with-template" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> BashOperator with Template</h1>
-<section id="bashoperator" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="bashoperator"><span class="header-section-number">2.1</span> BashOperator</h2>
+<section id="task-분기처리-방법" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="task-분기처리-방법"><span class="header-section-number">1.2</span> Task 분기처리 방법</h2>
 <ul>
-<li>Bash 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?</li>
-<li>파라미터
+<li>Task 분기처리 방법
 <ul>
-<li>bash_command (str)</li>
-<li>env (dict[str, str] | None)</li>
-<li>append_env (bool)</li>
-<li>output_encoding (str)</li>
-<li>skip_exit_code (int)</li>
-<li>cwd (str | None)</li>
-</ul></li>
-<li>https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/bash/index.html</li>
-</ul>
-<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1">bash_t1 = BashOperator(</span>
-<span id="cb2-2">    task_id='bash_t1',</span>
-<span id="cb2-3">    bash_command='echo "End date is {{ data_interval_end }}"'</span>
-<span id="cb2-4">)</span>
-<span id="cb2-5">bash_t2 = BashOperator(</span>
-<span id="cb2-6">    task_id='bash_t2',</span>
-<span id="cb2-7">    env={'START_DATE': '{{ data_interval_start | ds}}','END_DATE':'{{ data_interval_end | ds }}'},</span>
-<span id="cb2-8">    bash_command='echo "Start date is $START_DATE " &amp;&amp; ''echo "End date is $END_DATE"'</span>
-<span id="cb2-9">)</span></code></pre></div>
-</section>
-</section>
-<section id="airflow-date" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> Airflow Date</h1>
-<section id="데이터-추출-예시" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="데이터-추출-예시"><span class="header-section-number">3.1</span> 데이터 추출 예시</h2>
-<ul>
-<li>Daily ETL 처리를 위한 조회 쿼리(2023/02/25 0시 실행)</li>
-<li>example: 등록 테이블</li>
-</ul>
-<table class="table">
-<thead>
-<tr class="header">
-<th>REG_DATE</th>
-<th style="text-align: center;">NAME</th>
-<th style="text-align: center;">ADDRESS</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>2023-02-24 15:34:35</td>
-<td style="text-align: center;">홍길동</td>
-<td style="text-align: center;">Busan</td>
-</tr>
-<tr class="even">
-<td>2023-02-24 19:14:42</td>
-<td style="text-align: center;">김태희</td>
-<td style="text-align: center;">Seoul</td>
-</tr>
-<tr class="odd">
-<td>2023-02-24 23:52:19</td>
-<td style="text-align: center;">조인성</td>
-<td style="text-align: center;">Daejeon</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1">SELECT NAME, ADDRESS</span>
-<span id="cb3-2">FROM TBL_REG</span>
-<span id="cb3-3">WHERE REG_DATE BETWEEN TIMESTAMP('2023-02-24 00:00:00')</span>
-<span id="cb3-4">AND TIMESTAMP('2023-02-24 23:59:59')</span></code></pre></div>
-<p>데이터 관점의 시작일: 2023-02-24 데이터 관점의 종료일: 2023-02-25</p>
-</section>
-<section id="airflow-날짜-template-변수" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="airflow-날짜-template-변수"><span class="header-section-number">3.2</span> Airflow 날짜 Template 변수</h2>
-<ul>
-<li>예시: 일 배치
-<ul>
-<li>ex. 2023-02-24 이전 배치일 (논리적 기준일)
-<ul>
-<li>= data_interval_start</li>
-<li>= dag_run.logical_date</li>
-<li>= ds (yyyy-mm-dd 형식)</li>
-<li>= ts (타임스탬프)</li>
-<li>= execution_date (과거버전)</li>
-</ul></li>
-<li>ex. 2023-02-25 배치일
-<ul>
-<li>= data_interval_end</li>
-<li>=</li>
-<li>=</li>
-<li>=</li>
-<li>= next_execution_date (과거버전)</li>
-</ul></li>
+<li>BranchPythonOperator</li>
+<li>task.branch 데커레이터 이용</li>
+<li>BaseBranchOperator 상속하여 직접 개발</li>
 </ul></li>
 </ul>
-</section>
-</section>
-<section id="python-operator-with-template" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Python Operator with Template</h1>
-<section id="python-오퍼레이터에서-template-변수-사용" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="python-오퍼레이터에서-template-변수-사용"><span class="header-section-number">4.1</span> Python 오퍼레이터에서 Template 변수 사용</h2>
-<ul>
-<li><p>Python 오퍼레이터는 어떤 파라미터에 Template을 쓸 수 있는가?</p></li>
-<li><p>파라미터</p>
-<ul>
-<li>python_callable</li>
-<li>op_kwargs</li>
-<li>op_args</li>
-<li>templates_dict</li>
-<li>templates_exts</li>
-<li>show_return_value_in_logs</li>
-</ul></li>
-<li><p>https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html</p>
-<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1">def python_function1(start_date, end_date, **kwargs):</span>
-<span id="cb4-2">    print(start_date)</span>
-<span id="cb4-3">    print(end_date)</span>
-<span id="cb4-4"></span>
-<span id="cb4-5">python_t1 = PythonOperator(</span>
-<span id="cb4-6">    task_id='python_t1',</span>
-<span id="cb4-7">    python_callable=python_function,</span>
-<span id="cb4-8">    op_kwargs={'start_date':'{{data_interval_start | ds}}', 'end_date':'{{data_interval_end | ds}}'}</span>
-<span id="cb4-9">)</span></code></pre></div></li>
-<li><p>파이썬 오퍼레이터는 **kwargs에 Template 변수들을 자동으로 제공해주고 있음</p>
-<div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1">@task(task_id='python_t2')</span>
-<span id="cb5-2">def python_function2(**kwargs):</span>
-<span id="cb5-3">    print(kwargs)</span>
-<span id="cb5-4">    print('ds:' + kwargs<span class="co" style="color: #5E5E5E;
+<section id="branchpythonoperator" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="branchpythonoperator"><span class="header-section-number">1.2.1</span> BranchPythonOperator</h3>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"></span>
+<span id="cb1-2">def select_random():</span>
+<span id="cb1-3">import random</span>
+<span id="cb1-4"></span>
+<span id="cb1-5">item_lst= <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">'ds'</span><span class="co" style="color: #5E5E5E;
+font-style: inherit;">'A','B','C'</span><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">]</span>)</span>
-<span id="cb5-5">    print('ts:' + str(kwargs<span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">'ts'</span><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">]</span>))</span>
-<span id="cb5-6">    print('data_interval_start:' + str(kwargs<span class="co" style="color: #5E5E5E;
+font-style: inherit;">]</span></span>
+<span id="cb1-6">selected_item = random.choice(item_lst)</span>
+<span id="cb1-7">if selected_item == 'A';</span>
+<span id="cb1-8">    return 'task_a'</span>
+<span id="cb1-9">elif selected_item in <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">'data_interval_start'</span><span class="co" style="color: #5E5E5E;
+font-style: inherit;">'B','C</span><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">]</span>))</span>
-<span id="cb5-7">    print('data_interval_end:' + str(kwargs<span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">'data_interval_end'</span><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">]</span>))</span>
-<span id="cb5-8">    print('task_instance': + str(kwargs<span class="co" style="color: #5E5E5E;
+font-style: inherit;">]</span> </span>
+<span id="cb1-10">    return <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">'ti'</span><span class="co" style="color: #5E5E5E;
+font-style: inherit;">'task_b','task_c'</span><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">]</span>))</span>
-<span id="cb5-9">python_function2()</span></code></pre></div></li>
-</ul>
-</section>
-</section>
-<section id="bash-operator-with-macro" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Bash Operator with Macro</h1>
-<section id="macro-변수의-이해" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="macro-변수의-이해"><span class="header-section-number">5.1</span> Macro 변수의 이해</h2>
-<ul>
-<li><p>Macro 변수의 필요성</p>
-<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1">sql = f'''</span>
-<span id="cb6-2">SELECT NAME, ADDRESS</span>
-<span id="cb6-3">FROM TBL_REG</span>
-<span id="cb6-4">WHERE REG_DATE BETWEEN ?? AND ??</span>
-<span id="cb6-5">'''</span></code></pre></div>
-<p>DAG 스케줄은 매일 말일에 도는 스케줄인데 BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고 싶은데 어떻게 하지? 예를 들어 배치일이 1월 31일이면 12월 31일부터 1월 30일 까지 배치일이 2월 28일이면 1월 31일부터 2월 27일까지 BETWEEN 이 설정되었으면 좋겠어. DAG 스케줄이 월 단위이니까 Template 변수에서 data_interval_start 값은 한달 전 말일 이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들지? data_interval_end 에서 하루 뺀 값이 나와야 하는데…</p></li>
-<li><p>Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음</p>
-<table class="table">
-<thead>
-<tr class="header">
-<th style="text-align: center;">Variable</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">macros.datetime</td>
-<td>The standard lib’s datetime.datetime</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">macros.timedelta</td>
-<td>The standard lib’s datetime.timedelta</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">macros.dateutil</td>
-<td>A reference to the dateutil package</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">macros.time</td>
-<td>The standard lib’s time</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">macros.uuid</td>
-<td>The standard lib’s uuid</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">macros.random</td>
-<td>The standard lib’s random</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>macros.datetime &amp; macros.dateutil: 날짜 연산에 유용한 파이썬 라이브러리</li>
-</ul></li>
-<li><p>Macro를 잘 쓰려면 파이썬 datetime 및 dateutil 라이브러리에 익숙해져야 함.</p></li>
-</ul>
-</section>
-<section id="파이썬-datetime-dateutil-라이브러리-이해" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="파이썬-datetime-dateutil-라이브러리-이해"><span class="header-section-number">5.2</span> 파이썬 datetime + dateutil 라이브러리 이해</h2>
-<div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1">from datetime import datetime</span>
-<span id="cb7-2">from dateutil import relativedelta</span>
-<span id="cb7-3"></span>
-<span id="cb7-4">now = datetime(year=2003, month=3, day=30)</span>
-<span id="cb7-5">print('current time:'+str(now))</span>
-<span id="cb7-6">print('-------------month operation-------------')</span>
-<span id="cb7-7">print(now+relativedelta.relativedelta(month=1)) # 1월로 변경</span>
-<span id="cb7-8">print(now.replace(month=1)) # 1월로 변경</span>
-<span id="cb7-9">print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기</span>
-<span id="cb7-10">print('-------------day operation-------------')</span>
-<span id="cb7-11">print(now+relativedelta.relativedelta(day=1)) #1일로 변경</span>
-<span id="cb7-12">print(now.replace(day=1)) #1일로 변경</span>
-<span id="cb7-13">print(now+relativedelta.relativedelta(days=-1)) #1일 빼기</span>
-<span id="cb7-14">print('-------------multiple operations-------------')</span>
-<span id="cb7-15">print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기</span></code></pre></div>
-</section>
-<section id="bash-오퍼레이터에서-macro-변수-활용하기" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="bash-오퍼레이터에서-macro-변수-활용하기"><span class="header-section-number">5.3</span> Bash 오퍼레이터에서 Macro 변수 활용하기</h2>
-<ul>
-<li><p>예시1. 매월 말일 수행되는 Dag에서 변수 START_DATE: 전월 말일, 변수 END_DATE: 어제로 env 셋팅하기</p></li>
-<li><p>예시2. 매월 둘째주 토요일에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기</p></li>
-<li><p>변수는 YYYY-MM-DD 형식으로 나오도록 할 것</p>
-<div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1">t1 = BashOperator(</span>
-<span id="cb8-2">    task_id='t1',</span>
-<span id="cb8-3">    env={'START_DATE':''},</span>
-<span id="cb8-4">)</span></code></pre></div></li>
-</ul>
-<p>이 부분에 template + macro 활용</p>
-</section>
-</section>
-<section id="python-오퍼레이터-with-macro" class="level1" data-number="6">
-<h1 data-number="6"><span class="header-section-number">6</span> Python 오퍼레이터 with macro</h1>
-<ul>
-<li><p>어떤 파라미터가 Template 변수를 지원할까?</p></li>
-<li><p>패러미터</p>
-<ul>
-<li>python_callable (Callable | None)</li>
-<li>op_kwargs</li>
-<li>op_args</li>
-<li>templates_dict</li>
-<li>templates_exts</li>
-<li>show_return_value_in_logs</li>
-</ul></li>
-<li><p>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/python/index.html#airflow.operators.python.PythonOperator</p>
-<div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1">@task(task_id='task_using_macros',</span>
-<span id="cb9-2">    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")</span>
-<span id="cb9-3"><span class="ss" style="color: #20794D;
-background-color: null;
-font-style: inherit;">+ </span>macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',</span>
-<span id="cb9-4">'end_date': '{{</span>
-<span id="cb9-5">(data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
-<span id="cb9-6">macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
-<span id="cb9-7">    }</span>
-<span id="cb9-8">)</span>
-<span id="cb9-9"></span>
-<span id="cb9-10">def get_datetime_macro(**kwargs):</span>
-<span id="cb9-11">    templates_dict = kwargs.get('templates_dict') or {}</span>
-<span id="cb9-12">    if templates_dict:</span>
-<span id="cb9-13">    start_date = templates_dict.get('start_date') or 'start_date없음'</span>
-<span id="cb9-14">    end_date = templates_dict.get('end_date') or 'end_date없음'</span>
-<span id="cb9-15">    print(start_date)</span>
-<span id="cb9-16">    print(end_date)</span></code></pre></div></li>
-<li><p>그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 DAG안에서 직접 할 수 있다면?</p>
-<ul>
-<li>macro 사용</li>
-</ul>
-<div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1">@task(task_id='task_using_macros',</span>
-<span id="cb10-2">    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',</span>
-<span id="cb10-3">    'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
-<span id="cb10-4">    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
-<span id="cb10-5">    }</span>
-<span id="cb10-6">)</span>
-<span id="cb10-7"></span>
-<span id="cb10-8">def get_datetime_macro(**kwargs):</span>
-<span id="cb10-9">    templates_dict = kwargs.get('templates_dict') or {}</span>
-<span id="cb10-10">    if templates_dict:</span>
-<span id="cb10-11">        start_date = templates_dict.get('start_date') or 'start_date없음'</span>
-<span id="cb10-12">        end_date = templates_dict.get('end_date') or 'end_date없음'</span>
-<span id="cb10-13">        print(start_date)</span>
-<span id="cb10-14">        print(end_date)</span>
-<span id="cb10-15"></span>
-<span id="cb10-16">@task(task_id='task_direct_calc')</span>
-<span id="cb10-17">def get_datetime_calc(**kwargs):</span>
-<span id="cb10-18">    from dateutil.relativedelta import relativedelta</span>
-<span id="cb10-19">    data_interval_end = kwargs<span class="co" style="color: #5E5E5E;
+font-style: inherit;">]</span></span>
+<span id="cb1-11"></span>
+<span id="cb1-12">python_branch_task = BranchPythonOperator(</span>
+<span id="cb1-13">    task_id ='python_branch_task',</span>
+<span id="cb1-14">    python_callable=select_random</span>
+<span id="cb1-15">)</span>
+<span id="cb1-16"></span>
+<span id="cb1-17">python_branch_task &gt;&gt; <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
 background-color: null;
-font-style: inherit;">'data_interval_end'</span><span class="co" style="color: #5E5E5E;
+font-style: inherit;">task_a , task_b , task_c</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span></code></pre></div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<svg width="672" height="480" viewbox="0.00 0.00 189.55 209.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 205)">
+<title>
+G
+</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-205 185.55,-205 185.55,4 -4,4"></polygon> <g id="clust1" class="cluster">
+<title>
+cluster0
+</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-193 173.55,-193 173.55,-8 8,-8"></polygon> <text text-anchor="middle" x="90.78" y="-176.4" font-family="Times,serif" font-size="14.00">Task Flow</text> </g> <!-- task1 --> <g id="node1" class="node">
+<title>
+task1
+</title>
+<polygon fill="none" stroke="black" points="70,-106 16,-106 16,-70 70,-70 70,-106"></polygon> <text text-anchor="middle" x="43" y="-83.8" font-family="Times,serif" font-size="14.00">task1</text> </g> <!-- task2_1 --> <g id="node2" class="node">
+<title>
+task2_1
+</title>
+<polygon fill="none" stroke="black" points="165.33,-52 106.22,-52 106.22,-16 165.33,-16 165.33,-52"></polygon> <text text-anchor="middle" x="135.78" y="-29.8" font-family="Times,serif" font-size="14.00">task2_1</text> </g> <!-- task1&#45;&gt;task2_1 --> <g id="edge1" class="edge">
+<title>
+task1-&gt;task2_1
+</title>
+<path fill="none" stroke="black" d="M70.26,-72.38C78.66,-67.38 88.14,-61.74 97.18,-56.36"></path> <polygon fill="black" stroke="black" points="99.23,-59.22 106.04,-51.1 95.65,-53.2 99.23,-59.22"></polygon> </g> <!-- task2_2 --> <g id="node3" class="node">
+<title>
+task2_2
+</title>
+<polygon fill="none" stroke="black" points="165.33,-106 106.22,-106 106.22,-70 165.33,-70 165.33,-106"></polygon> <text text-anchor="middle" x="135.78" y="-83.8" font-family="Times,serif" font-size="14.00">task2_2</text> </g> <!-- task1&#45;&gt;task2_2 --> <g id="edge2" class="edge">
+<title>
+task1-&gt;task2_2
+</title>
+<path fill="none" stroke="black" d="M70.26,-88C78.22,-88 87.15,-88 95.77,-88"></path> <polygon fill="black" stroke="black" points="96.04,-91.5 106.04,-88 96.04,-84.5 96.04,-91.5"></polygon> </g> <!-- task2_3 --> <g id="node4" class="node">
+<title>
+task2_3
+</title>
+<polygon fill="none" stroke="black" points="165.33,-160 106.22,-160 106.22,-124 165.33,-124 165.33,-160"></polygon> <text text-anchor="middle" x="135.78" y="-137.8" font-family="Times,serif" font-size="14.00">task2_3</text> </g> <!-- task1&#45;&gt;task2_3 --> <g id="edge3" class="edge">
+<title>
+task1-&gt;task2_3
+</title>
+<path fill="none" stroke="black" d="M70.26,-103.62C78.66,-108.62 88.14,-114.26 97.18,-119.64"></path> <polygon fill="black" stroke="black" points="95.65,-122.8 106.04,-124.9 99.23,-116.78 95.65,-122.8"></polygon> </g> </g>
+</svg>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="task-분기처리하기-with-task.branch" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Task 분기처리하기 with task.branch</h1>
+<section id="task.branch-이해" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="task.branch-이해"><span class="header-section-number">2.1</span> Task.branch 이해</h2>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1">from airflow.operators.python import</span>
+<span id="cb2-2">BranchPythonOperator</span>
+<span id="cb2-3">def select_random(): </span>
+<span id="cb2-4">    import random</span>
+<span id="cb2-5">    item_lst = <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">'A','B','C'</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span id="cb2-6">    selected_item = random.choice(item_lst)</span>
+<span id="cb2-7">    if selected_item == 'A':</span>
+<span id="cb2-8">        return 'task_a'</span>
+<span id="cb2-9">    elif selected_item in <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">'B','C'</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span id="cb2-10">        return <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">'task_b','task_c'</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span id="cb2-11"></span>
+<span id="cb2-12">python_branch_task = BranchPythonOperator(</span>
+<span id="cb2-13">    task_id= 'branching',</span>
+<span id="cb2-14">    python_callable = select_random</span>
+<span id="cb2-15">)</span>
+<span id="cb2-16">python_branch_task &gt;&gt; <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">task_a , task_b , task_c</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span></code></pre></div>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1">from airflow.operators.python import</span>
+<span id="cb3-2"></span>
+<span id="cb3-3">@task.branch(task_id='python_branch_task')</span>
+<span id="cb3-4">def select_random(): </span>
+<span id="cb3-5">    import random</span>
+<span id="cb3-6">    item_lst = <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">'A','B','C'</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span id="cb3-7">    selected_item = random.choice(item_lst)</span>
+<span id="cb3-8">    if selected_item == 'A':</span>
+<span id="cb3-9">        return 'task_a'</span>
+<span id="cb3-10">    elif selected_item in <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">'B','C'</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span id="cb3-11">        return <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">'task_b','task_c'</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span id="cb3-12"></span>
+<span id="cb3-13">select_random() &gt;&gt; <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">task_a , task_b , task_c</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span></code></pre></div>
+</section>
+</section>
+<section id="task-분기처리하기-with-basebranchoperator" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Task 분기처리하기 With BaseBranchOperator</h1>
+<section id="basebranchoperator-이해-요약" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="basebranchoperator-이해-요약"><span class="header-section-number">3.1</span> BaseBranchOperator 이해 요약</h2>
+<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1">from airflow.operators.branch import BaseBranchOperator</span>
+<span id="cb4-2">with DAG(...</span>
+<span id="cb4-3">) as dag:</span>
+<span id="cb4-4">    class CustomBranchOperator(BaseBranchOperator):</span>
+<span id="cb4-5">        def choose_branch(self,context):</span>
+<span id="cb4-6">            import random</span>
+<span id="cb4-7">            </span>
+<span id="cb4-8"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            item_lst = ['A', 'B','C]</span></span>
+<span id="cb4-9"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            selected_item = random.choice(item_lst)</span></span>
+<span id="cb4-10"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            if selected_item == 'A':</span></span>
+<span id="cb4-11"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">                return 'task_a'</span></span>
+<span id="cb4-12"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            elif selected_item in ['B','C']:</span></span>
+<span id="cb4-13"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">                return ['task_b','task_c']</span></span>
+<span id="cb4-14"></span>
+<span id="cb4-15">custom_branch_operator = CustomBranchOperator(task_id ='python_branch_task')</span>
+<span id="cb4-16">custom_branch_operator &gt;&gt; <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">task_a , task_b , task_c</span><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">]</span></span></code></pre></div>
 <ul>
-<li>직접 연산</li>
+<li>클래스 상속 BaseBranchOperator 상속시 choose_branch 함수를 구현해 줘야 함</li>
 </ul>
-<div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1">prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)</span>
-<span id="cb11-2">prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)</span>
-<span id="cb11-3">print(prev_month_day_first.strftime('%Y-%m-%d'))</span>
-<span id="cb11-4">print(prev_month_day_last.strftime('%Y-%m-%d'))</span></code></pre></div></li>
+</section>
+<section id="summary" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="summary"><span class="header-section-number">3.2</span> Summary</h2>
+<ul>
+<li>Task 분기처리 방법
+<ol type="1">
+<li>BranchPythonOperator</li>
+<li>task.branch 데커레이터 이용</li>
+<li>BaseBranchOperator 상속 , choose_branch 를 재정의해야 함</li>
+</ol></li>
+<li>공통적으로 리턴 값으로 후행 Task 의 id 를 str 또는 list 로 리턴해야 함</li>
+<li>3가지 분기처리 방법은 방법만 다를 뿐 결과는 동일함</li>
+<li>3 보다는 1 또는 2를 주로 사용함</li>
 </ul>
+</section>
+</section>
+<section id="trigger-rule" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Trigger Rule</h1>
+<section id="trigger-rule-종류" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="trigger-rule-종류"><span class="header-section-number">4.1</span> Trigger Rule 종류</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<svg width="672" height="480" viewbox="0.00 0.00 184.00 209.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 205)">
+<title>
+G
+</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-205 180,-205 180,4 -4,4"></polygon> <g id="clust1" class="cluster">
+<title>
+cluster0
+</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-193 168,-193 168,-8 8,-8"></polygon> <text text-anchor="middle" x="88" y="-176.4" font-family="Times,serif" font-size="14.00">Task Flow</text> </g> <!-- task1 --> <g id="node1" class="node">
+<title>
+task1
+</title>
+<polygon fill="none" stroke="black" points="70,-160 16,-160 16,-124 70,-124 70,-160"></polygon> <text text-anchor="middle" x="43" y="-137.8" font-family="Times,serif" font-size="14.00">task1</text> </g> <!-- task4 --> <g id="node4" class="node">
+<title>
+task4
+</title>
+<polygon fill="none" stroke="black" points="160,-106 106,-106 106,-70 160,-70 160,-106"></polygon> <text text-anchor="middle" x="133" y="-83.8" font-family="Times,serif" font-size="14.00">task4</text> </g> <!-- task1&#45;&gt;task4 --> <g id="edge1" class="edge">
+<title>
+task1-&gt;task4
+</title>
+<path fill="none" stroke="black" d="M70.4,-125.8C78.83,-120.63 88.29,-114.82 97.22,-109.34"></path> <polygon fill="black" stroke="black" points="99.23,-112.22 105.92,-104 95.57,-106.25 99.23,-112.22"></polygon> </g> <!-- task2 --> <g id="node2" class="node">
+<title>
+task2
+</title>
+<polygon fill="none" stroke="black" points="70,-106 16,-106 16,-70 70,-70 70,-106"></polygon> <text text-anchor="middle" x="43" y="-83.8" font-family="Times,serif" font-size="14.00">task2</text> </g> <!-- task2&#45;&gt;task4 --> <g id="edge2" class="edge">
+<title>
+task2-&gt;task4
+</title>
+<path fill="none" stroke="black" d="M70.4,-88C78.39,-88 87.31,-88 95.82,-88"></path> <polygon fill="black" stroke="black" points="95.92,-91.5 105.92,-88 95.92,-84.5 95.92,-91.5"></polygon> </g> <!-- task3 --> <g id="node3" class="node">
+<title>
+task3
+</title>
+<polygon fill="none" stroke="black" points="70,-52 16,-52 16,-16 70,-16 70,-52"></polygon> <text text-anchor="middle" x="43" y="-29.8" font-family="Times,serif" font-size="14.00">task3</text> </g> <!-- task3&#45;&gt;task4 --> <g id="edge3" class="edge">
+<title>
+task3-&gt;task4
+</title>
+<path fill="none" stroke="black" d="M70.4,-50.2C78.83,-55.37 88.29,-61.18 97.22,-66.66"></path> <polygon fill="black" stroke="black" points="95.57,-69.75 105.92,-72 99.23,-63.78 95.57,-69.75"></polygon> </g> </g>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<ul>
+<li>상위 Task 들의 상태에 따라 수행여부 결정하고 싶은데 (기본 값 : 상위 Task 모두 성공시에만 수행)</li>
+</ul>
+<table class="table">
+<colgroup>
+<col style="width: 73%">
+<col style="width: 26%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Left</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">all_success (default)</td>
+<td style="text-align: left;">상위 task 가 모두 성공하면 실행</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">all_failed</td>
+<td style="text-align: left;">상위 task 가 모두 실패하면 실행</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">all_done</td>
+<td style="text-align: left;">상위 task 가 모두 수행되면 실행 (실패도 수행된것에 포함)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">all_skipped</td>
+<td style="text-align: left;">상위 task 가 모두 Skipped 상태면 실행</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">one_failed</td>
+<td style="text-align: left;">상위 task 중 하나 이상 실패하면 실행 (모든 상위 Task 완료를 기다리지 않음)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">one_success</td>
+<td style="text-align: left;">상위 task 중 하나 이상 성공하면 실행 (모든 상위 Task 완료를 기다리지 않음)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">one_done</td>
+<td style="text-align: left;">상위 task 중 하나 이상 성공 또는 실패 하면 실행</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">none_failed</td>
+<td style="text-align: left;">상위 task 중 실패가 없는 경우 실행 (성공 또는 Skipped 상태)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">none_failed_min_one_success</td>
+<td style="text-align: left;">상위 task 중 실패가 없고 성공한 Task가 적어도 1개 이상이면 실행</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">none_skipped</td>
+<td style="text-align: left;">Skip된 상위 Task가 없으면 실행 (상위 Task가 성공, 실패하여도 무방)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">always</td>
+<td style="text-align: left;">언제나 실행</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="trigger-rule-실습-all_done" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="trigger-rule-실습-all_done"><span class="header-section-number">4.2</span> 2. Trigger Rule 실습) all_done</h2>
+<div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"></span>
+<span id="cb5-2">bash_upstream_1 = BashOperator(</span>
+<span id="cb5-3">    task_id = 'bash_upstream_1',</span>
+<span id="cb5-4">    bash_command = 'echo upstream1'</span>
+<span id="cb5-5">)</span>
+<span id="cb5-6"></span>
+<span id="cb5-7">@task(task_id =='python_upstream_1')</span>
+<span id="cb5-8">def python_upstream_1():</span>
+<span id="cb5-9">    AirflowException('downstream_1 Exception!')</span>
+<span id="cb5-10"></span>
+<span id="cb5-11">@task(task_id =='python_upstream_2')</span>
+<span id="cb5-12">def python_upstream_2():</span>
+<span id="cb5-13">    print('정상 처리')</span>
+<span id="cb5-14"></span>
+<span id="cb5-15">@task(task_id ='python_downstream_1', trigger_rule =='all_done')</span>
+<span id="cb5-16">def python_downstream_1():</span>
+<span id="cb5-17">    print('정상 처리')</span>
+<span id="cb5-18"></span>
+<span id="cb5-19"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">bash_upstream_1 , python_upstream_1(), python_upstream_2()</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span> &gt;&gt; python_downstream_1()</span></code></pre></div>
+</section>
+<section id="trigger-rule-실습-none_skipped" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="trigger-rule-실습-none_skipped"><span class="header-section-number">4.3</span> 2. Trigger Rule 실습) none_skipped</h2>
+<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1">@task.branch(task_id ='branching')</span>
+<span id="cb6-2">def random_branch():</span>
+<span id="cb6-3">    import random</span>
+<span id="cb6-4">    item_lst = <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">' A', ' B', 'C'</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span></span>
+<span id="cb6-5">    selected_item = random.choice(item_lst)</span>
+<span id="cb6-6">    if selected_item == 'A':</span>
+<span id="cb6-7">        return 'task_a'</span>
+<span id="cb6-8">    elif selected_item == 'B':</span>
+<span id="cb6-9">        return 'task_b'</span>
+<span id="cb6-10">    elif selected_item == 'C':</span>
+<span id="cb6-11">        return 'task_c'</span>
+<span id="cb6-12"></span>
+<span id="cb6-13">task_a = BashOperator(</span>
+<span id="cb6-14">    task_id ='task_a',</span>
+<span id="cb6-15">    bash_command = 'echo upstream1'</span>
+<span id="cb6-16">    )</span>
+<span id="cb6-17"></span>
+<span id="cb6-18">@task(task_id ='task_b')</span>
+<span id="cb6-19">def task_b():</span>
+<span id="cb6-20">    print('정상 처리')</span>
+<span id="cb6-21"></span>
+<span id="cb6-22">@task(task_id =='task_c')</span>
+<span id="cb6-23">def task_c():</span>
+<span id="cb6-24">    print('정상 처리')</span>
+<span id="cb6-25"></span>
+<span id="cb6-26">@task(task_id =='task_d', trigger_rule ='none_skipped')</span>
+<span id="cb6-27">def task_d():</span>
+<span id="cb6-28">    print('정상 처리')</span>
+<span id="cb6-29"></span>
+<span id="cb6-30">random_branch() &gt;&gt; <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">task_a , task_b(), task_c()</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span> &gt;&gt; task_d()</span></code></pre></div>
+</section>
+</section>
+<section id="task-group" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Task Group</h1>
+<section id="task-group-개념" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="task-group-개념"><span class="header-section-number">5.1</span> Task Group 개념</h2>
+<ul>
+<li>Task들의 모음</li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/dags.html#taskgroups">UI Graph탭에서 Task 들을 Group 화하여 보여줌</a></li>
+<li>Task Group 안에 Task Group 을 중첩하여 구성 가능</li>
+</ul>
+</section>
+<section id="task-group-실습-task_group-데커레이터-이용" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="task-group-실습-task_group-데커레이터-이용"><span class="header-section-number">5.2</span> Task Group 실습 (task_group 데커레이터 이용)</h2>
+<div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1">from airflow.decorators import task_group</span>
+<span id="cb7-2">with DAG(...</span>
+<span id="cb7-3">) as dag:</span>
+<span id="cb7-4">    @task_group(group_id ='first_group')</span>
+<span id="cb7-5">    def group_1():</span>
+<span id="cb7-6">    ''' task_group 데커레이터를 이용한 첫 번째 그룹입니다. '''</span>
+<span id="cb7-7"></span>
+<span id="cb7-8"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    @task(task_id ='inner_function1')</span></span>
+<span id="cb7-9"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    def inner_func1(**kwargs):</span></span>
+<span id="cb7-10"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        print('첫 번째 TaskGroup 내 첫 번째 task 입니다')</span></span>
+<span id="cb7-11"></span>
+<span id="cb7-12"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    inner_function2 = PythonOperator(</span></span>
+<span id="cb7-13"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        task_id ='inner_function2',</span></span>
+<span id="cb7-14"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        python_callable = inner_func,</span></span>
+<span id="cb7-15"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        op_kwargs={'msg':'첫 번째 TaskGroup 내 두 번쨰 task 입니다.'}</span></span>
+<span id="cb7-16"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    )</span></span>
+<span id="cb7-17"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    inner_func1() &gt;&gt; inner_function2</span></span></code></pre></div>
+</section>
+<section id="task-group-실습-클래스-이용" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="task-group-실습-클래스-이용"><span class="header-section-number">5.3</span> Task Group 실습 (클래스 이용)</h2>
+<div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1">from airflow.utils.task_group import TaskGroup</span>
+<span id="cb8-2">    with TaskGroup(group_id ='second_group', tooltip='두 번째 그룹입니다.') as group_2:</span>
+<span id="cb8-3">        @task(task_id ='inner_function1')</span>
+<span id="cb8-4">        def inner_func1 (**kwargs):</span>
+<span id="cb8-5">            print('두 번째 TaskGroup 내 첫 번째 task 입니다.')</span>
+<span id="cb8-6"></span>
+<span id="cb8-7"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        inner_function2 = PythonOperator(</span></span>
+<span id="cb8-8"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            task_id = 'inner_function2',</span></span>
+<span id="cb8-9"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            python_collable = inner_func,</span></span>
+<span id="cb8-10"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            op_kwargs = {'msg': '두 번째 TaskGroup 내 두 번째 task 입니다'}</span></span>
+<span id="cb8-11"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        )</span></span>
+<span id="cb8-12">inner_func1() &gt;&gt; inner_function2</span></code></pre></div>
+</section>
+<section id="요약" class="level2" data-number="5.4">
+<h2 data-number="5.4" class="anchored" data-anchor-id="요약"><span class="header-section-number">5.4</span> 요약</h2>
+<ul>
+<li>Task Group 작성 방법은 2 가지가 존재함 (데커레이터 &amp; 클래스)</li>
+<li>Task Group 안에 Task Group 중첩하여 정의 가능</li>
+<li>Task Group 간에도 Flow 정의 가능</li>
+<li>Group이 다르면 task_id 가 같아도 무방</li>
+<li>Tooltip 파라미터를 이용해 UI 화면에서 Task group 에 대한 설명 제공 가능 (데커레이터 활용시 docstring 으로도 가능)</li>
+</ul>
+</section>
+</section>
+<section id="edge-label" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Edge label</h1>
+<section id="edge-label-개념" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="edge-label-개념"><span class="header-section-number">6.1</span> Edge Label 개념</h2>
+<ul>
+<li>Task 연결에 대한 설명 (Comment)</li>
+</ul>
+</section>
+<section id="edge-label-만들기" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="edge-label-만들기"><span class="header-section-number">6.2</span> Edge Label 만들기</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<svg width="672" height="480" viewbox="0.00 0.00 819.47 140.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 136)">
+<title>
+G
+</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-136 815.47,-136 815.47,4 -4,4"></polygon> <g id="clust1" class="cluster">
+<title>
+cluster0
+</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-124 803.47,-124 803.47,-8 8,-8"></polygon> <text text-anchor="middle" x="405.73" y="-107.4" font-family="Times,serif" font-size="14.00">Task Flow</text> </g> <!-- ingest --> <g id="node1" class="node">
+<title>
+ingest
+</title>
+<polygon fill="none" stroke="black" points="70,-71 16,-71 16,-35 70,-35 70,-71"></polygon> <text text-anchor="middle" x="43" y="-48.8" font-family="Times,serif" font-size="14.00">ingest</text> </g> <!-- analyze --> <g id="node2" class="node">
+<title>
+analyze
+</title>
+<polygon fill="none" stroke="black" points="165.62,-71 107.13,-71 107.13,-35 165.62,-35 165.62,-71"></polygon> <text text-anchor="middle" x="136.37" y="-48.8" font-family="Times,serif" font-size="14.00">analyze</text> </g> <!-- ingest&#45;&gt;analyze --> <g id="edge1" class="edge">
+<title>
+ingest-&gt;analyze
+</title>
+<path fill="none" stroke="black" d="M70.43,-53C78.69,-53 87.97,-53 96.88,-53"></path> <polygon fill="black" stroke="black" points="97.09,-56.5 107.09,-53 97.09,-49.5 97.09,-56.5"></polygon> </g> <!-- check_integrity --> <g id="node3" class="node">
+<title>
+check_integrity
+</title>
+<polygon fill="none" stroke="black" points="305.86,-71 202.71,-71 202.71,-35 305.86,-35 305.86,-71"></polygon> <text text-anchor="middle" x="254.28" y="-48.8" font-family="Times,serif" font-size="14.00">check_integrity</text> </g> <!-- analyze&#45;&gt;check_integrity --> <g id="edge2" class="edge">
+<title>
+analyze-&gt;check_integrity
+</title>
+<path fill="none" stroke="black" d="M165.73,-53C173.9,-53 183.14,-53 192.48,-53"></path> <polygon fill="black" stroke="black" points="192.61,-56.5 202.61,-53 192.61,-49.5 192.61,-56.5"></polygon> </g> <!-- describe_integrity --> <g id="node4" class="node">
+<title>
+describe_integrity
+</title>
+<polygon fill="none" stroke="black" points="533.21,-53 416.06,-53 416.06,-17 533.21,-17 533.21,-53"></polygon> <text text-anchor="middle" x="474.63" y="-30.8" font-family="Times,serif" font-size="14.00">describe_integrity</text> </g> <!-- check_integrity&#45;&gt;describe_integrity --> <g id="edge3" class="edge">
+<title>
+check_integrity-&gt;describe_integrity
+</title>
+<path fill="none" stroke="black" d="M305.9,-38.33C311.9,-37.05 317.97,-35.95 323.82,-35.2 350.47,-31.78 380,-31.09 405.75,-31.48"></path> <polygon fill="black" stroke="black" points="405.72,-34.98 415.79,-31.68 405.86,-27.98 405.72,-34.98"></polygon> <text text-anchor="middle" x="360.96" y="-39.2" font-family="Times,serif" font-size="14.00">Errors Found</text> </g> <!-- save --> <g id="node7" class="node">
+<title>
+save
+</title>
+<polygon fill="none" stroke="black" points="605.17,-90 551.17,-90 551.17,-54 605.17,-54 605.17,-90"></polygon> <text text-anchor="middle" x="578.17" y="-67.8" font-family="Times,serif" font-size="14.00">save</text> </g> <!-- check_integrity&#45;&gt;save --> <g id="edge6" class="edge">
+<title>
+check_integrity-&gt;save
+</title>
+<path fill="none" stroke="black" d="M305.93,-55.99C371.27,-59.85 483.33,-66.46 540.82,-69.85"></path> <polygon fill="black" stroke="black" points="540.7,-73.35 550.89,-70.45 541.12,-66.37 540.7,-73.35"></polygon> <text text-anchor="middle" x="360.96" y="-65.2" font-family="Times,serif" font-size="14.00">No Errors</text> </g> <!-- email_error --> <g id="node5" class="node">
+<title>
+email_error
+</title>
+<polygon fill="none" stroke="black" points="704.62,-53 623.02,-53 623.02,-17 704.62,-17 704.62,-53"></polygon> <text text-anchor="middle" x="663.82" y="-30.8" font-family="Times,serif" font-size="14.00">email_error</text> </g> <!-- describe_integrity&#45;&gt;email_error --> <g id="edge4" class="edge">
+<title>
+describe_integrity-&gt;email_error
+</title>
+<path fill="none" stroke="black" d="M533.32,-35C558.79,-35 588.45,-35 612.95,-35"></path> <polygon fill="black" stroke="black" points="613.1,-38.5 623.1,-35 613.1,-31.5 613.1,-38.5"></polygon> </g> <!-- report --> <g id="node6" class="node">
+<title>
+report
+</title>
+<polygon fill="none" stroke="black" points="795.47,-72 741.47,-72 741.47,-36 795.47,-36 795.47,-72"></polygon> <text text-anchor="middle" x="768.47" y="-49.8" font-family="Times,serif" font-size="14.00">report</text> </g> <!-- email_error&#45;&gt;report --> <g id="edge5" class="edge">
+<title>
+email_error-&gt;report
+</title>
+<path fill="none" stroke="black" d="M704.5,-42.35C713.34,-43.98 722.67,-45.71 731.36,-47.32"></path> <polygon fill="black" stroke="black" points="730.72,-50.76 741.19,-49.14 732,-43.88 730.72,-50.76"></polygon> </g> <!-- save&#45;&gt;report --> <g id="edge7" class="edge">
+<title>
+save-&gt;report
+</title>
+<path fill="none" stroke="black" d="M605.6,-70.25C630.98,-68.48 670.39,-65.52 704.47,-62 713.22,-61.1 722.63,-59.98 731.45,-58.87"></path> <polygon fill="black" stroke="black" points="731.97,-62.33 741.44,-57.58 731.08,-55.39 731.97,-62.33"></polygon> </g> </g>
+</svg>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="edge-label-실습-1" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="edge-label-실습-1"><span class="header-section-number">6.3</span> Edge Label 실습 1</h2>
+<div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"></span>
+<span id="cb9-2">from airflow.utils.edgemodifier import Label</span>
+<span id="cb9-3">empty_1 = EmptyOperator(</span>
+<span id="cb9-4">    task_id ='empty_1'</span>
+<span id="cb9-5">)</span>
+<span id="cb9-6"></span>
+<span id="cb9-7">empty_2 = EmptyOperator(</span>
+<span id="cb9-8">    task_id='empty_2'</span>
+<span id="cb9-9">)</span>
+<span id="cb9-10">empty_1 &gt;&gt; Label ('1 과 2 사이') &gt;&gt; empty_2</span></code></pre></div>
+</section>
+<section id="edge-label-실습-2" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="edge-label-실습-2"><span class="header-section-number">6.4</span> Edge Label 실습 2</h2>
+<div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"></span>
+<span id="cb10-2">from airflow.utils.edgemodifier import Label</span>
+<span id="cb10-3">empty_2 = EmptyOperator(</span>
+<span id="cb10-4">    task_id = 'empty_2'</span>
+<span id="cb10-5">)</span>
+<span id="cb10-6"></span>
+<span id="cb10-7">empty_3 = EmptyOperator(</span>
+<span id="cb10-8">    task_id ='empty_3'</span>
+<span id="cb10-9">)</span>
+<span id="cb10-10"></span>
+<span id="cb10-11">empty_4 = EmptyOperator(</span>
+<span id="cb10-12">    task_id ='empty_4'</span>
+<span id="cb10-13">)</span>
+<span id="cb10-14"></span>
+<span id="cb10-15">empty_5 = EmptyOperator(</span>
+<span id="cb10-16">    task_id ='empty_5'</span>
+<span id="cb10-17">)</span>
+<span id="cb10-18"></span>
+<span id="cb10-19">empty_6 = EmptyOperator(</span>
+<span id="cb10-20">    task_id ='empty_6'</span>
+<span id="cb10-21">)</span>
+<span id="cb10-22"></span>
+<span id="cb10-23">empty_2 &gt;&gt; Label('Start Branch') &gt;&gt; <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">empty_3, empty_4, empty_5 </span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span> &gt;&gt; Label('End Branch') &gt;&gt; empty_6</span></code></pre></div>
+</section>
 </section>
 </div>
 </div>
@@ -5859,9 +6171,9 @@ font-style: inherit;">]</span></span></code></pre></div>
   <pubDate>Sun, 30 Apr 2023 15:00:00 GMT</pubDate>
 </item>
 <item>
-  <title>Template Variabler</title>
+  <title>More Operators</title>
   <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/Engineering/airflow/08.operators_advanced.html</link>
+  <link>kmink3225.netlify.app/docs/blog/posts/Engineering/airflow/08.more_operators.html</link>
   <description><![CDATA[ 
 
 
@@ -5881,352 +6193,541 @@ English
 
 <div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
 <div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
-<section id="jinja-template" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Jinja Template</h1>
-<ul>
-<li><p>문서(파일)에서 특정 양식으로 작성된 값을 런타임시 실제 값으로 치환해주는 처리 엔진</p></li>
-<li><p>템플릿 엔진은 여러 솔루션이 존재하며 그 중 Jinja 템플릿은 파이썬 언어에서 사용하는 엔진</p>
-<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1">from jinja2 import Template</span>
-<span id="cb1-2"></span>
-<span id="cb1-3">template = Template('my name is {{name}}')</span>
-<span id="cb1-4">new_template = template.render('name=hjkim')</span>
-<span id="cb1-5">print(new_template)</span></code></pre></div></li>
-<li><p>Jinja 템플릿, 어디서 쓰이나?</p>
-<ul>
-<li>파이썬 기반 웹 프레임워크인 Flask, Django에서 주로 사용 (주로 HTML 템플릿 저장 후 화면에 보여질 때 실제 값으로 변환해서 출력)</li>
-<li>SQL작성시에도 활용 가능</li>
-</ul></li>
-</ul>
-<section id="airflow에서-사용법" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="airflow에서-사용법"><span class="header-section-number">1.1</span> Airflow에서 사용법</h2>
-<ul>
-<li>오퍼레이터 파라미터 입력시 중괄호 {} 2개를 이용하면 Airflow에서 기본적으로 제공하는 변수들을 치환된 값으로 입력할 수 있음. (ex: 수행 날짜, DAG_ID)
-<ul>
-<li>https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html</li>
-</ul></li>
-<li>모든 오퍼레이터, 모든 파라미터에 Template 변수 적용이 가능한가? No!</li>
-<li>Airflow 문서에서 어떤 파라미터에 Template 변수 적용 가능한지 확인 필요
-<ul>
-<li>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/index.html</li>
-</ul></li>
-</ul>
-</section>
-</section>
-<section id="bashoperator-with-template" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> BashOperator with Template</h1>
-<section id="bashoperator" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="bashoperator"><span class="header-section-number">2.1</span> BashOperator</h2>
-<ul>
-<li>Bash 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?</li>
-<li>파라미터
-<ul>
-<li>bash_command (str)</li>
-<li>env (dict[str, str] | None)</li>
-<li>append_env (bool)</li>
-<li>output_encoding (str)</li>
-<li>skip_exit_code (int)</li>
-<li>cwd (str | None)</li>
-</ul></li>
-<li>https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/bash/index.html</li>
-</ul>
-<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1">bash_t1 = BashOperator(</span>
-<span id="cb2-2">    task_id='bash_t1',</span>
-<span id="cb2-3">    bash_command='echo "End date is {{ data_interval_end }}"'</span>
-<span id="cb2-4">)</span>
-<span id="cb2-5">bash_t2 = BashOperator(</span>
-<span id="cb2-6">    task_id='bash_t2',</span>
-<span id="cb2-7">    env={'START_DATE': '{{ data_interval_start | ds}}','END_DATE':'{{ data_interval_end | ds }}'},</span>
-<span id="cb2-8">    bash_command='echo "Start date is $START_DATE " &amp;&amp; ''echo "End date is $END_DATE"'</span>
-<span id="cb2-9">)</span></code></pre></div>
-</section>
-</section>
-<section id="airflow-date" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> Airflow Date</h1>
-<section id="데이터-추출-예시" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="데이터-추출-예시"><span class="header-section-number">3.1</span> 데이터 추출 예시</h2>
-<ul>
-<li>Daily ETL 처리를 위한 조회 쿼리(2023/02/25 0시 실행)</li>
-<li>example: 등록 테이블</li>
-</ul>
+<section id="more-operators" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> More Operators</h1>
 <table class="table">
+<colgroup>
+<col style="width: 32%">
+<col style="width: 19%">
+<col style="width: 9%">
+<col style="width: 38%">
+</colgroup>
 <thead>
 <tr class="header">
-<th>REG_DATE</th>
-<th style="text-align: center;">NAME</th>
-<th style="text-align: center;">ADDRESS</th>
+<th style="text-align: left;">File Path</th>
+<th style="text-align: left;">Operator (Class)</th>
+<th>Importance</th>
+<th style="text-align: left;">Note</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td>2023-02-24 15:34:35</td>
-<td style="text-align: center;">홍길동</td>
-<td style="text-align: center;">Busan</td>
+<td style="text-align: left;">airflow.models.bashoperator</td>
+<td style="text-align: left;">BaseOperator</td>
+<td>***</td>
+<td style="text-align: left;">* 오퍼레이터를 직접 개발하고싶은 경우 이 클래스 상속하여 개발 (execute() 함수를 재정의하여 사용) <br> * 아래 오퍼레이터들은 모두 이 클래스를 상속하여 개발되어 있음 <br> * Airflow를 잘 쓰려면 이 오퍼레이터 상속/개발하는 것을 자유자재로 할 줄 알아야 함.</td>
 </tr>
 <tr class="even">
-<td>2023-02-24 19:14:42</td>
-<td style="text-align: center;">김태희</td>
-<td style="text-align: center;">Seoul</td>
+<td style="text-align: left;">airflow.operators.bash</td>
+<td style="text-align: left;">BashOperator</td>
+<td>***</td>
+<td style="text-align: left;">* bash 쉘 스크립트를 실행 <br> * 가장 많이 사용하는 오퍼레이터 중 하나임</td>
 </tr>
 <tr class="odd">
-<td>2023-02-24 23:52:19</td>
-<td style="text-align: center;">조인성</td>
-<td style="text-align: center;">Daejeon</td>
+<td style="text-align: left;">airflow.operators.branch</td>
+<td style="text-align: left;">BaseBranchOperator</td>
+<td>**</td>
+<td style="text-align: left;">* 직접 사용할 수는 없음. <br> * 이 클래스를 상속하여 choose_branch 함수를 구현해야 함 (그냥 사용시 에러 발생) <br> * 그러나 이 클래스 상속해서 사용하는것보다 <span class="citation" data-cites="task.branch">@task.branch</span> 데코레이터 사용을 권장</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">airflow.operators.datetime</td>
+<td style="text-align: left;">BranchDateTimeOperator</td>
+<td></td>
+<td style="text-align: left;">* 특정 Datetime 구간을 주어 Job 날짜가 구간에 속하는지 여부에 따라 분기 결정</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">airflow.operators.email</td>
+<td style="text-align: left;">EmailOperator</td>
+<td></td>
+<td style="text-align: left;">이메일 전송하는 오퍼레이터 (Airflow 파라미터에 SMTP 서버 등 사전 셋팅 필요)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">airflow.operators.generic_transfer</td>
+<td style="text-align: left;">GenericTransfer</td>
+<td></td>
+<td style="text-align: left;">데이터를 소스에서 타겟으로 전송 (Airflow 커넥션에 등록되어 있는 대상만 가능)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">airflow.operators.latest_only</td>
+<td style="text-align: left;">LatestOnlyOperator</td>
+<td></td>
+<td style="text-align: left;">이 Task 뒤에 연결되어 있는 task들을 모두 가장 최근의 Job만 실행하게끔 하는 오퍼레이터</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">airflow.operators.subdag</td>
+<td style="text-align: left;">SubDagOperator</td>
+<td></td>
+<td style="text-align: left;">* 일종의 task 그룹화, 해당 오퍼레이터 안에 다른 오퍼레이터를 둘 수 있음 (Task group과 유사)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">airflow.operators.trigger_dagrun</td>
+<td style="text-align: left;">TriggerDagRunOperator</td>
+<td>**</td>
+<td style="text-align: left;">* 다른 DAG을 수행하기 위한 오퍼레이터</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">airflow.operators.weekday</td>
+<td style="text-align: left;">BranchDayOfWeekOperator</td>
+<td></td>
+<td style="text-align: left;">* 특정 요일에 따라 분기처리할 수 있는 오퍼레이터</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">airflow.operators.python</td>
+<td style="text-align: left;">PythonOperator</td>
+<td>***</td>
+<td style="text-align: left;">* 어떤 파이썬 함수를 실행시키기 위한 오퍼레이터</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">airflow.operators.python</td>
+<td style="text-align: left;">BranchPythonOperator</td>
+<td>*</td>
+<td style="text-align: left;">* 파이썬 함수 실행 결과에 따라 task를 선택적으로 실행시킬 때 사용되는 오퍼레이터</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">airflow.operators.python</td>
+<td style="text-align: left;">ShortCircuitOperator</td>
+<td></td>
+<td style="text-align: left;">* 파이썬 함수 return 값이 False면 후행 Task를 Skip처리하고 dag을 종료시키는 오퍼레이터</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">airflow.operators.python</td>
+<td style="text-align: left;">PythonVirtualenvOperator</td>
+<td></td>
+<td style="text-align: left;">* 파이썬 가상환경 생성후 Job 수행하고 마무리되면 가상환경을 삭제해주는 오퍼레이터</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">airflow.operators.python</td>
+<td style="text-align: left;">ExternalPythonOperator</td>
+<td></td>
+<td style="text-align: left;">* 기존에 존재하는 파이썬 가상환경에서 Job 수행하게 하는 오퍼레이터</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1">SELECT NAME, ADDRESS</span>
-<span id="cb3-2">FROM TBL_REG</span>
-<span id="cb3-3">WHERE REG_DATE BETWEEN TIMESTAMP('2023-02-24 00:00:00')</span>
-<span id="cb3-4">AND TIMESTAMP('2023-02-24 23:59:59')</span></code></pre></div>
-<p>데이터 관점의 시작일: 2023-02-24 데이터 관점의 종료일: 2023-02-25</p>
+<section id="provider-operator" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="provider-operator"><span class="header-section-number">1.1</span> Provider Operator</h2>
+<ul>
+<li>airflow web service &gt;&gt; Admin &gt;&gt; Providers</li>
+</ul>
 </section>
-<section id="airflow-날짜-template-변수" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="airflow-날짜-template-변수"><span class="header-section-number">3.2</span> Airflow 날짜 Template 변수</h2>
+</section>
+<section id="triggerdagrun-operator" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> TriggerDagRun Operator</h1>
+<section id="dag간-의존관계-설정" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="dag간-의존관계-설정"><span class="header-section-number">2.1</span> DAG간 의존관계 설정</h2>
 <ul>
-<li>예시: 일 배치
+<li>DAG 의존관계 설정 방법
+<ol type="1">
+<li>TriggerDagRun Operator</li>
+</ol></li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<svg width="672" height="480" viewbox="0.00 0.00 184.00 209.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 205)">
+<title>
+G
+</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-205 180,-205 180,4 -4,4"></polygon> <g id="clust1" class="cluster">
+<title>
+cluster0
+</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-193 168,-193 168,-8 8,-8"></polygon> <text text-anchor="middle" x="88" y="-176.4" font-family="Times,serif" font-size="14.00">Task Flow</text> </g> <!-- task1 --> <g id="node1" class="node">
+<title>
+task1
+</title>
+<polygon fill="none" stroke="black" points="70,-106 16,-106 16,-70 70,-70 70,-106"></polygon> <text text-anchor="middle" x="43" y="-83.8" font-family="Times,serif" font-size="14.00">task1</text> </g> <!-- task2 --> <g id="node2" class="node">
+<title>
+task2
+</title>
+<polygon fill="none" stroke="black" points="160,-52 106,-52 106,-16 160,-16 160,-52"></polygon> <text text-anchor="middle" x="133" y="-29.8" font-family="Times,serif" font-size="14.00">task2</text> </g> <!-- task1&#45;&gt;task2 --> <g id="edge1" class="edge">
+<title>
+task1-&gt;task2
+</title>
+<path fill="none" stroke="black" d="M70.4,-71.8C78.83,-66.63 88.29,-60.82 97.22,-55.34"></path> <polygon fill="black" stroke="black" points="99.23,-58.22 105.92,-50 95.57,-52.25 99.23,-58.22"></polygon> </g> <!-- task3 --> <g id="node3" class="node">
+<title>
+task3
+</title>
+<polygon fill="none" stroke="black" points="160,-106 106,-106 106,-70 160,-70 160,-106"></polygon> <text text-anchor="middle" x="133" y="-83.8" font-family="Times,serif" font-size="14.00">task3</text> </g> <!-- task1&#45;&gt;task3 --> <g id="edge2" class="edge">
+<title>
+task1-&gt;task3
+</title>
+<path fill="none" stroke="black" d="M70.4,-88C78.39,-88 87.31,-88 95.82,-88"></path> <polygon fill="black" stroke="black" points="95.92,-91.5 105.92,-88 95.92,-84.5 95.92,-91.5"></polygon> </g> <!-- task4 --> <g id="node4" class="node">
+<title>
+task4
+</title>
+<polygon fill="none" stroke="black" points="160,-160 106,-160 106,-124 160,-124 160,-160"></polygon> <text text-anchor="middle" x="133" y="-137.8" font-family="Times,serif" font-size="14.00">task4</text> </g> <!-- task1&#45;&gt;task4 --> <g id="edge3" class="edge">
+<title>
+task1-&gt;task4
+</title>
+<path fill="none" stroke="black" d="M70.4,-104.2C78.83,-109.37 88.29,-115.18 97.22,-120.66"></path> <polygon fill="black" stroke="black" points="95.57,-123.75 105.92,-126 99.23,-117.78 95.57,-123.75"></polygon> </g> </g>
+</svg>
+</div>
+</div>
+</div>
+</div>
 <ul>
-<li>ex. 2023-02-24 이전 배치일 (논리적 기준일)
+<li>task1: PythonOperator 등</li>
+<li>task2,3,4: TriggerDagRun 오퍼레이터 다른 DAG 을 실행시키는 오퍼레이터</li>
+</ul>
+<ol start="2" type="1">
+<li>ExternalTask Sensor</li>
+</ol>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<svg width="672" height="480" viewbox="0.00 0.00 181.61 263.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 259)">
+<title>
+G
+</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-259 177.61,-259 177.61,4 -4,4"></polygon> <g id="clust1" class="cluster">
+<title>
+cluster0
+</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-247 82.77,-247 82.77,-8 8,-8"></polygon> <text text-anchor="middle" x="45.39" y="-230.4" font-family="Times,serif" font-size="14.00">Task Flow</text> </g> <!-- sensor1 --> <g id="node1" class="node">
+<title>
+sensor1
+</title>
+<polygon fill="none" stroke="black" points="74.66,-214 16.11,-214 16.11,-178 74.66,-178 74.66,-214"></polygon> <text text-anchor="middle" x="45.39" y="-191.8" font-family="Times,serif" font-size="14.00">sensor1</text> </g> <!-- task1 --> <g id="node5" class="node">
+<title>
+task1
+</title>
+<ellipse fill="none" stroke="black" cx="142.19" cy="-115" rx="31.34" ry="18"></ellipse> <text text-anchor="middle" x="142.19" y="-110.8" font-family="Times,serif" font-size="14.00">task1</text> </g> <!-- sensor1&#45;&gt;task1 --> <g id="edge1" class="edge">
+<title>
+sensor1-&gt;task1
+</title>
+<path fill="none" stroke="black" d="M71.71,-177.76C75.47,-174.89 79.26,-171.91 82.77,-169 94.63,-159.17 107.25,-147.65 117.72,-137.78"></path> <polygon fill="black" stroke="black" points="120.42,-140.04 125.25,-130.61 115.59,-134.97 120.42,-140.04"></polygon> </g> <!-- sensor2 --> <g id="node2" class="node">
+<title>
+sensor2
+</title>
+<polygon fill="none" stroke="black" points="74.66,-160 16.11,-160 16.11,-124 74.66,-124 74.66,-160"></polygon> <text text-anchor="middle" x="45.39" y="-137.8" font-family="Times,serif" font-size="14.00">sensor2</text> </g> <!-- sensor2&#45;&gt;task1 --> <g id="edge2" class="edge">
+<title>
+sensor2-&gt;task1
+</title>
+<path fill="none" stroke="black" d="M74.83,-133.9C83.98,-131.29 94.26,-128.37 103.94,-125.61"></path> <polygon fill="black" stroke="black" points="105.09,-128.92 113.75,-122.82 103.17,-122.19 105.09,-128.92"></polygon> </g> <!-- sensor3 --> <g id="node3" class="node">
+<title>
+sensor3
+</title>
+<polygon fill="none" stroke="black" points="74.66,-106 16.11,-106 16.11,-70 74.66,-70 74.66,-106"></polygon> <text text-anchor="middle" x="45.39" y="-83.8" font-family="Times,serif" font-size="14.00">sensor3</text> </g> <!-- sensor3&#45;&gt;task1 --> <g id="edge3" class="edge">
+<title>
+sensor3-&gt;task1
+</title>
+<path fill="none" stroke="black" d="M74.83,-96.1C83.98,-98.71 94.26,-101.63 103.94,-104.39"></path> <polygon fill="black" stroke="black" points="103.17,-107.81 113.75,-107.18 105.09,-101.08 103.17,-107.81"></polygon> </g> <!-- sensor4 --> <g id="node4" class="node">
+<title>
+sensor4
+</title>
+<polygon fill="none" stroke="black" points="74.66,-52 16.11,-52 16.11,-16 74.66,-16 74.66,-52"></polygon> <text text-anchor="middle" x="45.39" y="-29.8" font-family="Times,serif" font-size="14.00">sensor4</text> </g> <!-- sensor4&#45;&gt;task1 --> <g id="edge4" class="edge">
+<title>
+sensor4-&gt;task1
+</title>
+<path fill="none" stroke="black" d="M71.71,-52.24C75.47,-55.11 79.26,-58.09 82.77,-61 94.63,-70.83 107.25,-82.35 117.72,-92.22"></path> <polygon fill="black" stroke="black" points="115.59,-95.03 125.25,-99.39 120.42,-89.96 115.59,-95.03"></polygon> </g> </g>
+</svg>
+</div>
+</div>
+</div>
+</div>
 <ul>
-<li>= data_interval_start</li>
-<li>= dag_run.logical_date</li>
-<li>= ds (yyyy-mm-dd 형식)</li>
-<li>= ts (타임스탬프)</li>
-<li>= execution_date (과거버전)</li>
+<li>다른 DAG의 Task의 완료를 기다리는 센서</li>
+<li>DAG간 의존관계 설정
+<ul>
+<li>방식
+<ul>
+<li>TriggerDagRun Operator: 실행할 다른 DAG 의 ID 를 지정하여 수행</li>
+<li>ExternalTask 센서: 본 Task 가 수행되기 전 다른 DAG 의 완료를 기다린 후 수행</li>
 </ul></li>
-<li>ex. 2023-02-25 배치일
+<li>권고 사용 시점
 <ul>
-<li>= data_interval_end</li>
-<li>=</li>
-<li>=</li>
-<li>=</li>
-<li>= next_execution_date (과거버전)</li>
+<li>TriggerDagRun Operator: Trigger 되는 DAG 의 선행 DAG 이 하나만 있을 경우</li>
+<li>ExternalTask 센서: Trigger 되는 DAG 의 선행 DAG 이 2 개 이상인 경우</li>
 </ul></li>
 </ul></li>
 </ul>
 </section>
+<section id="triggerdagrun-오퍼레이터" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="triggerdagrun-오퍼레이터"><span class="header-section-number">2.2</span> TriggerDagRun 오퍼레이터</h2>
+<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"></span>
+<span id="cb1-2">from airflow.operators.trigger_dagrun import TriggerDagRunOperator</span>
+<span id="cb1-3"></span>
+<span id="cb1-4">with DAG(...) as dag:</span>
+<span id="cb1-5"></span>
+<span id="cb1-6"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    start_task = BashOperator(</span></span>
+<span id="cb1-7"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        task_id='start_task',</span></span>
+<span id="cb1-8"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        bash_command='echo "start!"',</span></span>
+<span id="cb1-9"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    )</span></span>
+<span id="cb1-10"></span>
+<span id="cb1-11"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    trigger_dag_task = TriggerDagRunOperator(</span></span>
+<span id="cb1-12"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        task_id='trigger_dag_task', #필수값</span></span>
+<span id="cb1-13"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        trigger_dag_id='dags_python_operator', #필수값</span></span>
+<span id="cb1-14"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        trigger_run_id=None,</span></span>
+<span id="cb1-15"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        execution_date='{{data_interval_start}}',</span></span>
+<span id="cb1-16"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        reset_dag_run=True,</span></span>
+<span id="cb1-17"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        wait_for_completion=False,</span></span>
+<span id="cb1-18"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        poke_interval=60,</span></span>
+<span id="cb1-19"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        allowed_states=['success'],</span></span>
+<span id="cb1-20"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        failed_states=None</span></span>
+<span id="cb1-21"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        )</span></span>
+<span id="cb1-22"></span>
+<span id="cb1-23"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    start_task &gt;&gt; trigger_dag_task</span></span></code></pre></div>
 </section>
-<section id="python-operator-with-template" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Python Operator with Template</h1>
-<section id="python-오퍼레이터에서-template-변수-사용" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="python-오퍼레이터에서-template-변수-사용"><span class="header-section-number">4.1</span> Python 오퍼레이터에서 Template 변수 사용</h2>
+<section id="triggerdagrun-오퍼레이터--run_id" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="triggerdagrun-오퍼레이터--run_id"><span class="header-section-number">2.3</span> TriggerDagRun 오퍼레이터- run_id</h2>
 <ul>
-<li><p>Python 오퍼레이터는 어떤 파라미터에 Template을 쓸 수 있는가?</p></li>
-<li><p>파라미터</p>
+<li>DAG의 수행 방식과 시간을 유일하게 식별해주는 키</li>
+<li>같은 시간이라 해도 수행 방식 (Schedule, manual, Backfill) 에 따라 키가 달라짐</li>
+<li>스케줄에 의해 실행된 경우 scheduled__{{data_interval_start}} 값을 가짐</li>
+</ul>
+<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"></span>
+<span id="cb2-2">from airflow.operators.trigger_dagrun import TriggerDagRunOperator</span>
+<span id="cb2-3"></span>
+<span id="cb2-4">with DAG(...) as dag:</span>
+<span id="cb2-5"></span>
+<span id="cb2-6"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    start_task = BashOperator(</span></span>
+<span id="cb2-7"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        task_id='start_task',</span></span>
+<span id="cb2-8"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        bash_command='echo "start!"',</span></span>
+<span id="cb2-9"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    )</span></span>
+<span id="cb2-10"></span>
+<span id="cb2-11"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    trigger_dag_task = TriggerDagRunOperator(</span></span>
+<span id="cb2-12"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        task_id='trigger_dag_task', </span></span>
+<span id="cb2-13"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        trigger_dag_id='dags_python_operator',</span></span>
+<span id="cb2-14"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        trigger_run_id=None, # rund_id 값 직접 지정</span></span>
+<span id="cb2-15"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        execution_date='{{data_interval_start}}', # manual_{{execution_date}} 로 수행</span></span>
+<span id="cb2-16"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        reset_dag_run=True, # 이미 run_id 값이 있는 경우에도 재수행할 것 인지 결정</span></span>
+<span id="cb2-17"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        wait_for_completion=False,</span></span>
+<span id="cb2-18"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        poke_interval=60,</span></span>
+<span id="cb2-19"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        allowed_states=['success'],</span></span>
+<span id="cb2-20"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        failed_states=None</span></span>
+<span id="cb2-21"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        )</span></span>
+<span id="cb2-22"></span>
+<span id="cb2-23"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    start_task &gt;&gt; trigger_dag_task</span></span></code></pre></div>
+</section>
+</section>
+<section id="simplehttp-오퍼레이터-서울시-공공데이터-키-발급받기" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> SimpleHttp 오퍼레이터 서울시 공공데이터 키 발급받기</h1>
+<section id="서울시-공공데이터-보기" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="서울시-공공데이터-보기"><span class="header-section-number">3.1</span> 서울시 공공데이터 보기</h2>
 <ul>
-<li>python_callable</li>
-<li>op_kwargs</li>
-<li>op_args</li>
-<li>templates_dict</li>
-<li>templates_exts</li>
-<li>show_return_value_in_logs</li>
+<li>https://data.seoul.go.kr/</li>
+<li>서울시가 보유한 데이터 다운로드 가능</li>
+<li>Csv, json, xml 등을 직접 다운로드 받거나 openAPI 통해 다운 가능</li>
+<li>openAPI 이용할 경우 api KEY 발급받아야 함 로그인 필요</li>
+</ul>
+</section>
+<section id="api-사용을-위한-키-발급-받기" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="api-사용을-위한-키-발급-받기"><span class="header-section-number">3.2</span> API 사용을 위한 키 발급 받기</h2>
+</section>
+</section>
+<section id="simplehttp-오퍼레이터-api-받아오기" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> SimpleHttp 오퍼레이터 API 받아오기</h1>
+<section id="simplehttpoperator-란" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="simplehttpoperator-란"><span class="header-section-number">4.1</span> SimpleHttpOperator 란?</h2>
+<ul>
+<li>HTTP 요청을 하고 결과로 text 를 리턴 받는 오퍼레이터 리턴 값은 Xcom 에 저장</li>
+<li>HTTP 를 이용하여 API 를 처리하는 RestAPI 호출시 사용 가능</li>
+<li>오퍼레이터 명세 확인하기</li>
+</ul>
+</section>
+<section id="커넥션-등록" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="커넥션-등록"><span class="header-section-number">4.2</span> 커넥션 등록</h2>
+<ul>
+<li>airflow web service &gt;&gt; Admin &gt;&gt; Plus button</li>
+<li>Conn_id: 다른 conn 이름과 중복되지 않게 작성</li>
+<li>Connection_type: HTTP</li>
+<li>Host: http://openapi.seoul.go.kr</li>
+<li>Port: 8088</li>
+<li>Test 버튼 클릭시 “405:Method Not Allowed” 가 뜨지만 무방함</li>
+</ul>
+</section>
+<section id="simplehttpoperator-작성" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="simplehttpoperator-작성"><span class="header-section-number">4.3</span> SimpleHttpOperator 작성</h2>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1">from airflow providers http operators http import SimpleHttpOperator</span>
+<span id="cb3-2">with DAG(...) as dag:</span>
+<span id="cb3-3">  tb_cycle_station_info = SimpleHttpOperator(</span>
+<span id="cb3-4">    task_id ='tb_cycle_station_info',</span>
+<span id="cb3-5">    http_conn_id = 'openapi.seoul.go.kr',</span>
+<span id="cb3-6">    endpoint ='yourapikey/json/tbCycleStationInfo/1/10',</span>
+<span id="cb3-7">    method ='GET',</span>
+<span id="cb3-8">    headers ={'Content-Type: 'application/json',</span>
+<span id="cb3-9">              charset': 'utf-8',</span>
+<span id="cb3-10">              'Accept': '*/*'</span>
+<span id="cb3-11">              }</span>
+<span id="cb3-12">  )</span></code></pre></div>
+<ul>
+<li>SimpleHttpOperator를 여러 DAG 에 작성했는데 API 키가 바뀐다면?</li>
+<li>API키를 코드에 노출시키지 않고 싶다면?</li>
+<li>Key에 아래 이름이 있을 경우 val 을 자동 마스킹처리하여 보여줌
+<ul>
+<li>‘access_token’,</li>
+<li>‘api_key’,</li>
+<li>‘apikey’,</li>
+<li>‘authorization’,</li>
+<li>‘passphrase’,</li>
+<li>‘passwd’,</li>
+<li>‘password’,</li>
+<li>‘private_key’,</li>
+<li>‘secret’,</li>
+<li>‘token’</li>
 </ul></li>
-<li><p>https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html</p>
-<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1">def python_function1(start_date, end_date, **kwargs):</span>
-<span id="cb4-2">    print(start_date)</span>
-<span id="cb4-3">    print(end_date)</span>
-<span id="cb4-4"></span>
-<span id="cb4-5">python_t1 = PythonOperator(</span>
-<span id="cb4-6">    task_id='python_t1',</span>
-<span id="cb4-7">    python_callable=python_function,</span>
-<span id="cb4-8">    op_kwargs={'start_date':'{{data_interval_start | ds}}', 'end_date':'{{data_interval_end | ds}}'}</span>
-<span id="cb4-9">)</span></code></pre></div></li>
-<li><p>파이썬 오퍼레이터는 **kwargs에 Template 변수들을 자동으로 제공해주고 있음</p>
-<div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1">@task(task_id='python_t2')</span>
-<span id="cb5-2">def python_function2(**kwargs):</span>
-<span id="cb5-3">    print(kwargs)</span>
-<span id="cb5-4">    print('ds:' + kwargs<span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">'ds'</span><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">]</span>)</span>
-<span id="cb5-5">    print('ts:' + str(kwargs<span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">'ts'</span><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">]</span>))</span>
-<span id="cb5-6">    print('data_interval_start:' + str(kwargs<span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">'data_interval_start'</span><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">]</span>))</span>
-<span id="cb5-7">    print('data_interval_end:' + str(kwargs<span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">'data_interval_end'</span><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">]</span>))</span>
-<span id="cb5-8">    print('task_instance': + str(kwargs<span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">'ti'</span><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">]</span>))</span>
-<span id="cb5-9">python_function2()</span></code></pre></div></li>
+</ul>
+<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1">from airflow providers http operators http import SimpleHttpOperator</span>
+<span id="cb4-2">with DAG(...) as dag:</span>
+<span id="cb4-3">  tb_cycle_station_info = SimpleHttpOperator(</span>
+<span id="cb4-4">    task_id ='tb_cycle_station_info',</span>
+<span id="cb4-5">    http_conn_id = 'openapi.seoul.go.kr',</span>
+<span id="cb4-6">    endpoint = '{{var.value.apikey_openapi_seoul_go_kr }}/json/tbCycleStationInfo/1/10/',</span>
+<span id="cb4-7">    method ='GET',</span>
+<span id="cb4-8">    headers ={'Content-Type: 'application/json',</span>
+<span id="cb4-9">              charset': 'utf-8',</span>
+<span id="cb4-10">              'Accept': '*/*'</span>
+<span id="cb4-11">              }</span>
+<span id="cb4-12">  )</span></code></pre></div>
+<ul>
+<li>서울시 공공데이터 추출하는 DAG 이 여러 개 있어도 API 키를 하나로 관리 가능</li>
+<li>API 키를 코드에 노출시키지 않음</li>
 </ul>
 </section>
 </section>
-<section id="bash-operator-with-macro" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Bash Operator with Macro</h1>
-<section id="macro-변수의-이해" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="macro-변수의-이해"><span class="header-section-number">5.1</span> Macro 변수의 이해</h2>
+<section id="custom-오퍼레이터-study" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Custom 오퍼레이터 Study</h1>
+<section id="airflow-의-꽃-custom-오퍼레이터" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="airflow-의-꽃-custom-오퍼레이터"><span class="header-section-number">5.1</span> Airflow 의 꽃 , Custom 오퍼레이터</h2>
 <ul>
-<li><p>Macro 변수의 필요성</p>
-<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1">sql = f'''</span>
-<span id="cb6-2">SELECT NAME, ADDRESS</span>
-<span id="cb6-3">FROM TBL_REG</span>
-<span id="cb6-4">WHERE REG_DATE BETWEEN ?? AND ??</span>
-<span id="cb6-5">'''</span></code></pre></div>
-<p>DAG 스케줄은 매일 말일에 도는 스케줄인데 BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고 싶은데 어떻게 하지? 예를 들어 배치일이 1월 31일이면 12월 31일부터 1월 30일 까지 배치일이 2월 28일이면 1월 31일부터 2월 27일까지 BETWEEN 이 설정되었으면 좋겠어. DAG 스케줄이 월 단위이니까 Template 변수에서 data_interval_start 값은 한달 전 말일 이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들지? data_interval_end 에서 하루 뺀 값이 나와야 하는데…</p></li>
-<li><p>Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음</p>
-<table class="table">
-<thead>
-<tr class="header">
-<th style="text-align: center;">Variable</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">macros.datetime</td>
-<td>The standard lib’s datetime.datetime</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">macros.timedelta</td>
-<td>The standard lib’s datetime.timedelta</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">macros.dateutil</td>
-<td>A reference to the dateutil package</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">macros.time</td>
-<td>The standard lib’s time</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">macros.uuid</td>
-<td>The standard lib’s uuid</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">macros.random</td>
-<td>The standard lib’s random</td>
-</tr>
-</tbody>
-</table>
+<li>Airflow는 오퍼레이터를 직접 만들어 사용할 수 있도록 클래스를 제공 (BaseOperator)</li>
+<li>BaseOperator 상속시 두 가지 메서드를 재정의해야 함 (Overriding)
+<ol type="1">
+<li>def__init__</li>
+</ol>
 <ul>
-<li>macros.datetime &amp; macros.dateutil: 날짜 연산에 유용한 파이썬 라이브러리</li>
+<li>클래스에서 객체 생성시 객체에 대한 초기값 지정하는 함수</li>
+</ul>
+<ol start="2" type="1">
+<li>def execute(self, context)</li>
+</ol>
+<ul>
+<li><strong>init</strong> 생성자로 객체를 얻은 후 execute 메서드를 실행시키도록 되어 있음</li>
+<li>비즈니스 로직은 execute 에 구현 필요</li>
 </ul></li>
-<li><p>Macro를 잘 쓰려면 파이썬 datetime 및 dateutil 라이브러리에 익숙해져야 함.</p></li>
-</ul>
-</section>
-<section id="파이썬-datetime-dateutil-라이브러리-이해" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="파이썬-datetime-dateutil-라이브러리-이해"><span class="header-section-number">5.2</span> 파이썬 datetime + dateutil 라이브러리 이해</h2>
-<div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1">from datetime import datetime</span>
-<span id="cb7-2">from dateutil import relativedelta</span>
-<span id="cb7-3"></span>
-<span id="cb7-4">now = datetime(year=2003, month=3, day=30)</span>
-<span id="cb7-5">print('current time:'+str(now))</span>
-<span id="cb7-6">print('-------------month operation-------------')</span>
-<span id="cb7-7">print(now+relativedelta.relativedelta(month=1)) # 1월로 변경</span>
-<span id="cb7-8">print(now.replace(month=1)) # 1월로 변경</span>
-<span id="cb7-9">print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기</span>
-<span id="cb7-10">print('-------------day operation-------------')</span>
-<span id="cb7-11">print(now+relativedelta.relativedelta(day=1)) #1일로 변경</span>
-<span id="cb7-12">print(now.replace(day=1)) #1일로 변경</span>
-<span id="cb7-13">print(now+relativedelta.relativedelta(days=-1)) #1일 빼기</span>
-<span id="cb7-14">print('-------------multiple operations-------------')</span>
-<span id="cb7-15">print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기</span></code></pre></div>
-</section>
-<section id="bash-오퍼레이터에서-macro-변수-활용하기" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="bash-오퍼레이터에서-macro-변수-활용하기"><span class="header-section-number">5.3</span> Bash 오퍼레이터에서 Macro 변수 활용하기</h2>
+<li>오퍼레이터 기능 정의
 <ul>
-<li><p>예시1. 매월 말일 수행되는 Dag에서 변수 START_DATE: 전월 말일, 변수 END_DATE: 어제로 env 셋팅하기</p></li>
-<li><p>예시2. 매월 둘째주 토요일에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기</p></li>
-<li><p>변수는 YYYY-MM-DD 형식으로 나오도록 할 것</p>
-<div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1">t1 = BashOperator(</span>
-<span id="cb8-2">    task_id='t1',</span>
-<span id="cb8-3">    env={'START_DATE':''},</span>
-<span id="cb8-4">)</span></code></pre></div></li>
-</ul>
-<p>이 부분에 template + macro 활용</p>
-</section>
-</section>
-<section id="python-오퍼레이터-with-macro" class="level1" data-number="6">
-<h1 data-number="6"><span class="header-section-number">6</span> Python 오퍼레이터 with macro</h1>
-<ul>
-<li><p>어떤 파라미터가 Template 변수를 지원할까?</p></li>
-<li><p>패러미터</p>
-<ul>
-<li>python_callable (Callable | None)</li>
-<li>op_kwargs</li>
-<li>op_args</li>
-<li>templates_dict</li>
-<li>templates_exts</li>
-<li>show_return_value_in_logs</li>
+<li>서울시 공공데이터 API 를 호출하여 전체 데이터를 받은 후 .csv 파일로 저장하기</li>
 </ul></li>
-<li><p>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/python/index.html#airflow.operators.python.PythonOperator</p>
-<div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1">@task(task_id='task_using_macros',</span>
-<span id="cb9-2">    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")</span>
-<span id="cb9-3"><span class="ss" style="color: #20794D;
-background-color: null;
-font-style: inherit;">+ </span>macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',</span>
-<span id="cb9-4">'end_date': '{{</span>
-<span id="cb9-5">(data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
-<span id="cb9-6">macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
-<span id="cb9-7">    }</span>
-<span id="cb9-8">)</span>
-<span id="cb9-9"></span>
-<span id="cb9-10">def get_datetime_macro(**kwargs):</span>
-<span id="cb9-11">    templates_dict = kwargs.get('templates_dict') or {}</span>
-<span id="cb9-12">    if templates_dict:</span>
-<span id="cb9-13">    start_date = templates_dict.get('start_date') or 'start_date없음'</span>
-<span id="cb9-14">    end_date = templates_dict.get('end_date') or 'end_date없음'</span>
-<span id="cb9-15">    print(start_date)</span>
-<span id="cb9-16">    print(end_date)</span></code></pre></div></li>
-<li><p>그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 DAG안에서 직접 할 수 있다면?</p>
+<li>오퍼레이터와 dag 의 위치
 <ul>
-<li>macro 사용</li>
+<li><p>/dags/dags_seoul_api.py</p>
+<div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1">from operators.seoul_api_to_csv_operator</span>
+<span id="cb5-2">import SeoulApiToCsvOperator</span></code></pre></div></li>
+<li><p>/plugins/operators/seoul_api_to_csv_operator.py</p></li>
+</ul></li>
+<li>Template 사용 가능한 파라미터 지정하기</li>
 </ul>
-<div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1">@task(task_id='task_using_macros',</span>
-<span id="cb10-2">    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',</span>
-<span id="cb10-3">    'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
-<span id="cb10-4">    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
-<span id="cb10-5">    }</span>
-<span id="cb10-6">)</span>
-<span id="cb10-7"></span>
-<span id="cb10-8">def get_datetime_macro(**kwargs):</span>
-<span id="cb10-9">    templates_dict = kwargs.get('templates_dict') or {}</span>
-<span id="cb10-10">    if templates_dict:</span>
-<span id="cb10-11">        start_date = templates_dict.get('start_date') or 'start_date없음'</span>
-<span id="cb10-12">        end_date = templates_dict.get('end_date') or 'end_date없음'</span>
-<span id="cb10-13">        print(start_date)</span>
-<span id="cb10-14">        print(end_date)</span>
-<span id="cb10-15"></span>
-<span id="cb10-16">@task(task_id='task_direct_calc')</span>
-<span id="cb10-17">def get_datetime_calc(**kwargs):</span>
-<span id="cb10-18">    from dateutil.relativedelta import relativedelta</span>
-<span id="cb10-19">    data_interval_end = kwargs<span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">'data_interval_end'</span><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">]</span></span></code></pre></div>
+<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"></span></code></pre></div>
+</section>
+</section>
+<section id="custom-오퍼레이터-개발" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Custom 오퍼레이터 개발</h1>
+<section id="custom-오퍼레이터-만들기" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="custom-오퍼레이터-만들기"><span class="header-section-number">6.1</span> Custom 오퍼레이터 만들기</h2>
 <ul>
-<li>직접 연산</li>
+<li><strong>init</strong> 생성자 재정의</li>
 </ul>
-<div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1">prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)</span>
-<span id="cb11-2">prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)</span>
-<span id="cb11-3">print(prev_month_day_first.strftime('%Y-%m-%d'))</span>
-<span id="cb11-4">print(prev_month_day_last.strftime('%Y-%m-%d'))</span></code></pre></div></li>
+<div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1">class SeoulApiToCsvOperator(BaseOperator):</span>
+<span id="cb7-2">  template_fields = (' endpoint', ' path','file_ name','base_dt')</span>
+<span id="cb7-3">  </span>
+<span id="cb7-4">  def __init__(self , dataset_nm , path , file_name , base_dt=None , **kwargs):</span>
+<span id="cb7-5">    super().__init__(**kwargs)</span>
+<span id="cb7-6">    self.http_conn_id = 'openapi.seoul.go.kr'</span>
+<span id="cb7-7">    self.path = path</span>
+<span id="cb7-8">    self.file_name = file_name</span>
+<span id="cb7-9">    self.endpoint = '{{var.value.apikey_openapi_seoul_go_kr}}/json/' + datset_nm</span>
+<span id="cb7-10">    self.base_dt =base_dt</span></code></pre></div>
+<ul>
+<li>execute 메서드 재정의</li>
+<li>dag 생성</li>
 </ul>
+</section>
+<section id="summary" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="summary"><span class="header-section-number">6.2</span> Summary</h2>
+<ul>
+<li>Custom 오퍼레이터를 만들면 왜 좋을까 ?
+<ul>
+<li>만약 custom 오퍼레이터를 만들지 않았다면
+<ul>
+<li>개발자마다 각자 서울 공공데이터 데이터셋 추출 저장하는 파이썬 파일을 만들어 PythonOperator 를 이용해 개발했을 것</li>
+<li>비슷한 동작을 하는 파이썬 파일이 관리되지 않은 채 수십 개 만들어지면 그 자체로 비효율 발생</li>
+</ul></li>
+</ul></li>
+<li>특정기능을 하는 모듈을 만들어 놓고 , 상세 조건은 파라미터로 받게끔하여 모듈을 재사용할 수 있도록 유도
+<ul>
+<li>Custom 오퍼레이터 개발</li>
+</ul></li>
+</ul>
+</section>
 </section>
 </div>
 </div>
@@ -6244,7 +6745,7 @@ font-style: inherit;">]</span></span></code></pre></div>
 
 </div></ul> ]]></description>
   <category>Engineering</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/Engineering/airflow/08.operators_advanced.html</guid>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Engineering/airflow/08.more_operators.html</guid>
   <pubDate>Sun, 30 Apr 2023 15:00:00 GMT</pubDate>
 </item>
 <item>

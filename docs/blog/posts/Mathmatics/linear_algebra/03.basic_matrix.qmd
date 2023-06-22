@@ -1430,7 +1430,7 @@ where $y$ represents the possible values of $Y$.
 
 For constants $a$ and $b$, matrix $\mathbf{A}_{m\times n}$, vector $\mathbf{b}_{m \times 1}$, random variables $X$ and $Y$, and random vector $\mathbf{x}_{m\times 1}$ and $\mathbf{y}_{m\times 1}$
 
-* Linearity of Expectation*
+**Linearity of Expectation**
 
 The expectation is a linear operator, which means it follows the rules of linearity. 
 
@@ -1468,20 +1468,17 @@ $$
 \end{aligned}
 $$
 
+### Random Vector
+
 Let $X,Y$ be $X_1,X_2$, independent with each other, and $\mathbf{x}=\begin{bmatrix} X_1 \\ X_2 \end{bmatrix}$.
 
 $$
 \begin{aligned}
-  E(\mathbf{x}) &= \mathbf{\mu} = \begin{bmatrix} 1 \\ 2 \end{bmatrix} \\
+  E(\mathbf{x}) &= \mathbf{\mu} = \begin{bmatrix} E( X_1) \\ E(X_2) \end{bmatrix}= \begin{bmatrix} 1 \\ 2 \end{bmatrix} \\
   E(2X+3Y) &= E(\mathbf{A}\mathbf{x}+\mathbf{b}) = E(\begin{bmatrix} 2 & 3 \end{bmatrix}\mathbf{x} + \mathbf{0}) \\
   &= \begin{bmatrix} 2 & 3 \end{bmatrix}\mathbf{\mu} + \mathbf{0} \\
   &= \begin{bmatrix} 2 & 3 \end{bmatrix}\begin{bmatrix} \mu_1 \\ \mu_2 \end{bmatrix} \\
-  &= \begin{bmatrix} 2 & 3 \end{bmatrix}\begin{bmatrix} 2 \\ \frac{1}{2} \end{bmatrix} = 1 \\
-
-  Var(\mathbf{x}) &= \mathbf{\Sigma} = \begin{bmatrix} Var(X_1) & Cov(X_1,X_2) \\ Cov(X_2,X_1) & Var(X_2)\end{bmatrix} =  \begin{bmatrix} Var(X_1) & 0 \\ 0 & Var(X_2)\end{bmatrix} \\
-
-  Var(2X_1+3X_2+3) &= Var(\begin{bmatrix} 2 & 3 \end{bmatrix} \mathbf{X} +3) = \begin{bmatrix} 2 & 3 \end{bmatrix} Var( \mathbf{X}) \begin{bmatrix} 2 \\ 3 \end{bmatrix} \\
-    &= \begin{bmatrix} 2 & 3 \end{bmatrix} \begin{bmatrix} Var(X_1) & 0 \\ 0 & Var(X_2)\end{bmatrix} \begin{bmatrix} 2 \\ 3 \end{bmatrix} 
+  &= \begin{bmatrix} 2 & 3 \end{bmatrix}\begin{bmatrix} 2 \\ \frac{1}{2} \end{bmatrix} = 1
 \end{aligned}
 $$
 
@@ -1677,10 +1674,15 @@ For constants $a$ and $b$, matrix $\mathbf{A}_{m\times n}$, vector $\mathbf{b}_{
    \text{Var}(aX) = a^2\text{Var}(X)
    $$
 
-   where $a$ is a constant.
-
+   where $a$ is a constant. For a random vector $\mathbf{x}$,
+   
    $$
-   \text{Var}(\mathbf{A}X+\mathbf{b}) = \mathbf{A}\text{Var}(X)\mathbf{A}^T
+   \begin{aligned}
+      \text{Var}(\mathbf{A}\mathbf{x}+\mathbf{b}) &= \mathbf{A}\text{Var}(\mathbf{x})\mathbf{A}^T \\
+      \text{Var}(\mathbf{x}) &= \mathbf{\Sigma} = \begin{bmatrix} \text{Var}(X_1) & \text{Cov}(X_1,X_2) \\ \text{Cov}(X_2,X_1) & \text{Var}(X_2)\end{bmatrix} \\
+      &=\begin{bmatrix} \sigma_1^2 & \rho\sigma_1\sigma_2 \\ \rho\sigma_1\sigma_2 & \sigma_2^2\end{bmatrix} \\
+      &=\begin{bmatrix} \text{Var}(X_1) & 0 \\ 0 & \text{Var}(X_2)\end{bmatrix} \text{when the two random variables are independent}
+    \end{aligned}
    $$
 
 
@@ -1697,7 +1699,7 @@ For constants $a$ and $b$, matrix $\mathbf{A}_{m\times n}$, vector $\mathbf{b}_{
 
 **Example:**
 
-Consider two independent random variables $$X$$ and $$Y$$ with variances $$\text{Var}(X) = 4$$ and $$\text{Var}(Y) = 9$$.
+Consider two independent random variables $X$ and $Y$ with variances $\text{Var}(X) = 4$ and $\text{Var}(Y) = 9$.
 
 1. Non-Negativity:
    $\text{Var}(X) = 4 \geq 0$, $\text{Var}(Y) = 9 \geq 0$
@@ -1707,6 +1709,13 @@ Consider two independent random variables $$X$$ and $$Y$$ with variances $$\text
 
 3. Linearity:
    Let $a = 2$ be a constant. $\text{Var}(aX) = \text{Var}(2X) = 4(2^2) = 16$
+
+  $$
+  \begin{aligned}
+    Var(2X_1+3X_2+3) &= Var(\begin{bmatrix} 2 & 3 \end{bmatrix} \mathbf{X} +3) = \begin{bmatrix} 2 & 3 \end{bmatrix} Var( \mathbf{X}) \begin{bmatrix} 2 \\ 3 \end{bmatrix} \\
+      &= \begin{bmatrix} 2 & 3 \end{bmatrix} \begin{bmatrix} Var(X_1) & 0 \\ 0 & Var(X_2)\end{bmatrix} \begin{bmatrix} 2 \\ 3 \end{bmatrix} 
+  \end{aligned}
+  $$
 
 4. Additivity of Independent Variables:
    $\text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y) = 4 + 9 = 13$

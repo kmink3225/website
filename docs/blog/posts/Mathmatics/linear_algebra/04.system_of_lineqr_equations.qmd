@@ -1,0 +1,512 @@
+---
+title: "Linear Equations"
+subtitle: Vectors and Linear Equations, Elimination, Rules for Matrix Operations, Inverse Matrices, Factorization, Transposes and Permutations
+description: |
+  template
+categories:
+  - Mathematics
+author: Kwangmin Kim
+date: 03/31/2023
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    toc: true
+    number-sections: true
+comments: 
+  utterances: 
+    repo: docs/comments
+draft: False
+---
+
+```{python}
+#| echo: false
+
+import numpy as np
+import matplotlib_inline
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import sympy as sym # for RREF
+import scipy.linalg # for LU
+import matplotlib.gridspec as gridspec # used to create non-regular subplots
+
+# NOTE: these lines define global figure properties used for publication.
+from IPython import display
+matplotlib_inline.backend_inline.set_matplotlib_formats('svg')
+#display.set_matplotlib_formats('svg') # display figures in vector format
+plt.rcParams.update({'font.size':14}) # set global font size
+     
+```
+
+# Solving Systems of Linear Equations
+ 
+This blog is going to focus on solving $n$ equations in $n$ unknowns variables or columns (for any $n$).
+
+## Vectors and Linear Equations
+
+### Linear Equation
+
+A linear equation is an equation that represents a linear relationship between variables. It can be written in the form:
+
+$$
+a_1x_1 + a_2x_2 + \ldots + a_nx_n = b
+$$
+
+where $x_1, x_2, \ldots, x_n$ are the variables, $a_1, a_2, \ldots, a_n$ are the coefficients, and $b$ is a constant term.
+
+### System of Linear Equations
+
+A system of linear equations is a collection of linear equations involving the same variables. It can be written in the form:
+
+$$
+\begin{align*}
+a_{11}x_1 + a_{12}x_2 + \ldots + a_{1n}x_n &= b_1 \\
+a_{21}x_1 + a_{22}x_2 + \ldots + a_{2n}x_n &= b_2 \\
+&\vdots \\
+a_{m1}x_1 + a_{m2}x_2 + \ldots + a_{mn}x_n &= b_m \\
+\end{align*}
+$$
+
+where $x_1, x_2, \ldots, x_n$ are the variables, $a_{ij}$ are the coefficients, and $b_i$ are the constant terms.
+
+* when $n>m$, no solution or infinetely many solutions
+* when $n=m$, no solution or a unique solution
+* when $n<m$, no solution or a unique solution 
+  * ex. no solution: $x=2$, $x=3$
+  * ex. unique solution: $x=2$, $2x=4$
+
+### 3 Equations in 3 Unknown Variables
+
+$$
+\begin{align*}
+x + 2y - z &= 1 \\
+2x - y + 3z &= -2 \\
+x + 3y + z &= 3 \\
+\end{align*} 
+$$
+
+can be written in matrix form as:
+$$
+\begin{align*}
+\begin{bmatrix}
+3 & 2 & -1 \\
+2 & -1 & 3 \\
+1 & 3 & 1 \\
+\end{bmatrix}
+\begin{bmatrix}
+x \\
+y \\
+z \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 \\
+-2 \\
+3 \\
+\end{bmatrix} 
+\end{align*} 
+$$
+
+The matrix form can be represented as :
+
+$$
+\begin{align*}
+x
+\begin{bmatrix}
+3 \\
+2 \\
+1 \\
+\end{bmatrix} +
+y
+\begin{bmatrix}
+2 \\
+-1 \\
+3 \\
+\end{bmatrix} +
+z
+\begin{bmatrix}
+-1 \\
+3 \\
+1 \\
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 \\
+-2 \\
+3 \\
+\end{bmatrix} 
+\end{align*} 
+$$
+
+```{python}
+# Coefficient matrix of the system of equations
+A = np.array([[3, 2, -1],
+              [2, -1, 3],
+              [1, 3, 1]])
+
+# Right-hand side vector of the system of equations
+b = np.array([1, -2, 3])
+
+# Solve the system of equations
+x = np.linalg.solve(A, b)
+
+# Extract the solutions for x, y, and z
+x_val, y_val, z_val = x
+
+# Print the solution
+print("Intersection point:")
+print("x =", x_val)
+print("y =", y_val)
+print("z =", z_val)
+
+# Generate points on the planes
+x_plane1, y_plane1 = np.meshgrid(np.linspace(-2, 2, 10), np.linspace(-2, 2, 10))
+z_plane1 = (1 - 3 * x_plane1 - 2 * y_plane1) / -1
+
+x_plane2, z_plane2 = np.meshgrid(np.linspace(-2, 2, 10), np.linspace(-2, 2, 10))
+y_plane2 = (-2 - 2 * x_plane2 + 3 * z_plane2) / 1
+
+y_plane3, z_plane3 = np.meshgrid(np.linspace(-2, 2, 10), np.linspace(-2, 2, 10))
+x_plane3 = (1 - 3 * y_plane3 - z_plane3) / 2
+
+# Create 3D plot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Plot the planes
+ax.plot_surface(x_plane1, y_plane1, z_plane1, alpha=0.5)
+ax.plot_surface(x_plane2, y_plane2, z_plane2, alpha=0.5)
+ax.plot_surface(x_plane3, y_plane3, z_plane3, alpha=0.5)
+
+# Plot the intersection point
+ax.scatter(x_val, y_val, z_val, color='red', label='Intersection Point')
+
+# Set labels and title
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('z')
+ax.set_title('Intersection of Three Planes')
+
+# Show legend
+ax.legend()
+
+# Show the plot
+plt.show()
+
+```
+
+```{python}
+# Define the vectors
+v1 = np.array([-3, 2, 1])
+v2 = np.array([-2, -1, 3])
+v3 = np.array([1, 3, 1])
+
+# Define the right-hand side vector
+rhs = np.array([1, -2, 3])
+
+# Create 3D plot
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+# Plot the vectors
+ax.quiver(0, 0, 0, v1[0], v1[1], v1[2], color='red', label='v1')
+ax.quiver(0, 0, 0, v2[0], v2[1], v2[2], color='green', label='v2')
+ax.quiver(0, 0, 0, v3[0], v3[1], v3[2], color='blue', label='v3')
+
+# Plot the right-hand side vector
+ax.quiver(0, 0, 0, rhs[0], rhs[1], rhs[2], color='black', label='b')
+
+# Set equal axes scales
+ax.set_xlim([-3, 3])
+ax.set_ylim([-3, 3])
+ax.set_zlim([-3, 3])
+
+# Set labels and title
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('z')
+ax.set_title('Vectors in 3D Space')
+
+# Show legend
+ax.legend()
+
+# Set viewing angle
+ax.view_init(elev=30, azim=120)
+
+# Show the plot
+plt.show()
+```
+
+## Elimination
+
+The elimination method, also known as Gaussian elimination, is a systematic way to solve systems of linear equations by transforming the augmented matrix of the system into row-echelon form or reduced row-echelon form using a sequence of elementary row operations. The principle of the Gauss-Jordan elimination method is a matrix representation of the process of solving simultaneous linear equations by subtraction and substitution.
+
+::: {#def-elimination}
+
+The elimination method (Gaussian elimination) is a systematic way to solve a system of linear equations by performing a sequence of elementary row operations on the augmented matrix of the system, with the goal of transforming the augmented matrix into row-echelon form or reduced row-echelon form.
+:::
+
+::: {#def-augmentedMatrix}
+An augmented matrix is a matrix formed by appending the column vector $\mathbf{b}$ to the right of matrix $\mathbf{A}$ in the system of linear equations $\mathbf{Ax}=\mathbf{b}$. More formally, the augmented matrix is defined as:
+$$
+\begin{align*}
+\begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{1n} & b_1 \\
+a_{21} & a_{22} & \cdots & a_{2n} & b_2 \\
+\vdots & \vdots & \ddots & \vdots & \vdots \\
+a_{m1} & a_{m2} & \cdots & a_{mn} & b_m \\
+\end{bmatrix}
+\end{align*}
+$$
+
+where $\mathbf{A}$ is an $m\times n$ matrix, $\mathbf{b}$ is an $m\times 1$ column vector, and the augmented matrix is an $m\times (n+1)$ matrix.
+:::
+
+### Example
+
+$$
+\begin{align*}
+x_1 + 2x_2 - 3x_3 &= 4 \\
+2x_1 - x_2 + 4x_3 &= 7 \\
+x_1 + 3x_2 + 2x_3 &= 5
+\end{align*}
+$$
+
+The corresponding augmented matrix is:
+
+$$
+\begin{align*}
+\left[\begin{array}{ccc|c}
+1 & 2 & -3 & 4 \\
+2 & -1 & 4 & 7 \\
+1 & 3 & 2 & 5
+\end{array}\right]
+\end{align*}
+$$
+
+Then the augmented matrix $[\mathbf{A}|\mathbf{b}]$ is
+
+$$
+\begin{align*}
+[\mathbf{A}|\mathbf{b}] = \left[\begin{array}{cc|c} 1 & 2 & 3 \\ 2 & 3 & 4 \end{array}\right].
+\end{align*}
+$$
+
+Solving the system of linear equations $\mathbf{Ax=b}$ is equivalent to finding the row echelon form (REF) or reduced row echelon form (RREF) of the augmented matrix $[\mathbf{A}|\mathbf{b}]$.
+
+::: {#def-row_operations}
+
+Elementary row operations are specific operations that can be performed on the rows of a matrix to transform it into a different matrix with the same row space. There are three types of elementary row operations:
+
+1. Row scaling: Multiply a row of the matrix by a nonzero scalar.
+1. Row addition: Add a multiple of one row to another row.
+1. Row interchange: Swap the positions of two rows.
+:::
+
+Elementary row operations are specific operations that can be performed on the rows of a matrix to transform it into a different matrix with the same row space. 
+
+
+::: {#def-row_echelon_form}
+A matrix is said to be in row-echelon form if it satisfies the following conditions:
+
+1. All zero rows are at the bottom of the matrix.
+1. The leading coefficient (the first non-zero entry) in each row is 1.
+1. All other entries in the same column as a leading coefficient are zero.
+1. The leading coefficient of a row occurs to the right of the leading coefficient of the row above it.
+:::
+
+$$
+\begin{align*}
+[\mathbf{A}|\mathbf{b}]=
+\left[\begin{array}{ccc|c}
+3 & 0 & 5 & -3 \\
+0 & -9 & 3 & 5 \\
+0 & 0 & -1 & -4
+\end{array}\right]
+\end{align*}
+$$
+
+::: {#def-row_reduced_echelon_form}
+A matrix is said to be in the row-reduced echelon form (or RREF) if it satisfies the following conditions:
+
+1. All rows that contain a nonzero element are above any rows that contain only zeros (i.e., rows of all zeros, if any, are at the bottom of the matrix).
+1. The leading coefficient (the first nonzero entry) in each nonzero row is 1.
+1. The leading coefficient of any nonzero row is strictly to the right of the leading coefficient of the row above it.
+1. All other entries in the same column as a leading coefficient are zero.
+:::
+
+$$
+\begin{align*}
+[\mathbf{A}|\mathbf{b}] =
+
+\left[\begin{array}{ccc|c}
+3 & 0 & 5 & -3 \\
+0 & -9 & 3 & 5 \\
+0 & 0 & -1 & -4
+\end{array}\right]_{\text{row echolon form}} \rightarrow
+[\mathbf{A}|\mathbf{b}] =
+\left[\begin{array}{ccc|c}
+1 & 0 & 0 & -\frac{47}{27} \\
+0 & 1 & 0 & \frac{23}{27} \\
+0 & 0 & 1 & 4
+\end{array}\right]_{\text{row reduced echolon form}}
+\end{align*}
+$$
+
+
+
+The row-echelon form (or row-reduced echelon form or RREF) is a systematic way of representing a matrix such that it has certain properties, making it easier to solve linear equations using methods like Gaussian elimination. In row-echelon form, the leading coefficient (the first non-zero entry) in each row is 1, and all other entries in the same column are zero.
+
+From the row-echolon form, it produces an **upper triangular system** and the reduced one or RREF is **the final goal to solve the system**.
+
+### Example
+
+#### Unique Solution
+
+$$
+\begin{align*}
+& 2x + y - z = 3 \\
+& 3x - 2y + 2z = 1 \\
+& x + 3y - z = 4 \\
+
+& \text{the augmented matrix:} \\
+& \begin{bmatrix}
+2 & 1 & -1 & | & 3 \\
+3 & -2 & 2 & | & 1 \\
+1 & 3 & -1 & | & 4 \\
+\end{bmatrix} \\
+\\
+& \text{Perform elementary row operations:} \\
+\\
+& \text{Row2 = Row2 - 3/2 * Row1} \\
+& \text{Row3 = Row3 - 1/2 * Row1} \\
+\\
+& \begin{bmatrix}
+2 & 1 & -1 &| & 3 \\
+0 & -5/2 & 7/2&| & -7/2 \\
+0 & 5/2 & -1/2&| & 5/2 \\
+\end{bmatrix} \\
+\\
+& \text{Row3 = Row3 + Row2} \\
+\\
+& \text{Row Echelon Form:} \\
+& \begin{bmatrix}
+2 & 1 & -1 &| & 3 \\
+0 & -5/2 & 7/2 &| & -7/2 \\
+0 & 0 & 3 &| & -1 \\
+\end{bmatrix} \\
+\\
+& \text{Reduced Row Echelon Form:} \\
+&\begin{bmatrix}
+1 & 0 & 0 &| & 1 \\
+0 & 1 & -1 &|& 1 \\
+0 & 0 & 1 &|& -\frac{1}{3} \\
+\end{bmatrix}
+\\
+\\
+& \text{Breakdown: Perform back substitution to obtain the solution:} \\
+& z = -1/3 \\
+& y = -2/3 \\
+& x = 4/3
+\end{align*}
+$$
+
+#### Infinitely Many Solutions
+
+$$
+\begin{align*}
+& 3x + 2y - z = 4 \\
+& 6x + 4y - 2z = 8 \\
+& 9x + 6y - 3z = 12 \\
+& \text{the augmented matrix:} \\
+& \begin{bmatrix}
+3 & 2 & -1 & | & 4 \\
+6 & 4 & -2 & | & 8 \\
+9 & 6 & -3 & | & 12 \\
+\end{bmatrix} \\
+
+& \text{Perform elementary row operations:} \\
+\\
+& \text{Row2 = Row2 - 2 * Row1} \\
+& \text{Row3 = Row3 - 3 * Row1} \\
+\\
+& \begin{bmatrix}
+3 & 2 & -1 &| & 4 \\
+0 & 0 & 0 &| & 0 \\
+0 & 0 & 0 &| & 0 \\
+\end{bmatrix} \\
+\\
+& \text{Row Echelon Form:} \\
+& \begin{bmatrix}
+3 & 2 & -1 &| & 4 \\
+0 & 0 & 0 &| & 0 \\
+0 & 0 & 0 &| & 0 \\
+\end{bmatrix} \\
+\\
+& \text{Reduced Row Echelon Form:} \\
+& \begin{bmatrix}
+1 & \frac{2}{3} & -\frac{1}{3} &| & \frac{4}{3} \\
+0 & 0 & 0 &| & 0 \\
+0 & 0 & 0 &| & 0 \\
+\end{bmatrix} \\
+\\
+& \text{Breakdown:} \\
+& \text{Perform back substitution to obtain the solution:} \\
+& z = t \quad \text{(where t is a parameter)} \\
+& y = s \quad \text{(where s is a parameter)} \\
+& x = \frac{4}{3} - \frac{2}{3}y + \frac{1}{3}z \quad \text{(in terms of t and s)}
+\end{align*}
+$$
+
+In this example, the system of linear equations has infinitely many solutions because after performing row operations, the rows become all zeros in the second and third rows, indicating that there are infinitely many values of $x$, $y$, and $z$ that satisfy the system of equations. The parameters t and s can take any real values, and the values of $x$, $y$, and $z$ can be expressed in terms of $t$ and $s$.
+
+Having zero rows in a Reduced Row Echelon Form of a system of linear equations indicates that these equations are redundant or equivalent to the other equations in the system. It means that the information provided by these equations does not add any new constraints or information to the system.
+
+#### No Solution
+
+$$
+\begin{align*}
+& 2x + 3y - z = 7 \\
+& 4x + 6y - 2z = 12 \\
+& 3x + 4y - z = 8 \\
+
+& \text{the augmented matrix:} \\
+& \begin{bmatrix}
+2 & 3 & -1 & | & 7 \\
+4 & 6 & -2 & | & 12 \\
+3 & 4 & -1 & | & 8 \\
+\end{bmatrix} \\
+
+& \text{Perform elementary row operations:} \\
+\\
+& \text{Row2 = Row2 - 2 * Row1} \\
+& \text{Row3 = Row3 - 3/2 * Row1} \\
+\\
+& \begin{bmatrix}
+2 & 3 & -1 &| & 7 \\
+0 & 0 & 0&| & -2 \\
+0 & 1/2 & 1/2&| & 1 \\
+\end{bmatrix} \\
+\\
+& \text{Row3 = Row3 - 1/2 * Row2} \\
+\\
+& \text{Row Echelon Form:} \\
+& \begin{bmatrix}
+2 & 3 & -1 &| & 7 \\
+0 & 1/2 & 1/2 &| & 1 \\
+0 & 0 & 0 &| & -2 \\
+\end{bmatrix} \\
+\\
+& \text{Reduced Row Echelon Form:} \\
+&\begin{bmatrix}
+1 & 3/2 & -1/2 &| & 7/2 \\
+0 & 1 & 1 &|& 2 \\
+0 & 0 & 0 &|& -2 
+\end{bmatrix}
+\end{align*}
+$$
+
+The last row of the reduced row echelon form has all zeros except for the right-hand side (RHS) part, which is $-2$. This implies that $0 = -2$, which is not possible. Therefore, there is no solution to this system of linear equations.
+
+The augmented matrix of an already solved system of linear equations is always a reduced-row echelon form.
+

@@ -24,6 +24,28 @@ library(tidyverse)
 set.seed(100)
 ```
 
+
+```{python}
+#| echo: false
+#| eval: false
+
+import numpy as np
+import matplotlib_inline
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import sympy as sym # for RREF
+import scipy.linalg # for LU
+import matplotlib.gridspec as gridspec # used to create non-regular subplots
+
+# NOTE: these lines define global figure properties used for publication.
+from IPython import display
+matplotlib_inline.backend_inline.set_matplotlib_formats('svg')
+#display.set_matplotlib_formats('svg') # display figures in vector format
+plt.rcParams.update({'font.size':14}) # set global font size
+     
+```
+
+
 ## Matrix
 
 A matrix is a rectangular array of elements, usually real numbers, arranged in rows and columns. If $\mathbf{A}$ is an $m \times n$ matrix, it can be represented as:
@@ -119,6 +141,795 @@ $$
 7 & -18 & 16
 \end{bmatrix}
 $$
+
+# 정리할 것
+
+
+## Rules for Matrix Operations
+
+You reference some rules of matrix operations in the other blog (See [the basic matrix operation](./02.basic_matrix.qmd)).
+
+### Commutative Law of Matrix Addition
+
+Matrix addition is commutative, which means that changing the order of the matrices being added does not affect the result.
+
+$$
+\begin{align*}
+\mathbf A + \mathbf B = \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} + \begin{bmatrix}
+5 & 6 \\
+7 & 8
+\end{bmatrix} = \begin{bmatrix}
+1 + 5 & 2 + 6 \\
+3 + 7 & 4 + 8
+\end{bmatrix} = \begin{bmatrix}
+6 & 8 \\
+10 & 12
+\end{bmatrix}
+\\
+\mathbf B + \mathbf A = \begin{bmatrix}
+5 & 6 \\
+7 & 8
+\end{bmatrix} + \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} = \begin{bmatrix}
+5 + 1 & 6 + 2 \\
+7 + 3 & 8 + 4
+\end{bmatrix} = \begin{bmatrix}
+6 & 8 \\
+10 & 12
+\end{bmatrix}
+\end{align*}
+$$
+
+### Distributive Law
+
+Matrix addition distributes over matrix multiplication, which means that multiplying a matrix by the sum of two matrices is the same as multiplying the matrix by each individual matrix and then adding the results.
+
+$$
+\begin{align*}
+\mathbf A (\mathbf B + \mathbf C )
+&= \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} \cdot \left( \begin{bmatrix}
+5 & 6 \\
+7 & 8
+\end{bmatrix} + \begin{bmatrix}
+9 & 10 \\
+11 & 12
+\end{bmatrix} \right) = \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} \cdot \begin{bmatrix}
+14 & 16 \\
+18 & 20
+\end{bmatrix} = \begin{bmatrix}
+70 & 76 \\
+158 & 172
+\end{bmatrix}
+\end{align*}
+$$
+
+$$
+\begin{align*}
+\mathbf A \mathbf B + \mathbf A \mathbf C 
+&= \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} \cdot \begin{bmatrix}
+5 & 6 \\
+7 & 8
+\end{bmatrix} + \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} \cdot \begin{bmatrix}
+9 & 10 \\
+11 & 12
+\end{bmatrix} = \begin{bmatrix}
+19 & 22 \\
+43 & 50
+\end{bmatrix} + \begin{bmatrix}
+23 & 26 \\
+31 & 34
+\end{bmatrix} = \begin{bmatrix}
+70 & 76 \\
+158 & 172
+\end{bmatrix}
+\end{align*}
+$$
+
+
+### Associative Law
+
+Matrix addition is associative, which means that changing the grouping of the matrices being added does not affect the result.
+
+$$
+\begin{align*}
+(\mathbf A + \mathbf B )+ \mathbf C 
+&= \left( \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} + \begin{bmatrix}
+5 & 6 \\
+7 & 8
+\end{bmatrix} \right) + \begin{bmatrix}
+9 & 10 \\
+11 & 12
+\end{bmatrix} = \begin{bmatrix}
+1 + 5 & 2 + 6 \\
+3 + 7 & 4 + 8
+\end{bmatrix} + \begin{bmatrix}
+9 & 10 \\
+11 & 12
+\end{bmatrix} = \begin{bmatrix}
+6 & 8 \\
+10 & 12
+\end{bmatrix} + \begin{bmatrix}
+9 & 10 \\
+11 & 12
+\end{bmatrix} = \begin{bmatrix}
+15 & 18 \\
+21 & 24
+\end{bmatrix}
+\end{align*}
+$$
+
+$$
+\begin{align*}
+\mathbf A + (\mathbf B + \mathbf C) 
+&= \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} + \left( \begin{bmatrix}
+5 & 6 \\
+7 & 8
+\end{bmatrix} + \begin{bmatrix}
+9 & 10 \\
+11 & 12
+\end{bmatrix} \right) = \begin{bmatrix}
+1 & 2 \\
+3 & 4
+\end{bmatrix} + \begin{bmatrix}
+14 & 16 \\
+18 & 20
+\end{bmatrix} = \begin{bmatrix}
+15 & 18 \\
+21 & 24
+\end{bmatrix}
+\end{align*}
+$$
+
+## Block Matrices
+
+A block matrix is a matrix that is partitioned into smaller matrices, or blocks, arranged in a rectangular grid. The blocks can be of any size, and the resulting matrix is used to represent a system of linear equations with multiple variables or equations.
+
+### Example
+
+Let $\mathbf A$  be a block matrix with four blocks, $\mathbf A_{11}$, $\mathbf A_{12}$, $\mathbf A_{21}$, and $\mathbf A_{22}$, as shown below:
+
+$$
+\mathbf A = \begin{bmatrix}
+\mathbf A_{11} & \mathbf A_{12} \\
+\mathbf A_{21} & \mathbf A_{22}
+\end{bmatrix}
+$$
+
+where $\mathbf A_{11}, \mathbf A_{12}, \mathbf A_{21},\text{ and }\mathbf A_{22}$ are individual matrices. This block matrix can be used to represent a system of linear equations with four variables or equations, where the blocks $\mathbf A_{11}, \mathbf A_{12}, \mathbf A_{21},\text{ and }\mathbf A_{22}$ represent the coefficients of the variables in the linear equations.
+
+### Block Multiplication
+
+Block multiplication is a matrix operation used with block matrices, where a matrix is partitioned into smaller matrices, or blocks, and the blocks are multiplied according to certain rules.
+
+#### Example
+
+$$
+\mathbf A = \begin{bmatrix}
+\mathbf A_{11} & \mathbf A_{12} \\
+\mathbf A_{21} & \mathbf A_{22}
+\end{bmatrix}
+\quad
+\mathbf B = \begin{bmatrix}
+\mathbf B_{11} & \mathbf B_{12} \\
+\mathbf B_{21} & \mathbf B_{22}
+\end{bmatrix}
+$$
+
+
+The block multiplication of $\mathbf A$ and $\mathbf B$, denoted as $\mathbf{AB}$, can be computed as:
+
+$$
+\mathbf{AB} = \begin{bmatrix}
+\mathbf A_{11} & \mathbf A_{12} \\
+\mathbf A_{21} & \mathbf A_{22}
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf B_{11} & \mathbf B_{12} \\
+\mathbf B_{21} & \mathbf B_{22}
+\end{bmatrix}
+= \begin{bmatrix}
+\mathbf A_{11}\mathbf B_{11} + \mathbf A_{12}\mathbf B_{21} & \mathbf A_{11}\mathbf B_{12} + \mathbf A_{12}\mathbf B_{22} \\
+\mathbf A_{21}\mathbf B_{11} + \mathbf A_{22}\mathbf B_{21} & \mathbf A_{21}\mathbf B_{12} + \mathbf A_{22}\mathbf B_{22}
+\end{bmatrix}
+$$
+
+where $\mathbf{A}_{11}\mathbf{B}_{11}, \mathbf{A}_{12}\mathbf{B}_{21}, \mathbf{A}_{11}\mathbf{B}_{12}, \mathbf{A}_{12}\mathbf{B}_{22}, \mathbf{A}_{21}\mathbf{B}_{11}, \mathbf{A}_{22}\mathbf{B}_{21}, \mathbf{A}_{21}\mathbf{B}_{12},\text{ and }\mathbf{A}_{22}\mathbf{B}_{22}$ are block multiplications of the corresponding blocks.
+
+When matrices split into blocks, it is often simpler to see how they act. 
+
+This block unit can be reduced to the vector:
+
+$$
+\mathbf{AB} = \begin{bmatrix}
+\mathbf a_{1} & \dots & \mathbf a_{n} 
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf b_{1} \\
+\vdots\\
+\mathbf b_{n} 
+\end{bmatrix}
+= \begin{bmatrix}
+\mathbf a_{1}\mathbf b_{1} + \dots + \mathbf a_{n}\mathbf b_{n}
+\end{bmatrix}
+$$
+
+### Block Elimination
+
+Block elimination is a technique used to solve systems of linear equations by reducing the system to a smaller set of equations. The process involves breaking the system down into smaller sub-systems or blocks, then eliminating one set of variables by expressing them in terms of the remaining variables. 
+
+#### Schur Complement
+
+The Schur complement is a matrix obtained by block elimination, where a large matrix $\mathbf{A}$ is partitioned into blocks:
+
+$$
+\begin{align*}
+\mathbf{A} =
+\begin{bmatrix}
+\mathbf{A}_{11} & \mathbf{A}_{12} \\
+\mathbf{A}_{21} & \mathbf{A}_{22}
+\end{bmatrix}
+\end{align*}
+$$
+
+where $\mathbf{A}_{11}$ is a square sub-matrix of $\mathbf{A}$. The Schur complement of $\mathbf{A}_{22}$ with respect to $\mathbf{A}_{11}$ is defined as:
+
+$$
+\begin{align*}
+\mathbf{S} = \mathbf{A}_{22} - \mathbf{A}_{21} \mathbf{A}_{11}^{-1} \mathbf{A}_{12}
+\end{align*}
+$$
+
+The Schur complement is useful in many areas of mathematics and engineering, including control theory, optimization, and signal processing.
+
+As an example, consider the following system of linear equations:
+
+$$
+\begin{align*}
+\begin{bmatrix}
+\mathbf{A}_{11} & \mathbf{A}_{12} \\
+\mathbf{A}_{21} & \mathbf{A}_{22}
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf{x}_1 \\
+\mathbf{x}_2
+\end{bmatrix}
+\begin{bmatrix}
+\mathbf{b}_1 \\
+\mathbf{b}_2
+\end{bmatrix}
+\end{align*}
+$$
+
+We can eliminate the variables $\mathbf{x}_2$ by solving for them in terms of $\mathbf{x}_1$:
+
+$$
+\begin{align*}
+\mathbf{A}_{22} \mathbf{x}_2 = \mathbf{b}_2 - \mathbf{A}_{21} \mathbf{x}_1 \\
+\mathbf{x}_2 = \mathbf{A}_{22}^{-1} (\mathbf{b}_2 - \mathbf{A}_{21} \mathbf{x}_1)
+\end{align*}
+$$
+
+Substituting this into the first equation, we obtain:
+
+$$
+\begin{align*}
+\mathbf{A}_{11} \mathbf{x}_1 + \mathbf{A}_{12} \mathbf{A}_{22}^{-1} (\mathbf{b}_2 - \mathbf{A}_{21} \mathbf{x}_1) = \mathbf{b}_1
+\end{align*}
+$$
+
+Rearranging terms, we obtain an equation in the form $\mathbf{B} \mathbf{x}_1 = \mathbf{c}$, where:
+
+$$
+\begin{align*}
+\mathbf{B} &= \mathbf{A}_{11} - \mathbf{A}_{12} \mathbf{A}_{22}^{-1} \mathbf{A}_{21} \\
+\mathbf{c} &= \mathbf{b}_1 - \mathbf{A}_{12} \mathbf{A}_{22}^{-1} \mathbf{b}_2
+\end{align*}
+$$
+
+Thus, we have obtained a smaller system.
+
+## Inverse Matrices
+
+::: {#def-inverse}
+
+The inverse of a square matrix $A$ of size $n$ is a matrix $A^{-1}$ such that the product of $A$ and $A^{-1}$ is the identity matrix $I_n$, i.e. $A \times A^{-1} = I_n$. If such a matrix exists, then $A$ is said to be **invertible or non-singular**.
+
+The inverse of a square matrix $\mathbf{A}$ is denoted by $\mathbf{A}^{-1}$ and is defined as the unique matrix that satisfies the following equation:
+$$
+\mathbf{A}^{-1}\mathbf{A} = \mathbf{A}\mathbf{A}^{-1} = \mathbf{I}
+$$
+
+where $\mathbf{I}$ is the identity matrix. Not all matrices have an inverse, and a matrix that has an inverse is called invertible or nonsingular. A matrix that does not have an inverse is called singular.
+:::
+
+### Properties about $\mathbf A^{-1}$
+
+1. Existence: The inverse of the matrix $\mathbf A$ exists if and only if elimination produces $n$ pivots, where $n$ is the number of rows (or columns) of $\mathbf A$. Elimination solves $\mathbf{Ax}=\mathbf{b}$ without explicitly using the matrix 
+  * Pivots are the non-zero elements that are selected during the elimination process and used as the basis for row operations. If $n$ pivots are obtained, then the matrix $\mathbf A$ is said to be full rank, and its inverse exists. If fewer than $n$ pivots are obtained, then the matrix $\mathbf A$ is singular, and its inverse does not exist
+1. Unique Inverse: the matrix $\mathbf A$ cannot have two different inverses
+1. If $\mathbf A$ is invertible, the one and only solution to  $\mathbf{Ax}=\mathbf{b}$ is $\mathbf{x}=\mathbf{A^{-1}b}$
+1. (Important) Suppose there is a nonzero vector $\mathbf A$ such that $\mathbf{Ax}=\mathbf{0}$. Then $\mathbf A$ cannot have an inverse. No matrix can bring  $\mathbf 0$ back to $\mathbf x$.
+  * If $\mathbf A$ is invertible, then $\mathbf{Ax}=\mathbf{0}$ can only have the zero solution $\mathbf{x}=\mathbf{A^{-1}0=0}$.
+4. A 2 by 2 matrix is invertible if and only if $ad - bc$ is not zero:
+$$
+A = \begin{bmatrix}
+a & b \\
+c & d \\
+\end{bmatrix}
+\quad
+A^{-1} = \frac{1}{ad - bc} \begin{bmatrix}
+d & -b \\
+-c & a \\
+\end{bmatrix}
+$$
+5. A diagonal matrix has an inverse provided no diagonal entries are zero
+6. Inverse of Inverse: $(\mathbf A^{-1})^{-1} = \mathbf A$ 
+7. Inverse of Product: If $\mathbf{AB = I}$, where $\mathbf I$ is the identity matrix, then $\mathbf{B = A^{-1}}$.
+8. Scalar Multiple: If $c$ is a scalar, then $(c\mathbf A)^{-1} = \frac{1}{c}\mathbf A^{-1}$ (if $c \neq 0$).
+9. Product of Inverses: If $\mathbf A^{-1}$ and $\mathbf B^{-1}$ both exist, then $(\mathbf{AB})^{-1} = \mathbf B^{-1}\mathbf A^{-1}$ (if $\mathbf{AB}$ is invertible).
+10. Reverse Order: $(\mathbf{ABC})^{-1}$=$\mathbf C^{-1}$ $\mathbf B^{-1}$ $\mathbf A^{-1}$
+
+### Inverse by Gauss Jordan Elimination 
+
+Given a square matrix $\mathbf A$, to find its inverse $\mathbf A^{-1}$:
+
+Step 1: Augment the matrix $\mathbf A$ with an identity matrix $\mathbf I$ of the same size:
+$[\mathbf A | \mathbf I]$
+
+Step 2: Perform elementary row operations to transform the left half $\mathbf A$ into the identity matrix $\mathbf I$:
+- Interchange rows
+- Multiply a row by a scalar
+- Add a multiple of one row to another row
+
+Step 3: Apply the same row operations to the right half $\mathbf I$ to obtain $\mathbf A^{-1}$.
+
+Step 4: If $\mathbf A$ is not invertible, the augmented matrix $[\mathbf A | \mathbf I]$ will not result in an identity matrix on the left half. 
+
+#### Example 
+
+$$
+\mathbf A= \begin{bmatrix}
+1 & 2 & 3 \\
+4 & 5 & 6 \\
+7 & 8 & 9 \\
+\end{bmatrix}
+$$
+
+Step 1: Augment the matrix $\mathbf A$ with an identity matrix $\mathbf I$ of the same size:
+$$
+[\mathbf A | \mathbf I] = \begin{bmatrix}
+1 & 2 & 3 & | & 1 & 0 & 0 \\
+4 & 5 & 6 & | & 0 & 1 & 0 \\
+7 & 8 & 9 & | & 0 & 0 & 1 
+\end{bmatrix}
+$$
+
+Step 2: Perform elementary row operations to transform the left half $\mathbf A$ into the identity matrix $\mathbf I$:
+- Interchange rows
+- Multiply a row by a scalar
+- Add a multiple of one row to another row
+
+Step 3: Apply the same row operations to the right half $\mathbf I$ to obtain $\mathbf A^{-1}$.
+
+Step 4: If $\mathbf A$ is not invertible, the augmented matrix $[\mathbf A | \mathbf I]$ will not result in an identity matrix on the left half. In this case, $\mathbf A$ does not have an inverse because $\text{det}(\mathbf A) = 1(5 \cdot 9 - 6 \cdot 8) - 2(4 \cdot 9 - 6 \cdot 7) + 3(4 \cdot 8 - 5 \cdot 7) = 0$
+
+::: {#def-elementary_matrix}
+An elementary matrix is a square matrix obtained by performing a single elementary row operation on the identity matrix $\mathbf{I}$.
+
+There are three types of elementary row operations:
+
+* Swapping two rows: The elementary matrix obtained by swapping two rows of the identity matrix is denoted by $\mathbf{E}_i$, where $i$ indicates the row numbers to be swapped. $\mathbf{E}_1 = \begin{bmatrix} 0 & 1 \\ 1 & 0 \end{bmatrix}$ 
+* Scaling a row by a nonzero scalar: The elementary matrix obtained by scaling a row of the identity matrix by a nonzero scalar $c$ is denoted by $\mathbf{E}_i(c)$, where $i$ indicates the row number to be scaled and $c$ is the scalar. $\mathbf{E}_2(2) = \begin{bmatrix} 1 & 0 \\ 0 & 2 \end{bmatrix}$
+
+* Adding a multiple of one row to another row: The elementary matrix obtained by adding a multiple of one row of the identity matrix to another row is denoted by $\mathbf{E}_{ij}(c)$, where $i$ indicates the row number from which a multiple is added, $j$ indicates the row number to which the multiple is added, and $c$ is the scalar multiple. $\mathbf{E}_{12}(3) = \begin{bmatrix} 1 & 3 \\ 0 & 1 \end{bmatrix}$
+:::
+
+
+
+::: {#thm-elementary_matrix}
+**Elementary Matrix Theorem** 
+
+Let $\mathbf{A}$ be an invertible $n \times n$ matrix. Then $\mathbf{A}$ can be represented as the product of elementary matrices $\mathbf{E}_1, \mathbf{E}_2, \ldots, \mathbf{E}_k$, where each $\mathbf{E}_i$ is an elementary matrix corresponding to a single elementary row operation.
+:::
+
+Any invertible matrix can be obtained by performing a sequence of elementary row operations on the identity matrix.
+
+Let $\mathbf{A} = \begin{bmatrix} 2 & 3 \\ 4 & 5 \end{bmatrix}$ be an invertible matrix. We can represent $\mathbf{A}$ as the product of elementary matrices $\mathbf{E}_1$ and $\mathbf{E}_2$ as follows:
+
+$$
+\begin{align*}
+\mathbf{E}_1 = \begin{bmatrix} 1 & 0 \\ -2 & 1 \end{bmatrix}, \quad
+\mathbf{E}_2 = \begin{bmatrix} \frac{1}{2} & 0 \\ 0 & 1 \end{bmatrix}
+\end{align*}
+$$
+
+such that $\mathbf{A} = \mathbf{E}_2 \mathbf{E}_1 \mathbf{I}$.
+
+Let $\mathbf{B} = \begin{bmatrix} 3 & 2 & 1 \\ 1 & 1 & 1 \\ 2 & 3 & 4 \end{bmatrix}$ be an invertible matrix. We can represent $\mathbf{B}$ as the product of elementary matrices $\mathbf{E}_1$, $\mathbf{E}_2$, and $\mathbf{E}_3$ as follows:
+
+$$
+\begin{align*}
+\mathbf{E}_1 = \begin{bmatrix} 0 & 1 & 0 \\ 1 & 0 & 0 \\ 0 & 0 & 1 \end{bmatrix}, \quad
+\mathbf{E}_2 = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 0 & 1 \\ 0 & 1 & 0 \end{bmatrix}, \quad
+\mathbf{E}_3 = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & 0 & \frac{1}{2} \end{bmatrix}
+\end{align*}
+$$
+
+such that $\mathbf{B} = \mathbf{E}_3 \mathbf{E}_2 \mathbf{E}_1 \mathbf{I}$.
+
+## Factorization
+
+Factorization is one of the computational backbones underlying data-science algorithms, including least squares model fitting and the matrix inverse. 
+
+**Prerequisites**
+
+* systems of equations, 
+* row reduction or elmentary row operations, and
+* Gaussian elimination
+* echelon matrices and 
+* permutation matrices
+
+::: {#def-factorization}
+The LU factorization, also known as the LU decomposition, is a matrix factorization method that expresses a given matrix $\mathbf{A}$ as the product of two matrices: a lower triangular matrix $\mathbf{L}$ and an upper triangular matrix $\mathbf{U}$:
+$$
+\mathbf{A} = \mathbf{LU}
+$$
+
+where
+
+* $\mathbf{A}$ is the given matrix,
+* $\mathbf{L}$ is the lower triangular matrix with ones on the diagonal, and
+* $\mathbf{U}$ is the upper triangular matrix.
+:::
+
+It decomposes a given square matrix into the product of two matrices, a lower triangular matrix ($\mathbf{L}$) and an upper triangular matrix ($\mathbf{U}$).
+
+row reduction can be expressed as $\mathbf{L}^{-1}\mathbf{A} = \mathbf{U}$, where $\mathbf{L}^{-1}$ contains the set of row manipulations that transforms the dense $\mathbf{A}$ into upper-triangular (echelon) $\mathbf{U}$. Because the echelon form is not unique, LU decomposition is not necessarily unique. Thus, there is an infinite pairing of lower- and upper-triangular matrices that could multiply to produce matrix $\mathbf{A}$. 
+
+However, adding the constraint that the diagonals of L equal 1 ensures that LU decomposition is unique for a full-rank square matrix $\mathbf{A}$. 
+
+* Efficient Solution of Linear Systems: Once a matrix is factorized into its LU form, it can be used to efficiently solve systems of linear equations. This is because solving a system of equations involving triangular matrices (such as L and U) is computationally more efficient compared to directly solving the original system of equations involving a general matrix.
+* Matrix Inversion: LU decomposition can also be used to efficiently calculate the inverse of a matrix. Once a matrix is factorized into its LU form, the inverse can be obtained by solving two triangular systems of equations, which is computationally more efficient compared to direct methods for matrix inversion.
+* Numerical Stability: LU decomposition can be used as a more numerically stable method for solving linear systems compared to direct methods, such as Gaussian elimination, because it avoids the issues of division by small or zero pivots.
+
+### Properties
+
+* The LU decomposition of a matrix is not unique. There can be multiple factorizations of the same matrix into different combinations of L and U matrices.
+* If the original matrix has a determinant of zero, it is singular and does not have a unique LU decomposition.
+* The LU decomposition can be used for square as well as rectangular matrices, although in the case of rectangular matrices, it may not be unique and may involve additional techniques such as pivoting.
+* The LU decomposition can be calculated using various algorithms, such as Gaussian elimination, Crout's method, and Doolittle's method, among others, with different advantages and disadvantages in terms of computational complexity and numerical stability.
+
+
+### Example 
+
+$$
+\begin{align*} 
+\mathbf{A} &= \begin{bmatrix}
+a_{11} & a_{12} & \cdots & a_{1n} \\
+a_{21} & a_{22} & \cdots & a_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+a_{n1} & a_{n2} & \cdots & a_{nn} \\
+\end{bmatrix} \\
+&= \begin{bmatrix}
+1 & 0 & \cdots & 0 \\
+l_{21} & 1 & \cdots & 0 \\
+\vdots & \vdots & \ddots & \vdots \\
+l_{n1} & l_{n2} & \cdots & 1 \\
+\end{bmatrix}
+\begin{bmatrix}
+u_{11} & u_{12} & \cdots & u_{1n} \\
+0 & u_{22} & \cdots & u_{2n} \\
+\vdots & \vdots & \ddots & \vdots \\
+0 & 0 & \cdots & u_{nn} \\
+\end{bmatrix}
+\end{align*} 
+$$
+
+$$
+\begin{align*}
+\mathbf{A} &= \begin{bmatrix}
+2 & 3 & 1 \\
+4 & 9 & 5 \\
+6 & 15 & 9
+\end{bmatrix} \\
+\mathbf{A} &= \mathbf{LU} \\
+\mathbf{L} &= \begin{bmatrix}
+1 & 0 & 0 \\
+2 & 1 & 0 \\
+3 & 5 & 1
+\end{bmatrix}, \quad
+\mathbf{U} = \begin{bmatrix}
+2 & 3 & 1 \\
+0 & 3 & 3 \\
+0 & 0 & 2
+\end{bmatrix}
+\end{align*}
+$$
+
+```{python}
+
+A = np.array([[2, 3, 1],
+              [0, 4, -2],
+              [0, 0, 3]])
+           
+# its LU decomposition via scipy (please ignore the first output for now)
+_,L,U = scipy.linalg.lu(A)
+# print them out
+print('A: ')
+print(A), print(' ')
+
+print('L: ')
+print(L), print(' ')
+
+print('U: ')
+print(U), print(' ')
+
+print('A - LU: ')
+print(A - L@U) # should be zeros
+```
+
+## Transposes and Permutations
+
+### Transpose
+
+[Read the previous blog: the basic matrix operations](./02.basic_matrix.qmd)
+
+### Permutations
+
+A permutation is a reordering of a finite sequence of elements. In the context of solving $\mathbf{Ax=b}$, a permutation can be used to reorder the rows of the augmented matrix $\begin{bmatrix} \mathbf{A} & \mathbf{b} \end{bmatrix}$ to simplify the process of finding the row echelon form.
+
+Some matrices do not easily transform into an upper-triangular form, which can be transformed into upper-triangular form through a permutation matrix. Consider the following matrix:
+
+$$
+\begin{align*}
+&\mathbf{A} = \begin{bmatrix}
+3 & 2 & 1 \\
+0 & 0 & 5 \\
+0 & 7 & 2
+\end{bmatrix} \rightarrow
+
+\mathbf{A}' = \begin{bmatrix}
+3 & 2 & 1 \\
+0 & 7 & 2 \\
+0 & 0 & 5
+\end{bmatrix} \\ \\
+&\text{through a permutation matrix}
+\end{align*}
+$$
+
+
+::: {#def-permutation}
+
+A permutation of a set of size $n$ is a bijective function $\sigma: {1, 2, \ldots, n} \to {1, 2, \ldots, n}$, which means that every element in the set is mapped to a unique element in the set and vice versa. A common way to represent a permutation is by using a permutation matrix, which is a square matrix with a single 1 in each row and each column and 0s elsewhere. The location of the 1 in each row represents the new position of that row after the permutation.
+:::
+
+#### Example
+
+Consider the permutation $\sigma$ of the set ${1, 2, 3}$ defined by $\sigma(1) = 2$, $\sigma(2) = 3$, and $\sigma(3) = 1$. The corresponding permutation matrix is:
+
+$$
+\begin{align*}
+\mathbf{P} = \begin{bmatrix}
+0 & 0 & 1 \\
+1 & 0 & 0 \\
+0 & 1 & 0
+\end{bmatrix}
+\end{align*}
+$$
+
+To apply this permutation to the matrix $\mathbf{A}$, we multiply $\mathbf{A}$ on the left by $\mathbf{P}$, i.e., $P\mathbf{A}$. Similarly, to apply the permutation to the vector $\mathbf{b}$, we multiply $\mathbf{b}$ on the left by $\mathbf{P}$, i.e., $P\mathbf{b}$. This gives us the reordered augmented matrix:
+
+$$
+\begin{align*}
+\mathbf{P}\begin{bmatrix} \mathbf{A} & \mathbf{b} \end{bmatrix} = \begin{bmatrix} \mathbf{P}\mathbf{A} & \mathbf{P}\mathbf{b} \end{bmatrix}
+\end{align*}
+$$
+
+By permuting the rows of the augmented matrix, we can obtain a row echelon form that is easier to work with and may lead to simpler solutions for $\mathbf{x}$.
+
+The full LU decomposition actually takes the following form:
+
+$$
+\begin{align*}
+\mathbf{P}\mathbf{A} &= \mathbf{L}\mathbf{U} \\
+\mathbf{A} &= \mathbf{P}^{T}\mathbf{L}\mathbf{U} \because \mathbf{P} \text{ is orthogonal, } \mathbf{P}^{-1}=\mathbf{P}^{T}
+\end{align*}
+$$
+
+All elements of a permutation matrix are either 0 or 1, and rows are swapped only once, each column has exactly one nonzero element (indeed, all permutation matrices are identity matrices with row swaps). Therefore, the dot
+product of any two columns is 0 while the dot product of a column with itself is 1, meaning $\mathbf{P}^{T}\mathbf{P}=\mathbf{I}$
+
+
+#### Properties
+
+Permutations are used in solving linear systems of equations using Gaussian elimination, which is a common method for finding solutions to $\mathbf{Ax=b}$. Here are some formal properties of permutations:
+
+* The LU decomposition with permutations is used in several applications, including computing the determinant and the matrix inverse.
+* A permutation matrix $\mathbf{P}$ is a square matrix obtained by permuting the rows of the identity matrix $\mathbf{I}$.
+* The product of two permutation matrices is also a permutation matrix.
+* The inverse of a permutation matrix is its transpose.
+* Permutation matrices can be used to interchange rows of a matrix.
+
+$$
+\begin{align*}
+x_1 + 2x_2 + 3x_3 &= 7 \\
+4x_1 + 5x_2 + 6x_3 &= 8 \\
+7x_1 + 8x_2 + 9x_3 &= 10
+\end{align*}
+$$
+
+The augmented matrix for this system is:
+
+$$
+\begin{align*}
+\left[\begin{array}{ccc|c}
+1 & 2 & 3 & 7 \\
+4 & 5 & 6 & 8 \\
+7 & 8 & 9 & 10
+\end{array}\right]
+\end{align*}
+$$
+
+To perform Gaussian elimination, we might want to interchange the first and second rows of the matrix. We can do this by multiplying the matrix by the permutation matrix:
+
+$$
+\begin{align*}
+\mathbf{P}_1 = \begin{bmatrix}
+0 & 1 & 0 \\
+1 & 0 & 0 \\
+0 & 0 & 1
+\end{bmatrix}
+\end{align*}
+$$
+
+We can verify that $\mathbf{P}_1$ is a permutation matrix, and we can apply it to the augmented matrix:
+
+$$
+\begin{align*}
+\mathbf{P}_1\left[\begin{array}{ccc|c}
+1 & 2 & 3 & 7 \\
+4 & 5 & 6 & 8 \\
+7 & 8 & 9 & 10
+\end{array}\right] &= \left[\begin{array}{ccc|c}
+4 & 5 & 6 & 8 \\
+1 & 2 & 3 & 7 \\
+7 & 8 & 9 & 10
+\end{array}\right]
+\end{align*}
+$$
+
+We can continue with the Gaussian elimination process on the new augmented matrix. If we want to interchange the second and third rows, we can use the permutation matrix:
+
+$$
+\begin{align*}
+\mathbf{P}_2 = \begin{bmatrix}
+1 & 0 & 0 \\
+0 & 0 & 1 \\
+0 & 1 & 0
+\end{bmatrix}
+\end{align*}
+$$
+
+We can verify that $\mathbf{P}_2$ is a permutation matrix, and we can apply it to the augmented matrix:
+
+$$
+\begin{align*}
+\mathbf{P}_2\left[\begin{array}{ccc|c}
+4 & 5 & 6 & 8 \\
+1 & 2 & 3 & 7 \\
+7 & 8 & 9 & 10
+\end{array}\right] &= \left[\begin{array}{ccc|c}
+4 & 5 & 6 & 8 \\
+7 & 8 & 9 & 10 \\
+1 & 2 & 3 & 7
+\end{array}\right]
+\end{align*}
+$$
+
+We can now continue with Gaussian elimination on this new augmented matrix, which is in row echelon form.
+
+#### Example
+
+The Scipy package actually returns $\mathbf{A = PLU}$, which we could also write as $\mathbf{P^{T}A = LU}$.
+
+```{python}
+
+# matrix sizes
+m = 4
+n = 6
+
+A = np.random.randn(m,n)
+
+P,L,U = scipy.linalg.lu(A)
+
+# show the matrices
+fig,axs = plt.subplots(1,5,figsize=(13,4))
+
+axs[0].imshow(A,vmin=-1,vmax=1)
+axs[0].set_title('A')
+
+axs[1].imshow(np.ones((m,n)),cmap='gray',vmin=-1,vmax=1)
+axs[1].text(n/2,m/2,'=',ha='center',fontsize=30,fontweight='bold')
+# axs[1].axis('off')
+
+axs[2].imshow(P.T,vmin=-1,vmax=1)
+axs[2].set_title(r'P')
+
+axs[3].imshow(L,vmin=-1,vmax=1)
+axs[3].set_title('L')
+
+h = axs[4].imshow(U,vmin=-1,vmax=1)
+axs[4].set_title('U')
+
+for a in axs:
+  a.axis('off')
+  a.set_xlim([-.5,n-.5])
+  a.set_ylim([m-.5,-.5])
+
+
+fig.colorbar(h,ax=axs[-1],fraction=.05)
+plt.tight_layout()
+plt.savefig('Figure_10_01.png',dpi=300)
+plt.show()
+     
+```
+
+```{python}
+A = np.array([[1, 2, 3, 7],
+              [4, 5, 6, 8],
+              [7, 8, 9, 10]])
+           
+# its LU decomposition via scipy (please ignore the first output for now)
+P,L,U = scipy.linalg.lu(A)
+# print them out
+print('A: ')
+print(A), print(' ')
+
+print('P: ')
+print(P), print(' ')
+
+
+print('L: ')
+print(L), print(' ')
+
+print('U: ')
+print(U), print(' ')
+
+print('A - LU: ')
+print(A - P@L@U) # should be zeros
+```
+
+
+# 정리할 것 end
+
+
+
+
+
+
 
 ### Matrix with Combinations of Vectors
 

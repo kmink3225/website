@@ -45,9 +45,9 @@ import matplotlib.pyplot as plt
   * $y=mx+b$ 는 $\mathbf{x}=t\mathbf{v}$ 를 $b$ 만큼 평행 이동한 직선 이므로
     * $(0,b)= \mathbf{v}_0$ 라 두면 $(1,m)=\mathbf{v}_1$ 라 했을 때 $y=mx+b$ 는 $\mathbf{x}=\mathbf{v}_0+t\mathbf{v}_1$ 로 표현된다.
 * $\mathbf{x}=\mathbf{v}_0+t\mathbf{v}_1$ 표현은 차원 확장의 용이
-  * 3차원 공간상의 벡터를 표현할 때도 $\mathbf{x}=\mathbf{v}_0+t\mathbf{v}_1$ 로 표현
+  * 3차원 이상의 공간을 표현할 때도 $\mathbf{x}=\mathbf{v}_0+t\mathbf{v}_1$ 로 표현
   * 3차원 공간의 임의의 벡터가 주어졌을 때 원점에서 임의의 벡터까지의 벡터를 $\mathbf{v}_0$ 로 표현하면 $\mathbf{x}=\mathbf{v}_0+t\mathbf{v}_1$ 가 임의의 벡터의 모든 점을 표현할 수 있다. 여기서 $\mathbf{x}=(x,y,z)$ 이다. 
-  *  $\mathbf{v}_0$ 는 반드시 수직으로 이동한 벡터를 표현할 필요는 없다. 원점에서 임의의 벡터까지의 거리와 방향을 표현한 벡터이면 충분하다.
+  *  $\mathbf{v}_0$ 는 반드시 수직으로 이동한 벡터를 표현할 필요는 없다. 원점에서 임의의 직선상의 한점까지 거리와 방향을 표현한 벡터이면 충분하다. 그리고 직선에 평행한 벡터를 실수배하여 표현한 벡터에 $\mathbf{v}_0$ 를 더해주면 된다.
 
 ## Equations of Planes
 
@@ -55,242 +55,53 @@ import matplotlib.pyplot as plt
 * 왜냐면, 벡터의 실수배는 벡터이기 때문
 * 좌표 자체가 2개의 벡터로 되어 있기 때문에 평면을 모두 설명할 수 있다.
   * $(x,y) = xe_1+ye_2$ where $e_1=(1,0)$ and $e_2=(0,1)$
+  * 단, 2개의 벡터는 평행하면 안된다. 평행한 두 벡터는 한 벡터가 다른 하나의 벡터의 실수배로 표현되기 때문
+  * 만약, $\mathbf{v}_1 // \mathbf{v}_2$ 하다면 $(a,b)=a\mathbf{v}_1+b\mathbf{v}_2=ak\mathbf{v}_2+b\mathbf{v}_2=(ak+b)\mathbf{v}_2$ 그래서 직선하나 밖에 표현이 안된다.
+* **평면 전체를 표현하려면 서로 평행하지 않은 두 벡터가 있어야 한다.** (선형적으로 독립인 벡터)
+* 평행한 벡터는 두 벡터가 서로 종속임을 의미
+* 그러므로 평면의 방정식: $\mathbf{x}=\mathbf{v}_0+t_0\mathbf{v}_1+t_1\mathbf{v}_2$
+  * 원점으로 부터 평면에 $\mathbf{v}_0$ 만큼 이동해서 평면상의 $\mathbf{v}_1$ 과 $\mathbf{v}_2$ 의 실수배의 합으로 평면상의 모든 점을 표현한다.
 
-#### Linear Transformation
+### Example
 
-A function is said to be linear if it satisfies two properties: **additivity** and **homogeneity**.
-
-1. Additivity means that for any two inputs, the output of the function applied to their sum is equal to the sum of the outputs applied to each input separately. In other words, if we have a function $f$ and vectors $\mathbf x$ and $\mathbf y$, then
-
-$$
-f(\mathbf x + \mathbf y) = f(\mathbf x) + f(\mathbf y)
-$$
-
-2. Homogeneity means that for any input and scalar $c$, the output of the function applied to the input scaled by $c$ is equal to the output applied to the unscaled input multiplied by $c$. In other words,
-
-$$
-f(c\mathbf x) = c f(\mathbf x)
-$$
-These two properties together are what we mean when we say a function is linear.
-
-Try to compare $y=2x$ for liniearity vs $y=2x^2$ for non-linearity and which one satisfies the linear properties?
-
-:::
-
-Let's consider the standard inner product of two vectors in $\mathbb R^2$, given by $\langle \mathbf x, \mathbf y\rangle$ = $x_1y_1 + x_2y_2$, where $\mathbf x = [x_1, x_2]^T$ and $\mathbf y = [y_1, y_2]^T$.
-
-1. Linearity in the first argument:
-
-$$
-\langle 2 \mathbf x + 3\mathbf y, \mathbf z\rangle = (2x_1 + 3y_1)z_1 + (2x_2 + 3y_2)z_2 = 2\langle \mathbf x, \mathbf z \rangle + 3\langle \mathbf y, \mathbf z \rangle
-$$
-
-2. Conjugate linearity in the second argument:
-
-$$
-\langle \mathbf x, 2\mathbf y+3\mathbf z\rangle = x_1(2y_1 + 3z_1) + x_2(2y_2 + 3z_2) = 2\langle \mathbf x, \mathbf y \rangle + 3\langle \mathbf x, \mathbf z \rangle
-$$
-
-3. Symmetry:
-
-$$
-\langle \mathbf x,\mathbf y\rangle = x_1y_1 + x_2y_2 = y_1x_1 + y_2x_2 = \langle \mathbf y, \mathbf x \rangle
-$$
-
-4. Positive-definite:
-
-$$
-\langle \mathbf x,\mathbf x\rangle =  x_1^2 + x_2^2 \ge 0 = \langle \mathbf x, \mathbf x \rangle \text{ only if } \mathbf x = [0, 0]^T
-$$
-
-
-Let's see another example of two complex vectors for *2. Conjugate linearity in the second argument*, $\mathbf{u}=\begin{bmatrix} 1+i \\ 2 \end{bmatrix}$ and $\mathbf{v}=\begin{bmatrix} 3-2i \\ 1 \end{bmatrix}$.
-
-Their inner product would be:
+* $y=3x+2$ 의 벡터방정식을 구하면 직선상의 임의 두 점을 선택 $(1,5), (2,8)$
 $$
 \begin{aligned}
-\langle \mathbf{u}, \mathbf{v} \rangle &= \begin{bmatrix} 1+i \\ 2 \end{bmatrix}^H \begin{bmatrix} 3-2i \\ 1 \end{bmatrix} \\
-&= \begin{bmatrix} 1-i & 2 \end{bmatrix} \begin{bmatrix} 3-2i \\ 1 \end{bmatrix} \\
-&= (1-i)(3-2i) + 2(1) \\
-&= 1 + i + 6 - 4i + 2 \\
-&= 9 - 3i.
+  \mathbf{x}&=\mathbf{v}_0+t\mathbf{v}_1\\
+  &=(1,5)+t(2-1,8-5)\\
+  &=(1,5)+t(1,3)
 \end{aligned}
 $$
 
-where $H$ is the Hermitian transpose, also known as the conjugate transpose, which is similar to the transpose operation, but also involves taking the complex conjugate of each element. For a matrix $\mathbf A$, the Hermitian transpose is denoted by $\mathbf A^H$ or $A^\dagger$ and is defined as the transpose of the complex conjugate of $\mathbf A$. Mathematically, for a matrix $\mathbf A$ with elements $a_{i,j}$, the Hermitian transpose $\mathbf A^H$ is defined as:
-
-$$
-(\mathbf A^H)_{i,j} = \overline{a_{j,i}}
-$$
-
-where $\overline{a_{j,i}}$ denotes the complex conjugate of $a_{j,i}$.
-
-In the case of a real-valued matrix, the Hermitian transpose reduces to the ordinary transpose, denoted by $\mathbf A^T$.
-
-Now let's see the conjugate linearity property in the second argument:
-
+* $x+2y+3z=4$ 의 벡터방정식을 구하면 평면상의 임의 세 점을 선택 $(1,1,\frac{1}{3}), (1,2,-\frac{1}{3}), (0,0,\frac{3}{4})$
 $$
 \begin{aligned}
-\langle \mathbf{u}, c \mathbf{v} \rangle &= \begin{bmatrix} 1+i \\2 \end{bmatrix}^H \left(c \begin{bmatrix} 3-2i \\ 1 \end{bmatrix}\right) \\
-&= \begin{bmatrix} 1-i & 2 \end{bmatrix} \begin{bmatrix} 3c-2ci \\ c \end{bmatrix} \\
-&= (1-i)(3c-2ci) + 2(c) \\
-&= 3c - 2ci + 2c - 2ci \\
-&= (3+2)c - 4ci \\
-&= c(3+2i) - 4i\overline{c}.
+  \mathbf{x}&=\mathbf{v}_0+t_0\mathbf{v}_1+t_1\mathbf{v}_2\\
+  &=(1,1,\frac{1}{3})+t_0(0,1,-\frac{2}{3})+t_1(-1,-1,\frac{5}{12})\\
+  &=(1+t_0-t_1,1+t_0-t_1,\frac{1}{3}-t_0\frac{2}{3}+\frac{5}{12}t_1)
 \end{aligned}
 $$
 
-We can see that the second component of the result is $-4i\overline{c}$, which is the conjugate of $4ic$. Therefore, we can say that the inner product is conjugate linear in the second argument.
+## Reparametrization 
 
-A dot product is a specific type of inner product that is defined for Euclidean spaces, which are spaces with a notion of distance or length. The dot product of two vectors is defined as the sum of the products of their corresponding components. In other words, if $\mathbf a = [a_1, a_2, ..., a_n]$ and $\mathbf b = [b_1, b_2, ..., b_n]$ are two vectors in $\mathbb R^n$, then their dot product is given by:
+주로 미분 기하에서 많이 쓰임
 
-$$
-\mathbf a \cdot \mathbf b = a_1b_1 + a_2b_2 + ... + a_nb_n
-$$
+### 벡터 방정식의 아쉬운 점
 
-The dot product satisfies some of the properties of an inner product, such as being linear in the first argument and symmetric. However, it is not conjugate linear in the second argument, and it is not positive-definite in general.
-
-So, while a dot product is a specific type of inner product, not all inner products are dot products.
-:::
-
-For example, if $\textbf{a} = [1, 2, 3]$ and $\textbf{b} = [4, 5, 6]$, then their dot product $c = 1\cdot 4 + 2\cdot 5 + 3\cdot 6 = 32$.
-
-
-
-
-
-
-
-### Cross Product of Vectors
-
-The cross product of two vectors is a vector that is perpendicular to both of them. If $\textbf{a}$ and $\textbf{b}$ are two vectors in $\mathbb{R}^3$, then their cross product $\textbf{c} = \textbf{a} \times \textbf{b}$ is a vector given by the formula
-
-$$
-\textbf{c} = \textbf{a} \times \textbf{b} \\
-          = ||\textbf{a}|| ||\textbf{b}||\sin(\theta) \mathbf n           
-$$
-
-where:
-
-* $\theta$ is the angle between $\textbf{a}$ and $\textbf{b}$ in the plane containing them (hence, it $0 \le \theta \le \pi$)
-* $||\textbf{a}||$ and $||\textbf{b}||$ are the magnitudes of vectors $||\textbf{a}||$ and $||\textbf{b}||$
-* and $||\textbf{n}||$ is a unit vector perpendicular to the plane containing $||\textbf{a}||$ and $||\textbf{a}||$, with direction such that the ordered set ($||\textbf{a}||$, $||\textbf{b}||$, $||\textbf{n}||$) is positively-oriented.
-
-If the vectors $\textbf{a}$ and $\textbf{b}$ are parallel (that is, $\theta$ between them is either $0$ or $\pi$), by the above formula, the cross product of $\textbf{a}$ and $\textbf{b}$ is the zero vector 0.
-
-[Reference: read the explanations in wiki](https://en.wikipedia.org/wiki/Cross_product)
-
-::: {layout-ncol=2}
-![By User:Acdx - Self-made, based on Image:Crossproduct.png, Public Domain](../linear_algebra/images/Cross_product_vector.svg.png)
-![Right_hand_rule_cross_product](../linear_algebra/images/Right_hand_rule_cross_product.svg)
-:::
-
-For example, 
-$$
-\textbf{c} = \textbf{a} \times \textbf{b} = [a_2b_3 - a_3b_2, a_3b_1 - a_1b_3, a_1b_2 - a_2b_1]           
-$$
-
-If $\textbf{a} = [1, 2, 3]$ and $\textbf{b} = [4, 5, 6]$, then their cross product $\textbf{c} = [-3, 6, -3]$.
-
-### Column Vector & Row Vector
-
-A column vector $\mathbf{u}$ with $n$ elements is an $m \times 1$ matrix, which can be represented as:
-$$
-\mathbf{u} =
-\begin{bmatrix}
-u_{1} \\
-u_{2} \\
-\vdots \\
-u_{m}
-\end{bmatrix}
-$$
-
-In an $m \times n$ matrix, the column vectors can be represented as:
-
-$$
-\mathbf U  = \begin{bmatrix}  \mathbf u_{1} &\mathbf u_{2} & \dots &\mathbf u_{n} \end{bmatrix} \\
-=
-\begin{bmatrix} 
-  u_{11} & u_{12} & \cdots & u_{1n} \\
-  u_{21} & u_{22} & \cdots & u_{2n} \\
-  \vdots & \vdots & \ddots & \vdots \\
-  u_{m1} & u_{m2} & \cdots & u_{mn}
-\end{bmatrix} 
-$$
-
-
-where $u_i$ is the $i$-th element of the column vector $\mathbf{u}$, $n$ is the number of columns, and $m$ is the number of rows in the matrices.
-
-
-A row vector $\mathbf{u}$ with $m$ elements is a $1 \times n$ matrix, which can be represented as:
-$$
-\mathbf{u} = 
-\begin{bmatrix}
-u_{1} & u_{2} & \cdots & u_{m}
-\end{bmatrix}
-$$
-
-In an $m \times n$ matrix, the row vectors can be represented as:
-
-$$
-\mathbf U  = \begin{bmatrix}  \mathbf u_{1} \\\mathbf u_{2} \\ \vdots \\\mathbf u_{m} \end{bmatrix} \\
-=
-\begin{bmatrix} 
-  u_{11} & u_{12} & \cdots & u_{1n} \\
-  u_{21} & u_{22} & \cdots & u_{2n} \\
-  \vdots & \vdots & \ddots & \vdots \\
-  u_{m1} & u_{m2} & \cdots & u_{mn}
-\end{bmatrix} 
-$$
-
-
-where $u_i$ is the $i$-th element of the row vector $\mathbf{u}$ and $n$ is the number of columns in the matrix.
-
-### Linear Combination of vectors
-
-A linear combination of vectors $\mathbf{v}_1,\mathbf{v}_2,\dots,\mathbf{v}_n$ in a vector space $V$ over a field $\mathbb{F}$ is a vector of the form:
-$$
-a_1\mathbf{v_1}+a_2\mathbf{v_2}+\dots+a_n\mathbf{v_n}
-$$
-
-where $a_1,a_2,\dots,a_n\in\mathbb{F}$.
-
-For example, suppose we have two vectors $\mathbf{v}_1=\begin{bmatrix} 1 \ 2 \ 3 \end{bmatrix}$ and $\mathbf{v}_2=\begin{bmatrix} 4 \ 5 \ 6 \end{bmatrix}$ in $\mathbb{R}^3$. Then, a linear combination of $\mathbf{v}_1$ and $\mathbf{v}_2$ is of the form:
-
-$$
-a_1\begin{bmatrix}1\\2\\3\end{bmatrix}+a_2\begin{bmatrix}4\\5\\6\end{bmatrix}=\begin{bmatrix}a_1+4a_2\\2a_1+5a_2\\3a_1+6a_2\end{bmatrix}
-$$
-
-Here, $a_1$ and $a_2$ are scalar coefficients that determine the resulting linear combination vector.
-
-### Outer Product
-
-The outer product of two vectors $\mathbf{u} = [u_1, u_2, \dots, u_m]^T$ and $\mathbf{v} = [v_1, v_2, \dots, v_n]^T$ is a matrix $\mathbf{u} \mathbf{v}^T$ of size $m \times n$, defined by:
-
-$$
-\begin{aligned}
-\mathbf{u} \otimes \mathbf{v} &= 
-\begin{bmatrix}
-u_1v_1 &u_1v_2& \dots & u_1v_n \\
-u_2v_1 &u_2v_2& \dots & u_2v_n \\
-\vdots &\vdots& \ddots & u_1v_n \\
-u_mv_1 &u_mv_2& \dots & u_mv_n \\
-
-\end{bmatrix} 
-\end{aligned}
-$$
-
-$$
-(\mathbf{u} \otimes \mathbf{v})_{i,j} = u_i v_j
-$$
-
-where $\mathbf{u} = [u_1, u_2, \dots, u_m]$ and $\mathbf{v} = [v_1, v_2, \dots, v_n]$.
-
-The outer product is also called the tensor product, and it is a type of binary operation between two vectors that results in a matrix. It is important in linear algebra and other fields such as physics and engineering.
-
-Here is an example: Let $\mathbf{u} = [2, 4, 6]^T$ and $\mathbf{v} = [1, 3]^T$. The outer product of $\mathbf{u}$ and $\mathbf{v}$ is:
-
-
-So the outer product of $\mathbf{u}$ and $\mathbf{v}$ is a $3 \times 2$ matrix.
-
-[What is a matrix? Go to the Next Blog](../linear_algebra/02.basic_matrix.qmd)
+* 유일성을 보장하기 힘들다
+  * $y=x$ 의 벡터 방정식은 임의의 점 $(1,1)$ 을 잡아서 표현하면 $\mathbf{x}=t\mathbf{v}_1=t(1,1)=(t,t)$
+  * 벡터 방정식을 함수로 봤을 때 $f(t)=(t,t)$ 로 표현가능하고 t를 매개변수라고 부른다.
+  * 점 $(2,2)$ 를 잡아서 표현하면 $g(t)=t\mathbf{v}_2=t(2,2)=(2t,2t)$ 가 된다.
+  * 이렇게, 같은 직선이 다른 벡터 방정식으로 표현이 되었고 이를 reparametrization이라 부른다. $f(t),g(t)$ 는 재매개변수화의 결과물이다.
+* reparametrized vector equations 사이의 차이점
+* 벡터는 방향을 가진 물리량이기 때문에 힘이나 속도같은 물리량들이 시간에 따라 어떻게 변하는지를 많이 쓰이는데 매개변수 $t$ 를 보통 time으로 잡는다. $t$ 가 0~1 까지 움직일 때 $f(t) g(t)$ 가 움직이는 속도가 달라짐 (엄밀히 말하면 $y=x$ 의 예시에서 방향은 동등하게 유지되고 거리가 바뀌었기 때문에 속력이 달라졌다고 말할 수 있다. 하지만 일반적으로 방향과 이동 거리가 모두 달라짐.)
+  * $t=0, f(t)=g(t)=(0,0)$
+  * $t=1, f(t)=(1,1), g(t)=(2,2)$
+  * 즉, $f(t)$ 는 $(0,0) \righgtarrow (1,1)$. $g(t)$ 는 $(0,0) \righgtarrow (2,2)$
+* 유일성을 보장하기 위해 속도의 기준은 방향성 때문에 정하기 어렵지만 속력의 기준은 정할 수 있다.
+* 단위 속력 : 속력이 항상 $1$ 인 벡터 방정식
+  * $y=x$ 의 $f(t)=(t,t)$ 시간 $t$ 에 대한 $y=x$ 의 좌표 (위치)의 변화율은 속도가 됨
+  * $f'(t)$: 속도. $f'(t)=(1,1)$: $(1,1)$ 의 속도 방향을 가지고 있다는 의미
+  * 속력은 $f'(t)=(1,1)$ 의 norm을 구하면 됨: $||f'(t)||=\sqrt{1^2+1^2}=\sqrt{2}$
+  * 기준 속력 : $h(t)=\frac{f(t)}{||f'(t)||}=\frac{f(t)}{\sqrt{2}}=(\frac{t}{\sqrt{2}},\frac{t}{\sqrt{2}})$
+  * $h'(t)=(\frac{1}{\sqrt{2}},\frac{1}{\sqrt{2}}), \quad ||h'(t)||=1$

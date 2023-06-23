@@ -197,6 +197,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#expectation" id="toc-expectation" class="nav-link" data-scroll-target="#expectation"><span class="header-section-number">3</span> Expectation</a>
   <ul class="collapse">
   <li><a href="#properties-7" id="toc-properties-7" class="nav-link" data-scroll-target="#properties-7"><span class="header-section-number">3.1</span> Properties</a></li>
+  <li><a href="#random-vector" id="toc-random-vector" class="nav-link" data-scroll-target="#random-vector"><span class="header-section-number">3.2</span> Random Vector</a></li>
   </ul></li>
   <li><a href="#variance" id="toc-variance" class="nav-link" data-scroll-target="#variance"><span class="header-section-number">4</span> Variance</a>
   <ul class="collapse">
@@ -1964,9 +1965,7 @@ E(Y) = \int_{-\infty}^{\infty} y \cdot f(Y = y) \, dy
 <section id="properties-7" class="level3" data-number="3.1">
 <h3 data-number="3.1" class="anchored" data-anchor-id="properties-7"><span class="header-section-number">3.1</span> Properties</h3>
 <p>For constants <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>, matrix <span class="math inline">\(\mathbf{A}_{m\times n}\)</span>, vector <span class="math inline">\(\mathbf{b}_{m \times 1}\)</span>, random variables <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, and random vector <span class="math inline">\(\mathbf{x}_{m\times 1}\)</span> and <span class="math inline">\(\mathbf{y}_{m\times 1}\)</span></p>
-<ul>
-<li>Linearity of Expectation*</li>
-</ul>
+<p><strong>Linearity of Expectation</strong></p>
 <p>The expectation is a linear operator, which means it follows the rules of linearity.</p>
 <p><span class="math display">\[
 E(aX + bY) = aE(X) + bE(Y)
@@ -1992,21 +1991,19 @@ P(Y = 0) = \frac{1}{2}, \quad P(Y = 1) = \frac{1}{2}
   E(2X + 3Y) &amp;= 2 \cdot 2 + 3 \cdot \frac{1}{2} = 5
 \end{aligned}
 \]</span></p>
+</section>
+<section id="random-vector" class="level3" data-number="3.2">
+<h3 data-number="3.2" class="anchored" data-anchor-id="random-vector"><span class="header-section-number">3.2</span> Random Vector</h3>
 <p>Let <span class="math inline">\(X,Y\)</span> be <span class="math inline">\(X_1,X_2\)</span>, independent with each other, and <span class="math inline">\(\mathbf{x}=\begin{bmatrix} X_1 \\ X_2 \end{bmatrix}\)</span>.</p>
-$$
-<span class="math display">\[\begin{aligned}
-  E(\mathbf{x}) &amp;= \mathbf{\mu} = \begin{bmatrix} 1 \\ 2 \end{bmatrix} \\
+<p><span class="math display">\[
+\begin{aligned}
+  E(\mathbf{x}) &amp;= \mathbf{\mu} = \begin{bmatrix} E( X_1) \\ E(X_2) \end{bmatrix}= \begin{bmatrix} 1 \\ 2 \end{bmatrix} \\
   E(2X+3Y) &amp;= E(\mathbf{A}\mathbf{x}+\mathbf{b}) = E(\begin{bmatrix} 2 &amp; 3 \end{bmatrix}\mathbf{x} + \mathbf{0}) \\
   &amp;= \begin{bmatrix} 2 &amp; 3 \end{bmatrix}\mathbf{\mu} + \mathbf{0} \\
   &amp;= \begin{bmatrix} 2 &amp; 3 \end{bmatrix}\begin{bmatrix} \mu_1 \\ \mu_2 \end{bmatrix} \\
-  &amp;= \begin{bmatrix} 2 &amp; 3 \end{bmatrix}\begin{bmatrix} 2 \\ \frac{1}{2} \end{bmatrix} = 1 \\
-
-  Var(\mathbf{x}) &amp;= \mathbf{\Sigma} = \begin{bmatrix} Var(X_1) &amp; Cov(X_1,X_2) \\ Cov(X_2,X_1) &amp; Var(X_2)\end{bmatrix} =  \begin{bmatrix} Var(X_1) &amp; 0 \\ 0 &amp; Var(X_2)\end{bmatrix} \\
-
-  Var(2X_1+3X_2+3) &amp;= Var(\begin{bmatrix} 2 &amp; 3 \end{bmatrix} \mathbf{X} +3) = \begin{bmatrix} 2 &amp; 3 \end{bmatrix} Var( \mathbf{X}) \begin{bmatrix} 2 \\ 3 \end{bmatrix} \\
-    &amp;= \begin{bmatrix} 2 &amp; 3 \end{bmatrix} \begin{bmatrix} Var(X_1) &amp; 0 \\ 0 &amp; Var(X_2)\end{bmatrix} \begin{bmatrix} 2 \\ 3 \end{bmatrix}
-\end{aligned}\]</span>
-<p>$$</p>
+  &amp;= \begin{bmatrix} 2 &amp; 3 \end{bmatrix}\begin{bmatrix} 2 \\ \frac{1}{2} \end{bmatrix} = 1
+\end{aligned}
+\]</span></p>
 <p>Let <span class="math inline">\(Cov(X,Y)=1\)</span>. Let <span class="math inline">\(X,Y\)</span> be <span class="math inline">\(X_1,X_2\)</span>, dependent with each other. Let <span class="math inline">\(\mathbf{x}=\begin{bmatrix} X_1 \\ X_2 \end{bmatrix}\)</span>. The expected value is the same as that of the independent one.</p>
 <p><span class="math display">\[
 \begin{aligned}
@@ -2136,9 +2133,14 @@ E(X^2) = \frac{91}{6}
 <li><p>Linearity: The variance of a linear transformation of a random variable can be obtained by multiplying the variance of the original random variable by the square of the constant factor. <span class="math display">\[
 \text{Var}(aX) = a^2\text{Var}(X)
 \]</span></p>
-<p>where <span class="math inline">\(a\)</span> is a constant.</p>
+<p>where <span class="math inline">\(a\)</span> is a constant. For a random vector <span class="math inline">\(\mathbf{x}\)</span>,</p>
 <p><span class="math display">\[
-\text{Var}(\mathbf{A}X+\mathbf{b}) = \mathbf{A}\text{Var}(X)\mathbf{A}^T
+\begin{aligned}
+   \text{Var}(\mathbf{A}\mathbf{x}+\mathbf{b}) &amp;= \mathbf{A}\text{Var}(\mathbf{x})\mathbf{A}^T \\
+   \text{Var}(\mathbf{x}) &amp;= \mathbf{\Sigma} = \begin{bmatrix} \text{Var}(X_1) &amp; \text{Cov}(X_1,X_2) \\ \text{Cov}(X_2,X_1) &amp; \text{Var}(X_2)\end{bmatrix} \\
+   &amp;=\begin{bmatrix} \sigma_1^2 &amp; \rho\sigma_1\sigma_2 \\ \rho\sigma_1\sigma_2 &amp; \sigma_2^2\end{bmatrix} \\
+   &amp;=\begin{bmatrix} \text{Var}(X_1) &amp; 0 \\ 0 &amp; \text{Var}(X_2)\end{bmatrix} \text{when the two random variables are independent}
+\end{aligned}
 \]</span></p></li>
 <li><p>Additivity of Independent Variables: The variance of the sum (or difference) of independent random variables is equal to the sum of their variances. <span class="math display">\[
 \text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y)
@@ -2148,12 +2150,20 @@ E(X^2) = \frac{91}{6}
 \]</span> where <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are dependent random variables.</p></li>
 </ol>
 <p><strong>Example:</strong></p>
-<p>Consider two independent random variables <span class="math display">\[X\]</span> and <span class="math display">\[Y\]</span> with variances <span class="math display">\[\text{Var}(X) = 4\]</span> and <span class="math display">\[\text{Var}(Y) = 9\]</span>.</p>
+<p>Consider two independent random variables <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> with variances <span class="math inline">\(\text{Var}(X) = 4\)</span> and <span class="math inline">\(\text{Var}(Y) = 9\)</span>.</p>
 <ol type="1">
 <li><p>Non-Negativity: <span class="math inline">\(\text{Var}(X) = 4 \geq 0\)</span>, <span class="math inline">\(\text{Var}(Y) = 9 \geq 0\)</span></p></li>
 <li><p>Variance of a Constant: Let <span class="math inline">\(c = 5\)</span> be a constant. <span class="math inline">\(\text{Var}(c) = \text{Var}(5) = 0\)</span></p></li>
 <li><p>Linearity: Let <span class="math inline">\(a = 2\)</span> be a constant. <span class="math inline">\(\text{Var}(aX) = \text{Var}(2X) = 4(2^2) = 16\)</span></p></li>
-<li><p>Additivity of Independent Variables: <span class="math inline">\(\text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y) = 4 + 9 = 13\)</span></p></li>
+</ol>
+<p><span class="math display">\[
+  \begin{aligned}
+    Var(2X_1+3X_2+3) &amp;= Var(\begin{bmatrix} 2 &amp; 3 \end{bmatrix} \mathbf{X} +3) = \begin{bmatrix} 2 &amp; 3 \end{bmatrix} Var( \mathbf{X}) \begin{bmatrix} 2 \\ 3 \end{bmatrix} \\
+      &amp;= \begin{bmatrix} 2 &amp; 3 \end{bmatrix} \begin{bmatrix} Var(X_1) &amp; 0 \\ 0 &amp; Var(X_2)\end{bmatrix} \begin{bmatrix} 2 \\ 3 \end{bmatrix}
+  \end{aligned}
+  \]</span></p>
+<ol start="4" type="1">
+<li>Additivity of Independent Variables: <span class="math inline">\(\text{Var}(X + Y) = \text{Var}(X) + \text{Var}(Y) = 4 + 9 = 13\)</span></li>
 </ol>
 </section>
 </section>

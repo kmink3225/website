@@ -877,6 +877,508 @@ Note
   <pubDate>Sat, 31 Dec 2089 15:00:00 GMT</pubDate>
 </item>
 <item>
+  <title>Multivariate Normal Distribution &amp; Cholesky Decomposition</title>
+  <dc:creator>Kwangmin Kim</dc:creator>
+  <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/03-1.cholesky_decomposition.html</link>
+  <description><![CDATA[ 
+
+
+
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyverse)</span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(mosaic)</span>
+<span id="cb1-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(mvtnorm)</span></code></pre></div>
+</details>
+</div>
+<section id="sampling-from-multivariate-normal-distribution" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Sampling from Multivariate Normal Distribution</h1>
+<p>mvtnorm packcage의 rmvnnorm() 이용하는데 rmvnnorm()는 mean vector와 covariance matrix를 arguments로 받는다</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmu%20=%5Cbegin%7Bbmatrix%7D%201%20//%203//%203%20%5Cend%7Bbmatrix%7D%20%5Cquadd%20%5CSigma%20=%5Cbegin%7Bbmatrix%7D%204%20&amp;%20-2%20&amp;%201%20%5C%5C%20-2%20&amp;%203%20&amp;%20-1%20%5C%5C%201%20&amp;%20-1%20&amp;%202%20%5Cend%7Bbmatrix%7D%0A"></p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">mean_vector <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb2-2">cov_matrix <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ncol=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">byrow=</span><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>)</span>
+<span id="cb2-3">mvt_samples <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rmvnorm</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">n=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean=</span>mean_vector, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sigma=</span> cov_matrix)</span>
+<span id="cb2-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(mvt_samples)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>           [,1]      [,2]       [,3]
+[1,] -2.1515308 6.5697158  0.2911097
+[2,] -1.0691608 6.2564176  2.1150750
+[3,]  1.0416691 5.9014747  2.8999467
+[4,]  1.4139515 3.9385745  2.5840661
+[5,]  0.3922897 2.3432298 -1.1311747
+[6,]  2.3814019 0.8481142  2.3396410</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># mean vector와 variance vector 확인하는 시각화</span></span>
+<span id="cb4-2">mvt_samples[,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">hist</span>()</span></code></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/03-1.cholesky_decomposition_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">mvt_samples[,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">hist</span>()</span></code></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/03-1.cholesky_decomposition_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">mvt_samples[,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">hist</span>()</span></code></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/03-1.cholesky_decomposition_files/figure-html/unnamed-chunk-2-3.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">ecdf</span>(mvt_samples[,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>])<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">plot</span>() <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#empirical cdf</span></span>
+<span id="cb7-2">y<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">pnorm</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mean=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">sd=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># get cdf  points</span></span>
+<span id="cb7-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">points</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">seq</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>),y,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">col=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'red'</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># marginal cdf</span></span></code></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/03-1.cholesky_decomposition_files/figure-html/unnamed-chunk-2-4.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<section id="첫째로-표본-공분산-행렬-covmvt_samples-추정" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="첫째로-표본-공분산-행렬-covmvt_samples-추정"><span class="header-section-number">1.1</span> 첫째로 표본 공분산 행렬, cov(mvt_samples) 추정</h2>
+<p><img src="https://latex.codecogs.com/png.latex?%0AS=%5Cfrac%7B1%7D%7Bn-1%7D%20%5Ctilde%7BX%7D%5ET%5Ctilde%7BX%7D%0A"></p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># covariance matrix 확인하는 시각화</span></span>
+<span id="cb8-2"><span class="do" style="color: #5E5E5E;
+background-color: null;
+font-style: italic;">## 첫째로 표본 공분산 행렬, cov(mvt_samples) 추정</span></span>
+<span id="cb8-3">centered_X <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale</span>(mvt_samples, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">center =</span>T, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">scale =</span>F)</span>
+<span id="cb8-4"><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000-1</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">t</span>(centered_X) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%*%</span> centered_X</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]      [,2]      [,3]
+[1,]  4.319724 -2.231680  1.118771
+[2,] -2.231680  3.176240 -1.067248
+[3,]  1.118771 -1.067248  2.014970</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">cov</span>(mvt_samples)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]      [,2]      [,3]
+[1,]  4.319724 -2.231680  1.118771
+[2,] -2.231680  3.176240 -1.067248
+[3,]  1.118771 -1.067248  2.014970</code></pre>
+</div>
+</div>
+</section>
+<section id="난수-발생-원리" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="난수-발생-원리"><span class="header-section-number">1.2</span> 난수 발생 원리</h2>
+<section id="cholesky-decomposition" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="cholesky-decomposition"><span class="header-section-number">1.2.1</span> Cholesky Decomposition</h3>
+<p>cholesky decomposition 또는 촐레스키 인수분해는 선형대수학에서 사용되는 중요한 알고리즘 중 하나로 이는 양의 정부호 행렬을 lower triangular matrix와 그 행렬의 전치 행렬의 곱으로 분해하는 방법이다. 양의 정부호 대칭 행렬 <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7BA%7D"> 에 대하여 촐레스키 분해는 다음과 같이 정의 된다. 수의 제곱근을 구하는 개념에 대응시켜서 이해하면 편하다.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BA%7D%20=%20LL%5ET%0A"></p>
+<p>여기서 L은 하삼각행렬을 나타낸다. 촐레스키 분해는 행렬 A가 양의 정부호 임을 전제로 한다. 촐레스키 분해로 A를 하삼각행렬의 곱으로 정보를 압축할 수 있다. 촐레스키 분해는 통계학, 수치해석학, 머신러닝 등에서 사용되는데 가장 대표적인 예가 다변수 정규분포의 표본을 생성하는 것이다. system of linear equation의 해를 구할 때도 사용된다.</p>
+</section>
+<section id="촐레스키-분해-구현" class="level3" data-number="1.2.2">
+<h3 data-number="1.2.2" class="anchored" data-anchor-id="촐레스키-분해-구현"><span class="header-section-number">1.2.2</span> 촐레스키 분해 구현</h3>
+<p><code>chol()</code> 함수를 이용해 촐레스키 분해를 수행할 수 있다.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># define a positive matrix</span></span>
+<span id="cb12-2">cov_matrix</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    4   -2    1
+[2,]   -2    3   -1
+[3,]    1   -1    2</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1">upper_triangular_matrix<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">chol</span>(cov_matrix)</span>
+<span id="cb14-2">lower_triangular_matrix<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">t</span>(upper_triangular_matrix)</span>
+<span id="cb14-3"></span>
+<span id="cb14-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># verify the decomposition</span></span>
+<span id="cb14-5">lower_triangular_matrix<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%*%</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">t</span>(lower_triangular_matrix)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    4   -2    1
+[2,]   -2    3   -1
+[3,]    1   -1    2</code></pre>
+</div>
+</div>
+<p>모든 공분산 행렬은 positive semi definite인데 <code>cov_matrix</code>의 모든 대각원소가 양수이기 때문에 positive definite matrix가 된다.</p>
+<p>촐레스키 분해는 multivariate normal distribution에서 sampling하여 난수를 발생시키는 원리를 이해하는데 도움이 된다.</p>
+</section>
+<section id="촐레스키-분해를-사용한-표본-생성" class="level3" data-number="1.2.3">
+<h3 data-number="1.2.3" class="anchored" data-anchor-id="촐레스키-분해를-사용한-표본-생성"><span class="header-section-number">1.2.3</span> 촐레스키 분해를 사용한 표본 생성</h3>
+<p>목표로 하는 다변수 정규분포의 공분산 행렬에 대해 촐레스키 분해를 수행하고, 표준 정규분포로부터 뽑은 표본에 분해된 행렬을 사용하여 선형변환을 하는 방식이다. random vector가 <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bx%7D"> 가 iid이고 표준 정규 분포를 따른 다고 했을 때 random vector, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7By%7D%20%5Csim%20N(%5Cbegin%7Bbmatrix%7D1//3//2%5Cend%7Bbmatrix%7D,%5Cbegin%7Bbmatrix%7D4&amp;-2&amp;1//-2&amp;3&amp;-1//1&amp;-1&amp;2%5Cend%7Bbmatrix%7D)"> 라고 한다면</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balinged%7D%0A%20%20%5Cmathbf%7By%7D&amp;=%5Cmathbf%7BL%7D%5Cmathbf%7Bx%7D+%5Cmathbf%7B%5Cmu%7D%20%5C%5C%0A%20%20E(%5Cmathbf%7By%7D)&amp;=%20%5Cmathbf%7BL%7DE(%5Cmathbf%7Bx%7D)+%5Cmathbf%7B%5Cmu%7D%20%5C%5C%0A%20%20Var(%5Cmathbf%7By%7D)&amp;=%20%5Cmathbf%7BL%7DVar(%5Cmathbf(x))%20%5Cmathbf%7BL%7D%5ET=%20%5Cmathbf%7BL%7DVar(%5Cmathbf(I))%20%5Cmathbf%7BL%7D%5ET=%5Cmathbf%7BL%7D%20%5Cmathbf%7BL%7D%5ET%20=%5CSigma%0A%5Cend%7Baligned%7D%0A"></p>
+<p>이 성립한다.</p>
+<p>더 쉬운 예제를 들면, <img src="https://latex.codecogs.com/png.latex?X%20%5Csim%20N(0,1)%20%5Cquadd%20Y%20%5Csim%20N(4,9)"></p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AY=3X+4%0A"></p>
+<p>의 선형식이 성립한다.</p>
+<p>그러므로 data의 표본을 토대로 simulation을 할 때는 data의 표본 공분산 행렬을 구해 촐레스키 분해를 하여 L을 구한뒤 rnorm()을 변수의 갯 수 만큼 사용하고 데이터의 변수의 표본 벡터를 구해서 더해 주면 데이터의 분포에 기반한 시뮬래이션이 가능해진다.</p>
+<div class="callout-tips">
+<p><img src="https://latex.codecogs.com/png.latex?%0AY=A%5Cbegin%7Bbmatrix%7Drnorm(X_1)%20//rnorm(X_2)//rnorm(X_3)%5Cend%7Bbmatrix%7D%20+B%0A"></p>
+<p>정규 분포를 따르는 random vectors에 어떤 행렬을 곱하거나 더해도 그 변환된 Y역시 다변수 정규분포를 따른다는 것이 알려져 있다.</p>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">set.seed</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">00</span>)</span>
+<span id="cb16-2"></span>
+<span id="cb16-3">random_samples <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> lower_triangular_matrix <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%*%</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rnorm</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3000</span>),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">nrow=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ncol=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> mean_vector</span>
+<span id="cb16-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#위와 같은 식</span></span>
+<span id="cb16-5">random_samples <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> lower_triangular_matrix <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%*%</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">matrix</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rnorm</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span>),<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rnorm</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span>),<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">rnorm</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span>)),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">nrow=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">ncol=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span>) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> mean_vector</span>
+<span id="cb16-6"></span>
+<span id="cb16-7">random_samples<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">t</span>(random_samples)</span></code></pre></div>
+</details>
+</div>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cmathbf%7BL%7D_%7B3%20%5Ctimes%203%7D%20%5Ctext%7Brandom_samples%7D_%7B3%20%5Ctimes%201000%7D%20+%20%5Ctext%7Bmean_vector%7D_%7B3%5Ctimes%201%7D%0A"></p>
+<p><code>mean_vector</code>는 브로드캐스팅되어 앞의 두행렬의 연산결과의 각 열에 더해지게 됨.</p>
+<p>sample은 아래와 같이 뽑히게 된다.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">head</span>(random_samples)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>            [,1]       [,2]       [,3]
+[1,] -0.07612761  4.2403547 -0.2827580
+[2,] -1.22520465  2.6778132  2.5256458
+[3,]  0.57189770  2.5652002  4.5131124
+[4,]  3.71812120  2.2683683  0.9224851
+[5,]  1.03533835 -0.4098458  2.7877527
+[6,]  3.72684756  1.1950652  2.2052107</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#표본 공분산 행렬 추정</span></span>
+<span id="cb19-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">cov</span>(random_samples)</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]      [,2]      [,3]
+[1,]  3.849209 -1.820943  1.031505
+[2,] -1.820943  2.958023 -1.014896
+[3,]  1.031505 -1.014896  2.030114</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1">centered_X<span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">scale</span>(random_samples,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">center=</span>T,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">scale=</span>F)</span>
+<span id="cb21-2"><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000-1</span>)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">t</span>(centered_X)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%*%</span> centered_X</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]      [,2]      [,3]
+[1,]  3.849209 -1.820943  1.031505
+[2,] -1.820943  2.958023 -1.014896
+[3,]  1.031505 -1.014896  2.030114</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1">random_samples[,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%&gt;%</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">hist</span>()</span></code></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/03-1.cholesky_decomposition_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+
+
+</section>
+</section>
+</section>
+
+ ]]></description>
+  <category>Mathematics</category>
+  <guid>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/03-1.cholesky_decomposition.html</guid>
+  <pubDate>Thu, 01 Jun 2023 15:00:00 GMT</pubDate>
+</item>
+<item>
   <title>Eigenvalue</title>
   <dc:creator>Kwangmin Kim</dc:creator>
   <link>kmink3225.netlify.app/docs/blog/posts/Mathmatics/linear_algebra/09.eigenvalues.html</link>
@@ -6746,395 +7248,6 @@ font-style: inherit;">    start_task &gt;&gt; trigger_dag_task</span></span></co
 </div></ul> ]]></description>
   <category>Engineering</category>
   <guid>kmink3225.netlify.app/docs/blog/posts/Engineering/airflow/08.more_operators.html</guid>
-  <pubDate>Sun, 30 Apr 2023 15:00:00 GMT</pubDate>
-</item>
-<item>
-  <title>Template Variabler</title>
-  <dc:creator>Kwangmin Kim</dc:creator>
-  <link>kmink3225.netlify.app/docs/blog/posts/Engineering/airflow/09.connection_hook.html</link>
-  <description><![CDATA[ 
-
-
-
-<ul class="nav nav-pills" id="language-tab">
-<li class="nav-item">
-<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" aria-controls="Korean" aria-selected="true">
-Korean
-</button>
-</li>
-<li class="nav-item">
-<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" aria-controls="knitr" aria-selected="false">
-English
-</button>
-</li>
-<div class="tab-content" id="language-tabcontent">
-
-<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
-<div id="Korean" class="tab-pane fade show active" aria-labelledby="Korean-tab">
-<section id="jinja-template" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Jinja Template</h1>
-<ul>
-<li><p>문서(파일)에서 특정 양식으로 작성된 값을 런타임시 실제 값으로 치환해주는 처리 엔진</p></li>
-<li><p>템플릿 엔진은 여러 솔루션이 존재하며 그 중 Jinja 템플릿은 파이썬 언어에서 사용하는 엔진</p>
-<div class="sourceCode" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1">from jinja2 import Template</span>
-<span id="cb1-2"></span>
-<span id="cb1-3">template = Template('my name is {{name}}')</span>
-<span id="cb1-4">new_template = template.render('name=hjkim')</span>
-<span id="cb1-5">print(new_template)</span></code></pre></div></li>
-<li><p>Jinja 템플릿, 어디서 쓰이나?</p>
-<ul>
-<li>파이썬 기반 웹 프레임워크인 Flask, Django에서 주로 사용 (주로 HTML 템플릿 저장 후 화면에 보여질 때 실제 값으로 변환해서 출력)</li>
-<li>SQL작성시에도 활용 가능</li>
-</ul></li>
-</ul>
-<section id="airflow에서-사용법" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="airflow에서-사용법"><span class="header-section-number">1.1</span> Airflow에서 사용법</h2>
-<ul>
-<li>오퍼레이터 파라미터 입력시 중괄호 {} 2개를 이용하면 Airflow에서 기본적으로 제공하는 변수들을 치환된 값으로 입력할 수 있음. (ex: 수행 날짜, DAG_ID)
-<ul>
-<li>https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html</li>
-</ul></li>
-<li>모든 오퍼레이터, 모든 파라미터에 Template 변수 적용이 가능한가? No!</li>
-<li>Airflow 문서에서 어떤 파라미터에 Template 변수 적용 가능한지 확인 필요
-<ul>
-<li>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/index.html</li>
-</ul></li>
-</ul>
-</section>
-</section>
-<section id="bashoperator-with-template" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> BashOperator with Template</h1>
-<section id="bashoperator" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="bashoperator"><span class="header-section-number">2.1</span> BashOperator</h2>
-<ul>
-<li>Bash 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?</li>
-<li>파라미터
-<ul>
-<li>bash_command (str)</li>
-<li>env (dict[str, str] | None)</li>
-<li>append_env (bool)</li>
-<li>output_encoding (str)</li>
-<li>skip_exit_code (int)</li>
-<li>cwd (str | None)</li>
-</ul></li>
-<li>https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/bash/index.html</li>
-</ul>
-<div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1">bash_t1 = BashOperator(</span>
-<span id="cb2-2">    task_id='bash_t1',</span>
-<span id="cb2-3">    bash_command='echo "End date is {{ data_interval_end }}"'</span>
-<span id="cb2-4">)</span>
-<span id="cb2-5">bash_t2 = BashOperator(</span>
-<span id="cb2-6">    task_id='bash_t2',</span>
-<span id="cb2-7">    env={'START_DATE': '{{ data_interval_start | ds}}','END_DATE':'{{ data_interval_end | ds }}'},</span>
-<span id="cb2-8">    bash_command='echo "Start date is $START_DATE " &amp;&amp; ''echo "End date is $END_DATE"'</span>
-<span id="cb2-9">)</span></code></pre></div>
-</section>
-</section>
-<section id="airflow-date" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> Airflow Date</h1>
-<section id="데이터-추출-예시" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="데이터-추출-예시"><span class="header-section-number">3.1</span> 데이터 추출 예시</h2>
-<ul>
-<li>Daily ETL 처리를 위한 조회 쿼리(2023/02/25 0시 실행)</li>
-<li>example: 등록 테이블</li>
-</ul>
-<table class="table">
-<thead>
-<tr class="header">
-<th>REG_DATE</th>
-<th style="text-align: center;">NAME</th>
-<th style="text-align: center;">ADDRESS</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>2023-02-24 15:34:35</td>
-<td style="text-align: center;">홍길동</td>
-<td style="text-align: center;">Busan</td>
-</tr>
-<tr class="even">
-<td>2023-02-24 19:14:42</td>
-<td style="text-align: center;">김태희</td>
-<td style="text-align: center;">Seoul</td>
-</tr>
-<tr class="odd">
-<td>2023-02-24 23:52:19</td>
-<td style="text-align: center;">조인성</td>
-<td style="text-align: center;">Daejeon</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1">SELECT NAME, ADDRESS</span>
-<span id="cb3-2">FROM TBL_REG</span>
-<span id="cb3-3">WHERE REG_DATE BETWEEN TIMESTAMP('2023-02-24 00:00:00')</span>
-<span id="cb3-4">AND TIMESTAMP('2023-02-24 23:59:59')</span></code></pre></div>
-<p>데이터 관점의 시작일: 2023-02-24 데이터 관점의 종료일: 2023-02-25</p>
-</section>
-<section id="airflow-날짜-template-변수" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="airflow-날짜-template-변수"><span class="header-section-number">3.2</span> Airflow 날짜 Template 변수</h2>
-<ul>
-<li>예시: 일 배치
-<ul>
-<li>ex. 2023-02-24 이전 배치일 (논리적 기준일)
-<ul>
-<li>= data_interval_start</li>
-<li>= dag_run.logical_date</li>
-<li>= ds (yyyy-mm-dd 형식)</li>
-<li>= ts (타임스탬프)</li>
-<li>= execution_date (과거버전)</li>
-</ul></li>
-<li>ex. 2023-02-25 배치일
-<ul>
-<li>= data_interval_end</li>
-<li>=</li>
-<li>=</li>
-<li>=</li>
-<li>= next_execution_date (과거버전)</li>
-</ul></li>
-</ul></li>
-</ul>
-</section>
-</section>
-<section id="python-operator-with-template" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Python Operator with Template</h1>
-<section id="python-오퍼레이터에서-template-변수-사용" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="python-오퍼레이터에서-template-변수-사용"><span class="header-section-number">4.1</span> Python 오퍼레이터에서 Template 변수 사용</h2>
-<ul>
-<li><p>Python 오퍼레이터는 어떤 파라미터에 Template을 쓸 수 있는가?</p></li>
-<li><p>파라미터</p>
-<ul>
-<li>python_callable</li>
-<li>op_kwargs</li>
-<li>op_args</li>
-<li>templates_dict</li>
-<li>templates_exts</li>
-<li>show_return_value_in_logs</li>
-</ul></li>
-<li><p>https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html</p>
-<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1">def python_function1(start_date, end_date, **kwargs):</span>
-<span id="cb4-2">    print(start_date)</span>
-<span id="cb4-3">    print(end_date)</span>
-<span id="cb4-4"></span>
-<span id="cb4-5">python_t1 = PythonOperator(</span>
-<span id="cb4-6">    task_id='python_t1',</span>
-<span id="cb4-7">    python_callable=python_function,</span>
-<span id="cb4-8">    op_kwargs={'start_date':'{{data_interval_start | ds}}', 'end_date':'{{data_interval_end | ds}}'}</span>
-<span id="cb4-9">)</span></code></pre></div></li>
-<li><p>파이썬 오퍼레이터는 **kwargs에 Template 변수들을 자동으로 제공해주고 있음</p>
-<div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1">@task(task_id='python_t2')</span>
-<span id="cb5-2">def python_function2(**kwargs):</span>
-<span id="cb5-3">    print(kwargs)</span>
-<span id="cb5-4">    print('ds:' + kwargs<span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">'ds'</span><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">]</span>)</span>
-<span id="cb5-5">    print('ts:' + str(kwargs<span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">'ts'</span><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">]</span>))</span>
-<span id="cb5-6">    print('data_interval_start:' + str(kwargs<span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">'data_interval_start'</span><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">]</span>))</span>
-<span id="cb5-7">    print('data_interval_end:' + str(kwargs<span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">'data_interval_end'</span><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">]</span>))</span>
-<span id="cb5-8">    print('task_instance': + str(kwargs<span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">'ti'</span><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">]</span>))</span>
-<span id="cb5-9">python_function2()</span></code></pre></div></li>
-</ul>
-</section>
-</section>
-<section id="bash-operator-with-macro" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Bash Operator with Macro</h1>
-<section id="macro-변수의-이해" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="macro-변수의-이해"><span class="header-section-number">5.1</span> Macro 변수의 이해</h2>
-<ul>
-<li><p>Macro 변수의 필요성</p>
-<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1">sql = f'''</span>
-<span id="cb6-2">SELECT NAME, ADDRESS</span>
-<span id="cb6-3">FROM TBL_REG</span>
-<span id="cb6-4">WHERE REG_DATE BETWEEN ?? AND ??</span>
-<span id="cb6-5">'''</span></code></pre></div>
-<p>DAG 스케줄은 매일 말일에 도는 스케줄인데 BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고 싶은데 어떻게 하지? 예를 들어 배치일이 1월 31일이면 12월 31일부터 1월 30일 까지 배치일이 2월 28일이면 1월 31일부터 2월 27일까지 BETWEEN 이 설정되었으면 좋겠어. DAG 스케줄이 월 단위이니까 Template 변수에서 data_interval_start 값은 한달 전 말일 이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들지? data_interval_end 에서 하루 뺀 값이 나와야 하는데…</p></li>
-<li><p>Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음</p>
-<table class="table">
-<thead>
-<tr class="header">
-<th style="text-align: center;">Variable</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">macros.datetime</td>
-<td>The standard lib’s datetime.datetime</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">macros.timedelta</td>
-<td>The standard lib’s datetime.timedelta</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">macros.dateutil</td>
-<td>A reference to the dateutil package</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">macros.time</td>
-<td>The standard lib’s time</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">macros.uuid</td>
-<td>The standard lib’s uuid</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">macros.random</td>
-<td>The standard lib’s random</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>macros.datetime &amp; macros.dateutil: 날짜 연산에 유용한 파이썬 라이브러리</li>
-</ul></li>
-<li><p>Macro를 잘 쓰려면 파이썬 datetime 및 dateutil 라이브러리에 익숙해져야 함.</p></li>
-</ul>
-</section>
-<section id="파이썬-datetime-dateutil-라이브러리-이해" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="파이썬-datetime-dateutil-라이브러리-이해"><span class="header-section-number">5.2</span> 파이썬 datetime + dateutil 라이브러리 이해</h2>
-<div class="sourceCode" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1">from datetime import datetime</span>
-<span id="cb7-2">from dateutil import relativedelta</span>
-<span id="cb7-3"></span>
-<span id="cb7-4">now = datetime(year=2003, month=3, day=30)</span>
-<span id="cb7-5">print('current time:'+str(now))</span>
-<span id="cb7-6">print('-------------month operation-------------')</span>
-<span id="cb7-7">print(now+relativedelta.relativedelta(month=1)) # 1월로 변경</span>
-<span id="cb7-8">print(now.replace(month=1)) # 1월로 변경</span>
-<span id="cb7-9">print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기</span>
-<span id="cb7-10">print('-------------day operation-------------')</span>
-<span id="cb7-11">print(now+relativedelta.relativedelta(day=1)) #1일로 변경</span>
-<span id="cb7-12">print(now.replace(day=1)) #1일로 변경</span>
-<span id="cb7-13">print(now+relativedelta.relativedelta(days=-1)) #1일 빼기</span>
-<span id="cb7-14">print('-------------multiple operations-------------')</span>
-<span id="cb7-15">print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기</span></code></pre></div>
-</section>
-<section id="bash-오퍼레이터에서-macro-변수-활용하기" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="bash-오퍼레이터에서-macro-변수-활용하기"><span class="header-section-number">5.3</span> Bash 오퍼레이터에서 Macro 변수 활용하기</h2>
-<ul>
-<li><p>예시1. 매월 말일 수행되는 Dag에서 변수 START_DATE: 전월 말일, 변수 END_DATE: 어제로 env 셋팅하기</p></li>
-<li><p>예시2. 매월 둘째주 토요일에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기</p></li>
-<li><p>변수는 YYYY-MM-DD 형식으로 나오도록 할 것</p>
-<div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1">t1 = BashOperator(</span>
-<span id="cb8-2">    task_id='t1',</span>
-<span id="cb8-3">    env={'START_DATE':''},</span>
-<span id="cb8-4">)</span></code></pre></div></li>
-</ul>
-<p>이 부분에 template + macro 활용</p>
-</section>
-</section>
-<section id="python-오퍼레이터-with-macro" class="level1" data-number="6">
-<h1 data-number="6"><span class="header-section-number">6</span> Python 오퍼레이터 with macro</h1>
-<ul>
-<li><p>어떤 파라미터가 Template 변수를 지원할까?</p></li>
-<li><p>패러미터</p>
-<ul>
-<li>python_callable (Callable | None)</li>
-<li>op_kwargs</li>
-<li>op_args</li>
-<li>templates_dict</li>
-<li>templates_exts</li>
-<li>show_return_value_in_logs</li>
-</ul></li>
-<li><p>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/python/index.html#airflow.operators.python.PythonOperator</p>
-<div class="sourceCode" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1">@task(task_id='task_using_macros',</span>
-<span id="cb9-2">    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")</span>
-<span id="cb9-3"><span class="ss" style="color: #20794D;
-background-color: null;
-font-style: inherit;">+ </span>macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',</span>
-<span id="cb9-4">'end_date': '{{</span>
-<span id="cb9-5">(data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
-<span id="cb9-6">macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
-<span id="cb9-7">    }</span>
-<span id="cb9-8">)</span>
-<span id="cb9-9"></span>
-<span id="cb9-10">def get_datetime_macro(**kwargs):</span>
-<span id="cb9-11">    templates_dict = kwargs.get('templates_dict') or {}</span>
-<span id="cb9-12">    if templates_dict:</span>
-<span id="cb9-13">    start_date = templates_dict.get('start_date') or 'start_date없음'</span>
-<span id="cb9-14">    end_date = templates_dict.get('end_date') or 'end_date없음'</span>
-<span id="cb9-15">    print(start_date)</span>
-<span id="cb9-16">    print(end_date)</span></code></pre></div></li>
-<li><p>그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 DAG안에서 직접 할 수 있다면?</p>
-<ul>
-<li>macro 사용</li>
-</ul>
-<div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1">@task(task_id='task_using_macros',</span>
-<span id="cb10-2">    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',</span>
-<span id="cb10-3">    'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
-<span id="cb10-4">    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
-<span id="cb10-5">    }</span>
-<span id="cb10-6">)</span>
-<span id="cb10-7"></span>
-<span id="cb10-8">def get_datetime_macro(**kwargs):</span>
-<span id="cb10-9">    templates_dict = kwargs.get('templates_dict') or {}</span>
-<span id="cb10-10">    if templates_dict:</span>
-<span id="cb10-11">        start_date = templates_dict.get('start_date') or 'start_date없음'</span>
-<span id="cb10-12">        end_date = templates_dict.get('end_date') or 'end_date없음'</span>
-<span id="cb10-13">        print(start_date)</span>
-<span id="cb10-14">        print(end_date)</span>
-<span id="cb10-15"></span>
-<span id="cb10-16">@task(task_id='task_direct_calc')</span>
-<span id="cb10-17">def get_datetime_calc(**kwargs):</span>
-<span id="cb10-18">    from dateutil.relativedelta import relativedelta</span>
-<span id="cb10-19">    data_interval_end = kwargs<span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
-background-color: null;
-font-style: inherit;">'data_interval_end'</span><span class="co" style="color: #5E5E5E;
-background-color: null;
-font-style: inherit;">]</span></span></code></pre></div>
-<ul>
-<li>직접 연산</li>
-</ul>
-<div class="sourceCode" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1">prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)</span>
-<span id="cb11-2">prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)</span>
-<span id="cb11-3">print(prev_month_day_first.strftime('%Y-%m-%d'))</span>
-<span id="cb11-4">print(prev_month_day_last.strftime('%Y-%m-%d'))</span></code></pre></div></li>
-</ul>
-</section>
-</div>
-</div>
-<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
-<div id="English" class="tab-pane fade" aria-labelledby="English-tab">
-
-</div>
-</div>
-<section id="go-to-blog-content-list" class="level1" data-number="7">
-<h1 data-number="7"><span class="header-section-number">7</span> Go to Blog Content List</h1>
-<p><a href="../../../../../docs/blog/posts/content_list.html">Blog Content List</a></p>
-
-
-</section>
-
-</div></ul> ]]></description>
-  <category>Engineering</category>
-  <guid>kmink3225.netlify.app/docs/blog/posts/Engineering/airflow/09.connection_hook.html</guid>
   <pubDate>Sun, 30 Apr 2023 15:00:00 GMT</pubDate>
 </item>
 </channel>

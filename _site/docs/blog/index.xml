@@ -7649,6 +7649,7 @@ English
 <section id="dag간-의존관계-설정" class="level2" data-number="2.1">
 <h2 data-number="2.1" class="anchored" data-anchor-id="dag간-의존관계-설정"><span class="header-section-number">2.1</span> DAG간 의존관계 설정</h2>
 <ul>
+<li>의존 관계 : dag간 선 후행 관계</li>
 <li>DAG 의존관계 설정 방법
 <ol type="1">
 <li>TriggerDagRun Operator</li>
@@ -7702,8 +7703,9 @@ task1-&gt;task4
 </div>
 </div>
 <ul>
+<li>task를 만들 때 task내에 dag_id를 명시하는 parameter가 있음</li>
 <li>task1: PythonOperator 등</li>
-<li>task2,3,4: TriggerDagRun 오퍼레이터 다른 DAG 을 실행시키는 오퍼레이터</li>
+<li>task2,3,4: TriggerDagRun 오퍼레이터로 다른 DAG 을 실행시키는 오퍼레이터</li>
 </ul>
 <ol start="2" type="1">
 <li>ExternalTask Sensor</li>
@@ -7764,7 +7766,9 @@ sensor4-&gt;task1
 </div>
 </div>
 <ul>
-<li>다른 DAG의 Task의 완료를 기다리는 센서</li>
+<li>sensor를 통해 task를 만들기 때문에 여기서 sensor는 task를 의미함</li>
+<li>sensor를 만들 때도 감지해야할 dag_id를 명시해줘야함 (task_id도 명시 가능)</li>
+<li>ExternalTask Sensor는 다른 여러 DAGs의 Task의 완료를 기다리는 센서</li>
 <li>DAG간 의존관계 설정
 <ul>
 <li>방식
@@ -7774,8 +7778,8 @@ sensor4-&gt;task1
 </ul></li>
 <li>권고 사용 시점
 <ul>
-<li>TriggerDagRun Operator: Trigger 되는 DAG 의 선행 DAG 이 하나만 있을 경우</li>
-<li>ExternalTask 센서: Trigger 되는 DAG 의 선행 DAG 이 2 개 이상인 경우</li>
+<li>TriggerDagRun Operator: Trigger 되는 DAG 의 선행 DAG 이 <strong>하나</strong>만 있을 경우</li>
+<li>ExternalTask 센서: Trigger 되는 DAG 의 선행 DAG 이 <strong>2 개 이상</strong>인 경우</li>
 </ul></li>
 </ul></li>
 </ul>
@@ -7838,12 +7842,23 @@ font-style: inherit;">        )</span></span>
 background-color: null;
 font-style: inherit;">    start_task &gt;&gt; trigger_dag_task</span></span></code></pre></div>
 </section>
-<section id="triggerdagrun-오퍼레이터--run_id" class="level2" data-number="2.3">
-<h2 data-number="2.3" class="anchored" data-anchor-id="triggerdagrun-오퍼레이터--run_id"><span class="header-section-number">2.3</span> TriggerDagRun 오퍼레이터- run_id</h2>
+<section id="triggerdagrun-오퍼레이터-의-run_id" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="triggerdagrun-오퍼레이터-의-run_id"><span class="header-section-number">2.3</span> TriggerDagRun 오퍼레이터 의 run_id</h2>
 <ul>
-<li>DAG의 수행 방식과 시간을 유일하게 식별해주는 키</li>
-<li>같은 시간이라 해도 수행 방식 (Schedule, manual, Backfill) 에 따라 키가 달라짐</li>
-<li>스케줄에 의해 실행된 경우 scheduled__{{data_interval_start}} 값을 가짐</li>
+<li>run_id: DAG의 수행 방식과 시간을 유일하게 식별해주는 키</li>
+<li>같은 시간이라 해도 수행 방식 (Schedule, manual, Backfill) 에 따라 키가 달라짐
+<ul>
+<li>스케쥴: 스케줄에 의해 실행된 경우 scheduled__{{data_interval_start}} 값을 가짐</li>
+<li>manual: airflow ui web에서 수작업 수행. manual__{{data_interval_start}} 값을 가짐
+<ul>
+<li>manual__{{data_interval_start}}은 수작업 수행 시간이 아니라 수잦업으로 실행시킨 스케쥴의 구간값 중 data_interval_start값을 의미</li>
+</ul></li>
+<li>Backfill: 과거 날짜를 이용해 수행. backfill__{{data_interval_start}} 값을 가짐</li>
+</ul></li>
+<li>run_id를 보는 방법
+<ul>
+<li>airflow ui web &gt;&gt; dag &gt;&gt; grid &gt;&gt; 초록색 긴막대기 &gt;&gt; status Run ID 있음</li>
+</ul></li>
 </ul>
 <div class="sourceCode" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"></span>
 <span id="cb2-2">from airflow.operators.trigger_dagrun import TriggerDagRunOperator</span>
@@ -7880,7 +7895,7 @@ background-color: null;
 font-style: inherit;">        execution_date='{{data_interval_start}}', # manual_{{execution_date}} 로 수행</span></span>
 <span id="cb2-16"><span class="in" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">        reset_dag_run=True, # 이미 run_id 값이 있는 경우에도 재수행할 것 인지 결정</span></span>
+font-style: inherit;">        reset_dag_run=True, # 이미 run_id 값이 있는 경우에도 재수행할 것 인지 결정. True면 재수행</span></span>
 <span id="cb2-17"><span class="in" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">        wait_for_completion=False,</span></span>
@@ -7900,6 +7915,133 @@ font-style: inherit;">        )</span></span>
 <span id="cb2-23"><span class="in" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">    start_task &gt;&gt; trigger_dag_task</span></span></code></pre></div>
+<ul>
+<li>wait_for_completion:</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<svg width="672" height="480" viewbox="0.00 0.00 466.59 155.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 151)">
+<title>
+G
+</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-151 462.59,-151 462.59,4 -4,4"></polygon> <g id="clust1" class="cluster">
+<title>
+cluster0
+</title>
+<polygon fill="none" stroke="black" points="90.84,-8 90.84,-139 450.59,-139 450.59,-8 90.84,-8"></polygon> <text text-anchor="middle" x="270.71" y="-122.4" font-family="Times,serif" font-size="14.00">Task Flow</text> </g> <!-- task1 --> <g id="node1" class="node">
+<title>
+task1
+</title>
+<polygon fill="none" stroke="black" points="152.84,-106 98.84,-106 98.84,-70 152.84,-70 152.84,-106"></polygon> <text text-anchor="middle" x="125.84" y="-83.8" font-family="Times,serif" font-size="14.00">task1</text> </g> <!-- task2_by_trigger_dag_run --> <g id="node2" class="node">
+<title>
+task2_by_trigger_dag_run
+</title>
+<polygon fill="none" stroke="black" points="352.46,-106 188.97,-106 188.97,-70 352.46,-70 352.46,-106"></polygon> <text text-anchor="middle" x="270.71" y="-83.8" font-family="Times,serif" font-size="14.00">task2_by_trigger_dag_run</text> </g> <!-- task1&#45;&gt;task2_by_trigger_dag_run --> <g id="edge1" class="edge">
+<title>
+task1-&gt;task2_by_trigger_dag_run
+</title>
+<path fill="none" stroke="black" d="M153.05,-88C160.62,-88 169.34,-88 178.54,-88"></path> <polygon fill="black" stroke="black" points="178.68,-91.5 188.68,-88 178.68,-84.5 178.68,-91.5"></polygon> </g> <!-- task3 --> <g id="node3" class="node">
+<title>
+task3
+</title>
+<polygon fill="none" stroke="black" points="442.59,-106 388.59,-106 388.59,-70 442.59,-70 442.59,-106"></polygon> <text text-anchor="middle" x="415.59" y="-83.8" font-family="Times,serif" font-size="14.00">task3</text> </g> <!-- task2_by_trigger_dag_run&#45;&gt;task3 --> <g id="edge2" class="edge">
+<title>
+task2_by_trigger_dag_run-&gt;task3
+</title>
+<path fill="none" stroke="black" d="M352.75,-88C361.58,-88 370.22,-88 378.1,-88"></path> <polygon fill="black" stroke="black" points="378.33,-91.5 388.33,-88 378.33,-84.5 378.33,-91.5"></polygon> </g> <!-- dag_c --> <g id="node4" class="node">
+<title>
+dag_c
+</title>
+<polygon fill="none" stroke="black" points="152.84,-52 98.84,-52 98.84,-16 152.84,-16 152.84,-52"></polygon> <text text-anchor="middle" x="125.84" y="-29.8" font-family="Times,serif" font-size="14.00">dag_c</text> </g> <!-- task2 --> <g id="node5" class="node">
+<title>
+task2
+</title>
+<ellipse fill="none" stroke="black" cx="31.42" cy="-34" rx="31.34" ry="18"></ellipse> <text text-anchor="middle" x="31.42" y="-29.8" font-family="Times,serif" font-size="14.00">task2</text> </g> <!-- task2&#45;&gt;dag_c --> <g id="edge3" class="edge">
+<title>
+task2-&gt;dag_c
+</title>
+<path fill="none" stroke="black" d="M62.94,-34C71.16,-34 80.14,-34 88.64,-34"></path> <polygon fill="black" stroke="black" points="88.69,-37.5 98.69,-34 88.69,-30.5 88.69,-37.5"></polygon> </g> </g>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<ul>
+<li>wait_for_completion=True 의 의미: task2가 dag_c를 돌리고 dag_c가 성공한 상태 후 task2역시 성공 상태가 된 후에 task3을 돌리는 경우</li>
+<li>wait_for_completion=False 의 의미: dag_c의 성공여부와 상관없이 task2가 성공 상태로 빠져나옴</li>
+<li>poke_interval=60 : dag_c의 성공여부를 모니터링 하는 주기 60초</li>
+<li>allowed_states=[‘success’]: trigger dag의 task2가 성공상태로 끝나기 위해 dag_c가 어떤 상태로 수행이 끝나야하는지 명시. 만약 dag_c가 fail상태여도 task2가 성공 상태로 마킹이 되길 원한다면 allowed_states=[‘success’,‘fail’] 로 명시</li>
+<li>failed_states=None: task2가 실패 상태로 마킹이 되기 위해 dag_c가 어떤 상태로 작업 수행이 완료 되어야 하는지 명시. failed_states=fail이면 dag_c가 실패가 되어야 task2도 실패로 마킹 된다.</li>
+<li>Dag Full example</li>
+</ul>
+<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;"># Package Import</span></span>
+<span id="cb3-2">from airflow import DAG</span>
+<span id="cb3-3">from airflow.operators.bash import BashOperator</span>
+<span id="cb3-4">from airflow.operators.trigger_dagrun import TriggerDagRunOperator</span>
+<span id="cb3-5">import pendulum</span>
+<span id="cb3-6"></span>
+<span id="cb3-7">with DAG(</span>
+<span id="cb3-8">    dag_id='dags_trigger_dag_run_operator',</span>
+<span id="cb3-9">    start_date=pendulum.datetime(2023,4,1, tz='Asia/Seoul'),</span>
+<span id="cb3-10">    schedule='30 9 * * *', #9시 30분 daily schedule</span>
+<span id="cb3-11">    catchup=False</span>
+<span id="cb3-12">) as dag:</span>
+<span id="cb3-13"></span>
+<span id="cb3-14"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    start_task = BashOperator(</span></span>
+<span id="cb3-15"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        task_id='start_task',</span></span>
+<span id="cb3-16"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        bash_command='echo "start!"',</span></span>
+<span id="cb3-17"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    )</span></span>
+<span id="cb3-18"></span>
+<span id="cb3-19"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    trigger_dag_task = TriggerDagRunOperator(</span></span>
+<span id="cb3-20"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        task_id='trigger_dag_task',</span></span>
+<span id="cb3-21"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        trigger_dag_id='dags_python_operator',</span></span>
+<span id="cb3-22"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        trigger_run_id=None,</span></span>
+<span id="cb3-23"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        execution_date='{{data_interval_start}}', #9시 30분 daily schedule</span></span>
+<span id="cb3-24"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        reset_dag_run=True,</span></span>
+<span id="cb3-25"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        wait_for_completion=False,</span></span>
+<span id="cb3-26"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        poke_interval=60,</span></span>
+<span id="cb3-27"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        allowed_states=['success'],</span></span>
+<span id="cb3-28"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        failed_states=None</span></span>
+<span id="cb3-29"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        )</span></span>
+<span id="cb3-30"></span>
+<span id="cb3-31"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    start_task &gt;&gt; trigger_dag_task</span></span></code></pre></div>
 </section>
 </section>
 <section id="simplehttp-오퍼레이터-서울시-공공데이터-키-발급받기" class="level1" data-number="3">
@@ -7907,10 +8049,20 @@ font-style: inherit;">    start_task &gt;&gt; trigger_dag_task</span></span></co
 <section id="서울시-공공데이터-보기" class="level2" data-number="3.1">
 <h2 data-number="3.1" class="anchored" data-anchor-id="서울시-공공데이터-보기"><span class="header-section-number">3.1</span> 서울시 공공데이터 보기</h2>
 <ul>
-<li>https://data.seoul.go.kr/</li>
+<li><a href="https://data.seoul.go.kr/">서울시 열린데이터 광장 portal</a></li>
 <li>서울시가 보유한 데이터 다운로드 가능</li>
-<li>Csv, json, xml 등을 직접 다운로드 받거나 openAPI 통해 다운 가능</li>
-<li>openAPI 이용할 경우 api KEY 발급받아야 함 로그인 필요</li>
+<li>일회성 다운로드 : Csv, json, xml 등을 직접 다운로드</li>
+<li>스케쥴에 의한 주기성 다운로드 : openAPI(http method를 통해 data를 다운로드 할 수 있도록 개방해놓은 API) 통해 다운 가능</li>
+<li>openAPI 이용할 경우 api KEY 발급받아야 함 로그인 필요
+<ul>
+<li>로그인 &gt;&gt; 이용 안내 &gt;&gt; open API 소개 &gt;&gt; 일반 인증키 신청 or 실시간 지하철 인증키 신청</li>
+<li>sheet는 최대 1,000건 (행) 까지 노출됨. 전체 데이터는 CSV파일을 내려받아 확인해야함.</li>
+<li>url 양식: http://openapi.seoul.go.kr:8088/(key:인증키)/(type)/(servicec)/(type)/(start_index)/(end_index)/(main_key 혹은 날짜)</li>
+</ul></li>
+<li>예시: 서울시 자랑스러운 한국음식점 정보 (한국어)
+<ul>
+<li>샘플 URL: http://openapi.seoul.go.kr:8088/(인증키)/xml/SebcKoreanRestaurantsKor/1/5</li>
+</ul></li>
 </ul>
 </section>
 <section id="api-사용을-위한-키-발급-받기" class="level2" data-number="3.2">
@@ -7923,38 +8075,89 @@ font-style: inherit;">    start_task &gt;&gt; trigger_dag_task</span></span></co
 <h2 data-number="4.1" class="anchored" data-anchor-id="simplehttpoperator-란"><span class="header-section-number">4.1</span> SimpleHttpOperator 란?</h2>
 <ul>
 <li>HTTP 요청을 하고 결과로 text 를 리턴 받는 오퍼레이터 리턴 값은 Xcom 에 저장</li>
-<li>HTTP 를 이용하여 API 를 처리하는 RestAPI 호출시 사용 가능</li>
-<li>오퍼레이터 명세 확인하기</li>
+<li>HTTP 를 이용하여 API 를 처리하는 RestAPI 호출시 사용 가능
+<ul>
+<li>RestAPI: API 방법 중 하나로 http의 protocol을 이용해서 API data를 제공하거나, 다운로드, 변경할 수 있는 API를 제공하는 방식</li>
+<li>SimpleHttpOperator를 이용해서 RestAPI를 호출</li>
+<li>http://localhost:8080/provider/apache-airflow-providers-http 에서 <a href="https://airflow.apache.org/docs/apache-airflow-providers-http/4.3.0/">오퍼레이터 명세 확인하기</a></li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow-providers-http/4.3.0/_api/airflow/providers/http/index.html">python API click</a>
+<ul>
+<li><a href="https://airflow.apache.org/docs/apache-airflow-providers-http/4.3.0/_api/airflow/providers/http/operators/http/index.html">http Operator click</a> 의 자주 쓰는 parameters
+<ul>
+<li>http_conn_id (str) – The http connection to run the operator against: full url의 ’<strong><sub>.com<strong>/나머지’ 의 </strong></sub>.com</strong> 을 넣어줌</li>
+<li>endpoint (str | None) – The relative part of the full url. (templated): full url의 ‘~.com/<strong>나머지</strong>’ 의 <strong>나머지</strong>를 넣어줌</li>
+<li>method (str) – The HTTP method to use, default = “POST”: http의 4개 methods
+<ul>
+<li>GET: data 가져오기</li>
+<li>POST: data insert</li>
+<li>PUT: data 변경/update</li>
+<li>DELETE: data 삭제하기</li>
+</ul></li>
+<li>data (Any) – The data to pass. POST-data in POST/PUT and params in the URL for a GET request. (templated)
+<ul>
+<li>POST의 경우: insert할 data 값</li>
+<li>GET의 경우: HTTP Protocol을 GET으로 줬으면 GET요청의 parameter를 dictionary 형태로 입력해주면 됨</li>
+</ul></li>
+<li>headers (dict[str, str] | None) – The HTTP headers to be added to the GET request</li>
+<li>response_check (Callable[…, bool] | None) – A check against the ‘requests’ response object. The callable takes the response object as the first positional argument and optionally any number of keyword arguments available in the context dictionary. It should return True for ‘pass’ and False otherwise.
+<ul>
+<li>data 요청시 응답이 제대로 왔는지 확인</li>
+<li>data를 일회성으로 가져올 때 데이터 1000 행이 제대로 들어왔는지 간단한 조회로 알아볼 수 있지만</li>
+<li>data를 open API를 이용하여 주기적으로 내려받는 자동화의 경우 일일히 확인하는게 아니라 데이터가 잘 내려 받았는지 확인하는 함수를 하나 만들어 이 parameter에 할당하면 됨.</li>
+<li>true로 resturn하면 API가 정상적으로 실행된 것으로 간주</li>
+</ul></li>
+<li>response_filter (Callable[…, Any] | None) – A function allowing you to manipulate the response text. e.g response_filter=lambda response: json.loads(response.text). The callable takes the response object as the first positional argument and optionally any number of keyword arguments available in the context dictionary.
+<ul>
+<li>API의 요청 결과가 dictionary 형태의 string으로 출력됨. 나중에 dictionary type으로 바꿔주고 key: value 형태로 access하여 원하는 데이터를 가져 와야 한다.</li>
+<li>이런 전처리 과정을 수행하는 함수를 만들어 reponse_filter parameter에 넣어줘야함.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
 </ul>
 </section>
 <section id="커넥션-등록" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="커넥션-등록"><span class="header-section-number">4.2</span> 커넥션 등록</h2>
 <ul>
+<li>http_conn_id에 들어갈 connection id 만들기
+<ul>
 <li>airflow web service &gt;&gt; Admin &gt;&gt; Plus button</li>
-<li>Conn_id: 다른 conn 이름과 중복되지 않게 작성</li>
+<li>Conn_id: 다른 conn 이름과 중복되지 않게 string으로 작성</li>
+</ul></li>
 <li>Connection_type: HTTP</li>
-<li>Host: http://openapi.seoul.go.kr</li>
+<li>Host: openapi.seoul.go.kr</li>
+<li>token값에 의해 인증되는 방식이기 때문에 schema/login/password 필요없음</li>
 <li>Port: 8088</li>
 <li>Test 버튼 클릭시 “405:Method Not Allowed” 가 뜨지만 무방함</li>
 </ul>
 </section>
 <section id="simplehttpoperator-작성" class="level2" data-number="4.3">
 <h2 data-number="4.3" class="anchored" data-anchor-id="simplehttpoperator-작성"><span class="header-section-number">4.3</span> SimpleHttpOperator 작성</h2>
-<div class="sourceCode" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1">from airflow providers http operators http import SimpleHttpOperator</span>
-<span id="cb3-2">with DAG(...) as dag:</span>
-<span id="cb3-3">  tb_cycle_station_info = SimpleHttpOperator(</span>
-<span id="cb3-4">    task_id ='tb_cycle_station_info',</span>
-<span id="cb3-5">    http_conn_id = 'openapi.seoul.go.kr',</span>
-<span id="cb3-6">    endpoint ='yourapikey/json/tbCycleStationInfo/1/10',</span>
-<span id="cb3-7">    method ='GET',</span>
-<span id="cb3-8">    headers ={'Content-Type: 'application/json',</span>
-<span id="cb3-9">              charset': 'utf-8',</span>
-<span id="cb3-10">              'Accept': '*/*'</span>
-<span id="cb3-11">              }</span>
-<span id="cb3-12">  )</span></code></pre></div>
+<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1">from airflow.providers.http.operators.http import SimpleHttpOperator</span>
+<span id="cb4-2">with DAG(...) as dag:</span>
+<span id="cb4-3">  tb_cycle_station_info = SimpleHttpOperator(</span>
+<span id="cb4-4">    task_id ='tb_cycle_station_info',</span>
+<span id="cb4-5">    http_conn_id = 'openapi.seoul.go.kr',</span>
+<span id="cb4-6">    endpoint ='{{var.value.apikey_openpai_seoul_go_kr}}/json/SebcKoreanRestaurantsKor/1/1000/',</span>
+<span id="cb4-7">    method ='GET',</span>
+<span id="cb4-8">    headers ={'Content-Type: 'application/json',</span>
+<span id="cb4-9">              charset': 'utf-8',</span>
+<span id="cb4-10">              'Accept': '*/*'</span>
+<span id="cb4-11">              }</span>
+<span id="cb4-12">  )</span></code></pre></div>
+<section id="dag에-실제-api-key값을-작성하면-문제가-되는-이슈" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="dag에-실제-api-key값을-작성하면-문제가-되는-이슈"><span class="header-section-number">4.3.1</span> DAG에 실제 API key값을 작성하면 문제가 되는 이슈</h3>
 <ul>
-<li>SimpleHttpOperator를 여러 DAG 에 작성했는데 API 키가 바뀐다면?</li>
-<li>API키를 코드에 노출시키지 않고 싶다면?</li>
+<li>SimpleHttpOperator를 1000개의 DAGs 에 작성했는데 API 키가 바뀐다면?</li>
+<li>DAG에다가 바로 인증키를 복붙하면 다른 사람들도 API키를 볼 수 있어 보안상의 문제가 될 수 있다.</li>
+<li>위의 2가지 문제를 해결하기 위해 global variable을 이용하여 적을 것.
+<ul>
+<li>API key를 variable을 이용하여 등록: airflow web service &gt;&gt; admin &gt;&gt; Variables
+<ul>
+<li>key:value형태로 등록 가능</li>
+<li>관리자가 DB에 들어가면 API Key값 볼 수 있음</li>
+</ul></li>
+</ul></li>
 <li>Key에 아래 이름이 있을 경우 val 을 자동 마스킹처리하여 보여줌
 <ul>
 <li>‘access_token’,</li>
@@ -7968,40 +8171,35 @@ font-style: inherit;">    start_task &gt;&gt; trigger_dag_task</span></span></co
 <li>‘secret’,</li>
 <li>‘token’</li>
 </ul></li>
-</ul>
-<div class="sourceCode" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1">from airflow providers http operators http import SimpleHttpOperator</span>
-<span id="cb4-2">with DAG(...) as dag:</span>
-<span id="cb4-3">  tb_cycle_station_info = SimpleHttpOperator(</span>
-<span id="cb4-4">    task_id ='tb_cycle_station_info',</span>
-<span id="cb4-5">    http_conn_id = 'openapi.seoul.go.kr',</span>
-<span id="cb4-6">    endpoint = '{{var.value.apikey_openapi_seoul_go_kr }}/json/tbCycleStationInfo/1/10/',</span>
-<span id="cb4-7">    method ='GET',</span>
-<span id="cb4-8">    headers ={'Content-Type: 'application/json',</span>
-<span id="cb4-9">              charset': 'utf-8',</span>
-<span id="cb4-10">              'Accept': '*/*'</span>
-<span id="cb4-11">              }</span>
-<span id="cb4-12">  )</span></code></pre></div>
+<li>global variable 설정하면
 <ul>
 <li>서울시 공공데이터 추출하는 DAG 이 여러 개 있어도 API 키를 하나로 관리 가능</li>
 <li>API 키를 코드에 노출시키지 않음</li>
+</ul></li>
 </ul>
 </section>
 </section>
-<section id="custom-오퍼레이터-study" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Custom 오퍼레이터 Study</h1>
+</section>
+<section id="custom-오퍼레이터-만드는-방법" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Custom 오퍼레이터 만드는 방법</h1>
 <section id="airflow-의-꽃-custom-오퍼레이터" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="airflow-의-꽃-custom-오퍼레이터"><span class="header-section-number">5.1</span> Airflow 의 꽃 , Custom 오퍼레이터</h2>
 <ul>
 <li>Airflow는 오퍼레이터를 직접 만들어 사용할 수 있도록 클래스를 제공 (BaseOperator)</li>
+<li>확장성을 비약적으로 높여주는 기능으로 airflow가 인기가 많은 이유가 됨</li>
+<li>BaseOperator 상속한 자식 operator가 custom operator가 됨</li>
 <li>BaseOperator 상속시 두 가지 메서드를 재정의해야 함 (Overriding)
+<ul>
+<li>Overriding: 객체 지향 언어에서 부모 클래스가 가지고있던 method를 자식 class에서 재정의</li>
+</ul>
 <ol type="1">
-<li>def__init__</li>
+<li>생성자 재정의: def__init__</li>
 </ol>
 <ul>
 <li>클래스에서 객체 생성시 객체에 대한 초기값 지정하는 함수</li>
 </ul>
 <ol start="2" type="1">
-<li>def execute(self, context)</li>
+<li>def execute(self, context) (자식 클래스에서 똑같은 이름으로 써야함)</li>
 </ol>
 <ul>
 <li><strong>init</strong> 생성자로 객체를 얻은 후 execute 메서드를 실행시키도록 되어 있음</li>
@@ -8009,18 +8207,55 @@ font-style: inherit;">    start_task &gt;&gt; trigger_dag_task</span></span></co
 </ul></li>
 <li>오퍼레이터 기능 정의
 <ul>
+<li>기존에 있던 operator들로 job을 수행하기에 제한적이었던 점을 보완할 기능을 정의해야함
+<ul>
+<li>simpleHttpOperator에서 불편했던 점은 매번 endpoint에 시작행/끝행을 넣어서 호출 해줘야 했는데 이것을 1000행씩 불러오도록 하는 기능이 필요</li>
+<li>xcom에서 data를 가지고 온후 data에 접근할 수 있는 형태로 전처리를 해줘야하는 부분이 있었는데 전처리없이 local에다가 바로 저장할 수 있도록 하는 기능이 필요</li>
+</ul></li>
 <li>서울시 공공데이터 API 를 호출하여 전체 데이터를 받은 후 .csv 파일로 저장하기</li>
 </ul></li>
 <li>오퍼레이터와 dag 의 위치
 <ul>
-<li><p>/dags/dags_seoul_api.py</p>
+<li><p>/dags/dags_seoul_api.py 생성</p>
 <div class="sourceCode" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1">from operators.seoul_api_to_csv_operator</span>
 <span id="cb5-2">import SeoulApiToCsvOperator</span></code></pre></div></li>
-<li><p>/plugins/operators/seoul_api_to_csv_operator.py</p></li>
+<li><p>/plugins/operators/seoul_api_to_csv_operator.py 생성</p></li>
 </ul></li>
-<li>Template 사용 가능한 파라미터 지정하기</li>
+<li>Template 문법을 사용할 수 있는 Template을 지정 (사용 가능한 파라미터 지정하기)</li>
+<li>아래의 HelloOperator는 __init__과 execute(self, context) 둘다 재정의 해줬기 때문에 코드상으론 심플하지만 이미 custom operator로서의 기능을 할 수 있다.</li>
 </ul>
-<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"></span></code></pre></div>
+<div class="sourceCode" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1">class HelloOperator(BaseOperator):</span>
+<span id="cb6-2">  template_fields: Sequence<span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">[</span><span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">str</span><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">]</span> = ("name",) # 이 line 어떤 parameter에 template 문법을 적용할지 지정해주면 됨</span>
+<span id="cb6-3">  # 생성자 함수 __init__ 의 member들로 template 문법을 적용할 paratemer 지정</span>
+<span id="cb6-4">  def __init__(self, name: str, world: str, **kwargs) -&gt; None:</span>
+<span id="cb6-5">    super().__init__(**kwargs)</span>
+<span id="cb6-6">    self.name = name</span>
+<span id="cb6-7">    self.world =world</span>
+<span id="cb6-8">  def execute(self, context):</span>
+<span id="cb6-9">    message = f"Hello {self.world} it's {self.name}!"</span>
+<span id="cb6-10">    print(message)</span>
+<span id="cb6-11">    return message</span>
+<span id="cb6-12">with dag:</span>
+<span id="cb6-13">  hello_task = HelloOperator(</span>
+<span id="cb6-14">    task_id='task_id_1',</span>
+<span id="cb6-15">    name '{{ task_instance.task_id }}',</span>
+<span id="cb6-16">    world='Earth'</span>
+<span id="cb6-17">  )</span></code></pre></div>
+<ul>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/howto/custom-operator.html">Google Airflow Custom Operator</a></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="kmink3225.netlify.app/images/airflow/custom_operator.PNG" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Airflow Custom Operator Example</figcaption>
+</figure>
+</div>
 </section>
 </section>
 <section id="custom-오퍼레이터-개발" class="level1" data-number="6">
@@ -8034,15 +8269,237 @@ font-style: inherit;">    start_task &gt;&gt; trigger_dag_task</span></span></co
 <span id="cb7-2">  template_fields = (' endpoint', ' path','file_ name','base_dt')</span>
 <span id="cb7-3">  </span>
 <span id="cb7-4">  def __init__(self , dataset_nm , path , file_name , base_dt=None , **kwargs):</span>
-<span id="cb7-5">    super().__init__(**kwargs)</span>
-<span id="cb7-6">    self.http_conn_id = 'openapi.seoul.go.kr'</span>
-<span id="cb7-7">    self.path = path</span>
-<span id="cb7-8">    self.file_name = file_name</span>
-<span id="cb7-9">    self.endpoint = '{{var.value.apikey_openapi_seoul_go_kr}}/json/' + datset_nm</span>
-<span id="cb7-10">    self.base_dt =base_dt</span></code></pre></div>
+<span id="cb7-5">    #  dataset_nm , path , file_name , base_dt를 user로부터 받음</span>
+<span id="cb7-6">    super().__init__(**kwargs)</span>
+<span id="cb7-7">    self.http_conn_id = 'openapi.seoul.go.kr' #hard coding</span>
+<span id="cb7-8">    self.path = path</span>
+<span id="cb7-9">    self.file_name = file_name</span>
+<span id="cb7-10">    self.endpoint = '{{var.value.apikey_openapi_seoul_go_kr}}/json/' + datset_nm</span>
+<span id="cb7-11">    self.base_dt =base_dt</span>
+<span id="cb7-12">    # template 문법이 적용될 수 있도록 self.path 을 path로, </span>
+<span id="cb7-13">    # self.file_name을 file_name로 </span>
+<span id="cb7-14">    # self.endpoint 을 '{{var.value.apikey_openapi_seoul_go_kr}}/json/' + datset_nm로,</span>
+<span id="cb7-15">    # self.base_dt을 base_dt로 지정</span></code></pre></div>
 <ul>
-<li>execute 메서드 재정의</li>
-<li>dag 생성</li>
+<li>dag full example</li>
+</ul>
+<div class="sourceCode" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1">from airflow.models.baseoperator import BaseOperator</span>
+<span id="cb8-2">from airflow.hooks.base import BaseHook</span>
+<span id="cb8-3">import pandas as pd </span>
+<span id="cb8-4"></span>
+<span id="cb8-5">class SeoulApiToCsvOperator(BaseOperator):</span>
+<span id="cb8-6">    template_fields = ('endpoint', 'path','file_name','base_dt')</span>
+<span id="cb8-7"></span>
+<span id="cb8-8"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    def __init__(self, dataset_nm, path, file_name, base_dt=None, **kwargs):</span></span>
+<span id="cb8-9"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        super().__init__(**kwargs)</span></span>
+<span id="cb8-10"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        self.http_conn_id = 'openapi.seoul.go.kr'</span></span>
+<span id="cb8-11"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        self.path = path</span></span>
+<span id="cb8-12"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        self.file_name = file_name</span></span>
+<span id="cb8-13"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        self.endpoint = '{{var.value.apikey_openapi_seoul_go_kr}}/json/' + dataset_nm</span></span>
+<span id="cb8-14"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        self.base_dt = base_dt</span></span>
+<span id="cb8-15"></span>
+<span id="cb8-16"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    def execute(self, context):</span></span>
+<span id="cb8-17"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    '''</span></span>
+<span id="cb8-18"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    url:8080/endpoint</span></span>
+<span id="cb8-19"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    endpoint=apikey/type/dataset_nm/start/end</span></span>
+<span id="cb8-20"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    즉, url:8080/apikey/type/dataset_nm/start/end 로 줬어야 했다.</span></span>
+<span id="cb8-21"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    '''</span></span>
+<span id="cb8-22"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        import os</span></span>
+<span id="cb8-23"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        </span></span>
+<span id="cb8-24"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        connection = BaseHook.get_connection(self.http_conn_id)</span></span>
+<span id="cb8-25"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        self.base_url = f'http://{connection.host}:{connection.port}/{self.endpoint}'</span></span>
+<span id="cb8-26"></span>
+<span id="cb8-27"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        total_row_df = pd.DataFrame()</span></span>
+<span id="cb8-28"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        start_row = 1</span></span>
+<span id="cb8-29"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        end_row = 1000</span></span>
+<span id="cb8-30"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        while True:</span></span>
+<span id="cb8-31"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            self.log.info(f'시작:{start_row}')</span></span>
+<span id="cb8-32"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            self.log.info(f'끝:{end_row}')</span></span>
+<span id="cb8-33"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            row_df = self._call_api(self.base_url, start_row, end_row)</span></span>
+<span id="cb8-34"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            total_row_df = pd.concat([total_row_df, row_df])</span></span>
+<span id="cb8-35"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            if len(row_df) &lt; 1000:</span></span>
+<span id="cb8-36"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">                break</span></span>
+<span id="cb8-37"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            else:</span></span>
+<span id="cb8-38"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">                start_row = end_row + 1</span></span>
+<span id="cb8-39"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">                end_row += 1000</span></span>
+<span id="cb8-40"></span>
+<span id="cb8-41"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        if not os.path.exists(self.path):</span></span>
+<span id="cb8-42"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            os.system(f'mkdir -p {self.path}')</span></span>
+<span id="cb8-43"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        total_row_df.to_csv(self.path + '/' + self.file_name, encoding='utf-8', index=False)</span></span>
+<span id="cb8-44"></span>
+<span id="cb8-45"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">    def _call_api(self, base_url, start_row, end_row):</span></span>
+<span id="cb8-46"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        import requests #http의 get 요청을 하는 library</span></span>
+<span id="cb8-47"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        import json </span></span>
+<span id="cb8-48"></span>
+<span id="cb8-49"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        headers = {'Content-Type': 'application/json',</span></span>
+<span id="cb8-50"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">                   'charset': 'utf-8',</span></span>
+<span id="cb8-51"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">                   'Accept': '*/*'</span></span>
+<span id="cb8-52"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">                   }</span></span>
+<span id="cb8-53"></span>
+<span id="cb8-54"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        request_url = f'{base_url}/{start_row}/{end_row}/'</span></span>
+<span id="cb8-55"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        if self.base_dt is not None:</span></span>
+<span id="cb8-56"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">            request_url = f'{base_url}/{start_row}/{end_row}/{self.base_dt}'</span></span>
+<span id="cb8-57"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        response = requests.get(request_url, headers) # response는 dictionary형태의 string으로 들어옴</span></span>
+<span id="cb8-58"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        contents = json.loads(response.text) # json.loads() string이 dictionary로 반환됨</span></span>
+<span id="cb8-59"></span>
+<span id="cb8-60"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        key_nm = list(contents.keys())[0]</span></span>
+<span id="cb8-61"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        row_data = contents.get(key_nm).get('row')</span></span>
+<span id="cb8-62"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        row_df = pd.DataFrame(row_data)</span></span>
+<span id="cb8-63"></span>
+<span id="cb8-64"><span class="in" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">        return row_df</span></span></code></pre></div>
+<pre class="mardkown"><code>
+from operators.seoul_api_to_csv_operator import SeoulApiToCsvOperator
+from airflow import DAG
+import pendulum
+
+with DAG(
+    dag_id='dags_seoul_api_corona',
+    schedule='0 7 * * *',
+    start_date=pendulum.datetime(2023,4,1, tz='Asia/Seoul'),
+    catchup=False
+) as dag:
+    '''서울시 코로나19 확진자 발생동향'''
+    tb_corona19_count_status = SeoulApiToCsvOperator(
+        task_id='tb_corona19_count_status',
+        dataset_nm='TbCorona19CountStatus',
+        path='/opt/airflow/files/TbCorona19CountStatus/{{data_interval_end.in_timezone("Asia/Seoul") | ds_nodash }}',
+        file_name='TbCorona19CountStatus.csv'
+    )
+    
+    '''서울시 코로나19 백신 예방접종 현황'''
+    tv_corona19_vaccine_stat_new = SeoulApiToCsvOperator(
+        task_id='tv_corona19_vaccine_stat_new',
+        dataset_nm='tvCorona19VaccinestatNew',
+        path='/opt/airflow/files/tvCorona19VaccinestatNew/{{data_interval_end.in_timezone("Asia/Seoul") | ds_nodash }}',
+        file_name='tvCorona19VaccinestatNew.csv'
+    )
+
+    tb_corona19_count_status &gt;&gt; tv_corona19_vaccine_stat_new</code></pre>
+<ul>
+<li>tb_corona19_count_status = SeoulApiToCsvOperator() 의 수행은 wokrer_container가 주체</li>
+<li>SeoulApiToCsvOperator()의 path=‘/opt/airflow/files/TbCorona19CountStatus/{{data_interval_end.in_timezone(“Asia/Seoul”) | ds_nodash }}’.
+<ul>
+<li>여기서 worker container는 ‘/opt/airflow/files/TbCorona19CountStatus/{{data_interval_end.in_timezone(“Asia/Seoul”) | ds_nodash }}’ 연결이 안되어 있기 때문에</li>
+<li>container가 내려갔다가 다시 올라오면 files의 내용은 다 사라짐</li>
+<li>docker_compose.yaml에서 경로 지정을 해줘야 자동으로 인식하여 wsl/files에 csv가 자동으로 저장된다.</li>
+</ul>
+<div class="sourceCode" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1">  volumes:</span>
+<span id="cb10-2"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  - </span>${AIRFLOW_PROJ_DIR:-.}/airflow/dags:/opt/airflow/dags</span>
+<span id="cb10-3"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  - </span>${AIRFLOW_PROJ_DIR:-.}/logs:/opt/airflow/logs</span>
+<span id="cb10-4"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  - </span>${AIRFLOW_PROJ_DIR:-.}/config:/opt/airflow/config</span>
+<span id="cb10-5"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  - </span>${AIRFLOW_PROJ_DIR:-.}/airflow/plugins:/opt/airflow/plugin</span>
+<span id="cb10-6"><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">  - </span>${AIRFLOW_PROJ_DIR:-.}/airflow/files:/opt/airflow/files</span></code></pre></div>
+<ul>
+<li>실행 날짜로 저장된 directory명안에 csv를 vi editor로 열고 <code>se nu</code> 명령어로 건수를 확인</li>
+</ul></li>
 </ul>
 </section>
 <section id="summary" class="level2" data-number="6.2">
@@ -8050,15 +8507,18 @@ font-style: inherit;">    start_task &gt;&gt; trigger_dag_task</span></span></co
 <ul>
 <li>Custom 오퍼레이터를 만들면 왜 좋을까 ?
 <ul>
-<li>만약 custom 오퍼레이터를 만들지 않았다면
+<li>비효율성 제거
 <ul>
+<li>만약 custom 오퍼레이터를 만들지 않았다면</li>
 <li>개발자마다 각자 서울 공공데이터 데이터셋 추출 저장하는 파이썬 파일을 만들어 PythonOperator 를 이용해 개발했을 것</li>
 <li>비슷한 동작을 하는 파이썬 파일이 관리되지 않은 채 수십 개 만들어지면 그 자체로 비효율 발생</li>
+<li>운영하는 사람 입장에서 비슷한 script가 여러 개 있으면 이해할 수가 없음</li>
 </ul></li>
-</ul></li>
-<li>특정기능을 하는 모듈을 만들어 놓고 , 상세 조건은 파라미터로 받게끔하여 모듈을 재사용할 수 있도록 유도
+<li>재사용성 강화
 <ul>
+<li>특정기능을 하는 모듈을 만들어 놓고 , 상세 조건은 파라미터로 받게끔하여 모듈을 재사용할 수 있도록 유도</li>
 <li>Custom 오퍼레이터 개발</li>
+</ul></li>
 </ul></li>
 </ul>
 </section>
@@ -8070,12 +8530,8 @@ font-style: inherit;">    start_task &gt;&gt; trigger_dag_task</span></span></co
 
 </div>
 </div>
-<section id="go-to-blog-content-list" class="level1" data-number="7">
-<h1 data-number="7"><span class="header-section-number">7</span> Go to Blog Content List</h1>
-<p><a href="../../../../../docs/blog/posts/content_list.html">Blog Content List</a></p>
 
 
-</section>
 
 </div></ul> ]]></description>
   <category>Engineering</category>

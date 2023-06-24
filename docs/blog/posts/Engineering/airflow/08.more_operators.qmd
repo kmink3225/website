@@ -37,15 +37,15 @@ draft: False
 
 | File Path | Operator (Class) | Importance | Note |
 |:---------|:-----|---|:-----------|
-|airflow.models.bashoperator|BaseOperator| *** | * 오퍼레이터를 직접 개발하고싶은 경우 이 클래스 상속하여 개발 (execute() 함수를 재정의하여 사용) <br> * 아래 오퍼레이터들은 모두 이 클래스를 상속하여 개발되어 있음 <br> * Airflow를 잘 쓰려면 이 오퍼레이터 상속/개발하는 것을 자유자재로 할 줄 알아야 함. |
+|airflow.models.bashoperator|BaseOperator| *** | * base operator는 직접 쓰는게 아니라 user가 custom operator를 직접 개발하고싶은 경우 이 클래스를 상속하여 개발하기 위해 만든 operator (execute() 함수를 재정의(Override)하여 사용) <br> * 아래 오퍼레이터들은 모두 이 클래스를 상속하여 개발되어 있음 <br> * Airflow를 잘 쓰려면 이 오퍼레이터 상속/개발하는 것을 자유자재로 할 줄 알아야 함. |
 |airflow.operators.bash     |BashOperator| *** | * bash 쉘 스크립트를 실행 <br> * 가장 많이 사용하는 오퍼레이터 중 하나임 |
 |airflow.operators.branch   |BaseBranchOperator| ** | * 직접 사용할 수는 없음. <br> * 이 클래스를 상속하여 choose_branch 함수를 구현해야 함 (그냥 사용시 에러 발생) <br> * 그러나 이 클래스 상속해서 사용하는것보다 @task.branch 데코레이터 사용을 권장 |
-|airflow.operators.datetime |BranchDateTimeOperator|   | * 특정 Datetime 구간을 주어 Job 날짜가 구간에 속하는지 여부에 따라 분기 결정|
+|airflow.operators.datetime |BranchDateTimeOperator|   | * 특정 Datetime 구간을 주어 Job 수행 날짜가 구간에 속하는지 여부에 따라 분기 결정|
 |airflow.operators.email |EmailOperator|   | 이메일 전송하는 오퍼레이터 (Airflow 파라미터에 SMTP 서버 등 사전 셋팅 필요)   |
 |airflow.operators.generic_transfer|GenericTransfer|   | 데이터를 소스에서 타겟으로 전송 (Airflow 커넥션에 등록되어 있는 대상만 가능)   |
-|airflow.operators.latest_only|LatestOnlyOperator|   | 이 Task 뒤에 연결되어 있는 task들을 모두 가장 최근의 Job만 실행하게끔 하는 오퍼레이터   |
-|airflow.operators.subdag|SubDagOperator   |   | * 일종의 task 그룹화, 해당 오퍼레이터 안에 다른 오퍼레이터를 둘 수 있음 (Task group과 유사)   |
-|airflow.operators.trigger_dagrun|TriggerDagRunOperator | **  | * 다른 DAG을 수행하기 위한 오퍼레이터  |
+|airflow.operators.latest_only|LatestOnlyOperator|   | dag을 수행시킬 때 스케쥴이 아니라 backfill(과거 날짜로 dag 수행) 이 Task 뒤에 연결되어 있는 task들을 모두 가장 최근의 Job만 실행하게끔 하는 오퍼레이터. 수작업으로 job을 수행 시켰거나 과거날짜로 dag을 수행시켰을 때는 후행 task들은 돌아가지 않음. 가장 최근에 설정된 job에 의해서만 후행 task들이 돌아감.   |
+|airflow.operators.subdag|SubDagOperator   |   | * 일종의 task 그룹화, dag안에 또다른 dag을 불러올 수 있음. 해당 오퍼레이터 안에 다른 오퍼레이터를 둘 수 있음 (Task group과 유사)   |
+|airflow.operators.trigger_dagrun|TriggerDagRunOperator | **  | * 다른 DAG을 수행하기 위한 오퍼레이터. 예를 들어 task1에 의해 다른 dag이 수행되도록 설정할 수 있다.  |
 |airflow.operators.weekday|BranchDayOfWeekOperator |   | * 특정 요일에 따라 분기처리할 수 있는 오퍼레이터   |
 |airflow.operators.python|PythonOperator   | ***  | * 어떤 파이썬 함수를 실행시키기 위한 오퍼레이터   |
 |airflow.operators.python|BranchPythonOperator   | *   | * 파이썬 함수 실행 결과에 따라 task를 선택적으로 실행시킬 때 사용되는 오퍼레이터 |
@@ -53,9 +53,15 @@ draft: False
 |airflow.operators.python|PythonVirtualenvOperator   |   | * 파이썬 가상환경 생성후 Job 수행하고 마무리되면 가상환경을 삭제해주는 오퍼레이터 |
 |airflow.operators.python|ExternalPythonOperator   |   | * 기존에 존재하는 파이썬 가상환경에서 Job 수행하게 하는 오퍼레이터|
 
+* [more oeprators-airflow operators](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/index.html)
 ## Provider Operator
 
-* airflow web service >> Admin >> Providers
+* airflow web service >> Admin >> Providers 에서 확인할 수 있음
+* solution 제공 업체에서 본인들의 solution을 잘 다루게 하기 위해 만든 airflow에 제공한 operator
+* 솔루션 제공 업체: AWS, GCP, MS Azure 등
+* 예를 들어, airflow web service >> Admin >> Providers >> apache-airflow-providers-amazon >> Python API >> [airflow.providers.amazon.aws.hooks, airflow.providers.amazon.aws.operators]
+* 참고로 airflow는 GCP와 궁합이 잘맞음
+
 
 # TriggerDagRun Operator
 

@@ -16,10 +16,13 @@ format:
 execute:
   warning: false
   message: false
-draft: False
+  eval: false
+draft: true
 ---
 
 ```{r}
+#| eval: false
+
 library(tidyverse)
 set.seed(100)
 ```
@@ -670,6 +673,8 @@ $$
 $$
 
 ```{python}
+#| eval: false
+
 
 A = np.array([[2, 3, 1],
               [0, 4, -2],
@@ -856,6 +861,8 @@ We can now continue with Gaussian elimination on this new augmented matrix, whic
 The Scipy package actually returns $\mathbf{A = PLU}$, which we could also write as $\mathbf{P^{T}A = LU}$.
 
 ```{python}
+#| eval: false
+
 
 # matrix sizes
 m = 4
@@ -898,6 +905,10 @@ plt.show()
 ```
 
 ```{python}
+#| eval: false
+
+
+
 A = np.array([[1, 2, 3, 7],
               [4, 5, 6, 8],
               [7, 8, 9, 10]])
@@ -1264,6 +1275,9 @@ $$
 
 **Example2** consider the $3\times 3$ matrix 
 ```{r}
+#| eval: false
+
+
 A<-matrix(sample(1:100,9,replace = TRUE),ncol=3,byrow = TRUE)
 print('matrix A= ')
 print(A)
@@ -1347,6 +1361,9 @@ where $\operatorname{det}(\mathbf A)=ad-bc$
 $\operatorname{det}(\mathbf A)=ad-bc\ne 0$ in order that $\mathbf A$ is invertible.
 
 ```{r}
+#| eval: false
+
+
 mat_A<-A[-3,-3]
 print('2 by 2 matrix:')
 mat_A
@@ -1455,6 +1472,9 @@ $$
 There are several formulas for finding the inverse of a matrix such as Gauss-Jordan Elimination, Adjoint method, Cramer's rule, Inverse formula, etc. 
 
 ```{r}
+#| eval: false
+
+
 cofactor<-function(mat,i,j){
   mat_sub<-mat[-i,-j]
   return((-1)^(i+j)*det(mat_sub))
@@ -1639,6 +1659,8 @@ the determinant of $\mathbf A$ is $0$, which means that $\mathbf A$ is a singula
 ```{r}
 #| echo: false
 #| eval: false
+
+
 https://chbe241.github.io/Module-0-Introduction/MATH-152/Unique%20Solution,%20No%20Solution,%20or%20Infinite%20Solutions.html
 
 ```
@@ -1687,6 +1709,9 @@ is $c_1=c_2=0$.
 **Example2** Computation example with dependent columns.
 
 ```{r}
+#| eval: false
+
+
 v1 <- c(-4,2,0,6)
 v2 <- c(0,1,-2,-1)
 v3 <- c(-8,1,6,15)
@@ -1717,23 +1742,34 @@ rowSums(sweep(dependent_matrix,2,optimal_a$par, '*'))
 **Example3** rectangular data with dependent columns
 
 ```{r}
+#| eval: false
+
+
 temperature_data <- tibble(celcius=c(5,36,30,-3,26,33),
 velocity=c(2.35,11.5,8.62,5.37,11.8,12.20))%>%
 mutate(fahrenheit=celcius*9/5+32,after=celcius)
 
 temperature_data
+
+The temperature data include 3 columns: '`r names(temperature_data)`. Since the fahrenheit column can be represented as $\frac{9}{5}\text{celcius}+32$, the columns are not linearly independent. So, it is actually enought to reproduce the data with two columns: celcius and velocity. From the analysis perspective, the temperature data has a redundant column, `fahrenheit`.
+
 ```
 
-The temperature data include 3 columns: `r names(temperature_data)`. Since the fahrenheit column can be represented as $\frac{9}{5}\text{celcius}+32$, the columns are not linearly independent. So, it is actually enought to reproduce the data with two columns: celcius and velocity. From the analysis perspective, the temperature data has a redundant column, `fahrenheit`.
 
 Since the fahrenheit and celcius are linearly dependent, the scattor plot is represented as a line like the below. 
 
 ```{r}
+#| eval: false
+
+
 mosaic::plotPoints(fahrenheit~celcius,data=temperature_data)
 ```
 It indicates that to fit velocity on the temperature data, adding the fahrenheit columns does not influence and explain the variations of the velocity variable at all. 
 
 ```{r}
+#| eval: false
+
+
 result1 <- lm(velocity~celcius, data= temperature_data)
 result2 <- lm(velocity~celcius+fahrenheit, data= temperature_data)
 
@@ -1744,6 +1780,9 @@ sum(result2$residuals^2)
 **Example4**
 
 ```{r}
+#| eval: false
+
+
 a<-sample(seq(-10,10,by=0.01),3,replace=T)
 
 rowSums(sweep(dependent_matrix,2,a,'*')) # a[1]*v1+a[2]*v2+a[3]*v3 
@@ -1817,6 +1856,9 @@ If there are linearly dependent columns, $\operatorname{det}(\mathbf{X}^{T}\math
 
 **Example1** Simple Gram Matrix Example
 ```{r}
+#| eval: false
+
+
 # Define the set of vectors
 v1 <- c(1, 2, 3)
 v2 <- c(4, 5, 6)
@@ -1835,6 +1877,9 @@ print(column_vector_matrix)
 
 **Example2** Check if $\mathbf{V}$ is linearly independent using the linear independence property.
 ```{r}
+#| eval: false
+
+
 gram_matrix <- t(column_vector_matrix) %*% column_vector_matrix
 eigen(gram_matrix)$values %>% round(1)
 ```
@@ -1918,6 +1963,8 @@ Then, the trace of $\mathbf{A}$ is $\mathrm{tr}(\mathbf{A}) = 2 + 5 + 4 = 11$
 * $\operatorname{tr}(\mathbf{A}^{T}) =\operatorname{tr}(\mathbf{A})$
 
 ```{r}
+#| eval: false
+
 
 tr<-function(mat){
   return(sum(diag(mat)))
@@ -1987,6 +2034,9 @@ $\mathbf{A}$ is said to be a full rank matrix if $\text{rank}(\mathbf{A}) = \min
 It is said that the vectors are linearly indpendent if $\mathbf{A}$ is said to be a full rank matrix.
 
 ```{r}
+#| eval: false
+
+
 library(Matrix)
 A <- matrix(1:6,nrow=2)
 rankMatrix(A)
@@ -1999,6 +2049,9 @@ $$
 $$
 
 ```{r}
+#| eval: false
+
+
 rank_A <-rankMatrix(A)
 rank_A_transpose <-rankMatrix(t(A))
 rank_A == rank_A_transpose
@@ -2027,6 +2080,8 @@ $$
 $$
 
 ```{r}
+#| eval: false
+
 
 A<-matrix(c(2,0,0,1), nrow=2)
 B<-matrix(c(1,4,3,3,1,0,0,0,1), nrow=3)
@@ -2073,6 +2128,9 @@ $$
 $$
 
 ```{r}
+#| eval: false
+
+
 A<-matrix(1:6,nrow=2)
 rankMatrix(A)
 ```
@@ -2102,6 +2160,9 @@ $$
 $$
 
 ```{r}
+#| eval: false
+
+
 A<-matrix(c(1,2,3,6,5,10),nrow=2)
 B<-matrix(c(7,8,9,10,11,12),ncol=2)
 
@@ -2116,6 +2177,9 @@ $$
 $$
 
 ```{r}
+#| eval: false
+
+
 A<-matrix(c(1,2,3,6,5,10),nrow=2)
 B<-matrix(c(7,8,9,10,11,12),nrow=2)
 
@@ -2202,6 +2266,9 @@ We have reached the echelon form of $\mathbf{A}$. Notice that there are two line
 Hence, the rank of $\mathbf{A}$ is 2.
 
 ```{python}
+#| eval: false
+
+
 import numpy as np
 
 # Example data matrix

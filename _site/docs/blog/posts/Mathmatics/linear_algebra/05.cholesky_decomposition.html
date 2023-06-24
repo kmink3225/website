@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.361">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Kwangmin Kim">
+<meta name="dcterms.date" content="2023-06-02">
+<meta name="description" content="zsd.">
+
+<title>Kwangmin Kim - Multivariate Normal Distribution &amp; Cholesky Decomposition</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../../">
+<script src="../../../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../../../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="../../../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../../.././images/logo.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../../../../index.html">
+    <span class="navbar-title">Kwangmin Kim</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/CV/index.html" rel="" target="">
+ <span class="menu-text">CV</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/projects/index.html" rel="" target="">
+ <span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/blog/index.html" rel="" target="">
+ <span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../about.html" rel="" target="">
+ <span class="menu-text">Me</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/kmink3225" rel="" target=""><i class="bi bi-github" role="img" aria-label="Github">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/kwangmin-kim-a5241b200/" rel="" target=""><i class="bi bi-linkedin" role="img" aria-label="Linkedin">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/blog/index.html" rel="" target=""><i class="bi bi-rss" role="img">
+</i> 
+ <span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#sampling-from-multivariate-normal-distribution" id="toc-sampling-from-multivariate-normal-distribution" class="nav-link active" data-scroll-target="#sampling-from-multivariate-normal-distribution"><span class="header-section-number">1</span> Sampling from Multivariate Normal Distribution</a>
+  <ul class="collapse">
+  <li><a href="#첫째로-표본-공분산-행렬-covmvt_samples-추정" id="toc-첫째로-표본-공분산-행렬-covmvt_samples-추정" class="nav-link" data-scroll-target="#첫째로-표본-공분산-행렬-covmvt_samples-추정"><span class="header-section-number">1.1</span> 첫째로 표본 공분산 행렬, cov(mvt_samples) 추정</a></li>
+  <li><a href="#난수-발생-원리" id="toc-난수-발생-원리" class="nav-link" data-scroll-target="#난수-발생-원리"><span class="header-section-number">1.2</span> 난수 발생 원리</a>
+  <ul class="collapse">
+  <li><a href="#cholesky-decomposition" id="toc-cholesky-decomposition" class="nav-link" data-scroll-target="#cholesky-decomposition"><span class="header-section-number">1.2.1</span> Cholesky Decomposition</a></li>
+  <li><a href="#촐레스키-분해-구현" id="toc-촐레스키-분해-구현" class="nav-link" data-scroll-target="#촐레스키-분해-구현"><span class="header-section-number">1.2.2</span> 촐레스키 분해 구현</a></li>
+  <li><a href="#촐레스키-분해를-사용한-표본-생성" id="toc-촐레스키-분해를-사용한-표본-생성" class="nav-link" data-scroll-target="#촐레스키-분해를-사용한-표본-생성"><span class="header-section-number">1.2.3</span> 촐레스키 분해를 사용한 표본 생성</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Multivariate Normal Distribution &amp; Cholesky Decomposition</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">Mathematics</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    <p>zsd.</p>
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Kwangmin Kim </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 2, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mosaic)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(mvtnorm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="sampling-from-multivariate-normal-distribution" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Sampling from Multivariate Normal Distribution</h1>
+<p>mvtnorm packcage의 rmvnnorm() 이용하는데 rmvnnorm()는 mean vector와 covariance matrix를 arguments로 받는다</p>
+<p><span class="math display">\[
+\mu =\begin{bmatrix} 1 // 3// 3 \end{bmatrix} \quadd \Sigma =\begin{bmatrix} 4 &amp; -2 &amp; 1 \\ -2 &amp; 3 &amp; -1 \\ 1 &amp; -1 &amp; 2 \end{bmatrix}
+\]</span></p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mean_vector <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">2</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>cov_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">4</span>,<span class="sc">-</span><span class="dv">2</span>,<span class="dv">1</span>,<span class="sc">-</span><span class="dv">2</span>,<span class="dv">3</span>,<span class="sc">-</span><span class="dv">1</span>,<span class="dv">1</span>,<span class="sc">-</span><span class="dv">1</span>,<span class="dv">2</span>),<span class="at">ncol=</span><span class="dv">3</span>,<span class="at">byrow=</span><span class="cn">TRUE</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>mvt_samples <span class="ot">&lt;-</span><span class="fu">rmvnorm</span>(<span class="at">n=</span><span class="dv">1000</span>, <span class="at">mean=</span>mean_vector, <span class="at">sigma=</span> cov_matrix)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(mvt_samples)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>           [,1]      [,2]     [,3]
+[1,]  0.3049178 5.9949385 2.909686
+[2,]  1.7036649 2.4664723 2.732698
+[3,] -3.5938273 6.1803845 3.128076
+[4,]  1.1044888 4.6012269 2.402350
+[5,] -0.6166918 3.5394571 1.187899
+[6,]  4.2021484 0.5152966 4.509581</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># mean vector와 variance vector 확인하는 시각화</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>mvt_samples[,<span class="dv">1</span>]<span class="sc">%&gt;%</span><span class="fu">hist</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="05.cholesky_decomposition_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mvt_samples[,<span class="dv">2</span>]<span class="sc">%&gt;%</span><span class="fu">hist</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="05.cholesky_decomposition_files/figure-html/unnamed-chunk-2-2.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mvt_samples[,<span class="dv">3</span>]<span class="sc">%&gt;%</span><span class="fu">hist</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="05.cholesky_decomposition_files/figure-html/unnamed-chunk-2-3.png" class="img-fluid" width="672"></p>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ecdf</span>(mvt_samples[,<span class="dv">1</span>])<span class="sc">%&gt;%</span><span class="fu">plot</span>() <span class="co">#empirical cdf</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>y<span class="ot">&lt;-</span><span class="fu">pnorm</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="dv">5</span>,<span class="dv">7</span>,<span class="at">by=</span><span class="fl">0.01</span>),<span class="at">mean=</span><span class="dv">1</span>, <span class="at">sd=</span><span class="dv">2</span>) <span class="co"># get cdf  points</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">points</span>(<span class="fu">seq</span>(<span class="sc">-</span><span class="dv">5</span>,<span class="dv">7</span>,<span class="at">by=</span><span class="fl">0.01</span>),y,<span class="at">col=</span><span class="st">'red'</span>) <span class="co"># marginal cdf</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="05.cholesky_decomposition_files/figure-html/unnamed-chunk-2-4.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<section id="첫째로-표본-공분산-행렬-covmvt_samples-추정" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="첫째로-표본-공분산-행렬-covmvt_samples-추정"><span class="header-section-number">1.1</span> 첫째로 표본 공분산 행렬, cov(mvt_samples) 추정</h2>
+<p><span class="math display">\[
+S=\frac{1}{n-1} \tilde{X}^T\tilde{X}
+\]</span></p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># covariance matrix 확인하는 시각화</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="do">## 첫째로 표본 공분산 행렬, cov(mvt_samples) 추정</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>centered_X <span class="ot">&lt;-</span> <span class="fu">scale</span>(mvt_samples, <span class="at">center =</span>T, <span class="at">scale =</span>F)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">/</span>(<span class="dv">1000-1</span>) <span class="sc">*</span> <span class="fu">t</span>(centered_X) <span class="sc">%*%</span> centered_X</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]      [,2]      [,3]
+[1,]  4.070883 -1.962065  1.223705
+[2,] -1.962065  2.907151 -1.130307
+[3,]  1.223705 -1.130307  2.075480</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cov</span>(mvt_samples)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]      [,2]      [,3]
+[1,]  4.070883 -1.962065  1.223705
+[2,] -1.962065  2.907151 -1.130307
+[3,]  1.223705 -1.130307  2.075480</code></pre>
+</div>
+</div>
+</section>
+<section id="난수-발생-원리" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="난수-발생-원리"><span class="header-section-number">1.2</span> 난수 발생 원리</h2>
+<section id="cholesky-decomposition" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="cholesky-decomposition"><span class="header-section-number">1.2.1</span> Cholesky Decomposition</h3>
+<p>cholesky decomposition 또는 촐레스키 인수분해는 선형대수학에서 사용되는 중요한 알고리즘 중 하나로 이는 양의 정부호 행렬을 lower triangular matrix와 그 행렬의 전치 행렬의 곱으로 분해하는 방법이다. 양의 정부호 대칭 행렬 <span class="math inline">\(\mathbf{A}\)</span> 에 대하여 촐레스키 분해는 다음과 같이 정의 된다. 수의 제곱근을 구하는 개념에 대응시켜서 이해하면 편하다.</p>
+<p><span class="math display">\[
+\mathbf{A} = LL^T
+\]</span></p>
+<p>여기서 L은 하삼각행렬을 나타낸다. 촐레스키 분해는 행렬 A가 양의 정부호 임을 전제로 한다. 촐레스키 분해로 A를 하삼각행렬의 곱으로 정보를 압축할 수 있다. 촐레스키 분해는 통계학, 수치해석학, 머신러닝 등에서 사용되는데 가장 대표적인 예가 다변수 정규분포의 표본을 생성하는 것이다. system of linear equation의 해를 구할 때도 사용된다.</p>
+</section>
+<section id="촐레스키-분해-구현" class="level3" data-number="1.2.2">
+<h3 data-number="1.2.2" class="anchored" data-anchor-id="촐레스키-분해-구현"><span class="header-section-number">1.2.2</span> 촐레스키 분해 구현</h3>
+<p><code>chol()</code> 함수를 이용해 촐레스키 분해를 수행할 수 있다.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define a positive matrix</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>cov_matrix</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    4   -2    1
+[2,]   -2    3   -1
+[3,]    1   -1    2</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>upper_triangular_matrix<span class="ot">&lt;-</span><span class="fu">chol</span>(cov_matrix)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>lower_triangular_matrix<span class="ot">&lt;-</span><span class="fu">t</span>(upper_triangular_matrix)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># verify the decomposition</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>lower_triangular_matrix<span class="sc">%*%</span><span class="fu">t</span>(lower_triangular_matrix)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    4   -2    1
+[2,]   -2    3   -1
+[3,]    1   -1    2</code></pre>
+</div>
+</div>
+<p>모든 공분산 행렬은 positive semi definite인데 <code>cov_matrix</code>의 모든 대각원소가 양수이기 때문에 positive definite matrix가 된다.</p>
+<p>촐레스키 분해는 multivariate normal distribution에서 sampling하여 난수를 발생시키는 원리를 이해하는데 도움이 된다.</p>
+</section>
+<section id="촐레스키-분해를-사용한-표본-생성" class="level3" data-number="1.2.3">
+<h3 data-number="1.2.3" class="anchored" data-anchor-id="촐레스키-분해를-사용한-표본-생성"><span class="header-section-number">1.2.3</span> 촐레스키 분해를 사용한 표본 생성</h3>
+<p>목표로 하는 다변수 정규분포의 공분산 행렬에 대해 촐레스키 분해를 수행하고, 표준 정규분포로부터 뽑은 표본에 분해된 행렬을 사용하여 선형변환을 하는 방식이다. random vector가 <span class="math inline">\(\mathbf{x}\)</span> 가 iid이고 표준 정규 분포를 따른 다고 했을 때 random vector, <span class="math inline">\(\mathbf{y} \sim N(\begin{bmatrix}1//3//2\end{bmatrix},\begin{bmatrix}4&amp;-2&amp;1//-2&amp;3&amp;-1//1&amp;-1&amp;2\end{bmatrix})\)</span> 라고 한다면</p>
+<p><span class="math display">\[
+\begin{alinged}
+  \mathbf{y}&amp;=\mathbf{L}\mathbf{x}+\mathbf{\mu} \\
+  E(\mathbf{y})&amp;= \mathbf{L}E(\mathbf{x})+\mathbf{\mu} \\
+  Var(\mathbf{y})&amp;= \mathbf{L}Var(\mathbf(x)) \mathbf{L}^T= \mathbf{L}Var(\mathbf(I)) \mathbf{L}^T=\mathbf{L} \mathbf{L}^T =\Sigma
+\end{aligned}
+\]</span></p>
+<p>이 성립한다.</p>
+<p>더 쉬운 예제를 들면, <span class="math inline">\(X \sim N(0,1) \quadd Y \sim N(4,9)\)</span></p>
+<p><span class="math display">\[
+Y=3X+4
+\]</span></p>
+<p>의 선형식이 성립한다.</p>
+<p>그러므로 data의 표본을 토대로 simulation을 할 때는 data의 표본 공분산 행렬을 구해 촐레스키 분해를 하여 L을 구한뒤 rnorm()을 변수의 갯 수 만큼 사용하고 데이터의 변수의 표본 벡터를 구해서 더해 주면 데이터의 분포에 기반한 시뮬래이션이 가능해진다.</p>
+<div class="callout-tips">
+<p><span class="math display">\[
+Y=A\begin{bmatrix}rnorm(X_1) //rnorm(X_2)//rnorm(X_3)\end{bmatrix} +B
+\]</span></p>
+<p>정규 분포를 따르는 random vectors에 어떤 행렬을 곱하거나 더해도 그 변환된 Y역시 다변수 정규분포를 따른다는 것이 알려져 있다.</p>
+</div>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">00</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>random_samples <span class="ot">&lt;-</span> lower_triangular_matrix <span class="sc">%*%</span> <span class="fu">matrix</span>(<span class="fu">rnorm</span>(<span class="dv">3000</span>),<span class="at">nrow=</span><span class="dv">3</span>,<span class="at">ncol=</span><span class="dv">1000</span>) <span class="sc">+</span> mean_vector</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="co">#위와 같은 식</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>random_samples <span class="ot">&lt;-</span> lower_triangular_matrix <span class="sc">%*%</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">1000</span>),<span class="fu">rnorm</span>(<span class="dv">1000</span>),<span class="fu">rnorm</span>(<span class="dv">1000</span>)),<span class="at">nrow=</span><span class="dv">3</span>,<span class="at">ncol=</span><span class="dv">1000</span>) <span class="sc">+</span> mean_vector</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>random_samples<span class="ot">&lt;-</span><span class="fu">t</span>(random_samples)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p><span class="math display">\[
+\mathbf{L}_{3 \times 3} \text{random_samples}_{3 \times 1000} + \text{mean_vector}_{3\times 1}
+\]</span></p>
+<p><code>mean_vector</code>는 브로드캐스팅되어 앞의 두행렬의 연산결과의 각 열에 더해지게 됨.</p>
+<p>sample은 아래와 같이 뽑히게 된다.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(random_samples)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>            [,1]       [,2]       [,3]
+[1,] -0.07612761  4.2403547 -0.2827580
+[2,] -1.22520465  2.6778132  2.5256458
+[3,]  0.57189770  2.5652002  4.5131124
+[4,]  3.71812120  2.2683683  0.9224851
+[5,]  1.03533835 -0.4098458  2.7877527
+[6,]  3.72684756  1.1950652  2.2052107</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#표본 공분산 행렬 추정</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cov</span>(random_samples)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]      [,2]      [,3]
+[1,]  3.849209 -1.820943  1.031505
+[2,] -1.820943  2.958023 -1.014896
+[3,]  1.031505 -1.014896  2.030114</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>centered_X<span class="ot">&lt;-</span><span class="fu">scale</span>(random_samples,<span class="at">center=</span>T,<span class="at">scale=</span>F)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">/</span>(<span class="dv">1000-1</span>)<span class="sc">*</span><span class="fu">t</span>(centered_X)<span class="sc">%*%</span> centered_X</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]      [,2]      [,3]
+[1,]  3.849209 -1.820943  1.031505
+[2,] -1.820943  2.958023 -1.014896
+[3,]  1.031505 -1.014896  2.030114</code></pre>
+</div>
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>random_samples[,<span class="dv">1</span>]<span class="sc">%&gt;%</span><span class="fu">hist</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<p><img src="05.cholesky_decomposition_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

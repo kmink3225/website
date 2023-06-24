@@ -33,23 +33,99 @@ draft: False
 
 ::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
 
-# Jinja Template
+# Docker Compose Interpretation
 
-* 문서(파일)에서 특정 양식으로 작성된 값을 런타임시 실제 값으로 치환해주는 처리 엔진
-* 템플릿 엔진은 여러 솔루션이 존재하며 그 중 Jinja 템플릿은 파이썬 언어에서 사용하는 엔진
 
+* 목적: 1 개 이상 도커 컨테이너 생성시 스크립트 하나로 컨테이너들의 설정을 관리할 수 있도록 해주는 Docker 의 기능 중 하나
+* 작성방법: docker compose.yaml 파일에 컨테이너들의 설정 내용을 입력
+* 도커컴포즈 서비스 시작 : yaml 파일이 있는 위치에서 sudo docker compose up 명령 입력 기본적으로 Docker 서비스가 설치되어 있어야 함
+* docker compose.yaml 파일의 구성: yaml 파일은 json 이나 xml 과 같이 key, value 로 구성되며 계층적인 구조를 가지며 파이썬처럼 들여쓰기 문법을 사용함
+* 1 Level 내용
+
+```markdown
+version: '3.8' #파일의버전 정보 옵션
+x-airflow-common: #Extention Fields(각 서비스 항목에 공통 적용될 항목들 정의)
+services: #컨테이너로 실행할 서비스 정의
+volumes:  #컨테이너에 할당할 volume 정의
+networks: #컨테이너에 연결할 network 정의
+```
+* x-airflow-common: 공통 지정할 항목을 를 붙여서 지정
+
+```markdown
+x-airflow-common
+    &airflow-common
+    image: ${AIRFLOW_IMAGE:-apache/airflow:2.5.2}
+    environment
+        &airflow-common-env
+        AIRFLOW__CORE__DEFAULT_TIMEZONE: 'Asia/Seoul'
+        AIRFLOW__CORE__EXECUTOR: CeleryExecutor
+        AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    depends_on
+        &airflow-common-depends-on
+    redis:
+        condition: service_healthy
+    postgres:
+        condition: service_healthy
+```
+* services: 컨테이너로 올릴 서비스 지정
+```markdown
+  airflow-webserver:
+    <<: *airflow-common
+    command: webserver
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+```
+```markdown
+
+airflow-scheduler:
+    <<: *airflow-common
+    command: scheduler
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8974/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: always
+    depends_on:
+      <<: *airflow-common-depends-on
+      airflow-init:
+        condition: service_completed_successfully
+```
+* volumes: 컨테이너와 연결하기 위한 볼륨 정보
     ```markdown
-    from jinja2 import Template
+    volumns:
+        postgree-db-volume: #새로 만들 볼륨 이름
 
-    template = Template('my name is {{name}}')
-    new_template = template.render('name=hjkim')
-    print(new_template)
     ```
-
-* Jinja 템플릿, 어디서 쓰이나?
-    - 파이썬 기반 웹 프레임워크인 Flask, Django에서 주로 사용
-    (주로 HTML 템플릿 저장 후 화면에 보여질 때 실제 값으로 변환해서 출력)
-    - SQL작성시에도 활용 가능
+    * 볼륨에 대한 정보 확인하기
+        1.볼륨 리스트 보기 : sudo docker volume ls
+        2.볼륨 상세 보기 : sudo docker volume inspect {volume_id}
+* networks: 컨테이너의 network 정보 구성
+    ```markdown
+    networks:
+        network_custom:
+            driver: bridge
+            ipam:
+                driver: default
+                config:
+                    - subnet : 172.18.0.0/16
+                      gateway: 172.18.0.1
+    ```
+    * 네트워크에 대한 정보 확인하기
+        1. 네트워크 리스트 보기 : sudo docker network ls
+        2. 네트워크 상세 보기 : sudo docker network inspect {network_id}
 
 ## Airflow에서 사용법
 

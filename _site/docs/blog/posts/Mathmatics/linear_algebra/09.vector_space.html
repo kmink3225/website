@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.361">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Kwangmin Kim">
+<meta name="dcterms.date" content="2023-04-10">
+<meta name="description" content="template">
+
+<title>Kwangmin Kim - Vector Space</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../../../">
+<script src="../../../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../../../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a href="../../../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../../../.././images/logo.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../../../../index.html">
+    <span class="navbar-title">Kwangmin Kim</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../index.html" rel="" target="">
+ <span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/CV/index.html" rel="" target="">
+ <span class="menu-text">CV</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/projects/index.html" rel="" target="">
+ <span class="menu-text">Projects</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/blog/index.html" rel="" target="">
+ <span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../about.html" rel="" target="">
+ <span class="menu-text">Me</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/kmink3225" rel="" target=""><i class="bi bi-github" role="img" aria-label="Github">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/kwangmin-kim-a5241b200/" rel="" target=""><i class="bi bi-linkedin" role="img" aria-label="Linkedin">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../../../docs/blog/index.html" rel="" target=""><i class="bi bi-rss" role="img">
+</i> 
+ <span class="menu-text">Blog</span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#vector-space" id="toc-vector-space" class="nav-link active" data-scroll-target="#vector-space"><span class="header-section-number">1</span> Vector Space</a>
+  <ul class="collapse">
+  <li><a href="#definition" id="toc-definition" class="nav-link" data-scroll-target="#definition"><span class="header-section-number">1.1</span> Definition</a>
+  <ul class="collapse">
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">1.1.1</span> Example</a></li>
+  <li><a href="#three-special-vector-spaces" id="toc-three-special-vector-spaces" class="nav-link" data-scroll-target="#three-special-vector-spaces"><span class="header-section-number">1.1.2</span> Three Special Vector Spaces</a></li>
+  </ul></li>
+  <li><a href="#subspaces" id="toc-subspaces" class="nav-link" data-scroll-target="#subspaces"><span class="header-section-number">1.2</span> Subspaces</a>
+  <ul class="collapse">
+  <li><a href="#definition-1" id="toc-definition-1" class="nav-link" data-scroll-target="#definition-1"><span class="header-section-number">1.2.1</span> Definition</a></li>
+  <li><a href="#properties" id="toc-properties" class="nav-link" data-scroll-target="#properties"><span class="header-section-number">1.2.3</span> Properties</a></li>
+  <li><a href="#example-2" id="toc-example-2" class="nav-link" data-scroll-target="#example-2"><span class="header-section-number">1.2.4</span> Example</a></li>
+  </ul></li>
+  <li><a href="#the-column-space-of-mathbf-a" id="toc-the-column-space-of-mathbf-a" class="nav-link" data-scroll-target="#the-column-space-of-mathbf-a"><span class="header-section-number">1.3</span> The Column Space of <span class="math inline">\(\mathbf A\)</span></a>
+  <ul class="collapse">
+  <li><a href="#definition-2" id="toc-definition-2" class="nav-link" data-scroll-target="#definition-2"><span class="header-section-number">1.3.1</span> Definition</a></li>
+  <li><a href="#example-3" id="toc-example-3" class="nav-link" data-scroll-target="#example-3"><span class="header-section-number">1.3.2</span> Example</a></li>
+  <li><a href="#properties-1" id="toc-properties-1" class="nav-link" data-scroll-target="#properties-1"><span class="header-section-number">1.3.3</span> Properties</a></li>
+  </ul></li>
+  <li><a href="#nullspace-of-solving" id="toc-nullspace-of-solving" class="nav-link" data-scroll-target="#nullspace-of-solving"><span class="header-section-number">1.4</span> Nullspace of : Solving </a>
+  <ul class="collapse">
+  <li><a href="#definition-3" id="toc-definition-3" class="nav-link" data-scroll-target="#definition-3"><span class="header-section-number">1.4.1</span> Definition</a></li>
+  <li><a href="#example-4" id="toc-example-4" class="nav-link" data-scroll-target="#example-4"><span class="header-section-number">1.4.2</span> Example</a></li>
+  <li><a href="#properties-2" id="toc-properties-2" class="nav-link" data-scroll-target="#properties-2"><span class="header-section-number">1.4.3</span> Properties</a></li>
+  </ul></li>
+  <li><a href="#rank-and-row-reduced-form" id="toc-rank-and-row-reduced-form" class="nav-link" data-scroll-target="#rank-and-row-reduced-form"><span class="header-section-number">1.5</span> Rank and Row Reduced Form</a></li>
+  <li><a href="#complete-solution" id="toc-complete-solution" class="nav-link" data-scroll-target="#complete-solution"><span class="header-section-number">1.6</span> Complete Solution</a></li>
+  <li><a href="#independence-basis-and-dimension" id="toc-independence-basis-and-dimension" class="nav-link" data-scroll-target="#independence-basis-and-dimension"><span class="header-section-number">1.7</span> Independence, Basis, and Dimension</a></li>
+  <li><a href="#dimensions-of-four-subspaces" id="toc-dimensions-of-four-subspaces" class="nav-link" data-scroll-target="#dimensions-of-four-subspaces"><span class="header-section-number">1.8</span> Dimensions of Four Subspaces</a></li>
+  <li><a href="#basis-vector" id="toc-basis-vector" class="nav-link" data-scroll-target="#basis-vector"><span class="header-section-number">1.9</span> Basis Vector</a>
+  <ul class="collapse">
+  <li><a href="#example-5" id="toc-example-5" class="nav-link" data-scroll-target="#example-5"><span class="header-section-number">1.9.1</span> Example</a></li>
+  <li><a href="#properties-3" id="toc-properties-3" class="nav-link" data-scroll-target="#properties-3"><span class="header-section-number">1.9.2</span> Properties</a></li>
+  </ul></li>
+  <li><a href="#subspace" id="toc-subspace" class="nav-link" data-scroll-target="#subspace"><span class="header-section-number">1.10</span> Subspace</a>
+  <ul class="collapse">
+  <li><a href="#definition-of-a-subspace" id="toc-definition-of-a-subspace" class="nav-link" data-scroll-target="#definition-of-a-subspace"><span class="header-section-number">1.10.1</span> Definition of a subspace</a></li>
+  <li><a href="#example-6" id="toc-example-6" class="nav-link" data-scroll-target="#example-6"><span class="header-section-number">1.10.2</span> Example</a></li>
+  <li><a href="#properties-4" id="toc-properties-4" class="nav-link" data-scroll-target="#properties-4"><span class="header-section-number">1.10.3</span> Properties</a></li>
+  <li><a href="#span" id="toc-span" class="nav-link" data-scroll-target="#span"><span class="header-section-number">1.10.4</span> Span</a></li>
+  <li><a href="#definition-4" id="toc-definition-4" class="nav-link" data-scroll-target="#definition-4"><span class="header-section-number">1.10.5</span> Definition</a></li>
+  <li><a href="#proporties" id="toc-proporties" class="nav-link" data-scroll-target="#proporties"><span class="header-section-number">1.10.6</span> Proporties</a></li>
+  </ul></li>
+  <li><a href="#dimensionality-and-rank" id="toc-dimensionality-and-rank" class="nav-link" data-scroll-target="#dimensionality-and-rank"><span class="header-section-number">1.11</span> Dimensionality and Rank</a>
+  <ul class="collapse">
+  <li><a href="#definition-5" id="toc-definition-5" class="nav-link" data-scroll-target="#definition-5"><span class="header-section-number">1.11.1</span> Definition</a></li>
+  <li><a href="#example-7" id="toc-example-7" class="nav-link" data-scroll-target="#example-7"><span class="header-section-number">1.11.2</span> Example</a></li>
+  <li><a href="#properties-5" id="toc-properties-5" class="nav-link" data-scroll-target="#properties-5"><span class="header-section-number">1.11.3</span> Properties</a></li>
+  </ul></li>
+  <li><a href="#column-space" id="toc-column-space" class="nav-link" data-scroll-target="#column-space"><span class="header-section-number">1.12</span> Column Space</a>
+  <ul class="collapse">
+  <li><a href="#definition-6" id="toc-definition-6" class="nav-link" data-scroll-target="#definition-6"><span class="header-section-number">1.12.1</span> Definition</a></li>
+  <li><a href="#example-8" id="toc-example-8" class="nav-link" data-scroll-target="#example-8"><span class="header-section-number">1.12.2</span> Example</a></li>
+  <li><a href="#properties-6" id="toc-properties-6" class="nav-link" data-scroll-target="#properties-6"><span class="header-section-number">1.12.3</span> Properties</a></li>
+  </ul></li>
+  <li><a href="#row-space" id="toc-row-space" class="nav-link" data-scroll-target="#row-space"><span class="header-section-number">1.13</span> Row Space</a>
+  <ul class="collapse">
+  <li><a href="#definition-7" id="toc-definition-7" class="nav-link" data-scroll-target="#definition-7"><span class="header-section-number">1.13.1</span> Definition</a></li>
+  <li><a href="#example-9" id="toc-example-9" class="nav-link" data-scroll-target="#example-9"><span class="header-section-number">1.13.2</span> Example</a></li>
+  <li><a href="#properties-7" id="toc-properties-7" class="nav-link" data-scroll-target="#properties-7"><span class="header-section-number">1.13.3</span> Properties</a></li>
+  </ul></li>
+  <li><a href="#null-space" id="toc-null-space" class="nav-link" data-scroll-target="#null-space"><span class="header-section-number">1.14</span> Null Space</a>
+  <ul class="collapse">
+  <li><a href="#example-10" id="toc-example-10" class="nav-link" data-scroll-target="#example-10"><span class="header-section-number">1.14.1</span> Example</a></li>
+  <li><a href="#properties-8" id="toc-properties-8" class="nav-link" data-scroll-target="#properties-8"><span class="header-section-number">1.14.2</span> Properties</a></li>
+  </ul></li>
+  <li><a href="#column-space-vs-row-space-vs-null-space" id="toc-column-space-vs-row-space-vs-null-space" class="nav-link" data-scroll-target="#column-space-vs-row-space-vs-null-space"><span class="header-section-number">1.15</span> Column Space vs Row Space vs Null Space</a>
+  <ul class="collapse">
+  <li><a href="#column-space-vs-row-space" id="toc-column-space-vs-row-space" class="nav-link" data-scroll-target="#column-space-vs-row-space"><span class="header-section-number">1.15.1</span> Column Space vs Row Space</a></li>
+  <li><a href="#null-space-1" id="toc-null-space-1" class="nav-link" data-scroll-target="#null-space-1"><span class="header-section-number">1.15.2</span> Null Space</a></li>
+  <li><a href="#the-relationships-between-these-spaces" id="toc-the-relationships-between-these-spaces" class="nav-link" data-scroll-target="#the-relationships-between-these-spaces"><span class="header-section-number">1.15.3</span> The relationships between these spaces</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content column-page-left" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Vector Space</h1>
+<p class="subtitle lead">vector space, basis vector, susbspace, dimension, rank, column space, row space, null space</p>
+  <div class="quarto-categories">
+    <div class="quarto-category">Mathematics</div>
+  </div>
+  </div>
+
+<div>
+  <div class="description">
+    <p>template</p>
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Kwangmin Kim </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">April 10, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<div class="cell" data-execution_count="1">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> mpl_toolkits.mplot3d <span class="im">import</span> Axes3D</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<section id="vector-space" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Vector Space</h1>
+<p>The perspective of looking into linear algebra change from ‘numbers’ to ‘vector space’ through ‘vectors’. Here, instead of looking at individual columns, we will observe <strong>spaces of vecctors</strong> and <strong>their subspace</strong> to better understand <span class="math inline">\(\mathbf{Ax}=\mathbf{b}\)</span>. From this part, the fundamental theorem of linear algebra appears.</p>
+<section id="definition" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="definition"><span class="header-section-number">1.1</span> Definition</h2>
+<div id="def-VSnotation" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 1 </strong></span>The space <span class="math inline">\(\mathbb{R}^{n}\)</span> consists of all column vectors <span class="math inline">\(\mathbf v\)</span> with <span class="math inline">\(n\)</span> components. The space <span class="math inline">\(\mathbb{C}^{n}\)</span> consists of all column vectors <span class="math inline">\(\mathbf v\)</span> with <span class="math inline">\(n\)</span> components. where <span class="math inline">\(n=1,2,3,\ldots\)</span>, <span class="math inline">\(\mathbb{R}\)</span> stands for a set of real numbers, and <span class="math inline">\(\mathbb{C}\)</span> stands for a set of complex numbers.</p>
+</div>
+<p>For example, <span class="math inline">\(\mathbb{R}^{5}\)</span> contains all column vectors <span class="math inline">\(\mathbf v\)</span> with <span class="math inline">\(5\)</span> components, which is called ‘5-dimensional space’</p>
+<p><span class="math display">\[
+\begin{bmatrix}2 \\ 4 \end{bmatrix} \in \mathbb{R}^{2} \quad \begin{bmatrix}2 &amp; 2 &amp; 43 &amp; 56 &amp; 4 \end{bmatrix} \in \mathbb{R}^{5} \quad \begin{bmatrix}2+4i \\ 4-21i \end{bmatrix} \in \mathbb{C}^{2}
+\]</span></p>
+<p>A vector space is a set <span class="math inline">\(\mathbf{V}\)</span> equipped with two operations:</p>
+<ul>
+<li>vector addition and</li>
+<li>scalar multiplication</li>
+</ul>
+<p>,which satisfy the following properties for all vectors <span class="math inline">\(\mathbf{u}, \mathbf{v}, \mathbf{w}\)</span> in <span class="math inline">\(V\)</span> and all scalars <span class="math inline">\(c, d\)</span>:</p>
+<ol type="1">
+<li>Closure under vector addition: <span class="math inline">\(\mathbf{u} + \mathbf{v} \in V\)</span></li>
+<li>Associativity of vector addition: <span class="math inline">\((\mathbf{u} + \mathbf{v}) + \mathbf{w} = \mathbf{u} + (\mathbf{v} + \mathbf{w})\)</span></li>
+<li>Identity element of vector addition: There exists a vector <span class="math inline">\(\mathbf{0}\)</span> in <span class="math inline">\(V\)</span> such that <span class="math inline">\(\mathbf{u} + \mathbf{0} = \mathbf{u}\)</span> for all <span class="math inline">\(\mathbf{u}\)</span> in <span class="math inline">\(V\)</span></li>
+<li>Existence of additive inverse: For each <span class="math inline">\(\mathbf{u}\)</span> in <span class="math inline">\(V\)</span>, there exists a vector <span class="math inline">\(-\mathbf{u}\)</span> in <span class="math inline">\(\mathbf{V}\)</span> such that <span class="math inline">\(\mathbf{u} + (-\mathbf{u}) = \mathbf{0}\)</span></li>
+<li>Closure under scalar multiplication: <span class="math inline">\(c\mathbf{u} \in V\)</span></li>
+<li>Distributive law of scalar multiplication with respect to scalar addition: <span class="math inline">\((c + d)\mathbf{u} = c\mathbf{u} + d\mathbf{u}\)</span></li>
+<li>Distributive law of scalar multiplication with respect to vector addition: <span class="math inline">\(c(\mathbf{u} + \mathbf{v}) = c\mathbf{u} + c\mathbf{v}\)</span></li>
+<li>Associativity of scalar multiplication: <span class="math inline">\((cd)\mathbf{u} = c(d\mathbf{u})\)</span></li>
+<li>Identity element of scalar multiplication: <span class="math inline">\(1\mathbf{u} = \mathbf{u}\)</span></li>
+</ol>
+<p>The <strong>closure</strong> or <strong>inside the vector space</strong> mean that the result of the properties stays in the space.</p>
+<section id="example" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="example"><span class="header-section-number">1.1.1</span> Example</h3>
+<p>Let <span class="math inline">\(V = \mathbb{R}^3\)</span>, the set of all 3-dimensional real vectors. The vector space <span class="math inline">\(V\)</span> is equipped with vector addition and scalar multiplication defined as usual component-wise. Vector addition and scalar multiplication satisfy all the properties listed in the definition of a vector space.</p>
+</section>
+<section id="three-special-vector-spaces" class="level3" data-number="1.1.2">
+<h3 data-number="1.1.2" class="anchored" data-anchor-id="three-special-vector-spaces"><span class="header-section-number">1.1.2</span> Three Special Vector Spaces</h3>
+<ul>
+<li><span class="math inline">\(\mathbb{M}\)</span> the vector space of all real 3 by 2 matrices
+<ul>
+<li>the vectors <span class="math inline">\(\in \mathbb{M}\)</span> are really matrices.</li>
+</ul></li>
+<li><span class="math inline">\(\mathbb{F}\)</span> the vector space of all real functions f(x)
+<ul>
+<li>the vectors <span class="math inline">\(\in \mathbb{F}\)</span> are really functions.</li>
+</ul></li>
+<li><span class="math inline">\(\mathbb{Z}\)</span> the vector space that consists only of a zero vectors.
+<ul>
+<li>the vectors <span class="math inline">\(\in \mathbb{Z}\)</span> are used for the addition <span class="math inline">\(\mathbf{0}+\mathbf{0}=\mathbf{0}\)</span></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="subspaces" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="subspaces"><span class="header-section-number">1.2</span> Subspaces</h2>
+<section id="definition-1" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="definition-1"><span class="header-section-number">1.2.1</span> Definition</h3>
+<div id="def-subspace" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 2 </strong></span>A subset <span class="math inline">\(W\)</span> of a vector space <span class="math inline">\(V\)</span> over a field <span class="math inline">\(F\)</span> is called a subspace of <span class="math inline">\(V\)</span> if <span class="math inline">\(W\)</span> is also a vector space over <span class="math inline">\(F\)</span> under the same vector addition and scalar multiplication operations defined on <span class="math inline">\(V\)</span>. A subspace of a vector space is a set of vectors (including <span class="math inline">\(\mathbf 0\)</span>) that satisifies two requirements: if <span class="math inline">\(\mathbf u\)</span> and <span class="math inline">\(\mathbf v\)</span> in the subspace and <span class="math inline">\(c\)</span> is any scalar, then</p>
+<ol type="1">
+<li><span class="math inline">\(\mathbf v + \mathbf w\)</span> is in the subspace</li>
+<li><span class="math inline">\(c \mathbf v\)</span> is in the subspace.</li>
+</ol>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Field
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>A field is a set <span class="math inline">\(F\)</span> along with two operations, addition (<span class="math inline">\(+\)</span>) and multiplication (<span class="math inline">\(\cdot\)</span>), satisfying the following properties:</p>
+<ul>
+<li>Closure: For all <span class="math inline">\(a, b \in F\)</span>, both <span class="math inline">\(a + b\)</span> and <span class="math inline">\(a \cdot b\)</span> are in <span class="math inline">\(F\)</span>.</li>
+<li>Associativity: For all <span class="math inline">\(a, b, c \in F\)</span>, <span class="math inline">\((a + b) + c = a + (b + c)\)</span> and <span class="math inline">\((a \cdot b) \cdot c = a \cdot (b \cdot c)\)</span>.</li>
+<li>Commutativity: For all <span class="math inline">\(a, b \in F\)</span>, <span class="math inline">\(a + b = b + a\)</span> and <span class="math inline">\(a \cdot b = b \cdot a\)</span>.</li>
+<li>Identity: There exists an element <span class="math inline">\(0 \in F\)</span> such that for all <span class="math inline">\(a \in F\)</span>, <span class="math inline">\(a + 0 = a\)</span>. There exists an element <span class="math inline">\(1 \in F\)</span> such that for all <span class="math inline">\(a \in F\)</span>, <span class="math inline">\(a \cdot 1 = a\)</span>.</li>
+<li>Inverse: For every <span class="math inline">\(a \in F\)</span> with <span class="math inline">\(a \neq 0\)</span>, there exists an element <span class="math inline">\(b \in F\)</span> such that <span class="math inline">\(a + b = 0\)</span>. For every <span class="math inline">\(a \in F\)</span> with <span class="math inline">\(a \neq 0\)</span>, there exists an element <span class="math inline">\(c \in F\)</span> such that <span class="math inline">\(a \cdot c = 1\)</span>.</li>
+</ul>
+<section id="example-1" class="level3" data-number="1.2.2">
+<h3 data-number="1.2.2" class="anchored" data-anchor-id="example-1"><span class="header-section-number">1.2.2</span> Example</h3>
+<ul>
+<li>The set of real numbers <span class="math inline">\(\mathbb{R}\)</span> with addition and multiplication.</li>
+<li>The set of complex numbers <span class="math inline">\(\mathbb{C}\)</span> with addition and multiplication.</li>
+<li>The set of rational numbers <span class="math inline">\(\mathbb{Q}\)</span> with addition and multiplication.</li>
+<li>The set of integers modulo a prime number <span class="math inline">\(p\)</span>, denoted as <span class="math inline">\(\mathbb{Z}_p\)</span>, with addition and multiplication modulo <span class="math inline">\(p\)</span>.</li>
+</ul>
+</section>
+</div>
+</div>
+</section>
+<section id="properties" class="level3" data-number="1.2.3">
+<h3 data-number="1.2.3" class="anchored" data-anchor-id="properties"><span class="header-section-number">1.2.3</span> Properties</h3>
+<p>A subset <span class="math inline">\(W\)</span> of a vector space <span class="math inline">\(V\)</span> is called a subspace of <span class="math inline">\(V\)</span> if it satisfies the following properties:</p>
+<ul>
+<li>Closure under Addition: For all <span class="math inline">\(\mathbf{u}, \mathbf{v} \in W\)</span>, <span class="math inline">\(\mathbf{u} + \mathbf{v} \in W\)</span>.</li>
+<li>Closure under Scalar Multiplication: For all <span class="math inline">\(\mathbf{u} \in W\)</span> and <span class="math inline">\(c \in \mathbb{R}\)</span> (or any field), <span class="math inline">\(c\mathbf{u} \in W\)</span>.</li>
+<li>Contains the Zero Vector: The zero vector <span class="math inline">\(\mathbf{0}\)</span> of <span class="math inline">\(V\)</span> is in <span class="math inline">\(W\)</span>.</li>
+<li>Every subspace contains the zero vector</li>
+<li>Lines through the origin are also subspaces. (If we try to keep only part of a plane or line, the requirements for a subspace don’t hold.)</li>
+<li>A subspace containing <span class="math inline">\(\mathbf u\)</span> and <span class="math inline">\(\mathbf v\)</span> must contain all linear combinations <span class="math inline">\(c\mathbf v +d\mathbf w\)</span></li>
+</ul>
+</section>
+<section id="example-2" class="level3" data-number="1.2.4">
+<h3 data-number="1.2.4" class="anchored" data-anchor-id="example-2"><span class="header-section-number">1.2.4</span> Example</h3>
+<ol type="1">
+<li>The set of all real-valued <span class="math inline">\(n\)</span>-dimensional column vectors, denoted as <span class="math inline">\(\mathbb{R}^n\)</span>, is a subspace of the vector space of all <span class="math inline">\(n\)</span>-dimensional column vectors, denoted as <span class="math inline">\(\mathbb{R}^{n \times 1}\)</span>, with closure under addition and scalar multiplication.</li>
+</ol>
+<ul>
+<li>Subset <span class="math inline">\(V_3 = {(x, y, z) \in \mathbb{R}^3 : x + y + z = 0}\)</span> of vector space <span class="math inline">\(\mathbb{R}^3\)</span>: <span class="math inline">\(V_3 = \{(x, y, z) \in \mathbb{R}^3 : x + y + z = 0\}\)</span></li>
+</ul>
+<ol start="2" type="1">
+<li>The set of all <span class="math inline">\(2 \times 2\)</span> symmetric matrices, denoted as <span class="math inline">\(\mathcal{S}^2\)</span>, is a subspace of the vector space of all <span class="math inline">\(2 \times 2\)</span> matrices, denoted as <span class="math inline">\(\mathbb{R}^{2 \times 2}\)</span>, with closure under addition and scalar multiplication.</li>
+</ol>
+<ul>
+<li>Subset <span class="math inline">\(V_1 = {(x, y) \in \mathbb{R}^2 : x + y = 0}\)</span> of vector space <span class="math inline">\(\mathbb{R}^2\)</span>: <span class="math inline">\(V_1 = \{(x, y) \in \mathbb{R}^2 : x + y = 0\}\)</span></li>
+</ul>
+<ol start="3" type="1">
+<li>The set of all polynomials of degree at most <span class="math inline">\(n\)</span>, denoted as <span class="math inline">\(P_n\)</span>, is a subspace of the vector space of all polynomials, denoted as <span class="math inline">\(P\)</span>, with closure under addition and scalar multiplication.</li>
+</ol>
+<ul>
+<li>Subset <span class="math inline">\(V_2 = {p(x) \in \mathbb{R}[x] : \text{deg}(p(x)) \leq 3}\)</span> of vector space <span class="math inline">\(\mathbb{R}[x]\)</span>: <span class="math inline">\(V_2 = \{p(x) \in \mathbb{R}[x] : \text{deg}(p(x)) \leq 3\}\)</span></li>
+<li>“deg” stands for “degree” and refers to the degree of a polynomial. In the example, <span class="math inline">\(V_2 = {p(x) \in \mathbb{R}[x] : \text{deg}(p(x)) \leq 3}\)</span>, <span class="math inline">\(p(x)\)</span> represents a polynomial, and <span class="math inline">\(\text{deg}(p(x))\)</span> represents the degree of the polynomial <span class="math inline">\(p(x)\)</span>. The condition <span class="math inline">\(\text{deg}(p(x)) \leq 3\)</span> specifies that the subset <span class="math inline">\(V_2\)</span> includes all polynomials of degree 3 or lower in the vector space <span class="math inline">\(\mathbb{R}[x]\)</span> of polynomials with real coefficients.</li>
+</ul>
+<ol start="4" type="1">
+<li>All upper triangular matrices <span class="math inline">\(\begin{bmatrix}a&amp;b\\0&amp;d\end{bmatrix} \in \mathbb M\)</span> are a subspace</li>
+<li>All diagonal matrices <span class="math inline">\(\begin{bmatrix}a&amp;0\\0&amp;d\end{bmatrix} \in \mathbb M\)</span> are a subspace</li>
+</ol>
+</section>
+</section>
+<section id="the-column-space-of-mathbf-a" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="the-column-space-of-mathbf-a"><span class="header-section-number">1.3</span> The Column Space of <span class="math inline">\(\mathbf A\)</span></h2>
+<section id="definition-2" class="level3" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="definition-2"><span class="header-section-number">1.3.1</span> Definition</h3>
+<div id="def-subspace" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 3 </strong></span>Given a matrix <span class="math inline">\(\mathbf A\)</span> with columns <span class="math inline">\(\mathbf{a}_1, \mathbf{a}_2, \ldots, \mathbf{a}_n\)</span>, the column space of <span class="math inline">\(\mathbf A\)</span>, denoted as <span class="math inline">\(\text{col}(\mathbf A)\)</span>, is the set of all possible linear combinations of the columns of <span class="math inline">\(\mathbf A\)</span>. The combinations are all possible vectors <span class="math inline">\(\mathbf{Ax}\)</span>. In other words, <span class="math display">\[
+\begin{align*}
+\text{col}(\mathbf A) &amp;= \text{span}\{\mathbf{a}_1, \mathbf{a}_2, \ldots, \mathbf{a}_n\} \\
+S &amp;= \text{ set of vectors in } V (\text{ probably not a subspace }) \\
+SS &amp;= \text{ all combinations of vectors in } S \\
+SS &amp;= \text{ all } c_1\mathbf{v}_1+\ldots+c_n\mathbf{v}_n \\
+  &amp;= \text{ the subspace of } V \text{ spanned by } S
+\end{align*}
+\]</span></p>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>To solve <span class="math inline">\(\mathbf Ax=\mathbf b\)</span> is to express <span class="math inline">\(\mathbf b\)</span> as a combination of the columns <span class="math inline">\(\mathbf a\)</span>. <span class="math inline">\(\mathbf b\)</span> has to be in <span class="math inline">\(\text{col}(\mathbf A)\)</span> or no solution.
+<ul>
+<li>The system <span class="math inline">\(\mathbf Ax=\mathbf b\)</span> is solvable if and only if <span class="math inline">\(\mathbf b\)</span> is in <span class="math inline">\(\text{col}(\mathbf A)\)</span>.</li>
+</ul></li>
+<li>The column space of <span class="math inline">\(\mathbf A\)</span> or <span class="math inline">\(\text{col}(\mathbf A)\)</span> is a subspace of <span class="math inline">\(\mathbb R^{m}\)</span> not <span class="math inline">\(\mathbb R^{n}\)</span>.</li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../../../../images/linear_algebra/column_space.PNG" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Gilbert Strang - Introduction to Linear Algebra</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="example-3" class="level3" data-number="1.3.2">
+<h3 data-number="1.3.2" class="anchored" data-anchor-id="example-3"><span class="header-section-number">1.3.2</span> Example</h3>
+<ol type="1">
+<li>Consider the matrix <span class="math inline">\(\mathbf A = \begin{bmatrix}1 &amp; 2 &amp; 3 \\4 &amp; 5 &amp; 6 \\7 &amp; 8 &amp; 9 \end{bmatrix}\)</span></li>
+</ol>
+<p>The column space of <span class="math inline">\(\mathbf A\)</span> is the span of its columns: <span class="math inline">\(\text{col}(\mathbf A) = \text{span}\{\mathbf{a}_1, \mathbf{a}_2, \mathbf{a}_3\}\)</span></p>
+<ol start="2" type="1">
+<li>Describe the column spaces for the following matrices</li>
+</ol>
+<ul>
+<li><span class="math inline">\(\mathbf I = \begin{bmatrix}1 &amp; 0 \\0 &amp; 1 \end{bmatrix}\)</span>
+<ul>
+<li>The column space of the identity matrix <span class="math inline">\(\mathbf{I}\)</span>, denoted as <span class="math inline">\(\text{Col}(\mathbf{I})\)</span>, spans the entire space <span class="math inline">\(\mathbb{R}^2\)</span>, as it includes all possible linear combinations of the standard unit vectors <span class="math inline">\(\mathbf{e}_1\)</span> and <span class="math inline">\(\mathbf{e}_2\)</span>. Thus, <span class="math inline">\(\text{col}(\mathbf A)\)</span> is <span class="math inline">\(\mathbb R^2\)</span></li>
+</ul></li>
+<li><span class="math inline">\(\mathbf A = \begin{bmatrix}1 &amp; 2 \\2 &amp; 4 \end{bmatrix}\)</span>
+<ul>
+<li><span class="math inline">\(\text{Col}(\mathbf{A})\)</span>, is the subspace spanned by the columns of <span class="math inline">\(\mathbf{A}\)</span>. Since the second column of <span class="math inline">\(\mathbf{A}\)</span> is a scalar multiple (twice) of the first column, the column space of <span class="math inline">\(\mathbf{A}\)</span> is a one-dimensional subspace, which is the line in <span class="math inline">\(\mathbb{R}^2\)</span> that lies along the direction of the first column of <span class="math inline">\(\mathbf{A}\)</span>, <span class="math inline">\(\text{col}(\mathbf A) = \text{span}\left\{\begin{bmatrix}1 \\ 2\end{bmatrix}\right\}\)</span></li>
+<li>The equation <span class="math inline">\(\mathbf{Ax = b}\)</span> is only solvable when <span class="math inline">\(\mathbf{b}\)</span> is on the line.</li>
+</ul></li>
+<li><span class="math inline">\(\mathbf B = \begin{bmatrix}1 &amp; 2 &amp; 4\\0 &amp; 0 &amp; 4 \end{bmatrix}\)</span>
+<ul>
+<li>These column vectors span the column space of <span class="math inline">\(\mathbf{B}\)</span>. Since column 2 is a scalar multiple of column 1, and column 3 is a linear combination of columns 1 and 2, the column space of <span class="math inline">\(\mathbf{B}\)</span> is the span of the first two column vectors, which is a two-dimensional subspace of <span class="math inline">\(\mathbb{R}^2\)</span>, <span class="math inline">\(\text{col}(\mathbf B) = \text{span}\{\mathbf{b}_1, \mathbf{b}_2, \mathbf{b}_3\}\)</span> is <span class="math inline">\(\mathbb R^2\)</span>.</li>
+</ul></li>
+</ul>
+</section>
+<section id="properties-1" class="level3" data-number="1.3.3">
+<h3 data-number="1.3.3" class="anchored" data-anchor-id="properties-1"><span class="header-section-number">1.3.3</span> Properties</h3>
+<p>The column space of a matrix <span class="math inline">\(\mathbf{A}\)</span>, denoted as <span class="math inline">\(\text{col}(\mathbf{A})\)</span> or <span class="math inline">\(\text{span}{\mathbf{a}_1, \mathbf{a}_2, \ldots, \mathbf{a}_n}\)</span>, where <span class="math inline">\(\mathbf{a}_i\)</span> represents the columns of <span class="math inline">\(\mathbf{A}\)</span>, has several important properties:</p>
+<p>Consists of all possible linear combinations: The column space consists of all possible linear combinations of the columns of <span class="math inline">\(\mathbf{A}\)</span>. In other words, any vector in <span class="math inline">\(\text{col}(\mathbf{A})\)</span> can be expressed as a linear combination of the columns of <span class="math inline">\(\mathbf{A}\)</span>.</p>
+<section id="is-a-subspace" class="level4" data-number="1.3.3.1">
+<h4 data-number="1.3.3.1" class="anchored" data-anchor-id="is-a-subspace"><span class="header-section-number">1.3.3.1</span> Is a subspace</h4>
+<p>The column space is a subspace of the vector space <span class="math inline">\(\mathbb{R}^m\)</span>, meaning it is closed under vector addition and scalar multiplication. This property allows for the column space to be used in linear combinations and as a solution space for non-homogeneous linear equations.</p>
+</section>
+<section id="is-spanned-by-the-columns-of-mathbfa" class="level4" data-number="1.3.3.2">
+<h4 data-number="1.3.3.2" class="anchored" data-anchor-id="is-spanned-by-the-columns-of-mathbfa"><span class="header-section-number">1.3.3.2</span> Is spanned by the columns of <span class="math inline">\(\mathbf{A}\)</span></h4>
+<p>The column space is spanned by the columns of <span class="math inline">\(\mathbf{A}\)</span>, meaning any vector in <span class="math inline">\(\text{col}(\mathbf{A})\)</span> can be expressed as a linear combination of the columns of <span class="math inline">\(\mathbf{A}\)</span>.</p>
+</section>
+<section id="has-the-same-dimensionality-as-the-row-space" class="level4" data-number="1.3.3.3">
+<h4 data-number="1.3.3.3" class="anchored" data-anchor-id="has-the-same-dimensionality-as-the-row-space"><span class="header-section-number">1.3.3.3</span> Has the same dimensionality as the row space</h4>
+<p>The dimensionality of the column space, denoted as <span class="math inline">\(\text{dim}(\text{col}(\mathbf{A}))\)</span>, is equal to the dimensionality of the row space of <span class="math inline">\(\mathbf{A}\)</span>, denoted as <span class="math inline">\(\text{dim}(\text{row}(\mathbf{A}))\)</span>. This property is known as the rank-nullity theorem.</p>
+</section>
+<section id="has-the-same-dimensionality-as-the-row-space-1" class="level4" data-number="1.3.3.4">
+<h4 data-number="1.3.3.4" class="anchored" data-anchor-id="has-the-same-dimensionality-as-the-row-space-1"><span class="header-section-number">1.3.3.4</span> Has the same dimensionality as the row space</h4>
+<p>The dimensionality of the column space, denoted as <span class="math inline">\(\text{dim}(\text{col}(\mathbf{A}))\)</span>, is equal to the dimensionality of the row space of <span class="math inline">\(\mathbf{A}\)</span>, denoted as <span class="math inline">\(\text{dim}(\text{row}(\mathbf{A}))\)</span>. This property is known as the rank-nullity theorem. Is orthogonal to the nullspace: The column space is orthogonal to the nullspace of <span class="math inline">\(\mathbf{A}\)</span>, meaning any vector in the column space is orthogonal to any vector in the nullspace of <span class="math inline">\(\mathbf{A}\)</span>. This property is known as the fundamental theorem of linear algebra.</p>
+</section>
+</section>
+</section>
+<section id="nullspace-of-solving" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="nullspace-of-solving"><span class="header-section-number">1.4</span> Nullspace of : Solving </h2>
+<section id="definition-3" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="definition-3"><span class="header-section-number">1.4.1</span> Definition</h3>
+<div id="def-nullspace" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 4 </strong></span>The nullspace of a matrix refers to the set of all vectors that, when multiplied by the matrix, result in the zero vector <span class="math inline">\(\mathbf{0}\)</span>. For a matrix <span class="math inline">\(\mathbf{A}\)</span>, the nullspace is denoted as <span class="math inline">\(\text{null}(\mathbf{A})\)</span> and defined as follows: <span class="math display">\[
+\text{null}(\mathbf{A}) = \{\mathbf{x} \in \mathbb{R}^n \mid \mathbf{Ax} = \mathbf{0}\}
+\]</span></p>
+<p>The nullspace of <span class="math inline">\(\mathbf{A}\)</span> is the set of all solutions <span class="math inline">\(\mathbf{x}\)</span> to the homogeneous equation <span class="math inline">\(\mathbf{Ax} = \mathbf{0}\)</span>.</p>
+</div>
+<p>All the solutions <span class="math inline">\(\mathbf{x} \in \mathbb R^n\)</span>, so the <span class="math inline">\(\text{null}(\mathbf{A})\)</span> is a subspace of <span class="math inline">\(\mathbb R^n\)</span>, and <span class="math inline">\(\operatorname{Col}(\mathbf A)\)</span> is a subspace of <span class="math inline">\(\mathbb R^m\)</span> (from Gilbere Strang) If the right side <span class="math inline">\(\mathbf{b}\)</span> is not <span class="math inline">\(\mathbf{0}\)</span>, the solutions of <span class="math inline">\(\mathbf{Ax=b}\)</span> do not form a subspace. The vector <span class="math inline">\(\mathbf{x=0}\)</span> is only a solution if <span class="math inline">\(\mathbf{b=0}\)</span>. When the set of solutions does not include <span class="math inline">\(\mathbf{x=0}\)</span>, it cannot be a subspace. Section 3.4 will show how the solutions to <span class="math inline">\(\mathbf{Ax=b}\)</span> (if there are any solutions) are shifted away from the origin by one particular solution.</p>
+</section>
+<section id="example-4" class="level3" data-number="1.4.2">
+<h3 data-number="1.4.2" class="anchored" data-anchor-id="example-4"><span class="header-section-number">1.4.2</span> Example</h3>
+<section id="example-1-1" class="level4" data-number="1.4.2.1">
+<h4 data-number="1.4.2.1" class="anchored" data-anchor-id="example-1-1"><span class="header-section-number">1.4.2.1</span> Example 1</h4>
+<p><span class="math display">\[
+\begin{align*}
+\mathbf{A} = \begin{bmatrix} 1 &amp; 2 &amp; 3 \end{bmatrix} \quad \mathbf{Ax=0} \\
+\text{null}(\mathbf{A}) = \{\mathbf{x} \in \mathbb{R}^n \mid \mathbf{Ax} = \mathbf{0}\} \text{ is a subspace of }\mathbb R^3
+\end{align*}
+\]</span></p>
+<div class="cell" data-execution_count="2">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the coefficients of the planes</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>a1, b1, c1, d1 <span class="op">=</span> <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">0</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>a2, b2, c2, d2 <span class="op">=</span> <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">6</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">100</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.linspace(<span class="op">-</span><span class="dv">5</span>, <span class="dv">5</span>, <span class="dv">100</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>X, Y <span class="op">=</span> np.meshgrid(x, y)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the corresponding z values for each x, y pair for the first plane</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>Z1 <span class="op">=</span> (<span class="op">-</span>a1<span class="op">*</span>X <span class="op">-</span> b1<span class="op">*</span>Y <span class="op">-</span> d1) <span class="op">/</span> c1</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute the corresponding z values for each x, y pair for the second plane</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>Z2 <span class="op">=</span> (<span class="op">-</span>a2<span class="op">*</span>X <span class="op">-</span> b2<span class="op">*</span>Y <span class="op">-</span> d2) <span class="op">/</span> c2</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if the origin is in the blue plane</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>origin_in_blue_plane <span class="op">=</span> a1<span class="op">*</span><span class="dv">0</span> <span class="op">+</span> b1<span class="op">*</span><span class="dv">0</span> <span class="op">+</span> c1<span class="op">*</span><span class="dv">0</span> <span class="op">+</span> d1 <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if the origin is in the red plane</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>origin_in_red_plane <span class="op">=</span> a2<span class="op">*</span><span class="dv">0</span> <span class="op">+</span> b2<span class="op">*</span><span class="dv">0</span> <span class="op">+</span> c2<span class="op">*</span><span class="dv">0</span> <span class="op">+</span> d2 <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a 3D plot</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure()</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>, projection<span class="op">=</span><span class="st">'3d'</span>)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the first plane</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>ax.plot_surface(X, Y, Z1, color<span class="op">=</span><span class="st">'blue'</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the second plane</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>ax.plot_surface(X, Y, Z2, color<span class="op">=</span><span class="st">'red'</span>, alpha<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot the origin as a black point</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>ax.scatter(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, color<span class="op">=</span><span class="st">'black'</span>, s<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Highlight the origin in the blue plane</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> origin_in_blue_plane:</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    ax.scatter(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, color<span class="op">=</span><span class="st">'blue'</span>, s<span class="op">=</span><span class="dv">50</span>, label<span class="op">=</span><span class="vs">r'Origin in the $x+2y+3z=0$ Plane'</span>)</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Highlight the origin in the red plane</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> origin_in_red_plane:</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    ax.scatter(<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>, color<span class="op">=</span><span class="st">'red'</span>, s<span class="op">=</span><span class="dv">50</span>, label<span class="op">=</span><span class="vs">r'Origin in the $x+2y+3z=6$ Plane'</span>)</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Set labels and title</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'X'</span>)</span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'Y'</span>)</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>ax.set_zlabel(<span class="st">'Z'</span>)</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="vs">r'Example of Nullspace: $x+2y+3z=0$ vs $x+2y+3z=6$'</span>)</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a legend</span></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Show the plot</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<p><img src="09.vector_space_files/figure-html/cell-3-output-1.png" width="464" height="411"></p>
+</div>
+</div>
+</section>
+<section id="example-2-1" class="level4" data-number="1.4.2.2">
+<h4 data-number="1.4.2.2" class="anchored" data-anchor-id="example-2-1"><span class="header-section-number">1.4.2.2</span> Example 2</h4>
+<p><span class="math display">\[
+\begin{align*}
+\mathbf{A} = \begin{bmatrix} 1 &amp; 2 \\ 3 &amp; 6 \\ 2 &amp; 4 \end{bmatrix} \quad
+\text{null}(\mathbf{A}) = \left\{ \begin{bmatrix} -2t \\ t \end{bmatrix} \mid t \in \mathbb{R} \right\}
+\end{align*}
+\]</span></p>
+<p>The null space of a matrix <span class="math inline">\(\mathbf{A}\)</span>, denoted as <span class="math inline">\(\text{null}(\mathbf{A})\)</span>, is the set of all vectors <span class="math inline">\(\mathbf{x}\)</span> that satisfy the equation <span class="math inline">\(\mathbf{Ax} = \mathbf{0}\)</span>, where <span class="math inline">\(\mathbf{0}\)</span> is the zero vector.</p>
+<p>For the given matrix <span class="math inline">\(\mathbf{A} = \begin{bmatrix} 1 &amp; 2 \\ 3 &amp; 6 \\ 2 &amp; 4 \end{bmatrix}\)</span>, we can find the null space by solving the equation <span class="math inline">\(\mathbf{Ax} = \mathbf{0}\)</span>.</p>
+<p>Let’s set up the augmented matrix <span class="math inline">\([\mathbf{A} | \mathbf{0}]\)</span> and perform Gaussian elimination to find the row-reduced echelon form (RREF):</p>
+<p><span class="math display">\[
+\left[ \begin{array}{ccc|c}
+1 &amp; 2 &amp; 0 &amp; 0 \\
+3 &amp; 6 &amp; 0 &amp; 0 \\
+2 &amp; 4 &amp; 0 &amp; 0 \\
+\end{array} \right]
+\]</span></p>
+<p>Row 2 is equal to Row 1 multiplied by 3, and Row 3 is equal to Row 1 multiplied by 2. Thus, Row 3 is redundant and can be eliminated.</p>
+<p><span class="math display">\[
+\begin{bmatrix}{ccc|c}
+1 &amp; 2 &amp; 0 &amp; 0 \\
+3 &amp; 6 &amp; 0 &amp; 0 \\
+2 &amp; 4 &amp; 0 &amp; 0 \\
+\end{bmatrix}
+\]</span></p>
+<p><span class="math display">\[
+\begin{align*}
+\mathbf{A} = \begin{bmatrix} 1 &amp; 2 \\ 3 &amp; 6 \\ 2 &amp; 4 \end{bmatrix} \quad
+\text{null}(\mathbf{A}) = \left\{ \begin{bmatrix} -2t \\ t \end{bmatrix} \mid t \in \mathbb{R} \right\}
+\end{align*}
+\]</span></p>
+<p><span class="math display">\[
+\begin{align*}
+\mathbf{B} = \begin{bmatrix} 1 &amp; 0 &amp; 0 \\ 0 &amp; 0 &amp; 1 \end{bmatrix} \quad
+\text{null}(\mathbf{B}) = \left\{ \begin{bmatrix} 0 \\ t \\ 0 \end{bmatrix} \mid t \in \mathbb{R} \right\}
+\end{align*}
+\]</span></p>
+</section>
+</section>
+<section id="properties-2" class="level3" data-number="1.4.3">
+<h3 data-number="1.4.3" class="anchored" data-anchor-id="properties-2"><span class="header-section-number">1.4.3</span> Properties</h3>
+<section id="nullspace-contains-the-zero-vector" class="level4" data-number="1.4.3.1">
+<h4 data-number="1.4.3.1" class="anchored" data-anchor-id="nullspace-contains-the-zero-vector"><span class="header-section-number">1.4.3.1</span> Nullspace Contains the Zero Vector</h4>
+<p>The nullspace always contains the zero vector <span class="math inline">\(\mathbf{0}\)</span>, since <span class="math inline">\(\mathbf{A}\mathbf{0} = \mathbf{0}\)</span>.</p>
+</section>
+<section id="nullspace-is-a-subspace" class="level4" data-number="1.4.3.2">
+<h4 data-number="1.4.3.2" class="anchored" data-anchor-id="nullspace-is-a-subspace"><span class="header-section-number">1.4.3.2</span> Nullspace Is a Subspace</h4>
+<p>The nullspace is a subspace of the vector space <span class="math inline">\(\mathbb{R}^n\)</span>, meaning it is closed under vector addition and scalar multiplication. This property allows for the nullspace to be used in linear combinations and as a solution space for homogeneous linear equations.</p>
+</section>
+<section id="nullspace-is-orthogonal-to-row-space" class="level4" data-number="1.4.3.3">
+<h4 data-number="1.4.3.3" class="anchored" data-anchor-id="nullspace-is-orthogonal-to-row-space"><span class="header-section-number">1.4.3.3</span> Nullspace Is Orthogonal to Row Space</h4>
+<p>The nullspace is orthogonal to the row space of <span class="math inline">\(\mathbf{A}\)</span>, meaning any vector in the nullspace is orthogonal to all vectors in the row space of <span class="math inline">\(\mathbf{A}\)</span>.</p>
+</section>
+<section id="nullspace-can-be-non-mpty" class="level4" data-number="1.4.3.4">
+<h4 data-number="1.4.3.4" class="anchored" data-anchor-id="nullspace-can-be-non-mpty"><span class="header-section-number">1.4.3.4</span> Nullspace Can Be Non-mpty</h4>
+<p>The nullspace can be non-empty, meaning there can be non-trivial solutions to the homogeneous equation <span class="math inline">\(\mathbf{Ax} = \mathbf{0}\)</span>.</p>
+</section>
+<section id="dimensionality" class="level4" data-number="1.4.3.5">
+<h4 data-number="1.4.3.5" class="anchored" data-anchor-id="dimensionality"><span class="header-section-number">1.4.3.5</span> Dimensionality</h4>
+<p>The dimensionality of the nullspace, denoted as <span class="math inline">\(\text{dim}(\text{null}(\mathbf{A}))\)</span>, is also known as the nullity of <span class="math inline">\(\mathbf{A}\)</span>. The nullity of <span class="math inline">\(\mathbf{A}\)</span> is equal to the number of linearly independent columns or the number of free variables in the row-reduced echelon form (RREF) of <span class="math inline">\(\mathbf{A}\)</span>.</p>
+</section>
+</section>
+</section>
+<section id="rank-and-row-reduced-form" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="rank-and-row-reduced-form"><span class="header-section-number">1.5</span> Rank and Row Reduced Form</h2>
+</section>
+<section id="complete-solution" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="complete-solution"><span class="header-section-number">1.6</span> Complete Solution</h2>
+</section>
+<section id="independence-basis-and-dimension" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="independence-basis-and-dimension"><span class="header-section-number">1.7</span> Independence, Basis, and Dimension</h2>
+</section>
+<section id="dimensions-of-four-subspaces" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="dimensions-of-four-subspaces"><span class="header-section-number">1.8</span> Dimensions of Four Subspaces</h2>
+</section>
+<section id="basis-vector" class="level2" data-number="1.9">
+<h2 data-number="1.9" class="anchored" data-anchor-id="basis-vector"><span class="header-section-number">1.9</span> Basis Vector</h2>
+<p>A basis for a vector space <span class="math inline">\(V\)</span> is a set of vectors <span class="math inline">\({v_1, v_2, \ldots, v_n}\)</span> that spans <span class="math inline">\(V\)</span> and is linearly independent. In other words, every vector in <span class="math inline">\(V\)</span> can be expressed as a linear combination of the basis vectors, and the basis vectors are linearly independent, meaning that no basis vector can be written as a linear combination of the other basis vectors.</p>
+<p>Mathematically, a set of vectors <span class="math inline">\({v_1, v_2, \ldots, v_n}\)</span> is a basis for a vector space <span class="math inline">\(V\)</span> if it satisfies the following conditions:</p>
+<p>The vectors <span class="math inline">\({v_1, v_2, \ldots, v_n}\)</span> span <span class="math inline">\(V\)</span>, which means that for any vector <span class="math inline">\(v\)</span> in <span class="math inline">\(V\)</span>, there exist scalars <span class="math inline">\(c_1, c_2, \ldots, c_n\)</span> such that <span class="math inline">\(v = c_1 v_1 + c_2 v_2 + \ldots + c_n v_n\)</span>.</p>
+<p>The vectors <span class="math inline">\({v_1, v_2, \ldots, v_n}\)</span> are linearly independent, which means that the only solution to the equation <span class="math inline">\(c_1 v_1 + c_2 v_2 + \ldots + c_n v_n = 0\)</span> is <span class="math inline">\(c_1 = c_2 = \ldots = c_n = 0\)</span>.</p>
+<section id="example-5" class="level3" data-number="1.9.1">
+<h3 data-number="1.9.1" class="anchored" data-anchor-id="example-5"><span class="header-section-number">1.9.1</span> Example</h3>
+<p>Consider the vector space <span class="math inline">\(V = \mathbb{R}^3\)</span>, the set of all real-valued vectors with three components. A basis for <span class="math inline">\(V\)</span> can be given by the following set of vectors:</p>
+<p><span class="math display">\[
+v_1 = \begin{bmatrix}
+1 \\ 0 \\ 0
+\end{bmatrix}, \quad
+v_2 = \begin{bmatrix}
+0 \\ 1 \\ 0
+\end{bmatrix}, \quad
+v_3 = \begin{bmatrix}
+0 \\ 0 \\ 1
+\end{bmatrix}
+\]</span></p>
+<p>These three vectors form a basis for <span class="math inline">\(\mathbb{R}^3\)</span>, as they span <span class="math inline">\(\mathbb{R}^3\)</span> (any vector in <span class="math inline">\(\mathbb{R}^3\)</span> can be expressed as a linear combination of these vectors) and they are linearly independent (the only solution to the equation <span class="math inline">\(c_1 v_1 + c_2 v_2 + c_3 v_3 = 0\)</span> is <span class="math inline">\(c_1 = c_2 = c_3 = 0\)</span>).</p>
+<p>Basis vectors are fundamental in defining and understanding vector spaces because they provide a way to express any vector in the vector space as a linear combination of basis vectors. The properties of basis vectors, such as linear independence, spanning set, minimal set, and unique representation, are essential in establishing the foundational concepts of vector spaces and their properties. By using basis vectors, we can represent vectors in a vector space in a concise and systematic way, and they provide a basis for studying and analyzing vector spaces in various mathematical and practical applications.</p>
+</section>
+<section id="properties-3" class="level3" data-number="1.9.2">
+<h3 data-number="1.9.2" class="anchored" data-anchor-id="properties-3"><span class="header-section-number">1.9.2</span> Properties</h3>
+<ul>
+<li>Linear independence: A set of basis vectors is linearly independent, meaning that no vector in the set can be expressed as a linear combination of the others. In other words, the coefficients of the basis vectors in any linear combination that equals the zero vector are all zero.</li>
+<li>Spanning set: The set of basis vectors spans the entire vector space, meaning that any vector in the vector space can be expressed as a linear combination of the basis vectors. In other words, the basis vectors “span” the vector space by forming a basis for it.</li>
+<li>Minimal set: The set of basis vectors is minimal, meaning that no vector can be removed from the set without changing the span of the vector space. In other words, the basis vectors form the smallest possible set that can generate the entire vector space.</li>
+<li>Unique representation: Any vector in the vector space can be uniquely represented as a linear combination of the basis vectors. This means that there is only one way to express a vector as a linear combination of the basis vectors, ensuring that the representation is unique.</li>
+</ul>
+</section>
+</section>
+<section id="subspace" class="level2" data-number="1.10">
+<h2 data-number="1.10" class="anchored" data-anchor-id="subspace"><span class="header-section-number">1.10</span> Subspace</h2>
+<section id="definition-of-a-subspace" class="level3" data-number="1.10.1">
+<h3 data-number="1.10.1" class="anchored" data-anchor-id="definition-of-a-subspace"><span class="header-section-number">1.10.1</span> Definition of a subspace</h3>
+<p>A subset <span class="math inline">\(W\)</span> of <span class="math inline">\(V\)</span> is called a subspace of <span class="math inline">\(V\)</span> if it satisfies the following three conditions: 1. <span class="math inline">\(W\)</span> contains the zero vector <span class="math inline">\(\mathbf{0}\)</span> of <span class="math inline">\(V\)</span>. 2. <span class="math inline">\(W\)</span> is closed under vector addition, i.e., for any vectors <span class="math inline">\(\mathbf{u}, \mathbf{v} \in W\)</span>, their sum <span class="math inline">\(\mathbf{u} + \mathbf{v}\)</span> is also in <span class="math inline">\(W\)</span>. 3. <span class="math inline">\(W\)</span> is closed under scalar multiplication, i.e., for any vector <span class="math inline">\(\mathbf{u} \in W\)</span> and any scalar <span class="math inline">\(c\)</span>, their product <span class="math inline">\(c\mathbf{u}\)</span> is also in <span class="math inline">\(W\)</span>.</p>
+</section>
+<section id="example-6" class="level3" data-number="1.10.2">
+<h3 data-number="1.10.2" class="anchored" data-anchor-id="example-6"><span class="header-section-number">1.10.2</span> Example</h3>
+<p>Consider the vector space <span class="math inline">\(V = \mathbb{R}^3\)</span> with standard vector addition and scalar multiplication. Let <span class="math inline">\(W\)</span> be the subset of <span class="math inline">\(V\)</span> consisting of all vectors of the form <span class="math inline">\(\begin{bmatrix} x \\ y \\ 0 \end{bmatrix}\)</span>, where <span class="math inline">\(x, y\)</span> are real numbers. We can express <span class="math inline">\(W\)</span> as: <span class="math inline">\(W = \left\{ \begin{bmatrix} x \\ y \\ 0 \end{bmatrix} \, \middle| \, x, y \in \mathbb{R} \right\}\)</span> Then <span class="math inline">\(W\)</span> is a subspace of <span class="math inline">\(V\)</span> because it satisfies the three conditions mentioned above.</p>
+</section>
+<section id="properties-4" class="level3" data-number="1.10.3">
+<h3 data-number="1.10.3" class="anchored" data-anchor-id="properties-4"><span class="header-section-number">1.10.3</span> Properties</h3>
+<p>A subspace is a subset of a vector space that retains the structure of a vector space. Here are some properties of a subspace in relation to a vector space:</p>
+<ol type="1">
+<li>Contains the zero vector: A subspace must contain the zero vector (denoted as <span class="math inline">\(\mathbf{0}\)</span>) of the vector space it is a subset of. This is because the zero vector is required for closure under vector addition and scalar multiplication.</li>
+<li>Closed under vector addition: If <span class="math inline">\(\mathbf{u}, \mathbf{v} \in W\)</span>, then <span class="math inline">\(\mathbf{u} + \mathbf{v} \in W\)</span>.</li>
+<li>Closed under scalar multiplication: If <span class="math inline">\(\mathbf{u} \in W\)</span> and <span class="math inline">\(c\)</span> is a scalar, then <span class="math inline">\(c\mathbf{u} \in W\)</span>.</li>
+</ol>
+<p>These properties provide a way to describe subsets of vector spaces that inherit certain properties from the parent vector space. Subspaces are useful for understanding the structure, properties, and behavior of vector spaces in a more focused and simplified manner. Some reasons why we need subspaces are:</p>
+<ul>
+<li>Simplification and abstraction: Subspaces allow us to simplify the study of vector spaces by focusing on smaller, more manageable subsets that share similar properties. This abstraction can help us understand the fundamental structure and behavior of vector spaces without getting bogged down by the complexity of the entire vector space.</li>
+<li>Study of special cases: Subspaces can represent special cases or special structures within a vector space that are of particular interest.
+<ul>
+<li>For example, subspaces can represent sub-spaces of solutions to linear systems of equations, eigenspaces associated with eigenvalues of matrices, or orthogonal subspaces related to orthogonality and projections.</li>
+</ul></li>
+<li>Applications in various fields: Subspaces have numerous applications in various fields, such as physics, computer graphics, data analysis, signal processing, and optimization, among others. Subspaces provide a mathematical framework for modeling, analyzing, and solving problems in these fields.</li>
+<li>Computational efficiency: Subspaces can be used in algorithms and techniques for solving problems involving vector spaces in a computationally efficient manner. Techniques such as subspace methods, subspace approximation, and subspace projection can be employed to reduce the computational complexity of certain problems by working within lower-dimensional subspaces.</li>
+</ul>
+</section>
+<section id="span" class="level3" data-number="1.10.4">
+<h3 data-number="1.10.4" class="anchored" data-anchor-id="span"><span class="header-section-number">1.10.4</span> Span</h3>
+</section>
+<section id="definition-4" class="level3" data-number="1.10.5">
+<h3 data-number="1.10.5" class="anchored" data-anchor-id="definition-4"><span class="header-section-number">1.10.5</span> Definition</h3>
+<p>The span of a set of vectors <span class="math inline">\({v_1, v_2, \ldots, v_n}\)</span> in a vector space <span class="math inline">\(V\)</span>, denoted by <span class="math inline">\(\text{span}{v_1, v_2, \ldots, v_n}\)</span>, is the set of all possible linear combinations of these vectors. Mathematically, it is defined as:</p>
+<p><span class="math display">\[
+\text{span}\{\mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_n\} = \left\{ c_1\mathbf{v}_1 + c_2\mathbf{v}_2 + \ldots + c_n\mathbf{v}_n | c_1, c_2, \ldots, c_n \in \mathbb{R} \right\}
+\]</span></p>
+<p>where <span class="math inline">\(c_1, c_2, \ldots, c_n\)</span> are scalar coefficients and <span class="math inline">\(\mathbb{R}\)</span> represents the set of real numbers.</p>
+<p>Example: Let’s consider the set of vectors <span class="math inline">\(v_1\)</span>, <span class="math inline">\(v_2\)</span>, and <span class="math inline">\(v_3\)</span> defined as:</p>
+<p><span class="math inline">\(\mathbf{v}_1 = \begin{bmatrix} 1 \ 0 \ 0 \end{bmatrix}, \quad \mathbf{v}_2 = \begin{bmatrix} 0 \ 1 \ 0 \end{bmatrix}, \quad \mathbf{v}_3 = \begin{bmatrix} 0 \ 0 \ 1 \end{bmatrix}\)</span></p>
+<p>The span of these vectors, denoted by <span class="math inline">\(\text{span}{\mathbf{v}_1, \mathbf{v}_2, \mathbf{v}_3}\)</span>, is the set of all possible linear combinations of these vectors, which in this case is the entire three-dimensional vector space <span class="math inline">\(\mathbb{R}^3\)</span>, since any vector in <span class="math inline">\(\mathbb{R}^3\)</span> can be expressed as a linear combination of <span class="math inline">\(\mathbf{v}_1\)</span>, <span class="math inline">\(\mathbf{v}_2\)</span>, and <span class="math inline">\(\mathbf{v}_3\)</span>.</p>
+</section>
+<section id="proporties" class="level3" data-number="1.10.6">
+<h3 data-number="1.10.6" class="anchored" data-anchor-id="proporties"><span class="header-section-number">1.10.6</span> Proporties</h3>
+<ul>
+<li>Span is a subspace: The span of a set of vectors is always a subspace of the vector space in which the vectors belong. This means that it satisfies all the properties of a vector space, including closure under vector addition and scalar multiplication.</li>
+<li>Span is the smallest subspace: The span of a set of vectors is the smallest subspace that contains all the vectors in the set. It is the intersection of all subspaces that contain the vectors, and thus it forms the smallest subspace that spans the set of vectors.</li>
+<li>Span is closed under linear combinations: The span of a set of vectors is closed under linear combinations of the vectors. This means that any linear combination of the vectors in the set will also be in the span.</li>
+<li>Span generates the entire vector space: The span of a set of vectors is capable of generating the entire vector space to which the vectors belong. This means that any vector in the vector space can be expressed as a linear combination of the vectors in the span.</li>
+<li>Span is unique: The span of a set of vectors is unique, meaning that it is uniquely determined by the set of vectors being spanned. However, the span may be different for different sets of vectors.</li>
+</ul>
+<p>These properties make the concept of span important in linear algebra, as it allows us to understand the space spanned by a set of vectors and the relationships between vectors within a vector space.</p>
+<p>The concept of span is important in linear algebra because of:</p>
+<ul>
+<li>Understanding vector space: The span of a set of vectors helps us understand the space that can be generated by those vectors within a vector space. It provides insight into the range of possible values and combinations that can be obtained using the given set of vectors.</li>
+<li>Solving systems of linear equations: Span is closely related to solving systems of linear equations. The solutions to a system of linear equations can be expressed as linear combinations of the vectors in the span of the coefficient matrix. By finding the span of a set of vectors, we can determine the possible solutions to a system of linear equations and understand the relationship between different solutions.</li>
+<li>Basis for vector spaces: The span of a set of vectors can form a basis for a vector space. A basis is a set of linearly independent vectors that span the entire vector space. By finding the span of a set of vectors, we can determine if they form a basis for a vector space, and if so, use them as a foundation for understanding and manipulating vectors within that space.</li>
+<li>Vector space operations: Span is closed under vector space operations, such as vector addition and scalar multiplication. This property allows us to perform operations on vectors within the span and obtain new vectors that are still within the span. It also allows us to express any vector in the vector space as a linear combination of vectors in the span.</li>
+<li>Dimensionality and rank: The span of a set of vectors is closely related to the dimensionality and rank of a vector space. The dimension of a vector space is the number of linearly independent vectors in a basis for that space, and the rank of a matrix is the dimension of the span of its column vectors. Understanding the span of vectors can help us determine the dimensionality and rank of a vector space, which has applications in areas such as data analysis, machine learning, and signal processing.</li>
+</ul>
+<p>Span provides insights into the space spanned by a set of vectors, the relationships between vectors within a vector space, and the possible solutions to systems of linear equations. It also serves as a basis for vector spaces and facilitates vector space operations, and is closely related to the dimensionality and rank of a vector space.</p>
+</section>
+</section>
+<section id="dimensionality-and-rank" class="level2" data-number="1.11">
+<h2 data-number="1.11" class="anchored" data-anchor-id="dimensionality-and-rank"><span class="header-section-number">1.11</span> Dimensionality and Rank</h2>
+<section id="definition-5" class="level3" data-number="1.11.1">
+<h3 data-number="1.11.1" class="anchored" data-anchor-id="definition-5"><span class="header-section-number">1.11.1</span> Definition</h3>
+<ul>
+<li>The dimensionality of a vector space is defined as the number of linearly independent vectors in its basis.</li>
+<li>The rank of a matrix is defined as the maximum number of linearly independent rows or columns in the matrix.</li>
+</ul>
+</section>
+<section id="example-7" class="level3" data-number="1.11.2">
+<h3 data-number="1.11.2" class="anchored" data-anchor-id="example-7"><span class="header-section-number">1.11.2</span> Example</h3>
+<p>Let <span class="math inline">\(V\)</span> be a vector space with a basis <span class="math inline">\({ \mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_n }\)</span>. The dimensionality of <span class="math inline">\(V\)</span>, denoted as <span class="math inline">\(\text{dim}(V)\)</span>, is the number of linearly independent vectors in its basis, which is equal to <span class="math inline">\(n\)</span>. Let <span class="math inline">\(\mathbf A\)</span> be an <span class="math inline">\(m \times n\)</span> matrix. The rank of <span class="math inline">\(\mathbf A\)</span>, denoted as <span class="math inline">\(\text{rank}(\mathbf A)\)</span>, is the maximum number of linearly independent rows or columns in <span class="math inline">\(\mathbf A\)</span>. It can also be defined as the dimensionality of the column space or row space of <span class="math inline">\(\mathbf A\)</span>.</p>
+</section>
+<section id="properties-5" class="level3" data-number="1.11.3">
+<h3 data-number="1.11.3" class="anchored" data-anchor-id="properties-5"><span class="header-section-number">1.11.3</span> Properties</h3>
+<section id="dimensionality-1" class="level4" data-number="1.11.3.1">
+<h4 data-number="1.11.3.1" class="anchored" data-anchor-id="dimensionality-1"><span class="header-section-number">1.11.3.1</span> Dimensionality</h4>
+<ul>
+<li>Dimensionality refers to the number of elements or components in a vector or the size of a vector space.</li>
+<li>The dimensionality of a vector space is always a positive integer.</li>
+<li>Dimensionality is additive, meaning that the dimensionality of the direct sum of vector spaces is equal to the sum of their individual dimensionality.</li>
+<li>A set of vectors is linearly independent if and only if the dimensionality of the vector space they span is equal to the number of vectors in the set.</li>
+</ul>
+</section>
+<section id="rank" class="level4" data-number="1.11.3.2">
+<h4 data-number="1.11.3.2" class="anchored" data-anchor-id="rank"><span class="header-section-number">1.11.3.2</span> Rank</h4>
+<ul>
+<li>The rank of a matrix is the maximum number of linearly independent rows or columns in the matrix.</li>
+<li>The rank of a matrix is always a non-negative integer.</li>
+<li>The rank of a matrix is equal to the dimensionality of its column space and row space.</li>
+<li>The rank of a matrix is invariant under elementary row and column operations.</li>
+<li>The rank of a matrix is less than or equal to the minimum of the number of rows and columns in the matrix.</li>
+</ul>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In some contexts, the term “dimensionality” may also refer to the dimensionality of the column space or row space of a matrix, which is equivalent to the rank of the matrix.</p>
+</div>
+</div>
+</section>
+</section>
+</section>
+<section id="column-space" class="level2" data-number="1.12">
+<h2 data-number="1.12" class="anchored" data-anchor-id="column-space"><span class="header-section-number">1.12</span> Column Space</h2>
+<section id="definition-6" class="level3" data-number="1.12.1">
+<h3 data-number="1.12.1" class="anchored" data-anchor-id="definition-6"><span class="header-section-number">1.12.1</span> Definition</h3>
+<p>The column space of a matrix is the subspace spanned by its column vectors. It is denoted by <span class="math inline">\(\text{Col}(\mathbf A)\)</span> or <span class="math inline">\(\text{span}{\mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_n}\)</span>, where <span class="math inline">\(\mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_n\)</span> are the column vectors of the matrix <span class="math inline">\(\mathbf A\)</span>.</p>
+</section>
+<section id="example-8" class="level3" data-number="1.12.2">
+<h3 data-number="1.12.2" class="anchored" data-anchor-id="example-8"><span class="header-section-number">1.12.2</span> Example</h3>
+<p><span class="math display">\[
+\mathbf A=
+\begin{bmatrix}
+1 &amp; 2 &amp; 3 \\
+4 &amp; 5 &amp; 6 \\
+7 &amp; 8 &amp; 9
+\end{bmatrix}
+\]</span></p>
+<p>The column space of matrix <span class="math inline">\(\mathbf A\)</span>, denoted by <span class="math inline">\(\text{Col}(\mathbf A)\)</span> or <span class="math inline">\(\text{span}\{\mathbf{v}_1, \mathbf{v}_2, \mathbf{v}_3\}\)</span>, is the subspace spanned by its column vectors <span class="math inline">\(\mathbf{v}_1 = [1, 4, 7]^T\)</span>, <span class="math inline">\(\mathbf{v}_2 = [2, 5, 8]^T\)</span>, and <span class="math inline">\(\mathbf{v}_3 = [3, 6, 9]^T\)</span>.</p>
+<p><span class="math display">\[
+\text{Col}(\mathbf{A}) = \text{span}\left\{
+\begin{bmatrix}
+1 \\ 4 \\ 7 \\
+\end{bmatrix},
+\begin{bmatrix}
+2 \\ 5 \\ 8 \\
+\end{bmatrix},
+\begin{bmatrix}
+3 \\ 6 \\ 9 \\
+\end{bmatrix}
+\right\}
+\]</span></p>
+</section>
+<section id="properties-6" class="level3" data-number="1.12.3">
+<h3 data-number="1.12.3" class="anchored" data-anchor-id="properties-6"><span class="header-section-number">1.12.3</span> Properties</h3>
+<ul>
+<li>It is a subspace: The column space of a matrix is a subspace of the vector space in which the matrix’s columns reside. This means it is closed under vector addition and scalar multiplication, and contains the zero vector.</li>
+<li>It is spanned by the columns of the matrix: The column space of a matrix is the span of its column vectors. In other words, it is the smallest subspace that contains all the column vectors of the matrix.</li>
+<li>It is the range of the corresponding linear transformation: The column space of a matrix is the range of the linear transformation associated with that matrix. This means it contains all possible output vectors that can be obtained by applying the linear transformation to input vectors.</li>
+<li>It has the same dimension as the rank of the matrix: The dimension of the column space of a matrix is equal to the rank of the matrix. This is known as the column space’s dimensionality property.</li>
+<li>It provides a basis for the row space and null space: The column space of a matrix provides a basis for both the row space and the null space of the matrix. The row space is the orthogonal complement of the null space, and the column space is the orthogonal complement of the left null space.</li>
+<li>It determines the solvability of linear systems: The column space of a coefficient matrix in a system of linear equations determines whether the system has a unique solution, infinitely many solutions, or no solution at all. If the column space spans the entire vector space, the system has a unique solution. If the column space does not span the entire vector space, the system has either infinitely many solutions (if the rank of the matrix is less than the number of variables) or no solution (if the rank of the matrix is less than the number of equations).</li>
+</ul>
+</section>
+</section>
+<section id="row-space" class="level2" data-number="1.13">
+<h2 data-number="1.13" class="anchored" data-anchor-id="row-space"><span class="header-section-number">1.13</span> Row Space</h2>
+<section id="definition-7" class="level3" data-number="1.13.1">
+<h3 data-number="1.13.1" class="anchored" data-anchor-id="definition-7"><span class="header-section-number">1.13.1</span> Definition</h3>
+<p>The row space of a matrix <span class="math inline">\(\mathbf{A}\)</span>, denoted as <span class="math inline">\(\text{Row}(\mathbf{A})\)</span>, is the subspace spanned by the rows of <span class="math inline">\(\mathbf{A}\)</span>.</p>
+<p><span class="math display">\[
+\text{Row}(\mathbf{A}) = \text{span}\{\mathbf{r}_1, \mathbf{r}_2, \ldots, \mathbf{r}_m\}
+\]</span></p>
+<p>where <span class="math inline">\(\mathbf{r}_1, \mathbf{r}_2, \ldots, \mathbf{r}_m\)</span> are the rows of <span class="math inline">\(\mathbf{A}\)</span>.</p>
+</section>
+<section id="example-9" class="level3" data-number="1.13.2">
+<h3 data-number="1.13.2" class="anchored" data-anchor-id="example-9"><span class="header-section-number">1.13.2</span> Example</h3>
+<p>The row space of <span class="math inline">\(\mathbf{A}\)</span> is the subspace spanned by the rows of <span class="math inline">\(\mathbf{A}\)</span>, which can be expressed as:</p>
+<p><span class="math display">\[
+\text{Row}(\mathbf{A}) = \text{span}\left\{
+\begin{bmatrix}
+1 \\ 2 \\ 3 \\
+\end{bmatrix},
+\begin{bmatrix}
+4 \\ 5 \\ 6 \\
+\end{bmatrix},
+\begin{bmatrix}
+7 \\ 8 \\ 9 \\
+\end{bmatrix}
+\right\}
+\]</span></p>
+</section>
+<section id="properties-7" class="level3" data-number="1.13.3">
+<h3 data-number="1.13.3" class="anchored" data-anchor-id="properties-7"><span class="header-section-number">1.13.3</span> Properties</h3>
+<ul>
+<li>It is a subspace: The row space of a matrix is a subspace of the vector space in which the matrix’s rows reside. This means it is closed under vector addition and scalar multiplication, and contains the zero vector.</li>
+<li>It is spanned by the rows of the matrix: The row space of a matrix is the span of its row vectors. In other words, it is the smallest subspace that contains all the row vectors of the matrix.</li>
+<li>It is the range of the corresponding linear transformation: The row space of a matrix is the range of the linear transformation associated with the transpose of that matrix. This means it contains all possible output vectors that can be obtained by applying the transpose of the linear transformation to input vectors.</li>
+<li>It has the same dimension as the rank of the matrix: The dimension of the row space of a matrix is equal to the rank of the matrix. This is known as the row space’s dimensionality property.</li>
+<li>It provides a basis for the null space and left null space: The row space of a matrix provides a basis for both the null space (kernel) and the left null space (cokernel) of the matrix. The null space is the orthogonal complement of the row space, and the left null space is the orthogonal complement of the column space.</li>
+<li>It determines the row-rank and column-rank equality: The row space of a matrix determines the row-rank and column-rank equality property, which states that the number of linearly independent rows (the row-rank) is equal to the number of linearly independent columns (the column-rank) of the matrix.</li>
+<li>It determines the solvability of linear systems: The row space of a coefficient matrix in a system of linear equations determines whether the system has a unique solution, infinitely many solutions, or no solution at all. If the row space spans the entire vector space, the system has a unique solution. If the row space does not span the entire vector space, the system has either infinitely many solutions (if the rank of the matrix is less than the number of variables) or no solution (if the rank of the matrix is less than the number of equations).</li>
+</ul>
+</section>
+</section>
+<section id="null-space" class="level2" data-number="1.14">
+<h2 data-number="1.14" class="anchored" data-anchor-id="null-space"><span class="header-section-number">1.14</span> Null Space</h2>
+<p><span class="math display">\[
+\text{Null}(\mathbf{A}) = \left\{ \mathbf{x} \in \mathbb{R}^n \, \middle| \, \mathbf{A}\mathbf{x} = \mathbf{0} \right\}
+\]</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(\text{Null}\)</span> represents the null space of a matrix,</li>
+<li><span class="math inline">\(\mathbf{A}\)</span> represents the given matrix,</li>
+<li><span class="math inline">\(\mathbf{x}\)</span> represents a vector in the null space of ,</li>
+<li><span class="math inline">\(\mathbb{R}^n\)</span> represents the n-dimensional real vector space, and</li>
+<li><span class="math inline">\(\mathbf{0}\)</span> represents the zero vector.</li>
+</ul>
+<section id="example-10" class="level3" data-number="1.14.1">
+<h3 data-number="1.14.1" class="anchored" data-anchor-id="example-10"><span class="header-section-number">1.14.1</span> Example</h3>
+<p><span class="math display">\[
+\mathbf A=
+\begin{bmatrix}
+1 &amp; 2 &amp; 3 \\
+4 &amp; 5 &amp; 6 \\
+7 &amp; 8 &amp; 9
+\end{bmatrix}
+\]</span></p>
+<p>The null space of <span class="math inline">\(\mathbf{A}\)</span> is the set of all vectors <span class="math inline">\(\mathbf{x} \in \mathbb{R}^3\)</span> that satisfy <span class="math inline">\(\mathbf{A}\mathbf{x} = \mathbf{0}\)</span>.</p>
+</section>
+<section id="properties-8" class="level3" data-number="1.14.2">
+<h3 data-number="1.14.2" class="anchored" data-anchor-id="properties-8"><span class="header-section-number">1.14.2</span> Properties</h3>
+<p>The null space of a matrix, also known as the kernel space, is the set of all vectors that are mapped to the zero vector by the linear transformation associated with the matrix.</p>
+<ul>
+<li>Contains the zero vector: The null space always contains the zero vector, as any matrix multiplied by the zero vector results in the zero vector.</li>
+<li>Subspace property: The null space is a subspace of the vector space from which the vectors are drawn. This means that it is closed under vector addition and scalar multiplication. In other words, if two vectors are in the null space, their sum and any scalar multiple of them will also be in the null space.</li>
+<li>Dimensionality: The dimension of the null space is equal to the number of linearly independent solutions to the homogeneous linear system associated with the matrix. This is known as the nullity of the matrix.</li>
+<li>Basis: The null space has a basis consisting of linearly independent vectors that span the entire null space. This basis is used to represent all vectors in the null space as linear combinations of the basis vectors.</li>
+<li>Relationship to solvability: The null space is directly related to the solvability of a system of linear equations. If the null space contains only the zero vector, the system has a unique solution. If the null space contains non-zero vectors, the system has infinitely many solutions, and the null space vectors represent the general solutions.</li>
+<li>Orthogonal complement of row space: The null space is orthogonal to the row space of the matrix. This means that any vector in the null space is orthogonal to every vector in the row space, and vice versa.</li>
+<li>Relationship to matrix rank: The dimension of the null space, also known as the nullity, is related to the rank of the matrix through the rank-nullity theorem. The rank of the matrix plus the nullity of the matrix is equal to the number of columns in the matrix.</li>
+<li>Computation: The null space can be computed by finding the solutions to the homogeneous linear system <span class="math inline">\(\mathbf{Ax} = \mathbf{0}\)</span>, where <span class="math inline">\(\mathbf{A}\)</span> is the coefficient matrix of the system of linear equations.</li>
+</ul>
+</section>
+</section>
+<section id="column-space-vs-row-space-vs-null-space" class="level2" data-number="1.15">
+<h2 data-number="1.15" class="anchored" data-anchor-id="column-space-vs-row-space-vs-null-space"><span class="header-section-number">1.15</span> Column Space vs Row Space vs Null Space</h2>
+<p>While both column space and row space are subspaces associated with a matrix, they serve different roles in linear algebra.</p>
+<section id="column-space-vs-row-space" class="level3" data-number="1.15.1">
+<h3 data-number="1.15.1" class="anchored" data-anchor-id="column-space-vs-row-space"><span class="header-section-number">1.15.1</span> Column Space vs Row Space</h3>
+<ul>
+<li>Dimensionality: The dimensionality of the column space and row space can differ. The dimension of the column space is determined by the number of linearly independent columns, which is also known as the rank of the matrix. On the other hand, the dimension of the row space is determined by the number of linearly independent rows of the matrix, which may not necessarily be the same as the rank of the matrix.</li>
+<li>Basis and Span: The column space is typically used to find a basis for the range (output space) of a linear transformation associated with the matrix, while the row space is used to find a basis for the null space (kernel) and left null space (cokernel) of the matrix. The column space spans the range of the linear transformation, while the row space spans the orthogonal complement of the null space and left null space.</li>
+<li>Solvability of linear systems: The row space of the coefficient matrix in a system of linear equations determines the solvability of the system, while the column space is not directly related to the solvability. Specifically, if the row space spans the entire vector space, the system has a unique solution. If the row space does not span the entire vector space, the system may have infinitely many solutions or no solution. The column space, on the other hand, does not directly determine the solvability of the system.</li>
+<li>Transpose relationship: The row space of a matrix is related to the range of the linear transformation associated with the transpose of the matrix, while the column space is directly related to the range of the original matrix. This means that the row space and column space are related through the transpose operation, but they are not identical.</li>
+</ul>
+</section>
+<section id="null-space-1" class="level3" data-number="1.15.2">
+<h3 data-number="1.15.2" class="anchored" data-anchor-id="null-space-1"><span class="header-section-number">1.15.2</span> Null Space</h3>
+<p>Null space: The null space of a matrix is the set of all vectors that are mapped to the zero vector by the linear transformation associated with the matrix. It represents the subspace of the vector space that consists of solutions to the homogeneous linear system <span class="math inline">\(\mathbf{Ax} = \mathbf{0}\)</span>, where <span class="math inline">\(\mathbf{A}\)</span> is the coefficient matrix of the system of linear equations.</p>
+</section>
+<section id="the-relationships-between-these-spaces" class="level3" data-number="1.15.3">
+<h3 data-number="1.15.3" class="anchored" data-anchor-id="the-relationships-between-these-spaces"><span class="header-section-number">1.15.3</span> The relationships between these spaces</h3>
+<ul>
+<li>The column space and row space are related, as they are orthogonal complements of each other. This means that any vector in the row space is orthogonal to any vector in the null space, and vice versa. This relationship is known as the row-space-null-space decomposition.</li>
+<li>The dimension of the column space is equal to the rank of the matrix, which is the maximum number of linearly independent columns or rows. Similarly, the dimension of the row space is also equal to the rank of the matrix.</li>
+<li>The null space is orthogonal to both the column space and the row space. This means that any vector in the null space is orthogonal to any vector in the column space and the row space.</li>
+<li>The null space is useful in determining the solvability of a system of linear equations. If the null space contains only the zero vector, the system has a unique solution. If the null space contains non-zero vectors, the system has infinitely many solutions.</li>
+</ul>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

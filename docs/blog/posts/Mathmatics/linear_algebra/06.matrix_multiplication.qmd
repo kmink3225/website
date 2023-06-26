@@ -1,0 +1,148 @@
+---
+title: "Basic Matrix (5) - Matrix Multiplication"
+subtitle: Linear Transition
+description: |
+  template
+categories:
+  - Mathematics
+author: Kwangmin Kim
+date: 03/31/2023
+format: 
+  html:
+    page-layout: full
+    code-fold: true
+    toc: true
+    number-sections: true
+execute:
+  warning: false
+  message: false
+  eval: false
+draft: true
+---
+
+```{r}
+#| eval: false
+
+library(tidyverse)
+set.seed(100)
+```
+
+
+```{python}
+#| echo: false
+#| eval: false
+
+import numpy as np
+import matplotlib_inline
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import sympy as sym # for RREF
+import scipy.linalg # for LU
+import matplotlib.gridspec as gridspec # used to create non-regular subplots
+
+# NOTE: these lines define global figure properties used for publication.
+from IPython import display
+matplotlib_inline.backend_inline.set_matplotlib_formats('svg')
+#display.set_matplotlib_formats('svg') # display figures in vector format
+plt.rcParams.update({'font.size':14}) # set global font size
+     
+```
+
+
+## Linear Transition
+
+### 함수의 정의
+
+정의역 공역  치역
+
+함수는 정의역의 모든 원소에 대해 그 원소를 공역의 오직 한 원소에 대응시키는 대응 관계 
+
+
+### 함수의 종류
+
+전사 (surjecgtive function, onto): 치역 = 공역
+단사 일대일 원소 (injective function, one to one function )
+전단사 함수 ,  일대일 대응 (bijective function, one to one correspondence)
+
+### 선형사상
+f:\mathbf v_n -> \mathbf w_m
+
+
+\mathbf v_n: 위치 벡터로 나타내면 성분이 n개인 좌표 -f-> \mathbf w_m: 위치 벡터로 나타내면 성분이 m개인 좌표
+
+변수의 곱이 있으면 선형 사상이 안됨. 덧셈과 상수배만 가능: 정의역을 선형 결합해 공역의 원소에 각 각 대응되어야 한다.
+
+ex) f:R^3 -> R^2 by f(x_1,x_2.x_3)=(x_1,x_2) (x,y,z) 공간을 (x,y) 평면으로 사영
+ex) g:R^4 -> R^2 by f(x_1,x_2.x_3,x_4)=(x_1+2x_2,x_2-x_3)=(y_1,y_2) 
+y_1=x_1+2x_2
+y_2=x_2-x_3
+
+형렬곱의 형태로 표현하면 아래와 같이 연산을 정의할 수 있다면 관계가 간단하게 표현된다.
+\mahtbf y = g(x) = \mathbf \cdot  A\mathbf x  
+
+
+
+### Matrix multiplication
+
+The product of two matrices $\mathbf{A}$ and $\mathbf{B}$ is a matrix obtained by multiplying the rows of $\mathbf{A}$ by the columns of $\mathbf{B}$.
+
+Given two matrices $\mathbf{A}$ and $\mathbf{B}$ with dimensions $m \times n$ and $n \times p$, respectively, their product $\mathbf{C} = \mathbf{AB}$ is an $m \times p$ matrix defined by:
+$$
+c_{i,j} = \sum_{k=1}^n a_{i,k}b_{k,j}
+$$
+for $1 \leq i \leq m$ and $1 \leq j \leq p$.
+
+Example:
+$$
+\begin{bmatrix}
+1 & 2 \\
+3 & 4 \\
+5 & 6
+\end{bmatrix} \begin{bmatrix}
+-1 & 0 & 2 \\
+2 & -3 & 1
+\end{bmatrix} =
+\begin{bmatrix}
+3 & -6 & 4 \\
+5 & -12 & 10 \\
+7 & -18 & 16
+\end{bmatrix}
+$$
+
+
+### 행 벡터 열벡터 표기법
+
+\mathbf A = 행벡터
+\mathbf B = 열벡터
+
+(\mathbf A \mathbf B) = \mathbf v_i \cdot \mathbf r_j
+
+
+#### Properties
+
+* 선형 사상의 행렬화
+
+f:R^n -> R^m
+f(x_1, x_2, ..., x_n) = (y_1,y_2, ..., y_m)
+각 y_i x_j의 선형조합으로 구성됨
+y_1=a_{11}x_1+a_{12}x_2+ .... +a_{1n}x_n
+y_2=a_{21}x_1+a_{22}x_2+ .... +a_{2n}x_n
+
+y_m=a_{m1}x_1+a_{m2}x_2+ .... +a_{mn}x_n
+
+\mathbf{y}_{m1}=\mathbf{A}_{mn}\mathbf{x}_{n1}
+
+
+* 교환 법칙
+
+* 행렬의 곱셈의 성질
+
+스칼라 배: (cA)B= A(cB)= c(AB)
+
+* 결합 법칙 (AB)C=A(BC)
+
+c_{i,j} = \sum_{k=1}^n a_{i,k}b_{k,j}
+
+* 분배 법칙
+A(B+C)=AB+AC
+

@@ -20,65 +20,35 @@ execute:
 draft: true
 ---
 
-```{r}
-#| eval: false
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">Korean</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">English</button>
+  </li>
 
-library(tidyverse)
-set.seed(100)
-```
+<div class="tab-content" id="language-tabcontent">
 
+<div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
 
-```{python}
-#| echo: false
-#| eval: false
+# Linear Transition (선형 변환)
 
-import numpy as np
-import matplotlib_inline
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-import sympy as sym # for RREF
-import scipy.linalg # for LU
-import matplotlib.gridspec as gridspec # used to create non-regular subplots
+## 선형사상
 
-# NOTE: these lines define global figure properties used for publication.
-from IPython import display
-matplotlib_inline.backend_inline.set_matplotlib_formats('svg')
-#display.set_matplotlib_formats('svg') # display figures in vector format
-plt.rcParams.update({'font.size':14}) # set global font size
-     
-```
+엄밀한 정의는 다른 블로그에서 기술하고 행렬곱 관점에서 선형사상을 이해하는데 집중한다.
 
+$$
+f:\mathbf{v}_n -> \mathbf{w}_m
+$$
 
-## Linear Transition
-
-### 함수의 정의
-
-정의역 공역  치역
-
-함수는 정의역의 모든 원소에 대해 그 원소를 공역의 오직 한 원소에 대응시키는 대응 관계 
-
-
-### 함수의 종류
-
-전사 (surjecgtive function, onto): 치역 = 공역
-단사 일대일 원소 (injective function, one to one function )
-전단사 함수 ,  일대일 대응 (bijective function, one to one correspondence)
-
-### 선형사상
-f:\mathbf v_n -> \mathbf w_m
-
-
-\mathbf v_n: 위치 벡터로 나타내면 성분이 n개인 좌표 -f-> \mathbf w_m: 위치 벡터로 나타내면 성분이 m개인 좌표
-
-변수의 곱이 있으면 선형 사상이 안됨. 덧셈과 상수배만 가능: 정의역을 선형 결합해 공역의 원소에 각 각 대응되어야 한다.
-
-ex) f:R^3 -> R^2 by f(x_1,x_2.x_3)=(x_1,x_2) (x,y,z) 공간을 (x,y) 평면으로 사영
-ex) g:R^4 -> R^2 by f(x_1,x_2.x_3,x_4)=(x_1+2x_2,x_2-x_3)=(y_1,y_2) 
-y_1=x_1+2x_2
-y_2=x_2-x_3
-
-형렬곱의 형태로 표현하면 아래와 같이 연산을 정의할 수 있다면 관계가 간단하게 표현된다.
-\mahtbf y = g(x) = \mathbf \cdot  A\mathbf x  
+* $\mathbf{v}_n$ (위치 벡터로 나타내면 성분이 $n$ 개인 좌표) $\xrightarrow{f}$ $\mathbf{w}_m$ (위치 벡터로 나타내면 성분이 $m$ 개인 좌표) 
+* 변수의 곱이 있으면 선형 사상이 안된다. 
+* 덧셈과 상수배만 가능하며 정의역을 선형 결합해 공역의 원소에 각 각 대응되어야 한다.
+* ex) $f:\mathbb{R}^3 -> \mathbb{R}^2$ by $f(x_1,x_2.x_3)=(x_1,x_2) (x,y,z)$ 공간을 $(x,y)$ 평면으로 사영
+* ex) $g:\mathbb{R}^4 -> \mathbb{R}^2$ by $f(x_1,x_2.x_3,x_4)=(x_1+2x_2,x_2-x_3)=(y_1,y_2)$ where $y_1=x_1+2x_2$ & $y_2=x_2-x_3$
+  * 형렬곱의 형태로 표현하면 아래와 같이 연산을 정의할 수 있다면 관계가 간단하게 표현된다. $\mathbf{y} = g(\mathbf{x}) = \mathbf{A}\mathbf{x}$
+  * 복잡했던 벡터 함수 모양이 간단한 다항 함수 모양으로 바뀐다. 행렬의 곱셈으로 표현하는 장점 중의 하나이다.
 
 
 
@@ -112,37 +82,170 @@ $$
 
 ### 행 벡터 열벡터 표기법
 
-\mathbf A = 행벡터
-\mathbf B = 열벡터
+* Column Vector
 
-(\mathbf A \mathbf B) = \mathbf v_i \cdot \mathbf r_j
+Let $\mathbf{a}$ be an $n \times 1$ column vector and $\mathbf{A}$ be an $m \times n$ matrix.
+$$
+\mathbf{A} = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \cdots & \mathbf{a}_n \end{bmatrix}
+$$
+
+where $\mathbf{a}_1, \mathbf{a}_2, \ldots, \mathbf{a}_n$ are column vectors of $\mathbb{R}^n$.
+
+* Row Vector
+
+Let $\mathbf{b}$ be an $n \times 1$ column vector and $\mathbf{B}$ be an $n \times k$ matrix.
+$$
+\mathbf{B} = \begin{bmatrix} \mathbf{b}_1 \\ \mathbf{b}_2 \\ \vdots \\ \mathbf{b}_n \end{bmatrix}
+$$
+
+where $\mathbf{b}_1, \mathbf{b}_2, \ldots, \mathbf{b}_n$ are row vectors of $\mathbb{R}^k$.
+
+* Then, $(\mathbf{A} \mathbf{B})_{ij} = \mathbf{a}_i \cdot \mathbf{b}_j$
 
 
 #### Properties
 
 * 선형 사상의 행렬화
 
-f:R^n -> R^m
-f(x_1, x_2, ..., x_n) = (y_1,y_2, ..., y_m)
-각 y_i x_j의 선형조합으로 구성됨
-y_1=a_{11}x_1+a_{12}x_2+ .... +a_{1n}x_n
-y_2=a_{21}x_1+a_{22}x_2+ .... +a_{2n}x_n
+$$
+\begin{align*}
+\text{If }f:\mathbb{R}^n &\rightarrow \mathbb{R}^m  \\
+\text{then }f(x_1, x_2, ..., x_n) &= (y_1,y_2, ..., y_m)
+\end{align*}
+$$
 
-y_m=a_{m1}x_1+a_{m2}x_2+ .... +a_{mn}x_n
+* 각 $y_i$ 가 $x_j$ 의 선형조합으로 구성된다. 다시 말해서, 
+$$
+\begin{align*}
+y_1&=a_{11}x_1+a_{12}x_2+ .... +a_{1n}x_n \\
+y_2&=a_{21}x_1+a_{22}x_2+ .... +a_{2n}x_n \\
 
-\mathbf{y}_{m1}=\mathbf{A}_{mn}\mathbf{x}_{n1}
+&\vdots \\
+y_m&=a_{m1}x_1+a_{m2}x_2+ .... +a_{mn}x_n \\
 
+\mathbf{y}_{m\times 1} &= \mathbf{A}_{m\times n}\mathbf{x}_{n\times 1}
+\end{align*}
+$$
 
-* 교환 법칙
+where $a_ij$ is an entry of a weight matrix with the $i$ th row and the $j$ th column.
+
+그러면 행렬의 곱셈으로 $\mathbf{y_{m\times 1}}=(\mathbf{A}_{m\times n}\mathbf{x}_{m \times 1})_{m \times 1}$ 표현할 수 있게된다.
+
+* 교환 법칙 성립 안함
 
 * 행렬의 곱셈의 성질
+  * 스칼라 배: $(c\mathbf{A})\mathbf{B}= \mathbf{A}(c\mathbf{B})= c(\mathbf{AB})$
+  * 결합 법칙: $(\mathbf{AB})\mathbf{C}=\mathbf{A}(\mathbf{BC})$
+  * 분배 법칙: $\mathbf{A}(\mathbf{B}+\mathbf{C})=\mathbf{AB}+\mathbf{AC}$
 
-스칼라 배: (cA)B= A(cB)= c(AB)
 
-* 결합 법칙 (AB)C=A(BC)
 
+</div>
+
+<div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
+
+# Linear Transition
+
+## Linear Mapping
+
+The formal definition is described in another blog, and here we focus on understanding linear transformations from the perspective of matrix multiplication.
+
+$$
+f:\mathbf{v}_n -> \mathbf{w}_m
+$$
+
+* $\mathbf{v}_n$ (represented as a position vector with $n$ components) $\xrightarrow{f}$ $\mathbf{w}_m$ (represented as a position vector with $m$ components)
+* If there is a multiplication of variables, it is not a linear transformation.
+* Only addition and scalar multiplication are allowed, and the elements of the domain must be linearly combined to correspond to the elements of the codomain.
+* Example: $f:\mathbb{R}^3 -> \mathbb{R}^2$ by $f(x_1,x_2.x_3)=(x_1,x_2)$ projecting the space $(x,y,z)$ onto the $(x,y)$ plane.
+* Example: $g:\mathbb{R}^4 -> \mathbb{R}^2$ by $f(x_1,x_2.x_3,x_4)=(x_1+2x_2,x_2-x_3)=(y_1,y_2)$ where $y_1=x_1+2x_2$ & $y_2=x_2-x_3$
+  * If the operation can be defined in the form of matrix multiplication, the relationship can be expressed simply as $\mathbf{y} = g(\mathbf{x}) = \mathbf{A}\mathbf{x}$.
+  * The complex vector function is transformed into a simple polynomial function shape. This is one of the advantages of expressing it with matrix multiplication.
+
+### Matrix multiplication
+
+The product of two matrices $\mathbf{A}$ and $\mathbf{B}$ is a matrix obtained by multiplying the rows of $\mathbf{A}$ by the columns of $\mathbf{B}$.
+
+Given two matrices $\mathbf{A}$ and $\mathbf{B}$ with dimensions $m \times n$ and $n \times p$, respectively, their product $\mathbf{C} = \mathbf{AB}$ is an $m \times p$ matrix defined by:
+$$
 c_{i,j} = \sum_{k=1}^n a_{i,k}b_{k,j}
+$$
+for $1 \leq i \leq m$ and $1 \leq j \leq p$.
 
-* 분배 법칙
-A(B+C)=AB+AC
+Example:
+$$
+\begin{bmatrix}
+1 & 2 \\
+3 & 4 \\
+5 & 6
+\end{bmatrix} \begin{bmatrix}
+-1 & 0 & 2 \\
+2 & -3 & 1
+\end{bmatrix} =
+\begin{bmatrix}
+3 & -6 & 4 \\
+5 & -12 & 10 \\
+7 & -18 & 16
+\end{bmatrix}
+$$
+
+
+### 행 벡터 열벡터 표기법
+
+* Column Vector
+
+Let $\mathbf{a}$ be an $n \times 1$ column vector and $\mathbf{A}$ be an $m \times n$ matrix.
+$$
+\mathbf{A} = \begin{bmatrix} \mathbf{a}_1 & \mathbf{a}_2 & \cdots & \mathbf{a}_n \end{bmatrix}
+$$
+
+where $\mathbf{a}_1, \mathbf{a}_2, \ldots, \mathbf{a}_n$ are column vectors of $\mathbb{R}^n$.
+
+* Row Vector
+
+Let $\mathbf{b}$ be an $n \times 1$ column vector and $\mathbf{B}$ be an $n \times k$ matrix.
+$$
+\mathbf{B} = \begin{bmatrix} \mathbf{b}_1 \\ \mathbf{b}_2 \\ \vdots \\ \mathbf{b}_n \end{bmatrix}
+$$
+
+where $\mathbf{b}_1, \mathbf{b}_2, \ldots, \mathbf{b}_n$ are row vectors of $\mathbb{R}^k$.
+
+* Then, $(\mathbf{A} \mathbf{B})_{ij} = \mathbf{a}_i \cdot \mathbf{b}_j$
+
+
+#### Properties
+
+* Matrix representation of a linear transformation
+
+$$
+\begin{align*}
+\text{If }f:\mathbb{R}^n &\rightarrow \mathbb{R}^m  \\
+\text{then }f(x_1, x_2, ..., x_n) &= (y_1,y_2, ..., y_m)
+\end{align*}
+$$
+
+* Each $y_i$ is composed as a linear combination of $x_j$. In other words,
+$$
+\begin{align*}
+y_1&=a_{11}x_1+a_{12}x_2+ .... +a_{1n}x_n \\
+y_2&=a_{21}x_1+a_{22}x_2+ .... +a_{2n}x_n \\
+
+&\vdots \\
+y_m&=a_{m1}x_1+a_{m2}x_2+ .... +a_{mn}x_n \\
+
+\mathbf{y}_{m\times 1} &= \mathbf{A}_{m\times n}\mathbf{x}_{n\times 1}
+\end{align*}
+$$
+
+where $a_ij$ is an entry of a weight matrix with the $i$ th row and the $j$ th column.
+
+Then, it can be expressed using matrix multiplication as $\mathbf{y}{m\times 1}=(\mathbf{A}{m\times n}\mathbf{x}{n \times 1}){m \times 1}$.
+
+* Does not satisfy the commutative property.
+* Properties of matrix multiplication:
+  * Scalar multiplication: $(c\mathbf{A})\mathbf{B}= \mathbf{A}(c\mathbf{B})= c(\mathbf{AB})$
+  * Associative property: $(\mathbf{AB})\mathbf{C}=\mathbf{A}(\mathbf{BC})$
+  * Distributive property: $\mathbf{A}(\mathbf{B}+\mathbf{C})=\mathbf{AB}+\mathbf{AC}$
+
+</div>
 

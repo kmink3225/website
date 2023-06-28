@@ -207,6 +207,64 @@ x-airflow-common
         1. 네트워크 리스트 보기 : sudo docker network ls
         2. 네트워크 상세 보기 : sudo docker network inspect {network_id}
 
+# Postgres 컨테이너 올리기
+
+## Postgress 컨테이너 추가하기
+
+* postgres_custom 이라는 이름의 컨테이너 서비스 추가하기
+
+## 컨테이너 고정 IP 할당하기
+
+* 기본적으로 컨테이너들은 유동 IP를 지니며 (재기동시 IP 변경 가능)
+* 고정 IP를 할당하려면 networks를 만들어 할당해야 함.
+* networks 를 지정하지 않은 컨테이너들(airflow를 설치하면서 기본적으로 설치되는 containers)은 default network에 묶이게 됨
+* 따라서 동일 네트워크에 두고 싶은 컨테이너들은 모두 동일 netwworks 할당 필요
+  ```markdown
+  services:
+    postgres_custom:
+      image: postgres:13
+      environment:
+        POSTGRES_USER: kmkim
+        POSTGRES_PASSWORD: kmkim
+        POSTGRES_DB: kmkim
+        TZ: Asia/Seoul
+      volumes:
+        - postgres-custom-db-volume:/var/lib/postgresql/data
+      ports:
+        - 5432:5432
+      networks:
+        network_custom: # 밑에서 정의한 network_custom 을 쓰겠다는 의미
+          ipv4_address: 172.28.0.3 # 할당된 IP
+  
+  networks:
+    network_custom: 
+      driver: bridge
+      ipam:
+          driver: default
+          config:
+              - subnet: 172.28.0.0/16 # 네트 워크 ID 주소 밑에 16개/host id 주소 밑에 16개를 할당하겠다는 의미
+                gateway: 172.28.0.1 # default 네트워크 (172.18.0.0)가 쓰고 있지 않은 서브넷으로 구성
+  volumes:
+    postgres-db-volume:
+    postgres-custom-db-volume:
+  ```
+* Postgres_custom 컨테이너 뿐만 아니라 다른 컨테이너에도 network_custom 할당하고 IP 부여
+  ```markdown
+  postgres_custom:  # 172.28.0.3
+  postgres:  # 172.28.0.3 +  포트 노출 설정:(5431:5432)
+  redis: # 172.28.0.5
+  airflow-webserver: # 172.28.0.6
+  airflow-scheduler: # 172.28.0.7
+  airflow-worker: # 172.28.0.8
+  airflow-triggerer: # 172.28.0.9
+  airflow-init: # 172.28.0.10
+  ```
+    * postgres:  # airflow가 기본 메타DB로 쓰고 있는 postgress 컨테이너에 포트 번호 5431로 노출
+
+## DB 접속하기
+
+* Dbeaver: 설치 https://dbeaver.io/
+
 ## Airflow에서 사용법
 
 * 오퍼레이터 파라미터 입력시 중괄호 {} 2개를 이용하면 Airflow에서 기본적으로 제공하는 변수들을 치환된 값으로 입력할 수 있음. (ex: 수행 날짜, DAG_ID)

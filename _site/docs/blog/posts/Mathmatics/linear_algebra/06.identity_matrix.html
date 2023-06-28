@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kwangmin Kim">
-<meta name="dcterms.date" content="2023-01-31">
+<meta name="dcterms.date" content="2023-03-31">
 <meta name="description" content="template">
 
-<title>Kwangmin Kim - Function</title>
+<title>Kwangmin Kim - Basic Matrix (5) - Matrix Multiplication</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,40 +22,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -176,12 +142,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#definition" id="toc-definition" class="nav-link active" data-scroll-target="#definition">Definition</a>
+  <li><a href="#identity-matrix" id="toc-identity-matrix" class="nav-link active" data-scroll-target="#identity-matrix"><span class="header-section-number">1</span> Identity Matrix</a>
   <ul class="collapse">
-  <li><a href="#함수의-종류" id="toc-함수의-종류" class="nav-link" data-scroll-target="#함수의-종류">함수의 종류</a></li>
-  <li><a href="#구성-요소" id="toc-구성-요소" class="nav-link" data-scroll-target="#구성-요소">구성 요소</a></li>
-  <li><a href="#일반적인-함수의-종류" id="toc-일반적인-함수의-종류" class="nav-link" data-scroll-target="#일반적인-함수의-종류">일반적인 함수의 종류</a></li>
-  <li><a href="#예시" id="toc-예시" class="nav-link" data-scroll-target="#예시">예시</a></li>
+  <li><a href="#example" id="toc-example" class="nav-link" data-scroll-target="#example"><span class="header-section-number">1.1</span> Example</a></li>
+  <li><a href="#행렬곱의-열분해" id="toc-행렬곱의-열분해" class="nav-link" data-scroll-target="#행렬곱의-열분해"><span class="header-section-number">1.2</span> 행렬곱의 열분해</a></li>
+  <li><a href="#properties" id="toc-properties" class="nav-link" data-scroll-target="#properties"><span class="header-section-number">1.3</span> Properties</a></li>
+  </ul></li>
+  <li><a href="#identity-matrix-1" id="toc-identity-matrix-1" class="nav-link" data-scroll-target="#identity-matrix-1"><span class="header-section-number">2</span> Identity Matrix</a>
+  <ul class="collapse">
+  <li><a href="#example-1" id="toc-example-1" class="nav-link" data-scroll-target="#example-1"><span class="header-section-number">2.1</span> Example</a></li>
+  <li><a href="#matrix-multiplication-column-decomposition" id="toc-matrix-multiplication-column-decomposition" class="nav-link" data-scroll-target="#matrix-multiplication-column-decomposition"><span class="header-section-number">2.2</span> Matrix multiplication column decomposition</a></li>
+  <li><a href="#properties-1" id="toc-properties-1" class="nav-link" data-scroll-target="#properties-1"><span class="header-section-number">2.3</span> Properties</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -191,8 +162,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Function</h1>
-<p class="subtitle lead">template</p>
+<h1 class="title">Basic Matrix (5) - Matrix Multiplication</h1>
+<p class="subtitle lead">Linear Transition</p>
   <div class="quarto-categories">
     <div class="quarto-category">Mathematics</div>
   </div>
@@ -217,7 +188,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 31, 2023</p>
+      <p class="date">March 31, 2023</p>
     </div>
   </div>
   
@@ -241,185 +212,156 @@ English
 <div class="tab-content" id="language-tabcontent">
 
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
-<section id="definition" class="level2">
-<h2 class="anchored" data-anchor-id="definition">Definition</h2>
-<p><span class="math display">\[
-f: A \rightarrow B
+<section id="identity-matrix" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Identity Matrix</h1>
+<p>항등 핼렬, 단위 행렬</p>
+<p>항등 행렬 또는 단위 행렬은 정사각 행렬로, 대각선 요소는 모두 1이고 대각선을 제외한 모든 요소는 0인 행렬입니다. 크기가 n인 항등 행렬은 <span class="math inline">\(\mathbf{I}_n\)</span> 으로 표기된다.</p>
+<section id="example" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="example"><span class="header-section-number">1.1</span> Example</h2>
+<p>Example of a <span class="math inline">\(3\times 3\)</span> identity matrix, <span class="math inline">\(\mathbf{I}_3\)</span>: <span class="math display">\[
+\begin{equation}
+\mathbf{I}_3 =
+\begin{bmatrix}
+1 &amp; 0 &amp; 0 \\
+0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 1
+\end{bmatrix}
+\end{equation}
 \]</span></p>
 <ul>
-<li>A function <span class="math inline">\(f\)</span> is a relation between a set <span class="math inline">\(A\)</span> called the domain and a set <span class="math inline">\(B\)</span> called the codomain such that every element in the domain is uniquely associated with an element in the codomain.</li>
-<li>The element associated with an input <span class="math inline">\(x\)</span> in the domain is denoted as <span class="math inline">\(f(x)\)</span>.</li>
-<li>The set of all possible inputs in the domain is called the domain of the function, denoted as <span class="math inline">\(\text{dom}(f)\)</span>.</li>
-<li>The set of all possible outputs in the codomain is called the codomain of the function, denoted as <span class="math inline">\(\text{cod}(f)\)</span>.</li>
-<li>The set of all actual outputs produced by the function is called the range of the function, which is a subset of the codomain and denoted as <span class="math inline">\(\text{range}(f)\)</span>.</li>
-</ul>
-<section id="함수의-종류" class="level3">
-<h3 class="anchored" data-anchor-id="함수의-종류">함수의 종류</h3>
-<ul>
-<li>Surjective Function (Onto Function) <span class="math display">\[
-f: A \rightarrow B
-\]</span>
-<ul>
-<li>A function <span class="math inline">\(f\)</span> is said to be surjective (or onto) if every element in the codomain <span class="math inline">\(B\)</span> has a corresponding element in the domain <span class="math inline">\(A\)</span> such that <span class="math inline">\(f(x) = b\)</span> for some <span class="math inline">\(x \in A\)</span> and <span class="math inline">\(b \in B\)</span>.</li>
-<li>In other words, every element in the codomain <span class="math inline">\(B\)</span> is “hit” or “mapped to” by the function <span class="math inline">\(f\)</span>.</li>
-<li>The range of a surjective function is equal to the codomain.</li>
-</ul></li>
-<li>Injective Function (One-to-One Function) <span class="math display">\[
-f: A \rightarrow B
-\]</span>
-<ul>
-<li>A function <span class="math inline">\(f\)</span> is said to be injective (or one-to-one) if every element in the domain <span class="math inline">\(A\)</span> is uniquely mapped to a distinct element in the codomain <span class="math inline">\(B\)</span>.</li>
-<li>In other words, for any distinct elements <span class="math inline">\(x_1, x_2 \in A\)</span>, if <span class="math inline">\(f(x_1) = f(x_2)\)</span>, then <span class="math inline">\(x_1 = x_2\)</span>.</li>
-<li>An injective function ensures that no two different elements in the domain are mapped to the same element in the codomain.</li>
-</ul></li>
-<li>Bijective Function (Bijection, one to one correspondence) <span class="math display">\[
-f: A \rightarrow B
-\]</span>
-<ul>
-<li>A function <span class="math inline">\(f\)</span> is said to be bijective (or a bijection) if it is both injective and surjective.</li>
-<li>In other words, a bijective function is a one-to-one correspondence between the elements of the domain <span class="math inline">\(A\)</span> and the elements of the codomain <span class="math inline">\(B\)</span>.</li>
-<li>It means that every element in the domain has a unique corresponding element in the codomain, and every element in the codomain is “hit” or “mapped to” by exactly one element in the domain.</li>
-<li>In terms of sets, a bijective function establishes a one-to-one correspondence between the sets <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, which implies that the cardinality of the domain <span class="math inline">\(A\)</span> is equal to the cardinality of the codomain <span class="math inline">\(B\)</span>.</li>
-</ul></li>
+<li>보통 <span class="math inline">\(\mathbf{I}_{1\times 1}=\mathbf{I}_{1}=1, \quad \mathbf{I}_{2\times 2}=\mathbf{I}_2, \quad\mathbf{I}_{3\times 3}=\mathbf{I}_3, \quad\mathbf{I}_{4\times 4}=\mathbf{I}_4\)</span> 로 표현한다.</li>
 </ul>
 </section>
-<section id="구성-요소" class="level3">
-<h3 class="anchored" data-anchor-id="구성-요소">구성 요소</h3>
+<section id="행렬곱의-열분해" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="행렬곱의-열분해"><span class="header-section-number">1.2</span> 행렬곱의 열분해</h2>
+<p><span class="math inline">\(\mathbf{AB=C}\)</span></p>
 <p><span class="math display">\[
-y=f(x;\alpha)
+\begin{align*}
+\begin{bmatrix}
+- &amp; - &amp; \cdots &amp; - \\
+- &amp; - &amp; \cdots &amp; - \\
+- &amp; - &amp; \ddots &amp; - \\
+- &amp; - &amp; \cdots &amp; -
+\end{bmatrix}
+\begin{bmatrix}
+| &amp; 0  &amp; \cdots &amp; 0 \\
+| &amp; 0  &amp; \cdots &amp; 0 \\
+| &amp; 0  &amp; \ddots &amp; 0 \\
+| &amp; 0  &amp; \cdots &amp; 0
+\end{bmatrix}
+=
+\begin{bmatrix}
+| &amp; 0  &amp; \cdots &amp; 0 \\
+| &amp; 0  &amp; \cdots &amp; 0 \\
+| &amp; 0  &amp; \ddots &amp; 0 \\
+| &amp; 0  &amp; \cdots &amp; 0
+\end{bmatrix}
+\end{align*}
 \]</span></p>
-<ul>
-<li>독립변수 (independent variable): <span class="math inline">\(x\)</span>, 함수의 출력값을 결정하는 변수로서, feature, decision variable 등으로도 표현</li>
-<li>매개변수 (parameter): <span class="math inline">\(\alpha\)</span>, 함수의 모양을 결정하기 위한 변수</li>
-<li>종속 변수 (dependent variable): <span class="math inline">\(y\)</span> or <span class="math inline">\(f(x)\)</span> 독립변수와 매개 변수에 의해 값이 결정되는 변수</li>
-</ul>
-<div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-title-container flex-fill">
-Confusing Terms about Rectangular Data
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>독립 변수와 종속 변수는 각 분야에서 쓰이는 이름이 다르다. 아래 표 참고 (정확하진 않음. 아직도 업데이트 중) See <a href="#tbl-letters">Table&nbsp;1</a>.</p>
-<p>(The below table may be incorrect still under research)</p>
-<div id="tbl-letters" class="anchored">
-<table class="table">
-<caption>Table&nbsp;1: Confusing Terms in Data Science</caption>
-<colgroup>
-<col style="width: 7%">
-<col style="width: 17%">
-<col style="width: 41%">
-<col style="width: 20%">
-<col style="width: 13%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: center;">Terms</th>
-<th style="text-align: center;">Mathmatics</th>
-<th style="text-align: center;">Statistics</th>
-<th style="text-align: center;">Computer Science</th>
-<th style="text-align: center;">Data Engineering</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">graph</td>
-<td style="text-align: center;">visulaized plot</td>
-<td style="text-align: center;">visulaized plot</td>
-<td style="text-align: center;">connections among entities</td>
-<td style="text-align: center;">connections among entities, data structure</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">variable</td>
-<td style="text-align: center;">independent variable</td>
-<td style="text-align: center;">predictor, experimental variable, explanatory variable</td>
-<td style="text-align: center;">feature, input</td>
-<td style="text-align: center;">attribute, column</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">outcome</td>
-<td style="text-align: center;">dependent variable</td>
-<td style="text-align: center;">response variable, outcome</td>
-<td style="text-align: center;">target, output</td>
-<td style="text-align: center;">attribute, column</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">Records</td>
-<td style="text-align: center;">pattern, example</td>
-<td style="text-align: center;">case, sample, observation</td>
-<td style="text-align: center;">instance, record, row</td>
-<td style="text-align: center;">instance, record, row</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
+<p>위에서 보는 바와 같이 <span class="math inline">\(\mathbf{C}\)</span> 의 1열 에 영향을 주는 것은 <span class="math inline">\(\mathbf{A}\)</span> 의 모든 열 <span class="math inline">\(\mathbf{B}\)</span> 의 1열이다. 이를 수식화 하면 아래와 같이 행렬 <span class="math inline">\(\mathbf{B}\)</span> 의 열분해가 된다. 역으로 이렇게 열 분해가 된 것을 이어 붙이면 행렬 곱 <span class="math inline">\(\mathbf{AB}\)</span> 와 같아진다. 그러므로 <span class="math inline">\(\mathbf{B}\)</span> 의 열을 각 각 <span class="math inline">\(\mathbf{A}\)</span> 와 곱을 해서 <span class="math inline">\(\mathbf{c}_i\)</span> 를 n번 구해서 이어 붙이는 것이나 행렬 곱 <span class="math inline">\(\mathbf{AB}\)</span> 을 수행한 것이나 같은 결과를 얻게 된다. 그러므로 핼렬곱이 더 간단한 연산 표현 방식이다.</p>
+<p>$$ <span class="math display">\[\begin{align*}
+\mathbf{A}\mathbf{b}_1&amp;=\mathbf{c}_1 \\
+\mathbf{A}\mathbf{b}_2&amp;=\mathbf{c}_1 \\
+&amp; \vdots \\
+\mathbf{A}\mathbf{b}_n&amp;=\mathbf{c}_n
+
+\end{align*}\]</span> $$</p>
 </section>
-<section id="일반적인-함수의-종류" class="level3">
-<h3 class="anchored" data-anchor-id="일반적인-함수의-종류">일반적인 함수의 종류</h3>
+<section id="properties" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="properties"><span class="header-section-number">1.3</span> Properties</h2>
+<p>Some properties of an identity matrix include:</p>
 <ul>
-<li>함수, 분수함수, 지수함수, 로그함수, 삼각함수 등</li>
-</ul>
-</section>
-<section id="예시" class="level3">
-<h3 class="anchored" data-anchor-id="예시">예시</h3>
+<li>어떤 행렬이 항등 행렬과 곱해져도 원래 행렬과 같다: <span class="math inline">\(\mathbf{A} \mathbf{I} = \mathbf{I} \mathbf{A} = \mathbf{A}\)</span>.
 <ul>
-<li>2차 함수</li>
-</ul>
-<div class="cell" data-execution_count="1">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> f(x,a<span class="op">=</span><span class="dv">1</span>,b<span class="op">=</span><span class="dv">2</span>,c<span class="op">=</span><span class="dv">3</span>): <span class="co">#x: independent variable, f(x): dependent variable</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> a<span class="op">*</span>x<span class="op">**</span><span class="dv">2</span><span class="op">+</span>b<span class="op">*</span>x<span class="op">+</span>c <span class="co"># a,b,c : parameters</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>x<span class="op">=</span>np.linspace(<span class="op">-</span><span class="dv">10</span>,<span class="dv">10</span>,<span class="dv">1000</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>fig<span class="op">=</span>plt.figure()</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>ax<span class="op">=</span>plt.axes()</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>ax.plot(x,f(x))</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>ax.plot(x,f(x,<span class="dv">2</span>,<span class="op">-</span><span class="dv">3</span>,<span class="dv">2</span>))</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-display">
-<p><img src="index_files/figure-html/cell-2-output-1.png" width="575" height="411"></p>
-</div>
-</div>
-<ul>
-<li><span class="math inline">\(f(x)=2x^2-3x+2\)</span>
-<ul>
-<li>함수: <span class="math inline">\(f(x;a,b,c)\)</span></li>
-<li>종속 변수: <span class="math inline">\(f(x)\)</span></li>
-<li>독립 변수: <span class="math inline">\(x\)</span></li>
-<li>매개 변수 (parameter): <span class="math inline">\(a=2, \space b=-3, \space c=2\)</span></li>
+<li>행렬 곱셈 <span class="math inline">\(\mathbf{y}=\mathbf{Fx}\)</span> 에서 가중치 행렬 <span class="math inline">\(\mathbf{F}\)</span> 는 <span class="math inline">\(\mathbf{y}\)</span> 와 <span class="math inline">\(\mathbf{x}\)</span> 사이의 선형 매핑으로 볼 수 있다.</li>
+<li>이 연산에서 항등 행렬 <span class="math inline">\(\mathbf{I}\)</span> 를 <span class="math inline">\(\mathbf{F}\)</span> 자리에 대입하면 선형 매핑은 <span class="math inline">\(y_1=x_1, \ldots, y_n=x_n\)</span> 과 같은 항등 함수 관계로 표현된다.</li>
+<li>다시 말해, <span class="math inline">\(\mathbf{x}\)</span> 를 항등 함수 <span class="math inline">\(\mathbf{I}\)</span> 에 입력하면 <span class="math inline">\(\mathbf{y}\)</span> 는 <span class="math inline">\(\mathbf{x}\)</span> 와 동일해진다.</li>
+<li>이 원리는 <span class="math inline">\(\mathbf{x}\)</span> 가 행렬로 변환되더라도 여전히 적용된다. 따라서 <span class="math inline">\(\mathbf{I} \mathbf{A} = \mathbf{A}\)</span> 가 성립한다.</li>
+<li>마찬가지로 <span class="math inline">\(\mathbf{A} \mathbf{I}\)</span> 를 고려하고 열 분해를 적용하면 <span class="math inline">\(\mathbf{A}\)</span> 의 열들이 <span class="math inline">\(\mathbf{I}\)</span> 의 열 벡터 (표준 단위 벡터)와 곱해져서 <span class="math inline">\(\mathbf{A}\)</span> 의 해당 열들이 출력된다.</li>
+<li>따라서 <span class="math inline">\(\mathbf{A} \mathbf{I} = \mathbf{A}\)</span> 가 성립한다.</li>
 </ul></li>
-<li>예시2
-<ul>
-<li>linear regression
-<ul>
-<li>매개변를 수학적으로 최적화하여 데이터에 맞는 직선의 방정식을 찾는 알고리즘</li>
-<li>함수 : <span class="math inline">\(f(x;\mathbf \beta)=\beta_1x+\beta_0\)</span></li>
-<li>종속 변수: <span class="math inline">\(f(x)=y\)</span></li>
-<li>독립 변수: <span class="math inline">\(x\)</span></li>
-<li>매개 변수 (parameter): <span class="math inline">\(\mathbf \beta = (\beta_0, \space \beta_1)\)</span></li>
-</ul></li>
-</ul></li>
+<li>임의의 행렬과 해당 역행렬의 곱은 항등 행렬이다: <span class="math inline">\(\mathbf{A} \mathbf{A}^{-1} = \mathbf{A}^{-1} \mathbf{A} = \mathbf{I}\)</span>.</li>
+<li>항등 행렬의 행렬식은 1이다: <span class="math inline">\(\det(\mathbf{I}) = 1\)</span>.</li>
+<li>항등 행렬은 대칭 행렬이다: <span class="math inline">\(\mathbf{I} = \mathbf{I}^T\)</span>.</li>
 </ul>
-<p><span class="math display">\[
-\begin{aligned}
-L(oss)&amp;=\frac{1}{2}\sum_{n=1}^{N}(y_n-f(x_n,\mathbf \beta))^2 \\
-&amp;=\frac{1}{2}\sum_{n=1}^{N}(y_n-\beta_1x_n-\beta_0)^2
-\end{aligned}
-\]</span></p>
 </section>
 </section>
 </div>
 <div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
+<section id="identity-matrix-1" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Identity Matrix</h1>
+<p>항등 핼렬, 단위 행렬</p>
+<p>An identity matrix is a square matrix in which all the diagonal elements are equal to <span class="math inline">\(1\)</span> and all the off-diagonal elements are equal to 0. The notation for an identity matrix of size <span class="math inline">\(n\)</span> is <span class="math inline">\(\mathbf{I}_n\)</span>.</p>
+<section id="example-1" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="example-1"><span class="header-section-number">2.1</span> Example</h2>
+<p>Example of a <span class="math inline">\(3\times 3\)</span> identity matrix, <span class="math inline">\(\mathbf{I}_3\)</span>: <span class="math display">\[
+\begin{equation}
+\mathbf{I}_3 =
+\begin{bmatrix}
+1 &amp; 0 &amp; 0 \\
+0 &amp; 1 &amp; 0 \\
+0 &amp; 0 &amp; 1
+\end{bmatrix}
+\end{equation}
+\]</span></p>
+<ul>
+<li>Typically, <span class="math inline">\(\mathbf{I}{1\times 1}=\mathbf{I}{1}=1\)</span>, <span class="math inline">\(\mathbf{I}_{2\times 2}=\mathbf{I}2\)</span>, <span class="math inline">\(\mathbf{I}{3\times 3}=\mathbf{I}3\)</span>, and <span class="math inline">\(\mathbf{I}{4\times 4}=\mathbf{I}_4\)</span> are used to represent the identity matrices of respective sizes.</li>
+</ul>
+</section>
+<section id="matrix-multiplication-column-decomposition" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="matrix-multiplication-column-decomposition"><span class="header-section-number">2.2</span> Matrix multiplication column decomposition</h2>
+<p><span class="math inline">\(\mathbf{AB=C}\)</span></p>
+<p><span class="math display">\[
+\begin{align*}
+\begin{bmatrix}
+- &amp; - &amp; \cdots &amp; - \\
+- &amp; - &amp; \cdots &amp; - \\
+- &amp; - &amp; \ddots &amp; - \\
+- &amp; - &amp; \cdots &amp; -
+\end{bmatrix}
+\begin{bmatrix}
+| &amp; 0  &amp; \cdots &amp; 0 \\
+| &amp; 0  &amp; \cdots &amp; 0 \\
+| &amp; 0  &amp; \ddots &amp; 0 \\
+| &amp; 0  &amp; \cdots &amp; 0
+\end{bmatrix}
+=
+\begin{bmatrix}
+| &amp; 0  &amp; \cdots &amp; 0 \\
+| &amp; 0  &amp; \cdots &amp; 0 \\
+| &amp; 0  &amp; \ddots &amp; 0 \\
+| &amp; 0  &amp; \cdots &amp; 0
+\end{bmatrix}
+\end{align*}
+\]</span></p>
+<p>As seen above, the elements in the first column of matrix <span class="math inline">\(\mathbf{C}\)</span> are influenced by all the columns of matrix <span class="math inline">\(\mathbf{A}\)</span> and the first column of matrix <span class="math inline">\(\mathbf{B}\)</span>. This can be formulated as the column decomposition of matrix <span class="math inline">\(\mathbf{B}\)</span>. Conversely, by concatenating these decomposed columns, we obtain the matrix product <span class="math inline">\(\mathbf{AB}\)</span>. Therefore, obtaining <span class="math inline">\(\mathbf{c}_i\)</span> by multiplying each column of <span class="math inline">\(\mathbf{B}\)</span> with <span class="math inline">\(\mathbf{A}\)</span> and concatenating them yields the same result as performing the matrix multiplication <span class="math inline">\(\mathbf{AB}\)</span>. Thus, matrix multiplication provides a simpler way to express the operation.</p>
+<p>$$ <span class="math display">\[\begin{align*}
+\mathbf{A}\mathbf{b}_1&amp;=\mathbf{c}_1 \\
+\mathbf{A}\mathbf{b}_2&amp;=\mathbf{c}_1 \\
+&amp; \vdots \\
+\mathbf{A}\mathbf{b}_n&amp;=\mathbf{c}_n
 
+\end{align*}\]</span> $$</p>
+</section>
+<section id="properties-1" class="level2" data-number="2.3">
+<h2 data-number="2.3" class="anchored" data-anchor-id="properties-1"><span class="header-section-number">2.3</span> Properties</h2>
+<p>Some properties of an identity matrix include:</p>
+<ul>
+<li>Multiplying any matrix by an identity matrix results in the same matrix: <span class="math inline">\(\mathbf{A} \mathbf{I} = \mathbf{I} \mathbf{A} = \mathbf{A}\)</span>.
+<ul>
+<li>In matrix multiplication <span class="math inline">\(\mathbf{y} = \mathbf{Fx}\)</span>, the weight matrix <span class="math inline">\(\mathbf{F}\)</span> can be viewed as a linear mapping between <span class="math inline">\(\mathbf{y}\)</span> and <span class="math inline">\(\mathbf{x}\)</span>.</li>
+<li>When the identity matrix <span class="math inline">\(\mathbf{I}\)</span> is substituted for <span class="math inline">\(\mathbf{F}\)</span> in this operation, the linear mapping is represented as an identity function, where <span class="math inline">\(y_1 = x_1, \ldots, y_n = x_n\)</span>.</li>
+<li>In other words, when <span class="math inline">\(\mathbf{x}\)</span> is input to the identity function <span class="math inline">\(\mathbf{I}\)</span>, <span class="math inline">\(\mathbf{y}\)</span> becomes equal to <span class="math inline">\(\mathbf{x}\)</span>.</li>
+<li>This principle still holds even when <span class="math inline">\(\mathbf{x}\)</span> is transformed into a matrix. Therefore, <span class="math inline">\(\mathbf{I} \mathbf{A} = \mathbf{A}\)</span> holds true.</li>
+<li>Similarly, considering <span class="math inline">\(\mathbf{A} \mathbf{I}\)</span> and applying column decomposition, the columns of <span class="math inline">\(\mathbf{A}\)</span> are multiplied by the column vectors of <span class="math inline">\(\mathbf{I}\)</span> (standard unit vectors), resulting in the corresponding columns of <span class="math inline">\(\mathbf{A}\)</span>.</li>
+<li>Therefore, <span class="math inline">\(\mathbf{A} \mathbf{I} = \mathbf{A}\)</span> holds true.</li>
+</ul></li>
+<li>The product of any matrix and its corresponding inverse is an identity matrix: <span class="math inline">\(\mathbf{A} \mathbf{A}^{-1} = \mathbf{A}^{-1} \mathbf{A} = \mathbf{I}\)</span>.</li>
+<li>The determinant of an identity matrix is 1: <span class="math inline">\(\det(\mathbf{I}) = 1\)</span>.</li>
+<li>An identity matrix is symmetric: <span class="math inline">\(\mathbf{I} = \mathbf{I}^T\)</span>.</li>
+</ul>
+</section>
+</section>
 </div>
 
 

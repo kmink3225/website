@@ -31,286 +31,592 @@ draft: False
 
 <div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
 
-::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+# Dataset을 이용한 Dag 트리거
 
-# Jinja Template
+## Dataset의 필요성
 
-* 문서(파일)에서 특정 양식으로 작성된 값을 런타임시 실제 값으로 치환해주는 처리 엔진
-* 템플릿 엔진은 여러 솔루션이 존재하며 그 중 Jinja 템플릿은 파이썬 언어에서 사용하는 엔진
+* case 1
 
-    ```markdown
-    from jinja2 import Template
+:::: {.columns}
 
-    template = Template('my name is {{name}}')
-    new_template = template.render('name=hjkim')
-    print(new_template)
-    ```
-
-* Jinja 템플릿, 어디서 쓰이나?
-    - 파이썬 기반 웹 프레임워크인 Flask, Django에서 주로 사용
-    (주로 HTML 템플릿 저장 후 화면에 보여질 때 실제 값으로 변환해서 출력)
-    - SQL작성시에도 활용 가능
-
-## Airflow에서 사용법
-
-* 오퍼레이터 파라미터 입력시 중괄호 {} 2개를 이용하면 Airflow에서 기본적으로 제공하는 변수들을 치환된 값으로 입력할 수 있음. (ex: 수행 날짜, DAG_ID)
-    - https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html
-* 모든 오퍼레이터, 모든 파라미터에 Template 변수 적용이 가능한가? No!
-* Airflow 문서에서 어떤 파라미터에 Template 변수 적용 가능한지 확인 필요
-    - https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/index.html
-
-# BashOperator with Template
-
-## BashOperator
-
-* Bash 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?
-* 파라미터
-    * bash_command (str)
-    * env (dict[str, str] | None)
-    * append_env (bool)
-    * output_encoding (str)
-    * skip_exit_code (int)
-    * cwd (str | None)
-* https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/bash/index.html
-
-
-```markdown
-bash_t1 = BashOperator(
-    task_id='bash_t1',
-    bash_command='echo "End date is {{ data_interval_end }}"'
-)
-bash_t2 = BashOperator(
-    task_id='bash_t2',
-    env={'START_DATE': '{{ data_interval_start | ds}}','END_DATE':'{{ data_interval_end | ds }}'},
-    bash_command='echo "Start date is $START_DATE " && ''echo "End date is $END_DATE"'
-)
-
+::: {.column width="50%"}
+```{dot}
+digraph G {
+  compound=true;
+  rankdir=LR;
+  subgraph cluster0 {
+    rankdir=TB;
+    task_1 [shape=box];
+    task_3 [shape=box];
+    label= "DAG A";
+  }
+  task_1 -> task_3;
+  
+  subgraph cluster1 {
+    rankdir=TB;
+    task_k [shape=box];
+   label= "DAG B";
+ }
+}
 ```
 
-# Airflow Date
+* 위의 경우를 Task_1 뿐만 아니라 DAG_B의 task_k 에도 선행 의존관계가 걸리도록 External Task 센서를 하나 달도록 개선
+:::
 
-## 데이터 추출 예시
+::: {.column width="50%"}
+```{dot}
+digraph G {
+  compound=true;
+  rankdir=LR;
+  subgraph cluster0 {
+    rankdir=TB;
+    task_1 [shape=box];
+    label= "DAG A";
+  }
+  
+  subgraph cluster1 {
+    rankdir=TB;
+    Sensor_task_1 [shape=box];
+    Sensor_task_2 [shape=box];
+    task_x [shape=box];
+   label= "DAG C";
+ }
+ subgraph cluster2 {
+    rankdir=TB;
+    task_k [shape=box];
+   label= "DAG B";
+ }
 
-* Daily ETL 처리를 위한 조회 쿼리(2023/02/25 0시 실행)
-* example: 등록 테이블
+ Sensor_task_1-> task_x;
+ Sensor_task_2-> task_x;
+ Sensor_task_1-> task_1[label="sensing", style="dashed"];
+ Sensor_task_2-> task_k[label="sensing", style="dashed"];
 
-|REG_DATE|NAME|ADDRESS|
-|-----|:-:|:-:|
-|2023-02-24 15:34:35|홍길동|Busan|
-|2023-02-24 19:14:42|김태희|Seoul|
-|2023-02-24 23:52:19|조인성|Daejeon|
-
-```markdown
-SELECT NAME, ADDRESS
-FROM TBL_REG
-WHERE REG_DATE BETWEEN TIMESTAMP('2023-02-24 00:00:00')
-AND TIMESTAMP('2023-02-24 23:59:59')
-```
-데이터 관점의 시작일: 2023-02-24
-데이터 관점의 종료일: 2023-02-25
-
-
-## Airflow 날짜 Template 변수
-
-* 예시: 일 배치
-    * ex. 2023-02-24 이전 배치일 (논리적 기준일)
-        * = data_interval_start
-        * = dag_run.logical_date
-        * = ds (yyyy-mm-dd 형식)
-        * = ts (타임스탬프)
-        * = execution_date (과거버전)
-    * ex. 2023-02-25 배치일
-        * = data_interval_end
-        * = 
-        * = 
-        * = 
-        * = next_execution_date (과거버전)
-
-# Python Operator with Template
-
-## Python 오퍼레이터에서 Template 변수 사용
-
-* Python 오퍼레이터는 어떤 파라미터에 Template을 쓸 수 있는가?
-* 파라미터
-    * python_callable
-    * op_kwargs
-    * op_args
-    * templates_dict
-    * templates_exts
-    * show_return_value_in_logs
-* https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html
-
-    ```markdown
-    def python_function1(start_date, end_date, **kwargs):
-        print(start_date)
-        print(end_date)
-
-    python_t1 = PythonOperator(
-        task_id='python_t1',
-        python_callable=python_function,
-        op_kwargs={'start_date':'{{data_interval_start | ds}}', 'end_date':'{{data_interval_end | ds}}'}
-    )
-    ```
-
-* 파이썬 오퍼레이터는 **kwargs에 Template 변수들을 자동으로 제공해주고 있음
-
-    ```markdown
-    @task(task_id='python_t2')
-    def python_function2(**kwargs):
-        print(kwargs)
-        print('ds:' + kwargs['ds'])
-        print('ts:' + str(kwargs['ts']))
-        print('data_interval_start:' + str(kwargs['data_interval_start']))
-        print('data_interval_end:' + str(kwargs['data_interval_end']))
-        print('task_instance': + str(kwargs['ti']))
-    python_function2()
-    ```
-
-# Bash Operator with Macro
-
-## Macro 변수의 이해
-
-* Macro 변수의 필요성
-
-    ```markdown
-    sql = f'''
-    SELECT NAME, ADDRESS
-    FROM TBL_REG
-    WHERE REG_DATE BETWEEN ?? AND ??
-    '''
-    ```
-
-    DAG 스케줄은 매일 말일에 도는 스케줄인데
-    BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고
-    싶은데 어떻게 하지?
-    예를 들어
-    배치일이 1월 31일이면 12월 31일부터 1월 30일 까지
-    배치일이 2월 28일이면 1월 31일부터 2월 27일까지
-    BETWEEN 이 설정되었으면 좋겠어.
-    DAG 스케줄이 월 단위이니까
-    Template 변수에서 data_interval_start 값은 한달 전 말일
-    이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들지? 
-    data_interval_end 에서 하루 뺀 값이 나와야 하는데…
-
-* Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음
-
-    |Variable|Description|
-    |:--:|------|
-    |macros.datetime|The standard lib's datetime.datetime|
-    |macros.timedelta|The standard lib's datetime.timedelta|
-    |macros.dateutil|A reference to the dateutil package|
-    |macros.time|The standard lib's time|
-    |macros.uuid|The standard lib's uuid|
-    |macros.random|The standard lib's random|
-
-    * macros.datetime & macros.dateutil: 날짜 연산에 유용한 파이썬 라이브러리
-* Macro를 잘 쓰려면 파이썬 datetime 및 dateutil 라이브러리에 익숙해져야 함.
-
-## 파이썬 datetime + dateutil 라이브러리 이해
-
-```markdown
-from datetime import datetime
-from dateutil import relativedelta
-
-now = datetime(year=2003, month=3, day=30)
-print('current time:'+str(now))
-print('-------------month operation-------------')
-print(now+relativedelta.relativedelta(month=1)) # 1월로 변경
-print(now.replace(month=1)) # 1월로 변경
-print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기
-print('-------------day operation-------------')
-print(now+relativedelta.relativedelta(day=1)) #1일로 변경
-print(now.replace(day=1)) #1일로 변경
-print(now+relativedelta.relativedelta(days=-1)) #1일 빼기
-print('-------------multiple operations-------------')
-print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기
+}
 ```
 
-## Bash 오퍼레이터에서 Macro 변수 활용하기
+:::
 
-* 예시1. 매월 말일 수행되는 Dag에서 변수 START_DATE: 전월 말일, 변수 END_DATE: 어제로 env 셋팅하기
-* 예시2. 매월 둘째주 토요일에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기
-* 변수는 YYYY-MM-DD 형식으로 나오도록 할 것
+::::
 
-    ```markdown
-    t1 = BashOperator(
-        task_id='t1',
-        env={'START_DATE':''},
-    )
-    ```
+* case 2
 
-이 부분에 template + macro 활용
+:::: {.columns}
 
-# Python 오퍼레이터 with macro
+::: {.column width="50%"}
+```{dot}
+digraph G {
+  compound=true;
+  rankdir=LR;
+  subgraph cluster0 {
+    rankdir=TB;
+    task_1 [shape=box];
+    task_3 [shape=box];
+    task_4 [shape=box];
+    label= "DAG A";
+  }
+  task_1 -> task_3;
+  task_4
+  
+}
+```
 
-* 어떤 파라미터가 Template 변수를 지원할까?
-* 패러미터
-    * python_callable (Callable | None)
-    * op_kwargs
-    * op_args
-    * templates_dict
-    * templates_exts
-    * show_return_value_in_logs
-* https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/python/index.html#airflow.operators.python.PythonOperator
+* 위의 경우, Task_1이 완료되면 또 다른 dag 을 trigger 되고 싶은데 DAG A 를 수정해야할 경우
+:::
 
-    ```markdown
-    @task(task_id='task_using_macros',
-        templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")
-    + macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',
-    'end_date': '{{
-    (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +
-    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'
-        }
+::: {.column width="50%"}
+```{dot}
+digraph G {
+  compound=true;
+  rankdir=LR;
+  
+  subgraph cluster {
+    rankdir=TB;
+    task_1 [shape=box];
+    task_3 [shape=box];
+    task_4 [shape=box];
+   label= "DAG A";
+ }
+    task_1 -> task_3;
+    task_1 -> task_4;
+}
+```
+
+:::
+
+::::
+
+* TriggerDagRun 오퍼레이터와 ExternalTask 센서를 많이 사용하다보면 연결관리 에 많은 노력이 필요 (강한 연결)
+
+```{dot}
+digraph G {
+  compound=true;
+  rankdir=LR;
+  
+  subgraph cluster {
+    rankdir=TB;
+    DAG_A [shape=box];
+    DAG_B [shape=box];
+    DAG_C [shape=box];
+    DAG_D [shape=box];
+    DAG_E [shape=box];
+    DAG_G [shape=box];
+   label= "DAG Flow";
+ }
+    DAG_A -> DAG_B;
+    DAG_A -> DAG_C;
+    DAG_D -> DAG_C[style="dashed"];
+    DAG_D -> DAG_E[style="dashed"];
+    DAG_E -> DAG_G[style="dashed"];
+}
+```
+
+* 큐시스템과 같이 Job 수행이 완료된 Task 는 Push 하고 센싱이 필요한 task 은 큐 시스템을 구독하는 방식을 쓴다면 ? (약한 연결)
+
+```{dot}
+digraph G {
+  compound=true;
+  rankdir=LR;
+  
+  subgraph cluster {
+    rankdir=TB;
+    DAG_A [shape=box];
+    DAG_B [shape=box];
+    DAG_C [shape=box];
+    DAG_D [shape=box];
+    DAG_E [shape=box];
+    DAG_G [shape=box];
+    Queue [shape=cylinder];
+   label= "DAG Flow";
+ }
+    DAG_A -> Queue;
+    DAG_D -> Queue;
+    Queue -> DAG_B;
+    Queue -> DAG_C;
+    Queue -> DAG_E;
+    
+}
+```
+
+* Produce / Consume 구조를 이용하여 Task 완료를 알리기 위해 특정 키 값으로 Produce 하고 해당 키를 Consume 하는 DAG 을 트리거 스케줄 할 수 있는 기능
+    * 실제 큐가 있는 것은 아니고 DB 에 Produce / Consume 내역을 기록
+
+## 정리
+
+* Dataset 은 Pub/sub 구조로 DAG 간 의존관계를 주는 방법
+* Unique 한 String 형태의 Key 값을 부여하여 Dataset Publish
+* Dataset 을 Consume 하는 DAG 은 스케줄을 별도로 주지 않고 리스트 형태로 구독할 Dataset 요소들을 명시
+* Dataset에 의해 시작된 DAG 의 Run_id 는 dataset_triggered__{trigger 된 시간 } 으로 표현됨
+* Airflow 화면 메뉴 중 Datasets 메뉴를 통해 별도로 Dataset 현황 모니터링 가능
+* N개의 Dataset 을 구독할 때 스케줄링 시점은 ?
+    * 마지막 수행 이후 N 개의 Dataset 이 모두 재 업데이트되는 시점
+    ![Trigger using dataset - N개의 dataset 구독](../../../../../images/airflow/dataset_trigger.PNG)
+
+# DAG의 default_args 파라미터
+
+## DAG 의 default_args 파라미터
+
+* 목적: DAG 하위 모든 오퍼레이터에 공통 적용될 파라미터를 입력
+* 어떤 파라미터들이 적용 가능할까?
+    * 오퍼레이터에 공통 적용할 수 있는 파라미터들
+    * BaseOperator 클래스 생성자가 가지고 있는 파라미터
+* [airflow doc](https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/baseoperator.html#BaseOperator)
+* Code 
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```markdown
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from datetime import timedelta
+import pendulum
+from airflow.models import Variable
+
+email_str = Variable.get("email_target")
+email_lst = [email.strip() for email in email_str.split(',')]
+
+with DAG(
+    dag_id='dags_sla_email_example',
+    start_date=pendulum.datetime(2023, 5, 1, tz='Asia/Seoul'),
+    schedule='*/10 * * * *',
+    catchup=False,
+) as dag:
+    
+    task_1 = BashOperator(
+        task_id='task_1',
+        bash_command='sleep 10m',
+        sla: timedelta(seconds=70), #SLA 설정
+        email: 'sdf@sdfsfd.com'
     )
     
-    def get_datetime_macro(**kwargs):
-        templates_dict = kwargs.get('templates_dict') or {}
-        if templates_dict:
-        start_date = templates_dict.get('start_date') or 'start_date없음'
-        end_date = templates_dict.get('end_date') or 'end_date없음'
-        print(start_date)
-        print(end_date)
-    ```
-* 그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 DAG안에서 직접 할 수 있다면?
-    * macro 사용
-    ```markdown
-    @task(task_id='task_using_macros',
-        templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',
-        'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +
-        macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'
-        }
+    task_2 = BashOperator(
+        task_id='task_2',
+        bash_command='sleep 2m',
+        sla: timedelta(seconds=70), #SLA 설정
+        email: 'sdf@sdfsfd.com'
     )
 
-    def get_datetime_macro(**kwargs):
-        templates_dict = kwargs.get('templates_dict') or {}
-        if templates_dict:
-            start_date = templates_dict.get('start_date') or 'start_date없음'
-            end_date = templates_dict.get('end_date') or 'end_date없음'
-            print(start_date)
-            print(end_date)
+   task_1 >> task_2
 
-    @task(task_id='task_direct_calc')
-    def get_datetime_calc(**kwargs):
-        from dateutil.relativedelta import relativedelta
-        data_interval_end = kwargs['data_interval_end']
-    ```
-
-    * 직접 연산
-
-    ```markdown
-    prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)
-    prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)
-    print(prev_month_day_first.strftime('%Y-%m-%d'))
-    print(prev_month_day_last.strftime('%Y-%m-%d'))
-    ```
+```
 :::
-</div>
+
+::: {.column width="50%"}
+
+```markdown
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from datetime import timedelta
+import pendulum
+from airflow.models import Variable
+
+email_str = Variable.get("email_target")
+email_lst = [email.strip() for email in email_str.split(',')]
+
+with DAG(
+    dag_id='dags_sla_email_example',
+    start_date=pendulum.datetime(2023, 5, 1, tz='Asia/Seoul'),
+    schedule='*/10 * * * *',
+    catchup=False,
+    default_args={
+        'sla': timedelta(seconds=70),
+        'email': 'sdf@sdfsfd.com'
+    }
+) as dag:
+    
+    task_1 = BashOperator(
+        task_id='task_1',
+        bash_command='sleep 10m'
+    )
+    
+    task_2 = BashOperator(
+        task_id='task_2',
+        bash_command='sleep 2m'
+    )
+
+   task_1 >> task_2
+
+```
+
+:::
+
+::::
+
+## BaseOperator 파라미터 vs Dag 파라미터
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+### DAG Parameter
+
+* DAG 파라미터는 DAG 단위로 적용될 파라미터
+* 개별 오퍼레이터에 적용되지 않음
+* DAG 파라미터는 default_args 에 전달하면 안됨
+
+:::
+
+::: {.column width="60%"}
+
+### BaseOperator Parameter
+
+* Base 오퍼레이터 파라미터는 개별 Task 단위로 적용될 파라미터.
+* Task 마다 선언해줄 수 있지만 DAG 하위 모든 오퍼레이터에 적용 필요시 default_args 를 통해 전달 가능
+:::
+
+::::
+
+* default_args 에 전달된 파라미터보다 개별 오퍼레이터에 선언된 파라미터가 우선순위를 가짐
+
+```markdown
+
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from datetime import timedelta
+import pendulum
+from airflow.models import Variable
+
+email_str = Variable.get("email_target")
+email_lst = [email.strip() for email in email_str.split(',')]
+
+with DAG(
+    dag_id='dags_sla_email_example',
+    start_date=pendulum.datetime(2023, 5, 1, tz='Asia/Seoul'),
+    schedule='*/10 * * * *',
+    catchup=False,
+    default_args={
+        'sla': timedelta(seconds=70),
+        'email': 'sdf@sdfsfd.com'
+    }
+) as dag:
+    
+    task_1 = BashOperator(
+        task_id='task_1',
+        bash_command='sleep 10m'
+    )
+    
+    task_2 = BashOperator(
+        task_id='task_2',
+        bash_command='sleep 2m',
+        sla=timedelta(minutes=1)
+    )
+
+   task_1 >> task_2
+
+```
+
+# Task 실패시 Email 발송하기
+
+## Email 발송 위한 파라미터 확인
+
+* [airflow doc](https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/baseoperator.html#BaseOperator)
+* email 파라미터와 email_on_failure 파라미터를 이용
+* email 파라미터만 입력하면 email_on_failure 파라미터는 True 로 자동설정됨
+
+## Email 발송 대상 등록
+
+```markdown
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from airflow.decorators import task
+from airflow.exceptions import AirflowException
+import pendulum
+from datetime import timedelta
+from airflow.models import Variable
+
+email_str = Variable.get("email_target")
+email_lst = [email.strip() for email in email_str.split(',')]
+
+with DAG(
+    dag_id='dags_email_on_failure',
+    start_date=pendulum.datetime(2023,5,1, tz='Asia/Seoul'),
+    catchup=False,
+    schedule='0 1 * * *',
+    dagrun_timeout=timedelta(minutes=2),
+    default_args={
+        'email_on_failure': True,
+        'email': email_lst
+    }
+) as dag:
+    @task(task_id='python_fail')
+    def python_task_func():
+        raise AirflowException('에러 발생')
+    python_task_func()
+
+    bash_fail = BashOperator(
+        task_id='bash_fail',
+        bash_command='exit 1',
+    )
+
+    bash_success = BashOperator(
+        task_id='bash_success',
+        bash_command='exit 0',
+    )
+
+```
+
+* Email 받을 대상이 1 명이면 string 형식으로 , 2 명 이상이면 list 로 전달
+* 그런데 협업 환경에서 DAG 담당자는 수시로 바뀔 수 있고 인원도 수시로 바뀔 수 있는데 그때마다 DAG 을 뒤져서 email 리스트를 수정해야 할까 ?
+* 이럴때 Variable 을 이용하자
+
+# SLA로 task 수행 감시 & Email 발송하기
+
+## SLA파라미터 이해
+
+* 개념: 오퍼레이터 수행시 정해놓은 시간을 초과하였는지를 판단할 수 있도록 설정해놓은 시간 값 파이썬의 timedelta 로 정의
+* 동작: 설정해놓은 SLA 를 초과하여 오퍼레이터 running 시 SLA Miss 발생 , Airflow UI 화면에서 Miss 건만 조회 가능 + email 발송 가능
+    * SLA Miss 발생시 task 가 실패되는 것은 아니며 단순 Miss 대상에 기록만 됨
+    * SLA 는 DAG 파라미터가 아니며 BaseOperator 의 파라미터
+* [airflow docs](https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/baseoperator.html#BaseOperator)
+* [SLA Miss시 수행할 함수 지정 가능-Source code for airflow.models.dag](https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/dag.html)
+    * sla_miss_callback 파라미터
+    * DAG의 파라미터임 (BaseOperator 의 파라미터가 아니라는 것에 유의)
+
+## SLA 제약사항
+
+* 각 Task 의 SLA timeout 카운트 시작은 DAG 의 시작시간 기준임
+
+:::: {.columns}
+
+::: {.column width="40%"}
+
+### 생각하는 SLA timeout 카운트 방식
+
+![](../../../../../images/airflow/SLA_timeout_count1.PNG)
+
+:::
+
+::: {.column width="60%"}
+
+### 실제 Airflow 의 SLA timeout 카운트 방식
+
+![](../../../../../images/airflow/SLA_timeout_count2.PNG)
+
+:::
+
+::::
+
+
+* DAG의 시작시간 기준 → 명목적인 시작 시간 (data_interval_start)
+    * 만약 Pool 이 부족하거나 스케줄러의 부하로 인해 DAG 이 스케줄보다 늦게 시작했다면 늦게 시작한만큼 SLA 시간 카운트는 소요됨
+    * 실질적 DAG 시작 시간을 기준으로 카운트하지 않음
+* 첫 스케줄에서는 SLA Miss 가 기록되지 않음 (두 번째 스케줄부터 기록)
+
+## SLA Miss 시 email 발송하기
+
+```markdown
+
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from datetime import timedelta
+import pendulum
+from airflow.models import Variable
+
+email_str = Variable.get("email_target")
+email_lst = [email.strip() for email in email_str.split(',')]
+
+with DAG(
+    dag_id='dags_sla_email_example',
+    start_date=pendulum.datetime(2023, 5, 1, tz='Asia/Seoul'),
+    schedule='*/10 * * * *',
+    catchup=False,
+    default_args={
+        'sla': timedelta(seconds=70),
+        'email': email_lst
+    }
+) as dag:
+    
+    task_slp_30s_sla_70s = BashOperator(
+        task_id='task_slp_30s_sla_70s',
+        bash_command='sleep 30'
+    )
+    
+    task_slp_60_sla_70s = BashOperator(
+        task_id='task_slp_60_sla_70s',
+        bash_command='sleep 60'
+    )
+
+    task_slp_10s_sla_70s = BashOperator(
+        task_id='task_slp_10s_sla_70s',
+        bash_command='sleep 10'
+    )
+
+    task_slp_10s_sla_30s = BashOperator(
+        task_id='task_slp_10s_sla_30s',
+        bash_command='sleep 10',
+        sla=timedelta(seconds=30)
+    )
+
+    task_slp_30s_sla_70s >> task_slp_60_sla_70s >> task_slp_10s_sla_70s >> task_slp_10s_sla_30s
+
+```
+
+# timeout 설정하기
+
+## Timeout 파라미터 이해
+
+* Task수준의 timeout 과 DAG 수준의 timeout 이 존재
+* [Task수준의 timeout 파라미터](https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/baseoperator.html#BaseOperator) : execution_timeout
+* [DAG수준의 timeout 파라미터](https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/dag.html) : dagrun_timeout
+* task1 >> task2 >> task3 예시
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+### execution_timeout
+
+![](../../../../../images/airflow/execution_timeout1.PNG)
+:::
+
+::: {.column width="50%"}
+
+### datgrun_timeout
+
+![](../../../../../images/airflow/dagrun_timeout.PNG)
+:::
+
+::::
+
+## 정리
+
+| Comparision       | sla               | execution_timeout | dagrun_timeout    |
+|-------------------|-------------------|-------------------|-------------------|
+| 파라미터 정의 위치 | BaseOperator      | BaseOperator    | DAG    |
+| 적용 수준          | Task              | task    | DAG    |
+| 기능    | 지정한 시간 초과시 Miss 기록  | 지정한 시간 초과시 task fail 처리 | 지정한 시간 초과시 DAG fail 처리    |
+| email 발송 가능 여부| O                | O    | X    |
+| timeout 발생시 후행 task 상태 | 상관없이 지속 | Upstream_failed    | Skipped (current) /No status (not run)    |
+| 스케쥴 필요       | O                  | X    | X    |
+ 
+* 공통점: 파이썬의 timedelta 함수로 timeout 기준 시간 정의  
+
+# Airflow CLI 사용하기
+
+* Airflow가 설치되어 있는 서버에서 쉘 명령을 이용하여 Airflow를 컨트롤 할 수 있도록 많은 기능들을 제공하고 있음
+* [airflow cli doc](https://airflow.apache.org/docs/apache-airflow/stable/cli-and-env-variables-ref.html)
+* Cli를 잘 쓰면 좋은 이유
+    * 일괄작업: Airflow UI에서 할 수 없는 일괄 작업 방식을 제공(ex: connection 일괄 등록)
+    * 특수기능: Airflow UI에서는 할 수 없는 기능을 제공(ex: backfill)
+    * 자동화: Airflow UI에서 직접 눈으로 보고 클릭하는 방식이 아닌 프로그래밍에 의한 제어가 가능해짐
+
+## cli - dag trigger
+
+* manual 로 dag trigger 하거나 run_id 를 직접 넣어 trigger 할 수 있는 기능
+
+    ![CLI-Dag Trigger](../../.././../../images/airflow/cli_dag_trigger.PNG)
+
+    * `#> airflow dags trigger dags_seoul_api_corona`
+
+## cli - dag backfill
+
+* 입력 스케줄 구간에 대해 일괄 (재)실행 (스케줄 이력이 없는 과거 날짜도 가능)
+![CLI-Dag backfill](../../.././../../images/airflow/cli_dag_balckfill.PNG)
+
+```markdown
+#> airflow dags backfill -s 2023-04-19 -e 2023-04-21 dags_seoul_api_corona
+# start, end 파라미터를 dash string 형태로 입력하면 UTC로 간주되며 타임스탬프 형태로 직접 작성도 가능 (run_id에서 해당하는 날짜 구간을 찾아 실행)
+#> airflow dags backfill -s 2023-04-19T22:00:00+00:00 -e 2023-04-20T22:00:00+00:00 —
+reset-dagruns dags_seoul_api_corona
+```
+
+## cli - task clear
+
+* Clear 작업을 start / end 구간으로 일괄 재실행
+* Backfill과 달리 수행되지 않은 스케줄 구간은 실행할 수 없음
+![CLI-Task Clear](../../../../../images/airflow/cli_task_cleaner.PNG)
+
+```markdown
+#> airflow tasks clear -s 2023-05-07 -e 2023-05-12 dags_seoul_api_corona
+#> airflow tasks clear -s 2023-05-07T22:00:00+00:00 -e 2023-05-12T22:00:00+00:00
+dags_seoul_api_corona
+
+```
+* Backfill되었던 DAG은 clear 불가함. reset-dagruns 옵션과 함께 다시 Backfill 수행해야 함
+
+## 정리
+
+| Comparision       | trigger               | backfill | clear    |
+|-------------------|-------------------|-------------------|-------------------|
+| 목적 | 특정 날짜로 DAG Trigger      | Start ~ end 구간의 스케줄 실행    | Start ~ end 구간 내 이미 수
+행되었던 스케줄 재실행   |
+| Run type          | -r 옵션으로 지정 가능. 없으면 Manual | Backfill    | 원래의 run_type    |
+| 기 수행된 run_id가 존재하는 경우  | 동일 run_id 가 존재하는 경우 에러 발생  | Run_type 을 Backfill 로 덮어쓰며
+재실행 | 재실행   |
+| 구간 지정| 불가              | 가능    | 가능    |
+| 과거 날짜 적용 가능 | 가능   | 가능    | 불가 |
+| task 선택 가능    | 불가     | 가능    | 가능    |
+
+* 공통점: CLI 명령으로 DAG 실행 가능
+ 
+
+
+</div> 
 
 <div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
 
-::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
-
-:::
 
 
 </div>

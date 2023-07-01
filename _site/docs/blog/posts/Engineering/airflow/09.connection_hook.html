@@ -174,7 +174,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link active" data-scroll-target="#go-to-blog-content-list"><span class="header-section-number">8</span> Go to Blog Content List</a></li>
+  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link active" data-scroll-target="#go-to-blog-content-list"><span class="header-section-number">7</span> Go to Blog Content List</a></li>
   </ul>
 </nav>
     </div>
@@ -232,7 +232,6 @@ English
 </li>
 <div class="tab-content" id="language-tabcontent">
 
-<div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
 <section id="goal" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Goal</h1>
@@ -400,308 +399,488 @@ English
 </ol></li>
 </ul></li>
 </ul>
-<section id="airflow에서-사용법" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="airflow에서-사용법"><span class="header-section-number">2.1</span> Airflow에서 사용법</h2>
+</section>
+<section id="postgres-컨테이너-올리기" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Postgres 컨테이너 올리기</h1>
+<section id="postgress-컨테이너-추가하기" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="postgress-컨테이너-추가하기"><span class="header-section-number">3.1</span> Postgress 컨테이너 추가하기</h2>
 <ul>
-<li>오퍼레이터 파라미터 입력시 중괄호 {} 2개를 이용하면 Airflow에서 기본적으로 제공하는 변수들을 치환된 값으로 입력할 수 있음. (ex: 수행 날짜, DAG_ID)
+<li>postgres_custom 이라는 이름의 컨테이너 서비스 추가하기</li>
+</ul>
+</section>
+<section id="컨테이너-고정-ip-할당하기" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="컨테이너-고정-ip-할당하기"><span class="header-section-number">3.2</span> 컨테이너 고정 IP 할당하기</h2>
 <ul>
-<li>https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html</li>
-</ul></li>
-<li>모든 오퍼레이터, 모든 파라미터에 Template 변수 적용이 가능한가? No!</li>
-<li>Airflow 문서에서 어떤 파라미터에 Template 변수 적용 가능한지 확인 필요
+<li><p>기본적으로 컨테이너들은 유동 IP를 지니며 (재기동시 IP 변경 가능)</p></li>
+<li><p>고정 IP를 할당하려면 networks를 만들어 할당해야 함.</p></li>
+<li><p>networks 를 지정하지 않은 컨테이너들(airflow를 설치하면서 기본적으로 설치되는 containers)은 default network에 묶이게 됨</p></li>
+<li><p>따라서 동일 네트워크에 두고 싶은 컨테이너들은 모두 동일 netwworks 할당 필요</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="an">services:</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  postgres_custom:</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    image: postgres:13</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    environment:</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      POSTGRES_USER: kmkim</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      POSTGRES_PASSWORD: kmkim</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      POSTGRES_DB: kmkim</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      TZ: Asia/Seoul</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    volumes:</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="ss">      - </span>postgres-custom-db-volume:/var/lib/postgresql/data</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    ports:</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="ss">      - </span>5432:5432</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    networks:</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      network_custom: # 밑에서 정의한 network_custom 을 쓰겠다는 의미</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        ipv4_address: 172.28.0.3 # 할당된 IP</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>networks:</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  network_custom: </span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    driver: bridge</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    ipam:</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        driver: default</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        config:</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="ss">            - </span>subnet: 172.28.0.0/16 # 네트 워크 ID 주소 밑에 16개/host id 주소 밑에 16개를 할당하겠다는 의미</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>              gateway: 172.28.0.1 # default 네트워크 (172.18.0.0)가 쓰고 있지 않은 서브넷으로 구성</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>volumes:</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  postgres-db-volume:</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  postgres-custom-db-volume:</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>Postgres_custom 컨테이너 뿐만 아니라 다른 컨테이너에도 network_custom 할당하고 IP 부여</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="an">postgres_custom:</span><span class="co">  # 172.28.0.3</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="an">postgres:</span><span class="co">  # 172.28.0.3 +  포트 노출 설정:(5431:5432)</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="an">redis:</span><span class="co"> # 172.28.0.5</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="an">airflow-webserver:</span><span class="co"> # 172.28.0.6</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="an">airflow-scheduler:</span><span class="co"> # 172.28.0.7</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="an">airflow-worker:</span><span class="co"> # 172.28.0.8</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="an">airflow-triggerer:</span><span class="co"> # 172.28.0.9</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="an">airflow-init:</span><span class="co"> # 172.28.0.10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
-<li>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/index.html</li>
+<li>postgres: # airflow가 기본 메타DB로 쓰고 있는 postgress 컨테이너에 포트 번호 5431로 노출</li>
 </ul></li>
 </ul>
 </section>
-</section>
-<section id="bashoperator-with-template" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> BashOperator with Template</h1>
-<section id="bashoperator" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="bashoperator"><span class="header-section-number">3.1</span> BashOperator</h2>
+<section id="db-접속하기" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="db-접속하기"><span class="header-section-number">3.3</span> DB 접속하기</h2>
 <ul>
-<li>Bash 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?</li>
-<li>파라미터
-<ul>
-<li>bash_command (str)</li>
-<li>env (dict[str, str] | None)</li>
-<li>append_env (bool)</li>
-<li>output_encoding (str)</li>
-<li>skip_exit_code (int)</li>
-<li>cwd (str | None)</li>
-</ul></li>
-<li>https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/bash/index.html</li>
-</ul>
-<div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>bash_t1 = BashOperator(</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    task_id='bash_t1',</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    bash_command='echo "End date is {{ data_interval_end }}"'</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>bash_t2 = BashOperator(</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    task_id='bash_t2',</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    env={'START_DATE': '{{ data_interval_start | ds}}','END_DATE':'{{ data_interval_end | ds }}'},</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    bash_command='echo "Start date is $START_DATE " &amp;&amp; ''echo "End date is $END_DATE"'</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-</section>
-<section id="airflow-date" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Airflow Date</h1>
-<section id="데이터-추출-예시" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="데이터-추출-예시"><span class="header-section-number">4.1</span> 데이터 추출 예시</h2>
-<ul>
-<li>Daily ETL 처리를 위한 조회 쿼리(2023/02/25 0시 실행)</li>
-<li>example: 등록 테이블</li>
-</ul>
-<table class="table">
-<thead>
-<tr class="header">
-<th>REG_DATE</th>
-<th style="text-align: center;">NAME</th>
-<th style="text-align: center;">ADDRESS</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>2023-02-24 15:34:35</td>
-<td style="text-align: center;">홍길동</td>
-<td style="text-align: center;">Busan</td>
-</tr>
-<tr class="even">
-<td>2023-02-24 19:14:42</td>
-<td style="text-align: center;">김태희</td>
-<td style="text-align: center;">Seoul</td>
-</tr>
-<tr class="odd">
-<td>2023-02-24 23:52:19</td>
-<td style="text-align: center;">조인성</td>
-<td style="text-align: center;">Daejeon</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>SELECT NAME, ADDRESS</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>FROM TBL_REG</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>WHERE REG_DATE BETWEEN TIMESTAMP('2023-02-24 00:00:00')</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>AND TIMESTAMP('2023-02-24 23:59:59')</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>데이터 관점의 시작일: 2023-02-24 데이터 관점의 종료일: 2023-02-25</p>
-</section>
-<section id="airflow-날짜-template-변수" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="airflow-날짜-template-변수"><span class="header-section-number">4.2</span> Airflow 날짜 Template 변수</h2>
-<ul>
-<li>예시: 일 배치
-<ul>
-<li>ex. 2023-02-24 이전 배치일 (논리적 기준일)
-<ul>
-<li>= data_interval_start</li>
-<li>= dag_run.logical_date</li>
-<li>= ds (yyyy-mm-dd 형식)</li>
-<li>= ts (타임스탬프)</li>
-<li>= execution_date (과거버전)</li>
-</ul></li>
-<li>ex. 2023-02-25 배치일
-<ul>
-<li>= data_interval_end</li>
-<li>=</li>
-<li>=</li>
-<li>=</li>
-<li>= next_execution_date (과거버전)</li>
-</ul></li>
-</ul></li>
+<li>Dbeaver: 설치 https://dbeaver.io/</li>
 </ul>
 </section>
 </section>
-<section id="python-operator-with-template" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Python Operator with Template</h1>
-<section id="python-오퍼레이터에서-template-변수-사용" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="python-오퍼레이터에서-template-변수-사용"><span class="header-section-number">5.1</span> Python 오퍼레이터에서 Template 변수 사용</h2>
-<ul>
-<li><p>Python 오퍼레이터는 어떤 파라미터에 Template을 쓸 수 있는가?</p></li>
-<li><p>파라미터</p>
-<ul>
-<li>python_callable</li>
-<li>op_kwargs</li>
-<li>op_args</li>
-<li>templates_dict</li>
-<li>templates_exts</li>
-<li>show_return_value_in_logs</li>
-</ul></li>
-<li><p>https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>def python_function1(start_date, end_date, **kwargs):</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    print(start_date)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    print(end_date)</span>
+<section id="postgres에-데이터-insert" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Postgres에 데이터 insert</h1>
+<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.python import PythonOperator</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>python_t1 = PythonOperator(</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    task_id='python_t1',</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    python_callable=python_function,</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    op_kwargs={'start_date':'{{data_interval_start | ds}}', 'end_date':'{{data_interval_end | ds}}'}</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p>파이썬 오퍼레이터는 **kwargs에 Template 변수들을 자동으로 제공해주고 있음</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='python_t2')</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>def python_function2(**kwargs):</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    print(kwargs)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    print('ds:' + kwargs<span class="co">[</span><span class="ot">'ds'</span><span class="co">]</span>)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    print('ts:' + str(kwargs<span class="co">[</span><span class="ot">'ts'</span><span class="co">]</span>))</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    print('data_interval_start:' + str(kwargs<span class="co">[</span><span class="ot">'data_interval_start'</span><span class="co">]</span>))</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    print('data_interval_end:' + str(kwargs<span class="co">[</span><span class="ot">'data_interval_end'</span><span class="co">]</span>))</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    print('task_instance': + str(kwargs<span class="co">[</span><span class="ot">'ti'</span><span class="co">]</span>))</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>python_function2()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    dag_id='dags_python_with_postgres',</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023,4,1, tz='Asia/Seoul'),</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    schedule=None,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    catchup=False</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="in">    def insrt_postgres(ip, port, dbname, user, passwd, **kwargs):</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="in">        import psycopg2</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="in">        from contextlib import closing</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="in">        with closing(psycopg2.connect(host=ip, dbname=dbname, user=user, password=passwd, port=int(port))) as conn:</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="in">            with closing(conn.cursor()) as cursor:</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="in">                dag_id = kwargs.get('ti').dag_id</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="in">                task_id = kwargs.get('ti').task_id</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="in">                run_id = kwargs.get('ti').run_id</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="in">                msg = 'insrt 수행'</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="in">                sql = 'insert into py_opr_drct_insrt values (%s,%s,%s,%s);'</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="in">                cursor.execute(sql,(dag_id,task_id,run_id,msg))</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="in">                conn.commit()</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres = PythonOperator(</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='insrt_postgres',</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=insrt_postgres,</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="in">        op_args=['172.28.0.3', '5432', 'hjkim', 'hjkim', 'hjkim']</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="in">        </span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="문제점-및-해결방법" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="문제점-및-해결방법"><span class="header-section-number">4.1</span> 문제점 및 해결방법</h2>
+<ul>
+<li>문제점
+<ul>
+<li>접속정보 노출: postgres DB에 대한 User, Password 등</li>
+<li>접속정보 변경시 대응 어려움
+<ul>
+<li>만약 직접 접속하는 DAG이 수백개라면?</li>
+</ul></li>
+</ul></li>
+<li>해결 방법
+<ul>
+<li>Variable 이용 (User, Password 등을 Variable에 등록하고 꺼내오기)</li>
+<li>Hook 이용 (Variable 등록 필요없음)</li>
+</ul></li>
 </ul>
 </section>
-</section>
-<section id="bash-operator-with-macro" class="level1" data-number="6">
-<h1 data-number="6"><span class="header-section-number">6</span> Bash Operator with Macro</h1>
-<section id="macro-변수의-이해" class="level2" data-number="6.1">
-<h2 data-number="6.1" class="anchored" data-anchor-id="macro-변수의-이해"><span class="header-section-number">6.1</span> Macro 변수의 이해</h2>
+<section id="connection과-hook" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="connection과-hook"><span class="header-section-number">4.2</span> Connection과 Hook</h2>
 <ul>
-<li><p>Macro 변수의 필요성</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>sql = f'''</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>SELECT NAME, ADDRESS</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>FROM TBL_REG</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>WHERE REG_DATE BETWEEN ?? AND ??</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>'''</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>DAG 스케줄은 매일 말일에 도는 스케줄인데 BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고 싶은데 어떻게 하지? 예를 들어 배치일이 1월 31일이면 12월 31일부터 1월 30일 까지 배치일이 2월 28일이면 1월 31일부터 2월 27일까지 BETWEEN 이 설정되었으면 좋겠어. DAG 스케줄이 월 단위이니까 Template 변수에서 data_interval_start 값은 한달 전 말일 이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들지? data_interval_end 에서 하루 뺀 값이 나와야 하는데…</p></li>
-<li><p>Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음</p>
+<li>Connection
+<ul>
+<li>Airflow UI 화면에서 등록한 커넥션 정보</li>
+</ul></li>
+<li>Hook의 개념
+<ul>
+<li>Airflow에서 외부 솔루션의 기능을 사용할 수 있도록 미리 구현된 메서드를 가진 클래스</li>
+</ul></li>
+<li>Hook의 특징
+<ul>
+<li>Connection 정보를 통해 생성되는 객체
+<ul>
+<li>접속정보를 Connection을 통해 받아오므로 접속정보가 코드상 노출되지 않음</li>
+</ul></li>
+<li>특정 솔루션을 다룰 수 있는 메서드가 구현되어 있음.</li>
+<li>오퍼레이터나 센서와는 달리 Hook은 task를 만들어내지 못하므로 Custom 오퍼레이터 안에서나 Python 오퍼레이터 내 함수에서 사용됨</li>
+</ul></li>
+</ul>
+</section>
+<section id="connection-등록" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="connection-등록"><span class="header-section-number">4.3</span> Connection 등록</h2>
 <table class="table">
 <thead>
 <tr class="header">
-<th style="text-align: center;">Variable</th>
-<th>Description</th>
+<th>Connection_id</th>
+<th style="text-align: left;">conn-db-postgres-custom</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: center;">macros.datetime</td>
-<td>The standard lib’s datetime.datetime</td>
+<td>Connection_type</td>
+<td style="text-align: left;">postgres</td>
 </tr>
 <tr class="even">
-<td style="text-align: center;">macros.timedelta</td>
-<td>The standard lib’s datetime.timedelta</td>
+<td>Host</td>
+<td style="text-align: left;">172.28.0.3</td>
 </tr>
 <tr class="odd">
-<td style="text-align: center;">macros.dateutil</td>
-<td>A reference to the dateutil package</td>
+<td>Schema</td>
+<td style="text-align: left;">kmkim</td>
 </tr>
 <tr class="even">
-<td style="text-align: center;">macros.time</td>
-<td>The standard lib’s time</td>
+<td>Login</td>
+<td style="text-align: left;">kmkim</td>
 </tr>
 <tr class="odd">
-<td style="text-align: center;">macros.uuid</td>
-<td>The standard lib’s uuid</td>
+<td>Password</td>
+<td style="text-align: left;">kmkim</td>
 </tr>
 <tr class="even">
-<td style="text-align: center;">macros.random</td>
-<td>The standard lib’s random</td>
+<td>Port</td>
+<td style="text-align: left;">5432</td>
 </tr>
 </tbody>
 </table>
-<ul>
-<li>macros.datetime &amp; macros.dateutil: 날짜 연산에 유용한 파이썬 라이브러리</li>
-</ul></li>
-<li><p>Macro를 잘 쓰려면 파이썬 datetime 및 dateutil 라이브러리에 익숙해져야 함.</p></li>
-</ul>
 </section>
-<section id="파이썬-datetime-dateutil-라이브러리-이해" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="파이썬-datetime-dateutil-라이브러리-이해"><span class="header-section-number">6.2</span> 파이썬 datetime + dateutil 라이브러리 이해</h2>
-<div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>from datetime import datetime</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>from dateutil import relativedelta</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>now = datetime(year=2003, month=3, day=30)</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>print('current time:'+str(now))</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>print('-------------month operation-------------')</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(month=1)) # 1월로 변경</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>print(now.replace(month=1)) # 1월로 변경</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>print('-------------day operation-------------')</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(day=1)) #1일로 변경</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>print(now.replace(day=1)) #1일로 변경</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(days=-1)) #1일 빼기</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>print('-------------multiple operations-------------')</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="bash-오퍼레이터에서-macro-변수-활용하기" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="bash-오퍼레이터에서-macro-변수-활용하기"><span class="header-section-number">6.3</span> Bash 오퍼레이터에서 Macro 변수 활용하기</h2>
+<section id="postgres-hook-명세-보기" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="postgres-hook-명세-보기"><span class="header-section-number">4.4</span> Postgres Hook 명세 보기</h2>
 <ul>
-<li><p>예시1. 매월 말일 수행되는 Dag에서 변수 START_DATE: 전월 말일, 변수 END_DATE: 어제로 env 셋팅하기</p></li>
-<li><p>예시2. 매월 둘째주 토요일에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기</p></li>
-<li><p>변수는 YYYY-MM-DD 형식으로 나오도록 할 것</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>t1 = BashOperator(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    task_id='t1',</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    env={'START_DATE':''},</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow-providers-postgres/5.4.0/_modules/airflow/providers/postgres/hooks/postgres.html#PostgresHook.get_conn">airflow web service &gt;&gt; Providers &gt;&gt; apache.airflow.providers.postgres &gt;&gt; Python API &gt;&gt; airflow.providers.postgres.hooks.postgres &gt;&gt; get_conn() &gt;&gt; [source] &gt;&gt; def get_conn(self)</a></li>
 </ul>
-<p>이 부분에 template + macro 활용</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>def get_conn(self) -&gt; connection:</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>        """Establishes a connection to a postgres database."""</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        conn_id = getattr(self, self.conn_name_attr)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        conn = deepcopy(self.connection or self.get_connection(conn_id))</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="in">        # check for authentication via AWS IAM</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="in">        if conn.extra_dejson.get("iam", False):</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="in">            conn.login, conn.password, conn.port = self.get_iam_token(conn)</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="in">        conn_args = dict(</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="in">            host=conn.host,</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="in">            user=conn.login,</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="in">            password=conn.password,</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="in">            dbname=self.database or conn.schema,</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="in">            port=conn.port,</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="in">        )</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="in">        raw_cursor = conn.extra_dejson.get("cursor", False)</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="in">        if raw_cursor:</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="in">            conn_args["cursor_factory"] = self._get_cursor(raw_cursor)</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="in">        for arg_name, arg_val in conn.extra_dejson.items():</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="in">            if arg_name not in [</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="in">                "iam",</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="in">                "redshift",</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="in">                "cursor",</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="in">                "cluster-identifier",</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a><span class="in">                "aws_conn_id",</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="in">            ]:</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="in">                conn_args[arg_name] = arg_val</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="in">        self.conn = psycopg2.connect(**conn_args)</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="in">        return self.conn</span></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-</section>
-<section id="python-오퍼레이터-with-macro" class="level1" data-number="7">
-<h1 data-number="7"><span class="header-section-number">7</span> Python 오퍼레이터 with macro</h1>
-<ul>
-<li><p>어떤 파라미터가 Template 변수를 지원할까?</p></li>
-<li><p>패러미터</p>
-<ul>
-<li>python_callable (Callable | None)</li>
-<li>op_kwargs</li>
-<li>op_args</li>
-<li>templates_dict</li>
-<li>templates_exts</li>
-<li>show_return_value_in_logs</li>
-</ul></li>
-<li><p>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/python/index.html#airflow.operators.python.PythonOperator</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='task_using_macros',</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>'end_date': '{{</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>(data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>def get_datetime_macro(**kwargs):</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    templates_dict = kwargs.get('templates_dict') or {}</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    if templates_dict:</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    start_date = templates_dict.get('start_date') or 'start_date없음'</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    end_date = templates_dict.get('end_date') or 'end_date없음'</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    print(start_date)</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    print(end_date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p>그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 DAG안에서 직접 할 수 있다면?</p>
-<ul>
-<li>macro 사용</li>
-</ul>
-<div class="sourceCode" id="cb14"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='task_using_macros',</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>def get_datetime_macro(**kwargs):</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    templates_dict = kwargs.get('templates_dict') or {}</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    if templates_dict:</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        start_date = templates_dict.get('start_date') or 'start_date없음'</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        end_date = templates_dict.get('end_date') or 'end_date없음'</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>        print(start_date)</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>        print(end_date)</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>@task(task_id='task_direct_calc')</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>def get_datetime_calc(**kwargs):</span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    from dateutil.relativedelta import relativedelta</span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    data_interval_end = kwargs<span class="co">[</span><span class="ot">'data_interval_end'</span><span class="co">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>직접 연산</li>
-</ul>
-<div class="sourceCode" id="cb15"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>print(prev_month_day_first.strftime('%Y-%m-%d'))</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>print(prev_month_day_last.strftime('%Y-%m-%d'))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-</ul>
-</section>
+<section id="hook-이용하여-postgres-insert" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="hook-이용하여-postgres-insert"><span class="header-section-number">4.5</span> Hook 이용하여 Postgres Insert</h2>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.python import PythonOperator</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    dag_id='dags_python_with_postgres',</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023,4,1, tz='Asia/Seoul'),</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    schedule=None,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    catchup=False</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="in">    def insrt_postgres(ip, port, dbname, user, passwd, **kwargs):</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="in">        import psycopg2</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="in">        from contextlib import closing</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="in">        with closing(psycopg2.connect(host=ip, dbname=dbname, user=user, password=passwd, port=int(port))) as conn:</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="in">            with closing(conn.cursor()) as cursor:</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="in">                dag_id = kwargs.get('ti').dag_id</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="in">                task_id = kwargs.get('ti').task_id</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="in">                run_id = kwargs.get('ti').run_id</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="in">                msg = 'insrt 수행'</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="in">                sql = 'insert into py_opr_drct_insrt values (%s,%s,%s,%s);'</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="in">                cursor.execute(sql,(dag_id,task_id,run_id,msg))</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="in">                conn.commit()</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres = PythonOperator(</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='insrt_postgres',</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=insrt_postgres,</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="in">        op_args=['172.28.0.3', '5432', 'hjkim', 'hjkim', 'hjkim']</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="in">        </span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column" style="width:50%;">
+<div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.python import PythonOperator</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        dag_id='dags_python_with_postgres_hook',</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        start_date=pendulum.datetime(2023, 4, 1, tz='Asia/Seoul'),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        schedule=None,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        catchup=False</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    def insrt_postgres(postgres_conn_id, **kwargs):</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        from airflow.providers.postgres.hooks.postgres import PostgresHook</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        from contextlib import closing</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="in">        postgres_hook = PostgresHook(postgres_conn_id)</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="in">        with closing(postgres_hook.get_conn()) as conn:</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="in">            with closing(conn.cursor()) as cursor:</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="in">                dag_id = kwargs.get('ti').dag_id</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="in">                task_id = kwargs.get('ti').task_id</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="in">                run_id = kwargs.get('ti').run_id</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="in">                msg = 'hook insrt 수행'</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="in">                sql = 'insert into py_opr_drct_insrt values (%s,%s,%s,%s);'</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="in">                cursor.execute(sql, (dag_id, task_id, run_id, msg))</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="in">                conn.commit()</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres_with_hook = PythonOperator(</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='insrt_postgres_with_hook',</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=insrt_postgres,</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="in">        op_kwargs={'postgres_conn_id':'conn-db-postgres-custom'}</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres_with_hook</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
+</section>
+</section>
+<section id="postgres-hook-으로-bulk_load-하기" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Postgres Hook 으로 bulk_load 하기</h1>
+<section id="postgres-hook-명세-보기-1" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="postgres-hook-명세-보기-1"><span class="header-section-number">5.1</span> Postgres Hook 명세 보기</h2>
+<ul>
+<li><a href="https://airflow.apache.org/docs/apache-airflow-providers-postgres/5.4.0/_modules/airflow/providers/postgres/hooks/postgres.html#PostgresHook.get_conn">airflow web service &gt;&gt; Providers &gt;&gt; apache.airflow.providers.postgres &gt;&gt; Python API &gt;&gt; airflow.providers.postgres.hooks.postgres &gt;&gt; get_conn() &gt;&gt; [source] &gt;&gt; def bulg_load(self, temp_file)[source],def bulk_dump(self, table: str, tmp_file: str),def copy_expert(self, sql: str, filename: str)</a></li>
+</ul>
+<div class="sourceCode" id="cb12"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">docs</span><span class="co">]</span>    def bulk_load(self, table: str, tmp_file: str) -&gt; None:</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>        """Loads a tab-delimited file into a database table"""</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>        self.copy_expert(f"COPY {table} FROM STDIN", tmp_file)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">docs</span><span class="co">]</span>    def bulk_dump(self, table: str, tmp_file: str) -&gt; None:</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        """Dumps a database table into a tab-delimited file"""</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        self.copy_expert(f"COPY {table} TO STDOUT", tmp_file)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">docs</span><span class="co">]</span>    def copy_expert(self, sql: str, filename: str) -&gt; None:</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        """</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        Executes SQL using psycopg2 copy_expert method.</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        Necessary to execute COPY command without access to a superuser.</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="in">        Note: if this method is called with a "COPY FROM" statement and</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="in">        the specified input file does not exist, it creates an empty</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="in">        file and no data is loaded, but the operation succeeds.</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="in">        So if users want to be aware when the input file does not exist,</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="in">        they have to check its existence by themselves.</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="in">        """</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="in">        self.log.info("Running copy expert: %s, filename: %s", sql, filename)</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="in">        if not os.path.isfile(filename):</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="in">            with open(filename, "w"):</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="in">                pass</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="in">        with open(filename, "r+") as file:</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="in">            with closing(self.get_conn()) as conn:</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="in">                with closing(conn.cursor()) as cur:</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="in">                    cur.copy_expert(sql, file)</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a><span class="in">                    file.truncate(file.tell())</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="in">                    conn.commit()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.python import PythonOperator</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>from hooks.custom_postgres_hook import CustomPostgresHook</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        dag_id='dags_python_with_custom_hook_bulk_load',</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        start_date=pendulum.datetime(2023, 4, 1, tz='Asia/Seoul'),</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        schedule='0 7 * * *',</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        catchup=False</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    def insrt_postgres(postgres_conn_id, tbl_nm, file_nm, **kwargs):</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>        custom_postgres_hook = CustomPostgresHook(postgres_conn_id=postgres_conn_id)</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        custom_postgres_hook.bulk_load(table_name=tbl_nm, file_name=file_nm, delimiter=',', is_header=True, is_replace=True)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres = PythonOperator(</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='insrt_postgres',</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=insrt_postgres,</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="in">        op_kwargs={'postgres_conn_id': 'conn-db-postgres-custom',</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="in">                   'tbl_nm':'TbCorona19CountStatus_bulk2',</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="in">                   'file_nm':'/opt/airflow/files/TbCorona19CountStatus/{{data_interval_end.in_timezone("Asia/Seoul") | ds_nodash}}/TbCorona19CountStatus.csv'}</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="bulk_load-문제점-개선방안" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="bulk_load-문제점-개선방안"><span class="header-section-number">5.2</span> Bulk_load 문제점 &amp; 개선방안</h2>
+<ul>
+<li>문제점
+<ul>
+<li>Load 가능한 Delimiter는 Tab으로 고정되어 있음</li>
+<li>Header까지 포함해서 업로드됨</li>
+<li>특수문자로 인해 파싱이 안될 경우 에러 발생</li>
+</ul></li>
+<li>개선방안
+<ul>
+<li>Custom Hook 을 만들어서 Delimiter 유형을 입력받게 하고</li>
+<li>Header 여부를 선택하게끔 하며</li>
+<li>특수문자를 제거하는 로직을 추가 후</li>
+<li>sqlalchemy를 이용하여 Load 한다면? 그리고 테이블을 생성하면서 업로드할 수 있다면?</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="custom-hook-으로-bulk_load-하기" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Custom Hook 으로 bulk_load 하기</h1>
+<section id="basehook-명세-보기" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="basehook-명세-보기"><span class="header-section-number">6.1</span> BaseHook 명세 보기</h2>
+<ul>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/hooks/base/index.html#airflow.hooks.base.BaseHook.get_connection_form_widgets">Airflow Docs</a></li>
+</ul>
+</section>
+<section id="custom-hook-개발" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="custom-hook-개발"><span class="header-section-number">6.2</span> Custom Hook 개발</h2>
+<ul>
+<li>해야할 일
+<ul>
+<li>get_conn 메서드 구현하기
+<ul>
+<li>DB 와의 연결 세션 객체인 conn 을 리턴하도록 구현
+<ul>
+<li>(Airflow 에서 등록한 Connection 정보를 담은 conn 이 아님)</li>
+<li>BaseHook 의 추상 메서드 , 자식 클래스에서 구현 필요</li>
+</ul></li>
+</ul></li>
+<li>bulk_load 메서드 구현하기
+<ul>
+<li>입맛대로 만들기</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="providers-더-보기" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="providers-더-보기"><span class="header-section-number">6.3</span> Providers 더 보기</h2>
+<ul>
+<li>현재 설치되어 있는 Providers 패키지 확인
+<ul>
+<li>웹의 Admin Providers 에서 확인 가능</li>
+</ul></li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow-providers/">설치 가능한 Providers 더 보기</a></li>
+</ul>
+</section>
+<section id="connection-type-추가하기" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="connection-type-추가하기"><span class="header-section-number">6.4</span> Connection Type 추가하기</h2>
+<ul>
+<li>만약 HDFS, Hive 에 대한 커넥션을 추가하고 싶다면</li>
+<li>커넥션 타입 목록에 있는 대상은 이미 패키지 설치가 된 Providers 이며 Admin&gt;&gt;Providers 목록에서 설치된 대상 확인 가능</li>
+<li>Provider 검색 , py 라이브러리 설치 목록 확인</li>
+<li><a href="https://airflow.apache.org/docs/docker-stack/build.html">Airflow 이미지 Extend 방법 확인</a>
+<ul>
+<li>이미지 Extend vs Custom 이미지 생성</li>
+</ul>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Comparison</th>
+<th>image extend</th>
+<th style="text-align: left;">Custom Image Creation</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>간단히 생성 가능</td>
+<td>O</td>
+<td style="text-align: left;">X</td>
+</tr>
+<tr class="even">
+<td>빌드 시간</td>
+<td>짧음</td>
+<td style="text-align: left;">상대적으로 긺</td>
+</tr>
+<tr class="odd">
+<td>크기 최적화된 이미지</td>
+<td>X</td>
+<td style="text-align: left;">O (약 20% 정도 사이즈 감소)</td>
+</tr>
+<tr class="even">
+<td>폐쇄망에서 구성 가능</td>
+<td>X</td>
+<td style="text-align: left;">O</td>
+</tr>
+</tbody>
+</table></li>
+<li>Dockerfile 만들기</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="sourceCode" id="cb14"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>#&gt; cd; cd airflow</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>#&gt; mkdir -p custom_image/airflow</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>#&gt; cd custom_image/airflow</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>#&gt; vi Dockerfile</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column" style="width:50%;">
+<div class="sourceCode" id="cb15"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>FROM apache/airflow:2.5.1</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>USER root</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>RUN apt get update \</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; apt-get install -y --no-install-recommends \</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    gcc \</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    heimdal-dev \ </span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    g++ \</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    libsasl2-dev \</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; apt-get autoremove -yqq -purge \</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; apt-get clean \</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; rm -rf /var/lib/apt/lists/*</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>USER airflow</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>RUN pip install \</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  apache airflow providers apache hdfs \</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  apache airflow providers apache hive</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>RUN pip uninstall y argparse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+</section>
+</div>
 <div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
 
 </div>
-</div>
-<section id="go-to-blog-content-list" class="level1" data-number="8">
-<h1 data-number="8"><span class="header-section-number">8</span> Go to Blog Content List</h1>
+<section id="go-to-blog-content-list" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Go to Blog Content List</h1>
 <p><a href="../../../../../docs/blog/posts/content_list.html">Blog Content List</a></p>
 
 

@@ -31,8 +31,6 @@ draft: False
 
 <div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
 
-::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
-
 # Goal
 
 * posgres DB를 container로 띄우기
@@ -265,266 +263,360 @@ x-airflow-common
 
 * Dbeaver: 설치 https://dbeaver.io/
 
-## Airflow에서 사용법
-
-* 오퍼레이터 파라미터 입력시 중괄호 {} 2개를 이용하면 Airflow에서 기본적으로 제공하는 변수들을 치환된 값으로 입력할 수 있음. (ex: 수행 날짜, DAG_ID)
-    - https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html
-* 모든 오퍼레이터, 모든 파라미터에 Template 변수 적용이 가능한가? No!
-* Airflow 문서에서 어떤 파라미터에 Template 변수 적용 가능한지 확인 필요
-    - https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/index.html
-
-# BashOperator with Template
-
-## BashOperator
-
-* Bash 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?
-* 파라미터
-    * bash_command (str)
-    * env (dict[str, str] | None)
-    * append_env (bool)
-    * output_encoding (str)
-    * skip_exit_code (int)
-    * cwd (str | None)
-* https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/bash/index.html
-
+# Postgres에 데이터 insert
 
 ```markdown
-bash_t1 = BashOperator(
-    task_id='bash_t1',
-    bash_command='echo "End date is {{ data_interval_end }}"'
-)
-bash_t2 = BashOperator(
-    task_id='bash_t2',
-    env={'START_DATE': '{{ data_interval_start | ds}}','END_DATE':'{{ data_interval_end | ds }}'},
-    bash_command='echo "Start date is $START_DATE " && ''echo "End date is $END_DATE"'
-)
+from airflow import DAG
+import pendulum
+from airflow.operators.python import PythonOperator
 
-```
+with DAG(
+    dag_id='dags_python_with_postgres',
+    start_date=pendulum.datetime(2023,4,1, tz='Asia/Seoul'),
+    schedule=None,
+    catchup=False
+) as dag:
 
-# Airflow Date
-
-## 데이터 추출 예시
-
-* Daily ETL 처리를 위한 조회 쿼리(2023/02/25 0시 실행)
-* example: 등록 테이블
-
-|REG_DATE|NAME|ADDRESS|
-|-----|:-:|:-:|
-|2023-02-24 15:34:35|홍길동|Busan|
-|2023-02-24 19:14:42|김태희|Seoul|
-|2023-02-24 23:52:19|조인성|Daejeon|
-
-```markdown
-SELECT NAME, ADDRESS
-FROM TBL_REG
-WHERE REG_DATE BETWEEN TIMESTAMP('2023-02-24 00:00:00')
-AND TIMESTAMP('2023-02-24 23:59:59')
-```
-데이터 관점의 시작일: 2023-02-24
-데이터 관점의 종료일: 2023-02-25
-
-
-## Airflow 날짜 Template 변수
-
-* 예시: 일 배치
-    * ex. 2023-02-24 이전 배치일 (논리적 기준일)
-        * = data_interval_start
-        * = dag_run.logical_date
-        * = ds (yyyy-mm-dd 형식)
-        * = ts (타임스탬프)
-        * = execution_date (과거버전)
-    * ex. 2023-02-25 배치일
-        * = data_interval_end
-        * = 
-        * = 
-        * = 
-        * = next_execution_date (과거버전)
-
-# Python Operator with Template
-
-## Python 오퍼레이터에서 Template 변수 사용
-
-* Python 오퍼레이터는 어떤 파라미터에 Template을 쓸 수 있는가?
-* 파라미터
-    * python_callable
-    * op_kwargs
-    * op_args
-    * templates_dict
-    * templates_exts
-    * show_return_value_in_logs
-* https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html
-
-    ```markdown
-    def python_function1(start_date, end_date, **kwargs):
-        print(start_date)
-        print(end_date)
-
-    python_t1 = PythonOperator(
-        task_id='python_t1',
-        python_callable=python_function,
-        op_kwargs={'start_date':'{{data_interval_start | ds}}', 'end_date':'{{data_interval_end | ds}}'}
-    )
-    ```
-
-* 파이썬 오퍼레이터는 **kwargs에 Template 변수들을 자동으로 제공해주고 있음
-
-    ```markdown
-    @task(task_id='python_t2')
-    def python_function2(**kwargs):
-        print(kwargs)
-        print('ds:' + kwargs['ds'])
-        print('ts:' + str(kwargs['ts']))
-        print('data_interval_start:' + str(kwargs['data_interval_start']))
-        print('data_interval_end:' + str(kwargs['data_interval_end']))
-        print('task_instance': + str(kwargs['ti']))
-    python_function2()
-    ```
-
-# Bash Operator with Macro
-
-## Macro 변수의 이해
-
-* Macro 변수의 필요성
-
-    ```markdown
-    sql = f'''
-    SELECT NAME, ADDRESS
-    FROM TBL_REG
-    WHERE REG_DATE BETWEEN ?? AND ??
-    '''
-    ```
-
-    DAG 스케줄은 매일 말일에 도는 스케줄인데
-    BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고
-    싶은데 어떻게 하지?
-    예를 들어
-    배치일이 1월 31일이면 12월 31일부터 1월 30일 까지
-    배치일이 2월 28일이면 1월 31일부터 2월 27일까지
-    BETWEEN 이 설정되었으면 좋겠어.
-    DAG 스케줄이 월 단위이니까
-    Template 변수에서 data_interval_start 값은 한달 전 말일
-    이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들지? 
-    data_interval_end 에서 하루 뺀 값이 나와야 하는데…
-
-* Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음
-
-    |Variable|Description|
-    |:--:|------|
-    |macros.datetime|The standard lib's datetime.datetime|
-    |macros.timedelta|The standard lib's datetime.timedelta|
-    |macros.dateutil|A reference to the dateutil package|
-    |macros.time|The standard lib's time|
-    |macros.uuid|The standard lib's uuid|
-    |macros.random|The standard lib's random|
-
-    * macros.datetime & macros.dateutil: 날짜 연산에 유용한 파이썬 라이브러리
-* Macro를 잘 쓰려면 파이썬 datetime 및 dateutil 라이브러리에 익숙해져야 함.
-
-## 파이썬 datetime + dateutil 라이브러리 이해
-
-```markdown
-from datetime import datetime
-from dateutil import relativedelta
-
-now = datetime(year=2003, month=3, day=30)
-print('current time:'+str(now))
-print('-------------month operation-------------')
-print(now+relativedelta.relativedelta(month=1)) # 1월로 변경
-print(now.replace(month=1)) # 1월로 변경
-print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기
-print('-------------day operation-------------')
-print(now+relativedelta.relativedelta(day=1)) #1일로 변경
-print(now.replace(day=1)) #1일로 변경
-print(now+relativedelta.relativedelta(days=-1)) #1일 빼기
-print('-------------multiple operations-------------')
-print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기
-```
-
-## Bash 오퍼레이터에서 Macro 변수 활용하기
-
-* 예시1. 매월 말일 수행되는 Dag에서 변수 START_DATE: 전월 말일, 변수 END_DATE: 어제로 env 셋팅하기
-* 예시2. 매월 둘째주 토요일에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기
-* 변수는 YYYY-MM-DD 형식으로 나오도록 할 것
-
-    ```markdown
-    t1 = BashOperator(
-        task_id='t1',
-        env={'START_DATE':''},
-    )
-    ```
-
-이 부분에 template + macro 활용
-
-# Python 오퍼레이터 with macro
-
-* 어떤 파라미터가 Template 변수를 지원할까?
-* 패러미터
-    * python_callable (Callable | None)
-    * op_kwargs
-    * op_args
-    * templates_dict
-    * templates_exts
-    * show_return_value_in_logs
-* https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/python/index.html#airflow.operators.python.PythonOperator
-
-    ```markdown
-    @task(task_id='task_using_macros',
-        templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")
-    + macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',
-    'end_date': '{{
-    (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +
-    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'
-        }
-    )
     
-    def get_datetime_macro(**kwargs):
-        templates_dict = kwargs.get('templates_dict') or {}
-        if templates_dict:
-        start_date = templates_dict.get('start_date') or 'start_date없음'
-        end_date = templates_dict.get('end_date') or 'end_date없음'
-        print(start_date)
-        print(end_date)
-    ```
-* 그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 DAG안에서 직접 할 수 있다면?
-    * macro 사용
-    ```markdown
-    @task(task_id='task_using_macros',
-        templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',
-        'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +
-        macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'
-        }
+    def insrt_postgres(ip, port, dbname, user, passwd, **kwargs):
+        import psycopg2
+        from contextlib import closing
+
+        with closing(psycopg2.connect(host=ip, dbname=dbname, user=user, password=passwd, port=int(port))) as conn:
+            with closing(conn.cursor()) as cursor:
+                dag_id = kwargs.get('ti').dag_id
+                task_id = kwargs.get('ti').task_id
+                run_id = kwargs.get('ti').run_id
+                msg = 'insrt 수행'
+                sql = 'insert into py_opr_drct_insrt values (%s,%s,%s,%s);'
+                cursor.execute(sql,(dag_id,task_id,run_id,msg))
+                conn.commit()
+
+    insrt_postgres = PythonOperator(
+        task_id='insrt_postgres',
+        python_callable=insrt_postgres,
+        op_args=['172.28.0.3', '5432', 'hjkim', 'hjkim', 'hjkim']
     )
+        
+    insrt_postgres
+```
 
-    def get_datetime_macro(**kwargs):
-        templates_dict = kwargs.get('templates_dict') or {}
-        if templates_dict:
-            start_date = templates_dict.get('start_date') or 'start_date없음'
-            end_date = templates_dict.get('end_date') or 'end_date없음'
-            print(start_date)
-            print(end_date)
+## 문제점 및 해결방법
+* 문제점
+  * 접속정보 노출: postgres DB에 대한 User, Password 등
+  * 접속정보 변경시 대응 어려움
+    * 만약 직접 접속하는 DAG이 수백개라면?
+* 해결 방법
+  * Variable 이용 (User, Password 등을 Variable에 등록하고 꺼내오기)
+  * Hook 이용 (Variable 등록 필요없음)
 
-    @task(task_id='task_direct_calc')
-    def get_datetime_calc(**kwargs):
-        from dateutil.relativedelta import relativedelta
-        data_interval_end = kwargs['data_interval_end']
-    ```
+## Connection과 Hook
 
-    * 직접 연산
+* Connection
+  * Airflow UI 화면에서 등록한 커넥션 정보
+* Hook의 개념
+  * Airflow에서 외부 솔루션의 기능을 사용할 수 있도록 미리 구현된 메서드를 가진 클래스 
+* Hook의 특징
+  * Connection 정보를 통해 생성되는 객체
+    * 접속정보를 Connection을 통해 받아오므로 접속정보가 코드상 노출되지 않음
+  * 특정 솔루션을 다룰 수 있는 메서드가 구현되어 있음.
+  * 오퍼레이터나 센서와는 달리 Hook은 task를 만들어내지 못하므로 Custom 오퍼레이터 안에서나 Python 오퍼레이터 내 함수에서 사용됨
 
-    ```markdown
-    prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)
-    prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)
-    print(prev_month_day_first.strftime('%Y-%m-%d'))
-    print(prev_month_day_last.strftime('%Y-%m-%d'))
-    ```
+## Connection 등록
+
+| Connection_id   | conn-db-postgres-custom |
+|-----------------|:------------------------|
+| Connection_type | postgres                |
+| Host            | 172.28.0.3              |
+| Schema          | kmkim                   |
+| Login           | kmkim                   |
+| Password        | kmkim                   |
+| Port            | 5432                    |
+
+## Postgres Hook 명세 보기
+
+* [airflow web service >> Providers >> apache.airflow.providers.postgres >> Python API >> airflow.providers.postgres.hooks.postgres >> get_conn() >> [source] >> def get_conn(self)](https://airflow.apache.org/docs/apache-airflow-providers-postgres/5.4.0/_modules/airflow/providers/postgres/hooks/postgres.html#PostgresHook.get_conn)
+
+```markdown
+def get_conn(self) -> connection:
+        """Establishes a connection to a postgres database."""
+        conn_id = getattr(self, self.conn_name_attr)
+        conn = deepcopy(self.connection or self.get_connection(conn_id))
+
+        # check for authentication via AWS IAM
+        if conn.extra_dejson.get("iam", False):
+            conn.login, conn.password, conn.port = self.get_iam_token(conn)
+
+        conn_args = dict(
+            host=conn.host,
+            user=conn.login,
+            password=conn.password,
+            dbname=self.database or conn.schema,
+            port=conn.port,
+        )
+        raw_cursor = conn.extra_dejson.get("cursor", False)
+        if raw_cursor:
+            conn_args["cursor_factory"] = self._get_cursor(raw_cursor)
+
+        for arg_name, arg_val in conn.extra_dejson.items():
+            if arg_name not in [
+                "iam",
+                "redshift",
+                "cursor",
+                "cluster-identifier",
+                "aws_conn_id",
+            ]:
+                conn_args[arg_name] = arg_val
+
+        self.conn = psycopg2.connect(**conn_args)
+        return self.conn
+
+
+```
+
+## Hook 이용하여 Postgres Insert
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```markdown
+from airflow import DAG
+import pendulum
+from airflow.operators.python import PythonOperator
+
+with DAG(
+    dag_id='dags_python_with_postgres',
+    start_date=pendulum.datetime(2023,4,1, tz='Asia/Seoul'),
+    schedule=None,
+    catchup=False
+) as dag:
+
+    
+    def insrt_postgres(ip, port, dbname, user, passwd, **kwargs):
+        import psycopg2
+        from contextlib import closing
+
+        with closing(psycopg2.connect(host=ip, dbname=dbname, user=user, password=passwd, port=int(port))) as conn:
+            with closing(conn.cursor()) as cursor:
+                dag_id = kwargs.get('ti').dag_id
+                task_id = kwargs.get('ti').task_id
+                run_id = kwargs.get('ti').run_id
+                msg = 'insrt 수행'
+                sql = 'insert into py_opr_drct_insrt values (%s,%s,%s,%s);'
+                cursor.execute(sql,(dag_id,task_id,run_id,msg))
+                conn.commit()
+
+    insrt_postgres = PythonOperator(
+        task_id='insrt_postgres',
+        python_callable=insrt_postgres,
+        op_args=['172.28.0.3', '5432', 'hjkim', 'hjkim', 'hjkim']
+    )
+        
+    insrt_postgres
+```
+
 :::
+
+::: {.column width="50%"}
+
+```markdown
+from airflow import DAG
+import pendulum
+from airflow.operators.python import PythonOperator
+
+with DAG(
+        dag_id='dags_python_with_postgres_hook',
+        start_date=pendulum.datetime(2023, 4, 1, tz='Asia/Seoul'),
+        schedule=None,
+        catchup=False
+) as dag:
+    def insrt_postgres(postgres_conn_id, **kwargs):
+        from airflow.providers.postgres.hooks.postgres import PostgresHook
+        from contextlib import closing
+        
+        postgres_hook = PostgresHook(postgres_conn_id)
+        with closing(postgres_hook.get_conn()) as conn:
+            with closing(conn.cursor()) as cursor:
+                dag_id = kwargs.get('ti').dag_id
+                task_id = kwargs.get('ti').task_id
+                run_id = kwargs.get('ti').run_id
+                msg = 'hook insrt 수행'
+                sql = 'insert into py_opr_drct_insrt values (%s,%s,%s,%s);'
+                cursor.execute(sql, (dag_id, task_id, run_id, msg))
+                conn.commit()
+
+    insrt_postgres_with_hook = PythonOperator(
+        task_id='insrt_postgres_with_hook',
+        python_callable=insrt_postgres,
+        op_kwargs={'postgres_conn_id':'conn-db-postgres-custom'}
+    )
+    insrt_postgres_with_hook
+
+```
+:::
+
+::::
+
+# Postgres Hook 으로 bulk_load 하기
+
+## Postgres Hook 명세 보기
+
+* [airflow web service >> Providers >> apache.airflow.providers.postgres >> Python API >> airflow.providers.postgres.hooks.postgres >> get_conn() >> [source] >> def bulg_load(self, temp_file)[source],def bulk_dump(self, table: str, tmp_file: str),def copy_expert(self, sql: str, filename: str)](https://airflow.apache.org/docs/apache-airflow-providers-postgres/5.4.0/_modules/airflow/providers/postgres/hooks/postgres.html#PostgresHook.get_conn)
+
+```markdown
+[docs]    def bulk_load(self, table: str, tmp_file: str) -> None:
+        """Loads a tab-delimited file into a database table"""
+        self.copy_expert(f"COPY {table} FROM STDIN", tmp_file)
+
+[docs]    def bulk_dump(self, table: str, tmp_file: str) -> None:
+        """Dumps a database table into a tab-delimited file"""
+        self.copy_expert(f"COPY {table} TO STDOUT", tmp_file)
+
+[docs]    def copy_expert(self, sql: str, filename: str) -> None:
+        """
+        Executes SQL using psycopg2 copy_expert method.
+        Necessary to execute COPY command without access to a superuser.
+
+        Note: if this method is called with a "COPY FROM" statement and
+        the specified input file does not exist, it creates an empty
+        file and no data is loaded, but the operation succeeds.
+        So if users want to be aware when the input file does not exist,
+        they have to check its existence by themselves.
+        """
+        self.log.info("Running copy expert: %s, filename: %s", sql, filename)
+        if not os.path.isfile(filename):
+            with open(filename, "w"):
+                pass
+
+        with open(filename, "r+") as file:
+            with closing(self.get_conn()) as conn:
+                with closing(conn.cursor()) as cur:
+                    cur.copy_expert(sql, file)
+                    file.truncate(file.tell())
+                    conn.commit()
+```
+
+```markdown
+from airflow import DAG
+import pendulum
+from airflow.operators.python import PythonOperator
+from hooks.custom_postgres_hook import CustomPostgresHook
+
+with DAG(
+        dag_id='dags_python_with_custom_hook_bulk_load',
+        start_date=pendulum.datetime(2023, 4, 1, tz='Asia/Seoul'),
+        schedule='0 7 * * *',
+        catchup=False
+) as dag:
+    def insrt_postgres(postgres_conn_id, tbl_nm, file_nm, **kwargs):
+        custom_postgres_hook = CustomPostgresHook(postgres_conn_id=postgres_conn_id)
+        custom_postgres_hook.bulk_load(table_name=tbl_nm, file_name=file_nm, delimiter=',', is_header=True, is_replace=True)
+
+    insrt_postgres = PythonOperator(
+        task_id='insrt_postgres',
+        python_callable=insrt_postgres,
+        op_kwargs={'postgres_conn_id': 'conn-db-postgres-custom',
+                   'tbl_nm':'TbCorona19CountStatus_bulk2',
+                   'file_nm':'/opt/airflow/files/TbCorona19CountStatus/{{data_interval_end.in_timezone("Asia/Seoul") | ds_nodash}}/TbCorona19CountStatus.csv'}
+    )
+```
+
+## Bulk_load 문제점 & 개선방안
+
+* 문제점
+  * Load 가능한 Delimiter는 Tab으로 고정되어 있음
+  * Header까지 포함해서 업로드됨
+  * 특수문자로 인해 파싱이 안될 경우 에러 발생
+* 개선방안
+  * Custom Hook 을 만들어서 Delimiter 유형을 입력받게 하고
+  * Header 여부를 선택하게끔 하며
+  * 특수문자를 제거하는 로직을 추가 후
+  * sqlalchemy를 이용하여 Load 한다면? 그리고 테이블을 생성하면서 업로드할 수 있다면?
+
+# Custom Hook 으로 bulk_load 하기
+
+## BaseHook 명세 보기
+
+* [Airflow Docs](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/hooks/base/index.html#airflow.hooks.base.BaseHook.get_connection_form_widgets)
+
+## Custom Hook 개발
+
+* 해야할 일
+  * get_conn 메서드 구현하기
+    * DB 와의 연결 세션 객체인 conn 을 리턴하도록 구현
+      * (Airflow 에서 등록한 Connection 정보를 담은 conn 이 아님)
+      * BaseHook 의 추상 메서드 , 자식 클래스에서 구현 필요
+  * bulk_load 메서드 구현하기
+    * 입맛대로 만들기
+
+## Providers 더 보기
+
+* 현재 설치되어 있는 Providers 패키지 확인
+  * 웹의 Admin Providers 에서 확인 가능
+* [설치 가능한 Providers 더 보기](https://airflow.apache.org/docs/apache-airflow-providers/)
+
+## Connection Type 추가하기
+
+* 만약 HDFS, Hive 에 대한 커넥션을 추가하고 싶다면
+* 커넥션 타입 목록에 있는 대상은 이미 패키지 설치가 된 Providers 이며 Admin>>Providers 목록에서 설치된 대상 확인 가능
+* Provider 검색 , py 라이브러리 설치 목록 확인
+* [Airflow 이미지 Extend 방법 확인](https://airflow.apache.org/docs/docker-stack/build.html)
+  * 이미지 Extend vs Custom 이미지 생성
+
+  | Comparison          | image extend    | Custom Image Creation   |
+  |---------------------|-----------------|:------------------------|
+  | 간단히 생성 가능     | O               | X                       |
+  | 빌드 시간            | 짧음            | 상대적으로 긺            |
+  | 크기 최적화된 이미지 |  X              | O (약 20% 정도 사이즈 감소) |
+  | 폐쇄망에서 구성 가능 |  X              | O                       |
+  
+* Dockerfile 만들기  
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```markdown
+#> cd; cd airflow
+#> mkdir -p custom_image/airflow
+#> cd custom_image/airflow
+#> vi Dockerfile
+```
+
+:::
+
+::: {.column width="50%"}
+
+```markdown
+
+FROM apache/airflow:2.5.1
+USER root
+RUN apt get update \
+  && apt-get install -y --no-install-recommends \
+    gcc \
+    heimdal-dev \ 
+    g++ \
+    libsasl2-dev \
+  && apt-get autoremove -yqq -purge \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+USER airflow
+RUN pip install \
+  apache airflow providers apache hdfs \
+  apache airflow providers apache hive
+RUN pip uninstall y argparse
+```
+:::
+
+::::
+
+
 </div>
 
 <div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
 
-::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
 
-:::
 
 
 </div>

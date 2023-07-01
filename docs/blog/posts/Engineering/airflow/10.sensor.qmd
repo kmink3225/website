@@ -31,291 +31,211 @@ draft: False
 
 <div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
 
-::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+# 센서
 
-# Jinja Template
+## 센서의 개념
 
-* 문서(파일)에서 특정 양식으로 작성된 값을 런타임시 실제 값으로 치환해주는 처리 엔진
-* 템플릿 엔진은 여러 솔루션이 존재하며 그 중 Jinja 템플릿은 파이썬 언어에서 사용하는 엔진
+* 일종의 특화된 오퍼레이터
+* 특정 조건이 만족되기를 기다리고 만족되면 True를 반환하는 Task
+* 모든 센서는 BaseSensorOperator를 상속하여 구현되며
+(BaseSensorOperator는 BaseOperator를 상속함)
+상속시에는 __init()__ 함수와 poke(context) 함수 재정의 필요
+* 센싱하는 로직은 poke 함수에 정의
 
-    ```markdown
-    from jinja2 import Template
+## BaseSensor 오퍼레이터 명세 확인
 
-    template = Template('my name is {{name}}')
-    new_template = template.render('name=hjkim')
-    print(new_template)
-    ```
+[airflow](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/base/index.html#airflow.sensors.base.BaseSensorOperator)
 
-* Jinja 템플릿, 어디서 쓰이나?
-    - 파이썬 기반 웹 프레임워크인 Flask, Django에서 주로 사용
-    (주로 HTML 템플릿 저장 후 화면에 보여질 때 실제 값으로 변환해서 출력)
-    - SQL작성시에도 활용 가능
+* parameter
+    * soft_fail (bool) – Set to true to mark the task as SKIPPED on failure
+    * poke_interval (float) – Time in seconds that the job should wait in between each try
+    * timeout (float) – Time, in seconds before the task times out and fails.
+    * mode (str) – How the sensor operates. Options are: { poke | reschedule }, default is poke. When set to poke the sensor is taking up a worker slot for its whole execution time and sleeps between pokes. Use this mode if the expected runtime of the sensor is short or if a short poke interval is required. Note that the sensor will hold onto a worker slot and a pool slot for the duration of the sensor’s runtime in this mode. When set to reschedule the sensor task frees the worker slot when the criteria is not yet met and it’s rescheduled at a later time. Use this mode if the time before the criteria is met is expected to be quite long. The poke interval should be more than one minute to prevent too much load on the scheduler.
+    * exponential_backoff (bool) – allow progressive longer waits between pokes by using exponential backoff algorithm
+    * max_wait (datetime.timedelta | float | None) – maximum wait interval between pokes, can be timedelta or float seconds
+    * silent_fail (bool) – If true, and poke method raises an exception different from AirflowSensorTimeout, AirflowTaskTimeout, AirflowSkipException and AirflowFailException, the sensor will log the error and continue its execution. Otherwise, the sensor task fails, and it can be retried based on the provided retries parameter.
+* BaseSensor 오퍼레이터 Mode 유형
+    * mode 유형
 
-## Airflow에서 사용법
+  | Comparison          | Poke Mode    | Reschedule Mode   |
+  |---------------------|-----------------|:------------------------|
+  | 원리                | DAG이 수행되는 내내 Running Slot을 차지. 다만 Slot 안에서 Sleep, active 를 반복   | 센서가 동작하는 시기에만 Slot을 차지. 그 외에는 Slot을 점유하지 않음 |
+  | Wait에서의 Task 상태 | running            | up_for_reschedule  |
+  | 유리한 적용 시점 |  짧은 센싱 간격 (interval, 초 단위)    | 긴 센싱 간격, 주로 분 단위 Reschedule될 때 스케줄러의
+부하 발생 |
 
-* 오퍼레이터 파라미터 입력시 중괄호 {} 2개를 이용하면 Airflow에서 기본적으로 제공하는 변수들을 치환된 값으로 입력할 수 있음. (ex: 수행 날짜, DAG_ID)
-    - https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html
-* 모든 오퍼레이터, 모든 파라미터에 Template 변수 적용이 가능한가? No!
-* Airflow 문서에서 어떤 파라미터에 Template 변수 적용 가능한지 확인 필요
-    - https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/index.html
+## BaseSensor 오퍼레이터 Mode 유형
 
-# BashOperator with Template
+* Pool
+    * 모든 Task는 특정 Pool에서 수행되며 Pool은 Slot이라는 것을 가지고 있음.
+    * 기본적으로 Task 1개당 Slot 1개를 점유하며 Pool을 지정하지 않으면 default_pool에서 수행
+    ![Poke Mode vs Reschedule Mode](../../../../../images/airflow/poke.PNG)
 
-## BashOperator
+# Bash Sensor
 
-* Bash 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?
-* 파라미터
-    * bash_command (str)
-    * env (dict[str, str] | None)
-    * append_env (bool)
-    * output_encoding (str)
-    * skip_exit_code (int)
-    * cwd (str | None)
-* https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/bash/index.html
+## Bash 센서 명세 확인
 
+* 쉘 스크립트에서 return True를 주는 방법
+    - 파이썬에서의 return True와 같은 의미로 쉘 스크립트에서는 exit 0 를 사용
+* 모든 쉘은 수행을 마친 후 EXIT_STATUS를 가지고 있으며 0~255 사이의 값을 가짐.
+    * EXIT 0 만 정상이며 나머지는 모두 비정상의 의미를 가짐
+    * 마지막 명령 수행의 EXIT_STATUS를 확인하려면 echo $? 로 확인
+
+# File Sensor
+
+## File 센서 명세 확인
+
+* [airflow.sensors.filesystem](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/filesystem/index.html#airflow.sensors.filesystem.FileSensor)
+
+![File Sensor Sequential Diagram](../../../../../images/airflow/File_sensor_diagram.PNG)
+
+* Connection 작성
+
+  | Connection_id   | conn_file_opt_airflow_files   |
+  |-----------------|:------------------------------|
+  | Connection_type | File (path)                   |
+  | Host            |                               |
+  | Schema          |                               |
+  | Login           |                               |
+  | Password        |                               |
+  | Port            |                               |
+  | Extra           | {"path":"/opt/airflow/files"} |
+
+* Dag 작성
 
 ```markdown
-bash_t1 = BashOperator(
-    task_id='bash_t1',
-    bash_command='echo "End date is {{ data_interval_end }}"'
-)
-bash_t2 = BashOperator(
-    task_id='bash_t2',
-    env={'START_DATE': '{{ data_interval_start | ds}}','END_DATE':'{{ data_interval_end | ds }}'},
-    bash_command='echo "Start date is $START_DATE " && ''echo "End date is $END_DATE"'
-)
+from airflow import DAG
+from airflow.sensors.filesystem import FileSensor
+import pendulum
+
+with DAG(
+    dag_id='dags_file_sensor',
+    start_date=pendulum.datetime(2023,4,1, tz='Asia/Seoul'),
+    schedule='0 7 * * *',
+    catchup=False
+) as dag:
+    tvCorona19VaccinestatNew_sensor = FileSensor(
+        task_id='tvCorona19VaccinestatNew_sensor',
+        fs_conn_id='conn_file_opt_airflow_files',
+        filepath='tvCorona19VaccinestatNew/{{data_interval_end.in_timezone("Asia/Seoul") | ds_nodash }}/tvCorona19VaccinestatNew.csv',
+        recursive=False,
+        poke_interval=60,
+        timeout=60*60*24, # 1일
+        mode='reschedule'
+    )
 
 ```
 
-# Airflow Date
-
-## 데이터 추출 예시
-
-* Daily ETL 처리를 위한 조회 쿼리(2023/02/25 0시 실행)
-* example: 등록 테이블
-
-|REG_DATE|NAME|ADDRESS|
-|-----|:-:|:-:|
-|2023-02-24 15:34:35|홍길동|Busan|
-|2023-02-24 19:14:42|김태희|Seoul|
-|2023-02-24 23:52:19|조인성|Daejeon|
+# Python Sensor
+ 
+* [airflow.sensors.python](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/python/index.html)
 
 ```markdown
-SELECT NAME, ADDRESS
-FROM TBL_REG
-WHERE REG_DATE BETWEEN TIMESTAMP('2023-02-24 00:00:00')
-AND TIMESTAMP('2023-02-24 23:59:59')
-```
-데이터 관점의 시작일: 2023-02-24
-데이터 관점의 종료일: 2023-02-25
 
+classairflow.sensors.python.PythonSensor(*, python_callable, op_args=None, op_kwargs=None, templates_dict=None, **kwargs)[source]
+Bases: airflow.sensors.base.BaseSensorOperator
 
-## Airflow 날짜 Template 변수
+Waits for a Python callable to return True.
 
-* 예시: 일 배치
-    * ex. 2023-02-24 이전 배치일 (논리적 기준일)
-        * = data_interval_start
-        * = dag_run.logical_date
-        * = ds (yyyy-mm-dd 형식)
-        * = ts (타임스탬프)
-        * = execution_date (과거버전)
-    * ex. 2023-02-25 배치일
-        * = data_interval_end
-        * = 
-        * = 
-        * = 
-        * = next_execution_date (과거버전)
+User could put input argument in templates_dict e.g templates_dict = {'start_ds': 1970} and access the argument by calling kwargs['templates_dict']['start_ds'] in the callable
 
-# Python Operator with Template
-
-## Python 오퍼레이터에서 Template 변수 사용
-
-* Python 오퍼레이터는 어떤 파라미터에 Template을 쓸 수 있는가?
-* 파라미터
-    * python_callable
-    * op_kwargs
-    * op_args
-    * templates_dict
-    * templates_exts
-    * show_return_value_in_logs
-* https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html
-
-    ```markdown
-    def python_function1(start_date, end_date, **kwargs):
-        print(start_date)
-        print(end_date)
-
-    python_t1 = PythonOperator(
-        task_id='python_t1',
-        python_callable=python_function,
-        op_kwargs={'start_date':'{{data_interval_start | ds}}', 'end_date':'{{data_interval_end | ds}}'}
-    )
-    ```
-
-* 파이썬 오퍼레이터는 **kwargs에 Template 변수들을 자동으로 제공해주고 있음
-
-    ```markdown
-    @task(task_id='python_t2')
-    def python_function2(**kwargs):
-        print(kwargs)
-        print('ds:' + kwargs['ds'])
-        print('ts:' + str(kwargs['ts']))
-        print('data_interval_start:' + str(kwargs['data_interval_start']))
-        print('data_interval_end:' + str(kwargs['data_interval_end']))
-        print('task_instance': + str(kwargs['ti']))
-    python_function2()
-    ```
-
-# Bash Operator with Macro
-
-## Macro 변수의 이해
-
-* Macro 변수의 필요성
-
-    ```markdown
-    sql = f'''
-    SELECT NAME, ADDRESS
-    FROM TBL_REG
-    WHERE REG_DATE BETWEEN ?? AND ??
-    '''
-    ```
-
-    DAG 스케줄은 매일 말일에 도는 스케줄인데
-    BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고
-    싶은데 어떻게 하지?
-    예를 들어
-    배치일이 1월 31일이면 12월 31일부터 1월 30일 까지
-    배치일이 2월 28일이면 1월 31일부터 2월 27일까지
-    BETWEEN 이 설정되었으면 좋겠어.
-    DAG 스케줄이 월 단위이니까
-    Template 변수에서 data_interval_start 값은 한달 전 말일
-    이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들지? 
-    data_interval_end 에서 하루 뺀 값이 나와야 하는데…
-
-* Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음
-
-    |Variable|Description|
-    |:--:|------|
-    |macros.datetime|The standard lib's datetime.datetime|
-    |macros.timedelta|The standard lib's datetime.timedelta|
-    |macros.dateutil|A reference to the dateutil package|
-    |macros.time|The standard lib's time|
-    |macros.uuid|The standard lib's uuid|
-    |macros.random|The standard lib's random|
-
-    * macros.datetime & macros.dateutil: 날짜 연산에 유용한 파이썬 라이브러리
-* Macro를 잘 쓰려면 파이썬 datetime 및 dateutil 라이브러리에 익숙해져야 함.
-
-## 파이썬 datetime + dateutil 라이브러리 이해
-
-```markdown
-from datetime import datetime
-from dateutil import relativedelta
-
-now = datetime(year=2003, month=3, day=30)
-print('current time:'+str(now))
-print('-------------month operation-------------')
-print(now+relativedelta.relativedelta(month=1)) # 1월로 변경
-print(now.replace(month=1)) # 1월로 변경
-print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기
-print('-------------day operation-------------')
-print(now+relativedelta.relativedelta(day=1)) #1일로 변경
-print(now.replace(day=1)) #1일로 변경
-print(now+relativedelta.relativedelta(days=-1)) #1일 빼기
-print('-------------multiple operations-------------')
-print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기
+Parameters
+* python_callable (Callable) – A reference to an object that is callable
+* op_kwargs (Mapping[str, Any] | None) – a dictionary of keyword arguments that will get unpacked in your function
+* op_args (list | None) – a list of positional arguments that will get unpacked when calling your callable
+* templates_dict (dict | None) – a dictionary where the values are templates that will get templated by the Airflow engine sometime between __init__ and execute takes place and are made available in your callable’s context after the template has been applied.
 ```
 
-## Bash 오퍼레이터에서 Macro 변수 활용하기
+## Python 센서 DAG 작성
 
-* 예시1. 매월 말일 수행되는 Dag에서 변수 START_DATE: 전월 말일, 변수 END_DATE: 어제로 env 셋팅하기
-* 예시2. 매월 둘째주 토요일에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기
-* 변수는 YYYY-MM-DD 형식으로 나오도록 할 것
+* 무엇을 센싱할 것인가
+    * 서울시 공공데이터에서 당일 날짜로 데이터가 생성되었는지 센싱하기(날짜 컬럼이 있는 경우)
 
-    ```markdown
-    t1 = BashOperator(
-        task_id='t1',
-        env={'START_DATE':''},
-    )
-    ```
+# ExternalTask 센서
 
-이 부분에 template + macro 활용
+## DAG 간 의존관계 설정
 
-# Python 오퍼레이터 with macro
-
-* 어떤 파라미터가 Template 변수를 지원할까?
-* 패러미터
-    * python_callable (Callable | None)
-    * op_kwargs
-    * op_args
-    * templates_dict
-    * templates_exts
-    * show_return_value_in_logs
-* https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/python/index.html#airflow.operators.python.PythonOperator
-
-    ```markdown
-    @task(task_id='task_using_macros',
-        templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")
-    + macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',
-    'end_date': '{{
-    (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +
-    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'
-        }
-    )
+* DAG 의존관계 설정 방법
+    * TriggerDagRun 오퍼레이터
     
-    def get_datetime_macro(**kwargs):
-        templates_dict = kwargs.get('templates_dict') or {}
-        if templates_dict:
-        start_date = templates_dict.get('start_date') or 'start_date없음'
-        end_date = templates_dict.get('end_date') or 'end_date없음'
-        print(start_date)
-        print(end_date)
-    ```
-* 그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 DAG안에서 직접 할 수 있다면?
-    * macro 사용
-    ```markdown
-    @task(task_id='task_using_macros',
-        templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',
-        'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +
-        macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'
-        }
-    )
+    ```{dot}
 
-    def get_datetime_macro(**kwargs):
-        templates_dict = kwargs.get('templates_dict') or {}
-        if templates_dict:
-            start_date = templates_dict.get('start_date') or 'start_date없음'
-            end_date = templates_dict.get('end_date') or 'end_date없음'
-            print(start_date)
-            print(end_date)
+    digraph G {
+      compound=true;
+      rankdir=LR;
+      subgraph cluster0 {
+        rankdir=TB;
+        task1 [shape=box];
+        task2_1 [shape=box];
+        task2_2 [shape=box];
+        task2_3 [shape=box];
 
-    @task(task_id='task_direct_calc')
-    def get_datetime_calc(**kwargs):
-        from dateutil.relativedelta import relativedelta
-        data_interval_end = kwargs['data_interval_end']
+        label= "Task Flow";
+      }
+
+      task1 -> task2_1;
+      task1 -> task2_2;
+      task1 -> task2_3;
+    
+    }
     ```
 
-    * 직접 연산
-
-    ```markdown
-    prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)
-    prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)
-    print(prev_month_day_first.strftime('%Y-%m-%d'))
-    print(prev_month_day_last.strftime('%Y-%m-%d'))
+    * ExternalTask 센서
+    ```{dot}
+    digraph G {
+      compound=true;
+      rankdir=LR;
+      subgraph cluster0 {
+        rankdir=TB;
+        task1 [shape=box];
+        task2 [shape=box];
+        task3 [shape=box];
+        task4 [shape=box];
+        
+        label= "Task Flow";
+      }
+    
+      task1 -> task4;
+      task2 -> task4;
+      task3 -> task4; 
+    }
     ```
-:::
+
+## ExternalTask 센서 명세 확인
+
+* [airflow.sensors.external_task](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/external_task/index.html#module-airflow.sensors.external_task)
+* 
+| Parameter   | 필수여부   | 설명                  |
+|-----------------|-----------------|:------------------------------|
+| external_dag_id | O | 센싱할 dag 명  | 
+| external_task_id | X (셋 중 하나만 입력 가능 없으면 dag만 센싱) | 센싱할 task_id 명 (string) |
+| external_task_ids |  X (셋 중 하나만 입력 가능 없으면 dag만 센싱) | 센싱할 1 개 이상의 task_id 명 (list) |
+| external_task_group_id |  X (셋 중 하나만 입력 가능 없으면 dag만 센싱) | 센싱할 task_group_id명 |
+| allowed_status | X (같은 상태가 입력되면 안됨)  | 센서가 Success 되기 위한 센싱 대상의 상태      |
+| skipped_status | X (같은 상태가 입력되면 안됨)  | 센서가 Skipped 되기 위한 센싱 대상의 상태      |
+| failed_states  | X (같은 상태가 입력되면 안됨)  | 센서가 Fail 되기 위한 센싱 대상의 상태         |
+| execution_delta | Login           | 현재 dag과 센싱할 dag의 data_interval_start의 차이를 입력  |
+| execution_date_fn | Password      | 센싱할 dag의 data_interval_start를 구하기 위한 함수        |
+| check_existence | Password        | 해당 dag_id 또는 task_id 가 있는지 확인                    |
+
+* states: State.SKIPPED, State.SUCCESS, State.FAILED, State.QUEUED, State.SCHEDULED, State.UP_FOR_RESCHEDULE 등
+(from airflow.utils.state import State 필요)
+
+# Custom Sensor
+
+## Custom Sensor 만들기
+
+* 어떤 센서를 만들 것인가?
+    * Python 센서에서 만들었던 로직을 Custom Sensor화 하기
+    (서울시 공공데이터에서 날짜 컬럼이 있는 경우 날짜 기준 update되었는지 센싱)
+* 재활용성이 높아 다른 DAG에서 활용될 가능성이 높다면 가급적이면 Custom 오퍼레이터화 해놓는 것이 좋다.
+    (협업 환경에서 코드 중복 구현의 방지, 로직의 일원화 등)
+
+
 </div>
 
 <div class="tab-pane fade" id="English" role="tabpanel" aria-labelledby="English-tab">
 
-::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
-
-:::
-
 
 </div>
 
-
-# Go to Blog Content List
-
-[Blog Content List](../../content_list.qmd)

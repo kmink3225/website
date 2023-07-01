@@ -233,322 +233,867 @@ English
 <div class="tab-content" id="language-tabcontent">
 
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
-<div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
-<section id="jinja-template" class="level1" data-number="1">
-<h1 data-number="1"><span class="header-section-number">1</span> Jinja Template</h1>
+<section id="dataset을-이용한-dag-트리거" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Dataset을 이용한 Dag 트리거</h1>
+<section id="dataset의-필요성" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="dataset의-필요성"><span class="header-section-number">1.1</span> Dataset의 필요성</h2>
 <ul>
-<li><p>문서(파일)에서 특정 양식으로 작성된 값을 런타임시 실제 값으로 치환해주는 처리 엔진</p></li>
-<li><p>템플릿 엔진은 여러 솔루션이 존재하며 그 중 Jinja 템플릿은 파이썬 언어에서 사용하는 엔진</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>from jinja2 import Template</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>template = Template('my name is {{name}}')</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>new_template = template.render('name=hjkim')</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>print(new_template)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p>Jinja 템플릿, 어디서 쓰이나?</p>
+<li>case 1</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<svg width="672" height="480" viewbox="0.00 0.00 184.00 186.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 182)">
+<title>
+G
+</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-182 180,-182 180,4 -4,4"></polygon> <g id="clust1" class="cluster">
+<title>
+cluster0
+</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-85 168,-85 168,-8 8,-8"></polygon> <text text-anchor="middle" x="88" y="-68.4" font-family="Times,serif" font-size="14.00">DAG A</text> </g> <g id="clust2" class="cluster">
+<title>
+cluster1
+</title>
+<polygon fill="none" stroke="black" points="8,-93 8,-170 78,-170 78,-93 8,-93"></polygon> <text text-anchor="middle" x="43" y="-153.4" font-family="Times,serif" font-size="14.00">DAG B</text> </g> <!-- task_1 --> <g id="node1" class="node">
+<title>
+task_1
+</title>
+<polygon fill="none" stroke="black" points="70,-52 16,-52 16,-16 70,-16 70,-52"></polygon> <text text-anchor="middle" x="43" y="-29.8" font-family="Times,serif" font-size="14.00">task_1</text> </g> <!-- task_3 --> <g id="node2" class="node">
+<title>
+task_3
+</title>
+<polygon fill="none" stroke="black" points="160,-52 106,-52 106,-16 160,-16 160,-52"></polygon> <text text-anchor="middle" x="133" y="-29.8" font-family="Times,serif" font-size="14.00">task_3</text> </g> <!-- task_1&#45;&gt;task_3 --> <g id="edge1" class="edge">
+<title>
+task_1-&gt;task_3
+</title>
+<path fill="none" stroke="black" d="M70.4,-34C78.39,-34 87.31,-34 95.82,-34"></path> <polygon fill="black" stroke="black" points="95.92,-37.5 105.92,-34 95.92,-30.5 95.92,-37.5"></polygon> </g> <!-- task_k --> <g id="node3" class="node">
+<title>
+task_k
+</title>
+<polygon fill="none" stroke="black" points="70,-137 16,-137 16,-101 70,-101 70,-137"></polygon> <text text-anchor="middle" x="43" y="-114.8" font-family="Times,serif" font-size="14.00">task_k</text> </g> </g>
+</svg>
+</div>
+</div>
+</div>
+</div>
 <ul>
-<li>파이썬 기반 웹 프레임워크인 Flask, Django에서 주로 사용 (주로 HTML 템플릿 저장 후 화면에 보여질 때 실제 값으로 변환해서 출력)</li>
-<li>SQL작성시에도 활용 가능</li>
+<li>위의 경우를 Task_1 뿐만 아니라 DAG_B의 task_k 에도 선행 의존관계가 걸리도록 External Task 센서를 하나 달도록 개선</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<svg width="672" height="480" viewbox="0.00 0.00 269.66 325.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 321)">
+<title>
+G
+</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-321 265.66,-321 265.66,4 -4,4"></polygon> <g id="clust3" class="cluster">
+<title>
+cluster2
+</title>
+<polygon fill="none" stroke="black" points="183.66,-8 183.66,-85 253.66,-85 253.66,-8 183.66,-8"></polygon> <text text-anchor="middle" x="218.66" y="-68.4" font-family="Times,serif" font-size="14.00">DAG B</text> </g> <g id="clust1" class="cluster">
+<title>
+cluster0
+</title>
+<polygon fill="none" stroke="black" points="183.66,-93 183.66,-170 253.66,-170 253.66,-93 183.66,-93"></polygon> <text text-anchor="middle" x="218.66" y="-153.4" font-family="Times,serif" font-size="14.00">DAG A</text> </g> <g id="clust2" class="cluster">
+<title>
+cluster1
+</title>
+<polygon fill="none" stroke="black" points="8,-178 8,-309 253.66,-309 253.66,-178 8,-178"></polygon> <text text-anchor="middle" x="130.83" y="-292.4" font-family="Times,serif" font-size="14.00">DAG C</text> </g> <!-- task_1 --> <g id="node1" class="node">
+<title>
+task_1
+</title>
+<polygon fill="none" stroke="black" points="245.66,-137 191.66,-137 191.66,-101 245.66,-101 245.66,-137"></polygon> <text text-anchor="middle" x="218.66" y="-114.8" font-family="Times,serif" font-size="14.00">task_1</text> </g> <!-- Sensor_task_1 --> <g id="node2" class="node">
+<title>
+Sensor_task_1
+</title>
+<polygon fill="none" stroke="black" points="113.49,-276 16.17,-276 16.17,-240 113.49,-240 113.49,-276"></polygon> <text text-anchor="middle" x="64.83" y="-253.8" font-family="Times,serif" font-size="14.00">Sensor_task_1</text> </g> <!-- Sensor_task_1&#45;&gt;task_1 --> <g id="edge3" class="edge">
+<title>
+Sensor_task_1-&gt;task_1
+</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M100.88,-239.9C105.32,-237.12 109.69,-234.13 113.66,-231 146.08,-205.41 177.52,-169.54 197.19,-145.34"></path> <polygon fill="black" stroke="black" points="200.11,-147.3 203.64,-137.31 194.65,-142.92 200.11,-147.3"></polygon> <text text-anchor="middle" x="152.66" y="-218.2" font-family="Times,serif" font-size="14.00">sensing</text> </g> <!-- task_x --> <g id="node4" class="node">
+<title>
+task_x
+</title>
+<polygon fill="none" stroke="black" points="245.66,-249 191.66,-249 191.66,-213 245.66,-213 245.66,-249"></polygon> <text text-anchor="middle" x="218.66" y="-226.8" font-family="Times,serif" font-size="14.00">task_x</text> </g> <!-- Sensor_task_1&#45;&gt;task_x --> <g id="edge1" class="edge">
+<title>
+Sensor_task_1-&gt;task_x
+</title>
+<path fill="none" stroke="black" d="M113.87,-249.46C135.77,-245.56 161.26,-241.03 181.5,-237.43"></path> <polygon fill="black" stroke="black" points="182.33,-240.84 191.56,-235.64 181.1,-233.95 182.33,-240.84"></polygon> </g> <!-- Sensor_task_2 --> <g id="node3" class="node">
+<title>
+Sensor_task_2
+</title>
+<polygon fill="none" stroke="black" points="113.49,-222 16.17,-222 16.17,-186 113.49,-186 113.49,-222"></polygon> <text text-anchor="middle" x="64.83" y="-199.8" font-family="Times,serif" font-size="14.00">Sensor_task_2</text> </g> <!-- Sensor_task_2&#45;&gt;task_x --> <g id="edge2" class="edge">
+<title>
+Sensor_task_2-&gt;task_x
+</title>
+<path fill="none" stroke="black" d="M113.87,-212.54C135.77,-216.44 161.26,-220.97 181.5,-224.57"></path> <polygon fill="black" stroke="black" points="181.1,-228.05 191.56,-226.36 182.33,-221.16 181.1,-228.05"></polygon> </g> <!-- task_k --> <g id="node5" class="node">
+<title>
+task_k
+</title>
+<polygon fill="none" stroke="black" points="245.66,-52 191.66,-52 191.66,-16 245.66,-16 245.66,-52"></polygon> <text text-anchor="middle" x="218.66" y="-29.8" font-family="Times,serif" font-size="14.00">task_k</text> </g> <!-- Sensor_task_2&#45;&gt;task_k --> <g id="edge4" class="edge">
+<title>
+Sensor_task_2-&gt;task_k
+</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M82.08,-185.81C109.13,-155.52 163.5,-94.64 194.54,-59.89"></path> <polygon fill="black" stroke="black" points="197.48,-61.85 201.53,-52.06 192.26,-57.19 197.48,-61.85"></polygon> <text text-anchor="middle" x="152.66" y="-133.2" font-family="Times,serif" font-size="14.00">sensing</text> </g> </g>
+</svg>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<ul>
+<li>case 2</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<svg width="672" height="480" viewbox="0.00 0.00 184.00 155.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 151)">
+<title>
+G
+</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-151 180,-151 180,4 -4,4"></polygon> <g id="clust1" class="cluster">
+<title>
+cluster0
+</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-139 168,-139 168,-8 8,-8"></polygon> <text text-anchor="middle" x="88" y="-122.4" font-family="Times,serif" font-size="14.00">DAG A</text> </g> <!-- task_1 --> <g id="node1" class="node">
+<title>
+task_1
+</title>
+<polygon fill="none" stroke="black" points="70,-106 16,-106 16,-70 70,-70 70,-106"></polygon> <text text-anchor="middle" x="43" y="-83.8" font-family="Times,serif" font-size="14.00">task_1</text> </g> <!-- task_3 --> <g id="node2" class="node">
+<title>
+task_3
+</title>
+<polygon fill="none" stroke="black" points="160,-106 106,-106 106,-70 160,-70 160,-106"></polygon> <text text-anchor="middle" x="133" y="-83.8" font-family="Times,serif" font-size="14.00">task_3</text> </g> <!-- task_1&#45;&gt;task_3 --> <g id="edge1" class="edge">
+<title>
+task_1-&gt;task_3
+</title>
+<path fill="none" stroke="black" d="M70.4,-88C78.39,-88 87.31,-88 95.82,-88"></path> <polygon fill="black" stroke="black" points="95.92,-91.5 105.92,-88 95.92,-84.5 95.92,-91.5"></polygon> </g> <!-- task_4 --> <g id="node3" class="node">
+<title>
+task_4
+</title>
+<polygon fill="none" stroke="black" points="70,-52 16,-52 16,-16 70,-16 70,-52"></polygon> <text text-anchor="middle" x="43" y="-29.8" font-family="Times,serif" font-size="14.00">task_4</text> </g> </g>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<ul>
+<li>위의 경우, Task_1이 완료되면 또 다른 dag 을 trigger 되고 싶은데 DAG A 를 수정해야할 경우</li>
+</ul>
+</div><div class="column" style="width:50%;">
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<svg width="672" height="480" viewbox="0.00 0.00 184.00 155.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 151)">
+<title>
+G
+</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-151 180,-151 180,4 -4,4"></polygon> <g id="clust1" class="cluster">
+<title>
+cluster
+</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-139 168,-139 168,-8 8,-8"></polygon> <text text-anchor="middle" x="88" y="-122.4" font-family="Times,serif" font-size="14.00">DAG A</text> </g> <!-- task_1 --> <g id="node1" class="node">
+<title>
+task_1
+</title>
+<polygon fill="none" stroke="black" points="70,-79 16,-79 16,-43 70,-43 70,-79"></polygon> <text text-anchor="middle" x="43" y="-56.8" font-family="Times,serif" font-size="14.00">task_1</text> </g> <!-- task_3 --> <g id="node2" class="node">
+<title>
+task_3
+</title>
+<polygon fill="none" stroke="black" points="160,-52 106,-52 106,-16 160,-16 160,-52"></polygon> <text text-anchor="middle" x="133" y="-29.8" font-family="Times,serif" font-size="14.00">task_3</text> </g> <!-- task_1&#45;&gt;task_3 --> <g id="edge1" class="edge">
+<title>
+task_1-&gt;task_3
+</title>
+<path fill="none" stroke="black" d="M70.4,-52.9C78.48,-50.42 87.51,-47.65 96.1,-45.01"></path> <polygon fill="black" stroke="black" points="97.39,-48.28 105.92,-42 95.33,-41.59 97.39,-48.28"></polygon> </g> <!-- task_4 --> <g id="node3" class="node">
+<title>
+task_4
+</title>
+<polygon fill="none" stroke="black" points="160,-106 106,-106 106,-70 160,-70 160,-106"></polygon> <text text-anchor="middle" x="133" y="-83.8" font-family="Times,serif" font-size="14.00">task_4</text> </g> <!-- task_1&#45;&gt;task_4 --> <g id="edge2" class="edge">
+<title>
+task_1-&gt;task_4
+</title>
+<path fill="none" stroke="black" d="M70.4,-69.1C78.48,-71.58 87.51,-74.35 96.1,-76.99"></path> <polygon fill="black" stroke="black" points="95.33,-80.41 105.92,-80 97.39,-73.72 95.33,-80.41"></polygon> </g> </g>
+</svg>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<ul>
+<li>TriggerDagRun 오퍼레이터와 ExternalTask 센서를 많이 사용하다보면 연결관리 에 많은 노력이 필요 (강한 연결)</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<svg width="672" height="480" viewbox="0.00 0.00 301.55 209.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 205)">
+<title>
+G
+</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-205 297.55,-205 297.55,4 -4,4"></polygon> <g id="clust1" class="cluster">
+<title>
+cluster
+</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-193 285.55,-193 285.55,-8 8,-8"></polygon> <text text-anchor="middle" x="146.78" y="-176.4" font-family="Times,serif" font-size="14.00">DAG Flow</text> </g> <!-- DAG_A --> <g id="node1" class="node">
+<title>
+DAG_A
+</title>
+<polygon fill="none" stroke="black" points="79.66,-133 15.78,-133 15.78,-97 79.66,-97 79.66,-133"></polygon> <text text-anchor="middle" x="47.72" y="-110.8" font-family="Times,serif" font-size="14.00">DAG_A</text> </g> <!-- DAG_B --> <g id="node2" class="node">
+<title>
+DAG_B
+</title>
+<polygon fill="none" stroke="black" points="177.95,-160 115.61,-160 115.61,-124 177.95,-124 177.95,-160"></polygon> <text text-anchor="middle" x="146.78" y="-137.8" font-family="Times,serif" font-size="14.00">DAG_B</text> </g> <!-- DAG_A&#45;&gt;DAG_B --> <g id="edge1" class="edge">
+<title>
+DAG_A-&gt;DAG_B
+</title>
+<path fill="none" stroke="black" d="M79.7,-123.62C87.91,-125.9 96.9,-128.4 105.53,-130.8"></path> <polygon fill="black" stroke="black" points="104.85,-134.25 115.43,-133.56 106.73,-127.5 104.85,-134.25"></polygon> </g> <!-- DAG_C --> <g id="node3" class="node">
+<title>
+DAG_C
+</title>
+<polygon fill="none" stroke="black" points="177.95,-106 115.61,-106 115.61,-70 177.95,-70 177.95,-106"></polygon> <text text-anchor="middle" x="146.78" y="-83.8" font-family="Times,serif" font-size="14.00">DAG_C</text> </g> <!-- DAG_A&#45;&gt;DAG_C --> <g id="edge2" class="edge">
+<title>
+DAG_A-&gt;DAG_C
+</title>
+<path fill="none" stroke="black" d="M79.7,-106.38C87.91,-104.1 96.9,-101.6 105.53,-99.2"></path> <polygon fill="black" stroke="black" points="106.73,-102.5 115.43,-96.44 104.85,-95.75 106.73,-102.5"></polygon> </g> <!-- DAG_D --> <g id="node4" class="node">
+<title>
+DAG_D
+</title>
+<polygon fill="none" stroke="black" points="79.66,-79 15.78,-79 15.78,-43 79.66,-43 79.66,-79"></polygon> <text text-anchor="middle" x="47.72" y="-56.8" font-family="Times,serif" font-size="14.00">DAG_D</text> </g> <!-- DAG_D&#45;&gt;DAG_C --> <g id="edge3" class="edge">
+<title>
+DAG_D-&gt;DAG_C
+</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M79.7,-69.62C87.91,-71.9 96.9,-74.4 105.53,-76.8"></path> <polygon fill="black" stroke="black" points="104.85,-80.25 115.43,-79.56 106.73,-73.5 104.85,-80.25"></polygon> </g> <!-- DAG_E --> <g id="node5" class="node">
+<title>
+DAG_E
+</title>
+<polygon fill="none" stroke="black" points="177.66,-52 115.89,-52 115.89,-16 177.66,-16 177.66,-52"></polygon> <text text-anchor="middle" x="146.78" y="-29.8" font-family="Times,serif" font-size="14.00">DAG_E</text> </g> <!-- DAG_D&#45;&gt;DAG_E --> <g id="edge4" class="edge">
+<title>
+DAG_D-&gt;DAG_E
+</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M79.7,-52.38C88.08,-50.05 97.27,-47.49 106.06,-45.05"></path> <polygon fill="black" stroke="black" points="107.06,-48.4 115.76,-42.35 105.18,-41.66 107.06,-48.4"></polygon> </g> <!-- DAG_G --> <g id="node6" class="node">
+<title>
+DAG_G
+</title>
+<polygon fill="none" stroke="black" points="277.77,-52 213.89,-52 213.89,-16 277.77,-16 277.77,-52"></polygon> <text text-anchor="middle" x="245.83" y="-29.8" font-family="Times,serif" font-size="14.00">DAG_G</text> </g> <!-- DAG_E&#45;&gt;DAG_G --> <g id="edge5" class="edge">
+<title>
+DAG_E-&gt;DAG_G
+</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M177.69,-34C185.93,-34 195.03,-34 203.79,-34"></path> <polygon fill="black" stroke="black" points="203.84,-37.5 213.84,-34 203.84,-30.5 203.84,-37.5"></polygon> </g> </g>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<ul>
+<li>큐시스템과 같이 Job 수행이 완료된 Task 는 Push 하고 센싱이 필요한 task 은 큐 시스템을 구독하는 방식을 쓴다면 ? (약한 연결)</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<svg width="672" height="480" viewbox="0.00 0.00 292.11 209.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 205)">
+<title>
+G
+</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-205 288.11,-205 288.11,4 -4,4"></polygon> <g id="clust1" class="cluster">
+<title>
+cluster
+</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-193 276.11,-193 276.11,-8 8,-8"></polygon> <text text-anchor="middle" x="142.06" y="-176.4" font-family="Times,serif" font-size="14.00">DAG Flow</text> </g> <!-- DAG_A --> <g id="node1" class="node">
+<title>
+DAG_A
+</title>
+<polygon fill="none" stroke="black" points="79.66,-160 15.78,-160 15.78,-124 79.66,-124 79.66,-160"></polygon> <text text-anchor="middle" x="47.72" y="-137.8" font-family="Times,serif" font-size="14.00">DAG_A</text> </g> <!-- Queue --> <g id="node7" class="node">
+<title>
+Queue
+</title>
+<path fill="none" stroke="black" d="M169.44,-102.73C169.44,-104.53 157.34,-106 142.44,-106 127.54,-106 115.44,-104.53 115.44,-102.73 115.44,-102.73 115.44,-73.27 115.44,-73.27 115.44,-71.47 127.54,-70 142.44,-70 157.34,-70 169.44,-71.47 169.44,-73.27 169.44,-73.27 169.44,-102.73 169.44,-102.73"></path> <path fill="none" stroke="black" d="M169.44,-102.73C169.44,-100.92 157.34,-99.45 142.44,-99.45 127.54,-99.45 115.44,-100.92 115.44,-102.73"></path> <text text-anchor="middle" x="142.44" y="-83.8" font-family="Times,serif" font-size="14.00">Queue</text> </g> <!-- DAG_A&#45;&gt;Queue --> <g id="edge1" class="edge">
+<title>
+DAG_A-&gt;Queue
+</title>
+<path fill="none" stroke="black" d="M79.6,-124.02C88.29,-118.96 97.8,-113.42 106.7,-108.23"></path> <polygon fill="black" stroke="black" points="108.47,-111.25 115.35,-103.2 104.94,-105.21 108.47,-111.25"></polygon> </g> <!-- DAG_B --> <g id="node2" class="node">
+<title>
+DAG_B
+</title>
+<polygon fill="none" stroke="black" points="267.95,-52 205.61,-52 205.61,-16 267.95,-16 267.95,-52"></polygon> <text text-anchor="middle" x="236.78" y="-29.8" font-family="Times,serif" font-size="14.00">DAG_B</text> </g> <!-- DAG_C --> <g id="node3" class="node">
+<title>
+DAG_C
+</title>
+<polygon fill="none" stroke="black" points="267.95,-106 205.61,-106 205.61,-70 267.95,-70 267.95,-106"></polygon> <text text-anchor="middle" x="236.78" y="-83.8" font-family="Times,serif" font-size="14.00">DAG_C</text> </g> <!-- DAG_D --> <g id="node4" class="node">
+<title>
+DAG_D
+</title>
+<polygon fill="none" stroke="black" points="79.66,-106 15.78,-106 15.78,-70 79.66,-70 79.66,-106"></polygon> <text text-anchor="middle" x="47.72" y="-83.8" font-family="Times,serif" font-size="14.00">DAG_D</text> </g> <!-- DAG_D&#45;&gt;Queue --> <g id="edge2" class="edge">
+<title>
+DAG_D-&gt;Queue
+</title>
+<path fill="none" stroke="black" d="M79.6,-88C87.83,-88 96.81,-88 105.31,-88"></path> <polygon fill="black" stroke="black" points="105.35,-91.5 115.35,-88 105.35,-84.5 105.35,-91.5"></polygon> </g> <!-- DAG_E --> <g id="node5" class="node">
+<title>
+DAG_E
+</title>
+<polygon fill="none" stroke="black" points="267.66,-160 205.89,-160 205.89,-124 267.66,-124 267.66,-160"></polygon> <text text-anchor="middle" x="236.78" y="-137.8" font-family="Times,serif" font-size="14.00">DAG_E</text> </g> <!-- DAG_G --> <g id="node6" class="node">
+<title>
+DAG_G
+</title>
+<polygon fill="none" stroke="black" points="79.66,-52 15.78,-52 15.78,-16 79.66,-16 79.66,-52"></polygon> <text text-anchor="middle" x="47.72" y="-29.8" font-family="Times,serif" font-size="14.00">DAG_G</text> </g> <!-- Queue&#45;&gt;DAG_B --> <g id="edge3" class="edge">
+<title>
+Queue-&gt;DAG_B
+</title>
+<path fill="none" stroke="black" d="M169.65,-72.67C178.14,-67.71 187.74,-62.09 196.94,-56.71"></path> <polygon fill="black" stroke="black" points="198.72,-59.73 205.59,-51.66 195.19,-53.68 198.72,-59.73"></polygon> </g> <!-- Queue&#45;&gt;DAG_C --> <g id="edge4" class="edge">
+<title>
+Queue-&gt;DAG_C
+</title>
+<path fill="none" stroke="black" d="M169.65,-88C177.7,-88 186.75,-88 195.51,-88"></path> <polygon fill="black" stroke="black" points="195.59,-91.5 205.59,-88 195.59,-84.5 195.59,-91.5"></polygon> </g> <!-- Queue&#45;&gt;DAG_E --> <g id="edge5" class="edge">
+<title>
+Queue-&gt;DAG_E
+</title>
+<path fill="none" stroke="black" d="M169.65,-103.33C178.14,-108.29 187.74,-113.91 196.94,-119.29"></path> <polygon fill="black" stroke="black" points="195.19,-122.32 205.59,-124.34 198.72,-116.27 195.19,-122.32"></polygon> </g> </g>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<ul>
+<li>Produce / Consume 구조를 이용하여 Task 완료를 알리기 위해 특정 키 값으로 Produce 하고 해당 키를 Consume 하는 DAG 을 트리거 스케줄 할 수 있는 기능
+<ul>
+<li>실제 큐가 있는 것은 아니고 DB 에 Produce / Consume 내역을 기록</li>
 </ul></li>
 </ul>
-<section id="airflow에서-사용법" class="level2" data-number="1.1">
-<h2 data-number="1.1" class="anchored" data-anchor-id="airflow에서-사용법"><span class="header-section-number">1.1</span> Airflow에서 사용법</h2>
-<ul>
-<li>오퍼레이터 파라미터 입력시 중괄호 {} 2개를 이용하면 Airflow에서 기본적으로 제공하는 변수들을 치환된 값으로 입력할 수 있음. (ex: 수행 날짜, DAG_ID)
-<ul>
-<li>https://airflow.apache.org/docs/apache-airflow/stable/templates-ref.html</li>
-</ul></li>
-<li>모든 오퍼레이터, 모든 파라미터에 Template 변수 적용이 가능한가? No!</li>
-<li>Airflow 문서에서 어떤 파라미터에 Template 변수 적용 가능한지 확인 필요
-<ul>
-<li>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/index.html</li>
-</ul></li>
-</ul>
 </section>
-</section>
-<section id="bashoperator-with-template" class="level1" data-number="2">
-<h1 data-number="2"><span class="header-section-number">2</span> BashOperator with Template</h1>
-<section id="bashoperator" class="level2" data-number="2.1">
-<h2 data-number="2.1" class="anchored" data-anchor-id="bashoperator"><span class="header-section-number">2.1</span> BashOperator</h2>
+<section id="정리" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="정리"><span class="header-section-number">1.2</span> 정리</h2>
 <ul>
-<li>Bash 오퍼레이터는 어떤 파라미터에 Template를 쓸 수 있는가?</li>
-<li>파라미터
+<li>Dataset 은 Pub/sub 구조로 DAG 간 의존관계를 주는 방법</li>
+<li>Unique 한 String 형태의 Key 값을 부여하여 Dataset Publish</li>
+<li>Dataset 을 Consume 하는 DAG 은 스케줄을 별도로 주지 않고 리스트 형태로 구독할 Dataset 요소들을 명시</li>
+<li>Dataset에 의해 시작된 DAG 의 Run_id 는 dataset_triggered__{trigger 된 시간 } 으로 표현됨</li>
+<li>Airflow 화면 메뉴 중 Datasets 메뉴를 통해 별도로 Dataset 현황 모니터링 가능</li>
+<li>N개의 Dataset 을 구독할 때 스케줄링 시점은 ?
 <ul>
-<li>bash_command (str)</li>
-<li>env (dict[str, str] | None)</li>
-<li>append_env (bool)</li>
-<li>output_encoding (str)</li>
-<li>skip_exit_code (int)</li>
-<li>cwd (str | None)</li>
-</ul></li>
-<li>https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/bash/index.html</li>
-</ul>
-<div class="sourceCode" id="cb2"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>bash_t1 = BashOperator(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    task_id='bash_t1',</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    bash_command='echo "End date is {{ data_interval_end }}"'</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>bash_t2 = BashOperator(</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    task_id='bash_t2',</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    env={'START_DATE': '{{ data_interval_start | ds}}','END_DATE':'{{ data_interval_end | ds }}'},</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    bash_command='echo "Start date is $START_DATE " &amp;&amp; ''echo "End date is $END_DATE"'</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-</section>
-<section id="airflow-date" class="level1" data-number="3">
-<h1 data-number="3"><span class="header-section-number">3</span> Airflow Date</h1>
-<section id="데이터-추출-예시" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="데이터-추출-예시"><span class="header-section-number">3.1</span> 데이터 추출 예시</h2>
-<ul>
-<li>Daily ETL 처리를 위한 조회 쿼리(2023/02/25 0시 실행)</li>
-<li>example: 등록 테이블</li>
-</ul>
-<table class="table">
-<thead>
-<tr class="header">
-<th>REG_DATE</th>
-<th style="text-align: center;">NAME</th>
-<th style="text-align: center;">ADDRESS</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>2023-02-24 15:34:35</td>
-<td style="text-align: center;">홍길동</td>
-<td style="text-align: center;">Busan</td>
-</tr>
-<tr class="even">
-<td>2023-02-24 19:14:42</td>
-<td style="text-align: center;">김태희</td>
-<td style="text-align: center;">Seoul</td>
-</tr>
-<tr class="odd">
-<td>2023-02-24 23:52:19</td>
-<td style="text-align: center;">조인성</td>
-<td style="text-align: center;">Daejeon</td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>SELECT NAME, ADDRESS</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>FROM TBL_REG</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>WHERE REG_DATE BETWEEN TIMESTAMP('2023-02-24 00:00:00')</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>AND TIMESTAMP('2023-02-24 23:59:59')</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>데이터 관점의 시작일: 2023-02-24 데이터 관점의 종료일: 2023-02-25</p>
-</section>
-<section id="airflow-날짜-template-변수" class="level2" data-number="3.2">
-<h2 data-number="3.2" class="anchored" data-anchor-id="airflow-날짜-template-변수"><span class="header-section-number">3.2</span> Airflow 날짜 Template 변수</h2>
-<ul>
-<li>예시: 일 배치
-<ul>
-<li>ex. 2023-02-24 이전 배치일 (논리적 기준일)
-<ul>
-<li>= data_interval_start</li>
-<li>= dag_run.logical_date</li>
-<li>= ds (yyyy-mm-dd 형식)</li>
-<li>= ts (타임스탬프)</li>
-<li>= execution_date (과거버전)</li>
-</ul></li>
-<li>ex. 2023-02-25 배치일
-<ul>
-<li>= data_interval_end</li>
-<li>=</li>
-<li>=</li>
-<li>=</li>
-<li>= next_execution_date (과거버전)</li>
-</ul></li>
+<li>마지막 수행 이후 N 개의 Dataset 이 모두 재 업데이트되는 시점 <img src="../../../../../images/airflow/dataset_trigger.PNG" class="img-fluid" alt="Trigger using dataset - N개의 dataset 구독"></li>
 </ul></li>
 </ul>
 </section>
 </section>
-<section id="python-operator-with-template" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Python Operator with Template</h1>
-<section id="python-오퍼레이터에서-template-변수-사용" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="python-오퍼레이터에서-template-변수-사용"><span class="header-section-number">4.1</span> Python 오퍼레이터에서 Template 변수 사용</h2>
+<section id="dag의-default_args-파라미터" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> DAG의 default_args 파라미터</h1>
+<section id="dag-의-default_args-파라미터" class="level2" data-number="2.1">
+<h2 data-number="2.1" class="anchored" data-anchor-id="dag-의-default_args-파라미터"><span class="header-section-number">2.1</span> DAG 의 default_args 파라미터</h2>
 <ul>
-<li><p>Python 오퍼레이터는 어떤 파라미터에 Template을 쓸 수 있는가?</p></li>
-<li><p>파라미터</p>
+<li>목적: DAG 하위 모든 오퍼레이터에 공통 적용될 파라미터를 입력</li>
+<li>어떤 파라미터들이 적용 가능할까?
 <ul>
-<li>python_callable</li>
-<li>op_kwargs</li>
-<li>op_args</li>
-<li>templates_dict</li>
-<li>templates_exts</li>
-<li>show_return_value_in_logs</li>
+<li>오퍼레이터에 공통 적용할 수 있는 파라미터들</li>
+<li>BaseOperator 클래스 생성자가 가지고 있는 파라미터</li>
 </ul></li>
-<li><p>https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/operators/python/index.html</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>def python_function1(start_date, end_date, **kwargs):</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    print(start_date)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    print(end_date)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>python_t1 = PythonOperator(</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    task_id='python_t1',</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    python_callable=python_function,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    op_kwargs={'start_date':'{{data_interval_start | ds}}', 'end_date':'{{data_interval_end | ds}}'}</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p>파이썬 오퍼레이터는 **kwargs에 Template 변수들을 자동으로 제공해주고 있음</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='python_t2')</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>def python_function2(**kwargs):</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    print(kwargs)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    print('ds:' + kwargs<span class="co">[</span><span class="ot">'ds'</span><span class="co">]</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    print('ts:' + str(kwargs<span class="co">[</span><span class="ot">'ts'</span><span class="co">]</span>))</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    print('data_interval_start:' + str(kwargs<span class="co">[</span><span class="ot">'data_interval_start'</span><span class="co">]</span>))</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    print('data_interval_end:' + str(kwargs<span class="co">[</span><span class="ot">'data_interval_end'</span><span class="co">]</span>))</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    print('task_instance': + str(kwargs<span class="co">[</span><span class="ot">'ti'</span><span class="co">]</span>))</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>python_function2()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/baseoperator.html#BaseOperator">airflow doc</a></li>
+<li>Code</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>from airflow.operators.bash import BashOperator</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>from datetime import timedelta</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>from airflow.models import Variable</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>email_str = Variable.get("email_target")</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>email_lst = <span class="co">[</span><span class="ot">email.strip() for email in email_str.split(',')</span><span class="co">]</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    dag_id='dags_sla_email_example',</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 5, 1, tz='Asia/Seoul'),</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    schedule='*/10 * * * *',</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    catchup=False,</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="in">    task_1 = BashOperator(</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_1',</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 10m',</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="in">        sla: timedelta(seconds=70), #SLA 설정</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="in">        email: 'sdf@sdfsfd.com'</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="in">    task_2 = BashOperator(</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_2',</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 2m',</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="in">        sla: timedelta(seconds=70), #SLA 설정</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="in">        email: 'sdf@sdfsfd.com'</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>   task_1 &gt;&gt; task_2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div><div class="column" style="width:50%;">
+<div class="sourceCode" id="cb2"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>from airflow.operators.bash import BashOperator</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>from datetime import timedelta</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>from airflow.models import Variable</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>email_str = Variable.get("email_target")</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>email_lst = <span class="co">[</span><span class="ot">email.strip() for email in email_str.split(',')</span><span class="co">]</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    dag_id='dags_sla_email_example',</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 5, 1, tz='Asia/Seoul'),</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    schedule='*/10 * * * *',</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    catchup=False,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    default_args={</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        'sla': timedelta(seconds=70),</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        'email': 'sdf@sdfsfd.com'</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="in">    task_1 = BashOperator(</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_1',</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 10m'</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="in">    task_2 = BashOperator(</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_2',</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 2m'</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>   task_1 &gt;&gt; task_2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="baseoperator-파라미터-vs-dag-파라미터" class="level2" data-number="2.2">
+<h2 data-number="2.2" class="anchored" data-anchor-id="baseoperator-파라미터-vs-dag-파라미터"><span class="header-section-number">2.2</span> BaseOperator 파라미터 vs Dag 파라미터</h2>
+<div class="columns">
+<div class="column" style="width:40%;">
+<section id="dag-parameter" class="level3" data-number="2.2.1">
+<h3 data-number="2.2.1" class="anchored" data-anchor-id="dag-parameter"><span class="header-section-number">2.2.1</span> DAG Parameter</h3>
+<ul>
+<li>DAG 파라미터는 DAG 단위로 적용될 파라미터</li>
+<li>개별 오퍼레이터에 적용되지 않음</li>
+<li>DAG 파라미터는 default_args 에 전달하면 안됨</li>
 </ul>
 </section>
-</section>
-<section id="bash-operator-with-macro" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Bash Operator with Macro</h1>
-<section id="macro-변수의-이해" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="macro-변수의-이해"><span class="header-section-number">5.1</span> Macro 변수의 이해</h2>
+</div><div class="column" style="width:60%;">
+<section id="baseoperator-parameter" class="level3" data-number="2.2.2">
+<h3 data-number="2.2.2" class="anchored" data-anchor-id="baseoperator-parameter"><span class="header-section-number">2.2.2</span> BaseOperator Parameter</h3>
 <ul>
-<li><p>Macro 변수의 필요성</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>sql = f'''</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>SELECT NAME, ADDRESS</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>FROM TBL_REG</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>WHERE REG_DATE BETWEEN ?? AND ??</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>'''</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>DAG 스케줄은 매일 말일에 도는 스케줄인데 BETWEEN 값을 전월 마지막일부터 어제 날짜까지 주고 싶은데 어떻게 하지? 예를 들어 배치일이 1월 31일이면 12월 31일부터 1월 30일 까지 배치일이 2월 28일이면 1월 31일부터 2월 27일까지 BETWEEN 이 설정되었으면 좋겠어. DAG 스케줄이 월 단위이니까 Template 변수에서 data_interval_start 값은 한달 전 말일 이니까 시작일은 해결될 것 같은데 끝 부분은 어떻게 만들지? data_interval_end 에서 하루 뺀 값이 나와야 하는데…</p></li>
-<li><p>Template 변수 기반 다양한 날짜 연산이 가능하도록 연산 모듈을 제공하고 있음</p>
-<table class="table">
-<thead>
-<tr class="header">
-<th style="text-align: center;">Variable</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: center;">macros.datetime</td>
-<td>The standard lib’s datetime.datetime</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">macros.timedelta</td>
-<td>The standard lib’s datetime.timedelta</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">macros.dateutil</td>
-<td>A reference to the dateutil package</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">macros.time</td>
-<td>The standard lib’s time</td>
-</tr>
-<tr class="odd">
-<td style="text-align: center;">macros.uuid</td>
-<td>The standard lib’s uuid</td>
-</tr>
-<tr class="even">
-<td style="text-align: center;">macros.random</td>
-<td>The standard lib’s random</td>
-</tr>
-</tbody>
-</table>
-<ul>
-<li>macros.datetime &amp; macros.dateutil: 날짜 연산에 유용한 파이썬 라이브러리</li>
-</ul></li>
-<li><p>Macro를 잘 쓰려면 파이썬 datetime 및 dateutil 라이브러리에 익숙해져야 함.</p></li>
-</ul>
-</section>
-<section id="파이썬-datetime-dateutil-라이브러리-이해" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="파이썬-datetime-dateutil-라이브러리-이해"><span class="header-section-number">5.2</span> 파이썬 datetime + dateutil 라이브러리 이해</h2>
-<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>from datetime import datetime</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>from dateutil import relativedelta</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>now = datetime(year=2003, month=3, day=30)</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>print('current time:'+str(now))</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>print('-------------month operation-------------')</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(month=1)) # 1월로 변경</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>print(now.replace(month=1)) # 1월로 변경</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(months=-1)) # 1개월 빼기</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>print('-------------day operation-------------')</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(day=1)) #1일로 변경</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>print(now.replace(day=1)) #1일로 변경</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(days=-1)) #1일 빼기</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>print('-------------multiple operations-------------')</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>print(now+relativedelta.relativedelta(months=-1)+relativedelta.relativedelta(days=-1)) #1개월, 1일 빼기</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="bash-오퍼레이터에서-macro-변수-활용하기" class="level2" data-number="5.3">
-<h2 data-number="5.3" class="anchored" data-anchor-id="bash-오퍼레이터에서-macro-변수-활용하기"><span class="header-section-number">5.3</span> Bash 오퍼레이터에서 Macro 변수 활용하기</h2>
-<ul>
-<li><p>예시1. 매월 말일 수행되는 Dag에서 변수 START_DATE: 전월 말일, 변수 END_DATE: 어제로 env 셋팅하기</p></li>
-<li><p>예시2. 매월 둘째주 토요일에 수행되는 Dag에서 변수 START_DATE: 2주 전 월요일 변수 END_DATE: 2주 전 토요일로 env 셋팅하기</p></li>
-<li><p>변수는 YYYY-MM-DD 형식으로 나오도록 할 것</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>t1 = BashOperator(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    task_id='t1',</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    env={'START_DATE':''},</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-</ul>
-<p>이 부분에 template + macro 활용</p>
-</section>
-</section>
-<section id="python-오퍼레이터-with-macro" class="level1" data-number="6">
-<h1 data-number="6"><span class="header-section-number">6</span> Python 오퍼레이터 with macro</h1>
-<ul>
-<li><p>어떤 파라미터가 Template 변수를 지원할까?</p></li>
-<li><p>패러미터</p>
-<ul>
-<li>python_callable (Callable | None)</li>
-<li>op_kwargs</li>
-<li>op_args</li>
-<li>templates_dict</li>
-<li>templates_exts</li>
-<li>show_return_value_in_logs</li>
-</ul></li>
-<li><p>https://airflow.apache.org/docs/apacheairflow/stable/_api/airflow/operators/python/index.html#airflow.operators.python.PythonOperator</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='task_using_macros',</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul")</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ss">+ </span>macros.dateutil.relativedelta.relativedelta(months=-1, day=1)) | ds }}',</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>'end_date': '{{</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>(data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>def get_datetime_macro(**kwargs):</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    templates_dict = kwargs.get('templates_dict') or {}</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    if templates_dict:</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    start_date = templates_dict.get('start_date') or 'start_date없음'</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    end_date = templates_dict.get('end_date') or 'end_date없음'</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    print(start_date)</span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    print(end_date)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
-<li><p>그러나 Python 오퍼레이터에서 굳이 macro를 사용할 필요가 있을까? 날짜 연산을 DAG안에서 직접 할 수 있다면?</p>
-<ul>
-<li>macro 사용</li>
-</ul>
-<div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>@task(task_id='task_using_macros',</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    templates_dict={'start_date':'{{ (data_interval_end.in_timezone("Asia/Seoul") + macros.dateutil.relativedelta.relativedelta(months=-1,day=1)) | ds }}',</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    'end_date': '{{ (data_interval_end.in_timezone("Asia/Seoul").replace(day=1) +</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    macros.dateutil.relativedelta.relativedelta(days=-1)) | ds }}'</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>def get_datetime_macro(**kwargs):</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    templates_dict = kwargs.get('templates_dict') or {}</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    if templates_dict:</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        start_date = templates_dict.get('start_date') or 'start_date없음'</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        end_date = templates_dict.get('end_date') or 'end_date없음'</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        print(start_date)</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        print(end_date)</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>@task(task_id='task_direct_calc')</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>def get_datetime_calc(**kwargs):</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    from dateutil.relativedelta import relativedelta</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    data_interval_end = kwargs<span class="co">[</span><span class="ot">'data_interval_end'</span><span class="co">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<ul>
-<li>직접 연산</li>
-</ul>
-<div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>prev_month_day_first = data_interval_end.in_timezone('Asia/Seoul') + relativedelta(months=-1, day=1)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>prev_month_day_last = data_interval_end.in_timezone('Asia/Seoul').replace(day=1) + relativedelta(days=-1)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>print(prev_month_day_first.strftime('%Y-%m-%d'))</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>print(prev_month_day_last.strftime('%Y-%m-%d'))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li>Base 오퍼레이터 파라미터는 개별 Task 단위로 적용될 파라미터.</li>
+<li>Task 마다 선언해줄 수 있지만 DAG 하위 모든 오퍼레이터에 적용 필요시 default_args 를 통해 전달 가능</li>
 </ul>
 </section>
 </div>
 </div>
-<div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
+<ul>
+<li>default_args 에 전달된 파라미터보다 개별 오퍼레이터에 선언된 파라미터가 우선순위를 가짐</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.bash import BashOperator</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>from datetime import timedelta</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>from airflow.models import Variable</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>email_str = Variable.get("email_target")</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>email_lst = <span class="co">[</span><span class="ot">email.strip() for email in email_str.split(',')</span><span class="co">]</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    dag_id='dags_sla_email_example',</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 5, 1, tz='Asia/Seoul'),</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    schedule='*/10 * * * *',</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    catchup=False,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    default_args={</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        'sla': timedelta(seconds=70),</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        'email': 'sdf@sdfsfd.com'</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="in">    task_1 = BashOperator(</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_1',</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 10m'</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="in">    task_2 = BashOperator(</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_2',</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 2m',</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="in">        sla=timedelta(minutes=1)</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>   task_1 &gt;&gt; task_2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="task-실패시-email-발송하기" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Task 실패시 Email 발송하기</h1>
+<section id="email-발송-위한-파라미터-확인" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="email-발송-위한-파라미터-확인"><span class="header-section-number">3.1</span> Email 발송 위한 파라미터 확인</h2>
+<ul>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/baseoperator.html#BaseOperator">airflow doc</a></li>
+<li>email 파라미터와 email_on_failure 파라미터를 이용</li>
+<li>email 파라미터만 입력하면 email_on_failure 파라미터는 True 로 자동설정됨</li>
+</ul>
+</section>
+<section id="email-발송-대상-등록" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="email-발송-대상-등록"><span class="header-section-number">3.2</span> Email 발송 대상 등록</h2>
+<div class="sourceCode" id="cb4"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>from airflow.operators.bash import BashOperator</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>from airflow.decorators import task</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>from airflow.exceptions import AirflowException</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>from datetime import timedelta</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>from airflow.models import Variable</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>email_str = Variable.get("email_target")</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>email_lst = <span class="co">[</span><span class="ot">email.strip() for email in email_str.split(',')</span><span class="co">]</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    dag_id='dags_email_on_failure',</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023,5,1, tz='Asia/Seoul'),</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    catchup=False,</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    schedule='0 1 * * *',</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    dagrun_timeout=timedelta(minutes=2),</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    default_args={</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        'email_on_failure': True,</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        'email': email_lst</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    @task(task_id='python_fail')</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    def python_task_func():</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>        raise AirflowException('에러 발생')</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    python_task_func()</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="in">    bash_fail = BashOperator(</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='bash_fail',</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='exit 1',</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="in">    bash_success = BashOperator(</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='bash_success',</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='exit 0',</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Email 받을 대상이 1 명이면 string 형식으로 , 2 명 이상이면 list 로 전달</li>
+<li>그런데 협업 환경에서 DAG 담당자는 수시로 바뀔 수 있고 인원도 수시로 바뀔 수 있는데 그때마다 DAG 을 뒤져서 email 리스트를 수정해야 할까 ?</li>
+<li>이럴때 Variable 을 이용하자</li>
+</ul>
+</section>
+</section>
+<section id="sla로-task-수행-감시-email-발송하기" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> SLA로 task 수행 감시 &amp; Email 발송하기</h1>
+<section id="sla파라미터-이해" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="sla파라미터-이해"><span class="header-section-number">4.1</span> SLA파라미터 이해</h2>
+<ul>
+<li>개념: 오퍼레이터 수행시 정해놓은 시간을 초과하였는지를 판단할 수 있도록 설정해놓은 시간 값 파이썬의 timedelta 로 정의</li>
+<li>동작: 설정해놓은 SLA 를 초과하여 오퍼레이터 running 시 SLA Miss 발생 , Airflow UI 화면에서 Miss 건만 조회 가능 + email 발송 가능
+<ul>
+<li>SLA Miss 발생시 task 가 실패되는 것은 아니며 단순 Miss 대상에 기록만 됨</li>
+<li>SLA 는 DAG 파라미터가 아니며 BaseOperator 의 파라미터</li>
+</ul></li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/baseoperator.html#BaseOperator">airflow docs</a></li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/dag.html">SLA Miss시 수행할 함수 지정 가능-Source code for airflow.models.dag</a>
+<ul>
+<li>sla_miss_callback 파라미터</li>
+<li>DAG의 파라미터임 (BaseOperator 의 파라미터가 아니라는 것에 유의)</li>
+</ul></li>
+</ul>
+</section>
+<section id="sla-제약사항" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="sla-제약사항"><span class="header-section-number">4.2</span> SLA 제약사항</h2>
+<ul>
+<li>각 Task 의 SLA timeout 카운트 시작은 DAG 의 시작시간 기준임</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:40%;">
+<section id="생각하는-sla-timeout-카운트-방식" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="생각하는-sla-timeout-카운트-방식"><span class="header-section-number">4.2.1</span> 생각하는 SLA timeout 카운트 방식</h3>
+<p><img src="../../../../../images/airflow/SLA_timeout_count1.PNG" class="img-fluid"></p>
+</section>
+</div><div class="column" style="width:60%;">
+<section id="실제-airflow-의-sla-timeout-카운트-방식" class="level3" data-number="4.2.2">
+<h3 data-number="4.2.2" class="anchored" data-anchor-id="실제-airflow-의-sla-timeout-카운트-방식"><span class="header-section-number">4.2.2</span> 실제 Airflow 의 SLA timeout 카운트 방식</h3>
+<p><img src="../../../../../images/airflow/SLA_timeout_count2.PNG" class="img-fluid"></p>
+</section>
+</div>
+</div>
+<ul>
+<li>DAG의 시작시간 기준 → 명목적인 시작 시간 (data_interval_start)
+<ul>
+<li>만약 Pool 이 부족하거나 스케줄러의 부하로 인해 DAG 이 스케줄보다 늦게 시작했다면 늦게 시작한만큼 SLA 시간 카운트는 소요됨</li>
+<li>실질적 DAG 시작 시간을 기준으로 카운트하지 않음</li>
+</ul></li>
+<li>첫 스케줄에서는 SLA Miss 가 기록되지 않음 (두 번째 스케줄부터 기록)</li>
+</ul>
+</section>
+<section id="sla-miss-시-email-발송하기" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="sla-miss-시-email-발송하기"><span class="header-section-number">4.3</span> SLA Miss 시 email 발송하기</h2>
+<div class="sourceCode" id="cb5"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.bash import BashOperator</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>from datetime import timedelta</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>from airflow.models import Variable</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>email_str = Variable.get("email_target")</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>email_lst = <span class="co">[</span><span class="ot">email.strip() for email in email_str.split(',')</span><span class="co">]</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    dag_id='dags_sla_email_example',</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 5, 1, tz='Asia/Seoul'),</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    schedule='*/10 * * * *',</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    catchup=False,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    default_args={</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        'sla': timedelta(seconds=70),</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        'email': email_lst</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_30s_sla_70s = BashOperator(</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_slp_30s_sla_70s',</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 30'</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_60_sla_70s = BashOperator(</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_slp_60_sla_70s',</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 60'</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_10s_sla_70s = BashOperator(</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_slp_10s_sla_70s',</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 10'</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_10s_sla_30s = BashOperator(</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_slp_10s_sla_30s',</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 10',</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="in">        sla=timedelta(seconds=30)</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_30s_sla_70s &gt;&gt; task_slp_60_sla_70s &gt;&gt; task_slp_10s_sla_70s &gt;&gt; task_slp_10s_sla_30s</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+</section>
+<section id="timeout-설정하기" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> timeout 설정하기</h1>
+<section id="timeout-파라미터-이해" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="timeout-파라미터-이해"><span class="header-section-number">5.1</span> Timeout 파라미터 이해</h2>
+<ul>
+<li>Task수준의 timeout 과 DAG 수준의 timeout 이 존재</li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/baseoperator.html#BaseOperator">Task수준의 timeout 파라미터</a> : execution_timeout</li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/dag.html">DAG수준의 timeout 파라미터</a> : dagrun_timeout</li>
+<li>task1 &gt;&gt; task2 &gt;&gt; task3 예시</li>
+</ul>
+<div class="columns">
+<div class="column" style="width:50%;">
+<section id="execution_timeout" class="level3" data-number="5.1.1">
+<h3 data-number="5.1.1" class="anchored" data-anchor-id="execution_timeout"><span class="header-section-number">5.1.1</span> execution_timeout</h3>
+<p><img src="../../../../../images/airflow/execution_timeout1.PNG" class="img-fluid"></p>
+</section>
+</div><div class="column" style="width:50%;">
+<section id="datgrun_timeout" class="level3" data-number="5.1.2">
+<h3 data-number="5.1.2" class="anchored" data-anchor-id="datgrun_timeout"><span class="header-section-number">5.1.2</span> datgrun_timeout</h3>
+<p><img src="../../../../../images/airflow/dagrun_timeout.PNG" class="img-fluid"></p>
+</section>
+</div>
+</div>
+</section>
+<section id="정리-1" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="정리-1"><span class="header-section-number">5.2</span> 정리</h2>
+<table class="table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Comparision</th>
+<th>sla</th>
+<th>execution_timeout</th>
+<th>dagrun_timeout</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>파라미터 정의 위치</td>
+<td>BaseOperator</td>
+<td>BaseOperator</td>
+<td>DAG</td>
+</tr>
+<tr class="even">
+<td>적용 수준</td>
+<td>Task</td>
+<td>task</td>
+<td>DAG</td>
+</tr>
+<tr class="odd">
+<td>기능</td>
+<td>지정한 시간 초과시 Miss 기록</td>
+<td>지정한 시간 초과시 task fail 처리</td>
+<td>지정한 시간 초과시 DAG fail 처리</td>
+</tr>
+<tr class="even">
+<td>email 발송 가능 여부</td>
+<td>O</td>
+<td>O</td>
+<td>X</td>
+</tr>
+<tr class="odd">
+<td>timeout 발생시 후행 task 상태</td>
+<td>상관없이 지속</td>
+<td>Upstream_failed</td>
+<td>Skipped (current) /No status (not run)</td>
+</tr>
+<tr class="even">
+<td>스케쥴 필요</td>
+<td>O</td>
+<td>X</td>
+<td>X</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>공통점: 파이썬의 timedelta 함수로 timeout 기준 시간 정의</li>
+</ul>
+</section>
+</section>
+<section id="airflow-cli-사용하기" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Airflow CLI 사용하기</h1>
+<ul>
+<li>Airflow가 설치되어 있는 서버에서 쉘 명령을 이용하여 Airflow를 컨트롤 할 수 있도록 많은 기능들을 제공하고 있음</li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/cli-and-env-variables-ref.html">airflow cli doc</a></li>
+<li>Cli를 잘 쓰면 좋은 이유
+<ul>
+<li>일괄작업: Airflow UI에서 할 수 없는 일괄 작업 방식을 제공(ex: connection 일괄 등록)</li>
+<li>특수기능: Airflow UI에서는 할 수 없는 기능을 제공(ex: backfill)</li>
+<li>자동화: Airflow UI에서 직접 눈으로 보고 클릭하는 방식이 아닌 프로그래밍에 의한 제어가 가능해짐</li>
+</ul></li>
+</ul>
+<section id="cli---dag-trigger" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="cli---dag-trigger"><span class="header-section-number">6.1</span> cli - dag trigger</h2>
+<ul>
+<li><p>manual 로 dag trigger 하거나 run_id 를 직접 넣어 trigger 할 수 있는 기능</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../.././../../images/airflow/cli_dag_trigger.PNG" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">CLI-Dag Trigger</figcaption>
+</figure>
+</div>
+<ul>
+<li><code>#&gt; airflow dags trigger dags_seoul_api_corona</code></li>
+</ul></li>
+</ul>
+</section>
+<section id="cli---dag-backfill" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="cli---dag-backfill"><span class="header-section-number">6.2</span> cli - dag backfill</h2>
+<ul>
+<li>입력 스케줄 구간에 대해 일괄 (재)실행 (스케줄 이력이 없는 과거 날짜도 가능) <img src="../../.././../../images/airflow/cli_dag_balckfill.PNG" class="img-fluid" alt="CLI-Dag backfill"></li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>#&gt; airflow dags backfill -s 2023-04-19 -e 2023-04-21 dags_seoul_api_corona</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu"># start, end 파라미터를 dash string 형태로 입력하면 UTC로 간주되며 타임스탬프 형태로 직접 작성도 가능 (run_id에서 해당하는 날짜 구간을 찾아 실행)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>#&gt; airflow dags backfill -s 2023-04-19T22:00:00+00:00 -e 2023-04-20T22:00:00+00:00 —</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>reset-dagruns dags_seoul_api_corona</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="cli---task-clear" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="cli---task-clear"><span class="header-section-number">6.3</span> cli - task clear</h2>
+<ul>
+<li>Clear 작업을 start / end 구간으로 일괄 재실행</li>
+<li>Backfill과 달리 수행되지 않은 스케줄 구간은 실행할 수 없음 <img src="../../../../../images/airflow/cli_task_cleaner.PNG" class="img-fluid" alt="CLI-Task Clear"></li>
+</ul>
+<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>#&gt; airflow tasks clear -s 2023-05-07 -e 2023-05-12 dags_seoul_api_corona</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>#&gt; airflow tasks clear -s 2023-05-07T22:00:00+00:00 -e 2023-05-12T22:00:00+00:00</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>dags_seoul_api_corona</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Backfill되었던 DAG은 clear 불가함. reset-dagruns 옵션과 함께 다시 Backfill 수행해야 함</li>
+</ul>
+</section>
+<section id="정리-2" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="정리-2"><span class="header-section-number">6.4</span> 정리</h2>
+<table class="table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Comparision</th>
+<th>trigger</th>
+<th>backfill</th>
+<th>clear</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>목적</td>
+<td>특정 날짜로 DAG Trigger</td>
+<td>Start ~ end 구간의 스케줄 실행</td>
+<td>Start ~ end 구간 내 이미 수</td>
+</tr>
+<tr class="even">
+<td>행되었던 스케줄 재실행</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>Run type</td>
+<td>-r 옵션으로 지정 가능. 없으면 Manual</td>
+<td>Backfill</td>
+<td>원래의 run_type</td>
+</tr>
+<tr class="even">
+<td>기 수행된 run_id가 존재하는 경우</td>
+<td>동일 run_id 가 존재하는 경우 에러 발생</td>
+<td>Run_type 을 Backfill 로 덮어쓰며</td>
+<td></td>
+</tr>
+<tr class="odd">
+<td>재실행</td>
+<td>재실행</td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td>구간 지정</td>
+<td>불가</td>
+<td>가능</td>
+<td>가능</td>
+</tr>
+<tr class="odd">
+<td>과거 날짜 적용 가능</td>
+<td>가능</td>
+<td>가능</td>
+<td>불가</td>
+</tr>
+<tr class="even">
+<td>task 선택 가능</td>
+<td>불가</td>
+<td>가능</td>
+<td>가능</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>공통점: CLI 명령으로 DAG 실행 가능</li>
+</ul>
+</section>
+</section>
+</div>
 <div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
 
-</div>
 </div>
 <section id="go-to-blog-content-list" class="level1" data-number="7">
 <h1 data-number="7"><span class="header-section-number">7</span> Go to Blog Content List</h1>

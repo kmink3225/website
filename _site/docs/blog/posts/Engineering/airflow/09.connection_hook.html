@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2023-05-01">
 <meta name="description" content="template">
 
-<title>Kwangmin Kim - Template Variabler</title>
+<title>Kwangmin Kim - Connection &amp; Hook</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -183,8 +183,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Template Variabler</h1>
-<p class="subtitle lead">DAG Creation, Bash Operator, Task Performance Subject,</p>
+<h1 class="title">Connection &amp; Hook</h1>
+<p class="subtitle lead">docker_compose.yaml 해석, Postgres Container 올리기, Connection, Hook, bulk_load(), Custom Hook, Providers, Connection Type</p>
   <div class="quarto-categories">
     <div class="quarto-category">Engineering</div>
   </div>
@@ -245,34 +245,35 @@ English
 <ul>
 <li>목적
 <ul>
-<li>1 개 이상 도커 컨테이너 생성시 스크립트 하나로 컨테이너들의 설정을 관리할 수 있도록 해주는 Docker 의 기능 중 하나</li>
+<li>1 개 이상의 도커 컨테이너 생성시 스크립트 하나로 컨테이너들의 설정을 관리할 수 있도록 해주는 Docker 의 기능 중 하나</li>
 <li>각 각의 container 설정 관리 뿐만 아니라 containers간의 연관관계 및 dependency까지 설정할 수 있다.</li>
 <li>일부 containers를 같은 network에서 띄워지는지도 설정할 수 있는 network 설정도 할 수 있다.</li>
 </ul></li>
 <li>작성방법
 <ul>
-<li>모든 설정은 docker compose.yaml 파일에 컨테이너들의 설정 내용을 입력</li>
+<li>모든 설정은 docker_compose.yaml 파일에 컨테이너들의 설정 내용을 입력</li>
 </ul></li>
 <li>도커컴포즈 서비스 시작
 <ul>
-<li>yaml 파일이 있는 위치에서 sudo docker compose up 명령 입력하면 docker compose.yaml에 있는 모든 설정이 적용된다.</li>
+<li>yaml 파일이 있는 위치에서 sudo docker compose up 명령 입력하면 docker_compose.yaml에 있는 모든 설정이 적용된다.</li>
 <li>기본적으로 Docker 서비스가 설치되어 있어야 함</li>
 </ul></li>
 <li>docker compose.yaml 파일의 구성
 <ul>
-<li>yaml 파일은 json 이나 xml 과 같이 <strong>key, value 로 구성되며 계층적인 구조</strong>를 가지며 파이썬처럼 들여쓰기 문법을 사용함</li>
+<li>yaml 파일은 json 이나 xml 과 같이 <strong>key, value 로 구성되며 계층적인 구조</strong>를 가지며 파이썬처럼 들여쓰기 문법을 사용함. 들여쓰기 잘못하면 오류남.</li>
 <li>다시 말해서, json 이나 xml은 파이썬의 dictionary 같이 nested {key:value} structure로 작성할 수 있다.</li>
 </ul></li>
-<li>docker compose.yaml 파일의 1 Level 내용</li>
+<li>docker_compose.yaml 파일의 1 Level 내용</li>
 </ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="an">version:</span><span class="co"> '3.8' # yaml 파일의버전 정보 옵션</span></span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="an">version:</span><span class="co"> '3.8' # yaml 파일의 버전 정보 옵션</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="an">x-airflow-common:</span><span class="co"> # 'x-': Extention Fields(각 서비스 항목에 또는 container에  공통 적용될 항목들 정의)</span></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="an">services:</span><span class="co"> # 컨테이너로 실행할 서비스 정의로 가장 신경써서 적어야할 부분</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="an">volumes:</span><span class="co">  # 컨테이너에 할당할 volume 정의</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="an">networks:</span><span class="co"> # 컨테이너에 연결할 network 정의</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>위의 내용에서 key값은 version, x-airflow-common, services, volumes, networks</p>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="an">networks:</span><span class="co"> # 컨테이너에 연결할 network 정의. 초기에는 level1에 networks 항목이 정의되어 있지 않아 정의해줘야함</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
-<li>x-airflow-common: 공통 지정할 항목을 를 붙여서 지정</li>
+<li><p>위의 내용에서 key값은 version, x-airflow-common, services, volumes, networks</p></li>
+<li><p>networks: containers에 IP나 network정보를 할당해주기 위해 작성하는 항목</p></li>
+<li><p>x-airflow-common: 공통 지정할 항목을 &amp;를 붙여서 지정</p></li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>x-airflow-common</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    &amp;airflow-common # 공통 지정 parameters 정의: image, environment, depends_on</span>
@@ -289,19 +290,56 @@ English
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        postgres:</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>            condition: service_healthy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
-<li><p>공통 지정 항목1: &amp;airflow-common</p>
+<li>&amp;airflow-common는 image, environment, depends_on 인수를 미리 가지고 있음</li>
+<li>공통 지정 항목1: &amp;airflow-common
 <ul>
 <li>변수 또는 parameter: image, environment, depends_on</li>
 </ul></li>
-<li><p>공통 지정 항목2: &amp;airflow-common-env</p>
+<li>공통 지정 항목2: &amp;airflow-common-env
 <ul>
 <li>변수 또는 parameter: AIRFLOW__CORE__DEFAULT_TIMEZONE, AIRFLOW__CORE__EXECUTOR, AIRFLOW__DATABASE__SQL_ALCHEMY_CONN</li>
 </ul></li>
-<li><p>공통 지정 항목3: &amp;airflow-common-depends-on</p>
+<li>공통 지정 항목3: &amp;airflow-common-depends-on
 <ul>
 <li>변수 또는 parameter: redis, postgres</li>
 </ul></li>
-<li><p>services: 컨테이너로 올릴 서비스 지정 <code>markdown     services:        postgres:          image: postgres:13          environment:            POSTGRES_USER: airflow            POSTGRES_PASSWORD: airflow            POSTGRES_DB: airflow          volumes:            - postgres-db-volume:/var/lib/postgresql/data          healthcheck:            test: ["CMD", "pg_isready", "-U", "airflow"]            interval: 10s            retries: 5            start_period: 5s         ports             - 5432:5432          restart: always</code></p>
+<li>후차적인 스크립트에서 &amp;airflow-common 를 호출 하면 아래의 내용이 모두 호출 됨</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>&amp;airflow-common # 공통 지정 parameters 정의: image, environment, depends_on</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>image: ${AIRFLOW_IMAGE:-apache/airflow:2.5.2}</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>environment</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    &amp;airflow-common-env</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    AIRFLOW__CORE__DEFAULT_TIMEZONE: 'Asia/Seoul'</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    AIRFLOW__CORE__EXECUTOR: CeleryExecutor</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>depends_on # containers 실행 순서를 결정</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    &amp;airflow-common-depends-on # 공통 지정 parameters 정의: redis, postgres</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    redis:</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        condition: service_healthy</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    postgres:</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        condition: service_healthy</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><p>services: 컨테이너로 올릴(실행할) 서비스 지정</p>
+<ul>
+<li>default postgres 서비스 말고 새로 지정할 postgres 서비스. 초기의 docker_compose.yaml파일에서는 없음</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="an">services:</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>   postgres:</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>     image: postgres:13</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>     environment:</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>       POSTGRES_USER: airflow</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>       POSTGRES_PASSWORD: airflow</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>       POSTGRES_DB: airflow</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>     volumes:</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="ss">       - </span>postgres-db-volume:/var/lib/postgresql/data</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>     healthcheck:</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>       test: <span class="co">[</span><span class="ot">"CMD", "pg_isready", "-U", "airflow"</span><span class="co">]</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>       interval: 10s</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>       retries: 5</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>       start_period: 5s</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    ports</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="ss">        - </span>5432:5432</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>     restart: always</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li><code>image: postgres:13</code> 은 image는 postgre:13 버전의 image를 쓴다는 것이고 이 image가 local에 있으면 그대로 쓰고 없으면 인터넷에서 download됨.</li>
 <li><code>environment:</code> 는 postgres OS에 설정할 환경 변수들</li>
@@ -319,79 +357,85 @@ English
 <li><code>5432:5432</code> <code>:</code> 을 기준으로 왼쪽이 local에서 web에 접속할 port 번호고 오른쪽이 service가 갖고 있는 port번호. 다시 말해서, wsl 시스템안에 여러 컨테이너들이 있고 그 중 postgres 이미지가 깔려 있다면 postgres는 5432 port를 가지고 있는 상태이다. postgres 이미지에 접근하려면 wsl의 port를 통해서 접근해야하는데 그 wsl의 port가 5432로 지정된 것을 의미한다.</li>
 </ul></li>
 <li><code>restart: always</code> container가 죽으면 언제 새로 띄워주겠냐는 것이고 always니까 항상 새로 띄워줌</li>
+<li>redis</li>
 </ul>
-<div class="sourceCode" id="cb3"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a> redis:</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>   image: redis:latest</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>   expose:</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="ss">     - </span>6379</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>   healthcheck:</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>     test: <span class="co">[</span><span class="ot">"CMD", "redis-cli", "ping"</span><span class="co">]</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>     interval: 10s</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>     timeout: 30s</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>     retries: 50</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>     start_period: 30s</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>   restart: always</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>  redis:</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    image: redis:latest</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    expose:</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ss">      - </span>6379</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    healthcheck:</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>      test: <span class="co">[</span><span class="ot">"CMD", "redis-cli", "ping"</span><span class="co">]</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>      interval: 10s</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>      timeout: 30s</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>      retries: 50</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      start_period: 30s</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    restart: always</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li><code>expose: 6379</code> 이것 역시 port번호인데 외부와 연결될 때 사용되는 게 아니라 내부 다른 containers와 연결시 사용되는 port번호로 expose parameter로 공개 설정한다.</li>
+<li>airflow-webserver</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>services</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  airflow-webserver:</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">&lt;:</span> <span class="er">*airflow-common</span> <span class="er">#</span> <span class="er">공통</span> <span class="er">지정</span> <span class="er">parameters</span> <span class="er">호출:</span> <span class="er">image,</span> <span class="er">environment,</span> <span class="er">depends_on</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ot">    command:</span> <span class="er">webserver</span> <span class="er">#</span> <span class="er">container를</span> <span class="er">띄울</span> <span class="er">때</span> <span class="er">실행할</span> <span class="er">명령어</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ot">    ports:</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>      <span class="er">-</span> <span class="er">"8080:8080"</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="ot">    healthcheck:</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="ot">      test:</span> <span class="er">["CMD",</span> <span class="er">"curl",</span> <span class="er">"--fail",</span> <span class="er">"http://localhost:8080/health"]</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="ot">      interval:</span> <span class="er">30s</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="ot">      timeout:</span> <span class="er">10s</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="ot">      retries:</span> <span class="er">5</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="ot">      start_period:</span> <span class="er">30s</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="ot">    restart:</span> <span class="er">always</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="ot">    depends_on:</span> <span class="er">#</span> <span class="er">2번째</span> <span class="er">depends_on</span> <span class="er">선언으로</span> <span class="er">x-airflow-common의</span> <span class="er">depends_on</span> <span class="er">의</span> <span class="er">내용은</span> <span class="er">무시된다.</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>      <span class="er">&lt;&lt;:</span> <span class="er">*airflow-common-depends-on</span> <span class="er">#</span> <span class="er">공통</span> <span class="er">지정</span> <span class="er">parameters</span> <span class="er">호출:</span> <span class="er">redis,</span> <span class="er">postgres</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="ot">      airflow-init:</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="ot">        condition:</span> <span class="er">service_completed_successfully</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>  airflow-webserver:</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">&lt;:</span> <span class="er">*airflow-common</span> <span class="er">#</span> <span class="er">&amp;airflow-common의</span> <span class="er">공통</span> <span class="er">지정</span> <span class="er">parameters</span> <span class="er">호출:</span> <span class="er">image,</span> <span class="er">environment,</span> <span class="er">depends_on</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ot">    command:</span> <span class="er">webserver</span> <span class="er">#</span> <span class="er">container를</span> <span class="er">띄울</span> <span class="er">때</span> <span class="er">실행할</span> <span class="er">명령어</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ot">    ports:</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      <span class="er">-</span> <span class="er">"8080:8080"</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="ot">    healthcheck:</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="ot">      test:</span> <span class="er">["CMD",</span> <span class="er">"curl",</span> <span class="er">"--fail",</span> <span class="er">"http://localhost:8080/health"]</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="ot">      interval:</span> <span class="er">30s</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="ot">      timeout:</span> <span class="er">10s</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="ot">      retries:</span> <span class="er">5</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="ot">      start_period:</span> <span class="er">30s</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="ot">    restart:</span> <span class="er">always</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="ot">    depends_on:</span> <span class="er">#</span> <span class="er">2번째</span> <span class="er">depends_on</span> <span class="er">선언이</span> <span class="er">되어</span> <span class="er">호출된</span> <span class="er">(&lt;&lt;:</span> <span class="er">*airflow-common)</span> <span class="er">&amp;airflow-common의</span> <span class="er">depends_on</span> <span class="er">의</span> <span class="er">내용은</span> <span class="er">무시된다.</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      <span class="er">&lt;&lt;:</span> <span class="er">*airflow-common-depends-on</span> <span class="er">#</span> <span class="er">공통</span> <span class="er">지정</span> <span class="er">parameters</span> <span class="er">호출:</span> <span class="er">redis,</span> <span class="er">postgres</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="ot">      airflow-init:</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="ot">        condition:</span> <span class="er">service_completed_successfully</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li>services: 1-level (x-airflow-common 같은 level)
 <ul>
 <li>airflow-webserver, airflow-scheduler, redis, postgres 등이 같은 level의 서비스 항목으로 열거 된다.</li>
 </ul></li>
-<li>depends_on: containers를 띄우는 순서를 설정하는 부분으로 위의 예시는
+<li>depends_on: containers를 띄우는 (실행하는) 순서를 설정하는 부분으로 위의 예시는
 <ul>
 <li>redis, postgres, airflow-init을 띄우고 나서 airflow-webserver를 띄우겠다는 것.</li>
 <li>[redis, postgres, airflow-init]&gt;&gt;airflow-webserver</li>
 </ul></li>
+<li>airflow-scheduler: # 1-level</li>
 </ul>
-<div class="sourceCode" id="cb5"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>airflow-scheduler: # 1-level</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">&lt;:</span> <span class="er">*airflow-common</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ot">    command:</span> <span class="er">scheduler</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ot">    healthcheck:</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ot">      test:</span> <span class="er">["CMD",</span> <span class="er">"curl",</span> <span class="er">"--fail",</span> <span class="er">"http://localhost:8974/health"]</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ot">      interval:</span> <span class="er">30s</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="ot">      timeout:</span> <span class="er">10s</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="ot">      retries:</span> <span class="er">5</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="ot">      start_period:</span> <span class="er">30s</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="ot">    restart:</span> <span class="er">always</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="ot">    depends_on:</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>      <span class="er">&lt;&lt;:</span> <span class="er">*airflow-common-depends-on</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="ot">      airflow-init:</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="ot">        condition:</span> <span class="er">service_completed_successfully</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>  airflow-scheduler: # 1-level</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>       &lt;<span class="kw">&lt;:</span> <span class="er">*airflow-common</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ot">       command:</span> <span class="er">scheduler</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ot">       healthcheck:</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ot">         test:</span> <span class="er">["CMD",</span> <span class="er">"curl",</span> <span class="er">"--fail",</span> <span class="er">"http://localhost:8974/health"]</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="ot">         interval:</span> <span class="er">30s</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="ot">         timeout:</span> <span class="er">10s</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="ot">         retries:</span> <span class="er">5</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="ot">         start_period:</span> <span class="er">30s</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="ot">       restart:</span> <span class="er">always</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="ot">       depends_on:</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>         <span class="er">&lt;&lt;:</span> <span class="er">*airflow-common-depends-on</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="ot">         airflow-init:</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="ot">           condition:</span> <span class="er">service_completed_successfully</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 <li><p>volumes: 컨테이너와 연결하기 위한 볼륨 (공간) 정보 ```markdown volumns: postgree-db-volume: #새로 만들 볼륨 이름</p>
 <p>```</p>
 <ul>
 <li>볼륨에 대한 정보 확인하기 1.볼륨 리스트 보기 : sudo docker volume ls (현재 만들어진 volumes 리스트와 volumne_id가 보임) 2.볼륨 상세 보기 : sudo docker volume inspect {volume_id}</li>
 </ul></li>
-<li><p>networks: 컨테이너의 network 정보 구성 <code>markdown     networks:         network_custom: # 새로 만들 네트워크 이름             driver: bridge             ipam:                 driver: default                 config:                     - subnet : 172.18.0.0/16 # 네트워크 IP의 주소값이 2^16 개, host가 가질 IP의 주소값은 2^16-2 만큼을 할당할 수 있다.                       gateway: 172.18.0.1</code></p>
+<li><p>networks: 컨테이너의 network 정보 구성</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="an">networks:</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">    network_custom: # 새로 만들 네트워크 이름</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">        driver: bridge</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">        ipam:</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">            driver: default</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">            config:</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">                - subnet : 172.18.0.0/16 # 네트워크 IP의 주소값이 2^16 개, host가 가질 IP의 주소값은 2^16-2 만큼을 할당할 수 있다.</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">                  gateway: 172.18.0.1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li>config:
 <ul>
 <li>subnet : 172.18.0.0/16</li>
-<li>gateway: 172.18.0.1</li>
+<li>gateway: 172.18.0.1 주어진 서브넷은 172.18.0.0/16으로 주어졌는데 이 경우, 16비트의 네트워크 부분이 주소에 할당되어 있다. 네트워크 부분은 호스트를 식별하는데 사용되는 부분이 아닌 네트워크를 식별하는데 사용되는 부분이다. 이러한 설정에서는 네트워크 IP의 주소값이 2^16 (또는 65536) 개로 할당된다. 호스트는 네트워크에서 실제로 사용되는 장치 또는 시스템을 의미한다. 이 설정에서는 게이트웨이 주소를 172.18.0.1로 지정하여 해당 IP 주소를 게이트웨이로 사용한다. 따라서 호스트가 할당받을 수 있는 IP 주소값의 개수는 네트워크 IP 주소값에서 게이트웨이 주소를 제외한 개수이다. 즉, 2^16-2 (또는 65534) 개의 주소를 호스트에 할당할 수 있다.</li>
 </ul></li>
-</ul>
-<p>주어진 서브넷은 172.18.0.0/16으로 주어졌는데 이 경우, 16비트의 네트워크 부분이 주소에 할당되어 있다. 네트워크 부분은 호스트를 식별하는데 사용되는 부분이 아닌 네트워크를 식별하는데 사용되는 부분이다. 이러한 설정에서는 네트워크 IP의 주소값이 2^16 (또는 65536) 개로 할당된다. 호스트는 네트워크에서 실제로 사용되는 장치 또는 시스템을 의미한다. 이 설정에서는 게이트웨이 주소를 172.18.0.1로 지정하여 해당 IP 주소를 게이트웨이로 사용한다. 따라서 호스트가 할당받을 수 있는 IP 주소값의 개수는 네트워크 IP 주소값에서 게이트웨이 주소를 제외한 개수이다. 즉, 2^16-2 (또는 65534) 개의 주소를 호스트에 할당할 수 있다.</p>
-<ul>
 <li>네트워크에 대한 정보 확인하기
 <ol type="1">
 <li>네트워크 리스트 보기 : sudo docker network ls</li>
@@ -406,104 +450,342 @@ English
 <h2 data-number="3.1" class="anchored" data-anchor-id="postgress-컨테이너-추가하기"><span class="header-section-number">3.1</span> Postgress 컨테이너 추가하기</h2>
 <ul>
 <li>postgres_custom 이라는 이름의 컨테이너 서비스 추가하기</li>
+<li>networks를 만들어 컨테이너에 고정 IP 할당</li>
+<li>DBeaver로 postgres DB에 접속</li>
 </ul>
+<div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="an">services:</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  postgres_custom:</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    image: postgres:13</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    environment:</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>      POSTGRES_USER: kmkim</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>      POSTGRES_PASSWORD: kmkim</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>      POSTGRES_DB: kmkim</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>      TZ: Asia/Seoul</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    volumes:</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="ss">      - </span>postgres-custom-db-volume:/var/lib/postgresql/data</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    ports:</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="ss">      - </span>5432:5432</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    networks:</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>      network_custom: # 밑에서 정의한 network_custom 을 쓰겠다는 의미</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        ipv4_address: 172.28.0.3 # 할당된 IP</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>networks:</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  network_custom: </span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    driver: bridge</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    ipam:</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        driver: default</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>        config:</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="ss">            - </span>subnet: 172.28.0.0/16 # 네트 워크 ID 주소 밑에 16개/host id 주소 밑에 16개를 할당하겠다는 의미</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>              gateway: 172.28.0.1 # default 네트워크 (172.18.0.0)가 쓰고 있지 않은 서브넷으로 구성</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>volumes:</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  postgres-db-volume:</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  postgres-custom-db-volume: #wsl의 어느 path에 mapping이 되어 있는지 확인할 것</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="컨테이너-고정-ip-할당하기" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="컨테이너-고정-ip-할당하기"><span class="header-section-number">3.2</span> 컨테이너 고정 IP 할당하기</h2>
 <ul>
-<li><p>기본적으로 컨테이너들은 유동 IP를 지니며 (재기동시 IP 변경 가능)</p></li>
-<li><p>고정 IP를 할당하려면 networks를 만들어 할당해야 함.</p></li>
-<li><p>networks 를 지정하지 않은 컨테이너들(airflow를 설치하면서 기본적으로 설치되는 containers)은 default network에 묶이게 됨</p></li>
-<li><p>따라서 동일 네트워크에 두고 싶은 컨테이너들은 모두 동일 netwworks 할당 필요</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="an">services:</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  postgres_custom:</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    image: postgres:13</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    environment:</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>      POSTGRES_USER: kmkim</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      POSTGRES_PASSWORD: kmkim</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      POSTGRES_DB: kmkim</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      TZ: Asia/Seoul</span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    volumes:</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="ss">      - </span>postgres-custom-db-volume:/var/lib/postgresql/data</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    ports:</span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="ss">      - </span>5432:5432</span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    networks:</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      network_custom: # 밑에서 정의한 network_custom 을 쓰겠다는 의미</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        ipv4_address: 172.28.0.3 # 할당된 IP</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>networks:</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  network_custom: </span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    driver: bridge</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    ipam:</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        driver: default</span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        config:</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="ss">            - </span>subnet: 172.28.0.0/16 # 네트 워크 ID 주소 밑에 16개/host id 주소 밑에 16개를 할당하겠다는 의미</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>              gateway: 172.28.0.1 # default 네트워크 (172.18.0.0)가 쓰고 있지 않은 서브넷으로 구성</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>volumes:</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  postgres-db-volume:</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  postgres-custom-db-volume:</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li>기본적으로 컨테이너들은 유동 IP를 지니며 (재기동시 IP 변경 가능)</li>
+<li>postgres DB에 접속하려면 고정 IP 필요</li>
+<li>고정 IP를 할당하려면 networks를 만들어서 할당해야 함.</li>
+<li>networks 를 지정하지 않은 컨테이너들(airflow를 설치하면서 기본적으로 설치되는 containers)은 default network에 묶이게 됨</li>
+<li>따라서 동일 네트워크에 두고 싶은 컨테이너들은 모두 동일 netwworks 할당 필요</li>
+</ul>
+<div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="an">networks:</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  network_custom: </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    driver: bridge</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    ipam:</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        driver: default</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        config:</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="ss">            - </span>subnet: 172.28.0.0/16 # 네트 워크 ID 주소 밑에 16개/host id 주소 밑에 16개를 할당하겠다는 의미</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>              gateway: 172.28.0.1 # default 네트워크 (172.18.0.0)가 쓰고 있지 않은 서브넷으로 구성</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
 <li><p>Postgres_custom 컨테이너 뿐만 아니라 다른 컨테이너에도 network_custom 할당하고 IP 부여</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="an">postgres_custom:</span><span class="co">  # 172.28.0.3</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="an">postgres:</span><span class="co">  # 172.28.0.3 +  포트 노출 설정:(5431:5432)</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="an">redis:</span><span class="co"> # 172.28.0.5</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="an">airflow-webserver:</span><span class="co"> # 172.28.0.6</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="an">airflow-scheduler:</span><span class="co"> # 172.28.0.7</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="an">airflow-worker:</span><span class="co"> # 172.28.0.8</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="an">airflow-triggerer:</span><span class="co"> # 172.28.0.9</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="an">airflow-init:</span><span class="co"> # 172.28.0.10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="an">postgres_custom:</span><span class="co">  # 172.28.0.3</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="an">postgres:</span><span class="co">  # 172.28.0.3 +  포트 노출 설정:(5431:5432)</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="an">redis:</span><span class="co"> # 172.28.0.5</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="an">airflow-webserver:</span><span class="co"> # 172.28.0.6</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="an">airflow-scheduler:</span><span class="co"> # 172.28.0.7</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="an">airflow-worker:</span><span class="co"> # 172.28.0.8</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="an">airflow-triggerer:</span><span class="co"> # 172.28.0.9</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="an">airflow-init:</span><span class="co"> # 172.28.0.10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li>postgres: # airflow가 기본 메타DB로 쓰고 있는 postgress 컨테이너에 포트 번호 5431로 노출</li>
 </ul></li>
-</ul>
-</section>
-<section id="db-접속하기" class="level2" data-number="3.3">
-<h2 data-number="3.3" class="anchored" data-anchor-id="db-접속하기"><span class="header-section-number">3.3</span> DB 접속하기</h2>
+<li><p>networks에 172.28.xxx.xxx 같이 172.28 대역을 준 이유</p>
 <ul>
-<li>Dbeaver: 설치 https://dbeaver.io/</li>
+<li>아래와 같이 <code>sudo docker ps</code> 를 실행해 container list를 보고 container id를 확인 하여 <code>sudo docker inspect {container_id}</code> or <code>sudo docker inspect b739a3494646</code> 실행해보면 다음과 같은 정보를 볼 수 있다.</li>
+</ul>
+<div class="sourceCode" id="cb12"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a> "NetworkSettings": {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>          "Bridge": "",</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>          "SandboxID": "b1bda217ebe565bfcf64b3c52e7fbf47032821894db5d97ef9f8f85db5ee57d3",            "HairpinMode": false,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>          "LinkLocalIPv6Address": "",</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>          "LinkLocalIPv6PrefixLen": 0,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>          "Ports": {},</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>          "SandboxKey": "/var/run/docker/netns/b1bda217ebe5",</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>          "SecondaryIPAddresses": null,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>          "SecondaryIPv6Addresses": null,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>          "EndpointID": "",</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>          "Gateway": "", # custom-network로 지정해주기전엔 여기 172.19.0.1 로 되어 있었음</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>          "GlobalIPv6Address": "",</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>          "GlobalIPv6PrefixLen": 0,</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>          "IPAddress": "", # custom-network로 지정해주기전엔 여기 172.19.0.6 로 되어 있었음</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>          "IPPrefixLen": 0,</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>          "IPv6Gateway": "",</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>          "MacAddress": "",</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>          "Networks": {</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>              "airflow_network_custom": {</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>                  "IPAMConfig": {</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>                      "IPv4Address": "172.28.0.8"</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>                  },</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>                  "Links": null,</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>                  "Aliases": [</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>                      "airflow-airflow-worker-1",</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>                      "airflow-worker",</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>                      "b739a3494646"</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>                  ],</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>                  "NetworkID": "eb43aaa125bcf1aac0fd512057de947abafd9397dd0d51cf7f49582c8c7d5eb9",</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>                  "EndpointID": "",</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>                  "Gateway": "",</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>                  "IPAddress": "",</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>                  "IPPrefixLen": 0,</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>                  "IPv6Gateway": "",</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>                  "GlobalIPv6Address": "",</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>                  "GlobalIPv6PrefixLen": 0,</span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>                  "MacAddress": "",</span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>                  "DriverOpts": null</span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>              }</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>          }</span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>      }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>현재 설치되어 있는 networks list 보기 : <code>sudo docker network ls</code></li>
+</ul>
+<div class="sourceCode" id="cb13"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>NETWORK ID     NAME                     DRIVER    SCOPE</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>260163833c67   airflow_default          bridge    local</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>eb43aaa125bc   airflow_network_custom   bridge    local</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>1543a7e87603   bridge                   bridge    local</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>9d0e4a4e52ce   host                     host      local</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>5c1f555d034f   none                     null      local</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>worker container는 “NetworkID”: “eb43aaa125bcf1aac0fd512057de947abafd9397dd0d51cf7f49582c8c7d5eb9” 에서 앞 부분이 eb43aaa125bc 이기 때문에 airflow_network_custom을 사용하는 것을 볼 수 있다. (networks 지정 전에는 default에 있음)</li>
+<li>원래 default network는 IP를 172.19.xxx.xxx 대역을 쓰기 때문에 network custom에서는 안전하게 172.29.xxx.xxx IP 주소가 충돌이 되지 않도록 29로 설정한다.</li>
+</ul></li>
+<li><p>Volume 현황 보기 : <code>sudo docker volume ls</code></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>DRIVER    VOLUME NAME</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>local     1e0ab35524a66be9d849f574436e148479f9af7dd76c763cd4dac2ac147aba3c # docker가 알아서 만든 volume</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>local     2f2593b44a32b1474400a100216ccc0e9658b99b1cc0c83ad993bc3bb387d4ba # docker가 알아서 만든 volume </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>local     4ae485474d6168c4b62c3bd6ba1b6cd130576d49e733314f3802e36ad34f47a2 # docker가 알아서 만든 volume</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>local     4b80894138e5d2ed6b8d5a99723ac747e4325d215e04a81e7ec6254581758109 # docker가 알아서 만든 volume</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>local     8bec2d1d658ea13617520f12f1d73981ee2cb7740bee4f3b10ce0aa1e565d0ee # docker가 알아서 만든 volume</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>local     91a25038cbe4cec1757bb4ccb35b7a91d73000dfa501c45aa9ebebba351f4882 # docker가 알아서 만든 volume</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>local     0315bc7a7513fc0480ae1b220b3f3022d1df134f21c31a3b05282960ea58b820 # docker가 알아서 만든 volume</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>local     884de047d72dc84fcf02c7f2dba0c3c5ca6e4d2ef2eb7c2f471be32740ca6949 # docker가 알아서 만든 volume</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>local     7300ab83ca5c136dbd95e2d969e5d7d8e09c285c169aaf7789d396d12a940b7a # docker가 알아서 만든 volume</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>local     9619310c2f4f3e281b2bd49626cb7ffb157b97946e25bc2d84ea6a27b3842d7e # docker가 알아서 만든 volume</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>local     94856658cd6a9ba830bdfd39a73fcf6737cdf82707454c3da2ea6f59c1599ce2 # docker가 알아서 만든 volume</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>local     a9f0f6f5f1f4b83a4c1af47aef4ff8f0692cd21eed9db9cde77b08538ccd55a3 # docker가 알아서 만든 volume</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>local     a97aa8ddd6bf1224517f37eaeee7425dbfcce1b144ec5c0f3a5bcab47cb80f69 # docker가 알아서 만든 volume</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>local     ac91a112c4c03b110775e6ff6cdf8ae774f0376836501f96eb95130594038ec9 # docker가 알아서 만든 volume</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>local     airflow_postgres-custom-db-volume # 내가 만든 volume</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>local     airflow_postgres-db-volume # airflow가 postgres container를 실행하면서 만들었던 metaDB를 위한 volume</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>local     b3b8ab88bbaa69adc798f5fbeebe75dd4d4e47843e9e2861922193695e614926 # docker가 알아서 만든 volume </span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>local     b41f5d39b0778ca5efdc714a54ae103503cb8a96778cd9bdd19ecf5857e92e85 # docker가 알아서 만든 volume</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>local     c5c7439b17427b11aceee49239ed8f3f4805a9c531cf8a3673a635b2f17cc3ec # docker가 알아서 만든 volume</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>local     d31b1c160d8127fab58d1585a44b62498c4f0ae5c42962d68cd725cffe9fdd2d # docker가 알아서 만든 volume</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>local     f928be82c57a041a2e02e43b81e6e1280b00c71b39a12bb05ff9a1dd9d1ddb32 # docker가 알아서 만든 volume</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>volume detail 보기 : <code>sudo docker volume inspect airflow_postgres-custom-db-volume</code></li>
+</ul>
+<div class="sourceCode" id="cb15"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>[</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  {</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>      "CreatedAt": "2023-07-01T10:38:26+09:00",</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>      "Driver": "local",</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>      "Labels": {</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>          "com.docker.compose.project": "airflow",</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>          "com.docker.compose.version": "2.18.1",</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>          "com.docker.compose.volume": "postgres-custom-db-volume"</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>      },</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>      "Mountpoint": "/var/lib/docker/volumes/airflow_postgres-custom-db-volume/_data",</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>      "Name": "airflow_postgres-custom-db-volume",</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>      "Options": null,</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>      "Scope": "local"</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>volume의 위치: “/var/lib/docker/volumes/airflow_postgres-custom-db-volume/_data”
+<ul>
+<li><code>sudo ls /var/lib/docker/volumes/airflow_postgres-custom-db-volume/_data</code> 실행하면 postgres container가 쓰고있는 file list를 확인할 수 있다.</li>
+</ul>
+<div class="sourceCode" id="cb16"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>PG_VERSION  global        pg_dynshmem  pg_ident.conf  pg_multixact  pg_replslot  pg_snapshots  pg_stat_tmp  pg_tblspc    pg_wal   postgresql.auto.conf  postmaster.opts   base  pg_commit_ts  pg_hba.conf  pg_logical     pg_notify     pg_serial    pg_stat       pg_subtrans  pg_twophase  pg_xact  postgresql.conf       postmaster.pid</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<h2 id="db-접속하기" data-number="3.3" class="anchored"><span class="header-section-number">3.3</span> DB 접속하기</h2></li>
+</ul></li>
+<li><p><a href="https://dbeaver.io/">Dbeaver 설치 https://dbeaver.io/</a></p></li>
+<li><p>community versiono 설치하면 됨 &gt;&gt; windows installer download 받아 설치</p></li>
+</ul>
+<section id="dbeaver에-postgres-연결" class="level3" data-number="3.3.1">
+<h3 data-number="3.3.1" class="anchored" data-anchor-id="dbeaver에-postgres-연결"><span class="header-section-number">3.3.1</span> DBeaver에 Postgres 연결</h3>
+<p><img src="../../../../../images/airflow/postgres_install1.PNG" class="img-fluid" alt="New Database Connection"> <img src="../../../../../images/airflow/postgres_install2.PNG" class="img-fluid" alt="Postgres Connection"></p>
+<ul>
+<li>3번: localhost 자체가 local의 wsl을 의미하기 때문에 그대로 놔두면 됨</li>
+<li>4번: port는 docker_compose.yaml에 설정된 port번호 자동으로 입력되서 나옴</li>
+<li>5번: kmkim (docker_compose.yaml 설정대로 바꿔야함)</li>
+<li>6번: kmkim (docker_compose.yaml 설정대로 바꿔야함)</li>
+</ul>
+</section>
+<section id="airflow-metadb-연결" class="level3" data-number="3.3.2">
+<h3 data-number="3.3.2" class="anchored" data-anchor-id="airflow-metadb-연결"><span class="header-section-number">3.3.2</span> Airflow metaDB 연결</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../../../../images/airflow/airflow_metadb_connection.PNG" class="img-fluid figure-img"></p>
+<figcaption class="figure-caption">Airflow MetaDB Connection</figcaption>
+</figure>
+</div>
+<ul>
+<li>1번: docker_compose.yaml 설정대로 5431이 나옴</li>
+<li>2번: database 이름은 airflow</li>
+<li>3번: username은 airflow</li>
+<li>4번: password는 airflow</li>
 </ul>
 </section>
 </section>
-<section id="postgres에-데이터-insert" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Postgres에 데이터 insert</h1>
-<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.python import PythonOperator</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    dag_id='dags_python_with_postgres',</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023,4,1, tz='Asia/Seoul'),</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    schedule=None,</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    catchup=False</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="in">    def insrt_postgres(ip, port, dbname, user, passwd, **kwargs):</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="in">        import psycopg2</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="in">        from contextlib import closing</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="in">        with closing(psycopg2.connect(host=ip, dbname=dbname, user=user, password=passwd, port=int(port))) as conn:</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="in">            with closing(conn.cursor()) as cursor:</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="in">                dag_id = kwargs.get('ti').dag_id</span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="in">                task_id = kwargs.get('ti').task_id</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="in">                run_id = kwargs.get('ti').run_id</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="in">                msg = 'insrt 수행'</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="in">                sql = 'insert into py_opr_drct_insrt values (%s,%s,%s,%s);'</span></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="in">                cursor.execute(sql,(dag_id,task_id,run_id,msg))</span></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="in">                conn.commit()</span></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres = PythonOperator(</span></span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='insrt_postgres',</span></span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=insrt_postgres,</span></span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="in">        op_args=['172.28.0.3', '5432', 'hjkim', 'hjkim', 'hjkim']</span></span>
-<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
-<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="in">        </span></span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<section id="문제점-및-해결방법" class="level2" data-number="4.1">
-<h2 data-number="4.1" class="anchored" data-anchor-id="문제점-및-해결방법"><span class="header-section-number">4.1</span> 문제점 및 해결방법</h2>
+</section>
+<section id="connection-hook" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Connection &amp; Hook</h1>
+<section id="postgres에-데이터-insert" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="postgres에-데이터-insert"><span class="header-section-number">4.1</span> Postgres에 데이터 insert</h2>
+<div class="sourceCode" id="cb17"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.python import PythonOperator</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    dag_id='dags_python_with_postgres',</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023,4,1, tz='Asia/Seoul'),</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    schedule=None,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    catchup=False</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="in">    def insrt_postgres(ip, port, dbname, user, passwd, **kwargs):</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="in">        import psycopg2 # postgres DB에 접속해서 sql query 를 날리고 결과를 가지고 올수있게 해주는 library</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="in">        from contextlib import closing</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="in">        with closing(psycopg2.connect(host=ip, dbname=dbname, user=user, password=passwd, port=int(port))) as conn:</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="in">            with closing(conn.cursor()) as cursor:</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="in">                dag_id = kwargs.get('ti').dag_id</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="in">                task_id = kwargs.get('ti').task_id</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="in">                run_id = kwargs.get('ti').run_id</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a><span class="in">                msg = 'insrt 수행'</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="in">                sql = 'insert into py_opr_drct_insrt values (%s,%s,%s,%s);'</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="in">                cursor.execute(sql,(dag_id,task_id,run_id,msg))</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="in">                conn.commit()</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres = PythonOperator(</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='insrt_postgres',</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=insrt_postgres,</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a><span class="in">        op_args=['172.28.0.3', '5432', 'hjkim', 'hjkim', 'hjkim']</span></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a><span class="in">        </span></span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><p><code>psycopg2.connect(host=ip, dbname=dbname, user=user, password=passwd, port=int(port))</code> : DB server와의 연결 (Session)</p>
+<ul>
+<li>session: TCP/IP 기반의 connection</li>
+</ul></li>
+<li><p>conn session에서 sql을 이용한 구체적인 query 내용은 두 번째 with문에서 기술</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a> with closing(conn.cursor()) as cursor:</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>              dag_id = kwargs.get('ti').dag_id # task instance object 에서 dag_id (property) 호출</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>              task_id = kwargs.get('ti').task_id # task instance object 에서 task_id (property) 호출</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>              run_id = kwargs.get('ti').run_id # task instance object 에서 run_id (property) 호출</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>              msg = 'insrt 수행'</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>              sql = 'insert into py_opr_drct_insrt values (%s,%s,%s,%s);' </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>              cursor.execute(sql,(dag_id,task_id,run_id,msg))</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>              conn.commit()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>cursor: client(worker)와 DB서버(container) 사이의 session안에서 client에서 query를 날리고 DB서버로부터 결과를 가져와주는 object. 그러므로 cursor (=conn.cursor())가 없으면 query 수행을 못함</li>
+<li><code>cursor.execute(sql,(dag_id,task_id,run_id,msg))</code> 실제 sql 실행하는 부분</li>
+<li><code>py_opr_drct_insrt values</code> : 테이블 이름</li>
+<li><code>values (%s,%s,%s,%s)</code> 4개의 값 binding</li>
+</ul></li>
+<li><p>conn이 끝나면 첫 번째 with문의 closing()이 session을 닫아줌</p></li>
+<li><p>위의 코드가 아래의 코드와 같은 내용임</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>conn=psycopg2.connect(...)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="in">~~~</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="in">conn.close()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li><p>task 수행</p></li>
+</ul>
+<div class="sourceCode" id="cb20"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>  insrt_postgres = PythonOperator(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>        task_id='insrt_postgres',</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>        python_callable=insrt_postgres,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>        op_args=<span class="co">[</span><span class="ot">'172.28.0.3', '5432', 'hjkim', 'hjkim', 'hjkim'</span><span class="co">]</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><code>def insrt_postgres(ip, port, dbname, user, passwd, **kwargs)</code> 에서 보듯이
+<ul>
+<li>ip = ‘172.28.0.3’</li>
+<li>port = ‘5422’</li>
+<li>dbname = ‘hjkim’</li>
+<li>passwd = ‘hjkim’</li>
+<li>**kwargs = NULL</li>
+</ul></li>
+<li>postgres DB에 table 만들기
+<ul>
+<li>DBeaver Open &gt;&gt; kmkim databse 우클릭&gt;&gt; SQL editor &gt;&gt; New SQL Script &gt;&gt; <code>py_opr_drct_insrt</code> table 생성</li>
+</ul>
+<div class="sourceCode" id="cb21"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>create table py_opr_drct_insrt(</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  dag_id varchar(100),</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  task_id varchar(100),</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  run_id varchar(100),</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  msg text # 가변길이 type</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>table 확인: kmkim &gt;&gt; Databases &gt;&gt; Schemas &gt;&gt; public</li>
+</ul></li>
+<li>DAG full example</li>
+</ul>
+<pre class="mardkown"><code>from airflow import DAG
+import pendulum
+from airflow.operators.python import PythonOperator
+
+with DAG(
+    dag_id='dags_python_with_postgres',
+    start_date=pendulum.datetime(2023,4,1, tz='Asia/Seoul'),
+    schedule=None,
+    catchup=False
+) as dag:
+
+    
+    def insrt_postgres(ip, port, dbname, user, passwd, **kwargs):
+        import psycopg2
+        from contextlib import closing
+
+        with closing(psycopg2.connect(host=ip, dbname=dbname, user=user, password=passwd, port=int(port))) as conn:
+            with closing(conn.cursor()) as cursor:
+                dag_id = kwargs.get('ti').dag_id
+                task_id = kwargs.get('ti').task_id
+                run_id = kwargs.get('ti').run_id
+                msg = 'insrt 수행'
+                sql = 'insert into py_opr_drct_insrt values (%s,%s,%s,%s);'
+                cursor.execute(sql,(dag_id,task_id,run_id,msg))
+                conn.commit()
+
+    insrt_postgres = PythonOperator(
+        task_id='insrt_postgres',
+        python_callable=insrt_postgres,
+        op_args=['172.28.0.3', '5432', 'hjkim', 'hjkim', 'hjkim']
+    )
+        
+    insrt_postgres</code></pre>
+</section>
+<section id="문제점-및-해결방법" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="문제점-및-해결방법"><span class="header-section-number">4.2</span> 문제점 및 해결방법</h2>
 <ul>
 <li>문제점
 <ul>
-<li>접속정보 노출: postgres DB에 대한 User, Password 등</li>
+<li>접속정보 노출: postgres DB에 대한 User, Password 등
+<ul>
+<li>DAG을 열어볼 수 있는 사람이나 github에 접속할 수 있는 사람은 모두 볼 수 있음</li>
+</ul></li>
 <li>접속정보 변경시 대응 어려움
 <ul>
 <li>만약 직접 접속하는 DAG이 수백개라면?</li>
@@ -511,13 +793,13 @@ English
 </ul></li>
 <li>해결 방법
 <ul>
-<li>Variable 이용 (User, Password 등을 Variable에 등록하고 꺼내오기)</li>
+<li>Variable 이용 (User, Password 등을 Variable에 등록하고 꺼내오기) - 번거롭기 때문에 권장하는 방식은 아님</li>
 <li>Hook 이용 (Variable 등록 필요없음)</li>
 </ul></li>
 </ul>
 </section>
-<section id="connection과-hook" class="level2" data-number="4.2">
-<h2 data-number="4.2" class="anchored" data-anchor-id="connection과-hook"><span class="header-section-number">4.2</span> Connection과 Hook</h2>
+<section id="connection과-hook의-개념" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="connection과-hook의-개념"><span class="header-section-number">4.3</span> Connection과 Hook의 개념</h2>
 <ul>
 <li>Connection
 <ul>
@@ -529,7 +811,7 @@ English
 </ul></li>
 <li>Hook의 특징
 <ul>
-<li>Connection 정보를 통해 생성되는 객체
+<li>Connection 정보를 통해 생성되는 객체로 Hook을 사용하기 위해선 먼저 connection을 등록해야한다.
 <ul>
 <li>접속정보를 Connection을 통해 받아오므로 접속정보가 코드상 노출되지 않음</li>
 </ul></li>
@@ -538,8 +820,11 @@ English
 </ul></li>
 </ul>
 </section>
-<section id="connection-등록" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="connection-등록"><span class="header-section-number">4.3</span> Connection 등록</h2>
+<section id="connection-등록" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="connection-등록"><span class="header-section-number">4.4</span> Connection 등록</h2>
+<ul>
+<li>airflow web ui &gt;&gt; admin &gt;&gt; connections &gt;&gt; plus button &gt;&gt;</li>
+</ul>
 <table class="table">
 <thead>
 <tr class="header">
@@ -575,116 +860,122 @@ English
 </tbody>
 </table>
 </section>
-<section id="postgres-hook-명세-보기" class="level2" data-number="4.4">
-<h2 data-number="4.4" class="anchored" data-anchor-id="postgres-hook-명세-보기"><span class="header-section-number">4.4</span> Postgres Hook 명세 보기</h2>
+<section id="postgres-hook-명세-보기" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="postgres-hook-명세-보기"><span class="header-section-number">4.5</span> Postgres Hook 명세 보기</h2>
 <ul>
 <li><a href="https://airflow.apache.org/docs/apache-airflow-providers-postgres/5.4.0/_modules/airflow/providers/postgres/hooks/postgres.html#PostgresHook.get_conn">airflow web service &gt;&gt; Providers &gt;&gt; apache.airflow.providers.postgres &gt;&gt; Python API &gt;&gt; airflow.providers.postgres.hooks.postgres &gt;&gt; get_conn() &gt;&gt; [source] &gt;&gt; def get_conn(self)</a></li>
+<li>제공하는 함수의 source code를 잘 관찰하고 custom object(custom operator, custom sensor, custom hook 등)를 만드는 것에 익숙해져야 airflow를 잘 활용할 수 있다.</li>
 </ul>
-<div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>def get_conn(self) -&gt; connection:</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>        """Establishes a connection to a postgres database."""</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        conn_id = getattr(self, self.conn_name_attr)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        conn = deepcopy(self.connection or self.get_connection(conn_id))</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="in">        # check for authentication via AWS IAM</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="in">        if conn.extra_dejson.get("iam", False):</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="in">            conn.login, conn.password, conn.port = self.get_iam_token(conn)</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="in">        conn_args = dict(</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="in">            host=conn.host,</span></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="in">            user=conn.login,</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="in">            password=conn.password,</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a><span class="in">            dbname=self.database or conn.schema,</span></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="in">            port=conn.port,</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="in">        )</span></span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="in">        raw_cursor = conn.extra_dejson.get("cursor", False)</span></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="in">        if raw_cursor:</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="in">            conn_args["cursor_factory"] = self._get_cursor(raw_cursor)</span></span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="in">        for arg_name, arg_val in conn.extra_dejson.items():</span></span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="in">            if arg_name not in [</span></span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="in">                "iam",</span></span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a><span class="in">                "redshift",</span></span>
-<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a><span class="in">                "cursor",</span></span>
-<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="in">                "cluster-identifier",</span></span>
-<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a><span class="in">                "aws_conn_id",</span></span>
-<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a><span class="in">            ]:</span></span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="in">                conn_args[arg_name] = arg_val</span></span>
-<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="in">        self.conn = psycopg2.connect(**conn_args)</span></span>
-<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="in">        return self.conn</span></span>
-<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>def get_conn(self) -&gt; connection:</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>        """Establishes a connection to a postgres database."""</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>        conn_id = getattr(self, self.conn_name_attr)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>        conn = deepcopy(self.connection or self.get_connection(conn_id))</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="in">        # check for authentication via AWS IAM</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="in">        if conn.extra_dejson.get("iam", False):</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="in">            conn.login, conn.password, conn.port = self.get_iam_token(conn)</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="in">        conn_args = dict(</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="in">            host=conn.host,</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="in">            user=conn.login,</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="in">            password=conn.password,</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="in">            dbname=self.database or conn.schema,</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="in">            port=conn.port,</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="in">        )</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="in">        raw_cursor = conn.extra_dejson.get("cursor", False)</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="in">        if raw_cursor:</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a><span class="in">            conn_args["cursor_factory"] = self._get_cursor(raw_cursor)</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="in">        for arg_name, arg_val in conn.extra_dejson.items():</span></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="in">            if arg_name not in [</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a><span class="in">                "iam",</span></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a><span class="in">                "redshift",</span></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a><span class="in">                "cursor",</span></span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a><span class="in">                "cluster-identifier",</span></span>
+<span id="cb23-27"><a href="#cb23-27" aria-hidden="true" tabindex="-1"></a><span class="in">                "aws_conn_id",</span></span>
+<span id="cb23-28"><a href="#cb23-28" aria-hidden="true" tabindex="-1"></a><span class="in">            ]:</span></span>
+<span id="cb23-29"><a href="#cb23-29" aria-hidden="true" tabindex="-1"></a><span class="in">                conn_args[arg_name] = arg_val</span></span>
+<span id="cb23-30"><a href="#cb23-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-31"><a href="#cb23-31" aria-hidden="true" tabindex="-1"></a><span class="in">        self.conn = psycopg2.connect(**conn_args)</span></span>
+<span id="cb23-32"><a href="#cb23-32" aria-hidden="true" tabindex="-1"></a><span class="in">        return self.conn</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><code>conn = deepcopy(self.connection or self.get_connection(conn_id))</code> 를 보면 hook 클래스의 get_connection() method를 이용해 airflow web ui에서 입력했던 connection 입력값을 찾아내서 연결시켜줌</li>
+</ul>
 </section>
-<section id="hook-이용하여-postgres-insert" class="level2" data-number="4.5">
-<h2 data-number="4.5" class="anchored" data-anchor-id="hook-이용하여-postgres-insert"><span class="header-section-number">4.5</span> Hook 이용하여 Postgres Insert</h2>
+<section id="hook-이용하여-postgres-insert" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="hook-이용하여-postgres-insert"><span class="header-section-number">4.6</span> Hook 이용하여 Postgres Insert</h2>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.python import PythonOperator</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    dag_id='dags_python_with_postgres',</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023,4,1, tz='Asia/Seoul'),</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    schedule=None,</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    catchup=False</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="in">    def insrt_postgres(ip, port, dbname, user, passwd, **kwargs):</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="in">        import psycopg2</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="in">        from contextlib import closing</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="in">        with closing(psycopg2.connect(host=ip, dbname=dbname, user=user, password=passwd, port=int(port))) as conn:</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="in">            with closing(conn.cursor()) as cursor:</span></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="in">                dag_id = kwargs.get('ti').dag_id</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="in">                task_id = kwargs.get('ti').task_id</span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="in">                run_id = kwargs.get('ti').run_id</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="in">                msg = 'insrt 수행'</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="in">                sql = 'insert into py_opr_drct_insrt values (%s,%s,%s,%s);'</span></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="in">                cursor.execute(sql,(dag_id,task_id,run_id,msg))</span></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="in">                conn.commit()</span></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres = PythonOperator(</span></span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='insrt_postgres',</span></span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=insrt_postgres,</span></span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="in">        op_args=['172.28.0.3', '5432', 'hjkim', 'hjkim', 'hjkim']</span></span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="in">        </span></span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.python import PythonOperator</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    dag_id='dags_python_with_postgres',</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023,4,1, tz='Asia/Seoul'),</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    schedule=None,</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    catchup=False</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="in">    def insrt_postgres(ip, port, dbname, user, passwd, **kwargs):</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="in">        import psycopg2</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="in">        from contextlib import closing</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a><span class="in">        with closing(psycopg2.connect(host=ip, dbname=dbname, user=user, password=passwd, port=int(port))) as conn:</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a><span class="in">            with closing(conn.cursor()) as cursor:</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a><span class="in">                dag_id = kwargs.get('ti').dag_id</span></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a><span class="in">                task_id = kwargs.get('ti').task_id</span></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a><span class="in">                run_id = kwargs.get('ti').run_id</span></span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a><span class="in">                msg = 'insrt 수행'</span></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a><span class="in">                sql = 'insert into py_opr_drct_insrt values (%s,%s,%s,%s);'</span></span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a><span class="in">                cursor.execute(sql,(dag_id,task_id,run_id,msg))</span></span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a><span class="in">                conn.commit()</span></span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres = PythonOperator(</span></span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='insrt_postgres',</span></span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=insrt_postgres,</span></span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a><span class="in">        op_args=['172.28.0.3', '5432', 'hjkim', 'hjkim', 'hjkim']</span></span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a><span class="in">        </span></span>
+<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div><div class="column" style="width:50%;">
-<div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.python import PythonOperator</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        dag_id='dags_python_with_postgres_hook',</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        start_date=pendulum.datetime(2023, 4, 1, tz='Asia/Seoul'),</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        schedule=None,</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        catchup=False</span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    def insrt_postgres(postgres_conn_id, **kwargs):</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        from airflow.providers.postgres.hooks.postgres import PostgresHook</span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        from contextlib import closing</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="in">        postgres_hook = PostgresHook(postgres_conn_id)</span></span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="in">        with closing(postgres_hook.get_conn()) as conn:</span></span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="in">            with closing(conn.cursor()) as cursor:</span></span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="in">                dag_id = kwargs.get('ti').dag_id</span></span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="in">                task_id = kwargs.get('ti').task_id</span></span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="in">                run_id = kwargs.get('ti').run_id</span></span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="in">                msg = 'hook insrt 수행'</span></span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="in">                sql = 'insert into py_opr_drct_insrt values (%s,%s,%s,%s);'</span></span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="in">                cursor.execute(sql, (dag_id, task_id, run_id, msg))</span></span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="in">                conn.commit()</span></span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres_with_hook = PythonOperator(</span></span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='insrt_postgres_with_hook',</span></span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=insrt_postgres,</span></span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a><span class="in">        op_kwargs={'postgres_conn_id':'conn-db-postgres-custom'}</span></span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres_with_hook</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.python import PythonOperator</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>        dag_id='dags_python_with_postgres_hook',</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>        start_date=pendulum.datetime(2023, 4, 1, tz='Asia/Seoul'),</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>        schedule=None,</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>        catchup=False</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    def insrt_postgres(postgres_conn_id, **kwargs):</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>        from airflow.providers.postgres.hooks.postgres import PostgresHook</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>        from contextlib import closing</span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="in">        postgres_hook = PostgresHook(postgres_conn_id)</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="in">        with closing(postgres_hook.get_conn()) as conn:</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="in">            with closing(conn.cursor()) as cursor:</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="in">                dag_id = kwargs.get('ti').dag_id</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="in">                task_id = kwargs.get('ti').task_id</span></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="in">                run_id = kwargs.get('ti').run_id</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a><span class="in">                msg = 'hook insrt 수행'</span></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a><span class="in">                sql = 'insert into py_opr_drct_insrt values (%s,%s,%s,%s);'</span></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a><span class="in">                cursor.execute(sql, (dag_id, task_id, run_id, msg))</span></span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a><span class="in">                conn.commit()</span></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres_with_hook = PythonOperator(</span></span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='insrt_postgres_with_hook',</span></span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=insrt_postgres,</span></span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a><span class="in">        op_kwargs={'postgres_conn_id':'conn-db-postgres-custom'}</span></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres_with_hook</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
+<ul>
+<li><code>op_args=['172.28.0.3', '5432', 'hjkim', 'hjkim', 'hjkim']</code> 와 같은 보안 사항이 오른 쪽 코드에서는 <code>op_kwargs={'postgres_conn_id':'conn-db-postgres-custom'}</code> 가려지게 된다.</li>
+</ul>
 </section>
 </section>
 <section id="postgres-hook-으로-bulk_load-하기" class="level1" data-number="5">
@@ -694,58 +985,58 @@ English
 <ul>
 <li><a href="https://airflow.apache.org/docs/apache-airflow-providers-postgres/5.4.0/_modules/airflow/providers/postgres/hooks/postgres.html#PostgresHook.get_conn">airflow web service &gt;&gt; Providers &gt;&gt; apache.airflow.providers.postgres &gt;&gt; Python API &gt;&gt; airflow.providers.postgres.hooks.postgres &gt;&gt; get_conn() &gt;&gt; [source] &gt;&gt; def bulg_load(self, temp_file)[source],def bulk_dump(self, table: str, tmp_file: str),def copy_expert(self, sql: str, filename: str)</a></li>
 </ul>
-<div class="sourceCode" id="cb12"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">docs</span><span class="co">]</span>    def bulk_load(self, table: str, tmp_file: str) -&gt; None:</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>        """Loads a tab-delimited file into a database table"""</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>        self.copy_expert(f"COPY {table} FROM STDIN", tmp_file)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">docs</span><span class="co">]</span>    def bulk_dump(self, table: str, tmp_file: str) -&gt; None:</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        """Dumps a database table into a tab-delimited file"""</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        self.copy_expert(f"COPY {table} TO STDOUT", tmp_file)</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">docs</span><span class="co">]</span>    def copy_expert(self, sql: str, filename: str) -&gt; None:</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        """</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        Executes SQL using psycopg2 copy_expert method.</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        Necessary to execute COPY command without access to a superuser.</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="in">        Note: if this method is called with a "COPY FROM" statement and</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="in">        the specified input file does not exist, it creates an empty</span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="in">        file and no data is loaded, but the operation succeeds.</span></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="in">        So if users want to be aware when the input file does not exist,</span></span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="in">        they have to check its existence by themselves.</span></span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="in">        """</span></span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="in">        self.log.info("Running copy expert: %s, filename: %s", sql, filename)</span></span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="in">        if not os.path.isfile(filename):</span></span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="in">            with open(filename, "w"):</span></span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="in">                pass</span></span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="in">        with open(filename, "r+") as file:</span></span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a><span class="in">            with closing(self.get_conn()) as conn:</span></span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a><span class="in">                with closing(conn.cursor()) as cur:</span></span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="in">                    cur.copy_expert(sql, file)</span></span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a><span class="in">                    file.truncate(file.tell())</span></span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a><span class="in">                    conn.commit()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb13"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.python import PythonOperator</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>from hooks.custom_postgres_hook import CustomPostgresHook</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>        dag_id='dags_python_with_custom_hook_bulk_load',</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        start_date=pendulum.datetime(2023, 4, 1, tz='Asia/Seoul'),</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>        schedule='0 7 * * *',</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        catchup=False</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    def insrt_postgres(postgres_conn_id, tbl_nm, file_nm, **kwargs):</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>        custom_postgres_hook = CustomPostgresHook(postgres_conn_id=postgres_conn_id)</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        custom_postgres_hook.bulk_load(table_name=tbl_nm, file_name=file_nm, delimiter=',', is_header=True, is_replace=True)</span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres = PythonOperator(</span></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='insrt_postgres',</span></span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=insrt_postgres,</span></span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="in">        op_kwargs={'postgres_conn_id': 'conn-db-postgres-custom',</span></span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="in">                   'tbl_nm':'TbCorona19CountStatus_bulk2',</span></span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="in">                   'file_nm':'/opt/airflow/files/TbCorona19CountStatus/{{data_interval_end.in_timezone("Asia/Seoul") | ds_nodash}}/TbCorona19CountStatus.csv'}</span></span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">docs</span><span class="co">]</span>    def bulk_load(self, table: str, tmp_file: str) -&gt; None:</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>        """Loads a tab-delimited file into a database table"""</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>        self.copy_expert(f"COPY {table} FROM STDIN", tmp_file)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">docs</span><span class="co">]</span>    def bulk_dump(self, table: str, tmp_file: str) -&gt; None:</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>        """Dumps a database table into a tab-delimited file"""</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>        self.copy_expert(f"COPY {table} TO STDOUT", tmp_file)</span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">docs</span><span class="co">]</span>    def copy_expert(self, sql: str, filename: str) -&gt; None:</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>        """</span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>        Executes SQL using psycopg2 copy_expert method.</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>        Necessary to execute COPY command without access to a superuser.</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="in">        Note: if this method is called with a "COPY FROM" statement and</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="in">        the specified input file does not exist, it creates an empty</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="in">        file and no data is loaded, but the operation succeeds.</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="in">        So if users want to be aware when the input file does not exist,</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="in">        they have to check its existence by themselves.</span></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="in">        """</span></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="in">        self.log.info("Running copy expert: %s, filename: %s", sql, filename)</span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="in">        if not os.path.isfile(filename):</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a><span class="in">            with open(filename, "w"):</span></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a><span class="in">                pass</span></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a><span class="in">        with open(filename, "r+") as file:</span></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a><span class="in">            with closing(self.get_conn()) as conn:</span></span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a><span class="in">                with closing(conn.cursor()) as cur:</span></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a><span class="in">                    cur.copy_expert(sql, file)</span></span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a><span class="in">                    file.truncate(file.tell())</span></span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a><span class="in">                    conn.commit()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.python import PythonOperator</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>from hooks.custom_postgres_hook import CustomPostgresHook</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>        dag_id='dags_python_with_custom_hook_bulk_load',</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>        start_date=pendulum.datetime(2023, 4, 1, tz='Asia/Seoul'),</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>        schedule='0 7 * * *',</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>        catchup=False</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    def insrt_postgres(postgres_conn_id, tbl_nm, file_nm, **kwargs):</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>        custom_postgres_hook = CustomPostgresHook(postgres_conn_id=postgres_conn_id)</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>        custom_postgres_hook.bulk_load(table_name=tbl_nm, file_name=file_nm, delimiter=',', is_header=True, is_replace=True)</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres = PythonOperator(</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='insrt_postgres',</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=insrt_postgres,</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a><span class="in">        op_kwargs={'postgres_conn_id': 'conn-db-postgres-custom',</span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a><span class="in">                   'tbl_nm':'TbCorona19CountStatus_bulk2',</span></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="in">                   'file_nm':'/opt/airflow/files/TbCorona19CountStatus/{{data_interval_end.in_timezone("Asia/Seoul") | ds_nodash}}/TbCorona19CountStatus.csv'}</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="bulk_load-문제점-개선방안" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="bulk_load-문제점-개선방안"><span class="header-section-number">5.2</span> Bulk_load 문제점 &amp; 개선방안</h2>
@@ -849,30 +1140,55 @@ English
 </ul>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div class="sourceCode" id="cb14"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>#&gt; cd; cd airflow</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>#&gt; mkdir -p custom_image/airflow</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>#&gt; cd custom_image/airflow</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>#&gt; vi Dockerfile</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>#&gt; cd; cd airflow</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>#&gt; mkdir -p custom_image/airflow</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>#&gt; cd custom_image/airflow</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>#&gt; vi Dockerfile</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div><div class="column" style="width:50%;">
-<div class="sourceCode" id="cb15"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>FROM apache/airflow:2.5.1</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>USER root</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>RUN apt get update \</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; apt-get install -y --no-install-recommends \</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    gcc \</span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    heimdal-dev \ </span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    g++ \</span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    libsasl2-dev \</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; apt-get autoremove -yqq -purge \</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; apt-get clean \</span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; rm -rf /var/lib/apt/lists/*</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>USER airflow</span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>RUN pip install \</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  apache airflow providers apache hdfs \</span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  apache airflow providers apache hive</span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>RUN pip uninstall y argparse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>FROM apache/airflow:2.5.1</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>USER root</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>RUN apt get update \</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; apt-get install -y --no-install-recommends \</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    gcc \</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    heimdal-dev \ </span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    g++ \</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    libsasl2-dev \</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; apt-get autoremove -yqq -purge \</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; apt-get clean \</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; rm -rf /var/lib/apt/lists/*</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>USER airflow</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>RUN pip install \</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>  apache airflow providers apache hdfs \</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>  apache airflow providers apache hive</span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>RUN pip uninstall -y argparse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
+<ul>
+<li>Docker 이미지 생성하기</li>
+</ul>
+<div class="sourceCode" id="cb30"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>#&gt; pwd</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>/home/hjkim/airflow/custom_image/airflow</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>#&gt; sudo docker build -t {image_name} .</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>Docker 이미지 확인</li>
+</ul>
+<div class="sourceCode" id="cb31"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>#&gt; sudo docker image ls</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>docker-compose.yaml 수정하기</li>
+</ul>
+<div class="sourceCode" id="cb32"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>#&gt; cd</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>#&gt; vi docker-compose.yaml</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>version: '3.8'</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>x-airflow-common:</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  &amp;airflow-common</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="fu"># In order to add …</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  image: {image_name}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>docker compose (재) 기동</li>
+<li>Connection Type 에 추가 확인</li>
+</ul>
 </section>
 </section>
 </div>

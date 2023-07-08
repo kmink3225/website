@@ -832,7 +832,28 @@ with DAG(
         **file_name**='TbCorona19CountStatus.csv'
     )
                    
-* table이 사전에 만들어지지 않아도 되는지? 현재 DB에는 TbCorona19CountStatus_bulk1 table이 없음
+* troubleshooting
+  * table이 사전에 만들어지지 않아도 되는지? 현재 DB에는 TbCorona19CountStatus_bulk1 table이 없음
+    ![](../../../../../images/airflow/postgress_hook_bulk_load_method.PNG)
+  * 실행 결과 log 에서 table이 없다는 에러 메세지 뜸. table 만들어 주면 됨
+  * table만들어서 한번 더 task 실행하면 comma delimiter 인식 오류가 나기 떄문에 tab delimiter로 바꿔줘야한다.
+    * dags_seoul_api_corona.py 로 부터 받은 TbCorona19CountStatus.csv 파일을 열어 `,`를 tab으로 바꿔준다
+    ```markdown
+    vi TbCorona19CountStatus.csv
+    ```
+  * vi editor
+    * `: %s/,/\t/g` `,`를 `\t`으로 바꿔줌. 여기서 g는 global하게 적용하겠다는 의미
+  * 51번째 line에 에러 발생: `\M` 이라는 특수 문자가 있음
+    * `\M` 윈도우와 리눅스 간의 줄넘김 차이 때문에 발생
+      * 윈도우: enter key = CR (Carriage Return-한줄에서 왼쪽 끝으로 밀어주는것이 CR) + LF (Line Feed-다음 줄에 입력을 하도록 종이를 한줄 밀어주는 것 LF)
+      * DOS/Windows 계열에서는 엔터를 CR+LF(`\r\n`) 으로 처리하고
+      * Unix/Linux 계열에서는 엔터를 LF(`\n`)으로 처리하고
+      * MAC 계열에서는 엔터를 CR(`\r`)로 처리한다고 한다
+      * 윈도우 환경에서 입력된 값이 리눅스로 넘어오게 될 때 CR+LF와 같은 불일치 값이 있으면 `^M` 또는 `\M` 로 표시됨
+    * 51번째 record 지워서 해결
+  * airflow 상 errors는 더이상 발생하지 않지만 DB를 확인했을 때 첫번째 row에 column명이 들어간것을 확인되었다. 그래서 CSV상에 column값을 지워줘야한다는 것을 알 수 있다.
+
+
 
 ## Bulk_load 문제점 & 개선방안
 
@@ -842,9 +863,9 @@ with DAG(
   * 특수문자로 인해 파싱이 안될 경우 에러 발생
 * 개선방안
   * Custom Hook 을 만들어서 Delimiter 유형을 입력받게 하고
-  * Header 여부를 선택하게끔 하며
+  * Header 포함 여부를 선택하게끔 하며
   * 특수문자를 제거하는 로직을 추가 후
-  * sqlalchemy를 이용하여 Load 한다면? 그리고 테이블을 생성하면서 업로드할 수 있다면?
+  * sqlalchemy(python에서 DB 작업을 편리하게 해주는 library)를 이용하여 Load 한다면? 그리고 테이블을 생성하면서 업로드할 수 있다면?
 
 # Custom Hook 으로 bulk_load 하기
 

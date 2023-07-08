@@ -36,50 +36,181 @@ draft: False
 ## 센서의 개념
 
 * 일종의 특화된 오퍼레이터
-* 특정 조건이 만족되기를 기다리고 만족되면 True를 반환하는 Task
-* 모든 센서는 BaseSensorOperator를 상속하여 구현되며
-(BaseSensorOperator는 BaseOperator를 상속함)
-상속시에는 __init()__ 함수와 poke(context) 함수 재정의 필요
-* 센싱하는 로직은 poke 함수에 정의
+* 특정 조건이 만족되기를 주기적으로 확인 및 기다리고 만족되면 True를 반환하는 Task
+* 모든 센서는 BaseSensorOperator를 상속하여 구현되며 (BaseSensorOperator는 BaseOperator를 상속함)
+상속시에는 __init()__ 함수와 poke(context) 함수 재정의 해야한다
+* 센싱하는 로직은 poke 함수에 정의: 특정 조건이 만족하는지 체크하고 true를 return 하도록 정의
 
 ## BaseSensor 오퍼레이터 명세 확인
 
-[airflow](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/base/index.html#airflow.sensors.base.BaseSensorOperator)
+[airflow BaseSensorOperator](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/base/index.html#airflow.sensors.base.BaseSensorOperator)
 
+* Bases: airflow.models.baseoperator.BaseOperator, airflow.models.skipmixin.SkipMixin
+  Sensor operators are derived from this class and inherit these attributes. Sensor operators keep executing at a time interval and succeed when a criteria is met and fail if and when they time out.
 * parameter
-    * soft_fail (bool) – Set to true to mark the task as SKIPPED on failure
-    * poke_interval (float) – Time in seconds that the job should wait in between each try
-    * timeout (float) – Time, in seconds before the task times out and fails.
-    * mode (str) – How the sensor operates. Options are: { poke | reschedule }, default is poke. When set to poke the sensor is taking up a worker slot for its whole execution time and sleeps between pokes. Use this mode if the expected runtime of the sensor is short or if a short poke interval is required. Note that the sensor will hold onto a worker slot and a pool slot for the duration of the sensor’s runtime in this mode. When set to reschedule the sensor task frees the worker slot when the criteria is not yet met and it’s rescheduled at a later time. Use this mode if the time before the criteria is met is expected to be quite long. The poke interval should be more than one minute to prevent too much load on the scheduler.
-    * exponential_backoff (bool) – allow progressive longer waits between pokes by using exponential backoff algorithm
-    * max_wait (datetime.timedelta | float | None) – maximum wait interval between pokes, can be timedelta or float seconds
+    * poke_interval (float) – Time in seconds that the job should wait in between each try: 특정 조건이 만족하는지 체크하는 주기로 초단위로 입력하면 된다. 60 = 1mins
+    * timeout (float) – Time, in seconds before the task times out and fails. task가 계속 false 가 나올때 task failure 로 규정할 maximum 시간 초단위로 입력. 보통 daily dag을 많이 만드므로 timeout도 보통 24시간 으로 입력한다. ex) 60*60*24
+    * soft_fail (bool) – Set to true to mark the task as SKIPPED on failure. timeout을 만났을 때 sensor task fail로 marking하지 말고 skip으로 marking하도록 설정
+    * mode (str) (**중요**) – How the sensor operates. Options are: { poke | reschedule }, default is poke. When set to poke the sensor is taking up a worker slot for its whole execution time and sleeps between pokes. Use this mode if the expected runtime of the sensor is short or if a short poke interval is required. Note that the sensor will hold onto a worker slot and a pool slot for the duration of the sensor’s runtime in this mode. When set to reschedule the sensor task frees the worker slot when the criteria is not yet met and it’s rescheduled at a later time. Use this mode if the time before the criteria is met is expected to be quite long. The poke interval should be more than one minute to prevent too much load on the scheduler.
+    * exponential_backoff (bool) – allow progressive longer waits between pokes by using exponential backoff algorithm. sensor task를 체크하는 주기가 $2^n$ 으로 늘어지기 된다. 즉, 2초, 4초, 8초, $\ldots$
+    * max_wait (datetime.timedelta | float | None) – maximum wait interval between pokes, can be timedelta or float seconds. exponential_backoff가 true 일 때 홠성화 되며 exponential_backoff 의 상한선을 의미
     * silent_fail (bool) – If true, and poke method raises an exception different from AirflowSensorTimeout, AirflowTaskTimeout, AirflowSkipException and AirflowFailException, the sensor will log the error and continue its execution. Otherwise, the sensor task fails, and it can be retried based on the provided retries parameter.
+* `poke(context)[source]`: Function defined by the sensors while deriving this class should override.
+  * 재정의 하지 않으면 error 발생
+
+    ```markdown
+    [docs]    def poke(self, context: Context) -> bool | PokeReturnValue:
+            """Function defined by the sensors while deriving this class should override."""
+            raise AirflowException("Override me.")
+    ```
+* execute(self, context: Context): 재정의할 필요없음. 이미 정의가 되어 있음
+  ```markdown
+  [docs]    def execute(self, context: Context) -> Any:
+        started_at: datetime.datetime | float 
+        
+        (...)
+
+        while True:
+            try:
+                poke_return = self.poke(context)
+            except (
+                AirflowSensorTimeout,
+                AirflowTaskTimeout,
+                AirflowSkipException,
+                AirflowFailException,
+            ) as e:
+                raise e
+            except Exception as e:
+                if self.silent_fail:
+                    logging.error("Sensor poke failed: \n %s", traceback.format_exc())
+                    poke_return = False
+                else:
+                    raise e
+
+            if poke_return: # poke_return = true이면 while loop 탈출
+                if isinstance(poke_return, PokeReturnValue):
+                    xcom_value = poke_return.xcom_value
+                break
+          (...)       
+  ```
+
 * BaseSensor 오퍼레이터 Mode 유형
-    * mode 유형
+  * mode 유형
 
   | Comparison          | Poke Mode    | Reschedule Mode   |
   |---------------------|-----------------|:------------------------|
-  | 원리                | DAG이 수행되는 내내 Running Slot을 차지. 다만 Slot 안에서 Sleep, active 를 반복   | 센서가 동작하는 시기에만 Slot을 차지. 그 외에는 Slot을 점유하지 않음 |
-  | Wait에서의 Task 상태 | running            | up_for_reschedule  |
-  | 유리한 적용 시점 |  짧은 센싱 간격 (interval, 초 단위)    | 긴 센싱 간격, 주로 분 단위 Reschedule될 때 스케줄러의
-부하 발생 |
-
-## BaseSensor 오퍼레이터 Mode 유형
-
-* Pool
-    * 모든 Task는 특정 Pool에서 수행되며 Pool은 Slot이라는 것을 가지고 있음.
+  | 원리                | DAG이 수행되는 내내 Running Slot(task가 수행될 때 차지하는 공간) 을 차지. sensor가 특정 조건을 체킹할때나 안할때나 항상 slot 차지.  다만 Slot 안에서 Sleep, active 를 반복   | 센서가 조건을 체킹하는 동작 시기에만 Slot을 차지. 그 외에는 Slot을 점유하지 않음 |
+  | Wait에서의 Task 상태 | running (airflow web ui 에서 task bar가 연두색)           | up_for_reschedule  (task bar가 민트색) |
+  | 유리한 적용 시점 |  짧은 센싱 간격 (interval, 초 단위)    | 긴 센싱 간격, 주로 분 단위 Reschedule될 때 (5분, 10분) 스케줄러의 부하 발생 |
+  
+* Slot의 이해
+  * Pool
+    * 모든 operator로 만들어진 Task는 특정 Pool에서 수행되며 Pool은 Slot이라는 것을 가지고 있음.
     * 기본적으로 Task 1개당 Slot 1개를 점유하며 Pool을 지정하지 않으면 default_pool에서 수행
     ![Poke Mode vs Reschedule Mode](../../../../../images/airflow/poke.PNG)
+    * airflow web ui >> admin >> pools
+      * pool: pool name
+      * slots: 128개의 공간
+      * Running Slots, Queued Slots, Schedulued Slots.
+* 사용자 입장에서는 operator의 mode의 이해는 그렇게 중요하진 않지만 airflow를 운영하는 사람 입장에서는 중요한 변수가 될 수 있다.
 
 # Bash Sensor
 
 ## Bash 센서 명세 확인
 
-* 쉘 스크립트에서 return True를 주는 방법
-    - 파이썬에서의 return True와 같은 의미로 쉘 스크립트에서는 exit 0 를 사용
-* 모든 쉘은 수행을 마친 후 EXIT_STATUS를 가지고 있으며 0~255 사이의 값을 가짐.
-    * EXIT 0 만 정상이며 나머지는 모두 비정상의 의미를 가짐
-    * 마지막 명령 수행의 EXIT_STATUS를 확인하려면 echo $? 로 확인
+* [airflow.sensors.bash](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/bash/index.html)
+  * Parameters
+    * bash_command – 조건문을 여기에다가 적음
+      * Return True if and only if the return code is 0.
+      * shell 스크립트에서 return True를 주는 방법
+        * 파이썬에서의 return True와 같은 의미로 쉘 스크립트에서는 exit 0 를 사용
+      * 모든 쉘은 수행을 마친 후 EXIT_STATUS를 가지고 있으며 0~255 사이의 값을 가짐.
+        * EXIT 0 만 정상이며 나머지는 모두 비정상의 의미를 가짐
+        * 마지막 명령 수행의 EXIT_STATUS를 확인하려면 `echo $?` 로 확인
+      ```markdown
+      kmkim@K100230201051:~/airflow$ ls
+      airflow  custom_image  docker-compose.20230708  files  plugins
+      config   dags          docker-compose.yaml      logs
+      kmkim@K100230201051:~/airflow$ echo $?
+      0
+      kmkim@K100230201051:~/airflow$ ls sdf
+      ls: cannot access 'sdf': No such file or directory
+      kmkim@K100230201051:~/airflow$ echo $?
+      2
+      kmkim@K100230201051:~/airflow$ sdfsd
+      sdfsd: command not found
+      kmkim@K100230201051:~/airflow$ echo $?
+      127
+      ```
+      * exit status 변경하기
+      ```markdown
+      vi test.sh #exit status 변경할 shell script
+      # vi editor: test.sh
+      ls
+      exit 1
+
+      ```
+      ```markdown
+      chmod +x test.sh #실행권한 부여
+      ./test.sh #실행
+      echo $? #1 출력됨
+      ```
+    * env – If env is not None, it must be a mapping that defines the environment variables for the new process; these are used instead of inheriting the current process environment, which is the default behavior. (templated)
+    * output_encoding – output encoding of bash command.
+    * retry_exit_code (int | None) – If task exits with this code, treat the sensor as not-yet-complete and retry the check later according to the usual retry/timeout settings. Any other non-zero return code will be treated as an error, and cause the sensor to fail. If set to None (the default), any non-zero exit code will cause a retry and the task will never raise an error except on time-out.
+* Dag Example
+
+```markdown
+from airflow.sensors.bash import BashSensor
+from airflow.operators.bash import BashOperator
+from airflow import DAG
+import pendulum
+
+with DAG(
+    dag_id='dags_bash_sensor',
+    start_date=pendulum.datetime(2023,4,1, tz='Asia/Seoul'),
+    schedule='0 6 * * *',
+    catchup=False
+) as dag:
+
+    sensor_task_by_poke = BashSensor(
+        task_id='sensor_task_by_poke',
+        env={'FILE':'/opt/airflow/files/tvCorona19VaccinestatNew/{{data_interval_end.in_timezone("Asia/Seoul") | ds_nodash }}/tvCorona19VaccinestatNew.csv'},
+        bash_command=f'''echo $FILE && 
+                        if [ -f $FILE ]; then 
+                              exit 0
+                        else 
+                              exit 1
+                        fi''',
+        poke_interval=30,      #30초
+        timeout=60*2,          #2분
+        mode='poke',
+        soft_fail=False
+    )
+
+    sensor_task_by_reschedule = BashSensor(
+        task_id='sensor_task_by_reschedule',
+        env={'FILE':'/opt/airflow/files/tvCorona19VaccinestatNew/{{data_interval_end.in_timezone("Asia/Seoul") | ds_nodash }}/tvCorona19VaccinestatNew.csv'},
+        bash_command=f'''echo $FILE && 
+                        if [ -f $FILE ]; then 
+                              exit 0
+                        else 
+                              exit 1
+                        fi''',
+        poke_interval=60*3,    # 3분
+        timeout=60*9,          #9분
+        mode='reschedule',
+        soft_fail=True
+    )
+
+    bash_task = BashOperator(
+        task_id='bash_task',
+        env={'FILE': '/opt/airflow/files/tvCorona19VaccinestatNew/{{data_interval_end.in_timezone("Asia/Seoul") | ds_nodash }}/tvCorona19VaccinestatNew.csv'},
+        bash_command='echo "건수: `cat $FILE | wc -l`"',
+    )
+
+    [sensor_task_by_poke,sensor_task_by_reschedule] >> bash_task
+```
 
 # File Sensor
 

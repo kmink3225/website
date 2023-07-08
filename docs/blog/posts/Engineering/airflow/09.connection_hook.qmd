@@ -853,8 +853,6 @@ with DAG(
     * 51번째 record 지워서 해결
   * airflow 상 errors는 더이상 발생하지 않지만 DB를 확인했을 때 첫번째 row에 column명이 들어간것을 확인되었다. 그래서 CSV상에 column값을 지워줘야한다는 것을 알 수 있다.
 
-
-
 ## Bulk_load 문제점 & 개선방안
 
 * 문제점
@@ -865,113 +863,237 @@ with DAG(
   * Custom Hook 을 만들어서 Delimiter 유형을 입력받게 하고
   * Header 포함 여부를 선택하게끔 하며
   * 특수문자를 제거하는 로직을 추가 후
-  * sqlalchemy(python에서 DB 작업을 편리하게 해주는 library)를 이용하여 Load 한다면? 그리고 테이블을 생성하면서 업로드할 수 있다면?
+  * sqlalchemy(python에서 DB 작업을 편리하게 해주는 library)를 이용하여 Load 한다면? 그리고 테이블을 생성하면서 업로드할 수 있도록 한다.
 
 # Custom Hook 으로 bulk_load 하기
 
 ## BaseHook 명세 보기
 
-* [Airflow Docs](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/hooks/base/index.html#airflow.hooks.base.BaseHook.get_connection_form_widgets)
+* Custom Hook은 BaseHook을 상속해서 작성
+* [Airflow Docs에서 Basehook Source Code](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/hooks/base/index.html#airflow.hooks.base.BaseHook)
+* BaseHook class의 methods
+  * [docs]    def get_connection(cls, conn_id: str) -> Connection:
+    * airflow 상에서 만들었던 connection_id : user name, password, IP, Port 의 정보를 담고있는 object return
+  * [docs]    def get_connections(cls, conn_id: str) -> list[Connection]:
+    * will be deprecated. Use get_connection()
+  * [docs]    def get_conn(self) -> Any: # 이 함수를 쓰려면 상속받아서 구현할 때 get_conn() 함수를 구현해야함
+  * [docs]    def get_hook(cls, conn_id: str) -> BaseHook: 
+  * [docs]    def get_connection_form_widgets(cls) -> dict[str, Any]: (안중요)
+  * [docs]    def get_ui_field_behaviour(cls) -> dict[str, Any]: (안중요)
+* 위의 method 중 get_conn()을 제외하곤 모든 method에 데코레이터 `@classmethod ` 있음
+  * python있는 method 종류로 class method 라 하고 class method 는 class를 객체화 시키지 않고도 바로 호출할 수 있음
+  * 예를 들어, 
+    다음과 같은 방식으로 class method 호출 안해도 됨
+    ```markdown
+    import BaseHook
+    a=BaseHook()
+    a.get_connection(conn_id)
+    ```
+    바로 호출 해도됨
+    ```markdown
+    import BaseHook
+    BaseHook.get_connection(conn_id)
+    ```
+    
+  
 
 ## Custom Hook 개발
 
 * 해야할 일
   * get_conn 메서드 구현하기
     * DB 와의 연결 세션 객체인 conn 을 리턴하도록 구현
-      * (Airflow 에서 등록한 Connection 정보를 담은 conn 이 아님)
+    * 주의: get_connection() vs get_conn()
+      * get_connection(): Airflow 에서 등록한 Connection 정보를 담은 conn을 return
+      * get_conn(): postgres와의 연결하는 session 객체를 return
       * BaseHook 의 추상 메서드 , 자식 클래스에서 구현 필요
   * bulk_load 메서드 구현하기
-    * 입맛대로 만들기
+    * 입맛대로 만들기: custom_postgres_hook.py
+    ```markdown
+    from airflow.hooks.base import BaseHook
+    import psycopg2
+    import pandas as pd
+
+    class CustomPostgresHook(BaseHook):
+
+        # 생성자
+        def __init__(self, postgres_conn_id, **kwargs): # 입력은 하나만: postgres_conn_id
+            self.postgres_conn_id = postgres_conn_id
+
+        def get_conn(self):
+            airflow_conn = BaseHook.get_connection(self.postgres_conn_id) #class method라 바로 호출
+            # 아래의 보안 정보들이 hook을 통해서 노출되지 않고 접근 가능
+            self.host = airflow_conn.host
+            self.user = airflow_conn.login
+            self.password = airflow_conn.password
+            self.dbname = airflow_conn.schema
+            self.port = airflow_conn.port
+
+            # postgres DB 연결: session object를 return
+            self.postgres_conn = psycopg2.connect(host=self.host, user=self.user, password=self.password, dbname=self.dbname, port=self.port)
+            return self.postgres_conn
+
+        def bulk_load(self, table_name, file_name, delimiter: str, is_header: bool, is_replace: bool):
+
+            from sqlalchemy import create_engine
+
+            self.log.info('적재 대상파일:' + file_name)
+            self.log.info('테이블 :' + table_name)
+            self.get_conn()
+            header = 0 if is_header else None                       # is_header = True면 0, False면 None
+            if_exists = 'replace' if is_replace else 'append'       # is_replace = True면 replace, False면 append
+            file_df = pd.read_csv(file_name, header=header, delimiter=delimiter)
+
+            for col in file_df.columns:                             
+                try:
+                    # string 문자열이 아닐 경우 continue
+                    file_df[col] = file_df[col].str.replace('\r\n','')      # 줄넘김 및 ^M 제거
+                    self.log.info(f'{table_name}.{col}: 개행문자 제거')
+                except:
+                    continue 
+
+            self.log.info('적재 건수:' + str(len(file_df)))
+            uri = f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}'
+            engine = create_engine(uri)
+            file_df.to_sql(name=table_name,
+                                con=engine,
+                                schema='public',
+                                if_exists=if_exists,
+                                index=False
+                            )
+
+    ```
+    * 여기서 ` airflow_conn = BaseHook.get_connection(self.postgres_conn_id) #class method라 바로 호출` 와 `self.postgres_conn = psycopg2.connect(host=self.host, user=self.user, password=self.password, dbname=self.dbname, port=self.port)` 다른 종류의 conn 객체를 return한다.
 
 ## Providers 더 보기
 
 * 현재 설치되어 있는 Providers 패키지 확인
   * 웹의 Admin Providers 에서 확인 가능
 * [설치 가능한 Providers 더 보기](https://airflow.apache.org/docs/apache-airflow-providers/)
+  >> Apache Airflow 2 is built in modular way. The “Core” of Apache Airflow provides core scheduler functionality which allow you to write some basic tasks, but the capabilities of Apache Airflow can be extended by installing additional packages, called providers.
+  * providers package를 설치하면 다른 솔루션을 연동할 수 있도록 확장성을 제공
+  * The full list of community managed providers is available at [Providers Index](https://airflow.apache.org/docs/#providers-packages-docs-apache-airflow-providers-index-html).
+    * Providers packages:
+      * [Apache Hive](https://airflow.apache.org/docs/apache-airflow-providers-apache-hive/stable/_api/airflow/providers/apache/hive/hooks/hive/index.html)
 
 ## Connection Type 추가하기
 
-* 만약 HDFS, Hive 에 대한 커넥션을 추가하고 싶다면
-* 커넥션 타입 목록에 있는 대상은 이미 패키지 설치가 된 Providers 이며 Admin>>Providers 목록에서 설치된 대상 확인 가능
-* Provider 검색 , py 라이브러리 설치 목록 확인
-* [Airflow 이미지 Extend 방법 확인](https://airflow.apache.org/docs/docker-stack/build.html)
+*  Airflow Connection type 목록에 있는 대상은 이미 패키지 설치가 된 Providers 이며 Admin>>Providers 목록에서 설치된 대상 확인 가능
+* 만약 Hive 에 대한 커넥션을 추가하고 싶은데 Airflow Connection type 목록에 Hive가 없다면 관련된 package를 설치하여 본인이 직접 추가해야함
+  * Provider 검색, py 라이브러리 설치 목록 확인하여 `pip install [pkg name]` 실행
+    * 주의사항: 윈도우와 wsl2에 package를 설치하는게 아니라 airflow containers에 설치해줘야 함
+      * scheduler
+      * worker
+      * webserver
+      * triggerer
+    * 하지만, 각 각의 container에다가 pkg를 설치해주면 container가 꺼지게 되면 지워지게 됨
+    * 그래서, custom한 docker image를 만들어야 함
+      * Airflow 이미지 Extend 방법으로 custom image 만들기
+        * base image 에다가 custom image (pip install 및 다른 여러가지 layers) 추가
+        * 즉, custom image = base image + layer1 (library 호출) +layer2 (pip install pkgs)+ $\ldots$
+        * 이런 방식의 custom image는 layer가 많아질 수록 무거워져 overhead 가 커지는 약점이 있다.
+      * 애초에 base image 자체를 custom image 로 만드는 법
+        * extend의 약점인 overhead를 어느 정도 줄일 수 있지만 개발하는데 시간이 걸림
+* [Airflow 이미지 Extend 방법 & custom image 만드는 법 확인](https://airflow.apache.org/docs/docker-stack/build.html)
   * 이미지 Extend vs Custom 이미지 생성
 
   | Comparison          | image extend    | Custom Image Creation   |
   |---------------------|-----------------|:------------------------|
-  | 간단히 생성 가능     | O               | X                       |
-  | 빌드 시간            | 짧음            | 상대적으로 긺            |
+  | 간단히 생성 가능     | O               | X (많은 source codes 필요) |
+  | 빌드 시간            | 짧음 (5분 이내) | 상대적으로 긺            |
   | 크기 최적화된 이미지 |  X              | O (약 20% 정도 사이즈 감소) |
-  | 폐쇄망에서 구성 가능 |  X              | O                       |
+  | 폐쇄망에서 구성 가능 |  X  (인터넷이 되어야함) | O                       |
+
+* Airflow web에 connection type 추가하는 steps  
+  * 이미지 extend를 위한 Dockerfile 만들기  
+  :::: {.columns}
+
+  ::: {.column width="50%"}
+
+  ```markdown
+  #> cd; cd airflow
+  #> mkdir -p custom_image/airflow
+  #> cd custom_image/airflow
+  #> vi Dockerfile
+  ```
+
+  :::
+
+  ::: {.column width="50%"}
+
+  ```markdown
+  FROM apache/airflow:2.5.1 #base image 지정
+  USER root #root user
+  RUN apt get update \
+    && apt-get install -y --no-install-recommends \
+      gcc \ #library 1 for installing hdfs
+      heimdal-dev \ #library 2 for installing hdfs
+      g++ \ #library 3
+      libsasl2-dev \ #library 4
+    && apt-get autoremove -yqq -purge \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+  USER airflow
+  RUN pip install \
+    apache airflow providers apache hdfs \
+    apache airflow providers apache hive
+  RUN pip uninstall -y argparse
+  ```
+  :::
+
+  ::::
+
+  * Docker 이미지 생성하기
+
+  ```markdown
+  #> pwd 
+  #> cd /home/hjkim/airflow/custom_image/airflow #Dockerfile 만든 경로
+  #> sudo docker build -t {image_name} . #.: 현재 디렉토리
+  예) #> sudo docker build -t airflow_custom .
+  ```
+  error message
+  ```markdown
+  kmkim@K100230201051:~/airflow/custom_image/airflow$ sudo docker build -t airflow_custom .
   
-* Dockerfile 만들기  
+  failed to fetch metadata: fork/exec /usr/local/lib/docker/cli-plugins/docker-buildx: no such file or directory
 
-:::: {.columns}
+  DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+              Install the buildx component to build images with BuildKit:
+              https://docs.docker.com/go/buildx/
 
-::: {.column width="50%"}
+  Sending build context to Docker daemon  2.048kB
+  Step 1/6 : FROM apache/airflow:2.6.1
+   ---> 52c34708e903
+  Step 2/6 : USER root #root user
+   ---> Running in c3fe7d498d62
+  Removing intermediate container c3fe7d498d62
+   ---> d216e5376f4e
+  Step 3/6 : RUN apt get update   && apt-get install -y --no-install-recommends     gcc     heimdal-dev     g++     libsasl2-dev     heimdal-dev   && apt-get autoremove -yqq -purge   && apt-get clean   && rm -rf /var/lib/apt/lists/*
+   ---> Running in 8238d95b680a
+  unable to find user root #root user: no matching entries in passwd file
+  ```
 
-```markdown
-#> cd; cd airflow
-#> mkdir -p custom_image/airflow
-#> cd custom_image/airflow
-#> vi Dockerfile
-```
+  * Docker 이미지 확인
 
-:::
+  ```markdown
+  #> sudo docker image ls
+  ```
 
-::: {.column width="50%"}
+  * docker-compose.yaml 수정하기
 
-```markdown
+  ```markdown
+  #> cd
+  #> vi docker-compose.yaml
 
-FROM apache/airflow:2.5.1
-USER root
-RUN apt get update \
-  && apt-get install -y --no-install-recommends \
-    gcc \
-    heimdal-dev \ 
-    g++ \
-    libsasl2-dev \
-  && apt-get autoremove -yqq -purge \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/*
-USER airflow
-RUN pip install \
-  apache airflow providers apache hdfs \
-  apache airflow providers apache hive
-RUN pip uninstall -y argparse
-```
-:::
+  version: '3.8'
+  x-airflow-common:
+    &airflow-common
+  # In order to add …
+    image: {image_name} #새로 만든 docker image 이름 넣을 것
+  ```
 
-::::
-
-* Docker 이미지 생성하기
-
-```markdown
-#> pwd
-/home/hjkim/airflow/custom_image/airflow
-#> sudo docker build -t {image_name} .
-```
-* Docker 이미지 확인
-
-```markdown
-#> sudo docker image ls
-```
-
-* docker-compose.yaml 수정하기
-
-```markdown
-#> cd
-#> vi docker-compose.yaml
-
-version: '3.8'
-x-airflow-common:
-  &airflow-common
-# In order to add …
-  image: {image_name}
-```
-
-* docker compose (재) 기동
-* Connection Type 에 추가 확인
+  * docker compose (재) 기동
+  * Connection Type 에 추가 확인
+    * HDFS, Hive Client Wrapper, Hive Metastore Thrift, Hive Server 2 Thrift
 
 
 </div>

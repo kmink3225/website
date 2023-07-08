@@ -97,6 +97,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="../../../../../styles.css">
 </head>
@@ -935,7 +937,7 @@ with DAG(
 <span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres = PythonOperator(</span></span>
 <span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='insrt_postgres',</span></span>
 <span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=insrt_postgres,</span></span>
-<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a><span class="in">        op_args=['172.28.0.3', '5432', 'hjkim', 'hjkim', 'hjkim']</span></span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a><span class="in">        op_args=['172.28.0.3', '5432', 'kmkim', 'kmkim', 'kmkim']</span></span>
 <span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
 <span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a><span class="in">        </span></span>
 <span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -974,69 +976,152 @@ with DAG(
 </div>
 </div>
 <ul>
-<li><code>op_args=['172.28.0.3', '5432', 'hjkim', 'hjkim', 'hjkim']</code> 와 같은 보안 사항이 오른 쪽 코드에서는 <code>op_kwargs={'postgres_conn_id':'conn-db-postgres-custom'}</code> 가려지게 된다.</li>
+<li><code>op_args=['172.28.0.3', '5432', 'kmkim', 'kmkim', 'kmkim']</code> 와 같은 보안 사항이 오른 쪽 코드에서는 <code>op_kwargs={'postgres_conn_id':'conn-db-postgres-custom'}</code> 가려지게 된다.</li>
 </ul>
 </section>
 </section>
 <section id="postgres-hook-으로-bulk_load-하기" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> Postgres Hook 으로 bulk_load 하기</h1>
+<ul>
+<li>bulk_load: Hook은 특정 solution을 제어할 수 있도록 method</li>
+</ul>
 <section id="postgres-hook-명세-보기-1" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="postgres-hook-명세-보기-1"><span class="header-section-number">5.1</span> Postgres Hook 명세 보기</h2>
 <ul>
-<li><a href="https://airflow.apache.org/docs/apache-airflow-providers-postgres/5.4.0/_modules/airflow/providers/postgres/hooks/postgres.html#PostgresHook.get_conn">airflow web service &gt;&gt; Providers &gt;&gt; apache.airflow.providers.postgres &gt;&gt; Python API &gt;&gt; airflow.providers.postgres.hooks.postgres &gt;&gt; get_conn() &gt;&gt; [source] &gt;&gt; def bulg_load(self, temp_file)[source],def bulk_dump(self, table: str, tmp_file: str),def copy_expert(self, sql: str, filename: str)</a></li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow-providers-postgres/5.4.0/_modules/airflow/providers/postgres/hooks/postgres.html#PostgresHook.bulk_load">airflow web service &gt;&gt; Providers &gt;&gt; apache.airflow.providers.postgres &gt;&gt; Python API &gt;&gt; airflow.providers.postgres.hooks.postgres &gt;&gt; def bulk_load(self, temp_file)[source]</a></li>
+<li>bulk_load(): Loads a tab-delimited file into a database table. 설명이 불충분하여 다음과 같은 사항을 확인할 수 없다.
+<ul>
+<li>꼭 delimiter가 tab이어야 하는지?</li>
+<li>temp_file에 header가 있으면 header가 있는 상태로 data를 올려도 되는지?</li>
+<li>DB table이 없으면 만들어지면서 올라가는지? 아니면 사전에 만들어 놔야하는지?</li>
+<li>table에 기존 data가 있다면 truncate되면서 올라가는지? append되면서 올라가는지?</li>
+<li>parameter는 구체적으로 어떻게 입력해야하는지?</li>
+</ul></li>
+<li>bulk_load() 의 명세서를 확인해야 한다. (source code)</li>
 </ul>
 <div class="sourceCode" id="cb26"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">docs</span><span class="co">]</span>    def bulk_load(self, table: str, tmp_file: str) -&gt; None:</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>        """Loads a tab-delimited file into a database table"""</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>        self.copy_expert(f"COPY {table} FROM STDIN", tmp_file)</span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">docs</span><span class="co">]</span>    def bulk_dump(self, table: str, tmp_file: str) -&gt; None:</span>
-<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>        """Dumps a database table into a tab-delimited file"""</span>
-<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>        self.copy_expert(f"COPY {table} TO STDOUT", tmp_file)</span>
-<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">docs</span><span class="co">]</span>    def copy_expert(self, sql: str, filename: str) -&gt; None:</span>
-<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a>        """</span>
-<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>        Executes SQL using psycopg2 copy_expert method.</span>
-<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>        Necessary to execute COPY command without access to a superuser.</span>
-<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="in">        Note: if this method is called with a "COPY FROM" statement and</span></span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="in">        the specified input file does not exist, it creates an empty</span></span>
-<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="in">        file and no data is loaded, but the operation succeeds.</span></span>
-<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="in">        So if users want to be aware when the input file does not exist,</span></span>
-<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="in">        they have to check its existence by themselves.</span></span>
-<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="in">        """</span></span>
-<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="in">        self.log.info("Running copy expert: %s, filename: %s", sql, filename)</span></span>
-<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="in">        if not os.path.isfile(filename):</span></span>
-<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a><span class="in">            with open(filename, "w"):</span></span>
-<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a><span class="in">                pass</span></span>
-<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a><span class="in">        with open(filename, "r+") as file:</span></span>
-<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a><span class="in">            with closing(self.get_conn()) as conn:</span></span>
-<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a><span class="in">                with closing(conn.cursor()) as cur:</span></span>
-<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a><span class="in">                    cur.copy_expert(sql, file)</span></span>
-<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a><span class="in">                    file.truncate(file.tell())</span></span>
-<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a><span class="in">                    conn.commit()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="sourceCode" id="cb27"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
-<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.python import PythonOperator</span>
-<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>from hooks.custom_postgres_hook import CustomPostgresHook</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>        self.copy_expert(f"COPY {table} FROM STDIN", tmp_file)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><p><code>copy_expert()</code>: postgres hook class가 갖고 있는 method</p></li>
+<li><p>self.copy_expert(f”COPY {table} FROM STDIN”, tmp_file)</p></li>
+</ul>
+<div class="sourceCode" id="cb27"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">[</span><span class="ot">docs</span><span class="co">]</span>    def copy_expert(self, sql: str, filename: str) -&gt; None:</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>        """</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>        Executes SQL using psycopg2 copy_expert method.</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>        Necessary to execute COPY command without access to a superuser.</span>
 <span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>        dag_id='dags_python_with_custom_hook_bulk_load',</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>        start_date=pendulum.datetime(2023, 4, 1, tz='Asia/Seoul'),</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>        schedule='0 7 * * *',</span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>        catchup=False</span>
-<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    def insrt_postgres(postgres_conn_id, tbl_nm, file_nm, **kwargs):</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>        custom_postgres_hook = CustomPostgresHook(postgres_conn_id=postgres_conn_id)</span>
-<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>        custom_postgres_hook.bulk_load(table_name=tbl_nm, file_name=file_nm, delimiter=',', is_header=True, is_replace=True)</span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres = PythonOperator(</span></span>
-<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='insrt_postgres',</span></span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=insrt_postgres,</span></span>
-<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a><span class="in">        op_kwargs={'postgres_conn_id': 'conn-db-postgres-custom',</span></span>
-<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a><span class="in">                   'tbl_nm':'TbCorona19CountStatus_bulk2',</span></span>
-<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="in">                   'file_nm':'/opt/airflow/files/TbCorona19CountStatus/{{data_interval_end.in_timezone("Asia/Seoul") | ds_nodash}}/TbCorona19CountStatus.csv'}</span></span>
-<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="in">        Note: if this method is called with a "COPY FROM" statement and</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="in">        the specified input file does not exist, it creates an empty</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="in">        file and no data is loaded, but the operation succeeds.</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="in">        So if users want to be aware when the input file does not exist,</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="in">        they have to check its existence by themselves.</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="in">        """</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="in">        self.log.info("Running copy expert: %s, filename: %s", sql, filename)</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="in">        if not os.path.isfile(filename):</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="in">            with open(filename, "w"):</span></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="in">                pass</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a><span class="in">        with open(filename, "r+") as file:</span></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="in">            with closing(self.get_conn()) as conn:</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a><span class="in">                with closing(conn.cursor()) as cur:</span></span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a><span class="in">                    cur.copy_expert(sql, file)</span></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a><span class="in">                    file.truncate(file.tell())</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a><span class="in">                    conn.commit()</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><code>closing(self.get_conn()) as conn:</code> &gt;&gt; <code>with closing(conn.cursor()) as cur:</code>
+<ul>
+<li><code>get.conn() &gt;&gt; cursor()</code> 결국 postgres의 cursor로 postgres가 원래 갖고있는 copy_export() method를 이용</li>
+<li>그럼 postgres의 copy_export()의 source code를 확인해 봐야함. <a href="https://www.psycopg.org/docs/cursor.html">google psycopg2 cursor.copy_expert</a></li>
+</ul>
+<div class="sourceCode" id="cb28"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>copy_expert(sql, file, size=8192)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  Submit a user-composed COPY statement. The method is useful to handle all the parameters that PostgreSQL makes available (see COPY command documentation).</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  Parameters:</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  sql – the COPY statement to execute.</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>  file – a file-like object to read or write (according to sql).</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  size – size of the read buffer to be used in COPY FROM.</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  The sql statement should be in the form COPY table TO STDOUT to export table to the file object passed as argument or COPY table FROM STDIN to import the content of the file object into table. If you need to compose a COPY statement dynamically (because table, fields, or query parameters are in Python variables) you may use the objects provided by the psycopg2.sql module.</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>  file must be a readable file-like object (as required by copy_from()) for sql statement COPY ... FROM STDIN or a writable one (as required by copy_to()) for COPY ... TO STDOUT.</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>  Example:</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">&gt;&gt;&gt; cur.copy_expert("COPY test TO STDOUT WITH CSV HEADER", sys.stdout)</span></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a><span class="at">  id,num,data</span></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a><span class="at">  1,100,abc'def</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a><span class="at">  2,,dada</span></span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a><span class="at">  ...</span></span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a><span class="at">  New in version 2.0.6.</span></span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>  Changed in version 2.4: files implementing the io.TextIOBase interface are dealt with using Unicode data instead of bytes.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>이것이 가장 세부적인 정보로 나머지 정보는 troubleshooting으로 파악해야한다.
+<ul>
+<li>꼭 delimiter가 tab이어야 하는지? troubleshooting으로 확인해야함</li>
+<li>temp_file에 header가 있으면 header가 있는 상태로 data를 올려도 되는지? troubleshooting으로 확인해야함</li>
+<li>DB table이 없으면 만들어지면서 올라가는지? 아니면 사전에 만들어 놔야하는지? troubleshooting으로 확인해야함</li>
+<li>table에 기존 data가 있다면 truncate되면서 올라가는지? troubleshooting으로 확인해야함</li>
+</ul></li>
+</ul></li>
+<li>trouble shooting 할 DAG</li>
+</ul>
+<div class="sourceCode" id="cb29"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.python import PythonOperator</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>from airflow.providers.postgres.hooks.postgres import PostgresHook</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>        dag_id='dags_python_with_postgres_hook_bulk_load',</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>        start_date=pendulum.datetime(2023, 4, 1, tz='Asia/Seoul'),</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>        schedule='0 7 * * *', # 서울시 공공데이터를 API를 통해 불러들이(dags_seoul_api_corona.py)는 시간이 7시</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>        catchup=False</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>    def insrt_postgres(postgres_conn_id, tbl_nm, file_nm, **kwargs):</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>        postgres_hook = PostgresHook(postgres_conn_id)</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>        postgres_hook.bulk_load(tbl_nm, file_nm)</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a><span class="in">    insrt_postgres = PythonOperator(</span></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='insrt_postgres',</span></span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a><span class="in">        python_callable=insrt_postgres,</span></span>
+<span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a><span class="in">        op_kwargs={'postgres_conn_id': 'conn-db-postgres-custom',</span></span>
+<span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a><span class="in">                   'tbl_nm':'TbCorona19CountStatus_bulk1',</span></span>
+<span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a><span class="in">                   'file_nm':'/opt/airflow/files/TbCorona19CountStatus/{{data_interval_end.in_timezone("Asia/Seoul") | ds_nodash}}/TbCorona19CountStatus.csv'}</span></span>
+<span id="cb29-22"><a href="#cb29-22" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li><p>op_kwargs={‘postgres_conn_id’: ‘conn-db-postgres-custom’, ‘tbl_nm’:‘TbCorona19CountStatus_bulk1’, ‘file_nm’:‘/opt/airflow/files/TbCorona19CountStatus/{{data_interval_end.in_timezone(“Asia/Seoul”) | ds_nodash}}/TbCorona19CountStatus.csv’} 는 dags_seoul_api_corona.py 의 tb_corona19_count_status task의 path와 file_name 인수로 부터 가져온다.</p>
+<p>tb_corona19_count_status = SeoulApiToCsvOperator( task_id=‘tb_corona19_count_status’, dataset_nm=‘TbCorona19CountStatus’, <strong>path</strong>=‘/opt/airflow/files/TbCorona19CountStatus/{{data_interval_end.in_timezone(“Asia/Seoul”) | ds_nodash }}’, <strong>file_name</strong>=‘TbCorona19CountStatus.csv’ )</p></li>
+<li><p>troubleshooting</p>
+<ul>
+<li>table이 사전에 만들어지지 않아도 되는지? 현재 DB에는 TbCorona19CountStatus_bulk1 table이 없음 <img src="../../../../../images/airflow/postgress_hook_bulk_load_method.PNG" class="img-fluid"></li>
+<li>실행 결과 log 에서 table이 없다는 에러 메세지 뜸. table 만들어 주면 됨</li>
+<li>table만들어서 한번 더 task 실행하면 comma delimiter 인식 오류가 나기 떄문에 tab delimiter로 바꿔줘야한다.
+<ul>
+<li>dags_seoul_api_corona.py 로 부터 받은 TbCorona19CountStatus.csv 파일을 열어 <code>,</code>를 tab으로 바꿔준다</li>
+</ul>
+<div class="sourceCode" id="cb30"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>vi TbCorona19CountStatus.csv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li>vi editor
+<ul>
+<li><code>: %s/,/\t/g</code> <code>,</code>를 <code>\t</code>으로 바꿔줌. 여기서 g는 global하게 적용하겠다는 의미</li>
+</ul></li>
+<li>51번째 line에 에러 발생: <code>\M</code> 이라는 특수 문자가 있음
+<ul>
+<li><code>\M</code> 윈도우와 리눅스 간의 줄넘김 차이 때문에 발생
+<ul>
+<li>윈도우: enter key = CR (Carriage Return-한줄에서 왼쪽 끝으로 밀어주는것이 CR) + LF (Line Feed-다음 줄에 입력을 하도록 종이를 한줄 밀어주는 것 LF)</li>
+<li>DOS/Windows 계열에서는 엔터를 CR+LF(<code>\r\n</code>) 으로 처리하고</li>
+<li>Unix/Linux 계열에서는 엔터를 LF(<code>\n</code>)으로 처리하고</li>
+<li>MAC 계열에서는 엔터를 CR(<code>\r</code>)로 처리한다고 한다</li>
+<li>윈도우 환경에서 입력된 값이 리눅스로 넘어오게 될 때 CR+LF와 같은 불일치 값이 있으면 <code>^M</code> 또는 <code>\M</code> 로 표시됨</li>
+</ul></li>
+<li>51번째 record 지워서 해결</li>
+</ul></li>
+<li>airflow 상 errors는 더이상 발생하지 않지만 DB를 확인했을 때 첫번째 row에 column명이 들어간것을 확인되었다. 그래서 CSV상에 column값을 지워줘야한다는 것을 알 수 있다.</li>
+</ul></li>
+</ul>
 </section>
 <section id="bulk_load-문제점-개선방안" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="bulk_load-문제점-개선방안"><span class="header-section-number">5.2</span> Bulk_load 문제점 &amp; 개선방안</h2>
@@ -1050,9 +1135,9 @@ with DAG(
 <li>개선방안
 <ul>
 <li>Custom Hook 을 만들어서 Delimiter 유형을 입력받게 하고</li>
-<li>Header 여부를 선택하게끔 하며</li>
+<li>Header 포함 여부를 선택하게끔 하며</li>
 <li>특수문자를 제거하는 로직을 추가 후</li>
-<li>sqlalchemy를 이용하여 Load 한다면? 그리고 테이블을 생성하면서 업로드할 수 있다면?</li>
+<li>sqlalchemy(python에서 DB 작업을 편리하게 해주는 library)를 이용하여 Load 한다면? 그리고 테이블을 생성하면서 업로드할 수 있도록 한다.</li>
 </ul></li>
 </ul>
 </section>
@@ -1062,7 +1147,34 @@ with DAG(
 <section id="basehook-명세-보기" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="basehook-명세-보기"><span class="header-section-number">6.1</span> BaseHook 명세 보기</h2>
 <ul>
-<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/hooks/base/index.html#airflow.hooks.base.BaseHook.get_connection_form_widgets">Airflow Docs</a></li>
+<li>Custom Hook은 BaseHook을 상속해서 작성</li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/hooks/base/index.html#airflow.hooks.base.BaseHook">Airflow Docs에서 Basehook Source Code</a></li>
+<li>BaseHook class의 methods
+<ul>
+<li>[docs] def get_connection(cls, conn_id: str) -&gt; Connection:
+<ul>
+<li>airflow 상에서 만들었던 connection_id : user name, password, IP, Port 의 정보를 담고있는 object return</li>
+</ul></li>
+<li>[docs] def get_connections(cls, conn_id: str) -&gt; list[Connection]:
+<ul>
+<li>will be deprecated. Use get_connection()</li>
+</ul></li>
+<li>[docs] def get_conn(self) -&gt; Any: # 이 함수를 쓰려면 상속받아서 구현할 때 get_conn() 함수를 구현해야함</li>
+<li>[docs] def get_hook(cls, conn_id: str) -&gt; BaseHook:</li>
+<li>[docs] def get_connection_form_widgets(cls) -&gt; dict[str, Any]: (안중요)</li>
+<li>[docs] def get_ui_field_behaviour(cls) -&gt; dict[str, Any]: (안중요)</li>
+</ul></li>
+<li>위의 method 중 get_conn()을 제외하곤 모든 method에 데코레이터 <code>@classmethod</code> 있음
+<ul>
+<li><p>python있는 method 종류로 class method 라 하고 class method 는 class를 객체화 시키지 않고도 바로 호출할 수 있음</p></li>
+<li><p>예를 들어, 다음과 같은 방식으로 class method 호출 안해도 됨</p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>import BaseHook</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>a=BaseHook()</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>a.get_connection(conn_id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>바로 호출 해도됨</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>import BaseHook</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>BaseHook.get_connection(conn_id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+</ul></li>
 </ul>
 </section>
 <section id="custom-hook-개발" class="level2" data-number="6.2">
@@ -1072,15 +1184,71 @@ with DAG(
 <ul>
 <li>get_conn 메서드 구현하기
 <ul>
-<li>DB 와의 연결 세션 객체인 conn 을 리턴하도록 구현
+<li>DB 와의 연결 세션 객체인 conn 을 리턴하도록 구현</li>
+<li>주의: get_connection() vs get_conn()
 <ul>
-<li>(Airflow 에서 등록한 Connection 정보를 담은 conn 이 아님)</li>
+<li>get_connection(): Airflow 에서 등록한 Connection 정보를 담은 conn을 return</li>
+<li>get_conn(): postgres와의 연결하는 session 객체를 return</li>
 <li>BaseHook 의 추상 메서드 , 자식 클래스에서 구현 필요</li>
 </ul></li>
 </ul></li>
 <li>bulk_load 메서드 구현하기
 <ul>
-<li>입맛대로 만들기</li>
+<li>입맛대로 만들기: custom_postgres_hook.py</li>
+</ul>
+<div class="sourceCode" id="cb33"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>from airflow.hooks.base import BaseHook</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>import psycopg2</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>import pandas as pd</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>class CustomPostgresHook(BaseHook):</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="in">    # 생성자</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="in">    def __init__(self, postgres_conn_id, **kwargs): # 입력은 하나만: postgres_conn_id</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="in">        self.postgres_conn_id = postgres_conn_id</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a><span class="in">    def get_conn(self):</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a><span class="in">        airflow_conn = BaseHook.get_connection(self.postgres_conn_id) #class method라 바로 호출</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a><span class="in">        # 아래의 보안 정보들이 hook을 통해서 노출되지 않고 접근 가능</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a><span class="in">        self.host = airflow_conn.host</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a><span class="in">        self.user = airflow_conn.login</span></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a><span class="in">        self.password = airflow_conn.password</span></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a><span class="in">        self.dbname = airflow_conn.schema</span></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a><span class="in">        self.port = airflow_conn.port</span></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a><span class="in">        # postgres DB 연결: session object를 return</span></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a><span class="in">        self.postgres_conn = psycopg2.connect(host=self.host, user=self.user, password=self.password, dbname=self.dbname, port=self.port)</span></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a><span class="in">        return self.postgres_conn</span></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a><span class="in">    def bulk_load(self, table_name, file_name, delimiter: str, is_header: bool, is_replace: bool):</span></span>
+<span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a><span class="in">        from sqlalchemy import create_engine</span></span>
+<span id="cb33-27"><a href="#cb33-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-28"><a href="#cb33-28" aria-hidden="true" tabindex="-1"></a><span class="in">        self.log.info('적재 대상파일:' + file_name)</span></span>
+<span id="cb33-29"><a href="#cb33-29" aria-hidden="true" tabindex="-1"></a><span class="in">        self.log.info('테이블 :' + table_name)</span></span>
+<span id="cb33-30"><a href="#cb33-30" aria-hidden="true" tabindex="-1"></a><span class="in">        self.get_conn()</span></span>
+<span id="cb33-31"><a href="#cb33-31" aria-hidden="true" tabindex="-1"></a><span class="in">        header = 0 if is_header else None                       # is_header = True면 0, False면 None</span></span>
+<span id="cb33-32"><a href="#cb33-32" aria-hidden="true" tabindex="-1"></a><span class="in">        if_exists = 'replace' if is_replace else 'append'       # is_replace = True면 replace, False면 append</span></span>
+<span id="cb33-33"><a href="#cb33-33" aria-hidden="true" tabindex="-1"></a><span class="in">        file_df = pd.read_csv(file_name, header=header, delimiter=delimiter)</span></span>
+<span id="cb33-34"><a href="#cb33-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-35"><a href="#cb33-35" aria-hidden="true" tabindex="-1"></a><span class="in">        for col in file_df.columns:                             </span></span>
+<span id="cb33-36"><a href="#cb33-36" aria-hidden="true" tabindex="-1"></a><span class="in">            try:</span></span>
+<span id="cb33-37"><a href="#cb33-37" aria-hidden="true" tabindex="-1"></a><span class="in">                # string 문자열이 아닐 경우 continue</span></span>
+<span id="cb33-38"><a href="#cb33-38" aria-hidden="true" tabindex="-1"></a><span class="in">                file_df[col] = file_df[col].str.replace('\r\n','')      # 줄넘김 및 ^M 제거</span></span>
+<span id="cb33-39"><a href="#cb33-39" aria-hidden="true" tabindex="-1"></a><span class="in">                self.log.info(f'{table_name}.{col}: 개행문자 제거')</span></span>
+<span id="cb33-40"><a href="#cb33-40" aria-hidden="true" tabindex="-1"></a><span class="in">            except:</span></span>
+<span id="cb33-41"><a href="#cb33-41" aria-hidden="true" tabindex="-1"></a><span class="in">                continue </span></span>
+<span id="cb33-42"><a href="#cb33-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-43"><a href="#cb33-43" aria-hidden="true" tabindex="-1"></a><span class="in">        self.log.info('적재 건수:' + str(len(file_df)))</span></span>
+<span id="cb33-44"><a href="#cb33-44" aria-hidden="true" tabindex="-1"></a><span class="in">        uri = f'postgresql://{self.user}:{self.password}@{self.host}/{self.dbname}'</span></span>
+<span id="cb33-45"><a href="#cb33-45" aria-hidden="true" tabindex="-1"></a><span class="in">        engine = create_engine(uri)</span></span>
+<span id="cb33-46"><a href="#cb33-46" aria-hidden="true" tabindex="-1"></a><span class="in">        file_df.to_sql(name=table_name,</span></span>
+<span id="cb33-47"><a href="#cb33-47" aria-hidden="true" tabindex="-1"></a><span class="in">                            con=engine,</span></span>
+<span id="cb33-48"><a href="#cb33-48" aria-hidden="true" tabindex="-1"></a><span class="in">                            schema='public',</span></span>
+<span id="cb33-49"><a href="#cb33-49" aria-hidden="true" tabindex="-1"></a><span class="in">                            if_exists=if_exists,</span></span>
+<span id="cb33-50"><a href="#cb33-50" aria-hidden="true" tabindex="-1"></a><span class="in">                            index=False</span></span>
+<span id="cb33-51"><a href="#cb33-51" aria-hidden="true" tabindex="-1"></a><span class="in">                        )</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>여기서 <code>airflow_conn = BaseHook.get_connection(self.postgres_conn_id) #class method라 바로 호출</code> 와 <code>self.postgres_conn = psycopg2.connect(host=self.host, user=self.user, password=self.password, dbname=self.dbname, port=self.port)</code> 다른 종류의 conn 객체를 return한다.</li>
 </ul></li>
 </ul></li>
 </ul>
@@ -1092,20 +1260,60 @@ with DAG(
 <ul>
 <li>웹의 Admin Providers 에서 확인 가능</li>
 </ul></li>
-<li><a href="https://airflow.apache.org/docs/apache-airflow-providers/">설치 가능한 Providers 더 보기</a></li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow-providers/">설치 가능한 Providers 더 보기</a> &gt;&gt; Apache Airflow 2 is built in modular way. The “Core” of Apache Airflow provides core scheduler functionality which allow you to write some basic tasks, but the capabilities of Apache Airflow can be extended by installing additional packages, called providers.
+<ul>
+<li>providers package를 설치하면 다른 솔루션을 연동할 수 있도록 확장성을 제공</li>
+<li>The full list of community managed providers is available at <a href="https://airflow.apache.org/docs/#providers-packages-docs-apache-airflow-providers-index-html">Providers Index</a>.
+<ul>
+<li>Providers packages:
+<ul>
+<li><a href="https://airflow.apache.org/docs/apache-airflow-providers-apache-hive/stable/_api/airflow/providers/apache/hive/hooks/hive/index.html">Apache Hive</a></li>
+</ul></li>
+</ul></li>
+</ul></li>
 </ul>
 </section>
 <section id="connection-type-추가하기" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="connection-type-추가하기"><span class="header-section-number">6.4</span> Connection Type 추가하기</h2>
 <ul>
-<li>만약 HDFS, Hive 에 대한 커넥션을 추가하고 싶다면</li>
-<li>커넥션 타입 목록에 있는 대상은 이미 패키지 설치가 된 Providers 이며 Admin&gt;&gt;Providers 목록에서 설치된 대상 확인 가능</li>
-<li>Provider 검색 , py 라이브러리 설치 목록 확인</li>
-<li><a href="https://airflow.apache.org/docs/docker-stack/build.html">Airflow 이미지 Extend 방법 확인</a>
+<li><p>Airflow Connection type 목록에 있는 대상은 이미 패키지 설치가 된 Providers 이며 Admin&gt;&gt;Providers 목록에서 설치된 대상 확인 가능</p></li>
+<li><p>만약 Hive 에 대한 커넥션을 추가하고 싶은데 Airflow Connection type 목록에 Hive가 없다면 관련된 package를 설치하여 본인이 직접 추가해야함</p>
+<ul>
+<li>Provider 검색, py 라이브러리 설치 목록 확인하여 <code>pip install [pkg name]</code> 실행
+<ul>
+<li>주의사항: 윈도우와 wsl2에 package를 설치하는게 아니라 airflow containers에 설치해줘야 함
+<ul>
+<li>scheduler</li>
+<li>worker</li>
+<li>webserver</li>
+<li>triggerer</li>
+</ul></li>
+<li>하지만, 각 각의 container에다가 pkg를 설치해주면 container가 꺼지게 되면 지워지게 됨</li>
+<li>그래서, custom한 docker image를 만들어야 함
+<ul>
+<li>Airflow 이미지 Extend 방법으로 custom image 만들기
+<ul>
+<li>base image 에다가 custom image (pip install 및 다른 여러가지 layers) 추가</li>
+<li>즉, custom image = base image + layer1 (library 호출) +layer2 (pip install pkgs)+ <span class="math inline">\(\ldots\)</span></li>
+<li>이런 방식의 custom image는 layer가 많아질 수록 무거워져 overhead 가 커지는 약점이 있다.</li>
+</ul></li>
+<li>애초에 base image 자체를 custom image 로 만드는 법
+<ul>
+<li>extend의 약점인 overhead를 어느 정도 줄일 수 있지만 개발하는데 시간이 걸림</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p><a href="https://airflow.apache.org/docs/docker-stack/build.html">Airflow 이미지 Extend 방법 &amp; custom image 만드는 법 확인</a></p>
 <ul>
 <li>이미지 Extend vs Custom 이미지 생성</li>
 </ul>
 <table class="table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 26%">
+<col style="width: 39%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Comparison</th>
@@ -1117,11 +1325,11 @@ with DAG(
 <tr class="odd">
 <td>간단히 생성 가능</td>
 <td>O</td>
-<td style="text-align: left;">X</td>
+<td style="text-align: left;">X (많은 source codes 필요)</td>
 </tr>
 <tr class="even">
 <td>빌드 시간</td>
-<td>짧음</td>
+<td>짧음 (5분 이내)</td>
 <td style="text-align: left;">상대적으로 긺</td>
 </tr>
 <tr class="odd">
@@ -1131,63 +1339,89 @@ with DAG(
 </tr>
 <tr class="even">
 <td>폐쇄망에서 구성 가능</td>
-<td>X</td>
+<td>X (인터넷이 되어야함)</td>
 <td style="text-align: left;">O</td>
 </tr>
 </tbody>
 </table></li>
-<li>Dockerfile 만들기</li>
+<li><p>Airflow web에 connection type 추가하는 steps</p>
+<ul>
+<li>이미지 extend를 위한 Dockerfile 만들기<br>
+:::: {.columns}</li>
 </ul>
-<div class="columns">
 <div class="column" style="width:50%;">
-<div class="sourceCode" id="cb28"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>#&gt; cd; cd airflow</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>#&gt; mkdir -p custom_image/airflow</span>
-<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>#&gt; cd custom_image/airflow</span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>#&gt; vi Dockerfile</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div><div class="column" style="width:50%;">
-<div class="sourceCode" id="cb29"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>FROM apache/airflow:2.5.1</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>USER root</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>RUN apt get update \</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; apt-get install -y --no-install-recommends \</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>    gcc \</span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>    heimdal-dev \ </span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>    g++ \</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    libsasl2-dev \</span>
-<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; apt-get autoremove -yqq -purge \</span>
-<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; apt-get clean \</span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; rm -rf /var/lib/apt/lists/*</span>
-<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a>USER airflow</span>
-<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>RUN pip install \</span>
-<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>  apache airflow providers apache hdfs \</span>
-<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>  apache airflow providers apache hive</span>
-<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>RUN pip uninstall -y argparse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>#&gt; cd; cd airflow</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>#&gt; mkdir -p custom_image/airflow</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>#&gt; cd custom_image/airflow</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>#&gt; vi Dockerfile</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<div class="column" style="width:50%;">
+<div class="sourceCode" id="cb35"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>FROM apache/airflow:2.5.1 #base image 지정</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>USER root #root user</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>RUN apt get update \</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; apt-get install -y --no-install-recommends \</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    gcc \ #library 1 for installing hdfs</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    heimdal-dev \ #library 2 for installing hdfs</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    g++ \ #library 3</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    libsasl2-dev \ #library 4</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; apt-get autoremove -yqq -purge \</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; apt-get clean \</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  &amp;&amp; rm -rf /var/lib/apt/lists/*</span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>USER airflow</span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a>RUN pip install \</span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a>  apache airflow providers apache hdfs \</span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>  apache airflow providers apache hive</span>
+<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>RUN pip uninstall -y argparse</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>::::</p>
 <ul>
 <li>Docker 이미지 생성하기</li>
 </ul>
-<div class="sourceCode" id="cb30"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>#&gt; pwd</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>/home/hjkim/airflow/custom_image/airflow</span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>#&gt; sudo docker build -t {image_name} .</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>#&gt; pwd </span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>#&gt; cd /home/hjkim/airflow/custom_image/airflow #Dockerfile 만든 경로</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>#&gt; sudo docker build -t {image_name} . #.: 현재 디렉토리</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>예) #&gt; sudo docker build -t airflow_custom .</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>error message</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>kmkim@K100230201051:~/airflow/custom_image/airflow$ sudo docker build -t airflow_custom .</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>failed to fetch metadata: fork/exec /usr/local/lib/docker/cli-plugins/docker-buildx: no such file or directory</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>DEPRECATED: The legacy builder is deprecated and will be removed in a future release.</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>            Install the buildx component to build images with BuildKit:</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>            https://docs.docker.com/go/buildx/</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a>Sending build context to Docker daemon  2.048kB</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>Step 1/6 : FROM apache/airflow:2.6.1</span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a> ---&gt; 52c34708e903</span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>Step 2/6 : USER root #root user</span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a> ---&gt; Running in c3fe7d498d62</span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>Removing intermediate container c3fe7d498d62</span>
+<span id="cb37-15"><a href="#cb37-15" aria-hidden="true" tabindex="-1"></a> ---&gt; d216e5376f4e</span>
+<span id="cb37-16"><a href="#cb37-16" aria-hidden="true" tabindex="-1"></a>Step 3/6 : RUN apt get update   &amp;&amp; apt-get install -y --no-install-recommends     gcc     heimdal-dev     g++     libsasl2-dev     heimdal-dev   &amp;&amp; apt-get autoremove -yqq -purge   &amp;&amp; apt-get clean   &amp;&amp; rm -rf /var/lib/apt/lists/*</span>
+<span id="cb37-17"><a href="#cb37-17" aria-hidden="true" tabindex="-1"></a> ---&gt; Running in 8238d95b680a</span>
+<span id="cb37-18"><a href="#cb37-18" aria-hidden="true" tabindex="-1"></a>unable to find user root #root user: no matching entries in passwd file</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li>Docker 이미지 확인</li>
 </ul>
-<div class="sourceCode" id="cb31"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>#&gt; sudo docker image ls</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>#&gt; sudo docker image ls</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li>docker-compose.yaml 수정하기</li>
 </ul>
-<div class="sourceCode" id="cb32"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>#&gt; cd</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>#&gt; vi docker-compose.yaml</span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>version: '3.8'</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>x-airflow-common:</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  &amp;airflow-common</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="fu"># In order to add …</span></span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>  image: {image_name}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>#&gt; cd</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>#&gt; vi docker-compose.yaml</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>version: '3.8'</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>x-airflow-common:</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>  &amp;airflow-common</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="fu"># In order to add …</span></span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>  image: {image_name} #새로 만든 docker image 이름 넣을 것</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li>docker compose (재) 기동</li>
-<li>Connection Type 에 추가 확인</li>
+<li>Connection Type 에 추가 확인
+<ul>
+<li>HDFS, Hive Client Wrapper, Hive Metastore Thrift, Hive Server 2 Thrift</li>
+</ul></li>
+</ul></li>
 </ul>
 </section>
 </section>

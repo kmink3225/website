@@ -102,7 +102,7 @@ draft: False
   | 원리                | DAG이 수행되는 내내 Running Slot(task가 수행될 때 차지하는 공간) 을 차지. sensor가 특정 조건을 체킹할때나 안할때나 항상 slot 차지.  다만 Slot 안에서 Sleep, active 를 반복   | 센서가 조건을 체킹하는 동작 시기에만 Slot을 차지. 그 외에는 Slot을 점유하지 않음 |
   | Wait에서의 Task 상태 | running (airflow web ui 에서 task bar가 연두색)           | up_for_reschedule  (task bar가 민트색) |
   | 유리한 적용 시점 |  짧은 센싱 간격 (interval, 초 단위)    | 긴 센싱 간격, 주로 분 단위 Reschedule될 때 (5분, 10분) 스케줄러의 부하 발생 |
-  
+
 * Slot의 이해
   * Pool
     * 모든 operator로 만들어진 Task는 특정 Pool에서 수행되며 Pool은 Slot이라는 것을 가지고 있음.
@@ -159,6 +159,7 @@ draft: False
     * output_encoding – output encoding of bash command.
     * retry_exit_code (int | None) – If task exits with this code, treat the sensor as not-yet-complete and retry the check later according to the usual retry/timeout settings. Any other non-zero return code will be treated as an error, and cause the sensor to fail. If set to None (the default), any non-zero exit code will cause a retry and the task will never raise an error except on time-out.
 * Dag Example
+  * csv file 있는지 없는지 확인
 
 ```markdown
 from airflow.sensors.bash import BashSensor
@@ -175,6 +176,7 @@ with DAG(
 
     sensor_task_by_poke = BashSensor(
         task_id='sensor_task_by_poke',
+        # 오늘 날짜로 tvCorona19VaccinestatNew.csv 가 있는지 없는지 확인 
         env={'FILE':'/opt/airflow/files/tvCorona19VaccinestatNew/{{data_interval_end.in_timezone("Asia/Seoul") | ds_nodash }}/tvCorona19VaccinestatNew.csv'},
         bash_command=f'''echo $FILE && 
                         if [ -f $FILE ]; then 
@@ -217,7 +219,80 @@ with DAG(
 ## File 센서 명세 확인
 
 * [airflow.sensors.filesystem](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/filesystem/index.html#airflow.sensors.filesystem.FileSensor)
+  * Waits for a file or folder to land in a filesystem.
+  * Parameters
+    * fs_conn_id – reference to the File (path) connection id (connection을 airflow web에 미리 등록해놔야함)
+    * filepath – File or folder name (relative to the base path set within the connection), can be a glob.
+    * recursive – when set to True, enables recursive directory matching behavior of ** in glob filepath parameter. Defaults to False.
+  * source: 모든 sensor는 poke만 잘 이해하면 거의 이해함
+  ```markdown
+    [docs]    template_fields: Sequence[str] = ("filepath",)
 
+    [docs]    ui_color = "#91818a"
+
+
+        def __init__(self, *, filepath, fs_conn_id="fs_default", recursive=False, **kwargs):
+            super().__init__(**kwargs)
+            self.filepath = filepath
+            self.fs_conn_id = fs_conn_id
+            self.recursive = recursive
+
+    [docs]    def poke(self, context: Context):
+            hook = FSHook(self.fs_conn_id) # file sensor를 쓰기전에 file system과 관련된 connection을 사전에 설정해놔야함
+            basepath = hook.get_path()
+            full_path = os.path.join(basepath, self.filepath)
+            self.log.info("Poking for file %s", full_path)
+
+            for path in glob(full_path, recursive=self.recursive):
+                if os.path.isfile(path):
+                    mod_time = datetime.datetime.fromtimestamp(os.path.getmtime(path)).strftime("%Y%m%d%H%M%S")
+                    self.log.info("Found File %s last modified: %s", str(path), mod_time)
+                    return True
+
+                for _, _, files in os.walk(path):
+                    if len(files) > 0:
+                        return True
+            return False
+  ```
+  * glob: file path안에 있는 file이나 directory를 찾아서 list로 반환
+    * `glob('/home/kmkim')` : 모든 files and directories list 반환
+    * `glob('/home/kmkim/docker-compose.yaml')` : docker-compose.yaml만 리스트로 반환
+    * `glob('/home/kmkim/**',recursive=True)` : 하위 디렉토리 안에 있는 파일과 디렉토리들의 리스트로 반환
+  * `FSHook()` : [명세서](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/hooks/filesystem/index.html)
+    ```markdown
+    [docs]class FSHook(BaseHook):
+    """
+    Allows for interaction with an file server.
+
+    Connection should have a name and a path specified under extra:
+
+    example:
+    Connection Id: fs_test
+    Connection Type: File (path)
+    Host, Schema, Login, Password, Port: empty
+    Extra: {"path": "/tmp"} # dictionary 형태
+    """
+
+    def __init__(self, conn_id: str = "fs_default"):
+        super().__init__()
+        conn = self.get_connection(conn_id)
+        self.basepath = conn.extra_dejson.get("path", "")
+        self.conn = conn
+
+    [docs]    def get_conn(self) -> None:
+            pass
+
+
+    [docs]    def get_path(self) -> str:
+            """
+            Get the path to the filesystem location.
+
+            :return: the path.
+            """
+            return self.basepath
+
+    ```
+    * Connection should have a name and a path specified under extra:
 ![File Sensor Sequential Diagram](../../../../../images/airflow/File_sensor_diagram.PNG)
 
 * Connection 작성

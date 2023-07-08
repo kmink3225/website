@@ -664,7 +664,7 @@ with DAG(
     insrt_postgres = PythonOperator(
         task_id='insrt_postgres',
         python_callable=insrt_postgres,
-        op_args=['172.28.0.3', '5432', 'hjkim', 'hjkim', 'hjkim']
+        op_args=['172.28.0.3', '5432', 'kmkim', 'kmkim', 'kmkim']
     )
         
     insrt_postgres
@@ -712,23 +712,32 @@ with DAG(
 
 ::::
 
-*  `op_args=['172.28.0.3', '5432', 'hjkim', 'hjkim', 'hjkim']` 와 같은 보안 사항이 오른 쪽 코드에서는 `op_kwargs={'postgres_conn_id':'conn-db-postgres-custom'}` 가려지게 된다.
+*  `op_args=['172.28.0.3', '5432', 'kmkim', 'kmkim', 'kmkim']` 와 같은 보안 사항이 오른 쪽 코드에서는 `op_kwargs={'postgres_conn_id':'conn-db-postgres-custom'}` 가려지게 된다.
 
 # Postgres Hook 으로 bulk_load 하기
 
+* bulk_load: Hook은 특정 solution을 제어할 수 있도록 method
+
 ## Postgres Hook 명세 보기
 
-* [airflow web service >> Providers >> apache.airflow.providers.postgres >> Python API >> airflow.providers.postgres.hooks.postgres >> get_conn() >> [source] >> def bulg_load(self, temp_file)[source],def bulk_dump(self, table: str, tmp_file: str),def copy_expert(self, sql: str, filename: str)](https://airflow.apache.org/docs/apache-airflow-providers-postgres/5.4.0/_modules/airflow/providers/postgres/hooks/postgres.html#PostgresHook.get_conn)
-
+* [airflow web service >> Providers >> apache.airflow.providers.postgres >> Python API >> airflow.providers.postgres.hooks.postgres >> def bulk_load(self, temp_file)[source]](https://airflow.apache.org/docs/apache-airflow-providers-postgres/5.4.0/_modules/airflow/providers/postgres/hooks/postgres.html#PostgresHook.bulk_load)
+* bulk_load(): Loads a tab-delimited file into a database table. 설명이 불충분하여 다음과 같은 사항을 확인할 수 없다.
+  * 꼭 delimiter가 tab이어야 하는지?
+  * temp_file에 header가 있으면 header가 있는 상태로 data를 올려도 되는지?
+  * DB table이 없으면 만들어지면서 올라가는지? 아니면 사전에 만들어 놔야하는지?
+  * table에 기존 data가 있다면 truncate되면서 올라가는지? append되면서 올라가는지?
+  * parameter는 구체적으로 어떻게 입력해야하는지?
+* bulk_load() 의 명세서를 확인해야 한다. (source code)
 ```markdown
 [docs]    def bulk_load(self, table: str, tmp_file: str) -> None:
         """Loads a tab-delimited file into a database table"""
         self.copy_expert(f"COPY {table} FROM STDIN", tmp_file)
+```
+  * `copy_expert()`: postgres hook class가 갖고 있는 method
 
-[docs]    def bulk_dump(self, table: str, tmp_file: str) -> None:
-        """Dumps a database table into a tab-delimited file"""
-        self.copy_expert(f"COPY {table} TO STDOUT", tmp_file)
+* self.copy_expert(f"COPY {table} FROM STDIN", tmp_file)
 
+```markdown
 [docs]    def copy_expert(self, sql: str, filename: str) -> None:
         """
         Executes SQL using psycopg2 copy_expert method.
@@ -752,31 +761,78 @@ with DAG(
                     file.truncate(file.tell())
                     conn.commit()
 ```
+  * `closing(self.get_conn()) as conn:` >> `with closing(conn.cursor()) as cur:`
+    * `get.conn() >> cursor()` 결국 postgres의 cursor로 postgres가 원래 갖고있는 copy_export() method를 이용
+    * 그럼 postgres의 copy_export()의 source code를 확인해 봐야함. [google psycopg2 cursor.copy_expert](https://www.psycopg.org/docs/cursor.html)
+    ```markdown
+    copy_expert(sql, file, size=8192)
+      Submit a user-composed COPY statement. The method is useful to handle all the parameters that PostgreSQL makes available (see COPY command documentation).
+      
+      Parameters:
+      sql – the COPY statement to execute.
+      
+      file – a file-like object to read or write (according to sql).
+      
+      size – size of the read buffer to be used in COPY FROM.
+      
+      The sql statement should be in the form COPY table TO STDOUT to export table to the file object passed as argument or COPY table FROM STDIN to import the content of the file object into table. If you need to compose a COPY statement dynamically (because table, fields, or query parameters are in Python variables) you may use the objects provided by the psycopg2.sql module.
+      
+      file must be a readable file-like object (as required by copy_from()) for sql statement COPY ... FROM STDIN or a writable one (as required by copy_to()) for COPY ... TO STDOUT.
+      
+      Example:
+      
+      >>> cur.copy_expert("COPY test TO STDOUT WITH CSV HEADER", sys.stdout)
+      id,num,data
+      1,100,abc'def
+      2,,dada
+      ...
+      New in version 2.0.6.
+      
+      Changed in version 2.4: files implementing the io.TextIOBase interface are dealt with using Unicode data instead of bytes.
+    ```
+    * 이것이 가장 세부적인 정보로 나머지 정보는 troubleshooting으로 파악해야한다.
+      * 꼭 delimiter가 tab이어야 하는지? troubleshooting으로 확인해야함
+      * temp_file에 header가 있으면 header가 있는 상태로 data를 올려도 되는지? troubleshooting으로 확인해야함
+      * DB table이 없으면 만들어지면서 올라가는지? 아니면 사전에 만들어 놔야하는지? troubleshooting으로 확인해야함
+      * table에 기존 data가 있다면 truncate되면서 올라가는지? troubleshooting으로 확인해야함
+* trouble shooting 할 DAG
 
 ```markdown
 from airflow import DAG
 import pendulum
 from airflow.operators.python import PythonOperator
-from hooks.custom_postgres_hook import CustomPostgresHook
+from airflow.providers.postgres.hooks.postgres import PostgresHook
 
 with DAG(
-        dag_id='dags_python_with_custom_hook_bulk_load',
+        dag_id='dags_python_with_postgres_hook_bulk_load',
         start_date=pendulum.datetime(2023, 4, 1, tz='Asia/Seoul'),
-        schedule='0 7 * * *',
+        schedule='0 7 * * *', # 서울시 공공데이터를 API를 통해 불러들이(dags_seoul_api_corona.py)는 시간이 7시
         catchup=False
 ) as dag:
     def insrt_postgres(postgres_conn_id, tbl_nm, file_nm, **kwargs):
-        custom_postgres_hook = CustomPostgresHook(postgres_conn_id=postgres_conn_id)
-        custom_postgres_hook.bulk_load(table_name=tbl_nm, file_name=file_nm, delimiter=',', is_header=True, is_replace=True)
+        postgres_hook = PostgresHook(postgres_conn_id)
+        postgres_hook.bulk_load(tbl_nm, file_nm)
 
     insrt_postgres = PythonOperator(
         task_id='insrt_postgres',
         python_callable=insrt_postgres,
         op_kwargs={'postgres_conn_id': 'conn-db-postgres-custom',
-                   'tbl_nm':'TbCorona19CountStatus_bulk2',
+                   'tbl_nm':'TbCorona19CountStatus_bulk1',
                    'file_nm':'/opt/airflow/files/TbCorona19CountStatus/{{data_interval_end.in_timezone("Asia/Seoul") | ds_nodash}}/TbCorona19CountStatus.csv'}
     )
 ```
+* op_kwargs={'postgres_conn_id': 'conn-db-postgres-custom',
+                   'tbl_nm':'TbCorona19CountStatus_bulk1',
+                   'file_nm':'/opt/airflow/files/TbCorona19CountStatus/{{data_interval_end.in_timezone("Asia/Seoul") | ds_nodash}}/TbCorona19CountStatus.csv'} 는 dags_seoul_api_corona.py 의 tb_corona19_count_status task의 path와 file_name 인수로 부터 가져온다.
+   
+   tb_corona19_count_status = SeoulApiToCsvOperator(
+        task_id='tb_corona19_count_status',
+        dataset_nm='TbCorona19CountStatus',
+        **path**='/opt/airflow/files/TbCorona19CountStatus/{{data_interval_end.in_timezone("Asia/Seoul") | ds_nodash }}',
+        **file_name**='TbCorona19CountStatus.csv'
+    )
+                   
+* table이 사전에 만들어지지 않아도 되는지?
 
 ## Bulk_load 문제점 & 개선방안
 

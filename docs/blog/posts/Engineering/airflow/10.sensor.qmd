@@ -479,10 +479,8 @@ with DAG(
 ## DAG 간 의존관계 설정
 
 * DAG 의존관계 설정 방법
-    * TriggerDagRun 오퍼레이터
-    
+  * TriggerDagRun 오퍼레이터    
     ```{dot}
-
     digraph G {
       compound=true;
       rankdir=LR;
@@ -502,47 +500,166 @@ with DAG(
     
     }
     ```
-
-    * ExternalTask 센서
+    * task1: PythonOperator
+    * TriggerDagRun Operator: task1이 끝난 후 다른 dag을 돌리고 싶을 경우에 TriggerDagRun Operator사용. task2,3,4는 task1 후에 돌아가는 task로 triggerDagRun Operator에 의해 task2,3,4에 대응되는 각 각 다른 dag을 돌아가도록 수행된다.
+  * ExternalTask 센서
     ```{dot}
     digraph G {
       compound=true;
       rankdir=LR;
       subgraph cluster0 {
         rankdir=TB;
-        task1 [shape=box];
+        sensor1 [shape=box];
+        sensor2 [shape=box];
+        sensor3 [shape=box];
+        sensor4 [shape=box];
         task2 [shape=box];
-        task3 [shape=box];
-        task4 [shape=box];
-        
+
         label= "Task Flow";
       }
     
-      task1 -> task4;
-      task2 -> task4;
-      task3 -> task4; 
+      sensor1 -> task2;
+      sensor2 -> task2;
+      sensor3 -> task2; 
+      sensor4 -> task2; 
     }
     ```
+    * task2를 돌리기 위해 다른 dag의 task가 완료된 후에 돌아가야 하는 조건이 붙었을 때 사용
+    * 예를 들어, 위의 그림 처럼, sensor1는 Dag A, sensor2는 Dag B, sensor3은 Dag C, sensor3은 Dag D에 속해있다고 할 때, 4개의 dag이 완료가 되어야 task2가 돌아갈 수 있다.
+  * dataset
+    * airflow 2.4 version에 나온 기능으로 dag의 dependency를 설정하는 새로운 방법
 
 ## ExternalTask 센서 명세 확인
 
-* [airflow.sensors.external_task](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/external_task/index.html#module-airflow.sensors.external_task)
-* 
+* [airflow.sensors.external_task 명세](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/external_task/index.html#module-airflow.sensors.external_task)
+  * Bases: airflow.sensors.base.BaseSensorOperator
+  * Waits for a different DAG, task group, or task to complete for a specific logical date.
+* Parameter
+
 | Parameter   | 필수여부   | 설명                  |
 |-----------------|-----------------|:------------------------------|
 | external_dag_id | O | 센싱할 dag 명  | 
-| external_task_id | X (셋 중 하나만 입력 가능 없으면 dag만 센싱) | 센싱할 task_id 명 (string) |
-| external_task_ids |  X (셋 중 하나만 입력 가능 없으면 dag만 센싱) | 센싱할 1 개 이상의 task_id 명 (list) |
-| external_task_group_id |  X (셋 중 하나만 입력 가능 없으면 dag만 센싱) | 센싱할 task_group_id명 |
-| allowed_status | X (같은 상태가 입력되면 안됨)  | 센서가 Success 되기 위한 센싱 대상의 상태      |
-| skipped_status | X (같은 상태가 입력되면 안됨)  | 센서가 Skipped 되기 위한 센싱 대상의 상태      |
-| failed_states  | X (같은 상태가 입력되면 안됨)  | 센서가 Fail 되기 위한 센싱 대상의 상태         |
-| execution_delta | Login           | 현재 dag과 센싱할 dag의 data_interval_start의 차이를 입력  |
-| execution_date_fn | Password      | 센싱할 dag의 data_interval_start를 구하기 위한 함수        |
-| check_existence | Password        | 해당 dag_id 또는 task_id 가 있는지 확인                    |
+| **external_task_id** | X (셋 중 하나만 입력 가능 없으면 안써도 되고 없을 경우 dag만 센싱) | 센싱할 task_id 명 (string) |
+| **external_task_ids** |  X (셋 중 하나만 입력 가능 없으면 안써도 되고 없을 경우 dag만 센싱) | 센싱할 1 개 이상의 task_id 명 (list) |
+| **external_task_group_id** |  X (셋 중 하나만 입력 가능 없으면 dag만 센싱) | 센싱할 task_group_id명 |
+| allowed_states | X (같은 상태가 입력되면 안됨)  | 센서가 Success 되기 위한 센싱 대상의 상태 (기본적으로 센싱할 task가 success로 끝나야함)      |
+| skipped_states | X (같은 상태가 입력되면 안됨)  | 센서가 Skipped 되기 위한 센싱 대상의 상태 (기본적으로 none, 아무런 정의가 안되어있음)     |
+| failed_states  | X (같은 상태가 입력되면 안됨)  | 센서가 Fail 되기 위한 센싱 대상의 상태 (기본적으로 none, 아무런 정의가 안되어있음)         |
+| execution_delta | Login           | 현재 dag과 센싱할 dag의 data_interval_start의 차이 (스케쥴 차이)를 입력  |
+| execution_date_fn | Password      | 스케쥴 차이를 상수로 구할 수 없는 경우, 센싱할 dag의 data_interval_start를 구하기 위한 함수를 넣어주면 됨        |
+| check_existence | Password        | sensidng dag의 dag_id 또는 task_id 가 있는지 확인 true or false로 입력해야한다. default=false  |
 
-* states: State.SKIPPED, State.SUCCESS, State.FAILED, State.QUEUED, State.SCHEDULED, State.UP_FOR_RESCHEDULE 등
+* 위의 allowed_states, skipped_states, failed_states의 states 적을 수 있는 항목은 airflow.utils.state import State (State class) 에 있는 member들만 적을 수 있다.
+  * State.SKIPPED, State.SUCCESS, State.FAILED, State.QUEUED, State.SCHEDULED, State.UP_FOR_RESCHEDULE 등
 (from airflow.utils.state import State 필요)
+* 위의 execution_delta 에는 timedelta() 를 이용하여 입력. 
+  * External Task가 있는 dag보다 센싱할 dag이 얼마나 과거에 있는지 양수로 입력
+  * 예를 들어, 센싱할 dag이 6시간 앞선다면 timedelta(hours=6)으로 입력. 주의) -6으로 쓰면 안됨
+* execution_date_fn의 경우 함수가 들어가게 되는데 주로 주 dag의 주기가 다를 때 사용한다.
+  * 예를 들어, externalTask의 dag이 시간단위 스케쥴이고 센싱할 dag의 스케쥴이 월단위로 적혀 있을때, data_interval_schedule값이 점점 벌어지게 된다.
+  * 센싱할 dag의 스케쥴: dag(0 1 1 * *)
+  * external task의 dag의 스케쥴 : dag(0 7 * * *)
+  * data_interval_schedule = 6h (1일차), 1d+6h(2일차), 2d+6h(3일차), $\ldots$
+* **가장 빈번하게 쓰이고 중요한 parameter: external_dag_id와 execution_delta**
+
+## Dag Full Example
+
+* Monitoring or sensing 할 dag: dags_branch_python_operator.py
+
+```markdown
+from airflow import DAG
+import pendulum
+from airflow.operators.python import PythonOperator
+from airflow.operators.python import BranchPythonOperator
+
+with DAG(
+    dag_id='dags_branch_python_operator',
+    start_date=pendulum.datetime(2023,4,1, tz='Asia/Seoul'), 
+    schedule='0 1 * * *',
+    catchup=False
+) as dag:
+    def select_random():
+        import random
+
+        item_lst = ['A','B','C']
+        selected_item = random.choice(item_lst)
+        if selected_item == 'A':
+            return 'task_a' # task_id를 string 값으로 return해야함
+        elif selected_item in ['B','C']:
+            return ['task_b','task_c'] # 여러 task를 동시에 수행시킬 땐 리스트로 반환
+    
+    # 일반 operator의 parameter도 있음
+    python_branch_task = BranchPythonOperator(
+        task_id='python_branch_task',
+        python_callable=select_random
+    )
+    
+    # 후행 task 3개
+    def common_func(**kwargs):
+        print(kwargs['selected'])
+
+    task_a = PythonOperator(
+        task_id='task_a',
+        python_callable=common_func,
+        op_kwargs={'selected':'A'}
+    )
+
+    task_b = PythonOperator(
+        task_id='task_b',
+        python_callable=common_func,
+        op_kwargs={'selected':'B'}
+    )
+
+    task_c = PythonOperator(
+        task_id='task_c',
+        python_callable=common_func,
+        op_kwargs={'selected':'C'}
+    )
+
+    python_branch_task >> [task_a, task_b, task_c]
+```
+* ExternalTask dag: dags_external_task_sensor.py
+
+```markdown
+from airflow import DAG
+from airflow.sensors.external_task import ExternalTaskSensor
+import pendulum
+from datetime import timedelta
+from airflow.utils.state import State 
+
+with DAG(
+    dag_id='dags_external_task_sensor',
+    start_date=pendulum.datetime(2023,4,1, tz='Asia/Seoul'),
+    schedule='0 7 * * *',
+    catchup=False
+) as dag:
+    external_task_sensor_a = ExternalTaskSensor(
+        task_id='external_task_sensor_a',
+        external_dag_id='dags_branch_python_operator',
+        external_task_id='task_a',
+        allowed_states=[State.SKIPPED],
+        execution_delta=timedelta(hours=6),
+        poke_interval=10        #10초
+    )
+
+    external_task_sensor_b = ExternalTaskSensor(
+        task_id='external_task_sensor_b',
+        external_dag_id='dags_branch_python_operator',
+        external_task_id='task_b',
+        failed_states=[State.SKIPPED],
+        execution_delta=timedelta(hours=6),
+        poke_interval=10        #10초
+    )
+
+    external_task_sensor_c = ExternalTaskSensor(
+        task_id='external_task_sensor_c',
+        external_dag_id='dags_branch_python_operator',
+        external_task_id='task_c',
+        allowed_states=[State.SUCCESS],
+        execution_delta=timedelta(hours=6),
+        poke_interval=10        #10초
+    )
+```
 
 # Custom Sensor
 

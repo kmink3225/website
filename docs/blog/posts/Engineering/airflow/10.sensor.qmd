@@ -219,46 +219,91 @@ with DAG(
 ## File 센서 명세 확인
 
 * [airflow.sensors.filesystem](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/filesystem/index.html#airflow.sensors.filesystem.FileSensor)
-  * Waits for a file or folder to land in a filesystem.
+  * Waits for a file or folder to land in a filesystem. (file이나 folder가 시스템안에 들어왔는지 체크)
   * Parameters
-    * fs_conn_id – reference to the File (path) connection id (connection을 airflow web에 미리 등록해놔야함)
+    * fs_conn_id – reference to the File (path) connection id (file connection id을 airflow web에 미리 등록해놔야함)
     * filepath – File or folder name (relative to the base path set within the connection), can be a glob.
-    * recursive – when set to True, enables recursive directory matching behavior of ** in glob filepath parameter. Defaults to False.
-  * source: 모든 sensor는 poke만 잘 이해하면 거의 이해함
+    * recursive – when set to True, enables recursive directory matching behavior of ** in glob filepath parameter. Defaults to False. (glob(**))
+  * 구체적인 로직을 이해하기 위해 source를 봐야함
+    * 모든 sensor를 만들때는 poke를 재정의해야만 함. 
+    * 즉, poke만 잘 이해하면 거의 모든 sensor를 잘 이해할 수 있다.
+    * poke()의 FSHook() 은 imported from airflow.hooks.filesystem
+      * hook = FSHook(self.fs_conn_id): hook을 만들 때 fs_conn_id를 넘겨받고 있음
+    * glob()을 이해하는 것이 핵심
+      * file path안에 있는 files 또는 directories를 list로 반환
+      ```markdown
+      glob('/home/kmkim') # 이 path 안에 있는 모든 files, directories이 리스트로 반환됨
+      glob('/home/kmkim/docker-compose.yaml') # docker-compose.yaml 자체가 리스트로 반환됨
+      glob('/home/kmkim/**', recursive=True) # /home/kmkim/ 하위에 있는 모든 files 또는 directories이 리스트로 반환됨
+      ```
+      * 주로 file을 찾기 위해 사용되는 함수이기 때문에 glob('/home/kmkim/docker-compose.yaml') 이 형태가 가장 많이 사용된다.
+
   ```markdown
-    [docs]    template_fields: Sequence[str] = ("filepath",)
+  from __future__ import annotations
 
-    [docs]    ui_color = "#91818a"
+  import datetime
+  import os
+  from glob import glob
+  from typing import Sequence
+
+  from airflow.hooks.filesystem import FSHook
+  from airflow.sensors.base import BaseSensorOperator
+  from airflow.utils.context import Context
 
 
-        def __init__(self, *, filepath, fs_conn_id="fs_default", recursive=False, **kwargs):
-            super().__init__(**kwargs)
-            self.filepath = filepath
-            self.fs_conn_id = fs_conn_id
-            self.recursive = recursive
+  [docs]class FileSensor(BaseSensorOperator):
+      """
+      Waits for a file or folder to land in a filesystem.
 
-    [docs]    def poke(self, context: Context):
-            hook = FSHook(self.fs_conn_id) # file sensor를 쓰기전에 file system과 관련된 connection을 사전에 설정해놔야함
-            basepath = hook.get_path()
-            full_path = os.path.join(basepath, self.filepath)
-            self.log.info("Poking for file %s", full_path)
+      If the path given is a directory then this sensor will only return true if
+      any files exist inside it (either directly, or within a subdirectory)
 
-            for path in glob(full_path, recursive=self.recursive):
-                if os.path.isfile(path):
-                    mod_time = datetime.datetime.fromtimestamp(os.path.getmtime(path)).strftime("%Y%m%d%H%M%S")
-                    self.log.info("Found File %s last modified: %s", str(path), mod_time)
-                    return True
+      :param fs_conn_id: reference to the File (path)
+          connection id
+      :param filepath: File or folder name (relative to
+          the base path set within the connection), can be a glob.
+      :param recursive: when set to ``True``, enables recursive directory matching behavior of
+          ``**`` in glob filepath parameter. Defaults to ``False``.
 
-                for _, _, files in os.walk(path):
-                    if len(files) > 0:
-                        return True
-            return False
-  ```
+      .. seealso::
+          For more information on how to use this sensor, take a look at the guide:
+          :ref:`howto/operator:FileSensor`
+
+
+      """
+
+  [docs]    template_fields: Sequence[str] = ("filepath",)
+  [docs]    ui_color = "#91818a"
+
+      def __init__(self, *, filepath, fs_conn_id="fs_default", recursive=False, **kwargs):
+          super().__init__(**kwargs)
+          self.filepath = filepath
+          self.fs_conn_id = fs_conn_id
+          self.recursive = recursive
+
+  [docs]    def poke(self, context: Context):
+          hook = FSHook(self.fs_conn_id)
+          basepath = hook.get_path() # hook이 가지고 있는 method
+          full_path = os.path.join(basepath, self.filepath)
+          self.log.info("Poking for file %s", full_path)
+
+          for path in glob(full_path, recursive=self.recursive):
+              if os.path.isfile(path): # glob에 의한 결과물이 file이면 for loop 탈출
+                  mod_time = datetime.datetime.fromtimestamp(os.path.getmtime(path)).strftime("%Y%m%d%H%M%S")
+                  self.log.info("Found File %s last modified: %s", str(path), mod_time)
+                  return True
+
+              for _, _, files in os.walk(path):
+                  if len(files) > 0:
+                      return True
+          return False
+    ```
   * glob: file path안에 있는 file이나 directory를 찾아서 list로 반환
     * `glob('/home/kmkim')` : 모든 files and directories list 반환
     * `glob('/home/kmkim/docker-compose.yaml')` : docker-compose.yaml만 리스트로 반환
     * `glob('/home/kmkim/**',recursive=True)` : 하위 디렉토리 안에 있는 파일과 디렉토리들의 리스트로 반환
-  * `FSHook()` : [명세서](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/hooks/filesystem/index.html)
+  * `FSHook()` : [명세서](https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/hooks/filesystem.html#FSHook)
+  
     ```markdown
     [docs]class FSHook(BaseHook):
     """
@@ -292,7 +337,9 @@ with DAG(
             return self.basepath
 
     ```
-    * Connection should have a name and a path specified under extra:
+    * get_path(): self.baspath return - 별 내용 없음
+    * 생성자만 잘 이해하면 됨
+      * Connection should have a name and a path specified under extra (예시 잘 볼 것):
 ![File Sensor Sequential Diagram](../../../../../images/airflow/File_sensor_diagram.PNG)
 
 * Connection 작성
@@ -334,8 +381,8 @@ with DAG(
 
 # Python Sensor
  
-* [airflow.sensors.python](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/python/index.html)
-
+* [airflow.sensors.python 명세서 보기](https://airflow.apache.org/docs/apache-airflow/stable/_api/airflow/sensors/python/index.html)
+* python operator와 매우 유사: 다른점은 python collabe function의 return값이 반드시 true로 되어야함
 ```markdown
 
 classairflow.sensors.python.PythonSensor(*, python_callable, op_args=None, op_kwargs=None, templates_dict=None, **kwargs)[source]
@@ -355,7 +402,77 @@ Parameters
 ## Python 센서 DAG 작성
 
 * 무엇을 센싱할 것인가
-    * 서울시 공공데이터에서 당일 날짜로 데이터가 생성되었는지 센싱하기(날짜 컬럼이 있는 경우)
+  * 서울시 공공데이터에서 당일 날짜로 데이터가 생성되었는지 센싱하기(날짜 컬럼이 있는 경우)
+  * 당일 날짜가 몇시에 업로드가 되는지 모름 (12시? ,00시, 1시?)
+* [서울 열린 데이터 광장](https://data.seoul.go.kr/)
+  * 검색창 >> '코로나' 검색 >> 서울시 코로나19 확진자 발생동향 (2023.05.31.이전) >> 미리보기
+  * 목표: 센서를 공용적으로 만들어 다른 dataset에도 적용할 수 있도록 작성
+    * python collable function(check_api_update())을 일반화 시켜서 작성
+```markdown
+from airflow import DAG
+from airflow.sensors.python import PythonSensor
+import pendulum
+from airflow.hooks.base import BaseHook
+
+with DAG(
+    dag_id='dags_python_sensor',
+    start_date=pendulum.datetime(2023,4,1, tz='Asia/Seoul'),
+    schedule='10 1 * * *',
+    catchup=False
+) as dag:
+    def check_api_update(http_conn_id, endpoint, base_dt_col, **kwargs):
+        import requests
+        import json
+        from dateutil import relativedelta
+        connection = BaseHook.get_connection(http_conn_id)
+        url = f'http://{connection.host}:{connection.port}/{endpoint}/1/100' #1부터 100행 까지만 가지고옴
+        response = requests.get(url)
+        
+        contents = json.loads(response.text)
+        key_nm = list(contents.keys())[0]
+        row_data = contents.get(key_nm).get('row') 
+          # row_data에 list형태로 데이터가 들어감
+          # [{1행},
+             {2행},
+             {3행},
+             {4행},...]
+        last_dt = row_data[0].get(base_dt_col) #row_data의 첫번째 행, base_dt_col의 key에 대한 value를 추출
+        last_date = last_dt[:10] 
+          # 열번째 글자 까지만 slicing
+          # 왜냐면, 서울시 기준일(S_DT)가 date 형식이 아니라 string 형식으로 입력되어 있음
+          # 연/월/일 정보만 필요하기 때문에 시간은 제외
+        last_date = last_date.replace('.', '-').replace('/', '-')
+
+        # 밑에 try구문은 last_date 의 data 검증
+        try:
+            pendulum.from_format(last_date,'YYYY-MM-DD')
+        except:
+            from airflow.exceptions import AirflowException
+            AirflowException(f'{base_dt_col} 컬럼은 YYYY.MM.DD 또는 YYYY/MM/DD 형태가 아닙니다.')
+            # 서울시 코로나19 확진자 발생동향 (2023.05.31.이전) 의 데이텉 명세에 따르면
+            # S_DT: 서울시 기준일 (데이터 기준일) 을 의미
+
+        today_ymd = kwargs.get('data_interval_end').in_timezone('Asia/Seoul').strftime('%Y-%m-%d')
+          # time stamp를 string형태로 바꿈
+          # today_ymd는 batch(DAG)가 도는 날짜
+        if last_date >= today_ymd: # string 형태지만 크기는 비교 가능
+            print(f'생성 확인(배치 날짜: {today_ymd} / API Last 날짜: {last_date})')
+            return True
+        else:
+            print(f'Update 미완료 (배치 날짜: {today_ymd} / API Last 날짜:{last_date})')
+            return False
+
+    sensor_task = PythonSensor(
+        task_id='sensor_task',
+        python_callable=check_api_update,
+        op_kwargs={'http_conn_id':'openapi.seoul.go.kr',
+                   'endpoint':'{{var.value.apikey_openapi_seoul_go_kr}}/json/TbCorona19CountStatus',
+                   'base_dt_col':'S_DT'},
+        poke_interval=600,   #10분
+        mode='reschedule'
+    )
+```
+
 
 # ExternalTask 센서
 

@@ -1,5 +1,5 @@
 ---
-title: "Template Variabler"
+title: "Airflow Additional Function"
 subtitle: DAG Creation, Bash Operator, Task Performance Subject, 
 description: |
   template
@@ -30,6 +30,8 @@ draft: False
 <div class="tab-content" id="language-tabcontent">
 
 <div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
+
+몰라도 되지만 알면 좋은 고급 기능들
 
 # Dataset을 이용한 Dag 트리거
 
@@ -427,25 +429,88 @@ with DAG(
 
 * 개념: 오퍼레이터 수행시 정해놓은 시간을 초과하였는지를 판단할 수 있도록 설정해놓은 시간 값 파이썬의 timedelta 로 정의
 * 동작: 설정해놓은 SLA 를 초과하여 오퍼레이터 running 시 SLA Miss 발생 , Airflow UI 화면에서 Miss 건만 조회 가능 + email 발송 가능
-    * SLA Miss 발생시 task 가 실패되는 것은 아니며 단순 Miss 대상에 기록만 됨
+    * SLA Miss 발생시 task 가 실패되는 것은 아니며 단순 Miss 대상에 기록만 DB에 남기게 됨
     * SLA 는 DAG 파라미터가 아니며 BaseOperator 의 파라미터
-* [airflow docs](https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/baseoperator.html#BaseOperator)
-* [SLA Miss시 수행할 함수 지정 가능-Source code for airflow.models.dag](https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/dag.html)
+* [airflow docs- def __init__](https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/baseoperator.html#BaseOperator)
+  ```markdown
+   def __init__(
+        self,
+        task_id: str,
+        owner: str = DEFAULT_OWNER,
+        email: str | Iterable[str] | None = None,
+        email_on_retry: bool = conf.getboolean("email", "default_email_on_retry", fallback=True),
+        email_on_failure: bool = conf.getboolean("email", "default_email_on_failure", fallback=True),
+        retries: int | None = DEFAULT_RETRIES,
+        retry_delay: timedelta | float = DEFAULT_RETRY_DELAY,
+        retry_exponential_backoff: bool = False,
+        max_retry_delay: timedelta | float | None = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+        depends_on_past: bool = False,
+        ignore_first_depends_on_past: bool = DEFAULT_IGNORE_FIRST_DEPENDS_ON_PAST,
+        wait_for_past_depends_before_skipping: bool = DEFAULT_WAIT_FOR_PAST_DEPENDS_BEFORE_SKIPPING,
+        wait_for_downstream: bool = False,
+        dag: DAG | None = None,
+        params: collections.abc.MutableMapping | None = None,
+        default_args: dict | None = None,
+        priority_weight: int = DEFAULT_PRIORITY_WEIGHT,
+        weight_rule: str = DEFAULT_WEIGHT_RULE,
+        queue: str = DEFAULT_QUEUE,
+        pool: str | None = None,
+        pool_slots: int = DEFAULT_POOL_SLOTS,
+        sla: timedelta | None = None, # sla 변수
+        execution_timeout: timedelta | None = DEFAULT_TASK_EXECUTION_TIMEOUT,
+        on_execute_callback: None | TaskStateChangeCallback | list[TaskStateChangeCallback] = None,
+        on_failure_callback: None | TaskStateChangeCallback | list[TaskStateChangeCallback] = None,
+        on_success_callback: None | TaskStateChangeCallback | list[TaskStateChangeCallback] = None,
+        on_retry_callback: None | TaskStateChangeCallback | list[TaskStateChangeCallback] = None,
+        pre_execute: TaskPreExecuteHook | None = None,
+        post_execute: TaskPostExecuteHook | None = None,
+        trigger_rule: str = DEFAULT_TRIGGER_RULE,
+        resources: dict[str, Any] | None = None,
+        run_as_user: str | None = None,
+        task_concurrency: int | None = None,
+        max_active_tis_per_dag: int | None = None,
+        max_active_tis_per_dagrun: int | None = None,
+        executor_config: dict | None = None,
+        do_xcom_push: bool = True,
+        inlets: Any | None = None,
+        outlets: Any | None = None,
+        task_group: TaskGroup | None = None,
+        doc: str | None = None,
+        doc_md: str | None = None,
+        doc_json: str | None = None,
+        doc_yaml: str | None = None,
+        doc_rst: str | None = None,
+        **kwargs,
+    ):
+  ```
+  * sla: timedelta | None = None, # sla 변수
+    * timedelta보다 오랜 시간동안 task가 더 오래 수행되면 SLA Miss 기록만 남기고 실패처리는 안하게 됨
+    * default_arg에 넣을 수 있기 때문에 모든 task, 즉 모든 operator에 공통 적용할 수 있다.
+* [sla_miss_callback: DAG에 있는 SLA 관련 파라미터로 SLA Miss시 수행할 함수 지정 가능-Source code for airflow.models.dag](https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/dag.html)
     * sla_miss_callback 파라미터
+      * sla miss시 수행할 함수명을 입력 받음
+      * dag에 있는 파라미터이기 때문에 default_arg에 넣을 수 없음
     * DAG의 파라미터임 (BaseOperator 의 파라미터가 아니라는 것에 유의)
 
 ## SLA 제약사항
 
-* 각 Task 의 SLA timeout 카운트 시작은 DAG 의 시작시간 기준임
+* 1번째 제약사항: 각 Task 의 SLA timeout 카운트 시작은 DAG 의 시작시간 기준임
 
 :::: {.columns}
 
 ::: {.column width="40%"}
 
-### 생각하는 SLA timeout 카운트 방식
+### 사람이 생각하는 SLA timeout 카운트 방식
 
 ![](../../../../../images/airflow/SLA_timeout_count1.PNG)
 
+* 처음 사용하는 사용자들은 다음과 같이 생각할 수 있다.
+  * task1은 task1의 sla구간보다 수행시간이 짧게 완료됐기 때문에 성공 처리
+  * task2는 sla 구간보다 더 길기 때문에 miss 처리됨
+  * task3는 sla 구간보다 짧기 때문에 성공 처리
+* airflow는 위와 같이 동작하지 않음 옆의 그림과 같이 동작함
 :::
 
 ::: {.column width="60%"}
@@ -454,15 +519,83 @@ with DAG(
 
 ![](../../../../../images/airflow/SLA_timeout_count2.PNG)
 
+* 실제 airflow에서는 수행 시간을 dag의 최초 실행시점 부터 카운트 하기 시작함
+* task1의 수행완료 상태 및 시점과 상관없이 task2와 task3의 수행 시간은 task1 수행 시점 부터 카운트 되기 시작한다.
+* 그러므로 task2, task3는 수행된적이 없음에도 miss sla 상태로 처리됨
 :::
 
 ::::
 
-
-* DAG의 시작시간 기준 → 명목적인 시작 시간 (data_interval_start)
-    * 만약 Pool 이 부족하거나 스케줄러의 부하로 인해 DAG 이 스케줄보다 늦게 시작했다면 늦게 시작한만큼 SLA 시간 카운트는 소요됨
+* 2번째 제약사항: DAG의 시작시간 기준 $\rightarrow$ 명목적인 시작 시간 (data_interval_start)
+  * 위의 SLA timeout 카운트 시작은 dag의 시작시간 기준이라는 제약 사항과 연결되는 제약사항
+  * 만약 Pool 이 부족하거나 스케줄러의 부하로 인해 DAG 이 스케줄보다 늦게 시작했다면 늦게 시작한만큼 이미 SLA 시간 카운트는 진행되어 시간이 소요되고 있음
     * 실질적 DAG 시작 시간을 기준으로 카운트하지 않음
-* 첫 스케줄에서는 SLA Miss 가 기록되지 않음 (두 번째 스케줄부터 기록)
+  * 즉, 특정 task 수행에 computing 부하가 걸리면 후차적인 task들은 모두 miss 처리됨
+  * 대규모 프로젝트에서 흔히 발생하는 문제로 dag이 밀리는 현상이 자주 관찰되므로 sla는 자주쓰이는 방식은 아님.
+* 3번째 제약사항: 첫 스케줄에서는 SLA Miss 가 기록되지 않음 (두 번째 스케줄부터 기록)
+* 4번째 제약사항: sla miss처리가 분명히 발생됐는데 가끔 기록이 안될때가 있고 email역시 발송이 되지 않을때가 있음. 엄격이 관리가 되지 않는 기능
+
+## Full Dag Example
+
+```markdown
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+from datetime import timedelta
+import pendulum
+from airflow.models import Variable
+
+email_str = Variable.get("email_target")
+email_lst = [email.strip() for email in email_str.split(',')]
+
+with DAG(
+    dag_id='dags_sla_email_example',
+    start_date=pendulum.datetime(2023, 5, 1, tz='Asia/Seoul'),
+    schedule='*/10 * * * *',
+    catchup=False,
+    default_args={
+        'sla': timedelta(seconds=70),
+        'email': email_lst
+    }
+) as dag:
+    
+    # 30초 sleep
+    task_slp_30s_sla_70s = BashOperator( 
+        task_id='task_slp_30s_sla_70s',
+        bash_command='sleep 30'
+    )
+    # 60초 sleep
+    task_slp_60_sla_70s = BashOperator(
+        task_id='task_slp_60_sla_70s',
+        bash_command='sleep 60'
+    )
+
+    # 10초 sleep
+    task_slp_10s_sla_70s = BashOperator( 
+        task_id='task_slp_10s_sla_70s',
+        bash_command='sleep 10'
+    )
+
+    # 10초 sleep
+    # sla의 timedelta를 명시적으로 30초 선언
+    # default argument보다 명시적 선언이 우선 순위가 더 높음
+    # 그래서, 처음 3개의 task는 timedelta가 70초로 설정됐고 4번째 task는 30초로 설정됨 
+    task_slp_10s_sla_30s = BashOperator( 
+        task_id='task_slp_10s_sla_30s',
+        bash_command='sleep 10',
+        sla=timedelta(seconds=30)
+    )
+
+    task_slp_30s_sla_70s >> task_slp_60_sla_70s >> task_slp_10s_sla_70s >> task_slp_10s_sla_30s
+
+```
+
+* 위 코드를 보면,
+  * 1번째 task는 30초 sleep이 70초 sla timedelta보다 짧기 때문에 성공 처리
+  * 2번째 task는 30,40초 돌다가 miss 처리됨
+  * 3,4 번째 task는 수행되기도 전에 miss처리됨
+  * 4번째 timedelta가장 짧기 때문에 가장 먼저 miss 처리 됨
+* Airflow web service에서 SLA Miss 현황 조회하기 
+  * airflow web service >> browse 
 
 ## SLA Miss 시 email 발송하기
 

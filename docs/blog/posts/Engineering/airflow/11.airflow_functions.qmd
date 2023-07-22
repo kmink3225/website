@@ -651,8 +651,57 @@ with DAG(
 ## Timeout 파라미터 이해
 
 * Task수준의 timeout 과 DAG 수준의 timeout 이 존재
-* [Task수준의 timeout 파라미터](https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/baseoperator.html#BaseOperator) : execution_timeout
-* [DAG수준의 timeout 파라미터](https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/dag.html) : dagrun_timeout
+* execution_timeout: [Task수준의 timeout 파라미터: baseOperator 명세에서 __init__ 생성자에서 sla 파라미터 아래에 있음](https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/baseoperator.html#BaseOperator)
+  * execution_timeout: timedelta | None = DEFAULT_TASK_EXECUTION_TIMEOUT,
+  * timedelta보다 오래 task가 수행됐을 때 task는 fail 처리됨
+  * task가 fialure 됐을 때 __init__ 생성자 안의 다른 파라미터인 ` email_on_failure: bool = conf.getboolean("email", "default_email_on_failure", fallback=True)` 과 `email: str | Iterable[str] | None = None,`  에 의해 지정 대상에게 email을 보낼 수 있다.
+  * 요약하면, timedelta, email_on_failure, email 이렇게 3개의 파라미터를 이용하여 timedelta 를 초과하는 task 수행시 fail 처리를 하여 이메일을 보낼 수 있다.
+* dagrun_timeout: [DAG수준에서도 timeout 파라미터를 걸 수 도 있음](https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/dag.html) : dagrun_timeout
+  * [docs]class DAG(LoggingMixin): 의 __init__ 생성자
+  ```markdown
+
+      def __init__(
+        self,
+        dag_id: str,
+        description: str | None = None,
+        schedule: ScheduleArg = NOTSET,
+        schedule_interval: ScheduleIntervalArg = NOTSET,
+        timetable: Timetable | None = None,
+        start_date: datetime | None = None,
+        end_date: datetime | None = None,
+        full_filepath: str | None = None,
+        template_searchpath: str | Iterable[str] | None = None,
+        template_undefined: type[jinja2.StrictUndefined] = jinja2.StrictUndefined,
+        user_defined_macros: dict | None = None,
+        user_defined_filters: dict | None = None,
+        default_args: dict | None = None,
+        concurrency: int | None = None,
+        max_active_tasks: int = airflow_conf.getint("core", "max_active_tasks_per_dag"),
+        max_active_runs: int = airflow_conf.getint("core", "max_active_runs_per_dag"),
+        dagrun_timeout: timedelta | None = None,
+        sla_miss_callback: None | SLAMissCallback | list[SLAMissCallback] = None,
+        default_view: str = airflow_conf.get_mandatory_value("webserver", "dag_default_view").lower(),
+        orientation: str = airflow_conf.get_mandatory_value("webserver", "dag_orientation"),
+        catchup: bool = airflow_conf.getboolean("scheduler", "catchup_by_default"),
+        on_success_callback: None | DagStateChangeCallback | list[DagStateChangeCallback] = None,
+        on_failure_callback: None | DagStateChangeCallback | list[DagStateChangeCallback] = None,
+        doc_md: str | None = None,
+        params: collections.abc.MutableMapping | None = None,
+        access_control: dict | None = None,
+        is_paused_upon_creation: bool | None = None,
+        jinja_environment_kwargs: dict | None = None,
+        render_template_as_native_obj: bool = False,
+        tags: list[str] | None = None,
+        owner_links: dict[str, str] | None = None,
+        auto_register: bool = True,
+    ):
+
+    ```
+    * 다음 파라미터를 이용하여 dag을 관리할 수 있다.
+      * schedule: ScheduleArg = NOTSET, 
+      * start_date: datetime | None = None, 
+      * default_args: dict | None = None, 
+      * dagrun_timeout: timedelta | None = None,
 * task1 >> task2 >> task3 예시
 
 :::: {.columns}
@@ -661,17 +710,121 @@ with DAG(
 
 ### execution_timeout
 
+* dag은 timeout이 안됐지만 task가 timeout이 되는 case
+
 ![](../../../../../images/airflow/execution_timeout1.PNG)
+
+* task2의 실행시간이 task2의 execution_timeout보다 길게 수행되어 fail되었고 task3은 task2로 인해 upstream failed 이 발생
+* 하지만, task1,2,3 의 수행시간의 총합이 dagrun_timeout 보다 짧기 때문에 dag 자체는 실패처리 안됨
 :::
 
 ::: {.column width="50%"}
 
 ### datgrun_timeout
 
+* task는 성공 처리 됐지만 dag이 오랜시간동안 돌아 timeout되어 실패처리되는 case
+
 ![](../../../../../images/airflow/dagrun_timeout.PNG)
+
+* 각 task들이 execution_timeout보다 짧아 모두 정상 처리 되었지만 task1,2,3의 총 실행시간이 dagrun_timeout보다 길어 dag자체는 failure이 된 상황
+* dag이 failure되는 시점에서의 task는 skipped 상태로 처리된다.
 :::
 
 ::::
+
+## Dag Full Example
+
+* case1: tasks는 실패, dargrun 정상 
+
+```markdown
+# Package Import
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+import pendulum
+from datetime import timedelta
+from airflow.models import Variable
+
+# email 수신자 리스트
+email_str = Variable.get("email_target") 
+email_lst = [email.strip() for email in email_str.split(',')]
+
+with DAG(
+    dag_id='dags_timeout_example_1',
+    start_date=pendulum.datetime(2023, 5, 1, tz='Asia/Seoul'),
+    catchup=False,
+    schedule=None,
+    dagrun_timeout=timedelta(minutes=1),
+    default_args={
+        #각 task들이 20초안에 끝나야 성공 처리됨
+        'execution_timeout': timedelta(seconds=20), 
+        'email_on_failure': True,
+        'email': email_lst
+    }
+) as dag:
+    # execution_timeout보다 길기 때문에 task는 실패 처리됨
+    bash_sleep_30 = BashOperator(
+        task_id='bash_sleep_30', 
+        bash_command='sleep 30',
+    )
+    # execution_timeout보다 짧기 때문에 task는 성공 처리됨
+    bash_sleep_10 = BashOperator(
+        trigger_rule='all_done', # upstream fail에도 task 실행시키기 위해 triggering
+        task_id='bash_sleep_10',
+        bash_command='sleep 10',
+    )
+    
+    # upstream failure 발생해도 trigger_rule을 all_done을 줬기 때문에 bash_sleep_10 은 실행됨
+    # dagrun_timeout을 1분으로 설정했기 때문에 task run의 총합이 40초이기 때문에 dagrun은 정상 처리됨
+    bash_sleep_30 >> bash_sleep_10 
+    
+
+```
+
+* case2: tasks는 정상, dargrun 실패
+
+```markdown
+from airflow import DAG
+from airflow.operators.bash import BashOperator
+import pendulum
+from datetime import timedelta
+from airflow.models import Variable
+
+email_str = Variable.get("email_target")
+email_lst = [email.strip() for email in email_str.split(',')]
+
+with DAG(
+    dag_id='dags_timeout_example_2',
+    start_date=pendulum.datetime(2023, 5, 1, tz='Asia/Seoul'),
+    catchup=False,
+    schedule=None,
+    dagrun_timeout=timedelta(minutes=1),
+    default_args={
+        'execution_timeout': timedelta(seconds=40),
+        'email_on_failure': True,
+        'email': email_lst
+    }
+) as dag:
+    bash_sleep_35 = BashOperator(
+        task_id='bash_sleep_35',
+        bash_command='sleep 35',
+    )
+
+    bash_sleep_36 = BashOperator(
+        trigger_rule='all_done',
+        task_id='bash_sleep_36',
+        bash_command='sleep 36',
+    )
+
+    bash_go = BashOperator(
+        task_id='bash_go',
+        bash_command='exit 0',
+    )
+
+# 모든 task들이 40초안에 실행완료가 되기때문에 성공 처리됨
+# dagrun은 1분으로 설정됐기 때문에 2번째 task 가 실행될 시 fail이 됨 성공 처리됨.
+    bash_sleep_35 >> bash_sleep_36 >> bash_go
+    
+```
 
 ## 정리
 

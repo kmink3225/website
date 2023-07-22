@@ -986,7 +986,70 @@ airflow dags backfill -s 2023-04-19T22:00:00+00:00 -e 2023-04-20T22:00:00+00:00 
 
 * 공통점: CLI 명령으로 DAG 실행 가능
  
+# Triggerer 
 
+## Airflow Triggerer의 필요성
+
+* Airflow는 그 자체로 ETL 툴이라기보다 오케스트레이션 솔루션이며 연계되는 솔루션에 작업 제출, 상태 확인, 완료 확인 등의 절차를 통해 관리
+
+```{dot}
+digraph G {
+  compound=true;
+  rankdir=LR;
+  subgraph cluster0 {
+    rankdir=TB;
+    airflow [shape=circle];
+    PostgresqlDB [shape=box];
+    Hive [shape=box];
+    HDFS [shape=box];
+    Bigquerty [shape=box];
+    Python_func [shape=box];
+    Spark [shape=box];
+  
+  }
+  
+
+ airflow-> PostgresqlDB[label="작업 실행"];
+ airflow-> Hive[label=""];
+ airflow-> HDFS[label="작업 실행"];
+ airflow-> Bigquerty[label="완료 확인"];
+ airflow-> Python_func[label="Python func"];
+ airflow-> Spark[label="상태 확인"];
+
+}
+```
+
+* 외부 솔루션에 작업이 제출되어 완료될 때까지 Airflow의 Slot은 점유됨
+
+![](../../../../../images/airflow/triggerer.PNG)
+
+* Task는 Slot을 비우고 작업 상태 Polling 작업은 Triggerer 에게 위임
+
+![](../../../../../images/airflow/triggerer2.PNG)
+
+## Triggerer란
+
+* 워커를 대신하여 작업 상태 완료를 수신하고, 그때까지 Slot을 비워둘 수 있도록 해주는 Airflow의 서비스 (스케줄러, 워커 같은 요소 중 하나)
+* Python의 비동기 작업 라이브러리인 asyncio를 이용하여 작업상태 수신
+  * 사용 조건: Airflow 2.2 부터 & Python 3.7부터 사용 가능
+* 어떻게 사용하나?
+  * Deferrable Operator 이용하여 Task 생성
+  * 기본 Operator 중에서는 아래의 Sensor 종류만 사용 가능
+    - TimeSensorAsync
+    - DateTimeSensorAsync
+    - TimeDeltaSensorAsync
+  * 끝에 Async 가 붙은 오퍼레이터는 Deferrable Operator라 부르며 Triggerer에게 작업 완료 수신을 맡기는 오퍼레이터라는 의미
+
+## Triggerer 실습
+
+* dags/dags_time_sensor.py
+* dags/dags_time_sensor_with_async.py
+
+## 요약
+
+* 끝에 Async가 붙은 오퍼레이터는 Deferrable Operator 라 부르며 Triggerer에 의해 Polling이 수행되는 오퍼레이터임을 의미
+* Deferrable Operator는 작업 제출 후 Slot을 차지하지 않으며 Polling 내역에 대해 Trigger 제출 후 deferred 상태가 됨.
+* Triggerer는 제출된 Trigger 내역을 보고 작업 완료시(조건 만족시) Worker에게 알려줘 작업이 마무리될 수 있도록 함.
 
 </div> 
 
@@ -996,7 +1059,3 @@ airflow dags backfill -s 2023-04-19T22:00:00+00:00 -e 2023-04-20T22:00:00+00:00 
 
 </div>
 
-
-# Go to Blog Content List
-
-[Blog Content List](../../content_list.qmd)

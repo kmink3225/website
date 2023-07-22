@@ -988,9 +988,13 @@ airflow dags backfill -s 2023-04-19T22:00:00+00:00 -e 2023-04-20T22:00:00+00:00 
  
 # Triggerer 
 
+Scheduler, worker, webserver, triggerer containers 중 하나
+
 ## Airflow Triggerer의 필요성
 
-* Airflow는 그 자체로 ETL 툴이라기보다 오케스트레이션 솔루션이며 연계되는 솔루션에 작업 제출, 상태 확인, 완료 확인 등의 절차를 통해 관리
+* Airflow는 그 자체로 ETL 툴이라기보다 오케스트레이션 솔루션
+* 왜냐면 airflow와 연계되는 외부 솔루션에 작업 제출, 상태 확인, 완료 확인 등의 절차를 통해 관리
+* 예를 들어 airflow의 worker container가 python logic을 직접 처리하는게 아니라 python logic 을 python이 처리하도록 명령을 제출하고 로직 확인 및 결과 확인을 수행한다.
 
 ```{dot}
 digraph G {
@@ -1019,17 +1023,29 @@ digraph G {
 }
 ```
 
+* bigquerty: google에 있는 data 저장소 서비스
 * 외부 솔루션에 작업이 제출되어 완료될 때까지 Airflow의 Slot은 점유됨
 
 ![](../../../../../images/airflow/triggerer.PNG)
-
-* Task는 Slot을 비우고 작업 상태 Polling 작업은 Triggerer 에게 위임
+  * airflow 의 task가 들어왔을 때 task는 airflow worker의 slot을 차지하게 됨 
+  * 후에, 작업 대상에 작업을 제출하고 작업이 시작된다
+    * 작업대상: python function 또는 postgres, HDFS, Spark와 같은 외부 솔루션
+  * 작업이 진행되면 airflow는 작업이 완료 되었는지 작업상태를 polling 하면서 지속적으로 체크
+  * 작업 처리가 진행되는 동안 task는 차지했던 worker의 slot을 게속해서 차지한다.
+    * task가 많아지면 airflow의 slot이 부족할 수도 있는 상황이 있음
+    * 그럼 작업 처리동안 task는 slot 점유할 필요는 없지 않나라는 생각이 들 수 있다.
+    * triggerer가 이 문제를 해결
+* 작업을 제출하고 Task는 작업 처리가 시작될 때 Slot을 비우고 작업 상태 Polling 작업은 Triggerer 에게 위임
+  * 작업 처리 시작 전까지는 slot을 점유
+  * 작업상태를 끊임없이 polling하면서 확인해야하는데 triggerer를 이용하면 이 작업이 없어짐
+  * triggerer는 작업 처리 완료가 되는 event (작업 완료 callback message를 수신)를 받아 scheduluer container에게 message를 전달하고 scheduler는 task가 다시 비워진 slot을 점유하게 한다.
 
 ![](../../../../../images/airflow/triggerer2.PNG)
 
 ## Triggerer란
 
-* 워커를 대신하여 작업 상태 완료를 수신하고, 그때까지 Slot을 비워둘 수 있도록 해주는 Airflow의 서비스 (스케줄러, 워커 같은 요소 중 하나)
+* 워커를 대신하여 작업 상태 완료를 수신하고, 그때까지 Slot을 비워둘 수 있도록 해주는 Airflow의 서비스 
+  * airflow service: 스케줄러, 워커 같은 요소 중 하나
 * Python의 비동기 작업 라이브러리인 asyncio를 이용하여 작업상태 수신
   * 사용 조건: Airflow 2.2 부터 & Python 3.7부터 사용 가능
 * 어떻게 사용하나?
@@ -1038,12 +1054,66 @@ digraph G {
     - TimeSensorAsync
     - DateTimeSensorAsync
     - TimeDeltaSensorAsync
-  * 끝에 Async 가 붙은 오퍼레이터는 Deferrable Operator라 부르며 Triggerer에게 작업 완료 수신을 맡기는 오퍼레이터라는 의미
+  * 끝에 Async 가 붙은 오퍼레이터를 Deferrable Operator라 부르며 Triggerer에게 작업 완료 수신을 맡기는 오퍼레이터라는 의미
 
 ## Triggerer 실습
 
-* dags/dags_time_sensor.py
-* dags/dags_time_sensor_with_async.py
+비교 실험
+
+* dags/dags_time_sensor.py (함수를 그냥 짬)
+* dags/dags_time_sensor_with_async.py (asyncio library 이용)
+
+## Dag Full Example
+
+* dag_time_sensor.py
+
+```markdown
+import pendulum
+from airflow import DAG
+from airflow.sensors.date_time import DateTimeSensor
+
+with DAG(
+    dag_id="dags_time_sensor",
+    # 1시간 차이
+    start_date=pendulum.datetime(2023, 5, 1, 0, 0, 0), #5월1일 0시
+    end_date=pendulum.datetime(2023, 5, 1, 1, 0, 0), #5월1일 1시
+    schedule="*/10 * * * *", #10 분마다 1시간안에 7번 돌게함
+    # 00분, 10분, 20분, 30분, 40분, 50분, 60분 총 7번
+    catchup=True, # catchup을 true이기 때문에 작업 상태bar 7개가 동시에 뜸
+    # airflow ui의 작업 pool을 보면 시작할 때 7개를 모두 차지 하도록 나옴
+) as dag:
+    # DateTimeSensor는 목표로 하는 시간까지 기다리는 sensor
+    sync_sensor = DateTimeSensor(
+        task_id="sync_sensor",
+        # 현재 시간 + 5분
+        target_time="""{{ macros.datetime.utcnow() + macros.timedelta(minutes=5) }}""",
+    )
+```
+
+* dags_time_sensor_with_async.py
+
+```markdown
+import pendulum
+from airflow import DAG
+from airflow.sensors.date_time import DateTimeSensorAsync
+
+with DAG(
+    dag_id="dags_time_sensor_with_async",
+    start_date=pendulum.datetime(2023, 5, 1, 0, 0, 0),
+    end_date=pendulum.datetime(2023, 5, 1, 1, 0, 0),
+    schedule="*/10 * * * *",
+    catchup=True,
+) as dag:
+    sync_sensor = DateTimeSensorAsync(
+        task_id="sync_sensor",
+        target_time="""{{ macros.datetime.utcnow() + macros.timedelta(minutes=5) }}""",
+    )
+
+```
+* airflow ui>> browse >> triggers 에서 trigger가 작업하는 대상 목록을 보여줌
+* trigger는 triggerer에게 작업을 맡길 event 또는 ticket이라고 생각하면 됨
+* triggerer id는 ticket id
+* defered status 는 보라색을 띄고 이 상태에서는 worker slot을 차지 않는 상태이다.
 
 ## 요약
 

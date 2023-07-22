@@ -171,17 +171,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link active" data-scroll-target="#go-to-blog-content-list"><span class="header-section-number">7</span> Go to Blog Content List</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content">
+<main class="content column-page" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -301,15 +295,15 @@ G
 <title>
 cluster0
 </title>
-<polygon fill="none" stroke="black" points="183.66,-93 183.66,-170 253.66,-170 253.66,-93 183.66,-93"></polygon> <text text-anchor="middle" x="218.66" y="-153.4" font-family="Times,serif" font-size="14.00">DAG A</text> </g> <g id="clust3" class="cluster">
-<title>
-cluster2
-</title>
-<polygon fill="none" stroke="black" points="183.66,-8 183.66,-85 253.66,-85 253.66,-8 183.66,-8"></polygon> <text text-anchor="middle" x="218.66" y="-68.4" font-family="Times,serif" font-size="14.00">DAG B</text> </g> <g id="clust2" class="cluster">
+<polygon fill="none" stroke="black" points="183.66,-93 183.66,-170 253.66,-170 253.66,-93 183.66,-93"></polygon> <text text-anchor="middle" x="218.66" y="-153.4" font-family="Times,serif" font-size="14.00">DAG A</text> </g> <g id="clust2" class="cluster">
 <title>
 cluster1
 </title>
-<polygon fill="none" stroke="black" points="8,-178 8,-309 253.66,-309 253.66,-178 8,-178"></polygon> <text text-anchor="middle" x="130.83" y="-292.4" font-family="Times,serif" font-size="14.00">DAG C</text> </g> <!-- task_1 --> <g id="node1" class="node">
+<polygon fill="none" stroke="black" points="8,-178 8,-309 253.66,-309 253.66,-178 8,-178"></polygon> <text text-anchor="middle" x="130.83" y="-292.4" font-family="Times,serif" font-size="14.00">DAG C</text> </g> <g id="clust3" class="cluster">
+<title>
+cluster2
+</title>
+<polygon fill="none" stroke="black" points="183.66,-8 183.66,-85 253.66,-85 253.66,-8 183.66,-8"></polygon> <text text-anchor="middle" x="218.66" y="-68.4" font-family="Times,serif" font-size="14.00">DAG B</text> </g> <!-- task_1 --> <g id="node1" class="node">
 <title>
 task_1
 </title>
@@ -1384,36 +1378,53 @@ Queue-&gt;DAG_E
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>sudo docker exec -it 8b755cb5aa70 bash </span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="fu"># trigger 명령어 실행</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>airflow dags trigger dags_base_branch_operator</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>airflow dags trigger dags_base_branch_operator</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="결과" class="level2" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="결과"><span class="header-section-number">6.2</span> 결과</h2>
-<pre><code> |                 |                | data_interval_e | data_interval_ |          | external_trigge | last_schedulin |                 |          |            |</code></pre>
-<p>conf | dag_id | dag_run_id | nd | start | end_date | r | g_decision | logical_date | run_type | start_date | state =====+=================+================+=================+================+==========+=================+================+=================+==========+============+======= {} | dags_base_branc | manual__2023-0 | 2023-07-22T05:0 | 2023-07-22T05: | None | True | None | 2023-07-22T05:0 | manual | None | queued | h_operator | 7-22T05:05:59+ | 5:59+00:00 | 05:59+00:00 | | | | 5:59+00:00 | | | | | 00:00 | | | | | | | | |</p>
+<p><img src="../../../../../images/airflow/cli_example_1.PNG" class="img-fluid"></p>
 <ul>
-<li>dag_run_id: manual__2023-07-22T05:05:59+00:00. ClI 로 돌렸기 때문에 manual_이 붙어있음</li>
+<li>dag_run_id: manual__2023-07-22T05:05:59+00:00.</li>
+<li>run type: manual__
+<ul>
+<li>ClI 로 돌렸기 때문에 manual_이 붙어있음</li>
+<li>run types: schedule, manual, backfill 등이 있음</li>
+</ul></li>
 </ul>
 </section>
 <section id="cli---dag-backfill" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="cli---dag-backfill"><span class="header-section-number">6.3</span> cli - dag backfill</h2>
 <ul>
-<li>입력 스케줄 구간에 대해 일괄 (재)실행 (스케줄 이력이 없는 과거 날짜도 가능) <img src="../../.././../../images/airflow/cli_dag_balckfill.PNG" class="img-fluid" alt="CLI-Dag backfill"></li>
+<li>입력 스케줄 구간에 대해 일괄 (재)실행 (스케줄 이력이 없는 과거 날짜도 가능)</li>
 </ul>
-<div class="sourceCode" id="cb17"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>#&gt; airflow dags backfill -s 2023-04-19 -e 2023-04-21 dags_seoul_api_corona</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu"># start, end 파라미터를 dash string 형태로 입력하면 UTC로 간주되며 타임스탬프 형태로 직접 작성도 가능 (run_id에서 해당하는 날짜 구간을 찾아 실행)</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>#&gt; airflow dags backfill -s 2023-04-19T22:00:00+00:00 -e 2023-04-20T22:00:00+00:00 —</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>reset-dagruns dags_seoul_api_corona</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># start (-s), end(-ㄷ) 파라미터를 dashed string 형태로 입력하면 UTC로 간주(아래의 start 날짜에 시간:분:초가 나와있지 않지만 날짜뒤에 00:00:00 가 붙음) </span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>airflow dags backfill -s 2023-04-19 -e 2023-04-21 dags_seoul_api_corona</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu"># 타임스탬프 형태로 직접 작성도 가능 (run_id에서 해당하는 날짜 구간을 찾아 실행)</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>airflow dags backfill -s 2023-04-19T22:00:00+00:00 -e 2023-04-20T22:00:00+00:00 —reset-dagruns dags_seoul_api_corona</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>위의 예시에서, -s 2023-04-19 -e 2023-04-21 옵션이 있고 grid에서 task 수행 이력의 가장 최근 날짜가 2023-04-21 이라고 가정해보자.
+<ul>
+<li>run_id가 scheduled__2023-04-21T22:00:00+00:00 일때</li>
+<li>위의 날짜 구간 옵션에 있고 dag이 실행되지 않았던 04/20 22:00, 04/19 22:00 2개가 돌아가게 됨</li>
+</ul></li>
+</ul>
 </section>
 <section id="cli---task-clear" class="level2" data-number="6.4">
 <h2 data-number="6.4" class="anchored" data-anchor-id="cli---task-clear"><span class="header-section-number">6.4</span> cli - task clear</h2>
 <ul>
-<li>Clear 작업을 start / end 구간으로 일괄 재실행</li>
-<li>Backfill과 달리 수행되지 않은 스케줄 구간은 실행할 수 없음 <img src="../../../../../images/airflow/cli_task_cleaner.PNG" class="img-fluid" alt="CLI-Task Clear"></li>
-</ul>
-<div class="sourceCode" id="cb18"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>#&gt; airflow tasks clear -s 2023-05-07 -e 2023-05-12 dags_seoul_api_corona</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>#&gt; airflow tasks clear -s 2023-05-07T22:00:00+00:00 -e 2023-05-12T22:00:00+00:00</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>dags_seoul_api_corona</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<li>Clear 작업을 start / end 구간으로 일괄 재실행
 <ul>
+<li>backfill의 경우 task가 수행이 됐건 안됐건 무조건 실행 (무조건 재실행)</li>
+<li>하지만 clear 이미 실행됐던 task에 한해서 재실행됨</li>
+<li>Backfill과 달리 수행되지 않은 스케줄 구간은 실행할 수 없음</li>
+</ul>
+<div class="sourceCode" id="cb17"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>airflow tasks clear <span class="co">[</span><span class="ot">-h</span><span class="co">] [-R]</span> <span class="co">[</span><span class="ot">-d</span><span class="co">] [-e END_DATE]</span> <span class="co">[</span><span class="ot">-X</span><span class="co">] [-x]</span> <span class="co">[</span><span class="ot">-f</span><span class="co">] [-r]</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>                    <span class="co">[</span><span class="ot">-s START_DATE</span><span class="co">] [-S SUBDIR]</span> <span class="co">[</span><span class="ot">-t TASK_REGEX</span><span class="co">] [-u]</span> <span class="co">[</span><span class="ot">-v</span><span class="co">] [-y]</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                    dag_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>airflow tasks clear -s 2023-05-07 -e 2023-05-12 dags_seoul_api_corona</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>airflow tasks clear -s 2023-05-07T22:00:00+00:00 -e 2023-05-12T22:00:00+00:00 dags_seoul_api_corona</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
 <li>Backfill되었던 DAG은 clear 불가함. reset-dagruns 옵션과 함께 다시 Backfill 수행해야 함</li>
 </ul>
 </section>
@@ -1490,16 +1501,191 @@ Queue-&gt;DAG_E
 </ul>
 </section>
 </section>
+<section id="triggerer" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Triggerer</h1>
+<p>Scheduler, worker, webserver, triggerer containers 중 하나</p>
+<section id="airflow-triggerer의-필요성" class="level2" data-number="7.1">
+<h2 data-number="7.1" class="anchored" data-anchor-id="airflow-triggerer의-필요성"><span class="header-section-number">7.1</span> Airflow Triggerer의 필요성</h2>
+<ul>
+<li>Airflow는 그 자체로 ETL 툴이라기보다 오케스트레이션 솔루션</li>
+<li>왜냐면 airflow와 연계되는 외부 솔루션에 작업 제출, 상태 확인, 완료 확인 등의 절차를 통해 관리</li>
+<li>예를 들어 airflow의 worker container가 python logic을 직접 처리하는게 아니라 python logic 을 python이 처리하도록 명령을 제출하고 로직 확인 및 결과 확인을 수행한다.</li>
+</ul>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<div>
+<svg width="672" height="480" viewbox="0.00 0.00 315.68 346.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 342)">
+<title>
+G
+</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-342 311.68,-342 311.68,4 -4,4"></polygon> <g id="clust1" class="cluster">
+<title>
+cluster0
+</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-330 299.68,-330 299.68,-8 8,-8"></polygon> </g> <!-- airflow --> <g id="node1" class="node">
+<title>
+airflow
+</title>
+<ellipse fill="none" stroke="black" cx="54.92" cy="-168" rx="38.85" ry="38.85"></ellipse> <text text-anchor="middle" x="54.92" y="-163.8" font-family="Times,serif" font-size="14.00">airflow</text> </g> <!-- PostgresqlDB --> <g id="node2" class="node">
+<title>
+PostgresqlDB
+</title>
+<polygon fill="none" stroke="black" points="291.58,-52 198,-52 198,-16 291.58,-16 291.58,-52"></polygon> <text text-anchor="middle" x="244.79" y="-29.8" font-family="Times,serif" font-size="14.00">PostgresqlDB</text> </g> <!-- airflow&#45;&gt;PostgresqlDB --> <g id="edge1" class="edge">
+<title>
+airflow-&gt;PostgresqlDB
+</title>
+<path fill="none" stroke="black" d="M74.91,-134.17C84.47,-119.47 97.17,-102.95 111.85,-91.2 134.21,-73.29 163.04,-59.94 188.05,-50.67"></path> <polygon fill="black" stroke="black" points="189.54,-53.85 197.78,-47.19 187.18,-47.26 189.54,-53.85"></polygon> <text text-anchor="middle" x="145.87" y="-95.2" font-family="Times,serif" font-size="14.00">작업 실행</text> </g> <!-- Hive --> <g id="node3" class="node">
+<title>
+Hive
+</title>
+<polygon fill="none" stroke="black" points="271.79,-106 217.79,-106 217.79,-70 271.79,-70 271.79,-106"></polygon> <text text-anchor="middle" x="244.79" y="-83.8" font-family="Times,serif" font-size="14.00">Hive</text> </g> <!-- airflow&#45;&gt;Hive --> <g id="edge2" class="edge">
+<title>
+airflow-&gt;Hive
+</title>
+<path fill="none" stroke="black" d="M90.06,-151.07C97.21,-147.64 104.74,-144.14 111.85,-141 144.08,-126.76 181.4,-111.92 208.1,-101.58"></path> <polygon fill="black" stroke="black" points="209.71,-104.71 217.79,-97.85 207.2,-98.18 209.71,-104.71"></polygon> </g> <!-- HDFS --> <g id="node4" class="node">
+<title>
+HDFS
+</title>
+<polygon fill="none" stroke="black" points="271.79,-160 217.79,-160 217.79,-124 271.79,-124 271.79,-160"></polygon> <text text-anchor="middle" x="244.79" y="-137.8" font-family="Times,serif" font-size="14.00">HDFS</text> </g> <!-- airflow&#45;&gt;HDFS --> <g id="edge3" class="edge">
+<title>
+airflow-&gt;HDFS
+</title>
+<path fill="none" stroke="black" d="M92.42,-157.37C98.85,-155.77 105.51,-154.3 111.85,-153.2 143.84,-147.65 180.7,-144.82 207.31,-143.39"></path> <polygon fill="black" stroke="black" points="207.52,-146.88 217.33,-142.89 207.17,-139.89 207.52,-146.88"></polygon> <text text-anchor="middle" x="145.87" y="-157.2" font-family="Times,serif" font-size="14.00">작업 실행</text> </g> <!-- Bigquerty --> <g id="node5" class="node">
+<title>
+Bigquerty
+</title>
+<polygon fill="none" stroke="black" points="280.78,-214 208.8,-214 208.8,-178 280.78,-178 280.78,-214"></polygon> <text text-anchor="middle" x="244.79" y="-191.8" font-family="Times,serif" font-size="14.00">Bigquerty</text> </g> <!-- airflow&#45;&gt;Bigquerty --> <g id="edge4" class="edge">
+<title>
+airflow-&gt;Bigquerty
+</title>
+<path fill="none" stroke="black" d="M93.49,-173.6C123.73,-178.11 166.34,-184.46 198.48,-189.25"></path> <polygon fill="black" stroke="black" points="198.11,-192.73 208.51,-190.74 199.14,-185.81 198.11,-192.73"></polygon> <text text-anchor="middle" x="145.87" y="-190.2" font-family="Times,serif" font-size="14.00">완료 확인</text> </g> <!-- Python_func --> <g id="node6" class="node">
+<title>
+Python_func
+</title>
+<polygon fill="none" stroke="black" points="288.34,-268 201.24,-268 201.24,-232 288.34,-232 288.34,-268"></polygon> <text text-anchor="middle" x="244.79" y="-245.8" font-family="Times,serif" font-size="14.00">Python_func</text> </g> <!-- airflow&#45;&gt;Python_func --> <g id="edge5" class="edge">
+<title>
+airflow-&gt;Python_func
+</title>
+<path fill="none" stroke="black" d="M86.27,-191.56C94.3,-197.12 103.16,-202.67 111.85,-207 136.87,-219.46 166.31,-229.46 191.02,-236.67"></path> <polygon fill="black" stroke="black" points="190.37,-240.12 200.95,-239.49 192.28,-233.39 190.37,-240.12"></polygon> <text text-anchor="middle" x="145.87" y="-236.2" font-family="Times,serif" font-size="14.00">Python func</text> </g> <!-- Spark --> <g id="node7" class="node">
+<title>
+Spark
+</title>
+<polygon fill="none" stroke="black" points="271.79,-322 217.79,-322 217.79,-286 271.79,-286 271.79,-322"></polygon> <text text-anchor="middle" x="244.79" y="-299.8" font-family="Times,serif" font-size="14.00">Spark</text> </g> <!-- airflow&#45;&gt;Spark --> <g id="edge6" class="edge">
+<title>
+airflow-&gt;Spark
+</title>
+<path fill="none" stroke="black" d="M72.53,-203.21C82.03,-220.18 95.35,-239.69 111.85,-253 139.93,-275.66 179.25,-289.11 207.65,-296.46"></path> <polygon fill="black" stroke="black" points="207.04,-299.91 217.58,-298.89 208.7,-293.11 207.04,-299.91"></polygon> <text text-anchor="middle" x="145.87" y="-292.2" font-family="Times,serif" font-size="14.00">상태 확인</text> </g> </g>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<ul>
+<li>bigquerty: google에 있는 data 저장소 서비스</li>
+<li>외부 솔루션에 작업이 제출되어 완료될 때까지 Airflow의 Slot은 점유됨</li>
+</ul>
+<p><img src="../../../../../images/airflow/triggerer.PNG" class="img-fluid"> * airflow 의 task가 들어왔을 때 task는 airflow worker의 slot을 차지하게 됨 * 후에, 작업 대상에 작업을 제출하고 작업이 시작된다 * 작업대상: python function 또는 postgres, HDFS, Spark와 같은 외부 솔루션 * 작업이 진행되면 airflow는 작업이 완료 되었는지 작업상태를 polling 하면서 지속적으로 체크 * 작업 처리가 진행되는 동안 task는 차지했던 worker의 slot을 게속해서 차지한다. * task가 많아지면 airflow의 slot이 부족할 수도 있는 상황이 있음 * 그럼 작업 처리동안 task는 slot 점유할 필요는 없지 않나라는 생각이 들 수 있다. * triggerer가 이 문제를 해결 * 작업을 제출하고 Task는 작업 처리가 시작될 때 Slot을 비우고 작업 상태 Polling 작업은 Triggerer 에게 위임 * 작업 처리 시작 전까지는 slot을 점유 * 작업상태를 끊임없이 polling하면서 확인해야하는데 triggerer를 이용하면 이 작업이 없어짐 * triggerer는 작업 처리 완료가 되는 event (작업 완료 callback message를 수신)를 받아 scheduluer container에게 message를 전달하고 scheduler는 task가 다시 비워진 slot을 점유하게 한다.</p>
+<p><img src="../../../../../images/airflow/triggerer2.PNG" class="img-fluid"></p>
+</section>
+<section id="triggerer란" class="level2" data-number="7.2">
+<h2 data-number="7.2" class="anchored" data-anchor-id="triggerer란"><span class="header-section-number">7.2</span> Triggerer란</h2>
+<ul>
+<li>워커를 대신하여 작업 상태 완료를 수신하고, 그때까지 Slot을 비워둘 수 있도록 해주는 Airflow의 서비스
+<ul>
+<li>airflow service: 스케줄러, 워커 같은 요소 중 하나</li>
+</ul></li>
+<li>Python의 비동기 작업 라이브러리인 asyncio를 이용하여 작업상태 수신
+<ul>
+<li>사용 조건: Airflow 2.2 부터 &amp; Python 3.7부터 사용 가능</li>
+</ul></li>
+<li>어떻게 사용하나?
+<ul>
+<li>Deferrable Operator 이용하여 Task 생성</li>
+<li>기본 Operator 중에서는 아래의 Sensor 종류만 사용 가능
+<ul>
+<li>TimeSensorAsync</li>
+<li>DateTimeSensorAsync</li>
+<li>TimeDeltaSensorAsync</li>
+</ul></li>
+<li>끝에 Async 가 붙은 오퍼레이터를 Deferrable Operator라 부르며 Triggerer에게 작업 완료 수신을 맡기는 오퍼레이터라는 의미</li>
+</ul></li>
+</ul>
+</section>
+<section id="triggerer-실습" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="triggerer-실습"><span class="header-section-number">7.3</span> Triggerer 실습</h2>
+<p>비교 실험</p>
+<ul>
+<li>dags/dags_time_sensor.py (함수를 그냥 짬)</li>
+<li>dags/dags_time_sensor_with_async.py (asyncio library 이용)</li>
+</ul>
+</section>
+<section id="dag-full-example-1" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="dag-full-example-1"><span class="header-section-number">7.4</span> Dag Full Example</h2>
+<ul>
+<li>dag_time_sensor.py</li>
+</ul>
+<div class="sourceCode" id="cb19"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>from airflow.sensors.date_time import DateTimeSensor</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    dag_id="dags_time_sensor",</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    # 1시간 차이</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 5, 1, 0, 0, 0), #5월1일 0시</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    end_date=pendulum.datetime(2023, 5, 1, 1, 0, 0), #5월1일 1시</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    schedule="*/10 * * * *", #10 분마다 1시간안에 7번 돌게함</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    # 00분, 10분, 20분, 30분, 40분, 50분, 60분 총 7번</span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    catchup=True, # catchup을 true이기 때문에 작업 상태bar 7개가 동시에 뜸</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    # airflow ui의 작업 pool을 보면 시작할 때 7개를 모두 차지 하도록 나옴</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>    # DateTimeSensor는 목표로 하는 시간까지 기다리는 sensor</span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    sync_sensor = DateTimeSensor(</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>        task_id="sync_sensor",</span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>        # 현재 시간 + 5분</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>        target_time="""{{ macros.datetime.utcnow() + macros.timedelta(minutes=5) }}""",</span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>dags_time_sensor_with_async.py</li>
+</ul>
+<div class="sourceCode" id="cb20"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>from airflow.sensors.date_time import DateTimeSensorAsync</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    dag_id="dags_time_sensor_with_async",</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 5, 1, 0, 0, 0),</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    end_date=pendulum.datetime(2023, 5, 1, 1, 0, 0),</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    schedule="*/10 * * * *",</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    catchup=True,</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    sync_sensor = DateTimeSensorAsync(</span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>        task_id="sync_sensor",</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>        target_time="""{{ macros.datetime.utcnow() + macros.timedelta(minutes=5) }}""",</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>airflow ui&gt;&gt; browse &gt;&gt; triggers 에서 trigger가 작업하는 대상 목록을 보여줌</li>
+<li>trigger는 triggerer에게 작업을 맡길 event 또는 ticket이라고 생각하면 됨</li>
+<li>triggerer id는 ticket id</li>
+<li>defered status 는 보라색을 띄고 이 상태에서는 worker slot을 차지 않는 상태이다.</li>
+</ul>
+</section>
+<section id="요약" class="level2" data-number="7.5">
+<h2 data-number="7.5" class="anchored" data-anchor-id="요약"><span class="header-section-number">7.5</span> 요약</h2>
+<ul>
+<li>끝에 Async가 붙은 오퍼레이터는 Deferrable Operator 라 부르며 Triggerer에 의해 Polling이 수행되는 오퍼레이터임을 의미</li>
+<li>Deferrable Operator는 작업 제출 후 Slot을 차지하지 않으며 Polling 내역에 대해 Trigger 제출 후 deferred 상태가 됨.</li>
+<li>Triggerer는 제출된 Trigger 내역을 보고 작업 완료시(조건 만족시) Worker에게 알려줘 작업이 마무리될 수 있도록 함.</li>
+</ul>
+</section>
+</section>
 </div>
 <div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
 
 </div>
-<section id="go-to-blog-content-list" class="level1" data-number="7">
-<h1 data-number="7"><span class="header-section-number">7</span> Go to Blog Content List</h1>
-<p><a href="../../../../../docs/blog/posts/content_list.html">Blog Content List</a></p>
 
 
-</section>
 
 </div></ul></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">

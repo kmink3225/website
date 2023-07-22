@@ -819,12 +819,19 @@ with DAG(
         task_id='bash_go',
         bash_command='exit 0',
     )
-
 # 모든 task들이 40초안에 실행완료가 되기때문에 성공 처리됨
-# dagrun은 1분으로 설정됐기 때문에 2번째 task 가 실행될 시 fail이 됨 성공 처리됨.
+# dagrun은 1분으로 설정됐기 때문에 2번째 task 가 실행될 때 dag이 fail되고
+# 2번째task는 skipped 처리가 됨, 이 task에 대해서는 email도 안감 
+# 3번째 task는  no status 처리됨 , 이 task에 대해서는 email도 안감
     bash_sleep_35 >> bash_sleep_36 >> bash_go
     
 ```
+
+* dagrun_timeout의 한계점
+  * 모든 task들이 40초안에 실행완료가 되기때문에 성공 처리됨
+  * dagrun은 1분으로 설정됐기 때문에 2번째 task 가 실행될 때 dag이 fail되고
+  * 2번째task는 skipped 처리가 됨, 이 task에 대해서는 email도 안감 
+  * 3번째 task는  no status 처리됨 , 이 task에 대해서는 email도 안감
 
 ## 정리
 
@@ -836,50 +843,132 @@ with DAG(
 | email 발송 가능 여부| O                | O    | X    |
 | timeout 발생시 후행 task 상태 | 상관없이 지속 | Upstream_failed    | Skipped (current) /No status (not run)    |
 | 스케쥴 필요       | O                  | X    | X    |
- 
+
+* sla, execution_timeout에는 email 발송 paraemeter가 있지만 execution_timeout에는 없다.
+* dagrun timeout이 fail 됐을 때 반드시 email 발송 하고싶으면 dag의 파라미터 중 on_failure_callback 에 dag이 실패됐을 때 이메일을 전송하는 함수를 만들어 그 함수명을 할당해준다.
+* upstream_failed 상태는 execution_timeout만이 갖는 특징이 아니라 airflow의 디폴트 설정이다. 상위 task들이 fail되면 후행 task들은 upstream_failed로 남는다.
 * 공통점: 파이썬의 timedelta 함수로 timeout 기준 시간 정의  
 
 # Airflow CLI 사용하기
 
-* Airflow가 설치되어 있는 서버에서 쉘 명령을 이용하여 Airflow를 컨트롤 할 수 있도록 많은 기능들을 제공하고 있음
+* Airflow가 설치되어 있는 서버 또는 환경에서 shell 명령을 이용하여 Airflow를 컨트롤 할 수 있도록 많은 기능들을 제공하고 있음
 * [airflow cli doc](https://airflow.apache.org/docs/apache-airflow/stable/cli-and-env-variables-ref.html)
+  * 대표적인 content
+    * dags: dag을 다룰 수 잇는 커맨드  
+      * `airflow dags [-h] COMMAND ...`
+      * backfill: airflow web ui 의 grid 기능을 보면 dag이 돌았던 이력을 볼 수 있는데 grid 상 가장 과거 날짜 뿐만 아니라 그 이전의 과거 날짜 또한 command의 옵션으로 모두 돌릴 수 있음
+      ```markdown
+        airflow dags backfill [-h] [-c CONF] [--continue-on-failures]
+                      [--delay-on-limit DELAY_ON_LIMIT] [--disable-retry] [-x]
+                      [-n] [-e END_DATE] [-i] [-I] [-l] [-m] [--pool POOL]
+                      [--rerun-failed-tasks] [--reset-dagruns] [-B]
+                      [-s START_DATE] [-S SUBDIR] [-t TASK_REGEX]
+                      [--treat-dag-as-regex] [-v] [-y]
+                      dag_id
+      ```
+      * delete: Delete all DB records related to the specified DAG
+      ```markdown
+      airflow dags delete [-h] [-v] [-y] dag_id
+      ```  
+      * details: Get DAG details given a DAG id
+      ```markdown
+      airflow dags details [-h] [-o table, json, yaml, plain] [-v] dag_id
+      * list: List all the DAGs
+      ```markdown
+      airflow dags list [-h] [-o table, json, yaml, plain] [-S SUBDIR] [-v]
+      ```
+    * variables: variables을 관리하는 command
+      * `airflow variables [-h] COMMAND ...`
+      * delete: `airflow variables delete [-h] [-v] key`
+        * 등록되있는 variables을 key값을 입력하여 삭제
+      * export: `airflow variables export [-h] [-v] file`
+        * 등록되있는 variables을 json file로 추출
+      * get: `airflow variables get [-h] [-d VAL] [-j] [-v] key`
+        * 특정 variables의 key값을 주어 values을 꺼내옴
+      * import: `airflow variables import [-h] [-v] file`
+        * json file에 variables을 작성해놓고 list를 한번에 입력한다.
+      * list: `airflow variables list [-h] [-o table, json, yaml, plain] [-v]`
+      * set: `airflow variables set [-h] [-j] [-v] key VALUE`
+
 * Cli를 잘 쓰면 좋은 이유
-    * 일괄작업: Airflow UI에서 할 수 없는 일괄 작업 방식을 제공(ex: connection 일괄 등록)
-    * 특수기능: Airflow UI에서는 할 수 없는 기능을 제공(ex: backfill)
+    * 일괄작업: Airflow UI에서 할 수 없는 일괄 작업 방식을 제공
+      * ex: connection 일괄 등록. 만약 airflow ui로 등록하면 일일히 등록해야한다.
+      * 물론 CLI를 이용하는 방법 외에 metaDB table에 직접 insert하는 방법도 있음
+    * 특수기능: Airflow UI에서는 할 수 없는 기능을 제공
+      * ex: backfill 은 airflow ui 를 통해서는 실행 불가
     * 자동화: Airflow UI에서 직접 눈으로 보고 클릭하는 방식이 아닌 프로그래밍에 의한 제어가 가능해짐
+      * CLI 커맨드는 shell 명령어로 이루저있기 때문에 shell script를 작성하여 자동화 할 수 있다.
 
 ## cli - dag trigger
 
-* manual 로 dag trigger 하거나 run_id 를 직접 넣어 trigger 할 수 있는 기능
+* dag trigger: airflow ui 상에서 manual 로 dag trigger 하거나 run_id 를 직접 넣어 trigger 할 수 있는 기능으로 CLI로 실행시킬 수 있다.
+* CLI 명령은 WSL2에서 하는게 아니라 docker container안에서 해야함
 
-    ![CLI-Dag Trigger](../../.././../../images/airflow/cli_dag_trigger.PNG)
+  ```markdown
+  airflow dags trigger [-h] [-c CONF] [-e EXEC_DATE] 
+                       [--no-replace-microseconds] [-o table, json, yaml, plain] [-r RUN_ID] [-S SUBDIR] [-v]
+                     dag_id
+  ```
+  * EXEC_DATE: execution_date parameter는 모두 data_interval_start 기준이며 String 형식으로 입력하면 기본 UTC로 계산됨
+  * RUN_ID를 입력하면 기본적으로 manual__로 시작하며 run_id를 직접 입력도 가능
+  * 예시: `#> airflow dags trigger dags_seoul_api_corona`
+* Full Example
+```markdown
+# docker container list 확인
+sudo docker ps 
 
-    * `#> airflow dags trigger dags_seoul_api_corona`
+# webserver container 선택 (어떤 것을 골라도 상관없음)
+
+# airflow container 들어가기: sudo docker exec -it [docker_container_id] bash
+sudo docker exec -it 8b755cb5aa70 bash 
+
+# trigger 명령어 실행
+airflow dags trigger dags_base_branch_operator
+
+
+```
+## 결과
+
+![](../../../../../images/airflow/cli_example_1.PNG)
+
+* dag_run_id: manual__2023-07-22T05:05:59+00:00.
+* run type: manual__
+  * ClI 로 돌렸기 때문에 manual_이 붙어있음
+  * run types: schedule, manual, backfill 등이 있음
 
 ## cli - dag backfill
 
 * 입력 스케줄 구간에 대해 일괄 (재)실행 (스케줄 이력이 없는 과거 날짜도 가능)
-![CLI-Dag backfill](../../.././../../images/airflow/cli_dag_balckfill.PNG)
 
 ```markdown
-#> airflow dags backfill -s 2023-04-19 -e 2023-04-21 dags_seoul_api_corona
-# start, end 파라미터를 dash string 형태로 입력하면 UTC로 간주되며 타임스탬프 형태로 직접 작성도 가능 (run_id에서 해당하는 날짜 구간을 찾아 실행)
-#> airflow dags backfill -s 2023-04-19T22:00:00+00:00 -e 2023-04-20T22:00:00+00:00 —
-reset-dagruns dags_seoul_api_corona
+# start (-s), end(-ㄷ) 파라미터를 dashed string 형태로 입력하면 UTC로 간주(아래의 start 날짜에 시간:분:초가 나와있지 않지만 날짜뒤에 00:00:00 가 붙음) 
+airflow dags backfill -s 2023-04-19 -e 2023-04-21 dags_seoul_api_corona
+
+# 타임스탬프 형태로 직접 작성도 가능 (run_id에서 해당하는 날짜 구간을 찾아 실행)
+airflow dags backfill -s 2023-04-19T22:00:00+00:00 -e 2023-04-20T22:00:00+00:00 —reset-dagruns dags_seoul_api_corona
 ```
+
+* 위의 예시에서, -s 2023-04-19 -e 2023-04-21 옵션이 있고 grid에서 task 수행 이력의 가장 최근 날짜가 2023-04-21 이라고 가정해보자.
+  * run_id가 scheduled__2023-04-21T22:00:00+00:00 일때
+  * 위의 날짜 구간 옵션에 있고 dag이 실행되지 않았던 04/20 22:00, 04/19 22:00 2개가 돌아가게 됨
 
 ## cli - task clear
 
 * Clear 작업을 start / end 구간으로 일괄 재실행
-* Backfill과 달리 수행되지 않은 스케줄 구간은 실행할 수 없음
-![CLI-Task Clear](../../../../../images/airflow/cli_task_cleaner.PNG)
+  * backfill의 경우 task가 수행이 됐건 안됐건 무조건 실행 (무조건 재실행)
+  * 하지만 clear 이미 실행됐던 task에 한해서 재실행됨
+  * Backfill과 달리 수행되지 않은 스케줄 구간은 실행할 수 없음
 
-```markdown
-#> airflow tasks clear -s 2023-05-07 -e 2023-05-12 dags_seoul_api_corona
-#> airflow tasks clear -s 2023-05-07T22:00:00+00:00 -e 2023-05-12T22:00:00+00:00
-dags_seoul_api_corona
+  ```markdown
+  airflow tasks clear [-h] [-R] [-d] [-e END_DATE] [-X] [-x] [-f] [-r]
+                      [-s START_DATE] [-S SUBDIR] [-t TASK_REGEX] [-u] [-v] [-y]
+                      dag_id
+  ```
 
-```
+  ```markdown
+  airflow tasks clear -s 2023-05-07 -e 2023-05-12 dags_seoul_api_corona
+  airflow tasks clear -s 2023-05-07T22:00:00+00:00 -e 2023-05-12T22:00:00+00:00 dags_seoul_api_corona
+  ```
 * Backfill되었던 DAG은 clear 불가함. reset-dagruns 옵션과 함께 다시 Backfill 수행해야 함
 
 ## 정리

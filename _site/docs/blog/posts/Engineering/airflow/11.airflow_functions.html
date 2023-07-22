@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2023-05-01">
 <meta name="description" content="template">
 
-<title>Kwangmin Kim - Template Variabler</title>
+<title>Kwangmin Kim - Airflow Additional Function</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -97,6 +97,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <link rel="stylesheet" href="../../../../../styles.css">
 </head>
@@ -183,7 +185,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Template Variabler</h1>
+<h1 class="title">Airflow Additional Function</h1>
 <p class="subtitle lead">DAG Creation, Bash Operator, Task Performance Subject,</p>
   <div class="quarto-categories">
     <div class="quarto-category">Engineering</div>
@@ -233,6 +235,7 @@ English
 <div class="tab-content" id="language-tabcontent">
 
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
+<p>몰라도 되지만 알면 좋은 고급 기능들</p>
 <section id="dataset을-이용한-dag-트리거" class="level1" data-number="1">
 <h1 data-number="1"><span class="header-section-number">1</span> Dataset을 이용한 Dag 트리거</h1>
 <section id="dataset의-필요성" class="level2" data-number="1.1">
@@ -298,15 +301,15 @@ G
 <title>
 cluster0
 </title>
-<polygon fill="none" stroke="black" points="183.66,-93 183.66,-170 253.66,-170 253.66,-93 183.66,-93"></polygon> <text text-anchor="middle" x="218.66" y="-153.4" font-family="Times,serif" font-size="14.00">DAG A</text> </g> <g id="clust2" class="cluster">
-<title>
-cluster1
-</title>
-<polygon fill="none" stroke="black" points="8,-178 8,-309 253.66,-309 253.66,-178 8,-178"></polygon> <text text-anchor="middle" x="130.83" y="-292.4" font-family="Times,serif" font-size="14.00">DAG C</text> </g> <g id="clust3" class="cluster">
+<polygon fill="none" stroke="black" points="183.66,-93 183.66,-170 253.66,-170 253.66,-93 183.66,-93"></polygon> <text text-anchor="middle" x="218.66" y="-153.4" font-family="Times,serif" font-size="14.00">DAG A</text> </g> <g id="clust3" class="cluster">
 <title>
 cluster2
 </title>
-<polygon fill="none" stroke="black" points="183.66,-8 183.66,-85 253.66,-85 253.66,-8 183.66,-8"></polygon> <text text-anchor="middle" x="218.66" y="-68.4" font-family="Times,serif" font-size="14.00">DAG B</text> </g> <!-- task_1 --> <g id="node1" class="node">
+<polygon fill="none" stroke="black" points="183.66,-8 183.66,-85 253.66,-85 253.66,-8 183.66,-8"></polygon> <text text-anchor="middle" x="218.66" y="-68.4" font-family="Times,serif" font-size="14.00">DAG B</text> </g> <g id="clust2" class="cluster">
+<title>
+cluster1
+</title>
+<polygon fill="none" stroke="black" points="8,-178 8,-309 253.66,-309 253.66,-178 8,-178"></polygon> <text text-anchor="middle" x="130.83" y="-292.4" font-family="Times,serif" font-size="14.00">DAG C</text> </g> <!-- task_1 --> <g id="node1" class="node">
 <title>
 task_1
 </title>
@@ -795,16 +798,78 @@ Queue-&gt;DAG_E
 <section id="sla파라미터-이해" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="sla파라미터-이해"><span class="header-section-number">4.1</span> SLA파라미터 이해</h2>
 <ul>
-<li>개념: 오퍼레이터 수행시 정해놓은 시간을 초과하였는지를 판단할 수 있도록 설정해놓은 시간 값 파이썬의 timedelta 로 정의</li>
-<li>동작: 설정해놓은 SLA 를 초과하여 오퍼레이터 running 시 SLA Miss 발생 , Airflow UI 화면에서 Miss 건만 조회 가능 + email 발송 가능
+<li><p>개념: 오퍼레이터 수행시 정해놓은 시간을 초과하였는지를 판단할 수 있도록 설정해놓은 시간 값 파이썬의 timedelta 로 정의</p></li>
+<li><p>동작: 설정해놓은 SLA 를 초과하여 오퍼레이터 running 시 SLA Miss 발생 , Airflow UI 화면에서 Miss 건만 조회 가능 + email 발송 가능</p>
 <ul>
-<li>SLA Miss 발생시 task 가 실패되는 것은 아니며 단순 Miss 대상에 기록만 됨</li>
+<li>SLA Miss 발생시 task 가 실패되는 것은 아니며 단순 Miss 대상에 기록만 DB에 남기게 됨</li>
 <li>SLA 는 DAG 파라미터가 아니며 BaseOperator 의 파라미터</li>
 </ul></li>
-<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/baseoperator.html#BaseOperator">airflow docs</a></li>
-<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/dag.html">SLA Miss시 수행할 함수 지정 가능-Source code for airflow.models.dag</a>
+<li><p><a href="https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/baseoperator.html#BaseOperator">airflow docs- def <strong>init</strong></a></p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a> def __init__(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>      self,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>      task_id: str,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>      owner: str = DEFAULT_OWNER,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>      email: str | Iterable<span class="co">[</span><span class="ot">str</span><span class="co">]</span> | None = None,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>      email_on_retry: bool = conf.getboolean("email", "default_email_on_retry", fallback=True),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>      email_on_failure: bool = conf.getboolean("email", "default_email_on_failure", fallback=True),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>      retries: int | None = DEFAULT_RETRIES,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>      retry_delay: timedelta | float = DEFAULT_RETRY_DELAY,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      retry_exponential_backoff: bool = False,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>      max_retry_delay: timedelta | float | None = None,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>      start_date: datetime | None = None,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>      end_date: datetime | None = None,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>      depends_on_past: bool = False,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>      ignore_first_depends_on_past: bool = DEFAULT_IGNORE_FIRST_DEPENDS_ON_PAST,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>      wait_for_past_depends_before_skipping: bool = DEFAULT_WAIT_FOR_PAST_DEPENDS_BEFORE_SKIPPING,</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>      wait_for_downstream: bool = False,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>      dag: DAG | None = None,</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>      params: collections.abc.MutableMapping | None = None,</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>      default_args: dict | None = None,</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>      priority_weight: int = DEFAULT_PRIORITY_WEIGHT,</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>      weight_rule: str = DEFAULT_WEIGHT_RULE,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>      queue: str = DEFAULT_QUEUE,</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>      pool: str | None = None,</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>      pool_slots: int = DEFAULT_POOL_SLOTS,</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>      sla: timedelta | None = None, # sla 변수</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>      execution_timeout: timedelta | None = DEFAULT_TASK_EXECUTION_TIMEOUT,</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>      on_execute_callback: None | TaskStateChangeCallback | list<span class="co">[</span><span class="ot">TaskStateChangeCallback</span><span class="co">]</span> = None,</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>      on_failure_callback: None | TaskStateChangeCallback | list<span class="co">[</span><span class="ot">TaskStateChangeCallback</span><span class="co">]</span> = None,</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>      on_success_callback: None | TaskStateChangeCallback | list<span class="co">[</span><span class="ot">TaskStateChangeCallback</span><span class="co">]</span> = None,</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>      on_retry_callback: None | TaskStateChangeCallback | list<span class="co">[</span><span class="ot">TaskStateChangeCallback</span><span class="co">]</span> = None,</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>      pre_execute: TaskPreExecuteHook | None = None,</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>      post_execute: TaskPostExecuteHook | None = None,</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>      trigger_rule: str = DEFAULT_TRIGGER_RULE,</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>      resources: dict<span class="co">[</span><span class="ot">str, Any</span><span class="co">]</span> | None = None,</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>      run_as_user: str | None = None,</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>      task_concurrency: int | None = None,</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>      max_active_tis_per_dag: int | None = None,</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>      max_active_tis_per_dagrun: int | None = None,</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>      executor_config: dict | None = None,</span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>      do_xcom_push: bool = True,</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>      inlets: Any | None = None,</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>      outlets: Any | None = None,</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>      task_group: TaskGroup | None = None,</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>      doc: str | None = None,</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>      doc_md: str | None = None,</span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>      doc_json: str | None = None,</span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>      doc_yaml: str | None = None,</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>      doc_rst: str | None = None,</span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>      **kwargs,</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>  ):</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
-<li>sla_miss_callback 파라미터</li>
+<li>sla: timedelta | None = None, # sla 변수
+<ul>
+<li>timedelta보다 오랜 시간동안 task가 더 오래 수행되면 SLA Miss 기록만 남기고 실패처리는 안하게 됨</li>
+<li>default_arg에 넣을 수 있기 때문에 모든 task, 즉 모든 operator에 공통 적용할 수 있다.</li>
+</ul></li>
+</ul></li>
+<li><p><a href="https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/dag.html">sla_miss_callback: DAG에 있는 SLA 관련 파라미터로 SLA Miss시 수행할 함수 지정 가능-Source code for airflow.models.dag</a></p>
+<ul>
+<li>sla_miss_callback 파라미터
+<ul>
+<li>sla miss시 수행할 함수명을 입력 받음</li>
+<li>dag에 있는 파라미터이기 때문에 default_arg에 넣을 수 없음</li>
+</ul></li>
 <li>DAG의 파라미터임 (BaseOperator 의 파라미터가 아니라는 것에 유의)</li>
 </ul></li>
 </ul>
@@ -812,75 +877,159 @@ Queue-&gt;DAG_E
 <section id="sla-제약사항" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="sla-제약사항"><span class="header-section-number">4.2</span> SLA 제약사항</h2>
 <ul>
-<li>각 Task 의 SLA timeout 카운트 시작은 DAG 의 시작시간 기준임</li>
+<li>1번째 제약사항: 각 Task 의 SLA timeout 카운트 시작은 DAG 의 시작시간 기준임</li>
 </ul>
 <div class="columns">
 <div class="column" style="width:40%;">
-<section id="생각하는-sla-timeout-카운트-방식" class="level3" data-number="4.2.1">
-<h3 data-number="4.2.1" class="anchored" data-anchor-id="생각하는-sla-timeout-카운트-방식"><span class="header-section-number">4.2.1</span> 생각하는 SLA timeout 카운트 방식</h3>
+<section id="사람이-생각하는-sla-timeout-카운트-방식" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="사람이-생각하는-sla-timeout-카운트-방식"><span class="header-section-number">4.2.1</span> 사람이 생각하는 SLA timeout 카운트 방식</h3>
 <p><img src="../../../../../images/airflow/SLA_timeout_count1.PNG" class="img-fluid"></p>
+<ul>
+<li>처음 사용하는 사용자들은 다음과 같이 생각할 수 있다.
+<ul>
+<li>task1은 task1의 sla구간보다 수행시간이 짧게 완료됐기 때문에 성공 처리</li>
+<li>task2는 sla 구간보다 더 길기 때문에 miss 처리됨</li>
+<li>task3는 sla 구간보다 짧기 때문에 성공 처리</li>
+</ul></li>
+<li>airflow는 위와 같이 동작하지 않음 옆의 그림과 같이 동작함</li>
+</ul>
 </section>
 </div><div class="column" style="width:60%;">
 <section id="실제-airflow-의-sla-timeout-카운트-방식" class="level3" data-number="4.2.2">
 <h3 data-number="4.2.2" class="anchored" data-anchor-id="실제-airflow-의-sla-timeout-카운트-방식"><span class="header-section-number">4.2.2</span> 실제 Airflow 의 SLA timeout 카운트 방식</h3>
 <p><img src="../../../../../images/airflow/SLA_timeout_count2.PNG" class="img-fluid"></p>
-</section>
-</div>
-</div>
 <ul>
-<li>DAG의 시작시간 기준 → 명목적인 시작 시간 (data_interval_start)
-<ul>
-<li>만약 Pool 이 부족하거나 스케줄러의 부하로 인해 DAG 이 스케줄보다 늦게 시작했다면 늦게 시작한만큼 SLA 시간 카운트는 소요됨</li>
-<li>실질적 DAG 시작 시간을 기준으로 카운트하지 않음</li>
-</ul></li>
-<li>첫 스케줄에서는 SLA Miss 가 기록되지 않음 (두 번째 스케줄부터 기록)</li>
+<li>실제 airflow에서는 수행 시간을 dag의 최초 실행시점 부터 카운트 하기 시작함</li>
+<li>task1의 수행완료 상태 및 시점과 상관없이 task2와 task3의 수행 시간은 task1 수행 시점 부터 카운트 되기 시작한다.</li>
+<li>그러므로 task2, task3는 수행된적이 없음에도 miss sla 상태로 처리됨</li>
 </ul>
 </section>
-<section id="sla-miss-시-email-발송하기" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="sla-miss-시-email-발송하기"><span class="header-section-number">4.3</span> SLA Miss 시 email 발송하기</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.bash import BashOperator</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>from datetime import timedelta</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>from airflow.models import Variable</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>email_str = Variable.get("email_target")</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>email_lst = <span class="co">[</span><span class="ot">email.strip() for email in email_str.split(',')</span><span class="co">]</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    dag_id='dags_sla_email_example',</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 5, 1, tz='Asia/Seoul'),</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    schedule='*/10 * * * *',</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    catchup=False,</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    default_args={</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        'sla': timedelta(seconds=70),</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        'email': email_lst</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_30s_sla_70s = BashOperator(</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_slp_30s_sla_70s',</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 30'</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_60_sla_70s = BashOperator(</span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_slp_60_sla_70s',</span></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 60'</span></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_10s_sla_70s = BashOperator(</span></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_slp_10s_sla_70s',</span></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 10'</span></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_10s_sla_30s = BashOperator(</span></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_slp_10s_sla_30s',</span></span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 10',</span></span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="in">        sla=timedelta(seconds=30)</span></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_30s_sla_70s &gt;&gt; task_slp_60_sla_70s &gt;&gt; task_slp_10s_sla_70s &gt;&gt; task_slp_10s_sla_30s</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<ul>
+<li>2번째 제약사항: DAG의 시작시간 기준 <span class="math inline">\(\rightarrow\)</span> 명목적인 시작 시간 (data_interval_start)
+<ul>
+<li>위의 SLA timeout 카운트 시작은 dag의 시작시간 기준이라는 제약 사항과 연결되는 제약사항</li>
+<li>만약 Pool 이 부족하거나 스케줄러의 부하로 인해 DAG 이 스케줄보다 늦게 시작했다면 늦게 시작한만큼 이미 SLA 시간 카운트는 진행되어 시간이 소요되고 있음
+<ul>
+<li>실질적 DAG 시작 시간을 기준으로 카운트하지 않음</li>
+</ul></li>
+<li>즉, 특정 task 수행에 computing 부하가 걸리면 후차적인 task들은 모두 miss 처리됨</li>
+<li>대규모 프로젝트에서 흔히 발생하는 문제로 dag이 밀리는 현상이 자주 관찰되므로 sla는 자주쓰이는 방식은 아님.</li>
+</ul></li>
+<li>3번째 제약사항: 첫 스케줄에서는 SLA Miss 가 기록되지 않음 (두 번째 스케줄부터 기록)</li>
+<li>4번째 제약사항: sla miss처리가 분명히 발생됐는데 가끔 기록이 안될때가 있고 email역시 발송이 되지 않을때가 있음. 엄격이 관리가 되지 않는 기능</li>
+</ul>
+</section>
+<section id="full-dag-example" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="full-dag-example"><span class="header-section-number">4.3</span> Full Dag Example</h2>
+<div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>from airflow.operators.bash import BashOperator</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>from datetime import timedelta</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>from airflow.models import Variable</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>email_str = Variable.get("email_target")</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>email_lst = <span class="co">[</span><span class="ot">email.strip() for email in email_str.split(',')</span><span class="co">]</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    dag_id='dags_sla_email_example',</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 5, 1, tz='Asia/Seoul'),</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    schedule='*/10 * * * *',</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    catchup=False,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    default_args={</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        'sla': timedelta(seconds=70),</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        'email': email_lst</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="in">    # 30초 sleep</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_30s_sla_70s = BashOperator( </span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_slp_30s_sla_70s',</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 30'</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="in">    # 60초 sleep</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_60_sla_70s = BashOperator(</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_slp_60_sla_70s',</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 60'</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="in">    # 10초 sleep</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_10s_sla_70s = BashOperator( </span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_slp_10s_sla_70s',</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 10'</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a><span class="in">    # 10초 sleep</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a><span class="in">    # sla의 timedelta를 명시적으로 30초 선언</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a><span class="in">    # default argument보다 명시적 선언이 우선 순위가 더 높음</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a><span class="in">    # 그래서, 처음 3개의 task는 timedelta가 70초로 설정됐고 4번째 task는 30초로 설정됨 </span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_10s_sla_30s = BashOperator( </span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_slp_10s_sla_30s',</span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 10',</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a><span class="in">        sla=timedelta(seconds=30)</span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_30s_sla_70s &gt;&gt; task_slp_60_sla_70s &gt;&gt; task_slp_10s_sla_70s &gt;&gt; task_slp_10s_sla_30s</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>위 코드를 보면,
+<ul>
+<li>1번째 task는 30초 sleep이 70초 sla timedelta보다 짧기 때문에 성공 처리</li>
+<li>2번째 task는 30,40초 돌다가 miss 처리됨</li>
+<li>3,4 번째 task는 수행되기도 전에 miss처리됨</li>
+<li>4번째 timedelta가장 짧기 때문에 가장 먼저 miss 처리 됨</li>
+</ul></li>
+<li>Airflow web service에서 SLA Miss 현황 조회하기
+<ul>
+<li>airflow web service &gt;&gt; browse</li>
+</ul></li>
+</ul>
+</section>
+<section id="sla-miss-시-email-발송하기" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="sla-miss-시-email-발송하기"><span class="header-section-number">4.4</span> SLA Miss 시 email 발송하기</h2>
+<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.bash import BashOperator</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>from datetime import timedelta</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>from airflow.models import Variable</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>email_str = Variable.get("email_target")</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>email_lst = <span class="co">[</span><span class="ot">email.strip() for email in email_str.split(',')</span><span class="co">]</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    dag_id='dags_sla_email_example',</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 5, 1, tz='Asia/Seoul'),</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    schedule='*/10 * * * *',</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    catchup=False,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    default_args={</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        'sla': timedelta(seconds=70),</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        'email': email_lst</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_30s_sla_70s = BashOperator(</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_slp_30s_sla_70s',</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 30'</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_60_sla_70s = BashOperator(</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_slp_60_sla_70s',</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 60'</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_10s_sla_70s = BashOperator(</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_slp_10s_sla_70s',</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 10'</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_10s_sla_30s = BashOperator(</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='task_slp_10s_sla_30s',</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 10',</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="in">        sla=timedelta(seconds=30)</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a><span class="in">    task_slp_30s_sla_70s &gt;&gt; task_slp_60_sla_70s &gt;&gt; task_slp_10s_sla_70s &gt;&gt; task_slp_10s_sla_30s</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 </section>
 <section id="timeout-설정하기" class="level1" data-number="5">
@@ -889,26 +1038,194 @@ Queue-&gt;DAG_E
 <h2 data-number="5.1" class="anchored" data-anchor-id="timeout-파라미터-이해"><span class="header-section-number">5.1</span> Timeout 파라미터 이해</h2>
 <ul>
 <li>Task수준의 timeout 과 DAG 수준의 timeout 이 존재</li>
-<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/baseoperator.html#BaseOperator">Task수준의 timeout 파라미터</a> : execution_timeout</li>
-<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/dag.html">DAG수준의 timeout 파라미터</a> : dagrun_timeout</li>
+<li>execution_timeout: <a href="https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/baseoperator.html#BaseOperator">Task수준의 timeout 파라미터: baseOperator 명세에서 <strong>init</strong> 생성자에서 sla 파라미터 아래에 있음</a>
+<ul>
+<li>execution_timeout: timedelta | None = DEFAULT_TASK_EXECUTION_TIMEOUT,</li>
+<li>timedelta보다 오래 task가 수행됐을 때 task는 fail 처리됨</li>
+<li>task가 fialure 됐을 때 <strong>init</strong> 생성자 안의 다른 파라미터인 <code>email_on_failure: bool = conf.getboolean("email", "default_email_on_failure", fallback=True)</code> 과 <code>email: str | Iterable[str] | None = None,</code> 에 의해 지정 대상에게 email을 보낼 수 있다.</li>
+<li>요약하면, timedelta, email_on_failure, email 이렇게 3개의 파라미터를 이용하여 timedelta 를 초과하는 task 수행시 fail 처리를 하여 이메일을 보낼 수 있다.</li>
+</ul></li>
+<li>dagrun_timeout: <a href="https://airflow.apache.org/docs/apache-airflow/stable/_modules/airflow/models/dag.html">DAG수준에서도 timeout 파라미터를 걸 수 도 있음</a> : dagrun_timeout
+<ul>
+<li>[docs]class DAG(LoggingMixin): 의 <strong>init</strong> 생성자</li>
+</ul>
+<div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    def __init__(</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>      self,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>      dag_id: str,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>      description: str | None = None,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>      schedule: ScheduleArg = NOTSET,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>      schedule_interval: ScheduleIntervalArg = NOTSET,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>      timetable: Timetable | None = None,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>      start_date: datetime | None = None,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>      end_date: datetime | None = None,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>      full_filepath: str | None = None,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>      template_searchpath: str | Iterable<span class="co">[</span><span class="ot">str</span><span class="co">]</span> | None = None,</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>      template_undefined: type<span class="co">[</span><span class="ot">jinja2.StrictUndefined</span><span class="co">]</span> = jinja2.StrictUndefined,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>      user_defined_macros: dict | None = None,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>      user_defined_filters: dict | None = None,</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>      default_args: dict | None = None,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>      concurrency: int | None = None,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>      max_active_tasks: int = airflow_conf.getint("core", "max_active_tasks_per_dag"),</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>      max_active_runs: int = airflow_conf.getint("core", "max_active_runs_per_dag"),</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>      dagrun_timeout: timedelta | None = None,</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>      sla_miss_callback: None | SLAMissCallback | list<span class="co">[</span><span class="ot">SLAMissCallback</span><span class="co">]</span> = None,</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>      default_view: str = airflow_conf.get_mandatory_value("webserver", "dag_default_view").lower(),</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>      orientation: str = airflow_conf.get_mandatory_value("webserver", "dag_orientation"),</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>      catchup: bool = airflow_conf.getboolean("scheduler", "catchup_by_default"),</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>      on_success_callback: None | DagStateChangeCallback | list<span class="co">[</span><span class="ot">DagStateChangeCallback</span><span class="co">]</span> = None,</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>      on_failure_callback: None | DagStateChangeCallback | list<span class="co">[</span><span class="ot">DagStateChangeCallback</span><span class="co">]</span> = None,</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>      doc_md: str | None = None,</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>      params: collections.abc.MutableMapping | None = None,</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>      access_control: dict | None = None,</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>      is_paused_upon_creation: bool | None = None,</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>      jinja_environment_kwargs: dict | None = None,</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>      render_template_as_native_obj: bool = False,</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>      tags: list<span class="co">[</span><span class="ot">str</span><span class="co">]</span> | None = None,</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>      owner_links: dict<span class="co">[</span><span class="ot">str, str</span><span class="co">]</span> | None = None,</span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>      auto_register: bool = True,</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>  ):</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>다음 파라미터를 이용하여 dag을 관리할 수 있다.
+<ul>
+<li>schedule: ScheduleArg = NOTSET,</li>
+<li>start_date: datetime | None = None,</li>
+<li>default_args: dict | None = None,</li>
+<li>dagrun_timeout: timedelta | None = None,</li>
+</ul></li>
+</ul></li>
 <li>task1 &gt;&gt; task2 &gt;&gt; task3 예시</li>
 </ul>
 <div class="columns">
 <div class="column" style="width:50%;">
 <section id="execution_timeout" class="level3" data-number="5.1.1">
 <h3 data-number="5.1.1" class="anchored" data-anchor-id="execution_timeout"><span class="header-section-number">5.1.1</span> execution_timeout</h3>
+<ul>
+<li>dag은 timeout이 안됐지만 task가 timeout이 되는 case</li>
+</ul>
 <p><img src="../../../../../images/airflow/execution_timeout1.PNG" class="img-fluid"></p>
+<ul>
+<li>task2의 실행시간이 task2의 execution_timeout보다 길게 수행되어 fail되었고 task3은 task2로 인해 upstream failed 이 발생</li>
+<li>하지만, task1,2,3 의 수행시간의 총합이 dagrun_timeout 보다 짧기 때문에 dag 자체는 실패처리 안됨</li>
+</ul>
 </section>
 </div><div class="column" style="width:50%;">
 <section id="datgrun_timeout" class="level3" data-number="5.1.2">
 <h3 data-number="5.1.2" class="anchored" data-anchor-id="datgrun_timeout"><span class="header-section-number">5.1.2</span> datgrun_timeout</h3>
+<ul>
+<li>task는 성공 처리 됐지만 dag이 오랜시간동안 돌아 timeout되어 실패처리되는 case</li>
+</ul>
 <p><img src="../../../../../images/airflow/dagrun_timeout.PNG" class="img-fluid"></p>
+<ul>
+<li>각 task들이 execution_timeout보다 짧아 모두 정상 처리 되었지만 task1,2,3의 총 실행시간이 dagrun_timeout보다 길어 dag자체는 failure이 된 상황</li>
+<li>dag이 failure되는 시점에서의 task는 skipped 상태로 처리된다.</li>
+</ul>
 </section>
 </div>
 </div>
 </section>
-<section id="정리-1" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="정리-1"><span class="header-section-number">5.2</span> 정리</h2>
+<section id="dag-full-example" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="dag-full-example"><span class="header-section-number">5.2</span> Dag Full Example</h2>
+<ul>
+<li>case1: tasks는 실패, dargrun 정상</li>
+</ul>
+<div class="sourceCode" id="cb9"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Package Import</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>from airflow.operators.bash import BashOperator</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>from datetime import timedelta</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>from airflow.models import Variable</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu"># email 수신자 리스트</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>email_str = Variable.get("email_target") </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>email_lst = <span class="co">[</span><span class="ot">email.strip() for email in email_str.split(',')</span><span class="co">]</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    dag_id='dags_timeout_example_1',</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 5, 1, tz='Asia/Seoul'),</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    catchup=False,</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    schedule=None,</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    dagrun_timeout=timedelta(minutes=1),</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    default_args={</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        #각 task들이 20초안에 끝나야 성공 처리됨</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        'execution_timeout': timedelta(seconds=20), </span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        'email_on_failure': True,</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>        'email': email_lst</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    # execution_timeout보다 길기 때문에 task는 실패 처리됨</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    bash_sleep_30 = BashOperator(</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>        task_id='bash_sleep_30', </span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>        bash_command='sleep 30',</span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    # execution_timeout보다 짧기 때문에 task는 성공 처리됨</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    bash_sleep_10 = BashOperator(</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>        trigger_rule='all_done', # upstream fail에도 task 실행시키기 위해 triggering</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>        task_id='bash_sleep_10',</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>        bash_command='sleep 10',</span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a><span class="in">    # upstream failure 발생해도 trigger_rule을 all_done을 줬기 때문에 bash_sleep_10 은 실행됨</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a><span class="in">    # dagrun_timeout을 1분으로 설정했기 때문에 task run의 총합이 40초이기 때문에 dagrun은 정상 처리됨</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a><span class="in">    bash_sleep_30 &gt;&gt; bash_sleep_10 </span></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a><span class="in">    </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>case2: tasks는 정상, dargrun 실패</li>
+</ul>
+<div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>from airflow import DAG</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>from airflow.operators.bash import BashOperator</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>import pendulum</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>from datetime import timedelta</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>from airflow.models import Variable</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>email_str = Variable.get("email_target")</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>email_lst = <span class="co">[</span><span class="ot">email.strip() for email in email_str.split(',')</span><span class="co">]</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>with DAG(</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    dag_id='dags_timeout_example_2',</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    start_date=pendulum.datetime(2023, 5, 1, tz='Asia/Seoul'),</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    catchup=False,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    schedule=None,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    dagrun_timeout=timedelta(minutes=1),</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    default_args={</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>        'execution_timeout': timedelta(seconds=40),</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>        'email_on_failure': True,</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>        'email': email_lst</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>) as dag:</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    bash_sleep_35 = BashOperator(</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>        task_id='bash_sleep_35',</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>        bash_command='sleep 35',</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="in">    bash_sleep_36 = BashOperator(</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="in">        trigger_rule='all_done',</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='bash_sleep_36',</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='sleep 36',</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="in">    bash_go = BashOperator(</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="in">        task_id='bash_go',</span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="in">        bash_command='exit 0',</span></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="in">    )</span></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="fu"># 모든 task들이 40초안에 실행완료가 되기때문에 성공 처리됨</span></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="fu"># dagrun은 1분으로 설정됐기 때문에 2번째 task 가 실행될 때 dag이 fail되고</span></span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a><span class="fu"># 2번째task는 skipped 처리가 됨, 이 task에 대해서는 email도 안감 </span></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a><span class="fu"># 3번째 task는  no status 처리됨 , 이 task에 대해서는 email도 안감</span></span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>    bash_sleep_35 &gt;&gt; bash_sleep_36 &gt;&gt; bash_go</span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>    </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>dagrun_timeout의 한계점
+<ul>
+<li>모든 task들이 40초안에 실행완료가 되기때문에 성공 처리됨</li>
+<li>dagrun은 1분으로 설정됐기 때문에 2번째 task 가 실행될 때 dag이 fail되고</li>
+<li>2번째task는 skipped 처리가 됨, 이 task에 대해서는 email도 안감</li>
+<li>3번째 task는 no status 처리됨 , 이 task에 대해서는 email도 안감</li>
+</ul></li>
+</ul>
+</section>
+<section id="정리-1" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="정리-1"><span class="header-section-number">5.3</span> 정리</h2>
 <table class="table">
 <colgroup>
 <col style="width: 25%">
@@ -964,6 +1281,9 @@ Queue-&gt;DAG_E
 </tbody>
 </table>
 <ul>
+<li>sla, execution_timeout에는 email 발송 paraemeter가 있지만 execution_timeout에는 없다.</li>
+<li>dagrun timeout이 fail 됐을 때 반드시 email 발송 하고싶으면 dag의 파라미터 중 on_failure_callback 에 dag이 실패됐을 때 이메일을 전송하는 함수를 만들어 그 함수명을 할당해준다.</li>
+<li>upstream_failed 상태는 execution_timeout만이 갖는 특징이 아니라 airflow의 디폴트 설정이다. 상위 task들이 fail되면 후행 task들은 upstream_failed로 남는다.</li>
 <li>공통점: 파이썬의 timedelta 함수로 timeout 기준 시간 정의</li>
 </ul>
 </section>
@@ -971,55 +1291,134 @@ Queue-&gt;DAG_E
 <section id="airflow-cli-사용하기" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Airflow CLI 사용하기</h1>
 <ul>
-<li>Airflow가 설치되어 있는 서버에서 쉘 명령을 이용하여 Airflow를 컨트롤 할 수 있도록 많은 기능들을 제공하고 있음</li>
-<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/cli-and-env-variables-ref.html">airflow cli doc</a></li>
+<li>Airflow가 설치되어 있는 서버 또는 환경에서 shell 명령을 이용하여 Airflow를 컨트롤 할 수 있도록 많은 기능들을 제공하고 있음</li>
+<li><a href="https://airflow.apache.org/docs/apache-airflow/stable/cli-and-env-variables-ref.html">airflow cli doc</a>
+<ul>
+<li>대표적인 content
+<ul>
+<li>dags: dag을 다룰 수 잇는 커맨드
+<ul>
+<li><code>airflow dags [-h] COMMAND ...</code></li>
+<li>backfill: airflow web ui 의 grid 기능을 보면 dag이 돌았던 이력을 볼 수 있는데 grid 상 가장 과거 날짜 뿐만 아니라 그 이전의 과거 날짜 또한 command의 옵션으로 모두 돌릴 수 있음</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>  airflow dags backfill <span class="co">[</span><span class="ot">-h</span><span class="co">] [-c CONF]</span> <span class="co">[</span><span class="ot">--continue-on-failures</span><span class="co">]</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>                <span class="co">[</span><span class="ot">--delay-on-limit DELAY_ON_LIMIT</span><span class="co">] [--disable-retry]</span> <span class="co">[</span><span class="ot">-x</span><span class="co">]</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>                <span class="co">[</span><span class="ot">-n</span><span class="co">] [-e END_DATE]</span> <span class="co">[</span><span class="ot">-i</span><span class="co">] [-I]</span> <span class="co">[</span><span class="ot">-l</span><span class="co">] [-m]</span> <span class="co">[</span><span class="ot">--pool POOL</span><span class="co">]</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>                <span class="co">[</span><span class="ot">--rerun-failed-tasks</span><span class="co">] [--reset-dagruns]</span> <span class="co">[</span><span class="ot">-B</span><span class="co">]</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                <span class="co">[</span><span class="ot">-s START_DATE</span><span class="co">] [-S SUBDIR]</span> <span class="co">[</span><span class="ot">-t TASK_REGEX</span><span class="co">]</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                <span class="co">[</span><span class="ot">--treat-dag-as-regex</span><span class="co">] [-v]</span> <span class="co">[</span><span class="ot">-y</span><span class="co">]</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                dag_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>delete: Delete all DB records related to the specified DAG</li>
+</ul>
+<div class="sourceCode" id="cb12"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>airflow dags delete <span class="co">[</span><span class="ot">-h</span><span class="co">] [-v]</span> <span class="co">[</span><span class="ot">-y</span><span class="co">]</span> dag_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<ul>
+<li>details: Get DAG details given a DAG id</li>
+</ul>
+<div class="sourceCode" id="cb13"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>airflow dags details <span class="co">[</span><span class="ot">-h</span><span class="co">] [-o table, json, yaml, plain]</span> <span class="co">[</span><span class="ot">-v</span><span class="co">]</span> dag_id</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>list: List all the DAGs</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="in">```markdown</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>airflow dags list <span class="co">[</span><span class="ot">-h</span><span class="co">] [-o table, json, yaml, plain]</span> <span class="co">[</span><span class="ot">-S SUBDIR</span><span class="co">] [-v]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div></li>
+<li>variables: variables을 관리하는 command
+<ul>
+<li><code>airflow variables [-h] COMMAND ...</code></li>
+<li>delete: <code>airflow variables delete [-h] [-v] key</code>
+<ul>
+<li>등록되있는 variables을 key값을 입력하여 삭제</li>
+</ul></li>
+<li>export: <code>airflow variables export [-h] [-v] file</code>
+<ul>
+<li>등록되있는 variables을 json file로 추출</li>
+</ul></li>
+<li>get: <code>airflow variables get [-h] [-d VAL] [-j] [-v] key</code>
+<ul>
+<li>특정 variables의 key값을 주어 values을 꺼내옴</li>
+</ul></li>
+<li>import: <code>airflow variables import [-h] [-v] file</code>
+<ul>
+<li>json file에 variables을 작성해놓고 list를 한번에 입력한다.</li>
+</ul></li>
+<li>list: <code>airflow variables list [-h] [-o table, json, yaml, plain] [-v]</code></li>
+<li>set: <code>airflow variables set [-h] [-j] [-v] key VALUE</code></li>
+</ul></li>
+</ul></li>
+</ul></li>
 <li>Cli를 잘 쓰면 좋은 이유
 <ul>
-<li>일괄작업: Airflow UI에서 할 수 없는 일괄 작업 방식을 제공(ex: connection 일괄 등록)</li>
-<li>특수기능: Airflow UI에서는 할 수 없는 기능을 제공(ex: backfill)</li>
-<li>자동화: Airflow UI에서 직접 눈으로 보고 클릭하는 방식이 아닌 프로그래밍에 의한 제어가 가능해짐</li>
+<li>일괄작업: Airflow UI에서 할 수 없는 일괄 작업 방식을 제공
+<ul>
+<li>ex: connection 일괄 등록. 만약 airflow ui로 등록하면 일일히 등록해야한다.</li>
+<li>물론 CLI를 이용하는 방법 외에 metaDB table에 직접 insert하는 방법도 있음</li>
+</ul></li>
+<li>특수기능: Airflow UI에서는 할 수 없는 기능을 제공
+<ul>
+<li>ex: backfill 은 airflow ui 를 통해서는 실행 불가</li>
+</ul></li>
+<li>자동화: Airflow UI에서 직접 눈으로 보고 클릭하는 방식이 아닌 프로그래밍에 의한 제어가 가능해짐
+<ul>
+<li>CLI 커맨드는 shell 명령어로 이루저있기 때문에 shell script를 작성하여 자동화 할 수 있다.</li>
+</ul></li>
 </ul></li>
 </ul>
 <section id="cli---dag-trigger" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="cli---dag-trigger"><span class="header-section-number">6.1</span> cli - dag trigger</h2>
 <ul>
-<li><p>manual 로 dag trigger 하거나 run_id 를 직접 넣어 trigger 할 수 있는 기능</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../../.././../../images/airflow/cli_dag_trigger.PNG" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">CLI-Dag Trigger</figcaption>
-</figure>
-</div>
+<li><p>dag trigger: airflow ui 상에서 manual 로 dag trigger 하거나 run_id 를 직접 넣어 trigger 할 수 있는 기능으로 CLI로 실행시킬 수 있다.</p></li>
+<li><p>CLI 명령은 WSL2에서 하는게 아니라 docker container안에서 해야함</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>airflow dags trigger <span class="co">[</span><span class="ot">-h</span><span class="co">] [-c CONF]</span> <span class="co">[</span><span class="ot">-e EXEC_DATE</span><span class="co">]</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                     <span class="co">[</span><span class="ot">--no-replace-microseconds</span><span class="co">] [-o table, json, yaml, plain]</span> <span class="co">[</span><span class="ot">-r RUN_ID</span><span class="co">] [-S SUBDIR]</span> <span class="co">[</span><span class="ot">-v</span><span class="co">]</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                   dag_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
-<li><code>#&gt; airflow dags trigger dags_seoul_api_corona</code></li>
+<li>EXEC_DATE: execution_date parameter는 모두 data_interval_start 기준이며 String 형식으로 입력하면 기본 UTC로 계산됨</li>
+<li>RUN_ID를 입력하면 기본적으로 manual__로 시작하며 run_id를 직접 입력도 가능</li>
+<li>예시: <code>#&gt; airflow dags trigger dags_seoul_api_corona</code></li>
 </ul></li>
+<li><p>Full Example</p></li>
+</ul>
+<div class="sourceCode" id="cb15"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># docker container list 확인</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>sudo docker ps </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fu"># webserver container 선택 (어떤 것을 골라도 상관없음)</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="fu"># airflow container 들어가기: sudo docker exec -it [docker_container_id] bash</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>sudo docker exec -it 8b755cb5aa70 bash </span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="fu"># trigger 명령어 실행</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>airflow dags trigger dags_base_branch_operator</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="결과" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="결과"><span class="header-section-number">6.2</span> 결과</h2>
+<pre><code> |                 |                | data_interval_e | data_interval_ |          | external_trigge | last_schedulin |                 |          |            |</code></pre>
+<p>conf | dag_id | dag_run_id | nd | start | end_date | r | g_decision | logical_date | run_type | start_date | state =====+=================+================+=================+================+==========+=================+================+=================+==========+============+======= {} | dags_base_branc | manual__2023-0 | 2023-07-22T05:0 | 2023-07-22T05: | None | True | None | 2023-07-22T05:0 | manual | None | queued | h_operator | 7-22T05:05:59+ | 5:59+00:00 | 05:59+00:00 | | | | 5:59+00:00 | | | | | 00:00 | | | | | | | | |</p>
+<ul>
+<li>dag_run_id: manual__2023-07-22T05:05:59+00:00. ClI 로 돌렸기 때문에 manual_이 붙어있음</li>
 </ul>
 </section>
-<section id="cli---dag-backfill" class="level2" data-number="6.2">
-<h2 data-number="6.2" class="anchored" data-anchor-id="cli---dag-backfill"><span class="header-section-number">6.2</span> cli - dag backfill</h2>
+<section id="cli---dag-backfill" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="cli---dag-backfill"><span class="header-section-number">6.3</span> cli - dag backfill</h2>
 <ul>
 <li>입력 스케줄 구간에 대해 일괄 (재)실행 (스케줄 이력이 없는 과거 날짜도 가능) <img src="../../.././../../images/airflow/cli_dag_balckfill.PNG" class="img-fluid" alt="CLI-Dag backfill"></li>
 </ul>
-<div class="sourceCode" id="cb6"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>#&gt; airflow dags backfill -s 2023-04-19 -e 2023-04-21 dags_seoul_api_corona</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu"># start, end 파라미터를 dash string 형태로 입력하면 UTC로 간주되며 타임스탬프 형태로 직접 작성도 가능 (run_id에서 해당하는 날짜 구간을 찾아 실행)</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>#&gt; airflow dags backfill -s 2023-04-19T22:00:00+00:00 -e 2023-04-20T22:00:00+00:00 —</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>reset-dagruns dags_seoul_api_corona</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>#&gt; airflow dags backfill -s 2023-04-19 -e 2023-04-21 dags_seoul_api_corona</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu"># start, end 파라미터를 dash string 형태로 입력하면 UTC로 간주되며 타임스탬프 형태로 직접 작성도 가능 (run_id에서 해당하는 날짜 구간을 찾아 실행)</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>#&gt; airflow dags backfill -s 2023-04-19T22:00:00+00:00 -e 2023-04-20T22:00:00+00:00 —</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>reset-dagruns dags_seoul_api_corona</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="cli---task-clear" class="level2" data-number="6.3">
-<h2 data-number="6.3" class="anchored" data-anchor-id="cli---task-clear"><span class="header-section-number">6.3</span> cli - task clear</h2>
+<section id="cli---task-clear" class="level2" data-number="6.4">
+<h2 data-number="6.4" class="anchored" data-anchor-id="cli---task-clear"><span class="header-section-number">6.4</span> cli - task clear</h2>
 <ul>
 <li>Clear 작업을 start / end 구간으로 일괄 재실행</li>
 <li>Backfill과 달리 수행되지 않은 스케줄 구간은 실행할 수 없음 <img src="../../../../../images/airflow/cli_task_cleaner.PNG" class="img-fluid" alt="CLI-Task Clear"></li>
 </ul>
-<div class="sourceCode" id="cb7"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>#&gt; airflow tasks clear -s 2023-05-07 -e 2023-05-12 dags_seoul_api_corona</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>#&gt; airflow tasks clear -s 2023-05-07T22:00:00+00:00 -e 2023-05-12T22:00:00+00:00</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>dags_seoul_api_corona</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>#&gt; airflow tasks clear -s 2023-05-07 -e 2023-05-12 dags_seoul_api_corona</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>#&gt; airflow tasks clear -s 2023-05-07T22:00:00+00:00 -e 2023-05-12T22:00:00+00:00</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>dags_seoul_api_corona</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ul>
 <li>Backfill되었던 DAG은 clear 불가함. reset-dagruns 옵션과 함께 다시 Backfill 수행해야 함</li>
 </ul>
 </section>
-<section id="정리-2" class="level2" data-number="6.4">
-<h2 data-number="6.4" class="anchored" data-anchor-id="정리-2"><span class="header-section-number">6.4</span> 정리</h2>
+<section id="정리-2" class="level2" data-number="6.5">
+<h2 data-number="6.5" class="anchored" data-anchor-id="정리-2"><span class="header-section-number">6.5</span> 정리</h2>
 <table class="table">
 <colgroup>
 <col style="width: 25%">

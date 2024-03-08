@@ -1,9 +1,9 @@
 ---
-title: "FDA Algorithms Validation"
-subtitle: "Seegene's Top Priority Project: Diagnostic Signal Processing Algorithm Validation for Surveilance"
-description: "This project is necessary for entering global markets to prepare for the requirement of governments all around the world. Due to security concerns, it is difficult to display the data used in this project."
+title: "Baseline Fitting Algorithm Improvement"
+subtitle: "Diagnostic Algorithms Optimization"
+description: "This project is to improve the baseline-fitting performance of the diagnostic signal processing algorithms."
 author: Kwangmin Kim
-date: 2023-04-22
+date: 2024-03-08
 format: 
   html:
     toc: true  
@@ -25,12 +25,15 @@ format:
 
 ## Background
 
-* 의료 장비와 연관된 시약 제품의 특성상 Global Market 진출시 각 국가의 정부에서 자국민의 건강 및 생명의 안전을 위해 요구하는 규제사항들이 있다.
-    * 시약의 안정성 검증 요구
-    * 장비의 안정성 검증 요구
-    * Software의 안정성 검증 요구
-    * **Diagnostic Algorithm의 안정성 검증 요구**
-* COVID19 특수 시기 해제 후 Global market으로의 진입 및 관리를 위해 각 국의 정부가 요구하는 제품의 안정성 검증 및 규제 사항들을 충족시켜야한다.
+### Real Time PCR의 원리
+
+Real Time PCR 장비의 원리는 핵산 (Nucleic Acid) 검체의 존재 여부를 확인하기 위해, 각 사이클마다 핵산 검체를 2배씩 증폭시키면서 신호를 감지하는 것이다. 증폭된 검체의 신호가 일정 농도 이하일 경우, PCR 장비는 신호를 감지하지 못하고 장비 내부 기본값과 시약 및 소모품의 값이 합산된 신호로 반환한다. 증폭된 검체의 신호가 일정 농도 이상일 때부터 PCR 장비에서는 신호의 변화가 나타나며, 포화 상태에 이를 때까지 신호가 2의 지수승으로 증가한다. 포화 상태에 도달하면 신호는 더 이상 증가하지 않고 일정하게 유지된다. 이러한 방식으로 Real Time PCR 장비의 신호는 이론적으로 sigmoid curve의 패턴을 나타내게 된다.
+
+PCR 신호는 시험관 내에서 일어나는 미시적인 화학 반응, 광학 반응 및 기계적 반응의 결과로 나타난다. 그러나 이러한 반응으로 인해 사람이 명확히 측정하거나 설명할 수 없는 원인에 의한 노이즈가 섞일 수 있다. 이는 검체의 농도를 추정할 수 있는 지표인 Ct 값에 편향을 일으키며, 결과적으로 위양성 또는 위음성 결과가 나타날 위험을 증가시킨다.
+
+이런 noise를 보정한 후 진단 알고리즘의 최종 출력물인 검체의 존재 여부/ Ct 값을 반환하기 위해 sigmoid fitting을 수행한다.
+
+* 
 * EU(European Union)의 경우 IVDR (In Vitro Diagnostics Regulation) 을 요구한다. 
 * 북미시장에 진출하기 위해 세계에서 가장 엄격한 기준을 요구하는 미국의 FDA와 캐나다의 Health Canada의 surveilance 기준으로 진단 알고리즘의 안정성 검증 문서를 기획하고 작성해야한다.
 * 시간이 지날 수록 각 국에서 software 및 algorithms에 대한 규제가 강화되고 있기때문에 기존의 Software Engineering에 의한 안전성 검증 방식보다 더 엄격한 Advanced Testing이 요구되고 있다.

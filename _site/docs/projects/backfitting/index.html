@@ -2,12 +2,15 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.335">
+<meta name="generator" content="quarto-1.4.543">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Kwangmin Kim">
+<meta name="dcterms.date" content="2024-03-08">
+<meta name="description" content="This project is to improve the baseline-fitting performance of the diagnostic signal processing algorithms.">
 
-<title>Kwangmin Kim – index</title>
+<title>Kwangmin Kim - Baseline Fitting Algorithm Improvement</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -17,7 +20,7 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
 </style>
@@ -45,7 +48,13 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -54,22 +63,53 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../styles.css">
 </head>
 
-<body class="nav-sidebar floating nav-fixed">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="../../../index.html" class="navbar-brand navbar-brand-logo">
     <img src="../../.././images/logo.png" alt="" class="navbar-logo">
     </a>
@@ -77,269 +117,435 @@ ul.task-list li input[type="checkbox"] {
     <span class="navbar-title">Kwangmin Kim</span>
     </a>
   </div>
+            <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../../index.html">
- <span class="menu-text">Home</span></a>
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../../docs/CV/index.html">
- <span class="menu-text">CV</span></a>
+    <a class="nav-link" href="../../../docs/CV/index.html"> 
+<span class="menu-text">CV</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../../../docs/projects/index.html" aria-current="page">
- <span class="menu-text">Projects</span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../../../docs/blog/index.html">
- <span class="menu-text">Blog</span></a>
+    <a class="nav-link" href="../../../docs/projects/index.html"> 
+<span class="menu-text">Projects</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../../about.html">
- <span class="menu-text">Me</span></a>
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">Me</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/kmink3225"><i class="bi bi-github" role="img" aria-label="Github">
+    <a class="nav-link" href="https://github.com/kmink3225"> <i class="bi bi-github" role="img" aria-label="Github">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://www.linkedin.com/in/kwangmin-kim-a5241b200/"><i class="bi bi-linkedin" role="img" aria-label="Linkedin">
+    <a class="nav-link" href="https://www.linkedin.com/in/kwangmin-kim-a5241b200/"> <i class="bi bi-linkedin" role="img" aria-label="Linkedin">
 </i> 
- <span class="menu-text"></span></a>
-  </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="../../../docs/blog/index.html"><i class="bi bi-rss" role="img">
-</i> 
- <span class="menu-text">Blog</span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
-              <div id="quarto-search" class="" title="Search"></div>
           </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
       </div> <!-- /container-fluid -->
     </nav>
-  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-    <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"></h1>
-      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
-        <i class="bi bi-chevron-right"></i>
-      </button>
-    </div>
-  </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
-    <div class="sidebar-menu-container"> 
-    <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/index.html" class="sidebar-item-text sidebar-link">Projects</a>
-  </div>
-</li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">LLFS</a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="false">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/LLFS/project_description.html" class="sidebar-item-text sidebar-link">Description</a>
-  </div>
-</li>
-          <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">Self Project</a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="false">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth2 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/LLFS/self_description.html" class="sidebar-item-text sidebar-link">Project Description</a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/LLFS/data_preparation.html" class="sidebar-item-text sidebar-link">Data Preparation</a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/LLFS/eda.html" class="sidebar-item-text sidebar-link">EDA</a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/LLFS/mining.html" class="sidebar-item-text sidebar-link">Data Mining</a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/LLFS/statistical_approach.html" class="sidebar-item-text sidebar-link">Statistical Approach</a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/LLFS/ml_approach.html" class="sidebar-item-text sidebar-link">ML Approach</a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/LLFS/report.html" class="sidebar-item-text sidebar-link">Conclusion</a>
-  </div>
-</li>
-      </ul>
-  </li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">Platform Plan</a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="false">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/platform_plan/index.html" class="sidebar-item-text sidebar-link">index.html</a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">Diagnostic Algorithm</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/backfitting/index.html" class="sidebar-item-text sidebar-link active">index.html</a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">Clinical Data Analysis</a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-5" aria-expanded="false">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-5" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/pcr_clinical/index.html" class="sidebar-item-text sidebar-link">PCR Clinical Data Analysis</a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">Diagnostic Device QC</a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-6" aria-expanded="false">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-6" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/device_qc/index.html" class="sidebar-item-text sidebar-link">index.html</a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">Noise Test Prediction</a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-7" aria-expanded="false">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-7" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/noise_prediction/index.html" class="sidebar-item-text sidebar-link">index.html</a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">Heavy Metal Removal</a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-8" aria-expanded="false">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-8" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/heavy_metal/index.html" class="sidebar-item-text sidebar-link">index.html</a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">Diffusion Model</a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-9" aria-expanded="false">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/social_network/index.html" class="sidebar-item-text sidebar-link">index.html</a>
-  </div>
-</li>
-      </ul>
-  </li>
-        <li class="sidebar-item sidebar-item-section">
-      <div class="sidebar-item-container"> 
-            <a class="sidebar-item-text sidebar-link text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">Phellinus Linteus Effects</a>
-          <a class="sidebar-item-toggle text-start collapsed" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-10" aria-expanded="false">
-            <i class="bi bi-chevron-right ms-2"></i>
-          </a> 
-      </div>
-      <ul id="quarto-sidebar-section-10" class="collapse list-unstyled sidebar-section depth1 ">  
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../../../docs/projects/phellinus_linteus/index.html" class="sidebar-item-text sidebar-link">index.html</a>
-  </div>
-</li>
-      </ul>
-  </li>
-    </ul>
-    </div>
-</nav>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
         
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
+<main class="content column-page" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Baseline Fitting Algorithm Improvement</h1>
+<p class="subtitle lead">Diagnostic Algorithms Optimization</p>
+</div>
+
+<div>
+  <div class="description">
+    This project is to improve the baseline-fitting performance of the diagnostic signal processing algorithms.
+  </div>
+</div>
+
+
+<div class="quarto-title-meta column-page">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Kwangmin Kim </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 8, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+<li class="nav-item" role="presentation">
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">
+Korean
+</button>
+</li>
+<li class="nav-item" role="presentation">
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">
+English
+</button>
+</li>
+<div class="tab-content" id="language-tabcontent">
+
+<div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
+<section id="background" class="level2">
+<h2 class="anchored" data-anchor-id="background">Background</h2>
+<section id="real-time-pcr의-원리" class="level3">
+<h3 class="anchored" data-anchor-id="real-time-pcr의-원리">Real Time PCR의 원리</h3>
+<p>Real Time PCR 장비는 핵산(Nucleic Acid) 검체의 존재 여부를 확인하기 위해 각 사이클마다 핵산 검체를 2배씩 증폭하면서 신호를 감지한다.</p>
+<ul>
+<li>Lag Phase (지연 단계): 증폭된 검체의 신호가 일정 농도 이하일 경우, PCR 장비는 신호를 감지하지 못하고, 장비 내부 기본값과 시약 및 소모품의 값이 합산된 신호로 반환한다. 이는 일정 시간 동안 지연되는 구간이다.</li>
+<li>Log Phase (로그 단계): 증폭된 검체의 신호가 일정 농도 이상일 때, PCR 장비에서는 신호의 변화가 나타나며, 포화 상태에 이를 때까지 신호가 2의 지수승으로 증가한다.</li>
+<li>Plateau Phase (플라토 단계): 효소의 활성도 감소 및 반응물의 고갈 등으로 인해 포화 상태에 도달하면, 신호는 더 이상 증가하지 않고 일정하게 유지된다.</li>
+</ul>
+<p>이러한 방식으로 Real Time PCR 장비의 신호는 이론적으로 <strong>sigmoid curve</strong>의 패턴을 나타낸다.</p>
+</section>
+<section id="risk" class="level3">
+<h3 class="anchored" data-anchor-id="risk">Risk</h3>
+<p>PCR 신호는 시험관 내에서 일어나는 미시적 화학 반응, 광학 반응 및 기계적 반응의 결과이다. 이 과정에서 인간이 명확히 측정하거나 설명하기 어려운 원인에 의한 노이즈가 섞일 수 있다. 이로 인해 Ct 값의 편향과 결과적으로 위양성 또는 위음성 결과가 발생할 위험이 증가할 수 있다.</p>
+</section>
+<section id="pcr-신호처리-및-최종-출력물" class="level3">
+<h3 class="anchored" data-anchor-id="pcr-신호처리-및-최종-출력물">PCR 신호처리 및 최종 출력물</h3>
+<p>따라서, 이러한 노이즈를 보정하기 위한 전처리 방법이 필요하다. 전처리 후, 진단 알고리즘은 검체의 존재 여부와 Ct 값을 시그모이드 곡선 적합을 통해 최종 출력한다.</p>
+</section>
+</section>
+<section id="objective" class="level2">
+<h2 class="anchored" data-anchor-id="objective">Objective</h2>
+<p>noise를 보정하는 대표적인 전처리 방식 중 하나인 baseline 차감 알고리즘을 최적화한다. Baseline의 차감은 baseline fitting을 수행하여 fitted value를 raw data에서 차감한다.</p>
+<p><span class="math display">\[
+\text{RFU (or PCR Signal)} =  \text{Signal} + \text{Noise} + \text{Error}
+\]</span></p>
+<ul>
+<li>Signal: 시약에 의한 순수 증폭 및 미증폭 신호</li>
+<li>Noise: 장비의 결함, 소모품 및 시약의 기대하지 않은 반응에 의한 신호</li>
+<li>Error: 다른 설명할 수 없는 요인으로 인하여 발생한 신호</li>
+</ul>
+</section>
+<section id="rationale" class="level2">
+<h2 class="anchored" data-anchor-id="rationale">Rationale</h2>
+<p>Baseline 데이터에 노이즈가 많을 경우, 최적화 과정에서 과적합이나 local minima와 같은 문제로 인해 파라미터 추정의 복잡성이 증가한다. 따라서, sigmoid curve fitting 전의 전처리 단계인 baseline subtraction의 정확도가 매우 중요하다.</p>
+</section>
+<section id="motivation" class="level2">
+<h2 class="anchored" data-anchor-id="motivation">Motivation</h2>
+<p>회사에 처음 입사했을 때, 수많은 if문과 설정값, 그리고 해석하기 어려운 코드에 압도되었다. rule-based 알고리즘이 data-driven 알고리즘에 비해 성능이 떨어진다고는 할 수 없지만, 변화무쌍한 PCR 신호를 조건문으로 처리하기에는 한계가 있다고 판단했다. 따라서, 점진적으로 진단 알고리즘을 data-driven 방식으로 개선할 필요가 있다고 생각했다.</p>
+<section id="considerations" class="level3">
+<h3 class="anchored" data-anchor-id="considerations">Considerations</h3>
+<ul>
+<li>보수적인 biologists와 전문적 지식이 없는 임원진을 이해시킬 수 있는 설명력있는 간단한 알고리즘이어야 한다.</li>
+<li>현재의 진단 알고리즘은 수 많은 조건문으로 이루어진 rule-based 알고리즘이기 때문에 전체적인 알고리즘 수정 시 정합성 및 규제 문제가 발생할 수 있다. 따라서, baseline fitting 알고리즘만 개선하여 대체해야 한다.</li>
+<li>통계를 전공하지 않은 알고리즘 관리자1 (Computer Science 전공), 관리자2 (Physics 전공)가 이해할 수 있도록 알고리즘 평가 metric을 선정 및 설명할 수 있어야한다.</li>
+<li>Python으로 작성된 알고리즘을 C++로 porting을 해야만하기 때문에 최소한의 package를 사용하여 알고리즘을 low level로 coding해야한다.</li>
+<li>Lag Phase에서의 baseline data points 수가 적을 수 있으므로, 적은 데이터로도 fitting할 수 있는 알고리즘이 필요하다.</li>
+<li>baseline의 noise 패턴은 매우 다양하지만 기존의 legacy baseline fitting 알고리즘은 1차 곡선과 2차 곡선으로 fitting 한다. 따라서, 다양한 noise 패턴에 대응할 수 있는 알고리즘이 필요하다.</li>
+</ul>
+</section>
+<section id="goal" class="level3">
+<h3 class="anchored" data-anchor-id="goal">Goal</h3>
+<ul>
+<li>기존 및 새로운 baseline fitting 알고리즘들의 성능을 평가 및 비교한다.
+<ul>
+<li>알고리즘 1 (rule-based): 자사의 기존 legacy baseline fitting 알고리즘 named ‘Legacy’</li>
+<li>알고리즘 2 (rule-based): 자사의 biologists들이 실험 설정값을 산출해내기 위해 사용되는 baseline fitting 알고리즘 named ‘Bio’</li>
+<li>알고리즘 3 (black box): 업계 1위 타사의 black box인 baseline fitting 알고리즘 named ‘Black Box’</li>
+<li>알고리즘 4 (rule-based): 자사의 신제품에 특이적인 증폭신호에 최적화된 baseline fitting 알고리즘 named ‘신제품’</li>
+<li>알고리즘 5 (rule-based): 알고리즘4 를 개선한 새로운 조건문이 추가된 rule-based 알고리즘 named ‘신제품 +’</li>
+<li>알고리즘 6 (data-driven): machine learning을 이용한 baseline fitting 알고리즘 named ‘ML’</li>
+</ul></li>
+<li>음성 신호에 한하여 위양성 결과를 최소화하기 위해 baseline 차감 알고리즘을 최적화하여 여러 baseline fitting 알고리즘을 단일화한다.</li>
+<li>알고리즘의 성능을 평가할 수 있는 평가 metrics을 찾거나 개발한다.</li>
+</ul>
+</section>
+</section>
+<section id="strategies" class="level2">
+<h2 class="anchored" data-anchor-id="strategies">Strategies</h2>
+<section id="inspiration" class="level3">
+<h3 class="anchored" data-anchor-id="inspiration">Inspiration</h3>
+<p>baseline data를 살펴 보고 다양한 신호 패턴의 존재를 인식하고, 차감 결과가 white noise에 가까워야 성공적인 것으로 간주했다. 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여, 다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 선택했다. 이 접근법은 데이터의 feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링할 수 있게 한다. 그러나 다항식의 차수가 증가함에 따라 과적합의 위험이 있으므로, 적절한 차수 선택과 정규화를 통해 신호에 적합한 모델을 선택할 수 있도록 해야 한다.</p>
+</section>
+</section>
+<section id="methodology" class="level2">
+<h2 class="anchored" data-anchor-id="methodology">Methodology</h2>
+</section>
+<section id="result" class="level2">
+<h2 class="anchored" data-anchor-id="result">Result</h2>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+</section>
+<section id="issues" class="level2">
+<h2 class="anchored" data-anchor-id="issues">Issues</h2>
+</section>
+<section id="solutions-to-issues" class="level2">
+<h2 class="anchored" data-anchor-id="solutions-to-issues">Solutions to Issues</h2>
+</section>
+<section id="required-skills" class="level2">
+<h2 class="anchored" data-anchor-id="required-skills">Required Skills</h2>
+<ul>
+<li>Statistics</li>
+<li>Python</li>
+</ul>
+</section>
+<section id="colaborators" class="level2">
+<h2 class="anchored" data-anchor-id="colaborators">Colaborators</h2>
+<ul>
+<li>3 data scientists (I am a project manager.)</li>
+<li>2 data enineers</li>
+<li>2 biologists</li>
+</ul>
+</section>
+<section id="acheivements" class="level2">
+<h2 class="anchored" data-anchor-id="acheivements">Acheivements</h2>
+<table class="table">
+<thead>
+<tr class="header">
+<th style="text-align: center;">Output</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="long-term-project" class="level2">
+<h2 class="anchored" data-anchor-id="long-term-project">Long Term Project</h2>
+<ul>
+<li>알고리즘 Verification and Validation</li>
+</ul>
+</section>
+</div>
+<div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
+<section id="background-1" class="level2">
+<h2 class="anchored" data-anchor-id="background-1">Background</h2>
+<ul>
+<li>Due to the nature of reagent products related to medical device, there are regulations required by each country’s government for the health and life safety of its citizens when entering the global market.
+<ul>
+<li>Reagent stability verification and validation required</li>
+<li>Equipment stability verification and validation request</li>
+<li>Software stability verification and validation request</li>
+<li><strong>Stability verification and validation Request of Diagnostic Algorithm</strong></li>
+</ul></li>
+<li>In order to enter and manage the global market after the COVID19 special period is lifted, product safety verification and regulatory requirements required by each country’s government must be met.</li>
+<li>In the case of the EU (European Union), IVDR (In Vitro Diagnostics Regulation) is required</li>
+<li>In order to enter the North American market, it is necessary to plan and write a document verifying the stability of the diagnostic algorithm based on the surveilance standards of the US FDA and Canada’s Health Canada, which require the world’s most stringent standards.</li>
+<li>As time goes by, regulations on software and algorithms are being strengthened in each country, so advanced testing that is more stringent than the existing safety verification method by software engineering is required.</li>
+<li>Therefore, the stability verification and validation of the diagnostic algorithm includes software engineering testing and advanced testing. Here, advanced testing means statistical testing based on statistical analysis, and building a stable software engineering system is the prerequisite.</li>
+<li>Since the stability verification method of Seegene’s Diagnostic Signal Process (DSP) Algorithm is directly related to the business performance of the company, it is classified as a first-class security matter within the company, so specific and detailed planning and implementation details cannot be shared.</li>
+</ul>
+</section>
+<section id="objective-1" class="level2">
+<h2 class="anchored" data-anchor-id="objective-1">Objective</h2>
+<ul>
+<li>Design a system to statistically prove that the algorithm shows safe performance.</li>
+<li>Establish a Statistical Validation System to prove that the algorithm shows safe performance through statistical analysis.
+<ul>
+<li>Here, Establishment is defined as Definition, Documentation, and Implementation.</li>
+</ul></li>
+<li>Define the risk of the algorithm in detail and quantitatively analyze the effect of the risk on the algorithm.</li>
+<li>It is proved through statistical simulation that the algorithm is capable of risk management.</li>
+<li>In the case of code changes according to algorithm implementations and operations, a new validation report must be submitted, so an automation system is built.</li>
+</ul>
+</section>
+<section id="methodology-1" class="level2">
+<h2 class="anchored" data-anchor-id="methodology-1">Methodology</h2>
+<ul>
+<li>Refer to the guidance of SGS, a company that issues and provides training for the world’s most stringent inspection certificates.</li>
+<li>SGS provides guidance to the FDA as a target.</li>
+<li>After thoroughly reading the General Principles of Software Validation document provided by the FDA for software safety verification, establish a validation system based on this document.
+<ul>
+<li><a href="https://www.fda.gov/regulatory-information/search-fda-guidance-documents/general-principles-software-validation">Copy: General Principles of Software Validation</a></li>
+<li><a href="../../../docs/blog/posts/Surveilance/2022-12-10_FDA_sw_general_guidance/index.html">Summary: General Principles of Software Validation</a></li>
+<li><a href="../../../docs/blog/posts/Surveilance/2023-01-27_FDA_sw_general_guidance_presentation/index.html">Diagram: General Principles of Software Validation</a></li>
+</ul></li>
+<li>Software engineering is performed based on the General Principles of Software Validation document.</li>
+<li>The stability verification of Diagnostic Algorithm includes both Structural Testing and Advanced Testing. Structural Testing means code-based Software Engineering Testing and Advanced Testing means Statistical Testing based on Statistical Analysis. Advanced Testing is based on the establishment of a stable Software Engineering System.</li>
+<li>Establish a definition and logic for algorithm safety.</li>
+<li>Establish metrics or indicators for algorithm safety.</li>
+<li>Statistical Testing, which is Advanced Testing, is a task that requires the creativity of a data scientist, and a testing model is planned to materialize and document statistical analysis design.</li>
+<li>Cooperation between the BT (Biotechnology) sector and the IT (Information technology) sector must be a premise, and engineering design and statistical design should be established considering the BT department’s experimental design and limitation factors at a experimental level.</li>
+<li>Find a statistical model suitable for the planned testing model and calculate the minimum reuirement sample size.</li>
+<li>As per the above strategy, the BT department conducts experiments and the IT department (Data Science team) conducts analysis.</li>
+<li>Establish a document automation system in case of code changes in algorithm implementation and operation and the obligation to submit a new validation report for new products.</li>
+</ul>
+</section>
+<section id="issues-solutions" class="level2">
+<h2 class="anchored" data-anchor-id="issues-solutions">Issues &amp; Solutions</h2>
+<section id="issues-1" class="level3">
+<h3 class="anchored" data-anchor-id="issues-1">Issues</h3>
+<ul>
+<li>Absence of a system that can input data generated by BT departments</li>
+<li>Difficulties in communication due to lack of job description in BT departments.</li>
+<li>Absence of a system that preprocesses input data.</li>
+<li>Difficulties in communication within the team due to lack of job description within the Data Science team.</li>
+<li>It is so rare that no precedent or template for validation report can be found.</li>
+</ul>
+</section>
+<section id="solutions" class="level3">
+<h3 class="anchored" data-anchor-id="solutions">Solutions</h3>
+<ul>
+<li>Building a system that can input data generated by BT departments
+<ul>
+<li>digitalization: experimental design file, raw data generated from medical device, data extracted from medical device</li>
+</ul></li>
+<li>Work documented through communication with the BT department to establish the standard for the expected correct answer of the experiment results, and to establish independent and dependent variables</li>
+<li>Building an engineering system that preprocesses input data and merges the results of diagnostic algorithms</li>
+<li>Strengthen Data Quality Control Process
+<ul>
+<li>Step 1 typo correction</li>
+<li>Step 2 missing value processing</li>
+<li>Step 3 anomaly data processing</li>
+<li>Step 4 algorithm data conformity 1st Test: Preprocessed algorithm for FDA validation vs Original algorithm</li>
+<li>Step 5 algorithm data conformity 2nd test: Data Science team’s preprocessed algorithm for FDA validation vs algorithm published by BT department</li>
+</ul></li>
+<li>Realization of code centralization, data centralization, and documentation of specific matters by writing job descriptions within the Data Science team</li>
+<li>Plan and conduct statistical analysis after planning and establishing Seegene’s own software testing &amp; advanced testing model</li>
+</ul>
+</section>
+</section>
+<section id="required-skills-1" class="level2">
+<h2 class="anchored" data-anchor-id="required-skills-1">Required Skills</h2>
+<ul>
+<li>FDA software validation knowledge</li>
+<li>Statistics</li>
+<li>Dynamic documentation</li>
+<li>Biology</li>
+<li>Clinical study design</li>
+<li>R, Python, Matlab</li>
+<li>Apache Airflow</li>
+</ul>
+</section>
+<section id="colaborators-1" class="level2">
+<h2 class="anchored" data-anchor-id="colaborators-1">Colaborators</h2>
+<ul>
+<li>5 data scientists (I am a project manager.)</li>
+<li>3 data enineers</li>
+<li>27 biologists</li>
+<li>2 patent attorneys</li>
+</ul>
+</section>
+<section id="acheivements-1" class="level2">
+<h2 class="anchored" data-anchor-id="acheivements-1">Acheivements</h2>
+<table class="table">
+<colgroup>
+<col style="width: 55%">
+<col style="width: 44%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">DSP Algorithm Output</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">FDA Validation 1st Draft</td>
+<td style="text-align: left;">the 1st draft of verification &amp; validation report for FDA submission</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Data Input System</td>
+<td style="text-align: left;">It is a temporary data input system that develops into a platform that calculates a large amount of data in large quantities.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Documentation System</td>
+<td style="text-align: left;">Establishment of previously absent documentation and document automation systems <span class="math inline">\(\rightarrow\)</span> Necessary for business communication and establishment of Relational Database System</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Data Management System</td>
+<td style="text-align: left;">data quality control system</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">FDA Validation Model</td>
+<td style="text-align: left;">Establishment of validation model for DSP algorithm</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Patent Invention</td>
+<td style="text-align: left;">Inventing the FDA Validation Model</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">In-house first Performance evaluation of algorithms and reagent products</td>
+<td style="text-align: left;">Comprehensive performance evaluation of algorithms and reagent products that did not previously exist in-house</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Statistical analysis related to algorithmic risk management</td>
+<td style="text-align: left;">Risk management-related statistical analysis is performed on noise and anomaly data that may occur due to reagent and equipment-specific random effects and other confounders.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="long-term-project-1" class="level2">
+<h2 class="anchored" data-anchor-id="long-term-project-1">Long Term Project</h2>
+<ul>
+<li>Collaboratively write BT’s job description and establish RDB system</li>
+<li>Building a DevOps Platform for reagents, equipment, software and algorithm validation</li>
+</ul>
+</section>
+</div>
 
 
 
-
-
-
-</main> <!-- /main -->
+</div></ul></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -367,9 +573,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -405,10 +625,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -418,8 +637,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -434,6 +662,238 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
   const findCites = (el) => {
     const parentEl = el.parentElement;
     if (parentEl) {
@@ -474,6 +934,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
+
 
 
 

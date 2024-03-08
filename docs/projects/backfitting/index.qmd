@@ -27,104 +27,108 @@ format:
 
 ### Real Time PCR의 원리
 
-Real Time PCR 장비의 원리는 핵산 (Nucleic Acid) 검체의 존재 여부를 확인하기 위해, 각 사이클마다 핵산 검체를 2배씩 증폭시키면서 신호를 감지하는 것이다. 증폭된 검체의 신호가 일정 농도 이하일 경우, PCR 장비는 신호를 감지하지 못하고 장비 내부 기본값과 시약 및 소모품의 값이 합산된 신호로 반환한다. 증폭된 검체의 신호가 일정 농도 이상일 때부터 PCR 장비에서는 신호의 변화가 나타나며, 포화 상태에 이를 때까지 신호가 2의 지수승으로 증가한다. 포화 상태에 도달하면 신호는 더 이상 증가하지 않고 일정하게 유지된다. 이러한 방식으로 Real Time PCR 장비의 신호는 이론적으로 sigmoid curve의 패턴을 나타내게 된다.
+Real Time PCR 장비는 핵산(Nucleic Acid) 검체의 존재 여부를 확인하기 위해 각 사이클마다 핵산 검체를 2배씩 증폭하면서 신호를 감지한다.
 
-PCR 신호는 시험관 내에서 일어나는 미시적인 화학 반응, 광학 반응 및 기계적 반응의 결과로 나타난다. 그러나 이러한 반응으로 인해 사람이 명확히 측정하거나 설명할 수 없는 원인에 의한 노이즈가 섞일 수 있다. 이는 검체의 농도를 추정할 수 있는 지표인 Ct 값에 편향을 일으키며, 결과적으로 위양성 또는 위음성 결과가 나타날 위험을 증가시킨다.
+* Lag Phase (지연 단계): 증폭된 검체의 신호가 일정 농도 이하일 경우, PCR 장비는 신호를 감지하지 못하고, 장비 내부 기본값과 시약 및 소모품의 값이 합산된 신호로 반환한다. 이는 일정 시간 동안 지연되는 구간이다.
+* Log Phase (로그 단계): 증폭된 검체의 신호가 일정 농도 이상일 때, PCR 장비에서는 신호의 변화가 나타나며, 포화 상태에 이를 때까지 신호가 2의 지수승으로 증가한다.
+* Plateau Phase (플라토 단계): 효소의 활성도 감소 및 반응물의 고갈 등으로 인해 포화 상태에 도달하면, 신호는 더 이상 증가하지 않고 일정하게 유지된다.
 
-이런 noise를 보정한 후 진단 알고리즘의 최종 출력물인 검체의 존재 여부/ Ct 값을 반환하기 위해 sigmoid fitting을 수행한다.
+이러한 방식으로 Real Time PCR 장비의 신호는 이론적으로 **sigmoid curve**의 패턴을 나타낸다.
 
-* 
-* EU(European Union)의 경우 IVDR (In Vitro Diagnostics Regulation) 을 요구한다. 
-* 북미시장에 진출하기 위해 세계에서 가장 엄격한 기준을 요구하는 미국의 FDA와 캐나다의 Health Canada의 surveilance 기준으로 진단 알고리즘의 안정성 검증 문서를 기획하고 작성해야한다.
-* 시간이 지날 수록 각 국에서 software 및 algorithms에 대한 규제가 강화되고 있기때문에 기존의 Software Engineering에 의한 안전성 검증 방식보다 더 엄격한 Advanced Testing이 요구되고 있다.
-* Seegene의 Diagnostic Signal Process (DSP) Algorithm의 안정성 검증 방식은 기업의 사업성과 직결되는 만큼 회사내에서 1급 보안사항으로 분류되어 구체적이고 자세한 기획 및 구현 내용을 공유할 수는 없다.
+### Risk
+
+PCR 신호는 시험관 내에서 일어나는 미시적 화학 반응, 광학 반응 및 기계적 반응의 결과이다. 이 과정에서 인간이 명확히 측정하거나 설명하기 어려운 원인에 의한 노이즈가 섞일 수 있다. 이로 인해 Ct 값의 편향과 결과적으로 위양성 또는 위음성 결과가 발생할 위험이 증가할 수 있다.
+
+### PCR 신호처리 및 최종 출력물
+
+따라서, 이러한 노이즈를 보정하기 위한 전처리 방법이 필요하다. 전처리 후, 진단 알고리즘은 검체의 존재 여부와 Ct 값을 시그모이드 곡선 적합을 통해 최종 출력한다.
 
 ## Objective
 
-* algorithm이 안전한 성능을 보여준다는 것을 통계적으로 증명하기 위한 system을 기획한다.
-* algorithm이 안전한 성능을 보여준다는 것을 Statistical Validation Sytem을 확립하여 통계적 분석으로 증명한다.
-  * 여기서, 확립 (Establishment)은 정의(definition), 문서화(documentation) 및 구현 (Implement)으로 정의된다.
-* algorithm의 risk를 구체적으로 정의하고 risk가 algorithm에 미치는 영향도를 정량 분석한다.
-* algorithm이 risk 관리가 가능하다는 것을 statistical simulation을 통해 증명한다.
-* algorithm 구현 및 운영에 있어서 code의 변화가 있을 경우 새로운 validation report를 제출해야하므로 자동화 시스템을 구축한다. 
+noise를 보정하는 대표적인 전처리 방식 중 하나인 baseline 차감 알고리즘을 최적화한다. Baseline의 차감은 baseline fitting을 수행하여 fitted value를 raw data에서 차감한다. 
+
+$$
+\text{RFU (or PCR Signal)} =  \text{Signal} + \text{Noise} + \text{Error}
+$$
+
+* Signal: 시약에 의한 순수 증폭 및 미증폭 신호
+* Noise: 장비의 결함, 소모품 및 시약의 기대하지 않은 반응에 의한 신호
+* Error: 다른 설명할 수 없는 요인으로 인하여 발생한 신호
+
+## Rationale
+
+Baseline 데이터에 노이즈가 많을 경우, 최적화 과정에서 과적합이나 local minima와 같은 문제로 인해 파라미터 추정의 복잡성이 증가한다. 따라서, sigmoid curve fitting 전의 전처리 단계인 baseline subtraction의 정확도가 매우 중요하다.
+
+## Motivation
+
+회사에 처음 입사했을 때, 수많은 if문과 설정값, 그리고 해석하기 어려운 코드에 압도되었다. rule-based 알고리즘이 data-driven 알고리즘에 비해 성능이 떨어진다고는 할 수 없지만, 변화무쌍한 PCR 신호를 조건문으로 처리하기에는 한계가 있다고 판단했다. 따라서, 점진적으로 진단 알고리즘을 data-driven 방식으로 개선할 필요가 있다고 생각했다.  
+
+### Considerations
+
+* 보수적인 biologists와 전문적 지식이 없는 임원진을 이해시킬 수 있는 설명력있는 간단한 알고리즘이어야 한다.
+* 현재의 진단 알고리즘은 수 많은 조건문으로 이루어진 rule-based 알고리즘이기 때문에 전체적인 알고리즘 수정 시 정합성 및 규제 문제가 발생할 수 있다. 따라서, baseline fitting 알고리즘만 개선하여 대체해야 한다.
+* 통계를 전공하지 않은 알고리즘 관리자1 (Computer Science 전공), 관리자2 (Physics 전공)가 이해할 수 있도록 알고리즘 평가 metric을 선정 및 설명할 수 있어야한다. 
+* Python으로 작성된 알고리즘을 C++로 porting을 해야만하기 때문에 최소한의 package를 사용하여 알고리즘을 low level로 coding해야한다.
+* Lag Phase에서의 baseline data points 수가 적을 수 있으므로, 적은 데이터로도 fitting할 수 있는 알고리즘이 필요하다.
+* baseline의 noise 패턴은 매우 다양하지만 기존의 legacy baseline fitting 알고리즘은 1차 곡선과 2차 곡선으로 fitting 한다. 따라서, 다양한 noise 패턴에 대응할 수 있는 알고리즘이 필요하다.
+
+### Goal
+
+* 기존 및 새로운 baseline fitting 알고리즘들의 성능을 평가 및 비교한다.
+    * 알고리즘 1 (rule-based): 자사의 기존 legacy baseline fitting 알고리즘 named 'Legacy'
+    * 알고리즘 2 (rule-based): 자사의 biologists들이 실험 설정값을 산출해내기 위해 사용되는 baseline fitting 알고리즘 named 'Bio'
+    * 알고리즘 3 (black box): 업계 1위 타사의 black box인 baseline fitting 알고리즘 named 'Black Box'
+    * 알고리즘 4 (rule-based): 자사의 신제품에 특이적인 증폭신호에 최적화된 baseline fitting 알고리즘 named '신제품'
+    * 알고리즘 5 (rule-based): 알고리즘4 를 개선한 새로운 조건문이 추가된 rule-based 알고리즘 named '신제품 +'
+    * 알고리즘 6 (data-driven): machine learning을 이용한 baseline fitting 알고리즘 named 'ML'
+* 음성 신호에 한하여 위양성 결과를 최소화하기 위해 baseline 차감 알고리즘을 최적화하여 여러 baseline fitting 알고리즘을 단일화한다.
+* 알고리즘의 성능을 평가할 수 있는 평가 metrics을 찾거나 개발한다.
+
+## Strategies
+
+### Inspiration
+
+baseline data를 살펴 보고 다양한 신호 패턴의 존재를 인식하고, 차감 결과가 white noise에 가까워야 성공적인 것으로 간주했다. 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여, 다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 선택했다. 이 접근법은 데이터의 feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링할 수 있게 한다. 그러나 다항식의 차수가 증가함에 따라 과적합의 위험이 있으므로, 적절한 차수 선택과 정규화를 통해 신호에 적합한 모델을 선택할 수 있도록 해야 한다.
+
 
 ## Methodology
 
-* 세계에서 가장 엄격한 검열 인증서를 발급 및 교육을 제공하는 기업인 SGS의 guidance를 참고한다.
-* SGS는 FDA를 target으로 guidance를 제공한다.
-* Software의 안전성 검증을 위해 FDA에서 제공하는 General Principles of Software Validation 문서를 정독 후 이 문서를 기반으로 validation system을 확립한다.
-  * [Copy: General Principles of Software Validation](https://www.fda.gov/regulatory-information/search-fda-guidance-documents/general-principles-software-validation)
-  * [Summary: General Principles of Software Validation](../../blog/posts/Surveilance/2022-12-10_FDA_sw_general_guidance/index.qmd)
-  * [Diagram: General Principles of Software Validation](../../blog/posts/Surveilance/2023-01-27_FDA_sw_general_guidance_presentation/index.qmd)
-* Software engineering은 General Principles of Software Validation 문서를 기반하여 수행한다.
-* Diagnostic Algorithm의 안정성 검증은 Structural Testing와 Advanced Testing 모두 포함한다. Structural Testing은 code 기반의 Software Engineering Testing을 의미하고 Advanced Testing은 Statiscal Analysis에 기반한 Statistical Testing을 의미한다. Advanced Testing은 안정적인 Software Engineering System 구축이 그 전제가 된다.
-* algorithm 안전성에 대한 정의와 논리를 확립한다.
-* algorithm 안전성에 대한 지표를 확립한다.
-* Advanced Testing인 Statistical Testing은 data scientist의 창의성이 요구되는 작업으로 Testing Model을 기획하여 statistical analysis design을 구체화 및 문서화한다.
-* BT (Biotechnology) 부문과 IT (Information technology) 부문의 협력이 전제가 되어야하며 BT 부서의 experiment design 및 limitation factors at a experimental level을 고려한 engineering design과 statistical design을 확립한다.
-* 기획된 Testing model에 적합한 statistical model을 찾고 minimum reuirement sample size를 계산한다.
-* 위의 전략대로, BT 부서에서의 실험과 IT 부서 (Data Science 팀)에서 분석을 수행한다.
-* algorithm 구현 및 운영에 있어서 code의 변화가 있을 경우와 새로운 제품에 대한 새로운 validation report를 제출해야하는 의무사항에 대비한 문서 자동화 시스템을 구축한다. 
+## Result
 
-## Issues 및 Solutions
+## Conclusion
 
-### Issues
+## Issues
 
-* BT에서 생성된 data를 입력할 수 있는 시스템 부재
-* BT부서의 업무기술서 부재로 인한 소통의 어려움
-* 입력 데이터를 전처리하는 시스템 부재
-* Data Science 팀내 업무 기술서 부재로 인한 팀내 소통의 어려움
-* Validation report에 대한 선례 및 template를 찾을 수 없을 정도로 매우 드물다.
-
-### Solutions
-
-* BT에서 생성된 data를 입력할 수 있는 시스템 구축
-  * digitalization: experimental design file, raw data generated from medical device, data extracted from medical device
-* BT부서와의 소통으로 업무 문서화를 진행하여 실험 결과의 기대 정답 기준 확립, 독립 변수 및 종속 변수 확립
-* 입력 데이터를 전처리하여 diagnostic algorithm의 결과물을 병합하는 engineering 시스템 구축
-* Data Quality Control Process 강화
-  * 1단계 오타 교정
-  * 2단계 결측치 처리
-  * 3단계 anomaly data 처리
-  * 4단계 algorithm data 정합성 1차 검정: FDA validtion을 위한 전처리된 algorithm vs Original algorithm
-  * 5단계 algorithm data 정합성 2차 검정: Data Science팀의 FDA validtion을 위한 전처리된 algorithm vs BT 부서에 published algorithm
-* Data Science 팀내 업무 기술서 작성으로 코드 중앙화, 데이터 중앙화, 특이사항 문서화 실현
-* Seegene 고유의 software testing & advanced testing model 기획 및 확립 후 statistical analysis 기획 및 수행
+## Solutions to Issues
 
 ## Required Skills
 
-* FDA software validation knowledge
 * Statistics
-* Dynamic documentation
-* Biology
-* Clinical study design
-* R, Python, Matlab
-* Apache Airflow
+* Python
 
 ## Colaborators
 
-* 5 data scientists (I am a project manager.)
-* 3 data enineers
-* 27 biologists
-* 2 patent attorneys
+* 3 data scientists (I am a project manager.)
+* 2 data enineers
+* 2 biologists
  
 ## Acheivements
 
-|DSP Algorithm Output| Description |
+|Output| Description |
 |:---:|:---|
-| FDA Validation 1st Draft |  FDA 제출용 verification & validation report 1차 초안 |
-| Data Input System | 임시적인 데이터 입력 시스템으로 대량의 data를 대량으로 연산하는 플랫폼 구축으로 발전  |
-| Documentation System | 기존에 부재했던 문서화 및 문서 자동화 시스템 구축 $\rightarrow$ 업무 소통과 Relational Database System 구축에 필요 |
-| Data Management System | data quality control system |
-| FDA Validation Model | DSP algorithm을 위한 Validation Model 확립|
-| Patent Invention |  FDA Validation Model 발명 |
-| In-house first Performance evaluation of algorithms and reagent products | 사내에 기존에 존재하지 않았던 알고리즘 및 시약 제품의 종합 성능 평가 |
-| Statistical analysis related to algorithmic risk management | 시약과 장비 고유의 random effect와 다른 교란자로 인해 발생할 수 있는 noise 및 anomaly data에 위험 관리 관련 통계 분석을 수행|
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
+|  |  |
 
 ## Long Term Project
 
-* BT의 업무 기술서를 협업으로 공동작성하고 RDB system 구축
-* 시약, 장비, software 및 algorithm Validation용 DevOps Platform 구축
+* 알고리즘 Verification and Validation
+
 
 
 </div>

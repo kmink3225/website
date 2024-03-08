@@ -5628,5 +5628,131 @@
     "title": "Template Variabler",
     "section": "",
     "text": "무엇을 만들것인가\n\n현재는 서울시 공공데이터 API 를 통해 CSV 로 저장하는 오퍼레이터만 존재\nPostgresQL 데이터베이스로 바로 Insert 하는 오퍼레이터가 있다면\n\n오퍼레이터 개발 목표\n\n서울시 공공데이터 API 조회 후 데이터를 Postgres DB 로 바로 저장하는 오퍼레이 터"
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html",
+    "href": "docs/projects/backfitting/index.html",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "Korean\n\n\n\n\nEnglish\n\n\n\n\n\n\n\n\n\nReal Time PCR 장비는 핵산(Nucleic Acid) 검체의 존재 여부를 확인하기 위해 각 사이클마다 핵산 검체를 2배씩 증폭하면서 신호를 감지한다.\n\nLag Phase (지연 단계): 증폭된 검체의 신호가 일정 농도 이하일 경우, PCR 장비는 신호를 감지하지 못하고, 장비 내부 기본값과 시약 및 소모품의 값이 합산된 신호로 반환한다. 이는 일정 시간 동안 지연되는 구간이다.\nLog Phase (로그 단계): 증폭된 검체의 신호가 일정 농도 이상일 때, PCR 장비에서는 신호의 변화가 나타나며, 포화 상태에 이를 때까지 신호가 2의 지수승으로 증가한다.\nPlateau Phase (플라토 단계): 효소의 활성도 감소 및 반응물의 고갈 등으로 인해 포화 상태에 도달하면, 신호는 더 이상 증가하지 않고 일정하게 유지된다.\n\n이러한 방식으로 Real Time PCR 장비의 신호는 이론적으로 sigmoid curve의 패턴을 나타낸다.\n\n\n\nPCR 신호는 시험관 내에서 일어나는 미시적 화학 반응, 광학 반응 및 기계적 반응의 결과이다. 이 과정에서 인간이 명확히 측정하거나 설명하기 어려운 원인에 의한 노이즈가 섞일 수 있다. 이로 인해 Ct 값의 편향과 결과적으로 위양성 또는 위음성 결과가 발생할 위험이 증가할 수 있다.\n\n\n\n따라서, 이러한 노이즈를 보정하기 위한 전처리 방법이 필요하다. 전처리 후, 진단 알고리즘은 검체의 존재 여부와 Ct 값을 시그모이드 곡선 적합을 통해 최종 출력한다.\n\n\n\n\nnoise를 보정하는 대표적인 전처리 방식 중 하나인 baseline 차감 알고리즘을 최적화한다. Baseline의 차감은 baseline fitting을 수행하여 fitted value를 raw data에서 차감한다.\n\\[\n\\text{RFU (or PCR Signal)} =  \\text{Signal} + \\text{Noise} + \\text{Error}\n\\]\n\nSignal: 시약에 의한 순수 증폭 및 미증폭 신호\nNoise: 장비의 결함, 소모품 및 시약의 기대하지 않은 반응에 의한 신호\nError: 다른 설명할 수 없는 요인으로 인하여 발생한 신호\n\n\n\n\nBaseline 데이터에 노이즈가 많을 경우, 최적화 과정에서 과적합이나 local minima와 같은 문제로 인해 파라미터 추정의 복잡성이 증가한다. 따라서, sigmoid curve fitting 전의 전처리 단계인 baseline subtraction의 정확도가 매우 중요하다.\n\n\n\n회사에 처음 입사했을 때, 수많은 if문과 설정값, 그리고 해석하기 어려운 코드에 압도되었다. rule-based 알고리즘이 data-driven 알고리즘에 비해 성능이 떨어진다고는 할 수 없지만, 변화무쌍한 PCR 신호를 조건문으로 처리하기에는 한계가 있다고 판단했다. 따라서, 점진적으로 진단 알고리즘을 data-driven 방식으로 개선할 필요가 있다고 생각했다.\n\n\n\n보수적인 biologists와 전문적 지식이 없는 임원진을 이해시킬 수 있는 설명력있는 간단한 알고리즘이어야 한다.\n현재의 진단 알고리즘은 수 많은 조건문으로 이루어진 rule-based 알고리즘이기 때문에 전체적인 알고리즘 수정 시 정합성 및 규제 문제가 발생할 수 있다. 따라서, baseline fitting 알고리즘만 개선하여 대체해야 한다.\n통계를 전공하지 않은 알고리즘 관리자1 (Computer Science 전공), 관리자2 (Physics 전공)가 이해할 수 있도록 알고리즘 평가 metric을 선정 및 설명할 수 있어야한다.\nPython으로 작성된 알고리즘을 C++로 porting을 해야만하기 때문에 최소한의 package를 사용하여 알고리즘을 low level로 coding해야한다.\nLag Phase에서의 baseline data points 수가 적을 수 있으므로, 적은 데이터로도 fitting할 수 있는 알고리즘이 필요하다.\nbaseline의 noise 패턴은 매우 다양하지만 기존의 legacy baseline fitting 알고리즘은 1차 곡선과 2차 곡선으로 fitting 한다. 따라서, 다양한 noise 패턴에 대응할 수 있는 알고리즘이 필요하다.\n\n\n\n\n\n기존 및 새로운 baseline fitting 알고리즘들의 성능을 평가 및 비교한다.\n\n알고리즘 1 (rule-based): 자사의 기존 legacy baseline fitting 알고리즘 named ‘Legacy’\n알고리즘 2 (rule-based): 자사의 biologists들이 실험 설정값을 산출해내기 위해 사용되는 baseline fitting 알고리즘 named ‘Bio’\n알고리즘 3 (black box): 업계 1위 타사의 black box인 baseline fitting 알고리즘 named ‘Black Box’\n알고리즘 4 (rule-based): 자사의 신제품에 특이적인 증폭신호에 최적화된 baseline fitting 알고리즘 named ‘신제품’\n알고리즘 5 (rule-based): 알고리즘4 를 개선한 새로운 조건문이 추가된 rule-based 알고리즘 named ‘신제품 +’\n알고리즘 6 (data-driven): machine learning을 이용한 baseline fitting 알고리즘 named ‘ML’\n\n음성 신호에 한하여 위양성 결과를 최소화하기 위해 baseline 차감 알고리즘을 최적화하여 여러 baseline fitting 알고리즘을 단일화한다.\n알고리즘의 성능을 평가할 수 있는 평가 metrics을 찾거나 개발한다.\n\n\n\n\n\n\n\nbaseline data를 살펴 보고 다양한 신호 패턴의 존재를 인식하고, 차감 결과가 white noise에 가까워야 성공적인 것으로 간주했다. 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여, 다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 선택했다. 이 접근법은 데이터의 feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링할 수 있게 한다. 그러나 다항식의 차수가 증가함에 따라 과적합의 위험이 있으므로, 적절한 차수 선택과 정규화를 통해 신호에 적합한 모델을 선택할 수 있도록 해야 한다.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nStatistics\nPython\n\n\n\n\n\n3 data scientists (I am a project manager.)\n2 data enineers\n2 biologists\n\n\n\n\n\n\n\nOutput\nDescription\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n알고리즘 Verification and Validation\n\n\n\n\n\n\n\nDue to the nature of reagent products related to medical device, there are regulations required by each country’s government for the health and life safety of its citizens when entering the global market.\n\nReagent stability verification and validation required\nEquipment stability verification and validation request\nSoftware stability verification and validation request\nStability verification and validation Request of Diagnostic Algorithm\n\nIn order to enter and manage the global market after the COVID19 special period is lifted, product safety verification and regulatory requirements required by each country’s government must be met.\nIn the case of the EU (European Union), IVDR (In Vitro Diagnostics Regulation) is required\nIn order to enter the North American market, it is necessary to plan and write a document verifying the stability of the diagnostic algorithm based on the surveilance standards of the US FDA and Canada’s Health Canada, which require the world’s most stringent standards.\nAs time goes by, regulations on software and algorithms are being strengthened in each country, so advanced testing that is more stringent than the existing safety verification method by software engineering is required.\nTherefore, the stability verification and validation of the diagnostic algorithm includes software engineering testing and advanced testing. Here, advanced testing means statistical testing based on statistical analysis, and building a stable software engineering system is the prerequisite.\nSince the stability verification method of Seegene’s Diagnostic Signal Process (DSP) Algorithm is directly related to the business performance of the company, it is classified as a first-class security matter within the company, so specific and detailed planning and implementation details cannot be shared.\n\n\n\n\n\nDesign a system to statistically prove that the algorithm shows safe performance.\nEstablish a Statistical Validation System to prove that the algorithm shows safe performance through statistical analysis.\n\nHere, Establishment is defined as Definition, Documentation, and Implementation.\n\nDefine the risk of the algorithm in detail and quantitatively analyze the effect of the risk on the algorithm.\nIt is proved through statistical simulation that the algorithm is capable of risk management.\nIn the case of code changes according to algorithm implementations and operations, a new validation report must be submitted, so an automation system is built.\n\n\n\n\n\nRefer to the guidance of SGS, a company that issues and provides training for the world’s most stringent inspection certificates.\nSGS provides guidance to the FDA as a target.\nAfter thoroughly reading the General Principles of Software Validation document provided by the FDA for software safety verification, establish a validation system based on this document.\n\nCopy: General Principles of Software Validation\nSummary: General Principles of Software Validation\nDiagram: General Principles of Software Validation\n\nSoftware engineering is performed based on the General Principles of Software Validation document.\nThe stability verification of Diagnostic Algorithm includes both Structural Testing and Advanced Testing. Structural Testing means code-based Software Engineering Testing and Advanced Testing means Statistical Testing based on Statistical Analysis. Advanced Testing is based on the establishment of a stable Software Engineering System.\nEstablish a definition and logic for algorithm safety.\nEstablish metrics or indicators for algorithm safety.\nStatistical Testing, which is Advanced Testing, is a task that requires the creativity of a data scientist, and a testing model is planned to materialize and document statistical analysis design.\nCooperation between the BT (Biotechnology) sector and the IT (Information technology) sector must be a premise, and engineering design and statistical design should be established considering the BT department’s experimental design and limitation factors at a experimental level.\nFind a statistical model suitable for the planned testing model and calculate the minimum reuirement sample size.\nAs per the above strategy, the BT department conducts experiments and the IT department (Data Science team) conducts analysis.\nEstablish a document automation system in case of code changes in algorithm implementation and operation and the obligation to submit a new validation report for new products.\n\n\n\n\n\n\n\nAbsence of a system that can input data generated by BT departments\nDifficulties in communication due to lack of job description in BT departments.\nAbsence of a system that preprocesses input data.\nDifficulties in communication within the team due to lack of job description within the Data Science team.\nIt is so rare that no precedent or template for validation report can be found.\n\n\n\n\n\nBuilding a system that can input data generated by BT departments\n\ndigitalization: experimental design file, raw data generated from medical device, data extracted from medical device\n\nWork documented through communication with the BT department to establish the standard for the expected correct answer of the experiment results, and to establish independent and dependent variables\nBuilding an engineering system that preprocesses input data and merges the results of diagnostic algorithms\nStrengthen Data Quality Control Process\n\nStep 1 typo correction\nStep 2 missing value processing\nStep 3 anomaly data processing\nStep 4 algorithm data conformity 1st Test: Preprocessed algorithm for FDA validation vs Original algorithm\nStep 5 algorithm data conformity 2nd test: Data Science team’s preprocessed algorithm for FDA validation vs algorithm published by BT department\n\nRealization of code centralization, data centralization, and documentation of specific matters by writing job descriptions within the Data Science team\nPlan and conduct statistical analysis after planning and establishing Seegene’s own software testing & advanced testing model\n\n\n\n\n\n\nFDA software validation knowledge\nStatistics\nDynamic documentation\nBiology\nClinical study design\nR, Python, Matlab\nApache Airflow\n\n\n\n\n\n5 data scientists (I am a project manager.)\n3 data enineers\n27 biologists\n2 patent attorneys\n\n\n\n\n\n\n\n\n\n\n\nDSP Algorithm Output\nDescription\n\n\n\n\nFDA Validation 1st Draft\nthe 1st draft of verification & validation report for FDA submission\n\n\nData Input System\nIt is a temporary data input system that develops into a platform that calculates a large amount of data in large quantities.\n\n\nDocumentation System\nEstablishment of previously absent documentation and document automation systems \\(\\rightarrow\\) Necessary for business communication and establishment of Relational Database System\n\n\nData Management System\ndata quality control system\n\n\nFDA Validation Model\nEstablishment of validation model for DSP algorithm\n\n\nPatent Invention\nInventing the FDA Validation Model\n\n\nIn-house first Performance evaluation of algorithms and reagent products\nComprehensive performance evaluation of algorithms and reagent products that did not previously exist in-house\n\n\nStatistical analysis related to algorithmic risk management\nRisk management-related statistical analysis is performed on noise and anomaly data that may occur due to reagent and equipment-specific random effects and other confounders.\n\n\n\n\n\n\n\nCollaboratively write BT’s job description and establish RDB system\nBuilding a DevOps Platform for reagents, equipment, software and algorithm validation"
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#background",
+    "href": "docs/projects/backfitting/index.html#background",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "Real Time PCR 장비는 핵산(Nucleic Acid) 검체의 존재 여부를 확인하기 위해 각 사이클마다 핵산 검체를 2배씩 증폭하면서 신호를 감지한다.\n\nLag Phase (지연 단계): 증폭된 검체의 신호가 일정 농도 이하일 경우, PCR 장비는 신호를 감지하지 못하고, 장비 내부 기본값과 시약 및 소모품의 값이 합산된 신호로 반환한다. 이는 일정 시간 동안 지연되는 구간이다.\nLog Phase (로그 단계): 증폭된 검체의 신호가 일정 농도 이상일 때, PCR 장비에서는 신호의 변화가 나타나며, 포화 상태에 이를 때까지 신호가 2의 지수승으로 증가한다.\nPlateau Phase (플라토 단계): 효소의 활성도 감소 및 반응물의 고갈 등으로 인해 포화 상태에 도달하면, 신호는 더 이상 증가하지 않고 일정하게 유지된다.\n\n이러한 방식으로 Real Time PCR 장비의 신호는 이론적으로 sigmoid curve의 패턴을 나타낸다.\n\n\n\nPCR 신호는 시험관 내에서 일어나는 미시적 화학 반응, 광학 반응 및 기계적 반응의 결과이다. 이 과정에서 인간이 명확히 측정하거나 설명하기 어려운 원인에 의한 노이즈가 섞일 수 있다. 이로 인해 Ct 값의 편향과 결과적으로 위양성 또는 위음성 결과가 발생할 위험이 증가할 수 있다.\n\n\n\n따라서, 이러한 노이즈를 보정하기 위한 전처리 방법이 필요하다. 전처리 후, 진단 알고리즘은 검체의 존재 여부와 Ct 값을 시그모이드 곡선 적합을 통해 최종 출력한다."
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#objective",
+    "href": "docs/projects/backfitting/index.html#objective",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "noise를 보정하는 대표적인 전처리 방식 중 하나인 baseline 차감 알고리즘을 최적화한다. Baseline의 차감은 baseline fitting을 수행하여 fitted value를 raw data에서 차감한다.\n\\[\n\\text{RFU (or PCR Signal)} =  \\text{Signal} + \\text{Noise} + \\text{Error}\n\\]\n\nSignal: 시약에 의한 순수 증폭 및 미증폭 신호\nNoise: 장비의 결함, 소모품 및 시약의 기대하지 않은 반응에 의한 신호\nError: 다른 설명할 수 없는 요인으로 인하여 발생한 신호"
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#rationale",
+    "href": "docs/projects/backfitting/index.html#rationale",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "Baseline 데이터에 노이즈가 많을 경우, 최적화 과정에서 과적합이나 local minima와 같은 문제로 인해 파라미터 추정의 복잡성이 증가한다. 따라서, sigmoid curve fitting 전의 전처리 단계인 baseline subtraction의 정확도가 매우 중요하다."
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#motivation",
+    "href": "docs/projects/backfitting/index.html#motivation",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "회사에 처음 입사했을 때, 수많은 if문과 설정값, 그리고 해석하기 어려운 코드에 압도되었다. rule-based 알고리즘이 data-driven 알고리즘에 비해 성능이 떨어진다고는 할 수 없지만, 변화무쌍한 PCR 신호를 조건문으로 처리하기에는 한계가 있다고 판단했다. 따라서, 점진적으로 진단 알고리즘을 data-driven 방식으로 개선할 필요가 있다고 생각했다.\n\n\n\n보수적인 biologists와 전문적 지식이 없는 임원진을 이해시킬 수 있는 설명력있는 간단한 알고리즘이어야 한다.\n현재의 진단 알고리즘은 수 많은 조건문으로 이루어진 rule-based 알고리즘이기 때문에 전체적인 알고리즘 수정 시 정합성 및 규제 문제가 발생할 수 있다. 따라서, baseline fitting 알고리즘만 개선하여 대체해야 한다.\n통계를 전공하지 않은 알고리즘 관리자1 (Computer Science 전공), 관리자2 (Physics 전공)가 이해할 수 있도록 알고리즘 평가 metric을 선정 및 설명할 수 있어야한다.\nPython으로 작성된 알고리즘을 C++로 porting을 해야만하기 때문에 최소한의 package를 사용하여 알고리즘을 low level로 coding해야한다.\nLag Phase에서의 baseline data points 수가 적을 수 있으므로, 적은 데이터로도 fitting할 수 있는 알고리즘이 필요하다.\nbaseline의 noise 패턴은 매우 다양하지만 기존의 legacy baseline fitting 알고리즘은 1차 곡선과 2차 곡선으로 fitting 한다. 따라서, 다양한 noise 패턴에 대응할 수 있는 알고리즘이 필요하다.\n\n\n\n\n\n기존 및 새로운 baseline fitting 알고리즘들의 성능을 평가 및 비교한다.\n\n알고리즘 1 (rule-based): 자사의 기존 legacy baseline fitting 알고리즘 named ‘Legacy’\n알고리즘 2 (rule-based): 자사의 biologists들이 실험 설정값을 산출해내기 위해 사용되는 baseline fitting 알고리즘 named ‘Bio’\n알고리즘 3 (black box): 업계 1위 타사의 black box인 baseline fitting 알고리즘 named ‘Black Box’\n알고리즘 4 (rule-based): 자사의 신제품에 특이적인 증폭신호에 최적화된 baseline fitting 알고리즘 named ‘신제품’\n알고리즘 5 (rule-based): 알고리즘4 를 개선한 새로운 조건문이 추가된 rule-based 알고리즘 named ‘신제품 +’\n알고리즘 6 (data-driven): machine learning을 이용한 baseline fitting 알고리즘 named ‘ML’\n\n음성 신호에 한하여 위양성 결과를 최소화하기 위해 baseline 차감 알고리즘을 최적화하여 여러 baseline fitting 알고리즘을 단일화한다.\n알고리즘의 성능을 평가할 수 있는 평가 metrics을 찾거나 개발한다."
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#strategies",
+    "href": "docs/projects/backfitting/index.html#strategies",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "baseline data를 살펴 보고 다양한 신호 패턴의 존재를 인식하고, 차감 결과가 white noise에 가까워야 성공적인 것으로 간주했다. 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여, 다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 선택했다. 이 접근법은 데이터의 feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링할 수 있게 한다. 그러나 다항식의 차수가 증가함에 따라 과적합의 위험이 있으므로, 적절한 차수 선택과 정규화를 통해 신호에 적합한 모델을 선택할 수 있도록 해야 한다."
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#required-skills",
+    "href": "docs/projects/backfitting/index.html#required-skills",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "Statistics\nPython"
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#colaborators",
+    "href": "docs/projects/backfitting/index.html#colaborators",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "3 data scientists (I am a project manager.)\n2 data enineers\n2 biologists"
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#acheivements",
+    "href": "docs/projects/backfitting/index.html#acheivements",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "Output\nDescription"
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#long-term-project",
+    "href": "docs/projects/backfitting/index.html#long-term-project",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "알고리즘 Verification and Validation"
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#background-1",
+    "href": "docs/projects/backfitting/index.html#background-1",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "Due to the nature of reagent products related to medical device, there are regulations required by each country’s government for the health and life safety of its citizens when entering the global market.\n\nReagent stability verification and validation required\nEquipment stability verification and validation request\nSoftware stability verification and validation request\nStability verification and validation Request of Diagnostic Algorithm\n\nIn order to enter and manage the global market after the COVID19 special period is lifted, product safety verification and regulatory requirements required by each country’s government must be met.\nIn the case of the EU (European Union), IVDR (In Vitro Diagnostics Regulation) is required\nIn order to enter the North American market, it is necessary to plan and write a document verifying the stability of the diagnostic algorithm based on the surveilance standards of the US FDA and Canada’s Health Canada, which require the world’s most stringent standards.\nAs time goes by, regulations on software and algorithms are being strengthened in each country, so advanced testing that is more stringent than the existing safety verification method by software engineering is required.\nTherefore, the stability verification and validation of the diagnostic algorithm includes software engineering testing and advanced testing. Here, advanced testing means statistical testing based on statistical analysis, and building a stable software engineering system is the prerequisite.\nSince the stability verification method of Seegene’s Diagnostic Signal Process (DSP) Algorithm is directly related to the business performance of the company, it is classified as a first-class security matter within the company, so specific and detailed planning and implementation details cannot be shared."
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#objective-1",
+    "href": "docs/projects/backfitting/index.html#objective-1",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "Design a system to statistically prove that the algorithm shows safe performance.\nEstablish a Statistical Validation System to prove that the algorithm shows safe performance through statistical analysis.\n\nHere, Establishment is defined as Definition, Documentation, and Implementation.\n\nDefine the risk of the algorithm in detail and quantitatively analyze the effect of the risk on the algorithm.\nIt is proved through statistical simulation that the algorithm is capable of risk management.\nIn the case of code changes according to algorithm implementations and operations, a new validation report must be submitted, so an automation system is built."
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#methodology-1",
+    "href": "docs/projects/backfitting/index.html#methodology-1",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "Refer to the guidance of SGS, a company that issues and provides training for the world’s most stringent inspection certificates.\nSGS provides guidance to the FDA as a target.\nAfter thoroughly reading the General Principles of Software Validation document provided by the FDA for software safety verification, establish a validation system based on this document.\n\nCopy: General Principles of Software Validation\nSummary: General Principles of Software Validation\nDiagram: General Principles of Software Validation\n\nSoftware engineering is performed based on the General Principles of Software Validation document.\nThe stability verification of Diagnostic Algorithm includes both Structural Testing and Advanced Testing. Structural Testing means code-based Software Engineering Testing and Advanced Testing means Statistical Testing based on Statistical Analysis. Advanced Testing is based on the establishment of a stable Software Engineering System.\nEstablish a definition and logic for algorithm safety.\nEstablish metrics or indicators for algorithm safety.\nStatistical Testing, which is Advanced Testing, is a task that requires the creativity of a data scientist, and a testing model is planned to materialize and document statistical analysis design.\nCooperation between the BT (Biotechnology) sector and the IT (Information technology) sector must be a premise, and engineering design and statistical design should be established considering the BT department’s experimental design and limitation factors at a experimental level.\nFind a statistical model suitable for the planned testing model and calculate the minimum reuirement sample size.\nAs per the above strategy, the BT department conducts experiments and the IT department (Data Science team) conducts analysis.\nEstablish a document automation system in case of code changes in algorithm implementation and operation and the obligation to submit a new validation report for new products."
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#issues-solutions",
+    "href": "docs/projects/backfitting/index.html#issues-solutions",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "Absence of a system that can input data generated by BT departments\nDifficulties in communication due to lack of job description in BT departments.\nAbsence of a system that preprocesses input data.\nDifficulties in communication within the team due to lack of job description within the Data Science team.\nIt is so rare that no precedent or template for validation report can be found.\n\n\n\n\n\nBuilding a system that can input data generated by BT departments\n\ndigitalization: experimental design file, raw data generated from medical device, data extracted from medical device\n\nWork documented through communication with the BT department to establish the standard for the expected correct answer of the experiment results, and to establish independent and dependent variables\nBuilding an engineering system that preprocesses input data and merges the results of diagnostic algorithms\nStrengthen Data Quality Control Process\n\nStep 1 typo correction\nStep 2 missing value processing\nStep 3 anomaly data processing\nStep 4 algorithm data conformity 1st Test: Preprocessed algorithm for FDA validation vs Original algorithm\nStep 5 algorithm data conformity 2nd test: Data Science team’s preprocessed algorithm for FDA validation vs algorithm published by BT department\n\nRealization of code centralization, data centralization, and documentation of specific matters by writing job descriptions within the Data Science team\nPlan and conduct statistical analysis after planning and establishing Seegene’s own software testing & advanced testing model"
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#required-skills-1",
+    "href": "docs/projects/backfitting/index.html#required-skills-1",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "FDA software validation knowledge\nStatistics\nDynamic documentation\nBiology\nClinical study design\nR, Python, Matlab\nApache Airflow"
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#colaborators-1",
+    "href": "docs/projects/backfitting/index.html#colaborators-1",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "5 data scientists (I am a project manager.)\n3 data enineers\n27 biologists\n2 patent attorneys"
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#acheivements-1",
+    "href": "docs/projects/backfitting/index.html#acheivements-1",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "DSP Algorithm Output\nDescription\n\n\n\n\nFDA Validation 1st Draft\nthe 1st draft of verification & validation report for FDA submission\n\n\nData Input System\nIt is a temporary data input system that develops into a platform that calculates a large amount of data in large quantities.\n\n\nDocumentation System\nEstablishment of previously absent documentation and document automation systems \\(\\rightarrow\\) Necessary for business communication and establishment of Relational Database System\n\n\nData Management System\ndata quality control system\n\n\nFDA Validation Model\nEstablishment of validation model for DSP algorithm\n\n\nPatent Invention\nInventing the FDA Validation Model\n\n\nIn-house first Performance evaluation of algorithms and reagent products\nComprehensive performance evaluation of algorithms and reagent products that did not previously exist in-house\n\n\nStatistical analysis related to algorithmic risk management\nRisk management-related statistical analysis is performed on noise and anomaly data that may occur due to reagent and equipment-specific random effects and other confounders."
+  },
+  {
+    "objectID": "docs/projects/backfitting/index.html#long-term-project-1",
+    "href": "docs/projects/backfitting/index.html#long-term-project-1",
+    "title": "Baseline Fitting Algorithm Improvement",
+    "section": "",
+    "text": "Collaboratively write BT’s job description and establish RDB system\nBuilding a DevOps Platform for reagents, equipment, software and algorithm validation"
   }
 ]

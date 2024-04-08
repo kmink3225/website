@@ -16,173 +16,106 @@ import pydsptools.biorad.parse as bioradparse
 import pprint
 import pyarrow as pa
 import os
+os.chdir('/home/jupyter-kmkim/dsp-research-strep-a/kkm')
 import subprocess
 from pathlib import Path
+from package import signal_filter
+from package import (signal_filter,visualization)
 
 # Visualization
 import pydsptools.plot as dspplt
 import plotly.express as px
 import matplotlib.pyplot as plt
 
-# Noise Naive Detection
-def detect_noise_naively(i_signal, i_threshold=1.28):
+
+### Merge Dataframes
+
+def load_and_prepare_parquet(i_file_path, i_selected_columns=None, i_combo_key_columns=None, i_rename_columns=None):
     '''
-    detect noisy signals.     
+    load parquets and prepare dataframe for analyses
+    
     Args:
-    - i_signal: a rfu signal with a data type as a list
-    - i_threshold: the z score
+    - i_file_path: a file_path where parquet files exist.
+    - i_selected_columns: a list of the column names used for a data analysis
+    - i_combo_key_columns: a list of the column names used for creating a combination key and merging several data frames
+    - i_rename_columns: a list of the column names for renaming
+    
     Returns:
-    - o_result
+    - o_df: a dataframe
     '''
+
+    o_df = pl.scan_parquet(i_file_path).collect().to_pandas()
+    if i_selected_columns:
+        o_df = o_df[i_selected_columns].copy()
+    if i_combo_key_columns:
+        o_df['combo_key'] = o_df.apply(lambda x: ' '.join(str(x[col]) for col in i_combo_key_columns), axis=1)
+    if i_rename_columns:
+        o_df.rename(columns = i_rename_columns, inplace=True)
     
-    if i_signal.size == 0:  # Check if the signal is empty
-        return [False, 0, []]  # Return default values for empty signals
-    
-    mean = np.mean(i_signal)
-    std = np.std(i_signal)
+    return o_df
 
-    if std == 0:  # Prevent division by zero
-        return [False, 0, []]
 
-    z_scores = [(point - mean) / std for point in i_signal]
-    outliers = [score * std + mean for score in z_scores if abs(score) > i_threshold]
-    outliers_boolean = [abs(score) > i_threshold for score in z_scores]
-    outlier_existence = 1 if any(outliers_boolean) else 0
-    outlierness_metric_sum = sum(abs(score) for score in z_scores if abs(score) > i_threshold)
-    outlierness_metric = outlierness_metric_sum / len(outliers) if len(outliers) != 0 else 0
-    o_result = [outlierness_metric, outliers,z_scores,outlier_existence]
-    return o_result
-
-def detect_noise_naively_ywj1(i_signal):
+def get_column_percentiles(i_data, i_column_name):
     '''
-    sum(abs(RFU_i)) after BPN
+    Calculate the percentile rank of each score in the specified column of a DataFrame.
+    
+    Args:
+    - i_data: DataFrame containing the metric scores.
+    - i_column_name: The name of the metric column whose scores' percentile ranks are to be calculated.
+    
+    Returns:
+    - o_percentiles: A Series containing the percentile ranks of the scores in the specified column.
+    '''
+    def get_percentile(i_sorted_data, i_value):
+        '''
+        Calculate the percentile rank of a metric score relative to sorted scores.
         
-    Args:
-    - i_signal: a rfu signal with a data type as a list
-
-    Returns:
-    - o_result: [noise_metric, residuals, after_bpn] with the data types of [a real number, a list, a list] 
-    '''
-    
-    if i_signal.size == 0:  # Check if the signal is empty
-        return [False, 0, []]  # Return default values for empty signals
-    
-    mean = np.mean(i_signal)
-    std = np.std(i_signal)
-
-    after_bpn = [(point / mean) * 100 for point in i_signal] # a normalized signal with the reference value = 100
-    mean_adjusted = np.mean(after_bpn)
-    residuals = [(rfu - mean_adjusted) for rfu in after_bpn]
-    noise_metric = sum(abs(rfu) for rfu in residuals)
-    
-    o_result = [noise_metric, residuals, after_bpn]
-    return o_result
-    
-def detect_noise_naively_pbg(i_signal):
-    '''
-    Detect noisy signals by discarding the first 10 cycles and then evaluating the rest based on a dynamic threshold
-    that captures the top 20% of deviation in terms of scores calculated as a percentage of the mean.
-    '''
-    
-    if len(i_signal) == 0:  # Check if the signal is empty after discarding
-        return [False, 0, []]  # Return default values for empty signals
-    
-    mean = np.mean(i_signal)
-    std = np.std(i_signal)
-    
-    if std == 0:  # Prevent division by zero
-        return [False, 0, []]
-    
-    scores = [(point - mean) for point in i_signal]  # Calculate scores as percentage of mean
-    threshold = np.percentile(scores, 80)  # Dynamic threshold for top 20% scores
-    
-    outliers = [score + mean for score in scores if abs(score) > threshold]  # Identify outliers
-    outlier_existence = bool(outliers)  # True if there are any outliers
-    outlierness_metric = sum(abs(score) - threshold for score in outliers) / len(outliers) if outliers else 0  # Calculate outlierness metric
-    
-    return [outlierness_metric, outliers, scores, outlier_existence]
-
-def detect_noise_naively_kkm(i_signal):
-    '''
-    
-    '''
-
-    if len(i_signal) == 0: 
-        return [False, 0, []]
+        Args:
+        - i_sorted_data: Sorted numpy array of scores.
+        - i_value: The score whose percentile rank is to be calculated.
         
-    mean = np.mean(i_signal)
-    after_bpn = [(point / mean) * 100 for point in i_signal]  # Calculate scores as percentage of mean
-    x = list(range(1, len(after_bpn) + 1))
-    slope = np.cov(x, after_bpn, bias=True)[0, 1] / np.var(x, ddof=0)
-    intercept = np.mean(after_bpn) - slope * np.mean(x)
-    x_values = np.array(x)
-    linear_fit = slope * x_values + intercept
-    residuals = after_bpn-linear_fit
-    metric = sum(abs(residuals))
+        Returns:
+        - o_percent: The percentile rank of the score.
+        '''
+        if not i_sorted_data.size:  # Check if sorted data is empty
+            return np.nan  # Return NaN for empty data
+        count = np.sum(i_sorted_data <= i_value)
+        o_percent = 100.0 * count / len(i_sorted_data)
+        return np.round(o_percent, 1)
     
-    return [metric, residuals,slope,intercept]
+    non_empty_values = i_data[i_column_name].apply(lambda x: x if x else np.nan).dropna()
+    i_sorted_data = np.sort(non_empty_values.values)
+    o_percentiles = non_empty_values.apply(lambda x: get_percentile(i_sorted_data, x))
     
-# simple nueral network
+    return o_percentiles
 
-def compute_simple_nn(y):
-    x = np.linspace(0, 1, len(y))
 
-    x = x.reshape(-1, 1)
-    y = y.reshape(-1, 1)
 
-    x_norm = (x - x.min()) / (x.max() - x.min())
-    y_norm = (y - y.min()) / (y.max() - y.min())
-
-    model = Sequential([
-        Dense(8, activation='relu', input_dim=1),
-        Dense(8, activation='softplus'), #softplus
-        Dense(2, activation='selu'),
-        Dense(1, activation='linear')
-    ])
-
-    model.compile(optimizer=Adam(learning_rate=0.01), loss='mean_squared_error')
-    history = model.fit(x_norm, y_norm, epochs=500, verbose=0)
-    y_pred = model.predict(x_norm)
-    y_pred_denorm = y_pred * (y.max() - y.min()) + y.min()
-    o_result = [item for sublist in y_pred_denorm for item in sublist]
-
-    return o_result
-
-# detect white noise signals
-def autocorrelation(i_signal, i_lag):
-    '''
-    this function calcuate autocorrelation value of a signal
-
+def process_column_for_outliers(i_data, i_column, i_groupby_columns,i_function):
+    """
+    Process a given column for outlier detection and related metrics using detect_noise_naively().
+    
     Args:
-    - i_signal: a PCR signal
-    - i_lag: a lag window
-
+    - i_data: DataFrame to process.
+    - i_column: The name of the column to process for outliers.
+    - i_groupby_columns: Columns names to group by for percentile calculations.
+    
     Returns:
-    - o_result: an autocorreation value
-    '''
-    n = len(i_signal)
-    mean_x = np.mean(i_signal)
-    denominator = np.sum((i_signal - mean_x) ** 2)
-    numerator = np.sum((i_signal[:-i_lag] - mean_x) * (i_signal[i_lag:] - mean_x))
-    o_result = numerator / denominator 
+    - o_result: Updated DataFrame with new outlier-related columns.
+    """
+    # Detect outliers and calculate outlierness metric
+    i_data[f'outlier_naive_residuals_{i_column}'] = i_data[i_column].apply(lambda cell: i_function(cell)[1])
+    i_data[f'outlier_naive_metric_{i_column}'] = i_data[i_column].apply(lambda cell: i_function(cell)[0])
+    
+    # Calculate 95th percentile cutoff for outlierness metric
+    i_data[f'outlier_naive_cutoff_{i_column}'] = i_data.groupby(i_groupby_columns)[f'outlier_naive_metric_{i_column}'].transform(lambda x: np.percentile(x, 95))
+    
+    # Calculate metric percentiles within each group
+    i_data[f'outlier_naive_metric_percentile_{i_column}'] = (i_data
+                                                             .groupby(i_groupby_columns)
+                                                             .apply(lambda grp: get_column_percentiles(grp, f'outlier_naive_metric_{i_column}'),include_groups=False)
+                                                             .reset_index(level=i_groupby_columns, drop=True))
+    
+    o_result = i_data
     return o_result
 
-def test_white_noise(i_signal, i_max_lag):
-    '''
-    this function tests if a signal is white noise.
-
-    args:
-    - i_signal: a PCR signal
-    - i_max_lag: a max lag
-
-    return:
-    - o_result: a test statistic
-    '''
-    n = len(i_signal)
-    statistic = 0
-    for lag in range(1, i_max_lag + 1):
-        rho = autocorrelation(i_signal, lag)
-        statistic += (n * (n + 2) * rho ** 2) / (n - lag)
-    p_value = 1 - chi2.cdf(statistic, i_max_lag)
-    o_result = [statistic, p_value]
-    return o_result

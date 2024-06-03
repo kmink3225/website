@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.543">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Kwangmin Kim - 파이썬 라이브러리 불러오기</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../../">
+<script src="../../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="../../../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../../index.html" class="navbar-brand navbar-brand-logo">
+    <img src="../../.././images/logo.png" alt="" class="navbar-logo">
+    </a>
+    <a class="navbar-brand" href="../../../index.html">
+    <span class="navbar-title">Kwangmin Kim</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../docs/CV/index.html"> 
+<span class="menu-text">CV</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../../docs/projects/index.html"> 
+<span class="menu-text">Projects</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../../about.html"> 
+<span class="menu-text">Me</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/kmink3225"> <i class="bi bi-github" role="img" aria-label="Github">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/kwangmin-kim-a5241b200/"> <i class="bi bi-linkedin" role="img" aria-label="Linkedin">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#파이썬-라이브러리-불러오기" id="toc-파이썬-라이브러리-불러오기" class="nav-link active" data-scroll-target="#파이썬-라이브러리-불러오기">파이썬 라이브러리 불러오기</a></li>
+  <li><a href="#script-description" id="toc-script-description" class="nav-link" data-scroll-target="#script-description">Script Description</a>
+  <ul class="collapse">
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section">[2024-04-23]</a></li>
+  <li><a href="#cfx의-csv-to-parquet-converter-단계" id="toc-cfx의-csv-to-parquet-converter-단계" class="nav-link" data-scroll-target="#cfx의-csv-to-parquet-converter-단계">1. CFX의 csv-to-parquet converter 단계</a>
+  <ul class="collapse">
+  <li><a href="#after-bpn-modified-dsp" id="toc-after-bpn-modified-dsp" class="nav-link" data-scroll-target="#after-bpn-modified-dsp">[After BPN] + [Modified DSP]</a></li>
+  <li><a href="#control-dsp" id="toc-control-dsp" class="nav-link" data-scroll-target="#control-dsp">[Control DSP]</a></li>
+  <li><a href="#auto" id="toc-auto" class="nav-link" data-scroll-target="#auto">[Auto]</a></li>
+  <li><a href="#cfx" id="toc-cfx" class="nav-link" data-scroll-target="#cfx">[CFX]</a></li>
+  <li><a href="#strep1" id="toc-strep1" class="nav-link" data-scroll-target="#strep1">[Strep+1]</a></li>
+  </ul></li>
+  <li><a href="#dsp-executer-단계" id="toc-dsp-executer-단계" class="nav-link" data-scroll-target="#dsp-executer-단계">2. dsp-executer 단계</a>
+  <ul class="collapse">
+  <li><a href="#after-bpn-modified-dsp-1" id="toc-after-bpn-modified-dsp-1" class="nav-link" data-scroll-target="#after-bpn-modified-dsp-1">[After BPN] + [Modified DSP]</a></li>
+  <li><a href="#control-dsp-1" id="toc-control-dsp-1" class="nav-link" data-scroll-target="#control-dsp-1">[Control DSP]</a></li>
+  <li><a href="#auto-1" id="toc-auto-1" class="nav-link" data-scroll-target="#auto-1">[Auto]</a></li>
+  <li><a href="#cfx-1" id="toc-cfx-1" class="nav-link" data-scroll-target="#cfx-1">[CFX]</a></li>
+  <li><a href="#strep1-1" id="toc-strep1-1" class="nav-link" data-scroll-target="#strep1-1">[Strep+1]</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">파이썬 라이브러리 불러오기</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="파이썬-라이브러리-불러오기" class="level3">
+<h3 class="anchored" data-anchor-id="파이썬-라이브러리-불러오기">파이썬 라이브러리 불러오기</h3>
+<div id="9fde3a32-47c0-44e0-81d5-16aa0ee68975" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data Import</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pydsptools.biorad <span class="im">as</span> biorad</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Config</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pydsptools.config.pda <span class="im">as</span> pda</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># DSP processing</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pydsp.run.worker</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pathlib <span class="im">as</span> Path</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Analysis</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualization</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pydsptools.plot <span class="im">as</span> dspplt</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="script-description" class="level1">
+<h1>Script Description</h1>
+<section id="section" class="level2">
+<h2 class="anchored" data-anchor-id="section">[2024-04-23]</h2>
+<ul>
+<li>배경
+<ul>
+<li>이 스크립트는 데이터의 수와 종류가 늘어나고 병합과정이 복잡해짐에 따라 각 데이터가 각 단계에서 올바르게 처리되는지를 알아본다.</li>
+<li>baseline fitting 알고리즘의 성능을 측정하는 방법 중 하나인 MuDT의 왜곡 신호를 비교하는 시각화를 수행하기 위해 데이터 엔지니어링이 적절히 수행됐는지 확인해야한다.</li>
+<li>MuDT 왜곡 신호란? 하나의 well에서 High Temp에서 양성 Low Temp에서 음성 신호 결과가 나왔을 때, MuDT의 신호 왜곡 현상인 과도한 CR 현상이 발생하는 것을 의미한다.</li>
+<li>각 각의 well에서 High Temp에서 양성 Low Temp에서 음성 신호를 filtering 해야하는데 1개의 well당 Low Temp 신호와 High Temp 신호의 pairing이 전제가 되어야 한다.</li>
+</ul></li>
+<li>목표
+<ul>
+<li><code>cfx batch analyzer</code>에서 추출된 신호의 sample size를 확인하고 최종 data 전처리 결과물과 일치하는지 확인한다.</li>
+</ul></li>
+<li>방법
+<ul>
+<li>아래의 각 데이터 항목을 아래의 검증 절차에 따라 수행한다.
+<ul>
+<li>[After BPN] RFU: original rfu를 BPN으로 Transformation한 Data</li>
+<li>[Modified DSP] Original ABSD: 음성탈락 신호들의 absd-orig을 얻기위해 설정값들을 변경하여 얻은 Data로 음성 데이터에서 <strong>final_ct가 부정확</strong>할 수 있다. (final_ct 부정확 with 설정값 modified)</li>
+<li>[Auto] Baseline-Subtracted RFU: pgr-manager의 raw tab 결과 (final_ct 부정확 with 설정값 modified)</li>
+<li>[CFX] Baseline-Subtracted RFU: cfx manager의 baseline subtracted data. (final_ct 부정확 with 설정값 modified)</li>
+<li>[Strep] Baseline-Subtracted RFU (final_ct 부정확 with 설정값 modified)</li>
+<li>[Strep+n] Baseline-Subtracted RFU (final_ct 부정확 with 설정값 modified)</li>
+<li>[Control DSP] Baseline-Subtracted RFU (final_ct 정확 with 설정값 intact)</li>
+</ul></li>
+<li>검증 절차
+<ul>
+<li><code>1.cfx-to-parquet-converter.ipynb</code>의 csv에서 parquet의 pcrd 개수, pcrd당 channel당 temperature당 well 개수 확인</li>
+<li><code>2.dsp-executer.ipynb</code>의 DSP 실행 후 연산 결과인 parquet의 pcrd 개수, pcrd당 channel당 temperature당 well 개수 확인</li>
+</ul></li>
+</ul></li>
+</ul>
+</section>
+<section id="cfx의-csv-to-parquet-converter-단계" class="level2">
+<h2 class="anchored" data-anchor-id="cfx의-csv-to-parquet-converter-단계">1. CFX의 csv-to-parquet converter 단계</h2>
+<p><strong>1. CSV well 카운트</strong></p>
+<div id="41142db0-52ad-40b2-b2c0-1b74b5b4d125" class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>csv_path <span class="op">=</span> <span class="st">'./data/GI-B-I/GI-B-I-100/csv'</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>GIBI_8strip_csv_df <span class="op">=</span> []</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>channel_mapping <span class="op">=</span> {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Cal Red 610'</span>: <span class="st">'Cal Red 610'</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'FAM'</span>: <span class="st">'FAM'</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'HEX'</span>: <span class="st">'HEX'</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Quasar 670'</span>: <span class="st">'Quasar 670'</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>temperature_mapping <span class="op">=</span> {</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Amp4'</span>: <span class="st">'Low'</span>,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'Amp5'</span>: <span class="st">'High'</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_channel(filename):</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> key <span class="kw">in</span> channel_mapping:</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> key <span class="kw">in</span> filename:</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> channel_mapping[key]</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">'unexpected'</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_temperature(filename):</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> key <span class="kw">in</span> temperature_mapping:</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> key <span class="kw">in</span> filename:</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> temperature_mapping[key]</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">'unexpected'</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> filename <span class="kw">in</span> os.listdir(csv_path):</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">'Quantification Amplification Results'</span> <span class="kw">in</span> filename <span class="kw">and</span> filename.endswith(<span class="st">'.csv'</span>):</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        file_path <span class="op">=</span> os.path.join(csv_path, filename)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>        temp <span class="op">=</span> pd.read_csv(file_path)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        temp <span class="op">=</span> temp.iloc[:,<span class="dv">1</span>:]</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        temp[<span class="st">'name'</span>] <span class="op">=</span> filename</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>        temp[<span class="st">'channel'</span>] <span class="op">=</span> extract_channel(filename)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>        temp[<span class="st">'temperature'</span>] <span class="op">=</span> extract_temperature(filename)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>        GIBI_8strip_csv_df.append(temp)</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>GIBI_8strip_csv_df <span class="op">=</span> pd.concat(GIBI_8strip_csv_df, ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="co"># 칼럼 재정렬</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>leading_columns <span class="op">=</span> [<span class="st">'name'</span>, <span class="st">'channel'</span>, <span class="st">'temperature'</span>]</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>other_columns <span class="op">=</span> [col <span class="cf">for</span> col <span class="kw">in</span> GIBI_8strip_csv_df.columns <span class="cf">if</span> col <span class="kw">not</span> <span class="kw">in</span> leading_columns]</span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>new_order <span class="op">=</span> leading_columns <span class="op">+</span> other_columns</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>GIBI_8strip_csv_df <span class="op">=</span> GIBI_8strip_csv_df[new_order]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="11db3d1c-9319-4811-a392-8a392cd3c2c6" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>leading_columns <span class="op">=</span> [<span class="st">'name'</span>, <span class="st">'channel'</span>, <span class="st">'temperature'</span>]</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>leading_columns.append(<span class="st">'temp'</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>aggregated_df <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> well <span class="kw">in</span> other_columns[<span class="dv">1</span>:]:</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    current_columns <span class="op">=</span> leading_columns[:<span class="op">-</span><span class="dv">1</span>] <span class="op">+</span> [<span class="st">'Cycle'</span>, well]  <span class="co"># Simplified combining lists</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    temp <span class="op">=</span> combined_df[current_columns].groupby([<span class="st">'name'</span>, <span class="st">'channel'</span>, <span class="st">'temperature'</span>]).size().reset_index(name<span class="op">=</span><span class="st">'count'</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    temp[<span class="st">'well'</span>] <span class="op">=</span> well</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    aggregated_df <span class="op">=</span> pd.concat([aggregated_df, temp], ignore_index<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="269ba5a6-36b8-4d43-82a9-1627c0bf4289" class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>well_counts <span class="op">=</span> aggregated_df.groupby([<span class="st">'name'</span>, <span class="st">'channel'</span>])[<span class="st">'well'</span>].nunique().reset_index(name<span class="op">=</span><span class="st">'unique_wells'</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(well_counts)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(well_counts[<span class="st">'unique_wells'</span>].unique())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                                                  name      channel  \
+0    2. admin_2017-05-22 14-06-05_BR101459 GI9801XY...  Cal Red 610   
+1    2. admin_2017-05-22 14-06-05_BR101459 GI9801XY...          FAM   
+2    2. admin_2017-05-22 14-06-05_BR101459 GI9801XY...          HEX   
+3    2. admin_2017-05-22 14-06-05_BR101459 GI9801XY...   Quasar 670   
+4    2. admin_2017-05-22 14-06-05_BR101459 GI9801XY...  Cal Red 610   
+..                                                 ...          ...   
+795  admin_2017-10-27 10-11-31_BR100858 GI9801Y 완제품...   Quasar 670   
+796  admin_2017-10-27 10-11-31_BR100858 GI9801Y 완제품...  Cal Red 610   
+797  admin_2017-10-27 10-11-31_BR100858 GI9801Y 완제품...          FAM   
+798  admin_2017-10-27 10-11-31_BR100858 GI9801Y 완제품...          HEX   
+799  admin_2017-10-27 10-11-31_BR100858 GI9801Y 완제품...   Quasar 670   
+
+     unique_wells  
+0              96  
+1              96  
+2              96  
+3              96  
+4              96  
+..            ...  
+795            96  
+796            96  
+797            96  
+798            96  
+799            96  
+
+[800 rows x 3 columns]
+[96]</code></pre>
+</div>
+</div>
+<div id="3ffe0920-372b-40f7-b5dc-4fe945d7ea2d" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>aggregated_df.groupby([<span class="st">'channel'</span>,<span class="st">'temperature'</span>,<span class="st">'count'</span>]).size().reset_index(name<span class="op">=</span><span class="st">'n'</span>).assign(n<span class="op">=</span><span class="kw">lambda</span> df: df[<span class="st">'n'</span>] <span class="op">/</span> <span class="dv">96</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co"># cycle 45개 protocol : 94개</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># cycle 50개 protocol : 6개</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">channel</th>
+<th data-quarto-table-cell-role="th">temperature</th>
+<th data-quarto-table-cell-role="th">count</th>
+<th data-quarto-table-cell-role="th">n</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Cal Red 610</td>
+<td>High</td>
+<td>45</td>
+<td>94.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Cal Red 610</td>
+<td>High</td>
+<td>50</td>
+<td>6.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Cal Red 610</td>
+<td>Low</td>
+<td>45</td>
+<td>94.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Cal Red 610</td>
+<td>Low</td>
+<td>50</td>
+<td>6.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>FAM</td>
+<td>High</td>
+<td>45</td>
+<td>94.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>FAM</td>
+<td>High</td>
+<td>50</td>
+<td>6.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6</td>
+<td>FAM</td>
+<td>Low</td>
+<td>45</td>
+<td>94.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">7</td>
+<td>FAM</td>
+<td>Low</td>
+<td>50</td>
+<td>6.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">8</td>
+<td>HEX</td>
+<td>High</td>
+<td>45</td>
+<td>94.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">9</td>
+<td>HEX</td>
+<td>High</td>
+<td>50</td>
+<td>6.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10</td>
+<td>HEX</td>
+<td>Low</td>
+<td>45</td>
+<td>94.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">11</td>
+<td>HEX</td>
+<td>Low</td>
+<td>50</td>
+<td>6.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">12</td>
+<td>Quasar 670</td>
+<td>High</td>
+<td>45</td>
+<td>94.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">13</td>
+<td>Quasar 670</td>
+<td>High</td>
+<td>50</td>
+<td>6.0</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">14</td>
+<td>Quasar 670</td>
+<td>Low</td>
+<td>45</td>
+<td>94.0</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">15</td>
+<td>Quasar 670</td>
+<td>Low</td>
+<td>50</td>
+<td>6.0</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><strong>2. pda-pro의 DSP input의 well 카운트</strong></p>
+<div id="b480bd56-6bdc-4065-923d-22f4d63b4bee" class="cell" data-execution_count="41">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>paths</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="41">
+<pre><code>&lt;generator object Path.glob at 0x75449c7ff560&gt;</code></pre>
+</div>
+</div>
+<div id="8061e593-a22a-43cb-aa9b-c1a2b678831e" class="cell" data-execution_count="42">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>parquet_path <span class="op">=</span> <span class="st">'./data/GI-B-I/GI-B-I-100/computed/pcr_results/'</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>paths <span class="op">=</span> Path.Path(<span class="ss">f"</span><span class="sc">{</span>parquet_path<span class="sc">}</span><span class="ss">"</span>).glob(<span class="st">"*.parquet"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>paths <span class="op">=</span> <span class="bu">sorted</span>(<span class="bu">list</span>(paths), key<span class="op">=</span><span class="kw">lambda</span> p: p.name)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>GIBI_8strip_parquet_df <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> path <span class="kw">in</span> paths:</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    name <span class="op">=</span> path.name[:<span class="op">-</span><span class="dv">8</span>]</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_parquet(path)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>({<span class="st">'unique_wells'</span>:<span class="bu">len</span>(df[<span class="st">'well'</span>].unique()),<span class="st">'unique_signals'</span>: <span class="bu">len</span>(df[<span class="st">'well'</span>])<span class="op">/</span><span class="dv">4</span><span class="op">/</span><span class="dv">2</span>,<span class="st">'name'</span>:name}) <span class="co">#모든 pcrd파일들 channel 별로 high, low 짝지어 찍혔음</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{'unique_wells': 84, 'unique_signals': 84.0, 'name': '2. admin_2017-05-22 14-06-05_BR101459 GI9801XY MOM 소량 반제품1 민감도(Vpara, CdB, Vchol)'}
+{'unique_wells': 84, 'unique_signals': 84.0, 'name': '4. admin_2017-05-22 14-38-11_BR101644 GI9801XY MOM 소량 반제품1 민감도(Ahyd, Avero, Sbong)'}
+{'unique_wells': 56, 'unique_signals': 56.0, 'name': '5. admin_2017-05-22 14-40-33_BR101645 GI9801XY MOM 소량 반제품1 민감도(Styphi, IC)'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-23 02-32-41_BR100160_Allplex GI_B1_TCF_specificity-1'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-23 14-34-49_BR100135_Allplex GI_B1_TCF_specificity-2'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-23 14-35-01_BR100172_Allplex GI_B1_TCF_specificity-3'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-24 10-10-02_BR100135_Allplex GI_B1_TCF_specificity-1'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-24 10-10-34_BR100159_Allplex GI_B1_TCF_specificity-2'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-24 10-10-39_BR100172_Allplex GI_B1_TCF_specificity-3'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-27 10-40-40_BR100160_Allplex GI B1_Shelf life_plate 1'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-27 10-48-37_BR100172_Allplex GI B1_shelf life_plate 2'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-27 14-02-19_BR100136_Allplex GI B1_Shelf life_0M-plate 1'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-27 14-03-10_BR100139_Allplex GI B1_Shelf life_0M-plate 2'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-03 10-06-26_BR100136_Allplex GI B1_Analytical sensitivity_pV.para'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-03 10-07-06_BR100139_Allplex GI B1_Analytical sensitivity_ptcdB'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-09 10-01-00_BR100136_Allplex GI B1_Interfering substances_negative &amp; Salmonella'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-09 10-09-28_BR100136_Allplex GI B1_Interfeing substances_ipaH, Cco'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-09 10-15-05_CC015842_Allplex GI B1_interfering substances_Yen, Vpara'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-09 10-16-04_CC010436_Allplex GI B1_interfering substances_tcdB, Aver'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-11 14-29-06_BR100136_Allplex GI B1_comparison study-plate 2'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-11 15-35-24_CC015842_Allplex GI B1_comparison study-plate 3'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-13 10-36-56_BR100139_Allplex GI B1_Sample stability_4_Cco'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-13 14-27-43_CC015842_Allplex GI B1_Sample stability_4_Aver'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-13 14-28-54_CC010436_Allplex GI B1_Sample stability_4_Styphi'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-16 05-20-28_BR100139_B(I)_D1'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-16 09-30-55_BR100396_B(I)_D1'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-16 16-45-28_CC013751_B(I)_1'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-17 17-35-09_BR100136_Allplex GI B1_Sample stability_4_V.pa'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-18 05-45-04_CC009366_B(I)_D2_PRE'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-18 21-31-56_BR100139_B(I)_D2_1'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-20 23-12-44_BR100139_B(I)_D3-1'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-20 23-12-44_CC009366_B(I)_D3-1'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-23 10-09-22_CC009366_B(I)_D4-1'}
+{'unique_wells': 64, 'unique_signals': 64.0, 'name': 'admin_2015-03-23 15-20-53_CC010436_Allplex GI B1_Sample stability_-20_1M(target 1,2,3,4)'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-23 18-23-41_CC010436_Allplex GI B1_Sample stability_-20_1M(target5,6,7)'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-25 08-32-59_CC013751_B(I)_D5'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-25 14-44-57_BR100139_B(I)_D5-1'}
+{'unique_wells': 78, 'unique_signals': 78.0, 'name': 'admin_2015-04-02 10-31-09_BR100134_GI_Bacteria 1_Comparison Test(Qiagen,GeneAll,easyMAG,NIMBUS)'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-06 14-04-12_BR100171_GI_B1_ACC_tcdB-2'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-06 17-43-01_BR100136_Allplex GI B1_Accelerated_Yer-2'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-06 17-45-34_BR100168_GI_B1_ACC_Yer-1'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-06 17-58-47_BR100134_Allplex GI B1_Accelerated_Cco-2'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-06 17-59-32_CC009371_Allplex GI B1_Accelerated_Cco-1'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-07 13-49-58_BR100136_GI_B1_ACC_V.para-1'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-07 17-16-28_CC010424_GI_B1_ACC_A.vero-2'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-07 17-16-56_BR100136_Allplex GI B1_Accelerated_PC,NC'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-07 17-27-05_BR100135_GI_B1_ACC_S.typh-2'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-14 10-50-37_BR100394_repeat_B(I)_2D_AM'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-15 17-57-23_CC010436_REPEAT_b(I)_3D_PM'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-16 10-58-14_CC013751_REPEAT_b(I)_4D_AM'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-17 17-03-54_BR100396_repeat_B(I)_5D_PM'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-20 10-09-39_BR100394_repeat_B(I)_6D_AM'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-21 15-22-47_BR100136_GI_B1_In-use_TcdB_Ave'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-22 16-16-54_BR100139_repeat_B(I)_8D_PM'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-23 18-34-15_BR100392_repeat_B(I)_9D_PM'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-24 10-45-53_BR100135_repeat_B(I)_10D_AM'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-27 10-48-00_CC009366_repeat_B(I)_11D_AM'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-27 18-46-45_CC010436_repeat_B(I)_11D_PM'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-28 18-52-07_BR100139_repeat_B(I)_12D_PM'}
+{'unique_wells': 6, 'unique_signals': 6.0, 'name': 'admin_2015-04-29 12-58-02_BR100135_repeat_B(I)_13D_CdB_AM'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-05-06 10-58-54_CC009366_repeat_B(I)_15D_AM'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-05-07 10-42-43_BR100392_16D_AM'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-05-11 10-02-46_BR100386_repeat_B(I)_18D_AM'}
+{'unique_wells': 42, 'unique_signals': 42.0, 'name': 'admin_2015-05-11 17-45-31_CC013751_18D_PM'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-05-12 10-33-59_CC010436_repeat_B(I)_19D_AM'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-05-12 18-35-57_CC013751_repeat_B(I)_19D_PM'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-05-13 10-09-17_BR100139_repeat_B(I)_20D_AM'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-05-13 17-59-31_BR100172_repeat_B(I)_20D_PM'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-05-27 10-49-29_BR100135_Allplex GI B1_shelf life_3M_plate 1'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-05-27 10-49-29_BR100135_Allplex GI B1_shelf life_plate 1'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-05-27 10-49-52_BR100159_Allplex GI B1_shelf life_3M_plate 2'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-08-27 10-55-48_BR100171_Allplex GI B1_shelf life_6M_plate 2'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-08-27 10-56-24_BR100858_Allplex GI B1_shelf life_plate 1'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-11-27 15-01-48_BR100171_Allplex GI B1_shelf life_9M_plate 2'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-11-27 15-03-31_BR100858_Allplex GI B1_shelf life_9M_plate 1'}
+{'unique_wells': 94, 'unique_signals': 94.0, 'name': 'admin_2015-12-14 10-29-45_BR100392_GI-B(I)_LoD_8strip'}
+{'unique_wells': 94, 'unique_signals': 94.0, 'name': 'admin_2015-12-14 10-30-28_BR100139_GI-B(I)_LoD_8strip'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-12-17 10-10-31_CC010436_GI-B(I)_clinical_8strip'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2016-03-27 11-21-54_BR100139_Allplex_GI_B1 shlf life_13M'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2016-03-27 15-05-51_BR100139_Allplex_GI_B1 shelf life_13M_plate2'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2016-04-27 15-05-51_BR100139_Allplex_GI_B1 shelf life_plate2'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2017-02-09 10-39-42_BR100826 GI9801X MOM 소량 반제품1 NC'}
+{'unique_wells': 84, 'unique_signals': 84.0, 'name': 'admin_2017-02-09 11-22-33_BR101472 GI9801X MOM 소량반제품1 민감도 (Aela-1,Ahyd,Avero)'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2017-02-09 13-43-27_BR100550 GI9801X MOM 소량반제품1 민감도 (SHI, CCO,CJE)'}
+{'unique_wells': 64, 'unique_signals': 64.0, 'name': 'admin_2017-02-09 14-22-48_BR101644 GI9701X MOM 소량반제품1 민감도 (PXS, YER)'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2017-02-09 14-23-15_BR101645 GI9701X MOM 소량반제품1 민감도 (STYPHY, SBONG2, VCHOL)'}
+{'unique_wells': 84, 'unique_signals': 84.0, 'name': 'admin_2017-02-20 11-16-01_BR101644 GI9801X MOM 반제품1 민감도(AVERO, CDB,AELAL)'}
+{'unique_wells': 84, 'unique_signals': 84.0, 'name': 'admin_2017-02-20 11-23-53_BR101459 GI9801XY MOM 반제품1 민감도 (cje, yer, styphi)'}
+{'unique_wells': 84, 'unique_signals': 84.0, 'name': 'admin_2017-02-20 11-28-16_BR101472 GI9801XY MOM 반제품1 민감도 (sbong, vckol, IC)'}
+{'unique_wells': 56, 'unique_signals': 56.0, 'name': 'admin_2017-02-20 11-32-22_BR100558 GI9801XY MOM 반제품1 민감도 (shi, cco)'}
+{'unique_wells': 42, 'unique_signals': 42.0, 'name': 'admin_2017-02-21 14-40-46_BR101567 GI9801X MOM 반제품1 민감도 재실험(AELA)'}
+{'unique_wells': 20, 'unique_signals': 20.0, 'name': 'admin_2017-02-27 09-54-25_BR100550 GI9801X PC MOM 반제품2'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2017-05-29 11-30-27_BR101472 GI9801XY MOM 반제품1 NC TEST'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2017-05-29 14-03-21_BR100550 GI9801XY MOM 반제품1 민감도 (CdB, Vvul)'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2017-05-29 14-09-43_BR100355 GI9801XY MOM 반제품1 민감도 (Aela-1)'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2017-05-29 14-33-14_BR101472 GI9801XY MOM 반제품1 민감도(Cco, ShEi)'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2017-05-30 10-28-11_BR101645 GI9801XY MOM 반제품1 민감도 (Stypi, Sbong)'}
+{'unique_wells': 45, 'unique_signals': 45.0, 'name': 'admin_2017-07-25 10-32-15_BR100558 GI9801Y 완제품QC'}
+{'unique_wells': 6, 'unique_signals': 6.0, 'name': 'admin_2017-10-26 10-14-57_BR100858 GI9801Y 완제품 RETEST-2KIT PC'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2017-10-27 10-11-31_BR100858 GI9801Y 완제품 E,PC CROSS CHECK'}</code></pre>
+</div>
+</div>
+<section id="after-bpn-modified-dsp" class="level3">
+<h3 class="anchored" data-anchor-id="after-bpn-modified-dsp">[After BPN] + [Modified DSP]</h3>
+</section>
+<section id="control-dsp" class="level3">
+<h3 class="anchored" data-anchor-id="control-dsp">[Control DSP]</h3>
+<div id="25c2196d-aa62-4a22-81c9-f67a86b28996" class="cell" data-execution_count="43">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>parquet_path <span class="op">=</span> <span class="st">'./data/GI-B-I/control/computed/config__dsp2_generic/dsp/'</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>paths <span class="op">=</span> Path.Path(<span class="ss">f"</span><span class="sc">{</span>parquet_path<span class="sc">}</span><span class="ss">"</span>).glob(<span class="st">"*.parquet"</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>paths <span class="op">=</span> <span class="bu">sorted</span>(<span class="bu">list</span>(paths), key<span class="op">=</span><span class="kw">lambda</span> p: p.name)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>GIBI_8strip_control_df <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> path <span class="kw">in</span> paths:</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    name <span class="op">=</span> path.name[:<span class="op">-</span><span class="dv">8</span>]</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_parquet(path)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>({<span class="st">'unique_wells'</span>:<span class="bu">len</span>(df[<span class="st">'well'</span>].unique()),<span class="st">'unique_signals'</span>: <span class="bu">len</span>(df[<span class="st">'well'</span>])<span class="op">/</span><span class="dv">4</span><span class="op">/</span><span class="dv">2</span>,<span class="st">'name'</span>:name}) <span class="co">#모든 pcrd파일들 channel 별로 high, low 짝지어 찍혔음</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{'unique_wells': 84, 'unique_signals': 84.0, 'name': '2. admin_2017-05-22 14-06-05_BR101459 GI9801XY MOM 소량 반제품1 민감도(Vpara, CdB, Vchol).dsp'}
+{'unique_wells': 84, 'unique_signals': 84.0, 'name': '4. admin_2017-05-22 14-38-11_BR101644 GI9801XY MOM 소량 반제품1 민감도(Ahyd, Avero, Sbong).dsp'}
+{'unique_wells': 56, 'unique_signals': 56.0, 'name': '5. admin_2017-05-22 14-40-33_BR101645 GI9801XY MOM 소량 반제품1 민감도(Styphi, IC).dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-23 02-32-41_BR100160_Allplex GI_B1_TCF_specificity-1.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-23 14-34-49_BR100135_Allplex GI_B1_TCF_specificity-2.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-23 14-35-01_BR100172_Allplex GI_B1_TCF_specificity-3.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-24 10-10-02_BR100135_Allplex GI_B1_TCF_specificity-1.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-24 10-10-34_BR100159_Allplex GI_B1_TCF_specificity-2.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-24 10-10-39_BR100172_Allplex GI_B1_TCF_specificity-3.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-27 10-40-40_BR100160_Allplex GI B1_Shelf life_plate 1.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-27 10-48-37_BR100172_Allplex GI B1_shelf life_plate 2.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-27 14-02-19_BR100136_Allplex GI B1_Shelf life_0M-plate 1.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-02-27 14-03-10_BR100139_Allplex GI B1_Shelf life_0M-plate 2.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-03 10-06-26_BR100136_Allplex GI B1_Analytical sensitivity_pV.para.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-03 10-07-06_BR100139_Allplex GI B1_Analytical sensitivity_ptcdB.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-09 10-01-00_BR100136_Allplex GI B1_Interfering substances_negative &amp; Salmonella.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-09 10-09-28_BR100136_Allplex GI B1_Interfeing substances_ipaH, Cco.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-09 10-15-05_CC015842_Allplex GI B1_interfering substances_Yen, Vpara.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-09 10-16-04_CC010436_Allplex GI B1_interfering substances_tcdB, Aver.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-11 14-29-06_BR100136_Allplex GI B1_comparison study-plate 2.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-11 15-35-24_CC015842_Allplex GI B1_comparison study-plate 3.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-13 10-36-56_BR100139_Allplex GI B1_Sample stability_4_Cco.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-13 14-27-43_CC015842_Allplex GI B1_Sample stability_4_Aver.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-13 14-28-54_CC010436_Allplex GI B1_Sample stability_4_Styphi.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-16 05-20-28_BR100139_B(I)_D1.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-16 09-30-55_BR100396_B(I)_D1.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-16 16-45-28_CC013751_B(I)_1.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-17 17-35-09_BR100136_Allplex GI B1_Sample stability_4_V.pa.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-18 05-45-04_CC009366_B(I)_D2_PRE.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-18 21-31-56_BR100139_B(I)_D2_1.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-20 23-12-44_BR100139_B(I)_D3-1.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-20 23-12-44_CC009366_B(I)_D3-1.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-23 10-09-22_CC009366_B(I)_D4-1.dsp'}
+{'unique_wells': 64, 'unique_signals': 64.0, 'name': 'admin_2015-03-23 15-20-53_CC010436_Allplex GI B1_Sample stability_-20_1M(target 1,2,3,4).dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-23 18-23-41_CC010436_Allplex GI B1_Sample stability_-20_1M(target5,6,7).dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-25 08-32-59_CC013751_B(I)_D5.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-03-25 14-44-57_BR100139_B(I)_D5-1.dsp'}
+{'unique_wells': 78, 'unique_signals': 78.0, 'name': 'admin_2015-04-02 10-31-09_BR100134_GI_Bacteria 1_Comparison Test(Qiagen,GeneAll,easyMAG,NIMBUS).dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-06 14-04-12_BR100171_GI_B1_ACC_tcdB-2.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-06 17-43-01_BR100136_Allplex GI B1_Accelerated_Yer-2.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-06 17-45-34_BR100168_GI_B1_ACC_Yer-1.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-06 17-58-47_BR100134_Allplex GI B1_Accelerated_Cco-2.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-06 17-59-32_CC009371_Allplex GI B1_Accelerated_Cco-1.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-07 13-49-58_BR100136_GI_B1_ACC_V.para-1.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-07 17-16-28_CC010424_GI_B1_ACC_A.vero-2.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-07 17-16-56_BR100136_Allplex GI B1_Accelerated_PC,NC.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-07 17-27-05_BR100135_GI_B1_ACC_S.typh-2.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-14 10-50-37_BR100394_repeat_B(I)_2D_AM.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-15 17-57-23_CC010436_REPEAT_b(I)_3D_PM.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-16 10-58-14_CC013751_REPEAT_b(I)_4D_AM.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-17 17-03-54_BR100396_repeat_B(I)_5D_PM.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-20 10-09-39_BR100394_repeat_B(I)_6D_AM.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-04-21 15-22-47_BR100136_GI_B1_In-use_TcdB_Ave.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-22 16-16-54_BR100139_repeat_B(I)_8D_PM.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-23 18-34-15_BR100392_repeat_B(I)_9D_PM.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-24 10-45-53_BR100135_repeat_B(I)_10D_AM.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-27 10-48-00_CC009366_repeat_B(I)_11D_AM.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-27 18-46-45_CC010436_repeat_B(I)_11D_PM.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-04-28 18-52-07_BR100139_repeat_B(I)_12D_PM.dsp'}
+{'unique_wells': 6, 'unique_signals': 6.0, 'name': 'admin_2015-04-29 12-58-02_BR100135_repeat_B(I)_13D_CdB_AM.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-05-06 10-58-54_CC009366_repeat_B(I)_15D_AM.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-05-07 10-42-43_BR100392_16D_AM.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-05-11 10-02-46_BR100386_repeat_B(I)_18D_AM.dsp'}
+{'unique_wells': 42, 'unique_signals': 42.0, 'name': 'admin_2015-05-11 17-45-31_CC013751_18D_PM.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-05-12 10-33-59_CC010436_repeat_B(I)_19D_AM.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-05-12 18-35-57_CC013751_repeat_B(I)_19D_PM.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-05-13 10-09-17_BR100139_repeat_B(I)_20D_AM.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2015-05-13 17-59-31_BR100172_repeat_B(I)_20D_PM.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-05-27 10-49-29_BR100135_Allplex GI B1_shelf life_3M_plate 1.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-05-27 10-49-29_BR100135_Allplex GI B1_shelf life_plate 1.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-05-27 10-49-52_BR100159_Allplex GI B1_shelf life_3M_plate 2.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-08-27 10-55-48_BR100171_Allplex GI B1_shelf life_6M_plate 2.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-08-27 10-56-24_BR100858_Allplex GI B1_shelf life_plate 1.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-11-27 15-01-48_BR100171_Allplex GI B1_shelf life_9M_plate 2.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-11-27 15-03-31_BR100858_Allplex GI B1_shelf life_9M_plate 1.dsp'}
+{'unique_wells': 94, 'unique_signals': 94.0, 'name': 'admin_2015-12-14 10-29-45_BR100392_GI-B(I)_LoD_8strip.dsp'}
+{'unique_wells': 94, 'unique_signals': 94.0, 'name': 'admin_2015-12-14 10-30-28_BR100139_GI-B(I)_LoD_8strip.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2015-12-17 10-10-31_CC010436_GI-B(I)_clinical_8strip.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2016-03-27 11-21-54_BR100139_Allplex_GI_B1 shlf life_13M.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2016-03-27 15-05-51_BR100139_Allplex_GI_B1 shelf life_13M_plate2.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2016-04-27 15-05-51_BR100139_Allplex_GI_B1 shelf life_plate2.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2017-02-09 10-39-42_BR100826 GI9801X MOM 소량 반제품1 NC.dsp'}
+{'unique_wells': 84, 'unique_signals': 84.0, 'name': 'admin_2017-02-09 11-22-33_BR101472 GI9801X MOM 소량반제품1 민감도 (Aela-1,Ahyd,Avero).dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2017-02-09 13-43-27_BR100550 GI9801X MOM 소량반제품1 민감도 (SHI, CCO,CJE).dsp'}
+{'unique_wells': 64, 'unique_signals': 64.0, 'name': 'admin_2017-02-09 14-22-48_BR101644 GI9701X MOM 소량반제품1 민감도 (PXS, YER).dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2017-02-09 14-23-15_BR101645 GI9701X MOM 소량반제품1 민감도 (STYPHY, SBONG2, VCHOL).dsp'}
+{'unique_wells': 84, 'unique_signals': 84.0, 'name': 'admin_2017-02-20 11-16-01_BR101644 GI9801X MOM 반제품1 민감도(AVERO, CDB,AELAL).dsp'}
+{'unique_wells': 84, 'unique_signals': 84.0, 'name': 'admin_2017-02-20 11-23-53_BR101459 GI9801XY MOM 반제품1 민감도 (cje, yer, styphi).dsp'}
+{'unique_wells': 84, 'unique_signals': 84.0, 'name': 'admin_2017-02-20 11-28-16_BR101472 GI9801XY MOM 반제품1 민감도 (sbong, vckol, IC).dsp'}
+{'unique_wells': 56, 'unique_signals': 56.0, 'name': 'admin_2017-02-20 11-32-22_BR100558 GI9801XY MOM 반제품1 민감도 (shi, cco).dsp'}
+{'unique_wells': 42, 'unique_signals': 42.0, 'name': 'admin_2017-02-21 14-40-46_BR101567 GI9801X MOM 반제품1 민감도 재실험(AELA).dsp'}
+{'unique_wells': 20, 'unique_signals': 20.0, 'name': 'admin_2017-02-27 09-54-25_BR100550 GI9801X PC MOM 반제품2.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2017-05-29 11-30-27_BR101472 GI9801XY MOM 반제품1 NC TEST.dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2017-05-29 14-03-21_BR100550 GI9801XY MOM 반제품1 민감도 (CdB, Vvul).dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2017-05-29 14-09-43_BR100355 GI9801XY MOM 반제품1 민감도 (Aela-1).dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2017-05-29 14-33-14_BR101472 GI9801XY MOM 반제품1 민감도(Cco, ShEi).dsp'}
+{'unique_wells': 96, 'unique_signals': 96.0, 'name': 'admin_2017-05-30 10-28-11_BR101645 GI9801XY MOM 반제품1 민감도 (Stypi, Sbong).dsp'}
+{'unique_wells': 45, 'unique_signals': 45.0, 'name': 'admin_2017-07-25 10-32-15_BR100558 GI9801Y 완제품QC.dsp'}
+{'unique_wells': 6, 'unique_signals': 6.0, 'name': 'admin_2017-10-26 10-14-57_BR100858 GI9801Y 완제품 RETEST-2KIT PC.dsp'}
+{'unique_wells': 48, 'unique_signals': 48.0, 'name': 'admin_2017-10-27 10-11-31_BR100858 GI9801Y 완제품 E,PC CROSS CHECK.dsp'}</code></pre>
+</div>
+</div>
+</section>
+<section id="auto" class="level3">
+<h3 class="anchored" data-anchor-id="auto">[Auto]</h3>
+</section>
+<section id="cfx" class="level3">
+<h3 class="anchored" data-anchor-id="cfx">[CFX]</h3>
+</section>
+<section id="strep1" class="level3">
+<h3 class="anchored" data-anchor-id="strep1">[Strep+1]</h3>
+</section>
+</section>
+<section id="dsp-executer-단계" class="level2">
+<h2 class="anchored" data-anchor-id="dsp-executer-단계">2. dsp-executer 단계</h2>
+<section id="after-bpn-modified-dsp-1" class="level3">
+<h3 class="anchored" data-anchor-id="after-bpn-modified-dsp-1">[After BPN] + [Modified DSP]</h3>
+</section>
+<section id="control-dsp-1" class="level3">
+<h3 class="anchored" data-anchor-id="control-dsp-1">[Control DSP]</h3>
+</section>
+<section id="auto-1" class="level3">
+<h3 class="anchored" data-anchor-id="auto-1">[Auto]</h3>
+</section>
+<section id="cfx-1" class="level3">
+<h3 class="anchored" data-anchor-id="cfx-1">[CFX]</h3>
+</section>
+<section id="strep1-1" class="level3">
+<h3 class="anchored" data-anchor-id="strep1-1">[Strep+1]</h3>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

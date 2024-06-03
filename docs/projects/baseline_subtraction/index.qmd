@@ -95,6 +95,70 @@ baseline data를 살펴 보고 다양한 신호 패턴의 존재를 인식하고
 
 ## Result
 
+### Import Packages
+
+```{python}
+# import packages
+import polars as pl
+
+# Analysis Preparation
+import pandas as pd
+import numpy as np
+
+# PreProcessing
+import pprint
+import pyarrow as pa
+import os
+
+import subprocess
+from pathlib import Path
+from source.preprocess import (main_function,
+                                load_and_prepare_parquet,
+                                get_column_percentiles,
+                                process_column_for_outliers,
+                                compute_lm_slope,
+                                check_memory_status,
+                                get_disk_usage,
+                                get_package_details)
+from source.signal_filter import (detect_noise_naively,
+                                    detect_noise_naively_ver2,
+                                    detect_noise_naively_ywj1,
+                                    detect_noise_naively_pbg,
+                                    detect_noise_naively_kkm,
+                                    compute_autocorrelation,
+                                    test_white_noise)
+
+# Visualization
+import plotly.express as px
+import matplotlib.pyplot as plt
+from source.visualization import (find_sub_extremes,
+                                    find_global_extremes,
+                                    get_comparison_metrics,
+                                    compute_bpn,
+                                    plot_baseline_subtractions,
+                                    plot_single_well,
+                                    plot_signal_patterns)
+
+# pandas 출력 옵션 설정
+#pd.set_option('display.max_rows', None)  # 모든 행 출력
+#pd.set_option('display.max_columns', None)  # 모든 열 출력
+#pd.set_option('display.width', 1000)  # 셀 너비 설정
+#pd.set_option('display.max_colwidth', None)  # 열 내용 전체 출력
+```
+
+### Data Preparation
+
+```{python}
+mudt=False
+outlier_naive_metric =1.65
+result_data = main_function(outlier_naive_metric,mudt)
+merged_data = result_data[0]
+filtered_data = result_data[1]
+
+
+```
+
+
 ## Conclusion
 
 ## Issues

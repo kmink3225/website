@@ -56,35 +56,40 @@ def main_function(outlier_naive_metric=1.65,mudt=True):
                           'analysis_efc','final_ct','analysis_resultwell','analysis_dataprocnum']
     combo_key_columns = ['name', 'consumable', 'channel', 'temperature', 'well']
 
-
+    datapath = 'C:/Users/kmkim/Desktop/projects/website/docs/data/baseline_optimization/GI-B-I'
     if mudt:    
         ### with MuDT (To Be Organized)
-        raw_datapath = './data/GI-B-I/raw_data/computed/dsp2_generic_config_MuDT/dsp/*.parquet'
-        auto_datapath = './data/GI-B-I/strep_plus2/computed/dsp2_strep_plus2_config_MuDT/basesub/*.parquet'
-        cfx_datapath = './data/cfx-baseline-subtracted/computed/example1/config__dsp2_orig/dsp/*.parquet'
-        strep_plus1_datapath = './data/GI-B-I/strep_plus1/dsp2_strep-plus1_config_MuDT.parquet'
-        strep_plus2_datapath = './data/GI-B-I/strep_plus2/computed/dsp2_strep_plus2_config_MuDT/dsp/*.parquet'
+        raw_datapath = datapath + '/raw_data/mudt_raw_data.parquet'
+        auto_datapath = datapath + '/auto_baseline_data/mudt_auto_baseline_data.parquet'
+        cfx_datapath = datapath + '/cfx_data/mudt_cfx_data.parquet'
+        strep_plus1_datapath = datapath + '/strep_plus1_data/mudt_strep_plus1_data.parquet'
+        strep_plus2_datapath = datapath + '/strep_plus2_data/mudt_strep_plus2_data.parquet'
     else:
         ### without MuDT (To Be Organized)
-        raw_datapath = './data/GI-B-I/raw_data/computed/dsp2_generic_config_no-MuDT/dsp/*.parquet'
-        auto_datapath = './data/GI-B-I/strep_plus2/computed/dsp2_strep_plus2_config_no-MuDT/basesub/*.parquet'
-        cfx_datapath = './data/cfx-baseline-subtracted/computed/example1/config__dsp2_orig/dsp/*.parquet'
-        strep_plus1_datapath = './data/GI-B-I/strep_plus1/dsp2_strep-plus1_config_no-MuDT.parquet'
-        strep_plus2_datapath = './data/GI-B-I/strep_plus2/computed/dsp2_strep_plus2_config_no-MuDT/dsp/*.parquet'
+        raw_datapath = datapath + '/raw_data/no_mudt_raw_data.parquet'
+        auto_datapath = datapath + '/auto_baseline_data/no_mudt_auto_baseline_data.parquet'
+        cfx_datapath = datapath + '/cfx_data/no_mudt_cfx_data.parquet'
+        strep_plus1_datapath = datapath + '/strep_plus1_data/no_mudt_strep_plus1_data.parquet'
+        strep_plus2_datapath = datapath + '/strep_plus2_data/no_mudt_strep_plus2_data.parquet'
     
     
     ## Read parquets
-    raw_data = load_and_prepare_parquet(raw_datapath, i_combo_key_columns=combo_key_columns)
-    cfx_data = load_and_prepare_parquet(cfx_datapath, cfx_columns, combo_key_columns, {'original_rfu': 'original_rfu_cfx'})
-    auto_baseline_data = load_and_prepare_parquet(auto_datapath, auto_baseline_columns, combo_key_columns)
-    strep_plus1_data = load_and_prepare_parquet(strep_plus1_datapath, strep_plus1_columns, combo_key_columns,
-                                        {'new_jump_corrected_rfu': 'strep_plus1_corrected_rfu','new_efc': 'strep_plus1_efc','new_baseline':'strep_plus1_baseline_fit',
-                                         'new_baseline_model':'strep_plus1_baseline_model','new_absd':'strep_plus1_analysis_absd','analysis_rd_diff':'strep_plus1_analysis_rd_diff'})
-    strep_plus2_data = load_and_prepare_parquet(strep_plus2_datapath, control_dsp_columns, combo_key_columns,
-                                          {'preproc_rfu': 'strep_plus2_preproc_rfu', 'analysis_absd': 'strep_plus2_analysis_absd',
-                                          'analysis_rd_diff': 'strep_plus2_analysis_rd_diff','analysis_scd_fit':'strep_plus2_analysis_scd_fit', 
-                                          'analysis_efc':'strep_plus2_analysis_efc', 'final_ct':'strep_plus2_final_ct', 
-                                          'analysis_resultwell':'strep_plus2_analysis_resultwell', 'analysis_dataprocnum': 'strep_plus2_analysis_dataprocnum'})
+    # raw_data = load_and_prepare_parquet(raw_datapath, i_combo_key_columns=combo_key_columns)
+    # cfx_data = load_and_prepare_parquet(cfx_datapath, cfx_columns, combo_key_columns, {'original_rfu': 'original_rfu_cfx'})
+    # auto_baseline_data = load_and_prepare_parquet(auto_datapath, auto_baseline_columns, combo_key_columns)
+    # strep_plus1_data = load_and_prepare_parquet(strep_plus1_datapath, strep_plus1_columns, combo_key_columns,
+    #                                     {'new_jump_corrected_rfu': 'strep_plus1_corrected_rfu','new_efc': 'strep_plus1_efc','new_baseline':'strep_plus1_baseline_fit',
+    #                                      'new_baseline_model':'strep_plus1_baseline_model','new_absd':'strep_plus1_analysis_absd','analysis_rd_diff':'strep_plus1_analysis_rd_diff'})
+    # strep_plus2_data = load_and_prepare_parquet(strep_plus2_datapath, control_dsp_columns, combo_key_columns,
+    #                                       {'preproc_rfu': 'strep_plus2_preproc_rfu', 'analysis_absd': 'strep_plus2_analysis_absd',
+    #                                       'analysis_rd_diff': 'strep_plus2_analysis_rd_diff','analysis_scd_fit':'strep_plus2_analysis_scd_fit', 
+    #                                       'analysis_efc':'strep_plus2_analysis_efc', 'final_ct':'strep_plus2_final_ct', 
+    #                                       'analysis_resultwell':'strep_plus2_analysis_resultwell', 'analysis_dataprocnum': 'strep_plus2_analysis_dataprocnum'})
+    raw_data = pl.scan_parquet(raw_datapath).collect().to_pandas()
+    cfx_data = pl.scan_parquet(cfx_datapath).collect().to_pandas()
+    auto_baseline_data = pl.scan_parquet(auto_datapath).collect().to_pandas()
+    strep_plus1_data = pl.scan_parquet(strep_plus1_datapath).collect().to_pandas()
+    strep_plus2_data = pl.scan_parquet(strep_plus2_datapath).collect().to_pandas()
     
     ## variable selection used for merging the dataframes
     cfx_df = cfx_data[['original_rfu_cfx', 'combo_key']]
@@ -224,7 +229,7 @@ def process_column_for_outliers(i_data, i_column, i_groupby_columns,i_function):
     # Calculate metric percentiles within each group
     i_data[f'outlier_naive_metric_percentile_{i_column}'] = (i_data
                                                              .groupby(i_groupby_columns)
-                                                             .apply(lambda grp: get_column_percentiles(grp, f'outlier_naive_metric_{i_column}'),include_groups=False)
+                                                             .apply(lambda grp: get_column_percentiles(grp, f'outlier_naive_metric_{i_column}'))#,include_groups=False)
                                                              .reset_index(level=i_groupby_columns, drop=True))
     
     o_result = i_data

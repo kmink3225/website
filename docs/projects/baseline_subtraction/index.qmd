@@ -144,6 +144,10 @@ from source.visualization import (find_sub_extremes,
 #pd.set_option('display.max_columns', None)  # 모든 열 출력
 #pd.set_option('display.width', 1000)  # 셀 너비 설정
 #pd.set_option('display.max_colwidth', None)  # 열 내용 전체 출력
+
+import warnings
+
+warnings.filterwarnings("ignore")
 ```
 
 ### Data Preparation
@@ -154,10 +158,219 @@ outlier_naive_metric =1.65
 result_data = main_function(outlier_naive_metric,mudt)
 merged_data = result_data[0]
 filtered_data = result_data[1]
+```
 
+```{python}
+merged_data = merged_data.query("`final_ct`<0")
+channels=merged_data['channel'].unique()
+temperatures=merged_data['temperature'].unique()
+plate_names=merged_data['name'].unique()
+well_names=merged_data['well'].unique()
+colors = {'Low':'blue','High':'red'}
+pcrd_name = merged_data['name'].unique()[0]
+channel_name = merged_data['channel'].unique()[0]
+temperature_name = merged_data['temperature'].unique()[0]
+```
+
+
+```{python}
+plot_baseline_subtractions(merged_data,pcrd_name,channel_name,temperature_name, mudt=mudt)
+```
+
+```{python}
+plot_single_well(filtered_data,pcrd_name,channel_name, temperature_name, 'H12',mudt=mudt)
+```
+```{python}
+ascending_data = merged_data.query("`channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` >0") #`analysis_dataprocnum` == 13 & 
+```
+
+```{python}
+plot_signal_patterns(ascending_data,channel_name, temperature_name, mudt = mudt)
+```
+
+```{python}
+temp=ascending_data[ascending_data['original_rfu_cfx'].apply(lambda x: x[30]>1000)]
+```
+
+```{python}
+pcrd_nm = temp.loc[17632]['name']
+channel_nm =temp.loc[17632]['channel']
+temperature_nm=temp.loc[17632]['temperature']
+well_nm=temp.loc[17632]['well']
+```
+
+```{python}
+plot_single_well(ascending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt=mudt)
+```
+
+```{python}
+temp=ascending_data[ascending_data['strep_plus2_analysis_absd'].apply(lambda x: x[41]>200)]
+pcrd_nm = temp.loc[18048]['name']
+channel_nm =temp.loc[18048]['channel']
+temperature_nm=temp.loc[18048]['temperature']
+well_nm=temp.loc[18048]['well']
+```
+```{python}
+plot_single_well(ascending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt=mudt)
+```
+
+```{python}
+descending_data = merged_data.query("`analysis_dataprocnum` == 13 & `channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` <0")
+descending_data=descending_data.iloc[:len(descending_data) // 2]
+```
+
+```{python}
+plot_signal_patterns(descending_data,channel_name, temperature_name, mudt = mudt)
+```
+
+```{python}
+temp=descending_data[descending_data['strep_plus1_analysis_absd'].apply(lambda x: x[12]>200)]
+pcrd_nm = temp.loc[5272]['name']
+channel_nm =temp.loc[5272]['channel']
+temperature_nm=temp.loc[5272]['temperature']
+well_nm=temp.loc[5272]['well']
+```
+
+```{python}
+plot_single_well(descending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt=mudt)
+```
+
+```{python}
+temp=descending_data[descending_data['strep_plus2_analysis_absd'].apply(lambda x: x[31]>50)]
+pcrd_nm = temp.loc[18528]['name']
+channel_nm =temp.loc[18528]['channel']
+temperature_nm=temp.loc[18528]['temperature']
+well_nm=temp.loc[18528]['well']
+```
+
+```{python}
+plot_single_well(descending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt=mudt)
+```
+
+```{python}
+mudt=True
+outlier_naive_metric =1.65
+result_data = main_function(outlier_naive_metric,mudt)
+merged_data = result_data[0]
+filtered_data = result_data[1]
+
+channels=filtered_data['channel'].unique()
+temperatures=filtered_data['temperature'].unique()
+plate_names=filtered_data['name'].unique()
+well_names=filtered_data['well'].unique()
+colors = {'Low':'blue','High':'red'}
+pcrd_name = filtered_data['name'].unique()[0]
+channel_name = filtered_data['channel'].unique()[0]
+temperature_name = filtered_data['temperature'].unique()[0]
+```
+
+```{python}
+plot_baseline_subtractions(filtered_data,pcrd_name,channel_name,temperature_name, mudt=mudt)
+```
+
+```{python}
+temp=filtered_data[filtered_data['strep_plus2_analysis_absd'].apply(lambda x: x[20]>100)]
+temp
+```
+
+```{python}
+pcrd_nm = temp.loc[640]['name']
+channel_nm =temp.loc[640]['channel']
+temperature_nm=temp.loc[640]['temperature']
+well_nm=temp.loc[640]['well']
+print(pcrd_nm)
+print(channel_nm)
+print(temperature_nm)
+print(well_nm)
+```
+```{python}
+plot_single_well(filtered_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
+```
+```{python}
+ascending_data = merged_data.query("`analysis_dataprocnum` == 13 & `channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` >0")
+ascending_data = ascending_data.iloc[:len(ascending_data) // 2]
+```
+```{python}
+plot_signal_patterns(ascending_data,channel_name, temperature_name, mudt = mudt)
+```
+```{python}
+temp=ascending_data[ascending_data['strep_plus1_analysis_absd'].apply(lambda x: x[10]<-200)]
+pcrd_nm = temp.loc[1528]['name']
+channel_nm =temp.loc[1528]['channel']
+temperature_nm=temp.loc[1528]['temperature']
+well_nm=temp.loc[1528]['well']
+plot_single_well(ascending_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
+```
+```{python}
+temp=ascending_data[ascending_data['strep_plus2_analysis_absd'].apply(lambda x: x[10]<-300)]
+pcrd_nm = temp.loc[36200]['name']
+channel_nm =temp.loc[36200]['channel']
+temperature_nm=temp.loc[36200]['temperature']
+well_nm=temp.loc[36200]['well']
+plot_single_well(ascending_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
+```
+```{python}
+descending_data = merged_data.query("`channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` <0")
+descending_data = descending_data.iloc[:len(descending_data) // 2]
+plot_signal_patterns(descending_data,channel_name, temperature_name, mudt = True)
+```
+```{python}
+descending_data = merged_data.query("`analysis_dataprocnum` == 13 & `channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` <0")
+plot_signal_patterns(descending_data,channel_name, temperature_name, mudt = True)
+```
+```{python}
+temp=descending_data[descending_data['strep_plus2_analysis_absd'].apply(lambda x: x[35]<-50)]
+pcrd_nm = temp.loc[26112]['name']
+channel_nm =temp.loc[26112]['channel']
+temperature_nm=temp.loc[26112]['temperature']
+well_nm=temp.loc[26112]['well']
+plot_single_well(descending_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
+```
+```{python}
+merged_data['mudt_distortion_combo_key']=merged_data[['name', 'channel', 'well']].apply(lambda x: ' '.join(x), axis=1)
+mudt_high_risk_list = merged_data.query("`temperature`=='High' & `final_ct`<40 & `final_ct`>0")['mudt_distortion_combo_key'].unique()
+mudt_risk_data=merged_data.query("`mudt_distortion_combo_key` in @mudt_high_risk_list & `temperature`=='Low' & `final_ct`<0")
+plot_signal_patterns(mudt_risk_data, channel_name, temperature_name, mudt=mudt)
+```
+
+```{python}
+temp=mudt_risk_data[mudt_risk_data['strep_plus2_analysis_absd'].apply(lambda x: x[20]>1000)]
+temp
 
 ```
 
+```{python}
+pcrd_nm = temp.loc[54384]['name']
+channel_nm =temp.loc[54384]['channel']
+temperature_nm=temp.loc[54384]['temperature']
+well_nm=temp.loc[54384]['well']
+plot_single_well(mudt_risk_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
+```
+```{python}
+temp=mudt_risk_data[mudt_risk_data['strep_plus1_analysis_absd'].apply(lambda x: x[20]>1000)]
+pcrd_nm = temp.loc[24912]['name']
+channel_nm =temp.loc[24912]['channel']
+temperature_nm=temp.loc[24912]['temperature']
+well_nm=temp.loc[24912]['well']
+plot_single_well(mudt_risk_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
+```
+```{python}
+temp=mudt_risk_data[mudt_risk_data['strep_plus2_analysis_absd'].apply(lambda x: x[35]<-1800)]
+pcrd_nm = temp.loc[54304]['name']
+channel_nm =temp.loc[54304]['channel']
+temperature_nm=temp.loc[54304]['temperature']
+well_nm=temp.loc[54304]['well']
+plot_single_well(mudt_risk_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
+```
+```{python}
+
+```
+```{python}
+
+```
+```{python}
+
+```
 
 ## Conclusion
 

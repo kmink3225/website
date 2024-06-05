@@ -233,7 +233,8 @@ def plot_baseline_subtractions(i_data, i_pcrd, i_channel, i_temperature, colors=
     grouping_columns = ['analysis_absd_orig', 'original_rfu_cfx', 'basesub_absd_orig', 'strep_plus1_analysis_absd', 'strep_plus2_analysis_absd']
     error_metrics_df = (i_data
                         .groupby(['name', 'channel', 'temperature'])
-                        .apply(lambda x: get_comparison_metrics(x, grouping_columns),include_groups=False)
+                        #.apply(lambda x: get_comparison_metrics(x, grouping_columns),include_groups=False)
+                        .apply(lambda x: get_comparison_metrics(x, grouping_columns))
                         .reset_index(drop=True))
     error_metrics_dict = error_metrics_df.iloc[0]
             
@@ -503,7 +504,8 @@ def plot_signal_patterns(i_data,i_channel,i_temperature, mudt):
     grouping_columns = ['analysis_absd_orig', 'original_rfu_cfx', 'basesub_absd_orig', 'strep_plus1_analysis_absd', 'strep_plus2_analysis_absd']
     error_metrics_df = (i_data
                         .groupby(['name', 'channel', 'temperature'])
-                        .apply(lambda x: get_comparison_metrics(x, grouping_columns),include_groups=False)
+                        #.apply(lambda x: get_comparison_metrics(x, grouping_columns),include_groups=False)
+                        .apply(lambda x: get_comparison_metrics(x, grouping_columns))
                         .reset_index(drop=True))
     error_metrics_dict = error_metrics_df.iloc[0]
             

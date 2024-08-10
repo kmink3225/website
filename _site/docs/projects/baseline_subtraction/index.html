@@ -475,11 +475,20 @@ English
 <section id="methodology" class="level2" data-number="6">
 <h2 data-number="6" class="anchored" data-anchor-id="methodology"><span class="header-section-number">6</span> Methodology</h2>
 </section>
-<section id="result" class="level2" data-number="7">
-<h2 data-number="7" class="anchored" data-anchor-id="result"><span class="header-section-number">7</span> Result</h2>
-<section id="import-packages" class="level3" data-number="7.1">
-<h3 data-number="7.1" class="anchored" data-anchor-id="import-packages"><span class="header-section-number">7.1</span> Import Packages</h3>
-<div id="2df0ca8e" class="cell" data-execution_count="1">
+<section id="analysis-pipeline" class="level2" data-number="7">
+<h2 data-number="7" class="anchored" data-anchor-id="analysis-pipeline"><span class="header-section-number">7</span> Analysis Pipeline</h2>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../../../images/projects/baseline_subtraction/pipeline.PNG" class="img-fluid figure-img"></p>
+<figcaption>Analysis Pipeline</figcaption>
+</figure>
+</div>
+</section>
+<section id="result" class="level2" data-number="8">
+<h2 data-number="8" class="anchored" data-anchor-id="result"><span class="header-section-number">8</span> Result</h2>
+<section id="import-packages" class="level3" data-number="8.1">
+<h3 data-number="8.1" class="anchored" data-anchor-id="import-packages"><span class="header-section-number">8.1</span> Import Packages</h3>
+<div id="86c8cd1d" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import packages</span></span>
@@ -535,9 +544,9 @@ English
 </details>
 </div>
 </section>
-<section id="data-preparation" class="level3" data-number="7.2">
-<h3 data-number="7.2" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">7.2</span> Data Preparation</h3>
-<div id="c29de503" class="cell" data-execution_count="2">
+<section id="data-preparation" class="level3" data-number="8.2">
+<h3 data-number="8.2" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">8.2</span> Data Preparation</h3>
+<div id="bbad417a" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mudt<span class="op">=</span><span class="va">False</span></span>
@@ -547,7 +556,7 @@ English
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>filtered_data <span class="op">=</span> result_data[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="ef32ff9c" class="cell" data-execution_count="3">
+<div id="920d743b" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>merged_data <span class="op">=</span> merged_data.query(<span class="st">"`final_ct`&lt;0"</span>)</span>
@@ -561,37 +570,37 @@ English
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>temperature_name <span class="op">=</span> merged_data[<span class="st">'temperature'</span>].unique()[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="ef141c1f" class="cell" data-execution_count="4">
+<div id="9b960144" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plot_baseline_subtractions(merged_data,pcrd_name,channel_name,temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="e8408124" class="cell" data-execution_count="5">
+<div id="c1db291b" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>plot_single_well(filtered_data,pcrd_name,channel_name, temperature_name, <span class="st">'H12'</span>,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="4778f2a7" class="cell" data-execution_count="6">
+<div id="8d0963c3" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ascending_data <span class="op">=</span> merged_data.query(<span class="st">"`channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &gt;0"</span>) <span class="co">#`analysis_dataprocnum` == 13 &amp; </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="e71b3c58" class="cell" data-execution_count="7">
+<div id="f117f058" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(ascending_data,channel_name, temperature_name, mudt <span class="op">=</span> mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="ca6c3ddd" class="cell" data-execution_count="8">
+<div id="cd43303f" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>ascending_data[ascending_data[<span class="st">'original_rfu_cfx'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">30</span>]<span class="op">&gt;</span><span class="dv">1000</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="2999068e" class="cell" data-execution_count="9">
+<div id="23b8c61d" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pcrd_nm <span class="op">=</span> temp.loc[<span class="dv">17632</span>][<span class="st">'name'</span>]</span>
@@ -600,13 +609,13 @@ English
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>well_nm<span class="op">=</span>temp.loc[<span class="dv">17632</span>][<span class="st">'well'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="f4536649" class="cell" data-execution_count="10">
+<div id="29aa5abe" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>plot_single_well(ascending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="f1fed268" class="cell" data-execution_count="11">
+<div id="834d8531" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>ascending_data[ascending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">41</span>]<span class="op">&gt;</span><span class="dv">200</span>)]</span>
@@ -616,26 +625,26 @@ English
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>well_nm<span class="op">=</span>temp.loc[<span class="dv">18048</span>][<span class="st">'well'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="621e01ef" class="cell" data-execution_count="12">
+<div id="4345b926" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>plot_single_well(ascending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="e65f3d88" class="cell" data-execution_count="13">
+<div id="f605db46" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>descending_data <span class="op">=</span> merged_data.query(<span class="st">"`analysis_dataprocnum` == 13 &amp; `channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &lt;0"</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>descending_data<span class="op">=</span>descending_data.iloc[:<span class="bu">len</span>(descending_data) <span class="op">//</span> <span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="41bfba55" class="cell" data-execution_count="14">
+<div id="315cd1a5" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(descending_data,channel_name, temperature_name, mudt <span class="op">=</span> mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="ebfde332" class="cell" data-execution_count="15">
+<div id="689caa0d" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>descending_data[descending_data[<span class="st">'strep_plus1_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">12</span>]<span class="op">&gt;</span><span class="dv">200</span>)]</span>
@@ -645,13 +654,13 @@ English
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>well_nm<span class="op">=</span>temp.loc[<span class="dv">5272</span>][<span class="st">'well'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="ae6185fd" class="cell" data-execution_count="16">
+<div id="18a266fa" class="cell" data-execution_count="16">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>plot_single_well(descending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="eb8c4ca2" class="cell" data-execution_count="17">
+<div id="574fffa1" class="cell" data-execution_count="17">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>descending_data[descending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">31</span>]<span class="op">&gt;</span><span class="dv">50</span>)]</span>
@@ -661,13 +670,13 @@ English
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>well_nm<span class="op">=</span>temp.loc[<span class="dv">18528</span>][<span class="st">'well'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="ce8d9764" class="cell" data-execution_count="18">
+<div id="9f3b959e" class="cell" data-execution_count="18">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>plot_single_well(descending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="44241571" class="cell" data-execution_count="19">
+<div id="25db6e64" class="cell" data-execution_count="19">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>mudt<span class="op">=</span><span class="va">True</span></span>
@@ -686,20 +695,20 @@ English
 <span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>temperature_name <span class="op">=</span> filtered_data[<span class="st">'temperature'</span>].unique()[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="1adbae1b" class="cell" data-execution_count="20">
+<div id="5c1c27ef" class="cell" data-execution_count="20">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>plot_baseline_subtractions(filtered_data,pcrd_name,channel_name,temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="517bfe3c" class="cell" data-execution_count="21">
+<div id="d82903db" class="cell" data-execution_count="21">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>filtered_data[filtered_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">20</span>]<span class="op">&gt;</span><span class="dv">100</span>)]</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>temp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="beda0558" class="cell" data-execution_count="22">
+<div id="6f4c4cb6" class="cell" data-execution_count="22">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>pcrd_nm <span class="op">=</span> temp.loc[<span class="dv">640</span>][<span class="st">'name'</span>]</span>
@@ -712,26 +721,26 @@ English
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(well_nm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="8f32f925" class="cell" data-execution_count="23">
+<div id="cbd5c94f" class="cell" data-execution_count="23">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>plot_single_well(filtered_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="c33cb8b0" class="cell" data-execution_count="24">
+<div id="af3da5ed" class="cell" data-execution_count="24">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ascending_data <span class="op">=</span> merged_data.query(<span class="st">"`analysis_dataprocnum` == 13 &amp; `channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &gt;0"</span>)</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>ascending_data <span class="op">=</span> ascending_data.iloc[:<span class="bu">len</span>(ascending_data) <span class="op">//</span> <span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="96a5b2f4" class="cell" data-execution_count="25">
+<div id="9c468b7f" class="cell" data-execution_count="25">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(ascending_data,channel_name, temperature_name, mudt <span class="op">=</span> mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="633c2993" class="cell" data-execution_count="26">
+<div id="8f1f7080" class="cell" data-execution_count="26">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>ascending_data[ascending_data[<span class="st">'strep_plus1_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">10</span>]<span class="op">&lt;-</span><span class="dv">200</span>)]</span>
@@ -742,7 +751,7 @@ English
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>plot_single_well(ascending_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="8be2add0" class="cell" data-execution_count="27">
+<div id="d2084053" class="cell" data-execution_count="27">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>ascending_data[ascending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">10</span>]<span class="op">&lt;-</span><span class="dv">300</span>)]</span>
@@ -753,7 +762,7 @@ English
 <span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>plot_single_well(ascending_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="e2e84ab4" class="cell" data-execution_count="28">
+<div id="6ba69234" class="cell" data-execution_count="28">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>descending_data <span class="op">=</span> merged_data.query(<span class="st">"`channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &lt;0"</span>)</span>
@@ -761,14 +770,14 @@ English
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(descending_data,channel_name, temperature_name, mudt <span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="9d1743ab" class="cell" data-execution_count="29">
+<div id="5f910fdc" class="cell" data-execution_count="29">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>descending_data <span class="op">=</span> merged_data.query(<span class="st">"`analysis_dataprocnum` == 13 &amp; `channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &lt;0"</span>)</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(descending_data,channel_name, temperature_name, mudt <span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="c6c5281e" class="cell" data-execution_count="30">
+<div id="869806d6" class="cell" data-execution_count="30">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>descending_data[descending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">35</span>]<span class="op">&lt;-</span><span class="dv">50</span>)]</span>
@@ -779,7 +788,7 @@ English
 <span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>plot_single_well(descending_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="b278a32f" class="cell" data-execution_count="31">
+<div id="816a89a9" class="cell" data-execution_count="31">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>merged_data[<span class="st">'mudt_distortion_combo_key'</span>]<span class="op">=</span>merged_data[[<span class="st">'name'</span>, <span class="st">'channel'</span>, <span class="st">'well'</span>]].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="st">' '</span>.join(x), axis<span class="op">=</span><span class="dv">1</span>)</span>
@@ -788,14 +797,14 @@ English
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(mudt_risk_data, channel_name, temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="3cfb9937" class="cell" data-execution_count="32">
+<div id="0014ea42" class="cell" data-execution_count="32">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>mudt_risk_data[mudt_risk_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">20</span>]<span class="op">&gt;</span><span class="dv">1000</span>)]</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>temp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="c3fc4b53" class="cell" data-execution_count="33">
+<div id="6c4d86d0" class="cell" data-execution_count="33">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>pcrd_nm <span class="op">=</span> temp.loc[<span class="dv">54384</span>][<span class="st">'name'</span>]</span>
@@ -805,7 +814,7 @@ English
 <span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>plot_single_well(mudt_risk_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="757a326a" class="cell" data-execution_count="34">
+<div id="4422cdbb" class="cell" data-execution_count="34">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>mudt_risk_data[mudt_risk_data[<span class="st">'strep_plus1_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">20</span>]<span class="op">&gt;</span><span class="dv">1000</span>)]</span>
@@ -816,7 +825,7 @@ English
 <span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>plot_single_well(mudt_risk_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="2ecedd24" class="cell" data-execution_count="35">
+<div id="d2647c82" class="cell" data-execution_count="35">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>mudt_risk_data[mudt_risk_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">35</span>]<span class="op">&lt;-</span><span class="dv">1800</span>)]</span>
@@ -829,32 +838,32 @@ English
 </div>
 </section>
 </section>
-<section id="conclusion" class="level2" data-number="8">
-<h2 data-number="8" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">8</span> Conclusion</h2>
+<section id="conclusion" class="level2" data-number="9">
+<h2 data-number="9" class="anchored" data-anchor-id="conclusion"><span class="header-section-number">9</span> Conclusion</h2>
 </section>
-<section id="issues" class="level2" data-number="9">
-<h2 data-number="9" class="anchored" data-anchor-id="issues"><span class="header-section-number">9</span> Issues</h2>
+<section id="issues" class="level2" data-number="10">
+<h2 data-number="10" class="anchored" data-anchor-id="issues"><span class="header-section-number">10</span> Issues</h2>
 </section>
-<section id="solutions-to-issues" class="level2" data-number="10">
-<h2 data-number="10" class="anchored" data-anchor-id="solutions-to-issues"><span class="header-section-number">10</span> Solutions to Issues</h2>
+<section id="solutions-to-issues" class="level2" data-number="11">
+<h2 data-number="11" class="anchored" data-anchor-id="solutions-to-issues"><span class="header-section-number">11</span> Solutions to Issues</h2>
 </section>
-<section id="required-skills" class="level2" data-number="11">
-<h2 data-number="11" class="anchored" data-anchor-id="required-skills"><span class="header-section-number">11</span> Required Skills</h2>
+<section id="required-skills" class="level2" data-number="12">
+<h2 data-number="12" class="anchored" data-anchor-id="required-skills"><span class="header-section-number">12</span> Required Skills</h2>
 <ul>
 <li>Statistics</li>
 <li>Python</li>
 </ul>
 </section>
-<section id="colaborators" class="level2" data-number="12">
-<h2 data-number="12" class="anchored" data-anchor-id="colaborators"><span class="header-section-number">12</span> Colaborators</h2>
+<section id="colaborators" class="level2" data-number="13">
+<h2 data-number="13" class="anchored" data-anchor-id="colaborators"><span class="header-section-number">13</span> Colaborators</h2>
 <ul>
 <li>3 data scientists (I am a project manager.)</li>
 <li>2 data enineers</li>
 <li>2 biologists</li>
 </ul>
 </section>
-<section id="acheivements" class="level2" data-number="13">
-<h2 data-number="13" class="anchored" data-anchor-id="acheivements"><span class="header-section-number">13</span> Acheivements</h2>
+<section id="acheivements" class="level2" data-number="14">
+<h2 data-number="14" class="anchored" data-anchor-id="acheivements"><span class="header-section-number">14</span> Acheivements</h2>
 <table class="table">
 <thead>
 <tr class="header">
@@ -898,16 +907,16 @@ English
 </tbody>
 </table>
 </section>
-<section id="long-term-project" class="level2" data-number="14">
-<h2 data-number="14" class="anchored" data-anchor-id="long-term-project"><span class="header-section-number">14</span> Long Term Project</h2>
+<section id="long-term-project" class="level2" data-number="15">
+<h2 data-number="15" class="anchored" data-anchor-id="long-term-project"><span class="header-section-number">15</span> Long Term Project</h2>
 <ul>
 <li>알고리즘 Verification and Validation</li>
 </ul>
 </section>
 </div>
 <div id="English" class="tab-pane fade" role="tabpanel" aria-labelledby="English-tab">
-<section id="background-1" class="level2" data-number="15">
-<h2 data-number="15" class="anchored" data-anchor-id="background-1"><span class="header-section-number">15</span> Background</h2>
+<section id="background-1" class="level2" data-number="16">
+<h2 data-number="16" class="anchored" data-anchor-id="background-1"><span class="header-section-number">16</span> Background</h2>
 <ul>
 <li>Due to the nature of reagent products related to medical device, there are regulations required by each country’s government for the health and life safety of its citizens when entering the global market.
 <ul>
@@ -924,8 +933,8 @@ English
 <li>Since the stability verification method of Seegene’s Diagnostic Signal Process (DSP) Algorithm is directly related to the business performance of the company, it is classified as a first-class security matter within the company, so specific and detailed planning and implementation details cannot be shared.</li>
 </ul>
 </section>
-<section id="objective-1" class="level2" data-number="16">
-<h2 data-number="16" class="anchored" data-anchor-id="objective-1"><span class="header-section-number">16</span> Objective</h2>
+<section id="objective-1" class="level2" data-number="17">
+<h2 data-number="17" class="anchored" data-anchor-id="objective-1"><span class="header-section-number">17</span> Objective</h2>
 <ul>
 <li>Design a system to statistically prove that the algorithm shows safe performance.</li>
 <li>Establish a Statistical Validation System to prove that the algorithm shows safe performance through statistical analysis.
@@ -937,8 +946,8 @@ English
 <li>In the case of code changes according to algorithm implementations and operations, a new validation report must be submitted, so an automation system is built.</li>
 </ul>
 </section>
-<section id="methodology-1" class="level2" data-number="17">
-<h2 data-number="17" class="anchored" data-anchor-id="methodology-1"><span class="header-section-number">17</span> Methodology</h2>
+<section id="methodology-1" class="level2" data-number="18">
+<h2 data-number="18" class="anchored" data-anchor-id="methodology-1"><span class="header-section-number">18</span> Methodology</h2>
 <ul>
 <li>Refer to the guidance of SGS, a company that issues and provides training for the world’s most stringent inspection certificates.</li>
 <li>SGS provides guidance to the FDA as a target.</li>
@@ -959,10 +968,10 @@ English
 <li>Establish a document automation system in case of code changes in algorithm implementation and operation and the obligation to submit a new validation report for new products.</li>
 </ul>
 </section>
-<section id="issues-solutions" class="level2" data-number="18">
-<h2 data-number="18" class="anchored" data-anchor-id="issues-solutions"><span class="header-section-number">18</span> Issues &amp; Solutions</h2>
-<section id="issues-1" class="level3" data-number="18.1">
-<h3 data-number="18.1" class="anchored" data-anchor-id="issues-1"><span class="header-section-number">18.1</span> Issues</h3>
+<section id="issues-solutions" class="level2" data-number="19">
+<h2 data-number="19" class="anchored" data-anchor-id="issues-solutions"><span class="header-section-number">19</span> Issues &amp; Solutions</h2>
+<section id="issues-1" class="level3" data-number="19.1">
+<h3 data-number="19.1" class="anchored" data-anchor-id="issues-1"><span class="header-section-number">19.1</span> Issues</h3>
 <ul>
 <li>Absence of a system that can input data generated by BT departments</li>
 <li>Difficulties in communication due to lack of job description in BT departments.</li>
@@ -971,8 +980,8 @@ English
 <li>It is so rare that no precedent or template for validation report can be found.</li>
 </ul>
 </section>
-<section id="solutions" class="level3" data-number="18.2">
-<h3 data-number="18.2" class="anchored" data-anchor-id="solutions"><span class="header-section-number">18.2</span> Solutions</h3>
+<section id="solutions" class="level3" data-number="19.2">
+<h3 data-number="19.2" class="anchored" data-anchor-id="solutions"><span class="header-section-number">19.2</span> Solutions</h3>
 <ul>
 <li>Building a system that can input data generated by BT departments
 <ul>
@@ -993,8 +1002,8 @@ English
 </ul>
 </section>
 </section>
-<section id="required-skills-1" class="level2" data-number="19">
-<h2 data-number="19" class="anchored" data-anchor-id="required-skills-1"><span class="header-section-number">19</span> Required Skills</h2>
+<section id="required-skills-1" class="level2" data-number="20">
+<h2 data-number="20" class="anchored" data-anchor-id="required-skills-1"><span class="header-section-number">20</span> Required Skills</h2>
 <ul>
 <li>FDA software validation knowledge</li>
 <li>Statistics</li>
@@ -1005,8 +1014,8 @@ English
 <li>Apache Airflow</li>
 </ul>
 </section>
-<section id="colaborators-1" class="level2" data-number="20">
-<h2 data-number="20" class="anchored" data-anchor-id="colaborators-1"><span class="header-section-number">20</span> Colaborators</h2>
+<section id="colaborators-1" class="level2" data-number="21">
+<h2 data-number="21" class="anchored" data-anchor-id="colaborators-1"><span class="header-section-number">21</span> Colaborators</h2>
 <ul>
 <li>5 data scientists (I am a project manager.)</li>
 <li>3 data enineers</li>
@@ -1014,8 +1023,8 @@ English
 <li>2 patent attorneys</li>
 </ul>
 </section>
-<section id="acheivements-1" class="level2" data-number="21">
-<h2 data-number="21" class="anchored" data-anchor-id="acheivements-1"><span class="header-section-number">21</span> Acheivements</h2>
+<section id="acheivements-1" class="level2" data-number="22">
+<h2 data-number="22" class="anchored" data-anchor-id="acheivements-1"><span class="header-section-number">22</span> Acheivements</h2>
 <table class="table">
 <colgroup>
 <col style="width: 55%">
@@ -1063,8 +1072,8 @@ English
 </tbody>
 </table>
 </section>
-<section id="long-term-project-1" class="level2" data-number="22">
-<h2 data-number="22" class="anchored" data-anchor-id="long-term-project-1"><span class="header-section-number">22</span> Long Term Project</h2>
+<section id="long-term-project-1" class="level2" data-number="23">
+<h2 data-number="23" class="anchored" data-anchor-id="long-term-project-1"><span class="header-section-number">23</span> Long Term Project</h2>
 <ul>
 <li>Collaboratively write BT’s job description and establish RDB system</li>
 <li>Building a DevOps Platform for reagents, equipment, software and algorithm validation</li>

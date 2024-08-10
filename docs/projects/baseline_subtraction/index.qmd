@@ -3,12 +3,22 @@ title: "Baseline Fitting Algorithm Improvement"
 subtitle: "Diagnostic Algorithms Optimization"
 description: "This project is to improve the baseline-fitting performance of the diagnostic signal processing algorithms."
 author: Kwangmin Kim
-date: 2024-03-08
+date: 2024-07-08
 format: 
   html:
     toc: true  
-    page-layout: full
-    code-fold: true  
+    #page-layout: article
+    code-fold: true
+    code-copy: true
+    code-overflow: wrap
+    number-sections: true
+    number-depth: 3
+    grid:
+      sidebar-width: 200px
+      body-width: 1200px
+      margin-width: 100px
+execute:
+  eval: false
 ---
 
 <ul class="nav nav-pills" id="language-tab" role="tablist">
@@ -30,10 +40,20 @@ format:
 Real Time PCR 장비는 핵산(Nucleic Acid) 검체의 존재 여부를 확인하기 위해 각 사이클마다 핵산 검체를 2배씩 증폭하면서 신호를 감지한다.
 
 * Lag Phase (지연 단계): 증폭된 검체의 신호가 일정 농도 이하일 경우, PCR 장비는 신호를 감지하지 못하고, 장비 내부 기본값과 시약 및 소모품의 값이 합산된 신호로 반환한다. 이는 일정 시간 동안 지연되는 구간이다.
-* Log Phase (로그 단계): 증폭된 검체의 신호가 일정 농도 이상일 때, PCR 장비에서는 신호의 변화가 나타나며, 포화 상태에 이를 때까지 신호가 2의 지수승으로 증가한다.
-* Plateau Phase (플라토 단계): 효소의 활성도 감소 및 반응물의 고갈 등으로 인해 포화 상태에 도달하면, 신호는 더 이상 증가하지 않고 일정하게 유지된다.
+* Log Phase (로그 단계): Exponential Phase라고도 불리며 증폭된 검체의 신호가 일정 농도 이상일 때, PCR 장비에서는 신호의 변화가 나타나며, 포화 상태에 이를 때까지 신호가 2의 지수승으로 증가한다.
+* Plateau Phase (플라토 단계): Stationary Phase 효소의 활성도 감소 및 반응물의 고갈 등으로 인해 포화 상태에 도달하면, 신호는 더 이상 증가하지 않고 일정하게 유지된다.
 
 이러한 방식으로 Real Time PCR 장비의 신호는 이론적으로 **sigmoid curve**의 패턴을 나타낸다.
+
+* 양/음성 결과
+  * 양성: 아래 그림과 같이 Real Time PCR 결과가 명확한 sigmoid curve가 나올 경우 검체가 발견된 **양성** 상태로 판독한다.
+  * 음성: 반응이 없는 평평한 curve가 나오거나 명확한 sigmoid curve가 나오지 않을 경우 검체가 발견되지 않은 **음성** 상태로 판독한다.
+* Ct
+  * Ct 값은 **Cycle threshold**의 약자로, 특정한 양의 증폭된 DNA가 처음으로 검출 가능한 수준에 도달했을 때의 PCR 사이클 수를 의미한다
+  * 초기 DNA 양: Ct 값은 초기 DNA 양과 반비례한다.
+  * 증폭 효율성: Ct 값은 증폭 효율성과 관련 있다. 이상적으로는 각 사이클에서 두 배로 증폭되지만, 실제 실험에서는 다양한 요인에 의해 증폭 효율성이 100% 미만일 수 있다.
+  
+![Sigmoid Curve Example](../../../images/projects/baseline_subtraction/sigmoid%20curve.PNG)
 
 ### Risk
 

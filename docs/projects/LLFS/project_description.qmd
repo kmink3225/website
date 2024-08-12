@@ -43,78 +43,111 @@ LLFS(Long Life Family Study) 프로젝트의 목적은 유전체, 전사체, 단
 
 ### Overview
 
-```{mermaid}
-%%| fig-width: 7.5
-flowchart LR
-    subgraph Data_Collection
-        direction TB
-        Multi_Centerd_Blood_Sampling---
-        Mass_Spectrometry---
-        Data_Transfer
-    end
-    subgraph Quality_Control
-        direction TB
-        Identify_Anomaly_Data---
-        Identify_Missing_Values
-    end
-    subgraph Analytics
-        direction TB 
-        EDA---
-        Data_Mining---
-        Statistical_Analysis---
-        Machine_Learning
-    end
-    subgraph Reporting_and_Conclusion
-        direction TB 
-        Share_with_Faculty
-    end
+```{dot}
+digraph G {
+  compound=true;
+  rankdir=LR;
+  subgraph cluster0 {
+    rankdir=TB;
+    Multi_Centered_Blood_Sampling [shape=box];
+    Mass_Spectrometry [shape=box];
+    Data_Transfer [shape=box];
+    
+    label= "Data Collection";
 
-Data_Collection-->Quality_Control-->Analytics-->Reporting_and_Conclusion
+  }
+  subgraph cluster1 {
+    Identify_Anomaly_Data [shape=box];
+    Identify_Missing_Values [shape=box];
+    
+    label= "Quality Control";
+  }
+  subgraph cluster2 {
+    EDA [shape=box];
+    Data_Mining [shape=box];
+    Statistical_Analysis [shape=box];
+    Machine_Learning [shape=box];
+    
+    label= "Analytics";
+  }
+  subgraph cluster3 {
+    Share_with_Faculty [shape=box];
+    label= "Reporting and Conclusion";
+  }
+  Data_Transfer -> Identify_Anomaly_Data [lhead=cluster1];
+  Identify_Missing_Values -> EDA [lhead=cluster2];
+  Machine_Learning -> Share_with_Faculty [lhead=cluster3];
+}
+
 ```
+
+
 
 Data는 장수 마을에 거주하는 백인을 대상으로 New York, Bonston, Pittsburgh 및 Denmark에 있는 여러 medical centers에서 sampled blood를 MS Spectromtetry로 Digitalization을 했다. 여러 과정을 통해 data를 csv형태로 받아 data의 QC(Quality Control)를 진행한뒤 Data 분석 업무를 수행했다. EDA (Exploratory Data Analysis) 와 Data Mining을 통해 data에 대한 이해도를 높였고 이를 토대로 통계 분석과 machine learning을 이용하여 이 data에 적합한 모형을 찾았다. 모든 결과물은 The Taub Institute for Research on Alzheimer's Disease and the Aging Brain 의 biostaticians, medical doctors, biologists, neurologists, bioinformaticians 및 epidemiologists와 공유를 했다.
 
 ### Data QC (Quality Control)
-```{mermaid}
-flowchart LR
-    subgraph Data_Quality_Control
-        direction TB
-        identify_anomaly_data---
-        identify_missing_values
-        subgraph Missing_Value_Analysis
-            direction LR
-            MCAR---
-            MAR---
-            MNAR
-        end
-        either_imputation_or_omission---
-        communication_with_labs---
-        set_data_inclusion/exclusion_criteria
-    end
-    identify_missing_values---Missing_Value_Analysis---either_imputation_or_omission
-    subgraph Data_Preprocessing
-        direction TB
-        data_transformation---
-        log_transformation---
-        standardization
-    end
 
-Data_Quality_Control-->Data_Preprocessing
+```{dot}
+//| fig-height: 8
+
+digraph G {
+  compound=true;
+  rankdir=TB;
+  subgraph cluster0 {
+    identify_anomaly_data [shape=box];
+    identify_missing_values [shape=box];
+    subgraph cluster1 {
+      Missing_Completely_At_Random [shape=box];
+      Missing_At_Random [shape=box];
+      Missing_Not_at_Random [shape=box];
+      label= "Missing Value Analysis";
+      Missing_Completely_At_Random->Missing_At_Random->Missing_Not_at_Random
+    }
+    either_imputation_or_omission [shape=box];
+    communication_with_labs [shape=box];
+    set_data_inclusion_exclusion_criteria [shape=box];
+
+    label= "Data Quality Control";
+    identify_anomaly_data->identify_missing_values
+    identify_missing_values->Missing_Completely_At_Random [lhead=cluster1];
+    Missing_Not_at_Random->either_imputation_or_omission->communication_with_labs->set_data_inclusion_exclusion_criteria;
+
+  }
+  subgraph cluster2 {
+    Data_Transformation [shape=box];
+    Log_Transformation [shape=box];
+    Standardization [shape=box];
+    label= "Data Preprocessing";
+    Data_Transformation->
+    Log_Transformation->
+    Standardization;
+  }
+  set_data_inclusion_exclusion_criteria->Data_Transformation [lhead=cluster2];
+}
 
 ```
+
 
 Data의 품질 관리를 위해 data를 생성한 biochemists와 소통하여 실험실 기준에 따라 결측치와 이상치를 구분하여 labeling을 수행했고 missing value analysis를 통해 결과에 따라 medical doctors를 포함한 다른 faculty members와 상의하여 결측치 처리를 했다. data QC criteria는 rowwise 와 columwise sum의 합이 sample size에 대하여 missing values의 비율이 5%가 넘는 환자와 변수는 분석 대상에서 제외 됐다. 모든 metabolites data는 log transoformation 과 standardization을 통해 data의 단위를 표준화 했다. 
 
 ### Methods
-```{mermaid}
-flowchart TB
-    subgraph Data_Analytics
-        direction TB
-        Exploratory_Data_Analysis---
-        Data_Minig---
-        Statistical_Analysis---
-        Machine_Learning
-    end
+```{dot}
+  digraph G {
+    compound=true;
+    rankdir=TB;
+    subgraph cluster2 {
+    Exploratory_Data_Analysis [shape=box];
+    Data_Minig [shape=box];
+    Statistical_Analysis [shape=box];
+    Machine_Learning [shape=box];
+    label= "Data Analytics";
+    }
+    
+    Exploratory_Data_Analysis -> Data_Minig;
+    Data_Minig -> Statistical_Analysis ;
+    Statistical_Analysis -> Machine_Learning;
+  }
+
 ```
 
 Data 분석은 크게 EDA (Exploratory Data Analysis), Statistical Analysis 및 Machine Learning과 같이 3 단계로 수행했다. 각 단계에서 나온 결과가 각 각의 단계에서 일관되게 나오는 metabolites를 선별했다.

@@ -106,15 +106,25 @@ Baseline 데이터에 노이즈가 많을 경우, 최적화 과정에서 과적�
 
 ## Strategies
 
-### Inspiration
 
-baseline data를 살펴 보고 다양한 신호 패턴의 존재를 인식하고, 차감 결과가 white noise에 가까워야 성공적인 것으로 간주했다. 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여, 다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 선택했다. 이 접근법은 데이터의 feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링할 수 있게 한다. 그러나 다항식의 차수가 증가함에 따라 과적합의 위험이 있으므로, 적절한 차수 선택과 정규화를 통해 신호에 적합한 모델을 선택할 수 있도록 해야 한다.
 
-## Methodology
+## Method
 
-## Analysis Pipeline
+baseline data를 살펴 보고 다양한 신호 패턴의 존재를 인식하고, 차감 결과가 white noise에 가까워야 성공적인 것으로 간주했다. 
 
-![Analysis Pipeline](../../../images/projects/baseline_subtraction/pipeline.PNG)
+### Data Pipeline
+
+![Data Pipeline](../../../images/projects/baseline_subtraction/pipeline.PNG)
+
+### Baseline Fitting with a Characteristic Equation
+
+경험상으로 Baseline 신호가 여러 요인으로 다양한 패턴을 보인다. Talyer Series에서 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여, 다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 시도했다. 
+이 접근법은 데이터의 feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링할 수 있게 한다. 적절한 차수 선택과 정규화를 통해 baseline 신호에 적합시킨다.
+
+### Neural Network
+
+Characteristic Equation (특성 방정식)은 기저함수를 분석가가 선정해줘야 하는 부담이 있다. Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기저함수를 설정할 수 있지만 임상신호나 실제 시장에서 만들어지는 신호는 그 패턴이 예상과 다를 수 있기 때문에 Data에 맞게 적합가능한 신경망을 구현하여 적합시킨다.
+
 
 ## Result
 

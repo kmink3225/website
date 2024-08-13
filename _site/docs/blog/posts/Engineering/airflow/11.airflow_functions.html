@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.433">
+<meta name="generator" content="quarto-1.5.56">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2023-05-01">
 <meta name="description" content="template">
 
-<title>Kwangmin Kim - Airflow Additional Function</title>
+<title>Airflow Additional Function – Kwangmin Kim</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,7 +25,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -36,7 +36,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -82,7 +82,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -91,14 +97,42 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../../../styles.css">
 </head>
@@ -107,9 +141,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="../../../../../index.html" class="navbar-brand navbar-brand-logo">
     <img src="../../../../.././images/logo.png" alt="" class="navbar-logo">
     </a>
@@ -118,43 +152,43 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../../../../index.html" rel="" target="">
- <span class="menu-text">Home</span></a>
+    <a class="nav-link" href="../../../../../index.html"> 
+<span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../../../../docs/CV/index.html" rel="" target="">
- <span class="menu-text">CV</span></a>
+    <a class="nav-link" href="../../../../../docs/CV/index.html"> 
+<span class="menu-text">CV</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../../../../docs/projects/index.html" rel="" target="">
- <span class="menu-text">Projects</span></a>
+    <a class="nav-link" href="../../../../../docs/projects/index.html"> 
+<span class="menu-text">Projects</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../../../../about.html" rel="" target="">
- <span class="menu-text">Me</span></a>
+    <a class="nav-link" href="../../../../../about.html"> 
+<span class="menu-text">Me</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/kmink3225" rel="" target=""><i class="bi bi-github" role="img" aria-label="Github">
+    <a class="nav-link" href="https://github.com/kmink3225"> <i class="bi bi-github" role="img" aria-label="Github">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://www.linkedin.com/in/kwangmin-kim-a5241b200/" rel="" target=""><i class="bi bi-linkedin" role="img" aria-label="Linkedin">
+    <a class="nav-link" href="https://www.linkedin.com/in/kwangmin-kim-a5241b200/"> <i class="bi bi-linkedin" role="img" aria-label="Linkedin">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
+          </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
 </div>
-          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -184,7 +218,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page">
 
     <div>
     <div class="quarto-title-meta-heading">Author</div>
@@ -204,7 +238,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
+
 </header>
+
 
 <ul class="nav nav-pills" id="language-tab" role="tablist">
 <li class="nav-item" role="presentation">
@@ -217,8 +253,7 @@ Korean
 English
 </button>
 </li>
-<div class="tab-content" id="language-tabcontent">
-
+<div id="language-tabcontent" class="tab-content">
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
 <p>몰라도 되지만 알면 좋은 고급 기능들</p>
 <section id="dataset을-이용한-dag-트리거" class="level1" data-number="1">
@@ -230,42 +265,53 @@ English
 </ul>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div class="cell">
+<div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
+<p></p><figure class="figure"><p></p>
 <div>
 <svg width="672" height="480" viewbox="0.00 0.00 184.00 186.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 182)">
-<title>
-G
-</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-182 180,-182 180,4 -4,4"></polygon> <g id="clust1" class="cluster">
-<title>
-cluster0
-</title>
-<polygon fill="none" stroke="black" points="8,-8 8,-85 168,-85 168,-8 8,-8"></polygon> <text text-anchor="middle" x="88" y="-68.4" font-family="Times,serif" font-size="14.00">DAG A</text> </g> <g id="clust2" class="cluster">
-<title>
-cluster1
-</title>
-<polygon fill="none" stroke="black" points="8,-93 8,-170 78,-170 78,-93 8,-93"></polygon> <text text-anchor="middle" x="43" y="-153.4" font-family="Times,serif" font-size="14.00">DAG B</text> </g> <!-- task_1 --> <g id="node1" class="node">
-<title>
-task_1
-</title>
-<polygon fill="none" stroke="black" points="70,-52 16,-52 16,-16 70,-16 70,-52"></polygon> <text text-anchor="middle" x="43" y="-29.8" font-family="Times,serif" font-size="14.00">task_1</text> </g> <!-- task_3 --> <g id="node2" class="node">
-<title>
-task_3
-</title>
-<polygon fill="none" stroke="black" points="160,-52 106,-52 106,-16 160,-16 160,-52"></polygon> <text text-anchor="middle" x="133" y="-29.8" font-family="Times,serif" font-size="14.00">task_3</text> </g> <!-- task_1&#45;&gt;task_3 --> <g id="edge1" class="edge">
-<title>
-task_1-&gt;task_3
-</title>
-<path fill="none" stroke="black" d="M70.4,-34C78.39,-34 87.31,-34 95.82,-34"></path> <polygon fill="black" stroke="black" points="95.92,-37.5 105.92,-34 95.92,-30.5 95.92,-37.5"></polygon> </g> <!-- task_k --> <g id="node3" class="node">
-<title>
-task_k
-</title>
-<polygon fill="none" stroke="black" points="70,-137 16,-137 16,-101 70,-101 70,-137"></polygon> <text text-anchor="middle" x="43" y="-114.8" font-family="Times,serif" font-size="14.00">task_k</text> </g> </g>
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-182 180,-182 180,4 -4,4"></polygon>
+<g id="clust1" class="cluster">
+<title>cluster0</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-85 168,-85 168,-8 8,-8"></polygon>
+<text text-anchor="middle" x="88" y="-68.4" font-family="Times,serif" font-size="14.00">DAG A</text>
+</g>
+<g id="clust2" class="cluster">
+<title>cluster1</title>
+<polygon fill="none" stroke="black" points="8,-93 8,-170 78,-170 78,-93 8,-93"></polygon>
+<text text-anchor="middle" x="43" y="-153.4" font-family="Times,serif" font-size="14.00">DAG B</text>
+</g>
+<!-- task_1 -->
+<g id="node1" class="node">
+<title>task_1</title>
+<polygon fill="none" stroke="black" points="70,-52 16,-52 16,-16 70,-16 70,-52"></polygon>
+<text text-anchor="middle" x="43" y="-29.8" font-family="Times,serif" font-size="14.00">task_1</text>
+</g>
+<!-- task_3 -->
+<g id="node2" class="node">
+<title>task_3</title>
+<polygon fill="none" stroke="black" points="160,-52 106,-52 106,-16 160,-16 160,-52"></polygon>
+<text text-anchor="middle" x="133" y="-29.8" font-family="Times,serif" font-size="14.00">task_3</text>
+</g>
+<!-- task_1&#45;&gt;task_3 -->
+<g id="edge1" class="edge">
+<title>task_1-&gt;task_3</title>
+<path fill="none" stroke="black" d="M70.4,-34C78.39,-34 87.31,-34 95.82,-34"></path>
+<polygon fill="black" stroke="black" points="95.92,-37.5 105.92,-34 95.92,-30.5 95.92,-37.5"></polygon>
+</g>
+<!-- task_k -->
+<g id="node3" class="node">
+<title>task_k</title>
+<polygon fill="none" stroke="black" points="70,-137 16,-137 16,-101 70,-101 70,-137"></polygon>
+<text text-anchor="middle" x="43" y="-114.8" font-family="Times,serif" font-size="14.00">task_k</text>
+</g>
+</g>
 </svg>
 </div>
+<p></p></figure><p></p>
 </div>
 </div>
 </div>
@@ -273,66 +319,90 @@ task_k
 <li>위의 경우를 Task_1 뿐만 아니라 DAG_B의 task_k 에도 선행 의존관계가 걸리도록 External Task 센서를 하나 달도록 개선</li>
 </ul>
 </div><div class="column" style="width:50%;">
-<div class="cell">
+<div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
+<p></p><figure class="figure"><p></p>
 <div>
 <svg width="672" height="480" viewbox="0.00 0.00 269.66 325.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 321)">
-<title>
-G
-</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-321 265.66,-321 265.66,4 -4,4"></polygon> <g id="clust3" class="cluster">
-<title>
-cluster2
-</title>
-<polygon fill="none" stroke="black" points="183.66,-8 183.66,-85 253.66,-85 253.66,-8 183.66,-8"></polygon> <text text-anchor="middle" x="218.66" y="-68.4" font-family="Times,serif" font-size="14.00">DAG B</text> </g> <g id="clust1" class="cluster">
-<title>
-cluster0
-</title>
-<polygon fill="none" stroke="black" points="183.66,-93 183.66,-170 253.66,-170 253.66,-93 183.66,-93"></polygon> <text text-anchor="middle" x="218.66" y="-153.4" font-family="Times,serif" font-size="14.00">DAG A</text> </g> <g id="clust2" class="cluster">
-<title>
-cluster1
-</title>
-<polygon fill="none" stroke="black" points="8,-178 8,-309 253.66,-309 253.66,-178 8,-178"></polygon> <text text-anchor="middle" x="130.83" y="-292.4" font-family="Times,serif" font-size="14.00">DAG C</text> </g> <!-- task_1 --> <g id="node1" class="node">
-<title>
-task_1
-</title>
-<polygon fill="none" stroke="black" points="245.66,-137 191.66,-137 191.66,-101 245.66,-101 245.66,-137"></polygon> <text text-anchor="middle" x="218.66" y="-114.8" font-family="Times,serif" font-size="14.00">task_1</text> </g> <!-- Sensor_task_1 --> <g id="node2" class="node">
-<title>
-Sensor_task_1
-</title>
-<polygon fill="none" stroke="black" points="113.49,-276 16.17,-276 16.17,-240 113.49,-240 113.49,-276"></polygon> <text text-anchor="middle" x="64.83" y="-253.8" font-family="Times,serif" font-size="14.00">Sensor_task_1</text> </g> <!-- Sensor_task_1&#45;&gt;task_1 --> <g id="edge3" class="edge">
-<title>
-Sensor_task_1-&gt;task_1
-</title>
-<path fill="none" stroke="black" stroke-dasharray="5,2" d="M100.88,-239.9C105.32,-237.12 109.69,-234.13 113.66,-231 146.08,-205.41 177.52,-169.54 197.19,-145.34"></path> <polygon fill="black" stroke="black" points="200.11,-147.3 203.64,-137.31 194.65,-142.92 200.11,-147.3"></polygon> <text text-anchor="middle" x="152.66" y="-218.2" font-family="Times,serif" font-size="14.00">sensing</text> </g> <!-- task_x --> <g id="node4" class="node">
-<title>
-task_x
-</title>
-<polygon fill="none" stroke="black" points="245.66,-249 191.66,-249 191.66,-213 245.66,-213 245.66,-249"></polygon> <text text-anchor="middle" x="218.66" y="-226.8" font-family="Times,serif" font-size="14.00">task_x</text> </g> <!-- Sensor_task_1&#45;&gt;task_x --> <g id="edge1" class="edge">
-<title>
-Sensor_task_1-&gt;task_x
-</title>
-<path fill="none" stroke="black" d="M113.87,-249.46C135.77,-245.56 161.26,-241.03 181.5,-237.43"></path> <polygon fill="black" stroke="black" points="182.33,-240.84 191.56,-235.64 181.1,-233.95 182.33,-240.84"></polygon> </g> <!-- Sensor_task_2 --> <g id="node3" class="node">
-<title>
-Sensor_task_2
-</title>
-<polygon fill="none" stroke="black" points="113.49,-222 16.17,-222 16.17,-186 113.49,-186 113.49,-222"></polygon> <text text-anchor="middle" x="64.83" y="-199.8" font-family="Times,serif" font-size="14.00">Sensor_task_2</text> </g> <!-- Sensor_task_2&#45;&gt;task_x --> <g id="edge2" class="edge">
-<title>
-Sensor_task_2-&gt;task_x
-</title>
-<path fill="none" stroke="black" d="M113.87,-212.54C135.77,-216.44 161.26,-220.97 181.5,-224.57"></path> <polygon fill="black" stroke="black" points="181.1,-228.05 191.56,-226.36 182.33,-221.16 181.1,-228.05"></polygon> </g> <!-- task_k --> <g id="node5" class="node">
-<title>
-task_k
-</title>
-<polygon fill="none" stroke="black" points="245.66,-52 191.66,-52 191.66,-16 245.66,-16 245.66,-52"></polygon> <text text-anchor="middle" x="218.66" y="-29.8" font-family="Times,serif" font-size="14.00">task_k</text> </g> <!-- Sensor_task_2&#45;&gt;task_k --> <g id="edge4" class="edge">
-<title>
-Sensor_task_2-&gt;task_k
-</title>
-<path fill="none" stroke="black" stroke-dasharray="5,2" d="M82.08,-185.81C109.13,-155.52 163.5,-94.64 194.54,-59.89"></path> <polygon fill="black" stroke="black" points="197.48,-61.85 201.53,-52.06 192.26,-57.19 197.48,-61.85"></polygon> <text text-anchor="middle" x="152.66" y="-133.2" font-family="Times,serif" font-size="14.00">sensing</text> </g> </g>
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-321 265.66,-321 265.66,4 -4,4"></polygon>
+<g id="clust3" class="cluster">
+<title>cluster2</title>
+<polygon fill="none" stroke="black" points="183.66,-8 183.66,-85 253.66,-85 253.66,-8 183.66,-8"></polygon>
+<text text-anchor="middle" x="218.66" y="-68.4" font-family="Times,serif" font-size="14.00">DAG B</text>
+</g>
+<g id="clust1" class="cluster">
+<title>cluster0</title>
+<polygon fill="none" stroke="black" points="183.66,-93 183.66,-170 253.66,-170 253.66,-93 183.66,-93"></polygon>
+<text text-anchor="middle" x="218.66" y="-153.4" font-family="Times,serif" font-size="14.00">DAG A</text>
+</g>
+<g id="clust2" class="cluster">
+<title>cluster1</title>
+<polygon fill="none" stroke="black" points="8,-178 8,-309 253.66,-309 253.66,-178 8,-178"></polygon>
+<text text-anchor="middle" x="130.83" y="-292.4" font-family="Times,serif" font-size="14.00">DAG C</text>
+</g>
+<!-- task_1 -->
+<g id="node1" class="node">
+<title>task_1</title>
+<polygon fill="none" stroke="black" points="245.66,-137 191.66,-137 191.66,-101 245.66,-101 245.66,-137"></polygon>
+<text text-anchor="middle" x="218.66" y="-114.8" font-family="Times,serif" font-size="14.00">task_1</text>
+</g>
+<!-- Sensor_task_1 -->
+<g id="node2" class="node">
+<title>Sensor_task_1</title>
+<polygon fill="none" stroke="black" points="113.49,-276 16.17,-276 16.17,-240 113.49,-240 113.49,-276"></polygon>
+<text text-anchor="middle" x="64.83" y="-253.8" font-family="Times,serif" font-size="14.00">Sensor_task_1</text>
+</g>
+<!-- Sensor_task_1&#45;&gt;task_1 -->
+<g id="edge3" class="edge">
+<title>Sensor_task_1-&gt;task_1</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M100.88,-239.9C105.32,-237.12 109.69,-234.13 113.66,-231 146.08,-205.41 177.52,-169.54 197.19,-145.34"></path>
+<polygon fill="black" stroke="black" points="200.11,-147.3 203.64,-137.31 194.65,-142.92 200.11,-147.3"></polygon>
+<text text-anchor="middle" x="152.66" y="-218.2" font-family="Times,serif" font-size="14.00">sensing</text>
+</g>
+<!-- task_x -->
+<g id="node4" class="node">
+<title>task_x</title>
+<polygon fill="none" stroke="black" points="245.66,-249 191.66,-249 191.66,-213 245.66,-213 245.66,-249"></polygon>
+<text text-anchor="middle" x="218.66" y="-226.8" font-family="Times,serif" font-size="14.00">task_x</text>
+</g>
+<!-- Sensor_task_1&#45;&gt;task_x -->
+<g id="edge1" class="edge">
+<title>Sensor_task_1-&gt;task_x</title>
+<path fill="none" stroke="black" d="M113.87,-249.46C135.77,-245.56 161.26,-241.03 181.5,-237.43"></path>
+<polygon fill="black" stroke="black" points="182.33,-240.84 191.56,-235.64 181.1,-233.95 182.33,-240.84"></polygon>
+</g>
+<!-- Sensor_task_2 -->
+<g id="node3" class="node">
+<title>Sensor_task_2</title>
+<polygon fill="none" stroke="black" points="113.49,-222 16.17,-222 16.17,-186 113.49,-186 113.49,-222"></polygon>
+<text text-anchor="middle" x="64.83" y="-199.8" font-family="Times,serif" font-size="14.00">Sensor_task_2</text>
+</g>
+<!-- Sensor_task_2&#45;&gt;task_x -->
+<g id="edge2" class="edge">
+<title>Sensor_task_2-&gt;task_x</title>
+<path fill="none" stroke="black" d="M113.87,-212.54C135.77,-216.44 161.26,-220.97 181.5,-224.57"></path>
+<polygon fill="black" stroke="black" points="181.1,-228.05 191.56,-226.36 182.33,-221.16 181.1,-228.05"></polygon>
+</g>
+<!-- task_k -->
+<g id="node5" class="node">
+<title>task_k</title>
+<polygon fill="none" stroke="black" points="245.66,-52 191.66,-52 191.66,-16 245.66,-16 245.66,-52"></polygon>
+<text text-anchor="middle" x="218.66" y="-29.8" font-family="Times,serif" font-size="14.00">task_k</text>
+</g>
+<!-- Sensor_task_2&#45;&gt;task_k -->
+<g id="edge4" class="edge">
+<title>Sensor_task_2-&gt;task_k</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M82.08,-185.81C109.13,-155.52 163.5,-94.64 194.54,-59.89"></path>
+<polygon fill="black" stroke="black" points="197.48,-61.85 201.53,-52.06 192.26,-57.19 197.48,-61.85"></polygon>
+<text text-anchor="middle" x="152.66" y="-133.2" font-family="Times,serif" font-size="14.00">sensing</text>
+</g>
+</g>
 </svg>
 </div>
+<p></p></figure><p></p>
 </div>
 </div>
 </div>
@@ -343,38 +413,48 @@ Sensor_task_2-&gt;task_k
 </ul>
 <div class="columns">
 <div class="column" style="width:50%;">
-<div class="cell">
+<div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
+<p></p><figure class="figure"><p></p>
 <div>
 <svg width="672" height="480" viewbox="0.00 0.00 184.00 155.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 151)">
-<title>
-G
-</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-151 180,-151 180,4 -4,4"></polygon> <g id="clust1" class="cluster">
-<title>
-cluster0
-</title>
-<polygon fill="none" stroke="black" points="8,-8 8,-139 168,-139 168,-8 8,-8"></polygon> <text text-anchor="middle" x="88" y="-122.4" font-family="Times,serif" font-size="14.00">DAG A</text> </g> <!-- task_1 --> <g id="node1" class="node">
-<title>
-task_1
-</title>
-<polygon fill="none" stroke="black" points="70,-106 16,-106 16,-70 70,-70 70,-106"></polygon> <text text-anchor="middle" x="43" y="-83.8" font-family="Times,serif" font-size="14.00">task_1</text> </g> <!-- task_3 --> <g id="node2" class="node">
-<title>
-task_3
-</title>
-<polygon fill="none" stroke="black" points="160,-106 106,-106 106,-70 160,-70 160,-106"></polygon> <text text-anchor="middle" x="133" y="-83.8" font-family="Times,serif" font-size="14.00">task_3</text> </g> <!-- task_1&#45;&gt;task_3 --> <g id="edge1" class="edge">
-<title>
-task_1-&gt;task_3
-</title>
-<path fill="none" stroke="black" d="M70.4,-88C78.39,-88 87.31,-88 95.82,-88"></path> <polygon fill="black" stroke="black" points="95.92,-91.5 105.92,-88 95.92,-84.5 95.92,-91.5"></polygon> </g> <!-- task_4 --> <g id="node3" class="node">
-<title>
-task_4
-</title>
-<polygon fill="none" stroke="black" points="70,-52 16,-52 16,-16 70,-16 70,-52"></polygon> <text text-anchor="middle" x="43" y="-29.8" font-family="Times,serif" font-size="14.00">task_4</text> </g> </g>
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-151 180,-151 180,4 -4,4"></polygon>
+<g id="clust1" class="cluster">
+<title>cluster0</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-139 168,-139 168,-8 8,-8"></polygon>
+<text text-anchor="middle" x="88" y="-122.4" font-family="Times,serif" font-size="14.00">DAG A</text>
+</g>
+<!-- task_1 -->
+<g id="node1" class="node">
+<title>task_1</title>
+<polygon fill="none" stroke="black" points="70,-106 16,-106 16,-70 70,-70 70,-106"></polygon>
+<text text-anchor="middle" x="43" y="-83.8" font-family="Times,serif" font-size="14.00">task_1</text>
+</g>
+<!-- task_3 -->
+<g id="node2" class="node">
+<title>task_3</title>
+<polygon fill="none" stroke="black" points="160,-106 106,-106 106,-70 160,-70 160,-106"></polygon>
+<text text-anchor="middle" x="133" y="-83.8" font-family="Times,serif" font-size="14.00">task_3</text>
+</g>
+<!-- task_1&#45;&gt;task_3 -->
+<g id="edge1" class="edge">
+<title>task_1-&gt;task_3</title>
+<path fill="none" stroke="black" d="M70.4,-88C78.39,-88 87.31,-88 95.82,-88"></path>
+<polygon fill="black" stroke="black" points="95.92,-91.5 105.92,-88 95.92,-84.5 95.92,-91.5"></polygon>
+</g>
+<!-- task_4 -->
+<g id="node3" class="node">
+<title>task_4</title>
+<polygon fill="none" stroke="black" points="70,-52 16,-52 16,-16 70,-16 70,-52"></polygon>
+<text text-anchor="middle" x="43" y="-29.8" font-family="Times,serif" font-size="14.00">task_4</text>
+</g>
+</g>
 </svg>
 </div>
+<p></p></figure><p></p>
 </div>
 </div>
 </div>
@@ -382,42 +462,54 @@ task_4
 <li>위의 경우, Task_1이 완료되면 또 다른 dag 을 trigger 되고 싶은데 DAG A 를 수정해야할 경우</li>
 </ul>
 </div><div class="column" style="width:50%;">
-<div class="cell">
+<div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
+<p></p><figure class="figure"><p></p>
 <div>
 <svg width="672" height="480" viewbox="0.00 0.00 184.00 155.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 151)">
-<title>
-G
-</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-151 180,-151 180,4 -4,4"></polygon> <g id="clust1" class="cluster">
-<title>
-cluster
-</title>
-<polygon fill="none" stroke="black" points="8,-8 8,-139 168,-139 168,-8 8,-8"></polygon> <text text-anchor="middle" x="88" y="-122.4" font-family="Times,serif" font-size="14.00">DAG A</text> </g> <!-- task_1 --> <g id="node1" class="node">
-<title>
-task_1
-</title>
-<polygon fill="none" stroke="black" points="70,-79 16,-79 16,-43 70,-43 70,-79"></polygon> <text text-anchor="middle" x="43" y="-56.8" font-family="Times,serif" font-size="14.00">task_1</text> </g> <!-- task_3 --> <g id="node2" class="node">
-<title>
-task_3
-</title>
-<polygon fill="none" stroke="black" points="160,-52 106,-52 106,-16 160,-16 160,-52"></polygon> <text text-anchor="middle" x="133" y="-29.8" font-family="Times,serif" font-size="14.00">task_3</text> </g> <!-- task_1&#45;&gt;task_3 --> <g id="edge1" class="edge">
-<title>
-task_1-&gt;task_3
-</title>
-<path fill="none" stroke="black" d="M70.4,-52.9C78.48,-50.42 87.51,-47.65 96.1,-45.01"></path> <polygon fill="black" stroke="black" points="97.39,-48.28 105.92,-42 95.33,-41.59 97.39,-48.28"></polygon> </g> <!-- task_4 --> <g id="node3" class="node">
-<title>
-task_4
-</title>
-<polygon fill="none" stroke="black" points="160,-106 106,-106 106,-70 160,-70 160,-106"></polygon> <text text-anchor="middle" x="133" y="-83.8" font-family="Times,serif" font-size="14.00">task_4</text> </g> <!-- task_1&#45;&gt;task_4 --> <g id="edge2" class="edge">
-<title>
-task_1-&gt;task_4
-</title>
-<path fill="none" stroke="black" d="M70.4,-69.1C78.48,-71.58 87.51,-74.35 96.1,-76.99"></path> <polygon fill="black" stroke="black" points="95.33,-80.41 105.92,-80 97.39,-73.72 95.33,-80.41"></polygon> </g> </g>
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-151 180,-151 180,4 -4,4"></polygon>
+<g id="clust1" class="cluster">
+<title>cluster</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-139 168,-139 168,-8 8,-8"></polygon>
+<text text-anchor="middle" x="88" y="-122.4" font-family="Times,serif" font-size="14.00">DAG A</text>
+</g>
+<!-- task_1 -->
+<g id="node1" class="node">
+<title>task_1</title>
+<polygon fill="none" stroke="black" points="70,-79 16,-79 16,-43 70,-43 70,-79"></polygon>
+<text text-anchor="middle" x="43" y="-56.8" font-family="Times,serif" font-size="14.00">task_1</text>
+</g>
+<!-- task_3 -->
+<g id="node2" class="node">
+<title>task_3</title>
+<polygon fill="none" stroke="black" points="160,-52 106,-52 106,-16 160,-16 160,-52"></polygon>
+<text text-anchor="middle" x="133" y="-29.8" font-family="Times,serif" font-size="14.00">task_3</text>
+</g>
+<!-- task_1&#45;&gt;task_3 -->
+<g id="edge1" class="edge">
+<title>task_1-&gt;task_3</title>
+<path fill="none" stroke="black" d="M70.4,-52.9C78.48,-50.42 87.51,-47.65 96.1,-45.01"></path>
+<polygon fill="black" stroke="black" points="97.39,-48.28 105.92,-42 95.33,-41.59 97.39,-48.28"></polygon>
+</g>
+<!-- task_4 -->
+<g id="node3" class="node">
+<title>task_4</title>
+<polygon fill="none" stroke="black" points="160,-106 106,-106 106,-70 160,-70 160,-106"></polygon>
+<text text-anchor="middle" x="133" y="-83.8" font-family="Times,serif" font-size="14.00">task_4</text>
+</g>
+<!-- task_1&#45;&gt;task_4 -->
+<g id="edge2" class="edge">
+<title>task_1-&gt;task_4</title>
+<path fill="none" stroke="black" d="M70.4,-69.1C78.48,-71.58 87.51,-74.35 96.1,-76.99"></path>
+<polygon fill="black" stroke="black" points="95.33,-80.41 105.92,-80 97.39,-73.72 95.33,-80.41"></polygon>
+</g>
+</g>
 </svg>
 </div>
+<p></p></figure><p></p>
 </div>
 </div>
 </div>
@@ -426,136 +518,187 @@ task_1-&gt;task_4
 <ul>
 <li>TriggerDagRun 오퍼레이터와 ExternalTask 센서를 많이 사용하다보면 연결관리 에 많은 노력이 필요 (강한 연결)</li>
 </ul>
-<div class="cell">
+<div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
+<p></p><figure class="figure"><p></p>
 <div>
 <svg width="672" height="480" viewbox="0.00 0.00 301.55 209.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 205)">
-<title>
-G
-</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-205 297.55,-205 297.55,4 -4,4"></polygon> <g id="clust1" class="cluster">
-<title>
-cluster
-</title>
-<polygon fill="none" stroke="black" points="8,-8 8,-193 285.55,-193 285.55,-8 8,-8"></polygon> <text text-anchor="middle" x="146.78" y="-176.4" font-family="Times,serif" font-size="14.00">DAG Flow</text> </g> <!-- DAG_A --> <g id="node1" class="node">
-<title>
-DAG_A
-</title>
-<polygon fill="none" stroke="black" points="79.66,-133 15.78,-133 15.78,-97 79.66,-97 79.66,-133"></polygon> <text text-anchor="middle" x="47.72" y="-110.8" font-family="Times,serif" font-size="14.00">DAG_A</text> </g> <!-- DAG_B --> <g id="node2" class="node">
-<title>
-DAG_B
-</title>
-<polygon fill="none" stroke="black" points="177.95,-160 115.61,-160 115.61,-124 177.95,-124 177.95,-160"></polygon> <text text-anchor="middle" x="146.78" y="-137.8" font-family="Times,serif" font-size="14.00">DAG_B</text> </g> <!-- DAG_A&#45;&gt;DAG_B --> <g id="edge1" class="edge">
-<title>
-DAG_A-&gt;DAG_B
-</title>
-<path fill="none" stroke="black" d="M79.7,-123.62C87.91,-125.9 96.9,-128.4 105.53,-130.8"></path> <polygon fill="black" stroke="black" points="104.85,-134.25 115.43,-133.56 106.73,-127.5 104.85,-134.25"></polygon> </g> <!-- DAG_C --> <g id="node3" class="node">
-<title>
-DAG_C
-</title>
-<polygon fill="none" stroke="black" points="177.95,-106 115.61,-106 115.61,-70 177.95,-70 177.95,-106"></polygon> <text text-anchor="middle" x="146.78" y="-83.8" font-family="Times,serif" font-size="14.00">DAG_C</text> </g> <!-- DAG_A&#45;&gt;DAG_C --> <g id="edge2" class="edge">
-<title>
-DAG_A-&gt;DAG_C
-</title>
-<path fill="none" stroke="black" d="M79.7,-106.38C87.91,-104.1 96.9,-101.6 105.53,-99.2"></path> <polygon fill="black" stroke="black" points="106.73,-102.5 115.43,-96.44 104.85,-95.75 106.73,-102.5"></polygon> </g> <!-- DAG_D --> <g id="node4" class="node">
-<title>
-DAG_D
-</title>
-<polygon fill="none" stroke="black" points="79.66,-79 15.78,-79 15.78,-43 79.66,-43 79.66,-79"></polygon> <text text-anchor="middle" x="47.72" y="-56.8" font-family="Times,serif" font-size="14.00">DAG_D</text> </g> <!-- DAG_D&#45;&gt;DAG_C --> <g id="edge3" class="edge">
-<title>
-DAG_D-&gt;DAG_C
-</title>
-<path fill="none" stroke="black" stroke-dasharray="5,2" d="M79.7,-69.62C87.91,-71.9 96.9,-74.4 105.53,-76.8"></path> <polygon fill="black" stroke="black" points="104.85,-80.25 115.43,-79.56 106.73,-73.5 104.85,-80.25"></polygon> </g> <!-- DAG_E --> <g id="node5" class="node">
-<title>
-DAG_E
-</title>
-<polygon fill="none" stroke="black" points="177.66,-52 115.89,-52 115.89,-16 177.66,-16 177.66,-52"></polygon> <text text-anchor="middle" x="146.78" y="-29.8" font-family="Times,serif" font-size="14.00">DAG_E</text> </g> <!-- DAG_D&#45;&gt;DAG_E --> <g id="edge4" class="edge">
-<title>
-DAG_D-&gt;DAG_E
-</title>
-<path fill="none" stroke="black" stroke-dasharray="5,2" d="M79.7,-52.38C88.08,-50.05 97.27,-47.49 106.06,-45.05"></path> <polygon fill="black" stroke="black" points="107.06,-48.4 115.76,-42.35 105.18,-41.66 107.06,-48.4"></polygon> </g> <!-- DAG_G --> <g id="node6" class="node">
-<title>
-DAG_G
-</title>
-<polygon fill="none" stroke="black" points="277.77,-52 213.89,-52 213.89,-16 277.77,-16 277.77,-52"></polygon> <text text-anchor="middle" x="245.83" y="-29.8" font-family="Times,serif" font-size="14.00">DAG_G</text> </g> <!-- DAG_E&#45;&gt;DAG_G --> <g id="edge5" class="edge">
-<title>
-DAG_E-&gt;DAG_G
-</title>
-<path fill="none" stroke="black" stroke-dasharray="5,2" d="M177.69,-34C185.93,-34 195.03,-34 203.79,-34"></path> <polygon fill="black" stroke="black" points="203.84,-37.5 213.84,-34 203.84,-30.5 203.84,-37.5"></polygon> </g> </g>
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-205 297.55,-205 297.55,4 -4,4"></polygon>
+<g id="clust1" class="cluster">
+<title>cluster</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-193 285.55,-193 285.55,-8 8,-8"></polygon>
+<text text-anchor="middle" x="146.78" y="-176.4" font-family="Times,serif" font-size="14.00">DAG Flow</text>
+</g>
+<!-- DAG_A -->
+<g id="node1" class="node">
+<title>DAG_A</title>
+<polygon fill="none" stroke="black" points="79.66,-133 15.78,-133 15.78,-97 79.66,-97 79.66,-133"></polygon>
+<text text-anchor="middle" x="47.72" y="-110.8" font-family="Times,serif" font-size="14.00">DAG_A</text>
+</g>
+<!-- DAG_B -->
+<g id="node2" class="node">
+<title>DAG_B</title>
+<polygon fill="none" stroke="black" points="177.95,-160 115.61,-160 115.61,-124 177.95,-124 177.95,-160"></polygon>
+<text text-anchor="middle" x="146.78" y="-137.8" font-family="Times,serif" font-size="14.00">DAG_B</text>
+</g>
+<!-- DAG_A&#45;&gt;DAG_B -->
+<g id="edge1" class="edge">
+<title>DAG_A-&gt;DAG_B</title>
+<path fill="none" stroke="black" d="M79.7,-123.62C87.91,-125.9 96.9,-128.4 105.53,-130.8"></path>
+<polygon fill="black" stroke="black" points="104.85,-134.25 115.43,-133.56 106.73,-127.5 104.85,-134.25"></polygon>
+</g>
+<!-- DAG_C -->
+<g id="node3" class="node">
+<title>DAG_C</title>
+<polygon fill="none" stroke="black" points="177.95,-106 115.61,-106 115.61,-70 177.95,-70 177.95,-106"></polygon>
+<text text-anchor="middle" x="146.78" y="-83.8" font-family="Times,serif" font-size="14.00">DAG_C</text>
+</g>
+<!-- DAG_A&#45;&gt;DAG_C -->
+<g id="edge2" class="edge">
+<title>DAG_A-&gt;DAG_C</title>
+<path fill="none" stroke="black" d="M79.7,-106.38C87.91,-104.1 96.9,-101.6 105.53,-99.2"></path>
+<polygon fill="black" stroke="black" points="106.73,-102.5 115.43,-96.44 104.85,-95.75 106.73,-102.5"></polygon>
+</g>
+<!-- DAG_D -->
+<g id="node4" class="node">
+<title>DAG_D</title>
+<polygon fill="none" stroke="black" points="79.66,-79 15.78,-79 15.78,-43 79.66,-43 79.66,-79"></polygon>
+<text text-anchor="middle" x="47.72" y="-56.8" font-family="Times,serif" font-size="14.00">DAG_D</text>
+</g>
+<!-- DAG_D&#45;&gt;DAG_C -->
+<g id="edge3" class="edge">
+<title>DAG_D-&gt;DAG_C</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M79.7,-69.62C87.91,-71.9 96.9,-74.4 105.53,-76.8"></path>
+<polygon fill="black" stroke="black" points="104.85,-80.25 115.43,-79.56 106.73,-73.5 104.85,-80.25"></polygon>
+</g>
+<!-- DAG_E -->
+<g id="node5" class="node">
+<title>DAG_E</title>
+<polygon fill="none" stroke="black" points="177.66,-52 115.89,-52 115.89,-16 177.66,-16 177.66,-52"></polygon>
+<text text-anchor="middle" x="146.78" y="-29.8" font-family="Times,serif" font-size="14.00">DAG_E</text>
+</g>
+<!-- DAG_D&#45;&gt;DAG_E -->
+<g id="edge4" class="edge">
+<title>DAG_D-&gt;DAG_E</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M79.7,-52.38C88.08,-50.05 97.27,-47.49 106.06,-45.05"></path>
+<polygon fill="black" stroke="black" points="107.06,-48.4 115.76,-42.35 105.18,-41.66 107.06,-48.4"></polygon>
+</g>
+<!-- DAG_G -->
+<g id="node6" class="node">
+<title>DAG_G</title>
+<polygon fill="none" stroke="black" points="277.77,-52 213.89,-52 213.89,-16 277.77,-16 277.77,-52"></polygon>
+<text text-anchor="middle" x="245.83" y="-29.8" font-family="Times,serif" font-size="14.00">DAG_G</text>
+</g>
+<!-- DAG_E&#45;&gt;DAG_G -->
+<g id="edge5" class="edge">
+<title>DAG_E-&gt;DAG_G</title>
+<path fill="none" stroke="black" stroke-dasharray="5,2" d="M177.69,-34C185.93,-34 195.03,-34 203.79,-34"></path>
+<polygon fill="black" stroke="black" points="203.84,-37.5 213.84,-34 203.84,-30.5 203.84,-37.5"></polygon>
+</g>
+</g>
 </svg>
 </div>
+<p></p></figure><p></p>
 </div>
 </div>
 </div>
 <ul>
 <li>큐시스템과 같이 Job 수행이 완료된 Task 는 Push 하고 센싱이 필요한 task 은 큐 시스템을 구독하는 방식을 쓴다면 ? (약한 연결)</li>
 </ul>
-<div class="cell">
+<div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
+<p></p><figure class="figure"><p></p>
 <div>
 <svg width="672" height="480" viewbox="0.00 0.00 292.11 209.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 205)">
-<title>
-G
-</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-205 288.11,-205 288.11,4 -4,4"></polygon> <g id="clust1" class="cluster">
-<title>
-cluster
-</title>
-<polygon fill="none" stroke="black" points="8,-8 8,-193 276.11,-193 276.11,-8 8,-8"></polygon> <text text-anchor="middle" x="142.06" y="-176.4" font-family="Times,serif" font-size="14.00">DAG Flow</text> </g> <!-- DAG_A --> <g id="node1" class="node">
-<title>
-DAG_A
-</title>
-<polygon fill="none" stroke="black" points="79.66,-160 15.78,-160 15.78,-124 79.66,-124 79.66,-160"></polygon> <text text-anchor="middle" x="47.72" y="-137.8" font-family="Times,serif" font-size="14.00">DAG_A</text> </g> <!-- Queue --> <g id="node7" class="node">
-<title>
-Queue
-</title>
-<path fill="none" stroke="black" d="M169.44,-102.73C169.44,-104.53 157.34,-106 142.44,-106 127.54,-106 115.44,-104.53 115.44,-102.73 115.44,-102.73 115.44,-73.27 115.44,-73.27 115.44,-71.47 127.54,-70 142.44,-70 157.34,-70 169.44,-71.47 169.44,-73.27 169.44,-73.27 169.44,-102.73 169.44,-102.73"></path> <path fill="none" stroke="black" d="M169.44,-102.73C169.44,-100.92 157.34,-99.45 142.44,-99.45 127.54,-99.45 115.44,-100.92 115.44,-102.73"></path> <text text-anchor="middle" x="142.44" y="-83.8" font-family="Times,serif" font-size="14.00">Queue</text> </g> <!-- DAG_A&#45;&gt;Queue --> <g id="edge1" class="edge">
-<title>
-DAG_A-&gt;Queue
-</title>
-<path fill="none" stroke="black" d="M79.6,-124.02C88.29,-118.96 97.8,-113.42 106.7,-108.23"></path> <polygon fill="black" stroke="black" points="108.47,-111.25 115.35,-103.2 104.94,-105.21 108.47,-111.25"></polygon> </g> <!-- DAG_B --> <g id="node2" class="node">
-<title>
-DAG_B
-</title>
-<polygon fill="none" stroke="black" points="267.95,-52 205.61,-52 205.61,-16 267.95,-16 267.95,-52"></polygon> <text text-anchor="middle" x="236.78" y="-29.8" font-family="Times,serif" font-size="14.00">DAG_B</text> </g> <!-- DAG_C --> <g id="node3" class="node">
-<title>
-DAG_C
-</title>
-<polygon fill="none" stroke="black" points="267.95,-106 205.61,-106 205.61,-70 267.95,-70 267.95,-106"></polygon> <text text-anchor="middle" x="236.78" y="-83.8" font-family="Times,serif" font-size="14.00">DAG_C</text> </g> <!-- DAG_D --> <g id="node4" class="node">
-<title>
-DAG_D
-</title>
-<polygon fill="none" stroke="black" points="79.66,-106 15.78,-106 15.78,-70 79.66,-70 79.66,-106"></polygon> <text text-anchor="middle" x="47.72" y="-83.8" font-family="Times,serif" font-size="14.00">DAG_D</text> </g> <!-- DAG_D&#45;&gt;Queue --> <g id="edge2" class="edge">
-<title>
-DAG_D-&gt;Queue
-</title>
-<path fill="none" stroke="black" d="M79.6,-88C87.83,-88 96.81,-88 105.31,-88"></path> <polygon fill="black" stroke="black" points="105.35,-91.5 115.35,-88 105.35,-84.5 105.35,-91.5"></polygon> </g> <!-- DAG_E --> <g id="node5" class="node">
-<title>
-DAG_E
-</title>
-<polygon fill="none" stroke="black" points="267.66,-160 205.89,-160 205.89,-124 267.66,-124 267.66,-160"></polygon> <text text-anchor="middle" x="236.78" y="-137.8" font-family="Times,serif" font-size="14.00">DAG_E</text> </g> <!-- DAG_G --> <g id="node6" class="node">
-<title>
-DAG_G
-</title>
-<polygon fill="none" stroke="black" points="79.66,-52 15.78,-52 15.78,-16 79.66,-16 79.66,-52"></polygon> <text text-anchor="middle" x="47.72" y="-29.8" font-family="Times,serif" font-size="14.00">DAG_G</text> </g> <!-- Queue&#45;&gt;DAG_B --> <g id="edge3" class="edge">
-<title>
-Queue-&gt;DAG_B
-</title>
-<path fill="none" stroke="black" d="M169.65,-72.67C178.14,-67.71 187.74,-62.09 196.94,-56.71"></path> <polygon fill="black" stroke="black" points="198.72,-59.73 205.59,-51.66 195.19,-53.68 198.72,-59.73"></polygon> </g> <!-- Queue&#45;&gt;DAG_C --> <g id="edge4" class="edge">
-<title>
-Queue-&gt;DAG_C
-</title>
-<path fill="none" stroke="black" d="M169.65,-88C177.7,-88 186.75,-88 195.51,-88"></path> <polygon fill="black" stroke="black" points="195.59,-91.5 205.59,-88 195.59,-84.5 195.59,-91.5"></polygon> </g> <!-- Queue&#45;&gt;DAG_E --> <g id="edge5" class="edge">
-<title>
-Queue-&gt;DAG_E
-</title>
-<path fill="none" stroke="black" d="M169.65,-103.33C178.14,-108.29 187.74,-113.91 196.94,-119.29"></path> <polygon fill="black" stroke="black" points="195.19,-122.32 205.59,-124.34 198.72,-116.27 195.19,-122.32"></polygon> </g> </g>
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-205 288.11,-205 288.11,4 -4,4"></polygon>
+<g id="clust1" class="cluster">
+<title>cluster</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-193 276.11,-193 276.11,-8 8,-8"></polygon>
+<text text-anchor="middle" x="142.06" y="-176.4" font-family="Times,serif" font-size="14.00">DAG Flow</text>
+</g>
+<!-- DAG_A -->
+<g id="node1" class="node">
+<title>DAG_A</title>
+<polygon fill="none" stroke="black" points="79.66,-160 15.78,-160 15.78,-124 79.66,-124 79.66,-160"></polygon>
+<text text-anchor="middle" x="47.72" y="-137.8" font-family="Times,serif" font-size="14.00">DAG_A</text>
+</g>
+<!-- Queue -->
+<g id="node7" class="node">
+<title>Queue</title>
+<path fill="none" stroke="black" d="M169.44,-102.73C169.44,-104.53 157.34,-106 142.44,-106 127.54,-106 115.44,-104.53 115.44,-102.73 115.44,-102.73 115.44,-73.27 115.44,-73.27 115.44,-71.47 127.54,-70 142.44,-70 157.34,-70 169.44,-71.47 169.44,-73.27 169.44,-73.27 169.44,-102.73 169.44,-102.73"></path>
+<path fill="none" stroke="black" d="M169.44,-102.73C169.44,-100.92 157.34,-99.45 142.44,-99.45 127.54,-99.45 115.44,-100.92 115.44,-102.73"></path>
+<text text-anchor="middle" x="142.44" y="-83.8" font-family="Times,serif" font-size="14.00">Queue</text>
+</g>
+<!-- DAG_A&#45;&gt;Queue -->
+<g id="edge1" class="edge">
+<title>DAG_A-&gt;Queue</title>
+<path fill="none" stroke="black" d="M79.6,-124.02C88.29,-118.96 97.8,-113.42 106.7,-108.23"></path>
+<polygon fill="black" stroke="black" points="108.47,-111.25 115.35,-103.2 104.94,-105.21 108.47,-111.25"></polygon>
+</g>
+<!-- DAG_B -->
+<g id="node2" class="node">
+<title>DAG_B</title>
+<polygon fill="none" stroke="black" points="267.95,-52 205.61,-52 205.61,-16 267.95,-16 267.95,-52"></polygon>
+<text text-anchor="middle" x="236.78" y="-29.8" font-family="Times,serif" font-size="14.00">DAG_B</text>
+</g>
+<!-- DAG_C -->
+<g id="node3" class="node">
+<title>DAG_C</title>
+<polygon fill="none" stroke="black" points="267.95,-106 205.61,-106 205.61,-70 267.95,-70 267.95,-106"></polygon>
+<text text-anchor="middle" x="236.78" y="-83.8" font-family="Times,serif" font-size="14.00">DAG_C</text>
+</g>
+<!-- DAG_D -->
+<g id="node4" class="node">
+<title>DAG_D</title>
+<polygon fill="none" stroke="black" points="79.66,-106 15.78,-106 15.78,-70 79.66,-70 79.66,-106"></polygon>
+<text text-anchor="middle" x="47.72" y="-83.8" font-family="Times,serif" font-size="14.00">DAG_D</text>
+</g>
+<!-- DAG_D&#45;&gt;Queue -->
+<g id="edge2" class="edge">
+<title>DAG_D-&gt;Queue</title>
+<path fill="none" stroke="black" d="M79.6,-88C87.83,-88 96.81,-88 105.31,-88"></path>
+<polygon fill="black" stroke="black" points="105.35,-91.5 115.35,-88 105.35,-84.5 105.35,-91.5"></polygon>
+</g>
+<!-- DAG_E -->
+<g id="node5" class="node">
+<title>DAG_E</title>
+<polygon fill="none" stroke="black" points="267.66,-160 205.89,-160 205.89,-124 267.66,-124 267.66,-160"></polygon>
+<text text-anchor="middle" x="236.78" y="-137.8" font-family="Times,serif" font-size="14.00">DAG_E</text>
+</g>
+<!-- DAG_G -->
+<g id="node6" class="node">
+<title>DAG_G</title>
+<polygon fill="none" stroke="black" points="79.66,-52 15.78,-52 15.78,-16 79.66,-16 79.66,-52"></polygon>
+<text text-anchor="middle" x="47.72" y="-29.8" font-family="Times,serif" font-size="14.00">DAG_G</text>
+</g>
+<!-- Queue&#45;&gt;DAG_B -->
+<g id="edge3" class="edge">
+<title>Queue-&gt;DAG_B</title>
+<path fill="none" stroke="black" d="M169.65,-72.67C178.14,-67.71 187.74,-62.09 196.94,-56.71"></path>
+<polygon fill="black" stroke="black" points="198.72,-59.73 205.59,-51.66 195.19,-53.68 198.72,-59.73"></polygon>
+</g>
+<!-- Queue&#45;&gt;DAG_C -->
+<g id="edge4" class="edge">
+<title>Queue-&gt;DAG_C</title>
+<path fill="none" stroke="black" d="M169.65,-88C177.7,-88 186.75,-88 195.51,-88"></path>
+<polygon fill="black" stroke="black" points="195.59,-91.5 205.59,-88 195.59,-84.5 195.59,-91.5"></polygon>
+</g>
+<!-- Queue&#45;&gt;DAG_E -->
+<g id="edge5" class="edge">
+<title>Queue-&gt;DAG_E</title>
+<path fill="none" stroke="black" d="M169.65,-103.33C178.14,-108.29 187.74,-113.91 196.94,-119.29"></path>
+<polygon fill="black" stroke="black" points="195.19,-122.32 205.59,-124.34 198.72,-116.27 195.19,-122.32"></polygon>
+</g>
+</g>
 </svg>
 </div>
+<p></p></figure><p></p>
 </div>
 </div>
 </div>
@@ -1211,7 +1354,7 @@ Queue-&gt;DAG_E
 </section>
 <section id="정리-1" class="level2" data-number="5.3">
 <h2 data-number="5.3" class="anchored" data-anchor-id="정리-1"><span class="header-section-number">5.3</span> 정리</h2>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
 <col style="width: 25%">
@@ -1421,7 +1564,7 @@ Queue-&gt;DAG_E
 </section>
 <section id="정리-2" class="level2" data-number="6.5">
 <h2 data-number="6.5" class="anchored" data-anchor-id="정리-2"><span class="header-section-number">6.5</span> 정리</h2>
-<table class="table">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
 <col style="width: 25%">
@@ -1502,74 +1645,106 @@ Queue-&gt;DAG_E
 <li>왜냐면 airflow와 연계되는 외부 솔루션에 작업 제출, 상태 확인, 완료 확인 등의 절차를 통해 관리</li>
 <li>예를 들어 airflow의 worker container가 python logic을 직접 처리하는게 아니라 python logic 을 python이 처리하도록 명령을 제출하고 로직 확인 및 결과 확인을 수행한다.</li>
 </ul>
-<div class="cell">
+<div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
+<p></p><figure class="figure"><p></p>
 <div>
 <svg width="672" height="480" viewbox="0.00 0.00 315.68 346.00" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 342)">
-<title>
-G
-</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-342 311.68,-342 311.68,4 -4,4"></polygon> <g id="clust1" class="cluster">
-<title>
-cluster0
-</title>
-<polygon fill="none" stroke="black" points="8,-8 8,-330 299.68,-330 299.68,-8 8,-8"></polygon> </g> <!-- airflow --> <g id="node1" class="node">
-<title>
-airflow
-</title>
-<ellipse fill="none" stroke="black" cx="54.92" cy="-168" rx="38.85" ry="38.85"></ellipse> <text text-anchor="middle" x="54.92" y="-163.8" font-family="Times,serif" font-size="14.00">airflow</text> </g> <!-- PostgresqlDB --> <g id="node2" class="node">
-<title>
-PostgresqlDB
-</title>
-<polygon fill="none" stroke="black" points="291.58,-52 198,-52 198,-16 291.58,-16 291.58,-52"></polygon> <text text-anchor="middle" x="244.79" y="-29.8" font-family="Times,serif" font-size="14.00">PostgresqlDB</text> </g> <!-- airflow&#45;&gt;PostgresqlDB --> <g id="edge1" class="edge">
-<title>
-airflow-&gt;PostgresqlDB
-</title>
-<path fill="none" stroke="black" d="M74.91,-134.17C84.47,-119.47 97.17,-102.95 111.85,-91.2 134.21,-73.29 163.04,-59.94 188.05,-50.67"></path> <polygon fill="black" stroke="black" points="189.54,-53.85 197.78,-47.19 187.18,-47.26 189.54,-53.85"></polygon> <text text-anchor="middle" x="145.87" y="-95.2" font-family="Times,serif" font-size="14.00">작업 실행</text> </g> <!-- Hive --> <g id="node3" class="node">
-<title>
-Hive
-</title>
-<polygon fill="none" stroke="black" points="271.79,-106 217.79,-106 217.79,-70 271.79,-70 271.79,-106"></polygon> <text text-anchor="middle" x="244.79" y="-83.8" font-family="Times,serif" font-size="14.00">Hive</text> </g> <!-- airflow&#45;&gt;Hive --> <g id="edge2" class="edge">
-<title>
-airflow-&gt;Hive
-</title>
-<path fill="none" stroke="black" d="M90.06,-151.07C97.21,-147.64 104.74,-144.14 111.85,-141 144.08,-126.76 181.4,-111.92 208.1,-101.58"></path> <polygon fill="black" stroke="black" points="209.71,-104.71 217.79,-97.85 207.2,-98.18 209.71,-104.71"></polygon> </g> <!-- HDFS --> <g id="node4" class="node">
-<title>
-HDFS
-</title>
-<polygon fill="none" stroke="black" points="271.79,-160 217.79,-160 217.79,-124 271.79,-124 271.79,-160"></polygon> <text text-anchor="middle" x="244.79" y="-137.8" font-family="Times,serif" font-size="14.00">HDFS</text> </g> <!-- airflow&#45;&gt;HDFS --> <g id="edge3" class="edge">
-<title>
-airflow-&gt;HDFS
-</title>
-<path fill="none" stroke="black" d="M92.42,-157.37C98.85,-155.77 105.51,-154.3 111.85,-153.2 143.84,-147.65 180.7,-144.82 207.31,-143.39"></path> <polygon fill="black" stroke="black" points="207.52,-146.88 217.33,-142.89 207.17,-139.89 207.52,-146.88"></polygon> <text text-anchor="middle" x="145.87" y="-157.2" font-family="Times,serif" font-size="14.00">작업 실행</text> </g> <!-- Bigquerty --> <g id="node5" class="node">
-<title>
-Bigquerty
-</title>
-<polygon fill="none" stroke="black" points="280.78,-214 208.8,-214 208.8,-178 280.78,-178 280.78,-214"></polygon> <text text-anchor="middle" x="244.79" y="-191.8" font-family="Times,serif" font-size="14.00">Bigquerty</text> </g> <!-- airflow&#45;&gt;Bigquerty --> <g id="edge4" class="edge">
-<title>
-airflow-&gt;Bigquerty
-</title>
-<path fill="none" stroke="black" d="M93.49,-173.6C123.73,-178.11 166.34,-184.46 198.48,-189.25"></path> <polygon fill="black" stroke="black" points="198.11,-192.73 208.51,-190.74 199.14,-185.81 198.11,-192.73"></polygon> <text text-anchor="middle" x="145.87" y="-190.2" font-family="Times,serif" font-size="14.00">완료 확인</text> </g> <!-- Python_func --> <g id="node6" class="node">
-<title>
-Python_func
-</title>
-<polygon fill="none" stroke="black" points="288.34,-268 201.24,-268 201.24,-232 288.34,-232 288.34,-268"></polygon> <text text-anchor="middle" x="244.79" y="-245.8" font-family="Times,serif" font-size="14.00">Python_func</text> </g> <!-- airflow&#45;&gt;Python_func --> <g id="edge5" class="edge">
-<title>
-airflow-&gt;Python_func
-</title>
-<path fill="none" stroke="black" d="M86.27,-191.56C94.3,-197.12 103.16,-202.67 111.85,-207 136.87,-219.46 166.31,-229.46 191.02,-236.67"></path> <polygon fill="black" stroke="black" points="190.37,-240.12 200.95,-239.49 192.28,-233.39 190.37,-240.12"></polygon> <text text-anchor="middle" x="145.87" y="-236.2" font-family="Times,serif" font-size="14.00">Python func</text> </g> <!-- Spark --> <g id="node7" class="node">
-<title>
-Spark
-</title>
-<polygon fill="none" stroke="black" points="271.79,-322 217.79,-322 217.79,-286 271.79,-286 271.79,-322"></polygon> <text text-anchor="middle" x="244.79" y="-299.8" font-family="Times,serif" font-size="14.00">Spark</text> </g> <!-- airflow&#45;&gt;Spark --> <g id="edge6" class="edge">
-<title>
-airflow-&gt;Spark
-</title>
-<path fill="none" stroke="black" d="M72.53,-203.21C82.03,-220.18 95.35,-239.69 111.85,-253 139.93,-275.66 179.25,-289.11 207.65,-296.46"></path> <polygon fill="black" stroke="black" points="207.04,-299.91 217.58,-298.89 208.7,-293.11 207.04,-299.91"></polygon> <text text-anchor="middle" x="145.87" y="-292.2" font-family="Times,serif" font-size="14.00">상태 확인</text> </g> </g>
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-342 311.68,-342 311.68,4 -4,4"></polygon>
+<g id="clust1" class="cluster">
+<title>cluster0</title>
+<polygon fill="none" stroke="black" points="8,-8 8,-330 299.68,-330 299.68,-8 8,-8"></polygon>
+</g>
+<!-- airflow -->
+<g id="node1" class="node">
+<title>airflow</title>
+<ellipse fill="none" stroke="black" cx="54.92" cy="-168" rx="38.85" ry="38.85"></ellipse>
+<text text-anchor="middle" x="54.92" y="-163.8" font-family="Times,serif" font-size="14.00">airflow</text>
+</g>
+<!-- PostgresqlDB -->
+<g id="node2" class="node">
+<title>PostgresqlDB</title>
+<polygon fill="none" stroke="black" points="291.58,-52 198,-52 198,-16 291.58,-16 291.58,-52"></polygon>
+<text text-anchor="middle" x="244.79" y="-29.8" font-family="Times,serif" font-size="14.00">PostgresqlDB</text>
+</g>
+<!-- airflow&#45;&gt;PostgresqlDB -->
+<g id="edge1" class="edge">
+<title>airflow-&gt;PostgresqlDB</title>
+<path fill="none" stroke="black" d="M74.91,-134.17C84.47,-119.47 97.17,-102.95 111.85,-91.2 134.21,-73.29 163.04,-59.94 188.05,-50.67"></path>
+<polygon fill="black" stroke="black" points="189.54,-53.85 197.78,-47.19 187.18,-47.26 189.54,-53.85"></polygon>
+<text text-anchor="middle" x="145.87" y="-95.2" font-family="Times,serif" font-size="14.00">작업 실행</text>
+</g>
+<!-- Hive -->
+<g id="node3" class="node">
+<title>Hive</title>
+<polygon fill="none" stroke="black" points="271.79,-106 217.79,-106 217.79,-70 271.79,-70 271.79,-106"></polygon>
+<text text-anchor="middle" x="244.79" y="-83.8" font-family="Times,serif" font-size="14.00">Hive</text>
+</g>
+<!-- airflow&#45;&gt;Hive -->
+<g id="edge2" class="edge">
+<title>airflow-&gt;Hive</title>
+<path fill="none" stroke="black" d="M90.06,-151.07C97.21,-147.64 104.74,-144.14 111.85,-141 144.08,-126.76 181.4,-111.92 208.1,-101.58"></path>
+<polygon fill="black" stroke="black" points="209.71,-104.71 217.79,-97.85 207.2,-98.18 209.71,-104.71"></polygon>
+</g>
+<!-- HDFS -->
+<g id="node4" class="node">
+<title>HDFS</title>
+<polygon fill="none" stroke="black" points="271.79,-160 217.79,-160 217.79,-124 271.79,-124 271.79,-160"></polygon>
+<text text-anchor="middle" x="244.79" y="-137.8" font-family="Times,serif" font-size="14.00">HDFS</text>
+</g>
+<!-- airflow&#45;&gt;HDFS -->
+<g id="edge3" class="edge">
+<title>airflow-&gt;HDFS</title>
+<path fill="none" stroke="black" d="M92.42,-157.37C98.85,-155.77 105.51,-154.3 111.85,-153.2 143.84,-147.65 180.7,-144.82 207.31,-143.39"></path>
+<polygon fill="black" stroke="black" points="207.52,-146.88 217.33,-142.89 207.17,-139.89 207.52,-146.88"></polygon>
+<text text-anchor="middle" x="145.87" y="-157.2" font-family="Times,serif" font-size="14.00">작업 실행</text>
+</g>
+<!-- Bigquerty -->
+<g id="node5" class="node">
+<title>Bigquerty</title>
+<polygon fill="none" stroke="black" points="280.78,-214 208.8,-214 208.8,-178 280.78,-178 280.78,-214"></polygon>
+<text text-anchor="middle" x="244.79" y="-191.8" font-family="Times,serif" font-size="14.00">Bigquerty</text>
+</g>
+<!-- airflow&#45;&gt;Bigquerty -->
+<g id="edge4" class="edge">
+<title>airflow-&gt;Bigquerty</title>
+<path fill="none" stroke="black" d="M93.49,-173.6C123.73,-178.11 166.34,-184.46 198.48,-189.25"></path>
+<polygon fill="black" stroke="black" points="198.11,-192.73 208.51,-190.74 199.14,-185.81 198.11,-192.73"></polygon>
+<text text-anchor="middle" x="145.87" y="-190.2" font-family="Times,serif" font-size="14.00">완료 확인</text>
+</g>
+<!-- Python_func -->
+<g id="node6" class="node">
+<title>Python_func</title>
+<polygon fill="none" stroke="black" points="288.34,-268 201.24,-268 201.24,-232 288.34,-232 288.34,-268"></polygon>
+<text text-anchor="middle" x="244.79" y="-245.8" font-family="Times,serif" font-size="14.00">Python_func</text>
+</g>
+<!-- airflow&#45;&gt;Python_func -->
+<g id="edge5" class="edge">
+<title>airflow-&gt;Python_func</title>
+<path fill="none" stroke="black" d="M86.27,-191.56C94.3,-197.12 103.16,-202.67 111.85,-207 136.87,-219.46 166.31,-229.46 191.02,-236.67"></path>
+<polygon fill="black" stroke="black" points="190.37,-240.12 200.95,-239.49 192.28,-233.39 190.37,-240.12"></polygon>
+<text text-anchor="middle" x="145.87" y="-236.2" font-family="Times,serif" font-size="14.00">Python func</text>
+</g>
+<!-- Spark -->
+<g id="node7" class="node">
+<title>Spark</title>
+<polygon fill="none" stroke="black" points="271.79,-322 217.79,-322 217.79,-286 271.79,-286 271.79,-322"></polygon>
+<text text-anchor="middle" x="244.79" y="-299.8" font-family="Times,serif" font-size="14.00">Spark</text>
+</g>
+<!-- airflow&#45;&gt;Spark -->
+<g id="edge6" class="edge">
+<title>airflow-&gt;Spark</title>
+<path fill="none" stroke="black" d="M72.53,-203.21C82.03,-220.18 95.35,-239.69 111.85,-253 139.93,-275.66 179.25,-289.11 207.65,-296.46"></path>
+<polygon fill="black" stroke="black" points="207.04,-299.91 217.58,-298.89 208.7,-293.11 207.04,-299.91"></polygon>
+<text text-anchor="middle" x="145.87" y="-292.2" font-family="Times,serif" font-size="14.00">상태 확인</text>
+</g>
+</g>
 </svg>
 </div>
+<p></p></figure><p></p>
 </div>
 </div>
 </div>
@@ -1677,8 +1852,9 @@ airflow-&gt;Spark
 </div>
 
 
+</div>
 
-</div></ul></main> <!-- /main -->
+</ul></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -1714,18 +1890,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1757,11 +1922,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("kmink3225\.netlify\.app");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1771,8 +1975,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1784,7 +1997,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -1828,6 +2164,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -1853,6 +2190,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -1915,6 +2278,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <script src="https://utteranc.es/client.js" repo="./docs/comments" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
 </script>
 </div> <!-- /content -->
+
 
 
 

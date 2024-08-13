@@ -63,64 +63,112 @@ PCR 신호는 시험관 내에서 일어나는 미시적 화학 반응, 광학 �
 
 따라서, 이러한 노이즈를 보정하기 위한 전처리 방법이 필요하다. 전처리 후, 진단 알고리즘은 검체의 존재 여부와 Ct 값을 시그모이드 곡선 적합을 통해 최종 출력한다.
 
-## Objective
-
-noise를 보정하는 대표적인 전처리 방식 중 하나인 baseline 차감 알고리즘을 최적화한다. Baseline의 차감은 baseline fitting을 수행하여 fitted value를 raw data에서 차감하여 순수 신호를 분리한다. 
-
-$$
-\text{RFU (or PCR Signal)} =  \text{Pure Signal} + \text{Noise} + \text{Error}
-$$
-
-* Pure Signal: 시약에 의한 순수 증폭 및 미증폭 신호
-* Noise: 장비의 결함, 소모품 및 시약의 기대하지 않은 반응에 의한 신호
-* Error: 다른 설명할 수 없는 요인으로 인하여 발생한 신호
-
 ## Rationale
 
-Baseline 데이터에 노이즈가 많을 경우, 최적화 과정에서 과적합이나 local minima와 같은 문제로 인해 파라미터 추정의 복잡성이 증가한다. 따라서, sigmoid curve fitting 전의 전처리 단계인 baseline subtraction의 정확도가 매우 중요하다.
+* Baseline 데이터에 노이즈가 많을 경우, 최적화 과정에서 과적합이나 local minima와 같은 문제로 인해 파라미터 추정의 복잡성이 증가한다. 따라서, sigmoid curve fitting 전의 전처리 단계인 baseline subtraction의 정확도가 매우 중요하다.
+* 사내에 표준화된 baseline fitting 알고리즘이 없어 여러 알고리즘으로 baseline fitting 알고리즘이 존재한다. 
 
 ## Motivation
 
 회사에 처음 입사했을 때, 진단 알고리즘의 수많은 if문과 설정값, 그리고 해석하기 어려운 코드에 압도되었다. rule-based 알고리즘이 data-driven 알고리즘에 비해 성능이 떨어진다고는 할 수 없지만, 변화무쌍한 PCR 신호를 조건문으로 처리하기에는 한계가 있다고 판단했다. 따라서, 점진적으로 진단 알고리즘을 data-driven 방식으로 개선할 필요가 있다고 생각했다.  
 
-### Considerations
 
-* 보수적인 biologists와 전문적 지식이 없는 임원진을 이해시킬 수 있는 설명력있는 간단한 알고리즘이어야 한다.
+## Considerations
+
+* 보수적인 biologists와 전문적 지식이 없는 임원진을 이해시킬 수 있는 간단한 알고리즘이어야 한다.
 * 현재의 진단 알고리즘은 수 많은 조건문으로 이루어진 rule-based 알고리즘이기 때문에 전체적인 알고리즘 수정 시 정합성 및 규제 문제가 발생할 수 있다. 따라서, baseline fitting 알고리즘만 개선하여 대체해야 한다.
 * 통계를 전공하지 않은 알고리즘 관리자1 (Computer Science 전공), 관리자2 (Physics 전공)가 이해할 수 있도록 알고리즘 평가 metric을 선정 및 설명할 수 있어야한다. 
 * Python으로 작성된 알고리즘을 C++로 porting을 해야만하기 때문에 최소한의 package를 사용하여 알고리즘을 low level로 coding해야한다.
 * Lag Phase에서의 baseline data points 수가 적을 수 있으므로, 적은 데이터로도 fitting할 수 있는 알고리즘이 필요하다.
 * baseline의 noise 패턴은 매우 다양하지만 기존의 legacy baseline fitting 알고리즘은 1차 곡선과 2차 곡선으로 fitting 한다. 따라서, 다양한 noise 패턴에 대응할 수 있는 알고리즘이 필요하다.
 
-### Goal
+### Issues
 
+* 신호 데이터 선정 기준 부재
+  * 기존 방식: 1년 동안 기존 담당자가 주먹구구식으로 파일을 열어가며 주관적 느낌으로 타사 SW를 통해 특이한 신호를 육안 및 수동으로 찾음. 
+  * 기존 방식 고수: 기존 방식으로 프로젝트 진행할 경우 너무 많은 소요 시간이 발생하여 프로젝트의 종결이 보이지 않음
+* 데이터 파이프라인 부재
+* 성능 평가 기준과 방법 부재
+* 어렵지 않고 보수적인 biologists가 알고리즘 성능을 쉽게 이해할 수 있도록 시각화를 하지만 기획자가 부재
+
+### Solutions to Issues
+
+* 신호 선정 메트릭 설정 후 활용하도록 복수 신호를 시각화 제시하여 설득
+* 알고리즘 성능 평가 메트릭 설정
+* 생물학자들, 알고리즘 관리자1(물리학 전공), 알고리즘 관리자2 (컴퓨터 공학 전공), 팀장과의 피드백 소통으로 시각화 개선
+
+## Required Skills
+
+* Statistics
+* Python
+
+## Colaborators
+
+* 3 data scientists (I am a project manager.)
+* 2 data enineers
+* 2 biologists
+
+## Objective
+
+* noise를 보정하는 대표적인 전처리 방식 중 하나인 baseline 차감 알고리즘을 최적화한다. Baseline의 차감은 baseline fitting을 수행하여 fitted value를 raw data에서 차감하여 순수 신호를 분리한다. 
+* 우수한 성능을 보이는 basline fitting 알고리즘을 정하고 baseline fitting 알고리즘을 단일화를 한다.
+
+$$
+\text{RFU (or PCR Signal)} =  \text{Pure Signal} + \text{Noise} + \text{Error}
+$$
+
+* Pure Signal: 시약에 의한 순수 증폭 및 미증폭 신호
+* Noise: 장비, 장비의 결함, 소모품 및 시약에서 방출하는 형광신호와 같은 기대하지 않은 반응에 의한 신호
+* Error: 다른 설명할 수 없는 요인으로 인하여 발생한 신호
+
+### Goals
+
+* Baseline 알고리즘 별 PCR 판독 결과 Data 마련을 위한 Data Engineering
+* Baseline 알고리즘 성능 비교 분석을 위한 data 처리 pipeline 구축
+* Baseline 알고리즘 성능 비교 분석이 가능한 시각화 기획 및 구현
+* Baseline 알고리즘 성능 비교 분석을 위한 비교 metric 고안 및 구현
+* Baseline 알고리즘 성능 비교 분석을 위한 신호 selection metric 고안 및 구현
+* Baseline 알고리즘 성능 비교 분석을 위한 신호 처리 세부 분석 시각화 기획 및 구현
+* 시각화 tool을 이용한 Baseline 알고리즘 개선
 * 기존 및 새로운 baseline fitting 알고리즘들의 성능을 평가 및 비교한다.
-    * 알고리즘 1 (rule-based): 자사의 기존 legacy 알고리즘 named 'Legacy'
-    * 알고리즘 2 (rule-based): 자사의 biologists들이 실험 설정값을 산출하기 위해 사용하는 알고리즘 named 'Bio Legacy'
-    * 알고리즘 3 (black box): 업계 1위 타사의 black box인 알고리즘 named 'Black Box'
-    * 알고리즘 4 (rule-based): 자사의 신제품에 특이적인 증폭신호에 최적화된 알고리즘 named '신제품'
-    * 알고리즘 5 (rule-based): 알고리즘4 를 개선한 새로운 조건문이 추가된 rule-based 알고리즘 named '신제품 +'
-    * 알고리즘 6 (data-driven): machine learning을 이용한 필자의 data-driven 알고리즘 named 'ML'
 * **음성 신호에 한하여** 위양성 결과를 최소화하기 위해 baseline 차감 알고리즘을 최적화하여 여러 baseline fitting 알고리즘을 단일화한다.
-* 알고리즘의 성능을 평가할 수 있는 평가 metrics을 찾거나 개발한다.
+
+
 
 ## Method
-
-baseline data를 살펴 보고 다양한 신호 패턴의 존재를 인식하고, 차감 결과가 white noise에 가까워야 성공적인 것으로 간주했다. 
 
 ### Data Pipeline
 
 ![Data Pipeline](../../../images/projects/baseline_subtraction/pipeline.PNG)
 
-### Baseline Fitting with a Characteristic Equation
+### 알고리즘 종류
 
-경험상으로 Baseline 신호가 여러 요인으로 다양한 패턴을 보인다. Talyer Series에서 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여, 다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 시도했다. 
-이 접근법은 데이터의 feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링할 수 있게 한다. 적절한 차수 선택과 정규화를 통해 baseline 신호에 적합시킨다.
+비전공자인 생물학자, 컴퓨터 공학출신들과 임원들의 이해도를 높이기 위해 직관적으로 이해할 수 있는 시각화를 통해 각 알고리즘을 비교 분석한다.
 
-### Neural Network
+* **Legacy** 알고리즘 1 (rule-based): 대조군1, 현재 Data Science팀에서 사용되고있는 공식적인 알고리즘 
+* **Bio Legacy** 알고리즘 2 (rule-based): 대조군2, 생물 실험자들이 제품을 최적화하기 위해 현재 사용하고있는 알고리즘 
+* **Black Box** 알고리즘 3 (black box): 대조군3, 업계 1위 타사의 알고리즘으로 기기전용 SW에 내재된 알고리즘으로 Black Box이지만 SW내에서 차감결과 data는 얻을 수 있다.
+* **Rule-Based** 알고리즘 4 (rule-based): 팀원(물리학자)이 **Legacy** 알고리즘 1을 보완하기 위해 만든 알고리즘
+* **Rule-Based+N**알고리즘 5 (rule-based): 팀원(물리학자)이 **Legacy** 알고리즘 1을 보완하기 위해 만든 n번째 알고리즘
+* **ML** 알고리즘 6 (data-driven): 본인이 만든 data driven ML알고리즘
+  * Baseline Fitting with a Characteristic Equation: 경험상으로 Baseline 신호가 여러 요인으로 다양한 패턴을 보인다. Talyer Series에서 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여, 다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 시도했다. 이 접근법은 데이터의 feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링할 수 있게 한다. 적절한 차수 선택과 정규화를 통해 baseline 신호에 적합시킨다.
+  * Neural Network: Characteristic Equation (특성 방정식)은 기저함수를 분석가가 선정해줘야 하는 위험 부담이 있다. Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기저함수를 설정할 수 있지만 임상신호나 실제 시장에서 만들어지는 신호는 그 패턴이 예상과 다를 수 있기 때문에 Data에 맞게 적합가능한 간단한 신경망을 구현하여 적합시킨다.
 
-Characteristic Equation (특성 방정식)은 기저함수를 분석가가 선정해줘야 하는 부담이 있다. Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기저함수를 설정할 수 있지만 임상신호나 실제 시장에서 만들어지는 신호는 그 패턴이 예상과 다를 수 있기 때문에 Data에 맞게 적합가능한 신경망을 구현하여 적합시킨다.
+### 시각화에 의한 직관적 분석
 
+baseline data를 관찰 및 기존의 경험으로 알고있는 다양한 신호 패턴에 각 알고리즘들이 어떤 성능을 보이는지 비교한다. 
+
+* 복수 신호에 대한 성능 평가: 알고리즘의 총체적인 성능평가를 관찰 및 분석
+* 단일 신호에 대한 성능 평가: 특이 신호에 대한 알고리즘이 어떤 성능을 보이는지 세부적으로 관찰 및 분석
+* Baseline 증가 신호에 대한 성능 평가: 증가 신호에 대해서 알고리즘들이 어떤 성능을 보이는지 관찰 및 분석
+* Baseline 감소 신호에 대한 성능 평가: 감소 신호에 대해서 알고리즘들이 어떤 성능을 보이는지 관찰 및 분석
+* 제품 특이적인 신호에 대한 성능 평가: 씨젠의 제품과 BT기술에 의한 신호처리 후 신호 패턴에 대하여 어떤 성능을 보이는지 관찰 및 분석 
+
+### 평가 Metric
+
+* MSE: mean squared error
+* MAE: mean absolute error
+* 차감 결과가 white noise에 가까워야 성공적인 fitting인 것으로 간주 
 
 ## Result
 
@@ -201,14 +249,20 @@ channel_name = merged_data['channel'].unique()[0]
 temperature_name = merged_data['temperature'].unique()[0]
 ```
 
+### 복수 신호에 대한 성능 평가
 
 ```{python}
 plot_baseline_subtractions(merged_data,pcrd_name,channel_name,temperature_name, mudt=mudt)
 ```
 
+#### 단일 신호에 대한 성능 평가
+
 ```{python}
 plot_single_well(filtered_data,pcrd_name,channel_name, temperature_name, 'H12',mudt=mudt)
 ```
+
+### 증가 신호에 대한 성능 평가
+
 ```{python}
 ascending_data = merged_data.query("`channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` >0") #`analysis_dataprocnum` == 13 & 
 ```
@@ -228,6 +282,8 @@ temperature_nm=temp.loc[17632]['temperature']
 well_nm=temp.loc[17632]['well']
 ```
 
+#### 단일 신호에 대한 성능 평가
+
 ```{python}
 plot_single_well(ascending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt=mudt)
 ```
@@ -243,6 +299,8 @@ well_nm=temp.loc[18048]['well']
 plot_single_well(ascending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt=mudt)
 ```
 
+### 감소 신호에 대한 성능 평가
+
 ```{python}
 descending_data = merged_data.query("`analysis_dataprocnum` == 13 & `channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` <0")
 descending_data=descending_data.iloc[:len(descending_data) // 2]
@@ -251,6 +309,8 @@ descending_data=descending_data.iloc[:len(descending_data) // 2]
 ```{python}
 plot_signal_patterns(descending_data,channel_name, temperature_name, mudt = mudt)
 ```
+
+#### 단일 신호에 대한 성능 평가
 
 ```{python}
 temp=descending_data[descending_data['strep_plus1_analysis_absd'].apply(lambda x: x[12]>200)]
@@ -276,6 +336,8 @@ well_nm=temp.loc[18528]['well']
 plot_single_well(descending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt=mudt)
 ```
 
+### 제품 특이적인 신호처리에 대한 성능 평가
+
 ```{python}
 mudt=True
 outlier_naive_metric =1.65
@@ -293,9 +355,12 @@ channel_name = filtered_data['channel'].unique()[0]
 temperature_name = filtered_data['temperature'].unique()[0]
 ```
 
+#### 복수 신호에 대한 성능 평가
 ```{python}
 plot_baseline_subtractions(filtered_data,pcrd_name,channel_name,temperature_name, mudt=mudt)
 ```
+
+##### 단일 신호에 대한 성능 평가
 
 ```{python}
 temp=filtered_data[filtered_data['strep_plus2_analysis_absd'].apply(lambda x: x[20]>100)]
@@ -315,10 +380,15 @@ print(well_nm)
 ```{python}
 plot_single_well(filtered_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
 ```
+
+#### 증가 신호에 대한 성능 평가 
+
 ```{python}
 ascending_data = merged_data.query("`analysis_dataprocnum` == 13 & `channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` >0")
 ascending_data = ascending_data.iloc[:len(ascending_data) // 2]
 ```
+
+##### 단일 신호에 대한 성능 평가
 ```{python}
 plot_signal_patterns(ascending_data,channel_name, temperature_name, mudt = mudt)
 ```
@@ -338,6 +408,9 @@ temperature_nm=temp.loc[36200]['temperature']
 well_nm=temp.loc[36200]['well']
 plot_single_well(ascending_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
 ```
+
+#### 감소 신호에 대한 성능 평가
+
 ```{python}
 descending_data = merged_data.query("`channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` <0")
 descending_data = descending_data.iloc[:len(descending_data) // 2]
@@ -347,6 +420,9 @@ plot_signal_patterns(descending_data,channel_name, temperature_name, mudt = True
 descending_data = merged_data.query("`analysis_dataprocnum` == 13 & `channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` <0")
 plot_signal_patterns(descending_data,channel_name, temperature_name, mudt = True)
 ```
+
+##### 단일 신호에 대한 성능 평가
+
 ```{python}
 temp=descending_data[descending_data['strep_plus2_analysis_absd'].apply(lambda x: x[35]<-50)]
 pcrd_nm = temp.loc[26112]['name']
@@ -364,8 +440,6 @@ plot_signal_patterns(mudt_risk_data, channel_name, temperature_name, mudt=mudt)
 
 ```{python}
 temp=mudt_risk_data[mudt_risk_data['strep_plus2_analysis_absd'].apply(lambda x: x[20]>1000)]
-temp
-
 ```
 
 ```{python}
@@ -391,32 +465,13 @@ temperature_nm=temp.loc[54304]['temperature']
 well_nm=temp.loc[54304]['well']
 plot_single_well(mudt_risk_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
 ```
-```{python}
-
-```
-```{python}
-
-```
-```{python}
-
-```
 
 ## Conclusion
 
-## Issues
+직관적인 알고리즘 성능 비교 분석 제공, 정량적 성능 평가를 위한 비교 metric 생성 및 알고리즘 성능 개선에 대한 insights 제공
+알고리즘 성능 비교 분석이 가능한 시각화를 제공 및 프로젝트 관련 동료에게 실무적 도움을 제공
 
-## Solutions to Issues
 
-## Required Skills
-
-* Statistics
-* Python
-
-## Colaborators
-
-* 3 data scientists (I am a project manager.)
-* 2 data enineers
-* 2 biologists
  
 ## Acheivements
 

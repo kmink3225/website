@@ -421,8 +421,12 @@ English
 <section id="rationale" class="level2" data-number="2">
 <h2 data-number="2" class="anchored" data-anchor-id="rationale"><span class="header-section-number">2</span> Rationale</h2>
 <ul>
-<li>Baseline 데이터에 노이즈가 많을 경우, 최적화 과정에서 과적합이나 local minima와 같은 문제로 인해 파라미터 추정의 복잡성이 증가한다. 따라서, sigmoid curve fitting 전의 전처리 단계인 baseline subtraction의 정확도가 매우 중요하다.</li>
-<li>사내에 표준화된 baseline fitting 알고리즘이 없어 여러 알고리즘으로 baseline fitting 알고리즘이 존재한다.</li>
+<li>sigmoid curve fitting 전의 전처리 단계인 baseline subtraction의 정확도가 매우 중요하다.
+<ul>
+<li>Baseline 데이터에 노이즈가 많을 경우, 최적화 과정에서 과적합이나 local minima와 같은 문제로 인해 파라미터 추정의 복잡성이 증가한다.</li>
+<li>Baseline subtraction의 정확도가 떨어질 경우 위양성/위음성의 위험이 있다.</li>
+</ul></li>
+<li>사내에 표준화된 baseline fitting 알고리즘이 없어 여러 baseline fitting 알고리즘이 존재한다.</li>
 </ul>
 </section>
 <section id="motivation" class="level2" data-number="3">
@@ -499,7 +503,7 @@ English
 <li>Baseline 알고리즘 성능 비교 분석을 위한 비교 metric 고안 및 구현</li>
 <li>Baseline 알고리즘 성능 비교 분석을 위한 신호 selection metric 고안 및 구현</li>
 <li>Baseline 알고리즘 성능 비교 분석을 위한 신호 처리 세부 분석 시각화 기획 및 구현</li>
-<li>시각화 tool을 이용한 Baseline 알고리즘 개선</li>
+<li>시각화를 이용한 Baseline 알고리즘 개선</li>
 <li>기존 및 새로운 baseline fitting 알고리즘들의 성능을 평가 및 비교한다.</li>
 <li><strong>음성 신호에 한하여</strong> 위양성 결과를 최소화하기 위해 baseline 차감 알고리즘을 최적화하여 여러 baseline fitting 알고리즘을 단일화한다.</li>
 </ul>
@@ -523,9 +527,9 @@ English
 <li><strong>Legacy</strong> 알고리즘 1 (rule-based): 대조군1, 현재 Data Science팀에서 사용되고있는 공식적인 알고리즘</li>
 <li><strong>Bio Legacy</strong> 알고리즘 2 (rule-based): 대조군2, 생물 실험자들이 제품을 최적화하기 위해 현재 사용하고있는 알고리즘</li>
 <li><strong>Black Box</strong> 알고리즘 3 (black box): 대조군3, 업계 1위 타사의 알고리즘으로 기기전용 SW에 내재된 알고리즘으로 Black Box이지만 SW내에서 차감결과 data는 얻을 수 있다.</li>
-<li><strong>Rule-Based</strong> 알고리즘 4 (rule-based): 팀원(물리학자)이 <strong>Legacy</strong> 알고리즘 1을 보완하기 위해 만든 알고리즘</li>
-<li><strong>Rule-Based+N</strong>알고리즘 5 (rule-based): 팀원(물리학자)이 <strong>Legacy</strong> 알고리즘 1을 보완하기 위해 만든 n번째 알고리즘</li>
-<li><strong>ML</strong> 알고리즘 6 (data-driven): 본인이 만든 data driven ML알고리즘
+<li><strong>Rule-Based</strong> 알고리즘 4 (rule-based): 실험군1, 팀원(물리학자)이 <strong>Legacy</strong> 알고리즘 1을 보완하기 위해 만든 알고리즘</li>
+<li><strong>Rule-Based+N</strong>알고리즘 5 (rule-based): 실험군2, 팀원(물리학자)이 <strong>Legacy</strong> 알고리즘 1을 보완하기 위해 만든 n번째 알고리즘</li>
+<li><strong>ML</strong> 알고리즘 6 (data-driven): 실험군3, 본인이 만든 data driven ML알고리즘
 <ul>
 <li>Baseline Fitting with a Characteristic Equation: 경험상으로 Baseline 신호가 여러 요인으로 다양한 패턴을 보인다. Talyer Series에서 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여, 다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 시도했다. 이 접근법은 데이터의 feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링할 수 있게 한다. 적절한 차수 선택과 정규화를 통해 baseline 신호에 적합시킨다.</li>
 <li>Neural Network: Characteristic Equation (특성 방정식)은 기저함수를 분석가가 선정해줘야 하는 위험 부담이 있다. Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기저함수를 설정할 수 있지만 임상신호나 실제 시장에서 만들어지는 신호는 그 패턴이 예상과 다를 수 있기 때문에 Data에 맞게 적합가능한 간단한 신경망을 구현하여 적합시킨다.</li>
@@ -556,7 +560,7 @@ English
 <h2 data-number="9" class="anchored" data-anchor-id="result"><span class="header-section-number">9</span> Result</h2>
 <section id="import-packages" class="level3" data-number="9.1">
 <h3 data-number="9.1" class="anchored" data-anchor-id="import-packages"><span class="header-section-number">9.1</span> Import Packages</h3>
-<div id="3cdb9f39" class="cell" data-execution_count="1">
+<div id="5d75f79f" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import packages</span></span>
@@ -614,7 +618,7 @@ English
 </section>
 <section id="data-preparation" class="level3" data-number="9.2">
 <h3 data-number="9.2" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">9.2</span> Data Preparation</h3>
-<div id="8b6e40e9" class="cell" data-execution_count="2">
+<div id="6ac33fed" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mudt<span class="op">=</span><span class="va">False</span></span>
@@ -624,7 +628,7 @@ English
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>filtered_data <span class="op">=</span> result_data[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="638fdfbc" class="cell" data-execution_count="3">
+<div id="e77cc261" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>merged_data <span class="op">=</span> merged_data.query(<span class="st">"`final_ct`&lt;0"</span>)</span>
@@ -641,7 +645,7 @@ English
 </section>
 <section id="복수-신호에-대한-성능-평가" class="level3" data-number="9.3">
 <h3 data-number="9.3" class="anchored" data-anchor-id="복수-신호에-대한-성능-평가"><span class="header-section-number">9.3</span> 복수 신호에 대한 성능 평가</h3>
-<div id="b3ccdd4d" class="cell" data-execution_count="4">
+<div id="bb6e12b8" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plot_baseline_subtractions(merged_data,pcrd_name,channel_name,temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -649,7 +653,7 @@ English
 </div>
 <section id="단일-신호에-대한-성능-평가" class="level4">
 <h4 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가">단일 신호에 대한 성능 평가</h4>
-<div id="a2a14884" class="cell" data-execution_count="5">
+<div id="9e9baf8d" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>plot_single_well(filtered_data,pcrd_name,channel_name, temperature_name, <span class="st">'H12'</span>,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -659,25 +663,25 @@ English
 </section>
 <section id="증가-신호에-대한-성능-평가" class="level3" data-number="9.4">
 <h3 data-number="9.4" class="anchored" data-anchor-id="증가-신호에-대한-성능-평가"><span class="header-section-number">9.4</span> 증가 신호에 대한 성능 평가</h3>
-<div id="0bbf19d4" class="cell" data-execution_count="6">
+<div id="34742b57" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>ascending_data <span class="op">=</span> merged_data.query(<span class="st">"`channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &gt;0"</span>) <span class="co">#`analysis_dataprocnum` == 13 &amp; </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="264ca66b" class="cell" data-execution_count="7">
+<div id="40348d42" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(ascending_data,channel_name, temperature_name, mudt <span class="op">=</span> mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="46321fd2" class="cell" data-execution_count="8">
+<div id="b1518d08" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>ascending_data[ascending_data[<span class="st">'original_rfu_cfx'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">30</span>]<span class="op">&gt;</span><span class="dv">1000</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="41772c61" class="cell" data-execution_count="9">
+<div id="4ed1f69e" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pcrd_nm <span class="op">=</span> temp.loc[<span class="dv">17632</span>][<span class="st">'name'</span>]</span>
@@ -688,13 +692,13 @@ English
 </div>
 <section id="단일-신호에-대한-성능-평가-1" class="level4">
 <h4 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-1">단일 신호에 대한 성능 평가</h4>
-<div id="b18efc59" class="cell" data-execution_count="10">
+<div id="ef031886" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>plot_single_well(ascending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="351b87d1" class="cell" data-execution_count="11">
+<div id="6ded2e9c" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>ascending_data[ascending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">41</span>]<span class="op">&gt;</span><span class="dv">200</span>)]</span>
@@ -704,7 +708,7 @@ English
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>well_nm<span class="op">=</span>temp.loc[<span class="dv">18048</span>][<span class="st">'well'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="209efdf3" class="cell" data-execution_count="12">
+<div id="b51737bf" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>plot_single_well(ascending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -714,14 +718,14 @@ English
 </section>
 <section id="감소-신호에-대한-성능-평가" class="level3" data-number="9.5">
 <h3 data-number="9.5" class="anchored" data-anchor-id="감소-신호에-대한-성능-평가"><span class="header-section-number">9.5</span> 감소 신호에 대한 성능 평가</h3>
-<div id="5cd3cd79" class="cell" data-execution_count="13">
+<div id="47ff51b2" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>descending_data <span class="op">=</span> merged_data.query(<span class="st">"`analysis_dataprocnum` == 13 &amp; `channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &lt;0"</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>descending_data<span class="op">=</span>descending_data.iloc[:<span class="bu">len</span>(descending_data) <span class="op">//</span> <span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="0c5b9975" class="cell" data-execution_count="14">
+<div id="d2d4b4c4" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(descending_data,channel_name, temperature_name, mudt <span class="op">=</span> mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -729,7 +733,7 @@ English
 </div>
 <section id="단일-신호에-대한-성능-평가-2" class="level4">
 <h4 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-2">단일 신호에 대한 성능 평가</h4>
-<div id="d33de494" class="cell" data-execution_count="15">
+<div id="6e7bd151" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>descending_data[descending_data[<span class="st">'strep_plus1_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">12</span>]<span class="op">&gt;</span><span class="dv">200</span>)]</span>
@@ -739,13 +743,13 @@ English
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>well_nm<span class="op">=</span>temp.loc[<span class="dv">5272</span>][<span class="st">'well'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="229d54d6" class="cell" data-execution_count="16">
+<div id="bf787ff6" class="cell" data-execution_count="16">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>plot_single_well(descending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="1d055823" class="cell" data-execution_count="17">
+<div id="c606e04d" class="cell" data-execution_count="17">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>descending_data[descending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">31</span>]<span class="op">&gt;</span><span class="dv">50</span>)]</span>
@@ -755,7 +759,7 @@ English
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>well_nm<span class="op">=</span>temp.loc[<span class="dv">18528</span>][<span class="st">'well'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="0b1d6b0b" class="cell" data-execution_count="18">
+<div id="278a3f30" class="cell" data-execution_count="18">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>plot_single_well(descending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -765,7 +769,7 @@ English
 </section>
 <section id="제품-특이적인-신호처리에-대한-성능-평가" class="level3" data-number="9.6">
 <h3 data-number="9.6" class="anchored" data-anchor-id="제품-특이적인-신호처리에-대한-성능-평가"><span class="header-section-number">9.6</span> 제품 특이적인 신호처리에 대한 성능 평가</h3>
-<div id="b4cef8ed" class="cell" data-execution_count="19">
+<div id="0dcdc8b9" class="cell" data-execution_count="19">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>mudt<span class="op">=</span><span class="va">True</span></span>
@@ -786,7 +790,7 @@ English
 </div>
 <section id="복수-신호에-대한-성능-평가-1" class="level4">
 <h4 class="anchored" data-anchor-id="복수-신호에-대한-성능-평가-1">복수 신호에 대한 성능 평가</h4>
-<div id="72dd8d10" class="cell" data-execution_count="20">
+<div id="042b7ff7" class="cell" data-execution_count="20">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>plot_baseline_subtractions(filtered_data,pcrd_name,channel_name,temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -794,14 +798,14 @@ English
 </div>
 <section id="단일-신호에-대한-성능-평가-3" class="level5">
 <h5 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-3">단일 신호에 대한 성능 평가</h5>
-<div id="8d33504e" class="cell" data-execution_count="21">
+<div id="49336839" class="cell" data-execution_count="21">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>filtered_data[filtered_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">20</span>]<span class="op">&gt;</span><span class="dv">100</span>)]</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>temp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="e22387e6" class="cell" data-execution_count="22">
+<div id="1bb8b2c0" class="cell" data-execution_count="22">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>pcrd_nm <span class="op">=</span> temp.loc[<span class="dv">640</span>][<span class="st">'name'</span>]</span>
@@ -814,7 +818,7 @@ English
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(well_nm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="6aea975b" class="cell" data-execution_count="23">
+<div id="e83da3f4" class="cell" data-execution_count="23">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>plot_single_well(filtered_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -824,7 +828,7 @@ English
 </section>
 <section id="증가-신호에-대한-성능-평가-1" class="level4">
 <h4 class="anchored" data-anchor-id="증가-신호에-대한-성능-평가-1">증가 신호에 대한 성능 평가</h4>
-<div id="9c06b50d" class="cell" data-execution_count="24">
+<div id="42e53911" class="cell" data-execution_count="24">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>ascending_data <span class="op">=</span> merged_data.query(<span class="st">"`analysis_dataprocnum` == 13 &amp; `channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &gt;0"</span>)</span>
@@ -833,13 +837,13 @@ English
 </div>
 <section id="단일-신호에-대한-성능-평가-4" class="level5">
 <h5 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-4">단일 신호에 대한 성능 평가</h5>
-<div id="ea6ee131" class="cell" data-execution_count="25">
+<div id="a8c2dc35" class="cell" data-execution_count="25">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(ascending_data,channel_name, temperature_name, mudt <span class="op">=</span> mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="09224c82" class="cell" data-execution_count="26">
+<div id="4d1ee0a8" class="cell" data-execution_count="26">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>ascending_data[ascending_data[<span class="st">'strep_plus1_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">10</span>]<span class="op">&lt;-</span><span class="dv">200</span>)]</span>
@@ -850,7 +854,7 @@ English
 <span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>plot_single_well(ascending_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="91a43314" class="cell" data-execution_count="27">
+<div id="36596257" class="cell" data-execution_count="27">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>ascending_data[ascending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">10</span>]<span class="op">&lt;-</span><span class="dv">300</span>)]</span>
@@ -865,7 +869,7 @@ English
 </section>
 <section id="감소-신호에-대한-성능-평가-1" class="level4">
 <h4 class="anchored" data-anchor-id="감소-신호에-대한-성능-평가-1">감소 신호에 대한 성능 평가</h4>
-<div id="7f20f202" class="cell" data-execution_count="28">
+<div id="ea0d7cda" class="cell" data-execution_count="28">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>descending_data <span class="op">=</span> merged_data.query(<span class="st">"`channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &lt;0"</span>)</span>
@@ -873,7 +877,7 @@ English
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(descending_data,channel_name, temperature_name, mudt <span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="bd0f842c" class="cell" data-execution_count="29">
+<div id="d8f263f3" class="cell" data-execution_count="29">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>descending_data <span class="op">=</span> merged_data.query(<span class="st">"`analysis_dataprocnum` == 13 &amp; `channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &lt;0"</span>)</span>
@@ -882,7 +886,7 @@ English
 </div>
 <section id="단일-신호에-대한-성능-평가-5" class="level5">
 <h5 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-5">단일 신호에 대한 성능 평가</h5>
-<div id="7a538d9e" class="cell" data-execution_count="30">
+<div id="4692781c" class="cell" data-execution_count="30">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>descending_data[descending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">35</span>]<span class="op">&lt;-</span><span class="dv">50</span>)]</span>
@@ -893,7 +897,7 @@ English
 <span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>plot_single_well(descending_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="59f17001" class="cell" data-execution_count="31">
+<div id="c5c9d7f9" class="cell" data-execution_count="31">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>merged_data[<span class="st">'mudt_distortion_combo_key'</span>]<span class="op">=</span>merged_data[[<span class="st">'name'</span>, <span class="st">'channel'</span>, <span class="st">'well'</span>]].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="st">' '</span>.join(x), axis<span class="op">=</span><span class="dv">1</span>)</span>
@@ -902,13 +906,13 @@ English
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(mudt_risk_data, channel_name, temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="90452295" class="cell" data-execution_count="32">
+<div id="66901b85" class="cell" data-execution_count="32">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>mudt_risk_data[mudt_risk_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">20</span>]<span class="op">&gt;</span><span class="dv">1000</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="752e681d" class="cell" data-execution_count="33">
+<div id="5c5f05bc" class="cell" data-execution_count="33">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>pcrd_nm <span class="op">=</span> temp.loc[<span class="dv">54384</span>][<span class="st">'name'</span>]</span>
@@ -918,7 +922,7 @@ English
 <span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>plot_single_well(mudt_risk_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="bc6abf58" class="cell" data-execution_count="34">
+<div id="7be291f7" class="cell" data-execution_count="34">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>mudt_risk_data[mudt_risk_data[<span class="st">'strep_plus1_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">20</span>]<span class="op">&gt;</span><span class="dv">1000</span>)]</span>
@@ -929,7 +933,7 @@ English
 <span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>plot_single_well(mudt_risk_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="1fac5ecc" class="cell" data-execution_count="35">
+<div id="6121f79c" class="cell" data-execution_count="35">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>mudt_risk_data[mudt_risk_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">35</span>]<span class="op">&lt;-</span><span class="dv">1800</span>)]</span>

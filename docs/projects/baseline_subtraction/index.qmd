@@ -65,13 +65,14 @@ PCR 신호는 시험관 내에서 일어나는 미시적 화학 반응, 광학 �
 
 ## Rationale
 
-* Baseline 데이터에 노이즈가 많을 경우, 최적화 과정에서 과적합이나 local minima와 같은 문제로 인해 파라미터 추정의 복잡성이 증가한다. 따라서, sigmoid curve fitting 전의 전처리 단계인 baseline subtraction의 정확도가 매우 중요하다.
-* 사내에 표준화된 baseline fitting 알고리즘이 없어 여러 알고리즘으로 baseline fitting 알고리즘이 존재한다. 
+* sigmoid curve fitting 전의 전처리 단계인 baseline subtraction의 정확도가 매우 중요하다.
+  * Baseline 데이터에 노이즈가 많을 경우, 최적화 과정에서 과적합이나 local minima와 같은 문제로 인해 파라미터 추정의 복잡성이 증가한다. 
+  * Baseline subtraction의 정확도가 떨어질 경우 위양성/위음성의 위험이 있다. 
+* 사내에 표준화된 baseline fitting 알고리즘이 없어 여러 baseline fitting 알고리즘이 존재한다. 
 
 ## Motivation
 
 회사에 처음 입사했을 때, 진단 알고리즘의 수많은 if문과 설정값, 그리고 해석하기 어려운 코드에 압도되었다. rule-based 알고리즘이 data-driven 알고리즘에 비해 성능이 떨어진다고는 할 수 없지만, 변화무쌍한 PCR 신호를 조건문으로 처리하기에는 한계가 있다고 판단했다. 따라서, 점진적으로 진단 알고리즘을 data-driven 방식으로 개선할 필요가 있다고 생각했다.  
-
 
 ## Considerations
 
@@ -129,7 +130,7 @@ $$
 * Baseline 알고리즘 성능 비교 분석을 위한 비교 metric 고안 및 구현
 * Baseline 알고리즘 성능 비교 분석을 위한 신호 selection metric 고안 및 구현
 * Baseline 알고리즘 성능 비교 분석을 위한 신호 처리 세부 분석 시각화 기획 및 구현
-* 시각화 tool을 이용한 Baseline 알고리즘 개선
+* 시각화를 이용한 Baseline 알고리즘 개선
 * 기존 및 새로운 baseline fitting 알고리즘들의 성능을 평가 및 비교한다.
 * **음성 신호에 한하여** 위양성 결과를 최소화하기 위해 baseline 차감 알고리즘을 최적화하여 여러 baseline fitting 알고리즘을 단일화한다.
 
@@ -148,9 +149,9 @@ $$
 * **Legacy** 알고리즘 1 (rule-based): 대조군1, 현재 Data Science팀에서 사용되고있는 공식적인 알고리즘 
 * **Bio Legacy** 알고리즘 2 (rule-based): 대조군2, 생물 실험자들이 제품을 최적화하기 위해 현재 사용하고있는 알고리즘 
 * **Black Box** 알고리즘 3 (black box): 대조군3, 업계 1위 타사의 알고리즘으로 기기전용 SW에 내재된 알고리즘으로 Black Box이지만 SW내에서 차감결과 data는 얻을 수 있다.
-* **Rule-Based** 알고리즘 4 (rule-based): 팀원(물리학자)이 **Legacy** 알고리즘 1을 보완하기 위해 만든 알고리즘
-* **Rule-Based+N**알고리즘 5 (rule-based): 팀원(물리학자)이 **Legacy** 알고리즘 1을 보완하기 위해 만든 n번째 알고리즘
-* **ML** 알고리즘 6 (data-driven): 본인이 만든 data driven ML알고리즘
+* **Rule-Based** 알고리즘 4 (rule-based): 실험군1, 팀원(물리학자)이 **Legacy** 알고리즘 1을 보완하기 위해 만든 알고리즘
+* **Rule-Based+N**알고리즘 5 (rule-based): 실험군2, 팀원(물리학자)이 **Legacy** 알고리즘 1을 보완하기 위해 만든 n번째 알고리즘
+* **ML** 알고리즘 6 (data-driven): 실험군3, 본인이 만든 data driven ML알고리즘
   * Baseline Fitting with a Characteristic Equation: 경험상으로 Baseline 신호가 여러 요인으로 다양한 패턴을 보인다. Talyer Series에서 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여, 다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 시도했다. 이 접근법은 데이터의 feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링할 수 있게 한다. 적절한 차수 선택과 정규화를 통해 baseline 신호에 적합시킨다.
   * Neural Network: Characteristic Equation (특성 방정식)은 기저함수를 분석가가 선정해줘야 하는 위험 부담이 있다. Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기저함수를 설정할 수 있지만 임상신호나 실제 시장에서 만들어지는 신호는 그 패턴이 예상과 다를 수 있기 때문에 Data에 맞게 적합가능한 간단한 신경망을 구현하여 적합시킨다.
 

@@ -131,6 +131,7 @@ def compute_conjugate_gradient(f, df, x, args=(), eps=1.0e-7, max_iter=2500, ver
         print("Stop max iter:{:5d} x:{}".format(k, x)) 
 
     return x
+
 def compute_phi(X):
     phi_functions = [
         lambda x: x[0] + x[1],

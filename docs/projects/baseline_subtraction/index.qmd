@@ -236,7 +236,191 @@ outlier_naive_metric =1.65
 result_data = main_function(outlier_naive_metric,mudt)
 merged_data = result_data[0]
 filtered_data = result_data[1]
+
+ml_data=filtered_data[['original_rfu_cfx', 'combo_key', 'name', 'steps', 'pcr_system',
+       'consumable', 'welltype', 'well', 'channel', 'temperature',
+       'original_rfu', 'has_melt', 'melt', 'melt_idx', 'setval_ispc',
+       'setval_used_temp', 'setval_thrd', 'preproc_resultwell','analysis_efc',
+       'preproc_dataprocnum', 'preproc_rfu', 'preproc_endrfu']]
 ```
+
+```{python}
+class NeuralNetwork:
+    def __init__(self, input_size, hidden_sizes=[64, 64, 64], output_size=1):
+        self.input_size = input_size
+        self.hidden_sizes = hidden_sizes
+        self.output_size = output_size
+        
+        self.weights = []
+        self.biases = []
+        
+        # Input layer to first hidden layer
+        self.weights.append(np.random.randn(input_size, hidden_sizes[0]) * 0.01)
+        self.biases.append(np.zeros((1, hidden_sizes[0])))
+        
+        # Hidden layers
+        for i in range(1, len(hidden_sizes)):
+            self.weights.append(np.random.randn(hidden_sizes[i-1], hidden_sizes[i]) * 0.01)
+            self.biases.append(np.zeros((1, hidden_sizes[i])))
+        
+        # Last hidden layer to output layer
+        self.weights.append(np.random.randn(hidden_sizes[-1], output_size) * 0.01)
+        self.biases.append(np.zeros((1, output_size)))
+    
+    def forward(self, X):
+        self.activations = [X]
+        for i in range(len(self.weights)):
+            z = np.dot(self.activations[-1], self.weights[i]) + self.biases[i]
+            a = np.maximum(0, z)  # ReLU activation
+            self.activations.append(a)
+        return self.activations[-1]
+    
+    def backward(self, X, y):
+        m = X.shape[0]
+        d_weights = [np.zeros_like(w) for w in self.weights]
+        d_biases = [np.zeros_like(b) for b in self.biases]
+        
+        # Output layer
+        error = self.activations[-1] - y
+        d_weights[-1] = np.dot(self.activations[-2].T, error) / m
+        d_biases[-1] = np.sum(error, axis=0, keepdims=True) / m
+        
+        # Hidden layers
+        for i in range(len(self.weights) - 2, -1, -1):
+            error = np.dot(error, self.weights[i+1].T) * (self.activations[i+1] > 0)
+            d_weights[i] = np.dot(self.activations[i].T, error) / m
+            d_biases[i] = np.sum(error, axis=0, keepdims=True) / m
+        
+        return d_weights, d_biases
+    
+    def update_params(self, d_weights, d_biases, learning_rate):
+        for i in range(len(self.weights)):
+            self.weights[i] -= learning_rate * d_weights[i]
+            self.biases[i] -= learning_rate * d_biases[i]
+    
+    def get_params(self):
+        params = []
+        for w, b in zip(self.weights, self.biases):
+            params.extend(w.ravel())
+            params.extend(b.ravel())
+        return np.array(params)
+    
+    def set_params(self, params):
+        start = 0
+        for i in range(len(self.weights)):
+            end = start + self.weights[i].size
+            self.weights[i] = params[start:end].reshape(self.weights[i].shape)
+            start = end
+            
+            end = start + self.biases[i].size
+            self.biases[i] = params[start:end].reshape(self.biases[i].shape)
+            start = end
+
+def train_model(data, learning_rate=0.01, epochs=500):
+    input_size = data.shape[1] - 1
+    X = data[:, :-1]
+    y = data[:, -1].reshape(-1, 1)
+    
+    model = NeuralNetwork(input_size)
+    
+    for epoch in range(epochs):
+        # Forward pass
+        output = model.forward(X)
+        
+        # Backward pass
+        d_weights, d_biases = model.backward(X, y)
+        
+        # Update parameters
+        model.update_params(d_weights, d_biases, learning_rate)
+        
+        if epoch % 100 == 0:
+            loss = np.mean((output - y) ** 2)
+            print(f'Epoch {epoch}, Loss: {loss}')
+    
+    return model
+
+def apply_nn_to_dataframe(df):
+    def fit_nn(row):
+        data = row.reshape(1, -1)  # 2D array로 변환
+        model = train_model(data)
+        return model.get_params()
+    
+    df['fitted_nn'] = df['preproc_rfu'].apply(fit_nn)
+    
+    def calculate_residuals(row):
+        input_size = len(row['preproc_rfu'])
+        model = NeuralNetwork(input_size)
+        model.set_params(row['fitted_nn'])
+        predicted = model.forward(row['preproc_rfu'].reshape(1, -1))
+        return row['preproc_rfu'] - predicted.flatten()
+    
+    df['residuals'] = df.apply(calculate_residuals, axis=1)
+    
+    return df
+
+# 데이터프레임에 신경망 적용
+ml_data = apply_nn_to_dataframe(ml_data)
+
+print(ml_data)
+
+# 잔차 시각화
+plt.figure(figsize=(15, 6))
+for i, residuals in enumerate(ml_data['residuals']):
+    plt.plot(residuals, label=f'Sample {i+1}')
+
+plt.title('Residuals for each sample')
+plt.xlabel('Data point')
+plt.ylabel('Residual value')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# 잔차의 통계 정보 출력
+residual_stats = ml_data['residuals'].apply(lambda x: pd.Series({
+    'mean': np.mean(x),
+    'std': np.std(x),
+    'min': np.min(x),
+    'max': np.max(x)
+}))
+print("\nResidual Statistics:")
+print(residual_stats)
+```
+
+```{python}
+
+
+# 데이터프레임에 신경망 적용
+ml_data = apply_nn_to_dataframe(ml_data)
+
+print(ml_data)
+
+# 잔차 시각화
+plt.figure(figsize=(15, 6))
+for i, residuals in enumerate(ml_data['residuals']):
+    plt.plot(residuals, label=f'Sample {i+1}')
+
+plt.title('Residuals for each sample')
+plt.xlabel('Data point')
+plt.ylabel('Residual value')
+plt.legend()
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# 추가: 잔차의 통계 정보 출력
+residual_stats = ml_data['residuals'].apply(lambda x: pd.Series({
+    'mean': np.mean(x),
+    'std': np.std(x),
+    'min': np.min(x),
+    'max': np.max(x)
+}))
+print("\nResidual Statistics:")
+print(residual_stats)
+
+```
+
+
 
 ```{python}
 merged_data = merged_data.query("`final_ct`<0")

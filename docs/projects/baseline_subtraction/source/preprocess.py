@@ -55,8 +55,14 @@ def main_function(outlier_naive_metric=1.65,mudt=True):
                           'preproc_rfu','analysis_absd','analysis_rd_diff','analysis_scd_fit',
                           'analysis_efc','final_ct','analysis_resultwell','analysis_dataprocnum']
     combo_key_columns = ['name', 'consumable', 'channel', 'temperature', 'well']
+    
 
-    datapath = 'C:/Users/kmkim/Desktop/projects/website/docs/data/baseline_optimization/GI-B-I'
+    rootpath = os.getcwd()
+
+    if 'Administrator' in rootpath:       
+        datapath = 'C:/Users/Administrator/Desktop/projects/website/docs/data/baseline_optimization/GI-B-I'
+    else:
+        datapath = 'C:/Users/kmkim/Desktop/projects/website/docs/data/baseline_optimization/GI-B-I'
     if mudt:    
         ### with MuDT (To Be Organized)
         raw_datapath = datapath + '/raw_data/mudt_raw_data.parquet'

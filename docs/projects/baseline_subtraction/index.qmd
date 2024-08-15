@@ -239,7 +239,7 @@ filtered_data = result_data[1]
 ```
 
 ```{python}
-merged_data = merged_data.query("`final_ct`<0")
+negative_data = merged_data.query("`final_ct`<0")
 channels=merged_data['channel'].unique()
 temperatures=merged_data['temperature'].unique()
 plate_names=merged_data['name'].unique()
@@ -250,6 +250,584 @@ channel_name = merged_data['channel'].unique()[0]
 temperature_name = merged_data['temperature'].unique()[0]
 ```
 
+
+### Temp
+
+```{python}
+
+def normalize(X):
+    X_min = np.min(X)
+    X_max = np.max(X)
+    X_normalized = (X - X_min) / (X_max - X_min)
+    return X_normalized, X_min, X_max
+
+def denormalize(X_normalized, X_min, X_max):
+    X_restored = X_normalized * (X_max - X_min) + X_min
+    return X_restored
+
+negative_data = merged_data.query("`final_ct` < 0")
+
+raw_X = negative_data['preproc_rfu'].iloc[0] # (N,D) = (45,1)
+raw_X_min, raw_X_max = normalize(raw_X)[1], normalize(raw_X)[2]
+
+X = normalize(X)[0]
+
+#
+#phi1 = lambda x: x**0 # 0제곱 x[0] 대괄호를 씌운 이유는 X가 2차원 array이기 때문에  스칼라를 뽑아내기 위함임
+#phi2 = lambda x: x**1 # 1제곱
+#phi3 = lambda x: np.e**x
+#phi4 = lambda x: np.e**(-x)
+#phi5 = lambda x: np.e**(-0.4*x)-np.e**(0.2*x)
+#phi6 = lambda x: np.e**(0.4*x)-np.e**(-0.2*x)
+#phi7 = lambda x: x*np.e**(-0.4*x)
+#
+#PHI = np.array([[phi1(x), phi2(x), phi3(x), phi4(x), phi5(x), phi6(x), phi7(x)] for x in X])
+#
+phi1 = lambda x: x**0 # 0제곱 x[0] 대괄호를 씌운 이유는 X가 2차원 array이기 때문에  스칼라를 뽑아내기 위함임
+phi2 = lambda x: x**1 # 1제곱
+phi3 = lambda x: x**2
+phi4 = lambda x: x**4
+PHI = np.array([[phi1(x), phi2(x), phi3(x), phi4(x)] for x in X])
+
+
+
+w = np.random.randn(4).reshape(-1,1)
+
+y= np.dot(w.T,PHI.T)
+denorm_y = denormalize(y_pred[0],raw_X_max,raw_X_min)
+raw_X
+
+# 플롯 생성
+plt.figure(figsize=(10, 6))
+
+# 첫 번째 데이터 라인 플롯
+plt.plot(raw_X, label='raw_X', marker='o')
+
+# 두 번째 데이터 라인 플롯
+plt.plot(denorm_y, label='denorm_y', marker='s')
+
+# 제목과 레이블 추가
+plt.xlabel('Index')
+plt.ylabel('Value')
+
+# 범례 추가
+plt.legend()
+
+# 그래프 표시
+plt.show()
+
+```
+
+
+
+```{python}
+def f_alpha(alpha, fun, x, s, args=()) :
+    """
+    This is a one-dimensional version of the objective function
+    given by the parameter alpha
+    
+    alpha : 1D independent variable
+    fun   : Original objective function
+    x     : Start point
+    s     : 1D search direction
+    args  : Tuple extra arguments passed to the objective function
+    """
+    x_new = x + alpha * s
+    
+    return fun(x_new, *args)
+
+def gss(fun, dfun, x, s, args=(), delta=1.0e-2, tol=1e-15):
+    """
+    Line search function by golden section search
+    https://en.wikipedia.org/wiki/Golden-section_search and [arora]
+    
+    fun   : Original objective function
+    dfun  : Objective function gradient which is not used
+    x     : Start point
+    s     : 1D search directin
+    args  : Tuple extra arguments passed to the objective function
+    delta : Init. guess interval determining initial interval of uncertainty
+    tol   : stop criterion
+    """
+    gr = (np.sqrt(5) + 1) / 2
+    AL = 0.
+    FL = f_alpha(AL, fun, x, s, args)
+    AA = delta
+    FA = f_alpha(AA, fun, x, s, args)
+    while  FL < FA :
+        delta = 0.1*delta
+        AA = delta
+        FA = f_alpha(AA, fun, x, s, args)
+ 
+    j = 1
+    AU = AA + delta * (gr**j)
+    FU = f_alpha(AU, fun, x, s, args)
+    while FA > FU :
+        AL = AA
+        AA = AU
+        FL = FA
+        FA = FU
+        
+        j += 1
+        AU = AA + delta * (gr**j)
+        FU = f_alpha(AU, fun, x, s, args)
+
+    AB = AL + (AU - AL) / gr
+    FB = f_alpha(AB, fun, x, s, args)
+    
+    while abs(AA - AB) > tol:
+        if f_alpha(AA, fun, x, s, args) < f_alpha(AB, fun, x, s, args):
+            AU = AB
+        else:
+            AL = AA
+
+ 
+        AA = AU - (AU - AL) / gr
+        AB = AL + (AU - AL) / gr
+
+    return ( (AU + AL) / 2, )
+
+
+def CGM(f, df, x, args=(), eps=1.0e-7, max_iter=2500, verbose=False, callback=None):
+    """
+    f       : 최적화 할 함수
+    df      : 최적화할 함수의 도함수
+    x       : 초기값
+    args    : f(x, *args)로 f를 호출하기 위한 추가 매개변수
+    eps     : 정기 기준
+    max_iter: 최대 반복수
+    verbose : 실행 정보를 텍스트로 출력 
+    callback: x에 대한 기록을 위한 콜백함수
+    """
+
+    if verbose:
+        print("INIT POINT : {}, dtype : {}".format(x, x.dtype))
+
+ 
+    for k in range(max_iter):
+        c = df(x, *args)
+
+        if np.linalg.norm(c) < eps :
+            if verbose:
+                print("Stop criterion break Iter: {:5d}, x: {}".format(k, x))
+                print("\n")
+            break
+
+        if k == 0 :
+            d = -c
+        else:
+            # Conjugate gradient Fletcher-Reeves
+            beta = (np.linalg.norm(c) / np.linalg.norm(c_old))**2
+            # Conjugate gradient Polak and Ribiere
+            # beta = (np.dot(c, c-c_old)) / np.linalg.norm(c_old)**2
+            d = -c + beta*d
+
+        alpha = gss(f, df, x, d, args=args)[0]
+        
+        x = x + alpha * d
+
+        c_old = c.copy()
+        
+        if callback :
+            callback(x)    
+
+    else:
+        print("Stop max iter:{:5d} x:{}".format(k, x)) 
+
+    return x
+```
+
+```{python}
+def f_alpha(alpha, fun, x, s, args=()) :
+    """
+    This is a one-dimensional version of the objective function
+    given by the parameter alpha
+    
+    alpha : 1D independent variable
+    fun   : Original objective function
+    x     : Start point
+    s     : 1D search direction
+    args  : Tuple extra arguments passed to the objective function
+    """
+    x_new = x + alpha * s
+    
+    return fun(x_new, *args)
+
+def gss(fun, dfun, x, s, args=(), delta=1.0e-2, tol=1e-15):
+    """
+    Line search function by golden section search
+    https://en.wikipedia.org/wiki/Golden-section_search and [arora]
+    
+    fun   : Original objective function
+    dfun  : Objective function gradient which is not used
+    x     : Start point
+    s     : 1D search directin
+    args  : Tuple extra arguments passed to the objective function
+    delta : Init. guess interval determining initial interval of uncertainty
+    tol   : stop criterion
+    """
+    gr = (np.sqrt(5) + 1) / 2
+    AL = 0.
+    FL = f_alpha(AL, fun, x, s, args)
+    AA = delta
+    FA = f_alpha(AA, fun, x, s, args)
+    while  FL < FA :
+        delta = 0.1*delta
+        AA = delta
+        FA = f_alpha(AA, fun, x, s, args)
+ 
+    j = 1
+    AU = AA + delta * (gr**j)
+    FU = f_alpha(AU, fun, x, s, args)
+    while FA > FU :
+        AL = AA
+        AA = AU
+        FL = FA
+        FA = FU
+        
+        j += 1
+        AU = AA + delta * (gr**j)
+        FU = f_alpha(AU, fun, x, s, args)
+
+    AB = AL + (AU - AL) / gr
+    FB = f_alpha(AB, fun, x, s, args)
+    
+    while abs(AA - AB) > tol:
+        if f_alpha(AA, fun, x, s, args) < f_alpha(AB, fun, x, s, args):
+            AU = AB
+        else:
+            AL = AA
+
+ 
+        AA = AU - (AU - AL) / gr
+        AB = AL + (AU - AL) / gr
+
+    return ( (AU + AL) / 2, )
+
+
+def CGM(f, df, x, args=(), eps=1.0e-7, max_iter=2500, verbose=False, callback=None):
+    """
+    f       : 최적화 할 함수
+    df      : 최적화할 함수의 도함수
+    x       : 초기값
+    args    : f(x, *args)로 f를 호출하기 위한 추가 매개변수
+    eps     : 정기 기준
+    max_iter: 최대 반복수
+    verbose : 실행 정보를 텍스트로 출력 
+    callback: x에 대한 기록을 위한 콜백함수
+    """
+
+    if verbose:
+        print("INIT POINT : {}, dtype : {}".format(x, x.dtype))
+
+ 
+    for k in range(max_iter):
+        c = df(x, *args)
+
+        if np.linalg.norm(c) < eps :
+            if verbose:
+                print("Stop criterion break Iter: {:5d}, x: {}".format(k, x))
+                print("\n")
+            break
+
+        if k == 0 :
+            d = -c
+        else:
+            # Conjugate gradient Fletcher-Reeves
+            beta = (np.linalg.norm(c) / np.linalg.norm(c_old))**2
+            # Conjugate gradient Polak and Ribiere
+            # beta = (np.dot(c, c-c_old)) / np.linalg.norm(c_old)**2
+            d = -c + beta*d
+
+        alpha = gss(f, df, x, d, args=args)[0]
+        
+        x = x + alpha * d
+
+        c_old = c.copy()
+        
+        if callback :
+            callback(x)    
+
+    else:
+        print("Stop max iter:{:5d} x:{}".format(k, x)) 
+
+    return x
+def normalize(X):
+    X_min = np.min(X)
+    X_max = np.max(X)
+    X_normalized = (X - X_min) / (X_max - X_min)
+    return X_normalized, X_min, X_max
+
+def denormalize(X_normalized, X_min, X_max):
+    X_restored = X_normalized * (X_max - X_min) + X_min
+    return X_restored
+
+# 예제 데이터
+negative_data = merged_data.query("`final_ct` < 0")
+raw_X = negative_data['preproc_rfu'].iloc[0]  # (N,D) = (45,1)
+X, raw_X_min, raw_X_max = normalize(raw_X)
+
+# 기저 함수 정의
+phi1 = lambda x: x**0  # 0제곱
+phi2 = lambda x: x**1  # 1제곱
+phi3 = lambda x: x**2  # 2제곱
+phi4 = lambda x: x**3 # 3제곱
+phi5 = lambda x: x**4 # 3제곱
+phi6 = lambda x: x*np.e**(-x) # 3제곱
+
+# 각 기저 함수 적용
+PHI = np.array([[phi1(x), phi2(x), phi3(x), phi4(x), phi5(x), phi6(x)] for x in X])
+
+# 가중치 생성 및 예측값 계산
+w = np.random.rand(6).reshape(-1, 1)
+y = np.dot(w.T, PHI.T)[0]
+
+# 예측값 복원
+denorm_y = denormalize(y, raw_X_min, raw_X_max)
+
+def J(w, P, x, y):
+    """
+    This function computes the objective function. 
+    J(w)= (1/2) * sum_{n=1}^{N} {y(x_n,w) - t_n}^2
+    y(x_n; w) = w_0*x^0 + w_1*x^1 + w_2*x^2 + ... + w_M*x^M
+    
+    w: 가중치 행렬, (M,) or (M,K) 여기서 K는 가중치 벡터 개수, 
+       M은 기저함수 개수 또는 데이터 차원
+    P: polynomial degree, scalar
+    x, y : data for error function eval.
+      x: data, (N,M)
+      y: target, (N,)
+    """
+    PHI = np.array([ x**i for i in range(P+1) ]).T
+    y_pred = np.dot(w.T, PHI.T) #(N,): w가 1개일 경우 or (K,N): w가 k개일 경우
+    # w=(2,K) -> w.T=(K,2), PHI-(N,2) -> PHI.T=(2,N) 
+    # np.dot(w.T, PHI.T)=(K,N)
+    # 데이터 N개 에 대해서 다 더한다.[+]
+    return 0.5*(((y-y_pred)**2).sum(axis=-1)) # 마지막 존재하는 차원 방향으로 summation
+
+def grad(w, P, x, y):
+    """
+    This function computes the analytic gradient of the objective function.
+
+    w: 가중치 행렬, (M,) or (M,K) 여기서 K는 가중치 벡터 개수, 
+       M은 기저함수 개수 또는 데이터 차원
+    P: polynomial degree, scalar
+    x, y : data for error function eval.
+      x: data, (N,M)
+      y: target, (N,)
+    """
+    # PI: (N,M)
+    PHI = np.array([ x**i for i in range(P+1) ]).T
+    # (K,M)(M,N)(N,M) - (1,N)(N,M) = (K,M)
+    g = np.dot(w.T, np.dot(PHI.T, PHI) ) - np.dot(y.T, PHI) #broadcasting
+    
+    return g.astype(grad_type)
+
+# 피팅결과 구해진 파라미터를 W에 저장
+W = []
+
+# 학습데이터를 넘기면서 fitting
+w = np.random.uniform(-1, 1, 6)
+
+W.append(
+    CGM(J, grad, w, args=(6, X, y_train), verbose=True)
+)
+    
+```
+
+```{python}
+import numpy as np
+
+def normalize(X):
+    X_min = np.min(X)
+    X_max = np.max(X)
+    X_normalized = (X - X_min) / (X_max - X_min)
+    return X_normalized, X_min, X_max
+
+def denormalize(X_normalized, X_min, X_max):
+    X_restored = X_normalized * (X_max - X_min) + X_min
+    return X_restored
+
+# 데이터 준비 (예시)
+raw_X = negative_data['preproc_rfu'].iloc[0]  # (N,D) = (45,1)
+X, raw_X_min, raw_X_max = normalize(raw_X)
+
+# 기저 함수 정의
+phi1 = lambda x: x**0  # 상수항
+phi2 = lambda x: x**1  # 1차항
+phi3 = lambda x: x**2  # 2차항
+phi4 = lambda x: x**3  # 3차항
+phi5 = lambda x: x**4  # 4차항
+phi6 = lambda x: x*np.e**(-x)  # 지수항
+
+# 각 기저 함수 적용
+PHI = np.array([[phi1(x), phi2(x), phi3(x), phi4(x), phi5(x), phi6(x)] for x in X])
+
+# 목표값 (원본 데이터)
+y = X
+
+def J(w, P, x, y):
+    PHI = np.array([x**i for i in range(P+1)]).T
+    y_pred = np.dot(w.T, PHI.T)
+    return 0.5*(((y-y_pred)**2).sum(axis=-1))
+
+def grad(w, P, x, y):
+    PHI = np.array([x**i for i in range(P+1)]).T
+    g = np.dot(w.T, np.dot(PHI.T, PHI)) - np.dot(y.T, PHI)
+    return g.astype(np.float64)
+
+# CGM 함수는 이전에 정의된 대로 사용
+
+# 초기 가중치 설정
+w = np.random.uniform(-1, 1, 6)
+
+# CGM을 사용하여 가중치 최적화
+optimized_w = CGM(J, grad, w, args=(5, X, y), verbose=True)
+
+# 최적화된 가중치를 사용하여 예측
+y_pred = np.dot(optimized_w.T, PHI.T)
+
+# 예측값 복원
+denorm_y_pred = denormalize(y_pred, raw_X_min, raw_X_max)
+
+plt.figure(figsize=(12, 6))
+plt.plot(raw_X, label='Original Data')
+plt.plot(denorm_y_pred, label='Predicted Data')
+plt.legend()
+plt.title('Original vs Predicted Data')
+plt.xlabel('Sample')
+plt.ylabel('Value')
+plt.show()
+
+# 오차 계산
+mse = np.mean((raw_X - denorm_y_pred)**2)
+print(f"Mean Squared Error: {mse}")
+
+```
+
+
+
+```{python}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+def normalize(X):
+    X_min = np.min(X)
+    X_max = np.max(X)
+    X_normalized = (X - X_min) / (X_max - X_min)
+    return X_normalized, X_min, X_max
+
+def denormalize(X_normalized, X_min, X_max):
+    X_restored = X_normalized * (X_max - X_min) + X_min
+    return X_restored
+
+def apply_basis_functions(X):
+    phi1 = lambda x: x**0  # 상수항
+    phi2 = lambda x: x**1  # 1차항
+    phi3 = lambda x: x**2  # 2차항
+    phi4 = lambda x: x**3  # 3차항
+    phi5 = lambda x: x**4  # 4차항
+    phi6 = lambda x: x*np.e**(-x)  # 지수항
+    return np.array([[phi1(x), phi2(x), phi3(x), phi4(x), phi5(x), phi6(x)] for x in X])
+
+def J(w, P, x, y):
+    PHI = np.array([x**i for i in range(P+1)]).T
+    y_pred = np.dot(w.T, PHI.T)
+    return 0.5*(((y-y_pred)**2).sum(axis=-1))
+
+def grad(w, P, x, y):
+    PHI = np.array([x**i for i in range(P+1)]).T
+    g = np.dot(w.T, np.dot(PHI.T, PHI)) - np.dot(y.T, PHI)
+    return g.astype(np.float64)
+
+def CGM(f, df, x, args=(), eps=1.0e-7, max_iter=300, verbose=False):
+    c = df(x, *args)
+    if np.linalg.norm(c) < eps:
+        return x
+    d = -c
+    for k in range(max_iter):
+        alpha = line_search(f, df, x, d, args)
+        x_new = x + alpha * d
+        c_new = df(x_new, *args)
+        if np.linalg.norm(c_new) < eps:
+            return x_new
+        beta = np.dot(c_new, c_new) / np.dot(c, c)
+        d = -c_new + beta * d
+        x = x_new
+        c = c_new
+    if verbose:
+        print(f"CGM reached max iterations: {max_iter}")
+    return x
+
+def line_search(f, df, x, d, args):
+    alpha, beta = 0.01, 0.5
+    t = 1.0
+    while f(x + t * d, *args) > f(x, *args) - alpha * t * np.dot(df(x, *args), d):
+        t *= beta
+    return t
+
+def predict_time_series(X):
+    X_norm, X_min, X_max = normalize(X)
+    PHI = apply_basis_functions(X_norm)
+    w = np.random.uniform(-1, 1, 6)
+    optimized_w = CGM(J, grad, w, args=(5, X_norm, X_norm), verbose=False)
+    y_pred = np.dot(optimized_w.T, PHI.T)
+    return denormalize(y_pred, X_min, X_max)
+
+def process_dataframe(df, input_column, output_column):
+    def process_row(row):
+        X = row[input_column]
+        if isinstance(X, np.ndarray) and X.size > 0:
+            row[output_column] = predict_time_series(X)
+        else:
+            row[output_column] = np.array([])
+        return row
+    
+    df[output_column] = None
+    return df.apply(process_row, axis=1)
+
+def plot_results(df, input_column, output_column, num_samples=9):
+    fig, axes = plt.subplots(3, 3, figsize=(15, 15))
+    axes = axes.flatten()
+
+    for i, (_, row) in enumerate(df.iterrows()):
+        if i >= num_samples:
+            break
+
+        X = row[input_column]
+        y_pred = row[output_column]
+
+        if isinstance(X, np.ndarray) and X.size > 0:
+            axes[i].plot(X, label='Original Data')
+            axes[i].plot(y_pred, label='Predicted Data')
+            axes[i].set_title(f'Sample {i+1}')
+            axes[i].legend()
+
+    plt.tight_layout()
+    plt.show()
+
+n = len(merged_data)
+
+# 3등분할 인덱스 계산
+first_split = n // 3
+second_split = 2 * (n // 3)
+
+# 데이터프레임 3등분
+df1 = merged_data.iloc[:first_split]
+df2 = merged_data.iloc[first_split:second_split]
+df3 = merged_data.iloc[second_split:]
+
+temp1 = process_dataframe(df1, 'preproc_rfu', 'ml_fitted')
+temp2 = process_dataframe(df2, 'preproc_rfu', 'ml_fitted')
+temp3 = process_dataframe(df3, 'preproc_rfu', 'ml_fitted')
+
+plot_results(temp, 'preproc_rfu', 'ml_fitted')
+temp.to_parquet('temp.parquet')
+# MSE 계산
+# negative_data['mse'] = negative_data.apply(lambda row: np.mean((row['preproc_rfu'] - row['ml_fitted'])**2) if isinstance(row['preproc_rfu'], np.ndarray) else np.nan, axis=1)
+# print(negative_data['mse'].describe())
+```
 ### 복수 신호에 대한 성능 평가
 
 ```{python}

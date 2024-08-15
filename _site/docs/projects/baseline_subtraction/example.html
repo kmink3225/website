@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.543">
+<meta name="generator" content="quarto-1.5.56">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Kwangmin Kim - VOC 데이터 처리 예제</title>
+<title>VOC 데이터 처리 예제 – Kwangmin Kim</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -123,7 +123,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -158,7 +158,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-          <div class="quarto-navbar-tools">
+            <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -172,15 +172,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#voc-데이터-처리-예제" id="toc-voc-데이터-처리-예제" class="nav-link active" data-scroll-target="#voc-데이터-처리-예제">VOC 데이터 처리 예제</a>
-  <ul class="collapse">
-  <li><a href="#준비하기" id="toc-준비하기" class="nav-link" data-scroll-target="#준비하기">준비하기</a>
+  <li><a href="#준비하기" id="toc-준비하기" class="nav-link active" data-scroll-target="#준비하기">준비하기</a>
   <ul class="collapse">
   <li><a href="#conda-환경-생성" id="toc-conda-환경-생성" class="nav-link" data-scroll-target="#conda-환경-생성">Conda 환경 생성</a></li>
   <li><a href="#pydsptools-설치" id="toc-pydsptools-설치" class="nav-link" data-scroll-target="#pydsptools-설치">PyDSPTools 설치</a></li>
   </ul></li>
   <li><a href="#분석하기" id="toc-분석하기" class="nav-link" data-scroll-target="#분석하기">분석하기</a></li>
-  </ul></li>
   </ul>
 </nav>
     </div>
@@ -206,8 +203,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="voc-데이터-처리-예제" class="level1">
-<h1>VOC 데이터 처리 예제</h1>
 <section id="준비하기" class="level2">
 <h2 class="anchored" data-anchor-id="준비하기">준비하기</h2>
 <section id="conda-환경-생성" class="level3">
@@ -238,23 +233,23 @@ pip install --upgrade --index-url https://pkgs.dev.azure.com/Seegene-SW/PyDSP/_p
 </section>
 <section id="분석하기" class="level2">
 <h2 class="anchored" data-anchor-id="분석하기">분석하기</h2>
-<div id="cell-1" class="cell" data-execution_count="1">
+<div id="cell-2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install Requirements</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># !sudo apt-get install libc++-dev libc++abi-dev</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># !pip install --index-url https://pkgs.dev.azure.com/Seegene-SW/PyDSP/_packaging/PyDSP/pypi/simple/ --upgrade "pydsp&gt;=2.1.0a2" "pydsptools&gt;=0.3.2"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-2" class="cell" data-execution_count="2">
+<div id="cell-3" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pathlib</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Seegene Export 데이터를 다음과 같이 Parquet 파일로 변환</p>
-<div id="cell-4" class="cell" data-execution_count="3">
+<div id="cell-5" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pathlib.Path(<span class="ss">f"processed/example1"</span>).mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>pathlib.Path(<span class="ss">f"processed/example2"</span>).mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-5" class="cell" data-execution_count="4">
+<div id="cell-6" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>python <span class="op">-</span>m pydsptools.biorad.parse <span class="op">-</span>t cfx<span class="op">-</span>xl <span class="op">-</span>f parquet <span class="op">-</span>o <span class="st">"processed/example1"</span> <span class="st">"data/20. 체코_RP1/"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>2024-01-05 19:24:27,342 - 357833 - INFO - Parse data/20. 체코_RP1/
@@ -262,7 +257,7 @@ pip install --upgrade --index-url https://pkgs.dev.azure.com/Seegene-SW/PyDSP/_p
 2024-01-05 19:24:27,672 - 357833 - INFO - Write to processed/example1/1. RP1 _2015-02-17 15-20-27_BR100181.parquet</code></pre>
 </div>
 </div>
-<div id="cell-6" class="cell" data-execution_count="5">
+<div id="cell-7" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>python <span class="op">-</span>m pydsptools.biorad.parse <span class="op">-</span>t cfx<span class="op">-</span>xl <span class="op">-</span>f parquet <span class="op">-</span>o <span class="st">"processed/example2"</span> <span class="st">"data/11. SSI191220-001_스페인_RP1, RP2, RP3"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>2024-01-05 19:24:28,408 - 357880 - INFO - Parse data/11. SSI191220-001_스페인_RP1, RP2, RP3/
@@ -271,7 +266,7 @@ pip install --upgrade --index-url https://pkgs.dev.azure.com/Seegene-SW/PyDSP/_p
 </div>
 </div>
 <p>Processed Parquet 파일에 <code>pcr_system</code>, <code>consumable</code>, <code>temperature</code>, <code>experiment_name</code>, <code>plate_name</code> 컬럼 추가</p>
-<div id="cell-8" class="cell" data-execution_count="6">
+<div id="cell-9" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>TESTNAME <span class="op">=</span> <span class="st">"example1"</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>PCR_SYSTEM <span class="op">=</span> <span class="st">"CFX96"</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>CONSUMABLE <span class="op">=</span> <span class="st">"8-strip"</span></span>
@@ -293,7 +288,7 @@ pip install --upgrade --index-url https://pkgs.dev.azure.com/Seegene-SW/PyDSP/_p
 <span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>        outdir.mkdir(parents<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    df.to_parquet(outdir <span class="op">/</span> <span class="ss">f"</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss">.parquet"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-9" class="cell" data-execution_count="7">
+<div id="cell-10" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>TESTNAME <span class="op">=</span> <span class="st">"example2"</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>PCR_SYSTEM <span class="op">=</span> <span class="st">"CFX96"</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>CONSUMABLE <span class="op">=</span> <span class="st">"8-strip"</span></span>
@@ -320,11 +315,11 @@ pip install --upgrade --index-url https://pkgs.dev.azure.com/Seegene-SW/PyDSP/_p
     -i /code/computed/example1/pcr_results \
     -c /code/config/yaml/PRJDS001/RP1/dsp1_orig.yml \
     -o /code/computed/example1/config__dsp1_orig</code></pre>
-<div id="cell-11" class="cell" data-execution_count="8">
+<div id="cell-12" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>pathlib.Path(<span class="ss">f"computed/example1/config__dsp1_orig/dsp"</span>).mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>pathlib.Path(<span class="ss">f"computed/example2/config__dsp1_orig/dsp"</span>).mkdir(parents<span class="op">=</span><span class="va">True</span>, exist_ok<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-12" class="cell" data-execution_count="9">
+<div id="cell-13" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>python <span class="op">-</span>m pydsp.run.worker multiple <span class="op">\</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">-</span>i computed<span class="op">/</span>example1<span class="op">/</span>pcr_results <span class="op">\</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">-</span>c config<span class="op">/</span>yaml<span class="op">/</span>PRJDS001<span class="op">/</span>RP1<span class="op">/</span>dsp1_orig.yml <span class="op">\</span></span>
@@ -339,7 +334,7 @@ pip install --upgrade --index-url https://pkgs.dev.azure.com/Seegene-SW/PyDSP/_p
 2024-01-05 19:24:30,414 - 357937 - INFO - process shutting down</code></pre>
 </div>
 </div>
-<div id="cell-13" class="cell" data-execution_count="10">
+<div id="cell-14" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>docker run <span class="op">-</span>it <span class="op">--</span>rm <span class="op">-</span>v $(pwd):<span class="op">/</span>code seegene<span class="op">/</span>pydsp:<span class="fl">2.1.0</span><span class="op">-</span>alpha<span class="fl">.1</span> python <span class="op">-</span>m pydsp.run.worker multiple <span class="op">\</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">-</span>i <span class="op">/</span>code<span class="op">/</span>computed<span class="op">/</span>example2<span class="op">/</span>pcr_results <span class="op">\</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">-</span>c <span class="op">/</span>code<span class="op">/</span>config<span class="op">/</span>yaml<span class="op">/</span>PRJDS001<span class="op">/</span>RP1<span class="op">/</span>dsp1_orig.yml <span class="op">\</span></span>
@@ -355,19 +350,19 @@ pip install --upgrade --index-url https://pkgs.dev.azure.com/Seegene-SW/PyDSP/_p
 </div>
 </div>
 <p>분석</p>
-<div id="cell-15" class="cell" data-execution_count="11">
+<div id="cell-16" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pydsptools.plot <span class="im">as</span> dspplt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-16" class="cell" data-execution_count="20">
+<div id="cell-17" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_parquet(<span class="st">'computed/example1/config__dsp1_orig/dsp/1. RP1 _2015-02-17 15-20-27_BR100181.dsp.parquet'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-17" class="cell" data-execution_count="21">
+<div id="cell-18" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="21">
 <div>
 
 
-<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -522,7 +517,7 @@ pip install --upgrade --index-url https://pkgs.dev.azure.com/Seegene-SW/PyDSP/_p
 </div>
 </div>
 </div>
-<div id="cell-18" class="cell" data-execution_count="23">
+<div id="cell-19" class="cell" data-execution_count="23">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>df.columns</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="23">
 <pre><code>Index(['name', 'steps', 'pcr_system', 'consumable', 'welltype', 'well',
@@ -542,13 +537,13 @@ pip install --upgrade --index-url https://pkgs.dev.azure.com/Seegene-SW/PyDSP/_p
       dtype='object')</code></pre>
 </div>
 </div>
-<div id="cell-19" class="cell" data-execution_count="30">
+<div id="cell-20" class="cell" data-execution_count="30">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>df[df[<span class="st">'setval_ispc'</span>]<span class="op">==</span><span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="30">
 <div>
 
 
-<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -775,10 +770,10 @@ pip install --upgrade --index-url https://pkgs.dev.azure.com/Seegene-SW/PyDSP/_p
 </div>
 </div>
 </div>
-<div id="cell-20" class="cell" data-execution_count="14">
+<div id="cell-21" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> dspplt.DspResultLegacyPlot(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-21" class="cell" data-execution_count="15">
+<div id="cell-22" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>p.plot(well<span class="op">=</span><span class="st">"A01"</span>, channel<span class="op">=</span><span class="st">"FAM"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
@@ -788,16 +783,16 @@ pip install --upgrade --index-url https://pkgs.dev.azure.com/Seegene-SW/PyDSP/_p
 </div>
 </div>
 </div>
-<div id="cell-22" class="cell" data-execution_count="16">
+<div id="cell-23" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_parquet(<span class="st">'computed/example2/config__dsp1_orig/dsp/1. Para ALFONSO_Fallo software FAm VRS A - RP123 STARLET_2019-10-2811-20-16_B.dsp.parquet'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-23" class="cell" data-execution_count="17">
+<div id="cell-24" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="17">
 <div>
 
 
-<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<table class="dataframe caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
@@ -952,10 +947,10 @@ pip install --upgrade --index-url https://pkgs.dev.azure.com/Seegene-SW/PyDSP/_p
 </div>
 </div>
 </div>
-<div id="cell-24" class="cell" data-execution_count="18">
+<div id="cell-25" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> dspplt.DspResultLegacyPlot(df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-25" class="cell" data-execution_count="19">
+<div id="cell-26" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>p.plot(well<span class="op">=</span><span class="st">"A01"</span>, channel<span class="op">=</span><span class="st">"FAM"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
@@ -967,7 +962,6 @@ pip install --upgrade --index-url https://pkgs.dev.azure.com/Seegene-SW/PyDSP/_p
 </div>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
@@ -1006,18 +1000,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1049,7 +1032,47 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("kmink3225\.netlify\.app");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -1084,7 +1107,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');

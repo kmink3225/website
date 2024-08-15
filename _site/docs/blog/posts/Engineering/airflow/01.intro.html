@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.433">
+<meta name="generator" content="quarto-1.5.56">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2023-05-01">
 <meta name="description" content="template">
 
-<title>Kwangmin Kim - Airflow Introduction</title>
+<title>Airflow Introduction – Kwangmin Kim</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -48,7 +48,13 @@ ul.task-list li input[type="checkbox"] {
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -57,14 +63,42 @@ ul.task-list li input[type="checkbox"] {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
 }</script>
 
-  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../../../../styles.css">
 </head>
@@ -73,9 +107,9 @@ ul.task-list li input[type="checkbox"] {
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a href="../../../../../index.html" class="navbar-brand navbar-brand-logo">
     <img src="../../../../.././images/logo.png" alt="" class="navbar-logo">
     </a>
@@ -84,43 +118,43 @@ ul.task-list li input[type="checkbox"] {
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../../../../index.html" rel="" target="">
- <span class="menu-text">Home</span></a>
+    <a class="nav-link" href="../../../../../index.html"> 
+<span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../../../../docs/CV/index.html" rel="" target="">
- <span class="menu-text">CV</span></a>
+    <a class="nav-link" href="../../../../../docs/CV/index.html"> 
+<span class="menu-text">CV</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../../../../docs/projects/index.html" rel="" target="">
- <span class="menu-text">Projects</span></a>
+    <a class="nav-link" href="../../../../../docs/projects/index.html"> 
+<span class="menu-text">Projects</span></a>
   </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../../../../about.html" rel="" target="">
- <span class="menu-text">Me</span></a>
+    <a class="nav-link" href="../../../../../about.html"> 
+<span class="menu-text">Me</span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/kmink3225" rel="" target=""><i class="bi bi-github" role="img" aria-label="Github">
+    <a class="nav-link" href="https://github.com/kmink3225"> <i class="bi bi-github" role="img" aria-label="Github">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="https://www.linkedin.com/in/kwangmin-kim-a5241b200/" rel="" target=""><i class="bi bi-linkedin" role="img" aria-label="Linkedin">
+    <a class="nav-link" href="https://www.linkedin.com/in/kwangmin-kim-a5241b200/"> <i class="bi bi-linkedin" role="img" aria-label="Linkedin">
 </i> 
- <span class="menu-text"></span></a>
+<span class="menu-text"></span></a>
   </li>  
 </ul>
+          </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
 </div>
-          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -128,27 +162,11 @@ ul.task-list li input[type="checkbox"] {
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
-   
-  <ul>
-  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="header-section-number">1</span> Introduction</a>
-  <ul class="collapse">
-  <li><a href="#characteristics" id="toc-characteristics" class="nav-link" data-scroll-target="#characteristics"><span class="header-section-number">1.1</span> Characteristics</a></li>
-  <li><a href="#motivation" id="toc-motivation" class="nav-link" data-scroll-target="#motivation"><span class="header-section-number">1.2</span> Motivation</a>
-  <ul class="collapse">
-  <li><a href="#why-to-learn-airflow" id="toc-why-to-learn-airflow" class="nav-link" data-scroll-target="#why-to-learn-airflow"><span class="header-section-number">1.2.1</span> Why to Learn Airflow?</a></li>
-  </ul></li>
-  <li><a href="#strength" id="toc-strength" class="nav-link" data-scroll-target="#strength"><span class="header-section-number">1.3</span> Strength</a></li>
-  <li><a href="#weakness" id="toc-weakness" class="nav-link" data-scroll-target="#weakness"><span class="header-section-number">1.4</span> Weakness</a></li>
-  </ul></li>
-  <li><a href="#go-to-blog-content-list" id="toc-go-to-blog-content-list" class="nav-link" data-scroll-target="#go-to-blog-content-list"><span class="header-section-number">2</span> Go to Blog Content List</a></li>
-  </ul>
-</nav>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+        
     </div>
 <!-- main -->
-<main class="content column-page-left" id="quarto-document-content">
+<main class="content column-page" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
@@ -166,7 +184,7 @@ ul.task-list li input[type="checkbox"] {
 </div>
 
 
-<div class="quarto-title-meta">
+<div class="quarto-title-meta column-page">
 
     <div>
     <div class="quarto-title-meta-heading">Author</div>
@@ -186,7 +204,9 @@ ul.task-list li input[type="checkbox"] {
   </div>
   
 
+
 </header>
+
 
 <ul class="nav nav-pills" id="language-tab" role="tablist">
 <li class="nav-item" role="presentation">
@@ -199,8 +219,7 @@ Korean
 English
 </button>
 </li>
-<div class="tab-content" id="language-tabcontent">
-
+<div id="language-tabcontent" class="tab-content">
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
 <div id="Korean" class="tab-pane fade show active" role="tabpanel" aria-labelledby="Korean-tab">
 <section id="introduction" class="level1" data-number="1">
@@ -215,40 +234,51 @@ English
 </ul>
 <section id="characteristics" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="characteristics"><span class="header-section-number">1.1</span> Characteristics</h2>
-<div class="cell">
+<div class="cell" data-layout-align="default">
 <div class="cell-output-display">
-<div id="fig-workflow" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
+<div id="fig-workflow" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
 <svg width="672" height="480" viewbox="0.00 0.00 343.92 169.48" xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" style="; max-width: none; max-height: none">
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 165.48)">
-<title>
-G
-</title>
-<polygon fill="white" stroke="transparent" points="-4,4 -4,-165.48 339.92,-165.48 339.92,4 -4,4"></polygon> <!-- REST API를 사용한 데이터를 받아 전처리 --> <g id="node1" class="node">
-<title>
-REST API를 사용한 데이터를 받아 전처리
-</title>
-<ellipse fill="none" stroke="black" cx="156.43" cy="-143.48" rx="156.37" ry="18"></ellipse> <text text-anchor="middle" x="156.43" y="-139.28" font-family="Times,serif" font-size="14.00">REST API를 사용한 데이터를 받아 전처리</text> </g> <!-- 기존 DB의 데이터 삭제 (중복 제거) --> <g id="node2" class="node">
-<title>
-기존 DB의 데이터 삭제 (중복 제거)
-</title>
-<ellipse fill="none" stroke="black" cx="200.45" cy="-86.15" rx="129.73" ry="18"></ellipse> <text text-anchor="middle" x="200.45" y="-81.95" font-family="Times,serif" font-size="14.00">기존 DB의 데이터 삭제 (중복 제거)</text> </g> <!-- REST API를 사용한 데이터를 받아 전처리&#45;&#45;기존 DB의 데이터 삭제 (중복 제거) --> <g id="edge1" class="edge">
-<title>
-REST API를 사용한 데이터를 받아 전처리–기존 DB의 데이터 삭제 (중복 제거)
-</title>
-<path fill="none" stroke="black" d="M170.36,-125.34C175.5,-118.65 181.32,-111.07 186.46,-104.37"></path> </g> <!-- 전처리한 데이터를 DB에 삽입 --> <g id="node3" class="node">
-<title>
-전처리한 데이터를 DB에 삽입
-</title>
-<ellipse fill="none" stroke="black" cx="224.56" cy="-18" rx="111.23" ry="18"></ellipse> <text text-anchor="middle" x="224.56" y="-13.8" font-family="Times,serif" font-size="14.00">전처리한 데이터를 DB에 삽입</text> </g> <!-- 기존 DB의 데이터 삭제 (중복 제거)&#45;&#45;전처리한 데이터를 DB에 삽입 --> <g id="edge2" class="edge">
-<title>
-기존 DB의 데이터 삭제 (중복 제거)–전처리한 데이터를 DB에 삽입
-</title>
-<path fill="none" stroke="black" d="M206.91,-67.89C210.37,-58.11 214.62,-46.1 218.08,-36.31"></path> </g> </g>
+<title>G</title>
+<polygon fill="white" stroke="transparent" points="-4,4 -4,-165.48 339.92,-165.48 339.92,4 -4,4"></polygon>
+<!-- REST API를 사용한 데이터를 받아 전처리 -->
+<g id="node1" class="node">
+<title>REST API를 사용한 데이터를 받아 전처리</title>
+<ellipse fill="none" stroke="black" cx="156.43" cy="-143.48" rx="156.37" ry="18"></ellipse>
+<text text-anchor="middle" x="156.43" y="-139.28" font-family="Times,serif" font-size="14.00">REST API를 사용한 데이터를 받아 전처리</text>
+</g>
+<!-- 기존 DB의 데이터 삭제 (중복 제거) -->
+<g id="node2" class="node">
+<title>기존 DB의 데이터 삭제 (중복 제거)</title>
+<ellipse fill="none" stroke="black" cx="200.45" cy="-86.15" rx="129.73" ry="18"></ellipse>
+<text text-anchor="middle" x="200.45" y="-81.95" font-family="Times,serif" font-size="14.00">기존 DB의 데이터 삭제 (중복 제거)</text>
+</g>
+<!-- REST API를 사용한 데이터를 받아 전처리&#45;&#45;기존 DB의 데이터 삭제 (중복 제거) -->
+<g id="edge1" class="edge">
+<title>REST API를 사용한 데이터를 받아 전처리--기존 DB의 데이터 삭제 (중복 제거)</title>
+<path fill="none" stroke="black" d="M170.36,-125.34C175.5,-118.65 181.32,-111.07 186.46,-104.37"></path>
+</g>
+<!-- 전처리한 데이터를 DB에 삽입 -->
+<g id="node3" class="node">
+<title>전처리한 데이터를 DB에 삽입</title>
+<ellipse fill="none" stroke="black" cx="224.56" cy="-18" rx="111.23" ry="18"></ellipse>
+<text text-anchor="middle" x="224.56" y="-13.8" font-family="Times,serif" font-size="14.00">전처리한 데이터를 DB에 삽입</text>
+</g>
+<!-- 기존 DB의 데이터 삭제 (중복 제거)&#45;&#45;전처리한 데이터를 DB에 삽입 -->
+<g id="edge2" class="edge">
+<title>기존 DB의 데이터 삭제 (중복 제거)--전처리한 데이터를 DB에 삽입</title>
+<path fill="none" stroke="black" d="M206.91,-67.89C210.37,-58.11 214.62,-46.1 218.08,-36.31"></path>
+</g>
+</g>
 </svg>
 </div>
-<figcaption class="figure-caption">Figure&nbsp;1: Airflow Workflow Simple Example</figcaption>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-workflow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Airflow Workflow Simple Example
+</figcaption>
 </figure>
 </div>
 </div>
@@ -257,7 +287,7 @@ REST API를 사용한 데이터를 받아 전처리–기존 DB의 데이터 삭
 <li>파이썬으로 제작된 도구이며 이용자가 워크플로우 생성시에도 파이썬으로 구현해야 함</li>
 <li>하나의 워크플로우는 DAG(Directed Acyclic Graph) 이라 부르며 DAG 안에는 1개 이상의 Task가 존재
 <ul>
-<li>예를 들어, REST API로부터 데이터를 내려 받아 DB에 insert하려는 과제를 수행하기 위해 <a href="#fig-workflow">Figure&nbsp;1</a> 와 같은 단계들이 필요하다.</li>
+<li>예를 들어, REST API로부터 데이터를 내려 받아 DB에 insert하려는 과제를 수행하기 위해 <a href="#fig-workflow" class="quarto-xref">Figure&nbsp;1</a> 와 같은 단계들이 필요하다.</li>
 <li>각 각의 단계를 task라 하고 각 각 선/후행 단계가 있다. (1번 task <span class="math inline">\(\rightarrow\)</span> 2번 task <span class="math inline">\(\rightarrow\)</span> 3번 task)</li>
 <li>이 tasks의 집합을 DAG이라고 한다.</li>
 <li>Task간 선후행 연결이 가능하되 순환되지 않고 방향성을 가짐(=DAG)</li>
@@ -268,19 +298,23 @@ REST API를 사용한 데이터를 받아 전처리–기존 DB의 데이터 삭
 </ul></li>
 <li>모니터링 및 실패 작업에 대한 재실행 기능이 간편</li>
 </ul>
-<div id="fig-DAG_example" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="../../../../../images/airflow/intro_dag-example.PNG" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Figure&nbsp;2: DAG Simple Example</figcaption>
+<div id="fig-DAG_example" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-DAG_example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../../../../../images/airflow/intro_dag-example.PNG" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-DAG_example-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: DAG Simple Example
+</figcaption>
 </figure>
 </div>
 <ul>
-<li>In <a href="#fig-DAG_example">Figure&nbsp;2</a>, 초록색 테두리의 node는 성공한 task를 의미하고 분홍색 테두리의 node는 실패한 task를 의미한다. 위의 그림에는 없지만 회색 테두리는 queue (준비) 상태를 의미한다. Airflow에는 DAG이 일련의 task로 구성되어 있기 때문에 실행 상태도 성공, 실패 및 준비 상태같은 여러 종류가 있다. 나머지 상태는 뒷 부분에서 차차 다뤄보기로 한다.</li>
+<li>In <a href="#fig-DAG_example" class="quarto-xref">Figure&nbsp;2</a>, 초록색 테두리의 node는 성공한 task를 의미하고 분홍색 테두리의 node는 실패한 task를 의미한다. 위의 그림에는 없지만 회색 테두리는 queue (준비) 상태를 의미한다. Airflow에는 DAG이 일련의 task로 구성되어 있기 때문에 실행 상태도 성공, 실패 및 준비 상태같은 여러 종류가 있다. 나머지 상태는 뒷 부분에서 차차 다뤄보기로 한다.</li>
 </ul>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="../../../../../images/airflow/task-status.PNG" class="img-fluid figure-img"></p>
-<figcaption class="figure-caption">Task Status</figcaption>
+<figcaption>Task Status</figcaption>
 </figure>
 </div>
 </section>
@@ -289,28 +323,40 @@ REST API를 사용한 데이터를 받아 전처리–기존 DB의 데이터 삭
 <section id="why-to-learn-airflow" class="level3" data-number="1.2.1">
 <h3 data-number="1.2.1" class="anchored" data-anchor-id="why-to-learn-airflow"><span class="header-section-number">1.2.1</span> Why to Learn Airflow?</h3>
 <div id="fig-comparison" class="quarto-layout-panel">
-<figure class="figure">
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 100.0%;justify-content: center;">
-<div id="fig-workflowDemand" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="../../../../../images/airflow/intro_airflow-demand.PNG" class="img-fluid figure-img" data-ref-parent="fig-comparison"></p>
-<figcaption class="figure-caption">(a) Orchestrating Task Tools (a.k.a Data Workflows) Demand Comparison</figcaption>
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-comparison" style="flex-basis: 100.0%;justify-content: flex-start;">
+<div id="fig-workflowDemand" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-workflowDemand-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../../../../../images/airflow/intro_airflow-demand.PNG" class="img-fluid figure-img" data-ref-parent="fig-comparison">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-workflowDemand-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Orchestrating Task Tools (a.k.a Data Workflows) Demand Comparison
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<div class="quarto-layout-row quarto-layout-valign-top">
-<div class="quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 100.0%;justify-content: center;">
-<div id="fig-workflowComputation" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="../../../../../images/airflow/intro_airflow-comparison.PNG" class="img-fluid figure-img" data-ref-parent="fig-comparison"></p>
-<figcaption class="figure-caption">(b) Orchestrating Task Tools Computation Comparison</figcaption>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-comparison" style="flex-basis: 100.0%;justify-content: flex-start;">
+<div id="fig-workflowComputation" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-workflowComputation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../../../../../images/airflow/intro_airflow-comparison.PNG" class="img-fluid figure-img" data-ref-parent="fig-comparison">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-workflowComputation-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Orchestrating Task Tools Computation Comparison
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p></p><figcaption class="figure-caption">Figure&nbsp;3: <a href="https://towardsdatascience.com/airflow-vs-luigi-vs-argo-vs-mlflow-vs-kubeflow-b3785dd1ed0c">Airflow Figure Reference: Airflow vs.&nbsp;Luigi vs.&nbsp;Argo vs.&nbsp;MLFlow vs.&nbsp;KubeFlow by Markus Schmitt</a></figcaption><p></p>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-comparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: <a href="https://towardsdatascience.com/airflow-vs-luigi-vs-argo-vs-mlflow-vs-kubeflow-b3785dd1ed0c">Airflow Figure Reference: Airflow vs.&nbsp;Luigi vs.&nbsp;Argo vs.&nbsp;MLFlow vs.&nbsp;KubeFlow by Markus Schmitt</a>
+</figcaption>
 </figure>
 </div>
 <ul>
@@ -319,7 +365,7 @@ REST API를 사용한 데이터를 받아 전처리–기존 DB의 데이터 삭
 <li>Simplicity: workflow를 얼마나 쉽게 사용할 수 있는지에 대한 난이도로 airflow는 사용하기에 어려운 난이도를 보여준다.</li>
 <li>Breadth: 확장성. 즉 얼마나 customizing할 수 있는지 보여주는 척도</li>
 </ul>
-<p><a href="#fig-comparison">Figure&nbsp;3</a> 을 보면, <a href="#fig-workflowDemand">Figure&nbsp;3 (a)</a> 에서 볼수 있듯이 최근 들어 airflow의 인기가 급증하는 것을 볼 수 있다. <a href="#fig-workflowComputation">Figure&nbsp;3 (b)</a> 에서 그 이유를 짐작할 수 있는데 airflow가 simplicity가 C 사용하기는 어렵지만 구현할 수 있는 폭 breadth가 높다 (Breadth: A). 즉, 다른 workflows에 비해 복잡한 코딩을 요구하는 만큼 그 자유도가 높다는 것을 짐작할 수 있다.</p>
+<p><a href="#fig-comparison" class="quarto-xref">Figure&nbsp;3</a> 을 보면, <a href="#fig-workflowDemand" class="quarto-xref">Figure&nbsp;3 (a)</a> 에서 볼수 있듯이 최근 들어 airflow의 인기가 급증하는 것을 볼 수 있다. <a href="#fig-workflowComputation" class="quarto-xref">Figure&nbsp;3 (b)</a> 에서 그 이유를 짐작할 수 있는데 airflow가 simplicity가 C 사용하기는 어렵지만 구현할 수 있는 폭 breadth가 높다 (Breadth: A). 즉, 다른 workflows에 비해 복잡한 코딩을 요구하는 만큼 그 자유도가 높다는 것을 짐작할 수 있다.</p>
 </section>
 </section>
 <section id="strength" class="level2" data-number="1.3">
@@ -357,8 +403,9 @@ REST API를 사용한 데이터를 받아 전처리–기존 DB의 데이터 삭
 
 
 </section>
+</div>
 
-</div></ul></main> <!-- /main -->
+</ul></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -394,18 +441,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -437,11 +473,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("kmink3225\.netlify\.app");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -451,8 +526,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -464,7 +548,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -508,6 +715,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -533,6 +741,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -595,6 +829,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <script src="https://utteranc.es/client.js" repo="./docs/comments" issue-term="pathname" theme="github-light" crossorigin="anonymous" async="">
 </script>
 </div> <!-- /content -->
+
 
 
 

@@ -45,11 +45,13 @@ Real Time PCR 장비는 핵산(Nucleic Acid) 검체의 존재 여부를 확인�
 
 이러한 방식으로 Real Time PCR 장비의 신호는 이론적으로 **sigmoid curve**의 패턴을 나타낸다.
 
+#### 주요 결과 지표
+
 * 양/음성 결과
   * 양성: 아래 그림과 같이 Real Time PCR 결과가 명확한 sigmoid curve가 나올 경우 검체가 발견된 **양성** 상태로 판독한다.
   * 음성: 반응이 없는 평평한 curve가 나오거나 명확한 sigmoid curve가 나오지 않을 경우 검체가 발견되지 않은 **음성** 상태로 판독한다.
 * Ct
-  * Ct 값은 **Cycle threshold**의 약자로, 특정한 양의 증폭된 DNA가 처음으로 검출 가능한 수준에 도달했을 때의 PCR 사이클 수를 의미한다
+  * Ct (=**Cycle threshold**)의 약자로, 특정한 양의 증폭된 DNA가 처음으로 검출 가능한 수준에 도달했을 때의 PCR 사이클 수를 의미한다
   * 초기 DNA 양: Ct 값은 초기 DNA 양과 반비례한다.
   * 증폭 효율성: Ct 값은 증폭 효율성과 관련 있다. 이상적으로는 각 사이클에서 두 배로 증폭되지만, 실제 실험에서는 다양한 요인에 의해 증폭 효율성이 100% 미만일 수 있다.
   
@@ -57,11 +59,17 @@ Real Time PCR 장비는 핵산(Nucleic Acid) 검체의 존재 여부를 확인�
 
 ### Risk
 
-PCR 신호는 시험관 내에서 일어나는 미시적 화학 반응, 광학 반응 및 기계적 반응의 결과이다. 이 과정에서 인간이 명확히 측정하거나 설명하기 어려운 원인에 의한 노이즈가 섞일 수 있다. 이로 인해 Ct 값의 편향과 결과적으로 위양성 또는 위음성 결과가 발생할 위험이 증가할 수 있다.
+* PCR 신호는 시험관 내에서 일어나는 미시적 화학 반응, 광학 반응 및 기계적 반응의 결과이다. 이 과정에서 인간이 명확히 측정하거나 설명하기 어려운 원인에 의한 노이즈가 섞일 수 있다. 
+* 이로 인해, Ct 값의 편향과 결과적으로 위양성 또는 위음성 결과가 발생할 위험이 증가할 수 있다.
 
 ### PCR 신호처리 및 최종 출력물
 
-따라서, 이러한 노이즈를 보정하기 위한 전처리 방법이 필요하다. 전처리 후, 진단 알고리즘은 검체의 존재 여부와 Ct 값을 시그모이드 곡선 적합을 통해 최종 출력한다.
+따라서, 이러한 노이즈를 보정하기 위한 전처리 방법이 필요하다. 전처리 후, 진단 알고리즘은 
+
+* 양/음성 (정성적 지표): 검체의 존재 여부와 
+* Ct 값 (정량적 지표): 검체의 농도 
+
+를 시그모이드 곡선 적합을 통해 최종 출력한다.
 
 ## Rationale
 
@@ -72,15 +80,17 @@ PCR 신호는 시험관 내에서 일어나는 미시적 화학 반응, 광학 �
 
 ## Motivation
 
-회사에 처음 입사했을 때, 진단 알고리즘의 수많은 if문과 설정값, 그리고 해석하기 어려운 코드에 압도되었다. rule-based 알고리즘이 data-driven 알고리즘에 비해 성능이 떨어진다고는 할 수 없지만, 변화무쌍한 PCR 신호를 조건문으로 처리하기에는 한계가 있다고 판단했다. 따라서, 점진적으로 진단 알고리즘을 data-driven 방식으로 개선할 필요가 있다고 생각했다.  
+* 회사에 처음 입사했을 때, legacy 진단 알고리즘의 수많은 if문과 설정값, 그리고 낮은 가독성의 코드에 압도되었다. 
+* rule-based 알고리즘이 data-driven 알고리즘에 비해 성능이 떨어진다고는 할 수 없지만, 다양한 PCR 신호를 조건문으로 처리하기에는 한계가 있다고 판단했다. 
+* 따라서, 점진적으로 진단 알고리즘을 data-driven 방식으로 개선할 필요가 있다고 생각했다.  
 
 ## Considerations
 
-* 보수적인 biologists와 전문적 지식이 없는 임원진을 이해시킬 수 있는 간단한 알고리즘이어야 한다.
 * 현재의 진단 알고리즘은 수 많은 조건문으로 이루어진 rule-based 알고리즘이기 때문에 전체적인 알고리즘 수정 시 정합성 및 규제 문제가 발생할 수 있다. 따라서, baseline fitting 알고리즘만 개선하여 대체해야 한다.
+* 보수적인 biologists와 전문 지식이 없는 임원진을 이해시킬 수 있는 간단한 알고리즘이어야 한다.
 * 통계를 전공하지 않은 알고리즘 관리자1 (Computer Science 전공), 관리자2 (Physics 전공)가 이해할 수 있도록 알고리즘 평가 metric을 선정 및 설명할 수 있어야한다. 
-* Python으로 작성된 알고리즘을 C++로 porting을 해야만하기 때문에 최소한의 package를 사용하여 알고리즘을 low level로 coding해야한다.
-* Lag Phase에서의 baseline data points 수가 적을 수 있으므로, 적은 데이터로도 fitting할 수 있는 알고리즘이 필요하다.
+* Python으로 작성된 알고리즘을 C++로 porting을 해야만하기 때문에 최소한의 package (numpy, pandas)를 사용하여 알고리즘을 low level로 coding해야한다.
+* Lag Phase에서의 baseline data points (i.e. cycle 수) 수가 적을 수 있으므로, 적은 데이터로도 fitting할 수 있는 알고리즘이 필요하다.
 * baseline의 noise 패턴은 매우 다양하지만 기존의 legacy baseline fitting 알고리즘은 1차 곡선과 2차 곡선으로 fitting 한다. 따라서, 다양한 noise 패턴에 대응할 수 있는 알고리즘이 필요하다.
 
 ### Issues
@@ -90,7 +100,7 @@ PCR 신호는 시험관 내에서 일어나는 미시적 화학 반응, 광학 �
   * 기존 방식 고수: 기존 방식으로 프로젝트 진행할 경우 너무 많은 소요 시간이 발생하여 프로젝트의 종결이 보이지 않음
 * 데이터 파이프라인 부재
 * 성능 평가 기준과 방법 부재
-* 어렵지 않고 보수적인 biologists가 알고리즘 성능을 쉽게 이해할 수 있도록 시각화를 하지만 기획자가 부재
+* 비전문가가 알고리즘 성능을 쉽게 이해할 수 있도록 직관적인 시각화가 요구됨 (기획자가 부재).
 
 ### Solutions to Issues
 
@@ -112,7 +122,7 @@ PCR 신호는 시험관 내에서 일어나는 미시적 화학 반응, 광학 �
 ## Objective
 
 * noise를 보정하는 대표적인 전처리 방식 중 하나인 baseline 차감 알고리즘을 최적화한다. Baseline의 차감은 baseline fitting을 수행하여 fitted value를 raw data에서 차감하여 순수 신호를 분리한다. 
-* 우수한 성능을 보이는 basline fitting 알고리즘을 정하고 baseline fitting 알고리즘을 단일화를 한다.
+* 우수한 성능을 보이는 basline fitting 알고리즘을 정하고 사내의 여러 baseline fitting 알고리즘을 단일화를 한다.
 
 $$
 \text{RFU (or PCR Signal)} =  \text{Pure Signal} + \text{Noise} + \text{Error}
@@ -126,15 +136,13 @@ $$
 
 * Baseline 알고리즘 별 PCR 판독 결과 Data 마련을 위한 Data Engineering
 * Baseline 알고리즘 성능 비교 분석을 위한 data 처리 pipeline 구축
-* Baseline 알고리즘 성능 비교 분석이 가능한 시각화 기획 및 구현
 * Baseline 알고리즘 성능 비교 분석을 위한 비교 metric 고안 및 구현
 * Baseline 알고리즘 성능 비교 분석을 위한 신호 selection metric 고안 및 구현
+* Baseline 알고리즘 성능 비교 분석이 가능한 복수 신호 시각화 기획 및 구현
 * Baseline 알고리즘 성능 비교 분석을 위한 신호 처리 세부 분석 시각화 기획 및 구현
 * 시각화를 이용한 Baseline 알고리즘 개선
 * 기존 및 새로운 baseline fitting 알고리즘들의 성능을 평가 및 비교한다.
 * **음성 신호에 한하여** 위양성 결과를 최소화하기 위해 baseline 차감 알고리즘을 최적화하여 여러 baseline fitting 알고리즘을 단일화한다.
-
-
 
 ## Method
 
@@ -146,14 +154,26 @@ $$
 
 비전공자인 생물학자, 컴퓨터 공학출신들과 임원들의 이해도를 높이기 위해 직관적으로 이해할 수 있는 시각화를 통해 각 알고리즘을 비교 분석한다.
 
-* **Legacy** 알고리즘 1 (rule-based): 대조군1, 현재 Data Science팀에서 사용되고있는 공식적인 알고리즘 
-* **Bio Legacy** 알고리즘 2 (rule-based): 대조군2, 생물 실험자들이 제품을 최적화하기 위해 현재 사용하고있는 알고리즘 
-* **Black Box** 알고리즘 3 (black box): 대조군3, 업계 1위 타사의 알고리즘으로 기기전용 SW에 내재된 알고리즘으로 Black Box이지만 SW내에서 차감결과 data는 얻을 수 있다.
-* **Rule-Based** 알고리즘 4 (rule-based): 실험군1, 팀원(물리학자)이 **Legacy** 알고리즘 1을 보완하기 위해 만든 알고리즘
-* **Rule-Based+N**알고리즘 5 (rule-based): 실험군2, 팀원(물리학자)이 **Legacy** 알고리즘 1을 보완하기 위해 만든 n번째 알고리즘
-* **ML** 알고리즘 6 (data-driven): 실험군3, 본인이 만든 data driven ML알고리즘
-  * Baseline Fitting with a Characteristic Equation: 경험상으로 Baseline 신호가 여러 요인으로 다양한 패턴을 보인다. Talyer Series에서 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여, 다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 시도했다. 이 접근법은 데이터의 feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링할 수 있게 한다. 적절한 차수 선택과 정규화를 통해 baseline 신호에 적합시킨다.
-  * Neural Network: Characteristic Equation (특성 방정식)은 기저함수를 분석가가 선정해줘야 하는 위험 부담이 있다. Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기저함수를 설정할 수 있지만 임상신호나 실제 시장에서 만들어지는 신호는 그 패턴이 예상과 다를 수 있기 때문에 Data에 맞게 적합가능한 간단한 신경망을 구현하여 적합시킨다.
+* MuDT는 SG 고유의 BT 기술에 의해 태생적으로 거쳐야 하는 전처리 과정이다. MuDT를 하지 않았을 때와 했을때를 구별하여 시각화를 한다.
+
+* MuDT Off 한 데이터에 대하여,
+  * 1st Pannel [After BPN]: normalized **Raw Data**를 보여준다. 
+  * 2nd Pannel [CFX]: 업계 1위 타사의 알고리즘으로 기기전용 SW에 내재된 **Black Box** 알고리즘 (대조군1)
+  * 3rd Pannel [DSP]: 현재 Data Science팀에서 사용되고있는 공식적인 **Legacy Rule-Based** 알고리즘 (대조군2)
+  * 4th Pannel [Auto]: 생물 실험자들이 제품을 최적화하기 위해 현재 사용하고있는 **Bio Legacy Rule-Based** 알고리즘 (대조군3) 
+  * 5th Pannel [Strep+N]: 팀원(물리학자)이 [DSP]를 보완하기 위해 만든 N+1 번째 **Rule-Based** 알고리즘 (실험군1)
+  * 6th Pannel [ML]: 본인이 **data driven ML**알고리즘 (실험군2)
+    * Characteristic Equation: Talyer Series에서 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여, 다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 시도했다. 이 접근법은 데이터의 feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링할 수 있게 한다. 적절한 차수 선택과 정규화를 통해 baseline 신호에 적합시킨다.
+    * Neural Network: Characteristic Equation (특성 방정식)은 기저함수를 분석가가 선정해줘야 하는 위험 부담이 있다. Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기저함수를 설정할 수 있지만 임상신호나 실제 시장에서 만들어지는 신호는 그 패턴이 예상과 다를 수 있기 때문에 Data에 맞게 적합가능한 간단한 신경망을 구현하여 적합시킨다.  
+* MuDT On 한 데이터에 대하여,
+  * 1st Pannel [After BPN]: normalized **Raw Data**를 보여준다.
+  * 2nd Pannel [After BPN]: normalized raw data를 MuDT에 의해 **Preprocessed Data**를 보여준다.
+  * 3rd Pannel [DSP]: 현재 Data Science팀에서 사용되고있는 공식적인 **Legacy Rule-Based** 알고리즘 (대조군1)
+  * 4th Pannel [Auto]: 생물 실험자들이 제품을 최적화하기 위해 현재 사용하고있는 **Bio Legacy Rule-Based** 알고리즘 (대조군2)
+  * 5th Pannel [Strep+N]: 팀원(물리학자)이 [DSP]를 보완하기 위해 만든 N+1 번째 **Rule-Based** 알고리즘 (실험군1)
+  * 6th Pannel [ML]: 본인이 **data driven ML**알고리즘 (실험군2)
+    * Characteristic Equation
+    * Neural Network
 
 ### 시각화에 의한 직관적 분석
 
@@ -251,6 +271,113 @@ channel_name = merged_data['channel'].unique()[0]
 temperature_name = merged_data['temperature'].unique()[0]
 ```
 
+### Temp0
+
+```{python}
+import numpy as np
+import pandas as pd
+
+def log_normalize(X):
+    X_min_original = np.min(X)
+    # 모든 값을 양수로 만들기 위해 최소값을 더함
+    X_positive = X - X_min_original + 1e-10  # 작은 값을 더해 로그의 0 입력을 방지
+
+    # 로그 변환
+    X_log = np.log(X_positive)
+
+    # 정규화
+    X_min = np.min(X_log)
+    X_max = np.max(X_log)
+    X_normalized = (X_log - X_min) / (X_max - X_min)
+
+    return X_normalized, X_min, X_max, X_min_original
+
+def log_denormalize(X_normalized, X_min, X_max, X_min_original):
+    # 역정규화
+    X_log_restored = X_normalized * (X_max - X_min) + X_min
+
+    # 지수 변환
+    X_restored = np.exp(X_log_restored)
+
+    # 원래 스케일로 복원
+    X_restored = X_restored + X_min_original - 1e-10
+
+    return X_restored
+
+def apply_basis_functions(X):
+    phi1 = lambda x: x**0  # 상수항
+    phi2 = lambda x: x     # 선형항
+    phi3 = lambda x: x**2  # 2차항
+    phi4 = lambda x: x**3  # 3차항
+    phi5 = lambda x: np.exp(x) - 1  # 지수 증가
+    phi6 = lambda x: np.exp(-x)     # 지수 감소
+    phi7 = lambda x: np.log(x + 1)  # 로그 함수 (느린 증가)
+    phi8 = lambda x: 1 / (x + 1)    # 역수 함수 (빠른 감소)
+    phi9 = lambda x: np.maximum(0, x - 0.5)**2  # ReLU의 변형 (비선형성 증가)
+    
+    return np.array([[phi1(x), phi2(x), phi3(x), phi4(x), phi5(x), phi6(x), phi7(x), phi8(x), phi9(x)] for x in X])
+
+def J(w, P, x, y):
+    PHI = apply_basis_functions(x)
+    y_pred = np.dot(w.T, PHI.T)
+    return 0.5*(((y-y_pred)**2).sum(axis=-1))
+
+def grad(w, P, x, y):
+    PHI = apply_basis_functions(x)
+    g = np.dot(w.T, np.dot(PHI.T, PHI)) - np.dot(y.T, PHI)
+    return g.astype(np.float64)
+
+def CGM(f, df, x, args=(), eps=1.0e-7, max_iter=300, verbose=False):
+    c = df(x, *args)
+    if np.linalg.norm(c) < eps:
+        return x
+    d = -c
+    for k in range(max_iter):
+        alpha = line_search(f, df, x, d, args)
+        x_new = x + alpha * d
+        c_new = df(x_new, *args)
+        if np.linalg.norm(c_new) < eps:
+            return x_new
+        beta = np.dot(c_new, c_new) / np.dot(c, c)
+        d = -c_new + beta * d
+        x = x_new
+        c = c_new
+    if verbose:
+        print(f"CGM reached max iterations: {max_iter}")
+    return x
+
+def line_search(f, df, x, d, args):
+    alpha, beta = 0.01, 0.5
+    t = 1.0
+    while f(x + t * d, *args) > f(x, *args) - alpha * t * np.dot(df(x, *args), d):
+        t *= beta
+    return t
+
+def predict_time_series(X):
+    X_norm, X_min, X_max, X_min_original = log_normalize(X)
+    PHI = apply_basis_functions(X_norm)
+    w = np.random.uniform(-1, 1, 9) 
+    optimized_w = CGM(J, grad, w, args=(8, X_norm, X_norm), verbose=False)
+    y_pred = np.dot(optimized_w.T, PHI.T)
+    return log_denormalize(y_pred, X_min, X_max, X_min_original)
+
+def process_dataframe(df, input_column, output_column):
+    def process_row(row):
+        X = row[input_column]
+        if isinstance(X, np.ndarray) and X.size > 0:
+            row[output_column] = predict_time_series(X)
+        else:
+            row[output_column] = np.array([])
+        return row
+    
+    df[output_column] = None
+    return df.apply(process_row, axis=1)
+
+ml_data = process_dataframe(ml_data, 'preproc_rfu', 'ml_baseline_fit')
+ml_data['ml_analysis_absd'] = ml_data['preproc_rfu'] - ml_data['ml_baseline_fit']
+ml_data.to_parquet('no_mudt_ml_data.parquet')
+```
+
 ### Temp
 
 ```{python}
@@ -287,7 +414,7 @@ def grad(w, P, x, y):
     g = np.dot(w.T, np.dot(PHI.T, PHI)) - np.dot(y.T, PHI)
     return g.astype(np.float64)
 
-def CGM(f, df, x, args=(), eps=1.0e-7, max_iter=300, verbose=False):
+def CGM(f, df, x, args=(), eps=1.0e-7, max_iter=600, verbose=False):
     c = df(x, *args)
     if np.linalg.norm(c) < eps:
         return x
@@ -367,10 +494,13 @@ n = len(merged_data)
 #temp1 = process_dataframe(df1, 'preproc_rfu', 'ml_fitted')
 #temp2 = process_dataframe(df2, 'preproc_rfu', 'ml_fitted')
 #temp3 = process_dataframe(df3, 'preproc_rfu', 'ml_fitted')
+temp = merged_data[['combo_key','preproc_rfu']]
+temp = process_dataframe(temp, 'preproc_rfu', 'ml_baseline_fit')
+
 #temp=pd.concat([temp1,temp2,temp3],axis=0,ignore_index=True)
 ##plot_results(temp, 'preproc_rfu', 'ml_fitted')
 #
-#temp.to_parquet('mudt_ml_data.parquet')
+#temp.to_parquet('no_mudt_ml_data.parquet')
 # MSE 계산
 # negative_data['mse'] = negative_data.apply(lambda row: np.mean((row['preproc_rfu'] - row['ml_fitted'])**2) if isinstance(row['preproc_rfu'], np.ndarray) else np.nan, axis=1)
 # print(negative_data['mse'].describe())
@@ -429,7 +559,8 @@ strep_plus1_data = pl.scan_parquet(strep_plus1_datapath).collect().to_pandas()
 strep_plus2_data = pl.scan_parquet(strep_plus2_datapath).collect().to_pandas()
 ml_data = pl.scan_parquet(ml_datapath).collect().to_pandas()
 
-
+ml_data['ml_analysis_absd']=ml_data['preproc_rfu'] - ml_data['ml_baseline_fit']
+ml_data.to_parquet('no_mudt_ml_data.parquet')
 ## variable selection used for merging the dataframes
 cfx_df = cfx_data[['original_rfu_cfx', 'combo_key']]
 auto_baseline_df = auto_baseline_data[auto_baseline_data.columns[6:]]  # Adjust index as necessary
@@ -838,6 +969,11 @@ plot_single_well(mudt_risk_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt
 ```
 
 ## Conclusion
+
+### 기존 발생하던 문제들을 효과적으로 개선
+### 알고리즘의 정확성 향상과 진단 신호 탐지에서의 오차 감소
+### 시각화 도구의 개선
+### 향후 개선
 
 직관적인 알고리즘 성능 비교 분석 제공, 정량적 성능 평가를 위한 비교 metric 생성 및 알고리즘 성능 개선에 대한 insights 제공
 알고리즘 성능 비교 분석이 가능한 시각화를 제공 및 프로젝트 관련 동료에게 실무적 도움을 제공

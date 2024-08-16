@@ -198,39 +198,42 @@ def plot_baseline_subtractions(i_data, i_pcrd, i_channel, i_temperature, colors=
         Output: 6 Pannels of plt.subplots()
     '''
     i_data = i_data.query("`name`==@i_pcrd & `channel` == @i_channel & `temperature`==@i_temperature").copy()
-    
+
     if mudt:
         titles = ['[After BPN] Raw RFU', '[After BPN] Preproc RFU', '[DSP] Original ABSD', 
-                  '[Auto] Baseline-Subtracted RFU', '[Strep+1] Baseline-Subtracted RFU', '[Strep+2] Baseline-Subtracted RFU']
+                '[Auto] Baseline-Subtracted RFU', '[Strep+2] Baseline-Subtracted RFU', '[ML] Baseline-Subtracted RFU']
         data_keys = ['original_rfu_after_bpn','preproc_rfu_after_bpn', 'analysis_absd_orig', 
-                     'basesub_absd_orig', 'strep_plus1_analysis_absd','strep_plus2_analysis_absd']
+                    'basesub_absd_orig', 'strep_plus2_analysis_absd', 'ml_analysis_absd']
+                    # 'basesub_absd_orig', 'strep_plus1_analysis_absd','strep_plus2_analysis_absd']
     else:
         titles = ['[After BPN] Raw RFU', '[CFX] Baseline-Subtracted RFU', '[DSP] Original ABSD', 
-                  '[Auto] Baseline-Subtracted RFU', '[Strep+1] Baseline-Subtracted RFU', '[Strep+2] Baseline-Subtracted RFU']
+                '[Auto] Baseline-Subtracted RFU','[Strep+2] Baseline-Subtracted RFU', '[ML] Baseline-Subtracted RFU']
         data_keys = ['original_rfu_after_bpn', 'original_rfu_cfx', 'analysis_absd_orig', 
-                     'basesub_absd_orig','strep_plus1_analysis_absd','strep_plus2_analysis_absd']
-    
+                    'basesub_absd_orig', 'strep_plus2_analysis_absd', 'ml_analysis_absd']
+                    # 'basesub_absd_orig', 'strep_plus1_analysis_absd','strep_plus2_analysis_absd']
+
     original_rfu_min_mean=i_data['original_rfu'].apply(lambda x: np.mean(x)).min()
     i_data.loc[:, 'original_rfu_after_bpn'] = i_data['original_rfu'].apply(lambda x: compute_bpn(x, original_rfu_min_mean))
-    
+
     preproc_rfu_min_mean=i_data['preproc_rfu'].apply(lambda x: np.mean(x)).min()
     i_data.loc[:, 'preproc_rfu_after_bpn'] = i_data['preproc_rfu'].apply(lambda x: compute_bpn(x, preproc_rfu_min_mean))
         
     array_columns = [col for col in i_data.columns if i_data[col].apply(lambda x: isinstance(x, np.ndarray)).any()]
     rfu = i_data['original_rfu'].values[0]
     cycle_length = len(rfu)
-       
+        
     for column in array_columns:
         i_data[column] = i_data[column].apply(lambda x: np.zeros(cycle_length) if x is None or x.size == 0 else x)
 
-    
-    baseline_data = i_data[['analysis_absd_orig','basesub_absd_orig', 'original_rfu_cfx','strep_plus1_analysis_absd','strep_plus2_analysis_absd']]
-    
+
+    baseline_data = i_data[['analysis_absd_orig','basesub_absd_orig', 'original_rfu_cfx','strep_plus2_analysis_absd','ml_analysis_absd']]
+
     original_rfu_after_bpn_limits = find_global_extremes(i_data['original_rfu_after_bpn'])
     preproc_rfu_after_bpn_limits = find_global_extremes(i_data['preproc_rfu_after_bpn'])
     limits = find_global_extremes(baseline_data)
-    
-    grouping_columns = ['analysis_absd_orig', 'original_rfu_cfx', 'basesub_absd_orig', 'strep_plus1_analysis_absd', 'strep_plus2_analysis_absd']
+
+    grouping_columns = ['analysis_absd_orig', 'original_rfu_cfx', 'basesub_absd_orig', 'strep_plus2_analysis_absd', 'ml_analysis_absd']
+
     error_metrics_df = (i_data
                         .groupby(['name', 'channel', 'temperature'])
                         #.apply(lambda x: get_comparison_metrics(x, grouping_columns),include_groups=False)
@@ -240,9 +243,9 @@ def plot_baseline_subtractions(i_data, i_pcrd, i_channel, i_temperature, colors=
             
     metric_min=round(i_data['outlier_naive_metric_original_rfu'].min(),2)
     metric_max=round(i_data['outlier_naive_metric_original_rfu'].max(),2)
-    
+
     fig, axs = plt.subplots(2, 3, figsize=(12, 8)) #(15, 10)
-    
+
     for (i, j), ax, title, key in zip(np.ndindex(axs.shape), axs.flat, titles, data_keys):
         if key:  
             rfu_values = []
@@ -250,7 +253,7 @@ def plot_baseline_subtractions(i_data, i_pcrd, i_channel, i_temperature, colors=
                 rfu = row[key]
                 rfu_values.extend(rfu)
                 cycle = list(range(len(rfu)))
-               
+                
                 if (i,j) == (0,0):
                     ax.text(0.05, 0.98, f"N: {i_data.shape[0]}\nOutlier Naive Metric: [{metric_min},{metric_max}]\nBPN Reference Value: {round(original_rfu_min_mean)}", 
                             verticalalignment='top', horizontalalignment='left', 
@@ -269,10 +272,10 @@ def plot_baseline_subtractions(i_data, i_pcrd, i_channel, i_temperature, colors=
                     ax.text(0.05, 0.98, f"n: {round(error_metrics_dict['basesub_absd_orig']['length'],2)}\nMAE: {round(error_metrics_dict['basesub_absd_orig']['mae'],2)}\nMSE: {round(error_metrics_dict['basesub_absd_orig']['mse'],2)}", 
                             verticalalignment='top', horizontalalignment='left', transform=ax.transAxes)
                 elif (i,j) == (1,1):
-                    ax.text(0.05, 0.98, f"n: {round(error_metrics_dict['strep_plus1_analysis_absd']['length'],2)}\nMAE: {round(error_metrics_dict['strep_plus1_analysis_absd']['mae'],2)}\nMSE: {round(error_metrics_dict['strep_plus1_analysis_absd']['mse'],2)}", 
+                    ax.text(0.05, 0.98, f"n: {round(error_metrics_dict['strep_plus2_analysis_absd']['length'],2)}\nMAE: {round(error_metrics_dict['strep_plus2_analysis_absd']['mae'],2)}\nMSE: {round(error_metrics_dict['strep_plus2_analysis_absd']['mse'],2)}", 
                             verticalalignment='top', horizontalalignment='left', transform=ax.transAxes)
                 elif (i, j) == (1, 2):
-                    ax.text(0.05, 0.98, f"n: {round(error_metrics_dict['strep_plus2_analysis_absd']['length'],2)}\nMAE: {round(error_metrics_dict['strep_plus2_analysis_absd']['mae'],2)}\nMSE: {round(error_metrics_dict['strep_plus2_analysis_absd']['mse'],2)}", 
+                    ax.text(0.05, 0.98, f"n: {round(error_metrics_dict['ml_analysis_absd']['length'],2)}\nMAE: {round(error_metrics_dict['ml_analysis_absd']['mae'],2)}\nMSE: {round(error_metrics_dict['ml_analysis_absd']['mse'],2)}", 
                             verticalalignment='top', horizontalalignment='left', transform=ax.transAxes)
                 ax.plot(cycle, rfu, alpha=0.5)
                 ax.axhline(y=0,color='black',linestyle='dotted',linewidth=2)
@@ -293,9 +296,10 @@ def plot_baseline_subtractions(i_data, i_pcrd, i_channel, i_temperature, colors=
             ax.set_title(title)
     pydsp_version = get_package_details().get('pydsp')
     fig.suptitle(f'PCRD: {i_pcrd}\npydsp Version: {pydsp_version}, Channel: {i_channel}, Temperature: {i_temperature}, The Number of Signals: {i_data.shape[0]}', 
-                 ha = 'left', x=0.02, fontsize=15)
+                ha = 'left', x=0.02, fontsize=15)
     plt.tight_layout()
     plt.show()
+
 
 def plot_single_well(i_data, i_pcrd, i_channel, i_temperature, i_well, mudt = True, colors=None):
     '''
@@ -313,62 +317,64 @@ def plot_single_well(i_data, i_pcrd, i_channel, i_temperature, i_well, mudt = Tr
         Output: 6 Pannels of plt.subplots()
     '''
     i_data = i_data.query("`name`==@i_pcrd & `channel` == @i_channel & `temperature`==@i_temperature & `well` == @i_well").copy()
-    
+
     if mudt:
         raw_rfu = 'preproc_rfu'
     else:
         raw_rfu = 'original_rfu'
-    
+
     columns = [ # (new_column, from, to) 
     ('dsp_correction_fit', raw_rfu, 'analysis_absd_orig'), # create DSP Correction + DSP Fit data 
     ('basesub_correction_fit', raw_rfu, 'basesub_absd_orig'), # create Auto Correction + Auto Fit data 
     ('cfx_correction_fit', raw_rfu, 'original_rfu_cfx'), # create CFX Correction + CFX Fit data
-    ('strep_plus1_correction_fit', raw_rfu , 'strep_plus1_analysis_absd'), # create strep+1 Correction + strep+1 Fit data
+    #('strep_plus1_correction_fit', raw_rfu , 'strep_plus1_analysis_absd'), # create strep+1 Correction + strep+1 Fit data
     ('strep_plus2_correction_fit', raw_rfu, 'strep_plus2_analysis_absd'), # create strep+2 Correction + strep+2 Fit data
-    
+    ('ml_correction_fit', raw_rfu, 'ml_analysis_absd'), # create ml Correction + ml Fit data
     ('dsp_corrected_rfu', raw_rfu, 'analysis_rd_diff'), # create DSP Correction data
     ('basesub_corrected_rfu', raw_rfu, 'basesub_rd_diff'), # create Auto Correction data  
     # cannot create CFX Correction: it is 'black box'
-    ('strep_plus1_corrected_rfu', raw_rfu, 'strep_plus1_analysis_rd_diff'), # create strep_plus1 Correction data  
-    ('strep_plus2_corrected_rfu',raw_rfu, 'strep_plus2_analysis_rd_diff'), # create strep+2 Correction data    
+    #('strep_plus1_corrected_rfu', raw_rfu, 'strep_plus1_analysis_rd_diff'), # create strep_plus1 Correction data  
+    ('strep_plus2_corrected_rfu',raw_rfu, 'strep_plus2_analysis_rd_diff'), # create strep+2 Correction data
+    ('ml_corrected_rfu',raw_rfu, 'strep_plus2_analysis_rd_diff') # create ml Correction data
     ]
-    
-    
+
+
     raw_scale_columns = [raw_rfu,'dsp_correction_fit', 'basesub_correction_fit','cfx_correction_fit',
-                        'strep_plus1_correction_fit','strep_plus2_correction_fit']
+                        #'strep_plus1_correction_fit','strep_plus2_correction_fit']
+                        'strep_plus2_correction_fit','ml_correction_fit']
     correction_scale_columns = [
-        raw_rfu,'dsp_corrected_rfu', 'basesub_corrected_rfu', 'strep_plus1_corrected_rfu', 'strep_plus2_corrected_rfu'#,
+        raw_rfu,'dsp_corrected_rfu', 'basesub_corrected_rfu', 'strep_plus2_corrected_rfu', 'ml_corrected_rfu'#,
         #'analysis_scd_fit', 'basesub_scd_fit', 'strep_plus1_baseline_fit', 'strep_plus2_analysis_scd_fit'
     ]
                             
     subtract_scale_columns = ['basesub_absd_orig','original_rfu_cfx', 'analysis_absd_orig', 
-                              'strep_plus1_analysis_absd','strep_plus2_analysis_absd']
-    
-    titles = ['[DSP] Algorithm Performance', '[Auto] Algorithm Performance', '[CFX] Algorithm Performance', '[Strep+1] Algorithm Performance', '[Strep+2] Algorithm Performance',
-          '[DSP] Fitting Performance', '[Auto] Fitting Performance', '[CFX] Fitting Performance', '[Strep+1] Fitting Performance', '[Strep+2] Fitting Performance',
-          '[DSP] Baseline-Subtracted RFU', '[Auto] Baseline-Subtracted RFU', '[CFX] Baseline-Subtracted RFU', '[Strep+1] Baseline-Subtracted RFU', '[Strep+2] Baseline-Subtracted RFU']
-    
+                            'strep_plus2_analysis_absd','ml_analysis_absd']
+
+    titles = ['[DSP] Algorithm Performance', '[Auto] Algorithm Performance', '[CFX] Algorithm Performance', '[Strep+2] Algorithm Performance', '[ML] Algorithm Performance',
+        '[DSP] Fitting Performance', '[Auto] Fitting Performance', '[CFX] Fitting Performance', '[Strep+2] Fitting Performance', '[ML] Fitting Performance',
+        '[DSP] Baseline-Subtracted RFU', '[Auto] Baseline-Subtracted RFU', '[CFX] Baseline-Subtracted RFU', '[Strep+2] Baseline-Subtracted RFU', '[ML] Baseline-Subtracted RFU']
+
     preprocessing_columns = [
     ('dsp_correction_fit', raw_rfu),
     ('basesub_correction_fit', raw_rfu),
     ('cfx_correction_fit', raw_rfu),
-    ('strep_plus1_correction_fit', raw_rfu),
-    ('strep_plus2_correction_fit', raw_rfu)]
-    
+    ('strep_plus2_correction_fit', raw_rfu),
+    ('ml_correction_fit', raw_rfu)]
+
     correction_columns = [
     ('dsp_corrected_rfu', raw_rfu, 'analysis_scd_fit'), 
     ('basesub_corrected_rfu', raw_rfu, 'basesub_scd_fit'),
     (raw_rfu, raw_rfu, 'cfx_correction_fit'),
-    ('strep_plus1_corrected_rfu', raw_rfu, 'strep_plus1_baseline_fit'),
-    ('strep_plus2_corrected_rfu', raw_rfu, 'strep_plus2_analysis_scd_fit')]
-    
+    ('strep_plus2_corrected_rfu', raw_rfu, 'strep_plus2_analysis_scd_fit'),
+    ('ml_corrected_rfu', raw_rfu, 'ml_baseline_fit')]
+
     subtracted_columns = [    
     ('analysis_absd_orig'),
     ('basesub_absd_orig'),
     ('original_rfu_cfx'),
-    ('strep_plus1_analysis_absd'),
-    ('strep_plus2_analysis_absd')]
-    
+    ('strep_plus2_analysis_absd'),
+    ('ml_analysis_absd')]
+
     if mudt:
         columns = [col for col in columns if 'cfx' not in col[0].lower()]
         raw_scale_columns= [col for col in raw_scale_columns if 'cfx' not in col.lower()]
@@ -381,31 +387,31 @@ def plot_single_well(i_data, i_pcrd, i_channel, i_temperature, i_well, mudt = Tr
         fig, axs = plt.subplots(3, 4, figsize=(18, 12)) #(15, 10)
     else:
         fig, axs = plt.subplots(3, 5, figsize=(18, 12)) #(15, 10)
-    
-    
+
+
     rfu = i_data[raw_rfu].values[0]
     cycle_length = len(rfu)
     cycle = list(range(cycle_length))       
-    
+
     array_columns = [col for col in i_data.columns if i_data[col].apply(lambda x: isinstance(x, np.ndarray)).any()]
     for column in array_columns:
         i_data[column] = i_data[column].apply(lambda x: np.zeros(cycle_length) if x is None or x.size == 0 else x)
-    
+
     for new_column, column_a, column_b in columns:
         i_data[new_column] = list(map(lambda x, y: [a - b for a, b in zip(x, y)], i_data[column_a], i_data[column_b]))
-    
+
     raw_scale_data = i_data[raw_scale_columns]
     correction_scale_data = i_data[correction_scale_columns]
     subtract_scale_data = i_data[subtract_scale_columns]
-    
+
     raw_limits = find_global_extremes(raw_scale_data)
     correction_limits = find_global_extremes(correction_scale_data)
     subtraction_limits = find_global_extremes(subtract_scale_data)
-    
+
     rfu_values = [] 
     correct_alpha = 0.5
     fit_alpha = 0.5
-    
+
     def set_ylim(ax, limits, index):
         if max(limits) < 0:
             max_limit_ratio = 0.95
@@ -419,12 +425,12 @@ def plot_single_well(i_data, i_pcrd, i_channel, i_temperature, i_well, mudt = Tr
         min_limit = np.sign(min(limits)) * np.abs(min(limits)) * min_limit_ratio
         max_limit = np.sign(max(limits)) * np.abs(max(limits)) * max_limit_ratio
         ax.set_ylim([min_limit, max_limit])
-    
+
     for ((i, j), ax, title) in zip(np.ndindex(axs.shape), axs.flat, titles):
         if i == 0:
             ax.plot(cycle, i_data[preprocessing_columns[j][0]].values[0], 'red', alpha=0.5, label = "Correction & Fit")
             ax.plot(cycle, i_data[preprocessing_columns[j][1]].values[0], 'k-', alpha=0.5, label = "Raw Data")
-    
+
         elif i == 1:
             ax.plot(cycle, i_data[correction_columns[j][0]].values[0], 'b--', alpha=1, label = "Correction")
             ax.plot(cycle, i_data[correction_columns[j][1]].values[0], 'k-', alpha=0.5, label = "Raw Data")
@@ -432,20 +438,20 @@ def plot_single_well(i_data, i_pcrd, i_channel, i_temperature, i_well, mudt = Tr
         else:
             ax.plot(cycle, i_data[subtracted_columns[j]].values[0], 'k-', alpha=0.5, label = "Subtracted Data")
             ax.axhline(y=0,color='black',linestyle='dotted',linewidth=2)
-    
+
         if i == 0:
             set_ylim(ax, raw_limits, 0)
         elif i == 1:
             set_ylim(ax, correction_limits, 1)
         else:
             set_ylim(ax, subtraction_limits, 2)
-    
+
         ax.set_title(title)
         ax.legend()
     pydsp_version = get_package_details().get('pydsp')
     fig.suptitle(f'PCRD: {i_pcrd}\npydsp Version: {pydsp_version}, Channel: {i_channel}, Temperature: {i_temperature}, Well: {i_well}', 
-                     ha = 'left', x=0.02, fontsize=15)
-    
+                    ha = 'left', x=0.02, fontsize=15)
+
     plt.tight_layout()
     plt.show()
 

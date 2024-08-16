@@ -70,6 +70,7 @@ def main_function(outlier_naive_metric=1.65,mudt=True):
         cfx_datapath = datapath + '/cfx_data/mudt_cfx_data.parquet'
         strep_plus1_datapath = datapath + '/strep_plus1_data/mudt_strep_plus1_data.parquet'
         strep_plus2_datapath = datapath + '/strep_plus2_data/mudt_strep_plus2_data.parquet'
+        ml_datapath = datapath + '/ml_data/mudt_ml_data.parquet'
     else:
         ### without MuDT (To Be Organized)
         raw_datapath = datapath + '/raw_data/no_mudt_raw_data.parquet'
@@ -77,42 +78,38 @@ def main_function(outlier_naive_metric=1.65,mudt=True):
         cfx_datapath = datapath + '/cfx_data/no_mudt_cfx_data.parquet'
         strep_plus1_datapath = datapath + '/strep_plus1_data/no_mudt_strep_plus1_data.parquet'
         strep_plus2_datapath = datapath + '/strep_plus2_data/no_mudt_strep_plus2_data.parquet'
-    
-    
+        ml_datapath = datapath + '/ml_data/no_mudt_ml_data.parquet'
+
+
     ## Read parquets
-    # raw_data = load_and_prepare_parquet(raw_datapath, i_combo_key_columns=combo_key_columns)
-    # cfx_data = load_and_prepare_parquet(cfx_datapath, cfx_columns, combo_key_columns, {'original_rfu': 'original_rfu_cfx'})
-    # auto_baseline_data = load_and_prepare_parquet(auto_datapath, auto_baseline_columns, combo_key_columns)
-    # strep_plus1_data = load_and_prepare_parquet(strep_plus1_datapath, strep_plus1_columns, combo_key_columns,
-    #                                     {'new_jump_corrected_rfu': 'strep_plus1_corrected_rfu','new_efc': 'strep_plus1_efc','new_baseline':'strep_plus1_baseline_fit',
-    #                                      'new_baseline_model':'strep_plus1_baseline_model','new_absd':'strep_plus1_analysis_absd','analysis_rd_diff':'strep_plus1_analysis_rd_diff'})
-    # strep_plus2_data = load_and_prepare_parquet(strep_plus2_datapath, control_dsp_columns, combo_key_columns,
-    #                                       {'preproc_rfu': 'strep_plus2_preproc_rfu', 'analysis_absd': 'strep_plus2_analysis_absd',
-    #                                       'analysis_rd_diff': 'strep_plus2_analysis_rd_diff','analysis_scd_fit':'strep_plus2_analysis_scd_fit', 
-    #                                       'analysis_efc':'strep_plus2_analysis_efc', 'final_ct':'strep_plus2_final_ct', 
-    #                                       'analysis_resultwell':'strep_plus2_analysis_resultwell', 'analysis_dataprocnum': 'strep_plus2_analysis_dataprocnum'})
+
     raw_data = pl.scan_parquet(raw_datapath).collect().to_pandas()
     cfx_data = pl.scan_parquet(cfx_datapath).collect().to_pandas()
     auto_baseline_data = pl.scan_parquet(auto_datapath).collect().to_pandas()
     strep_plus1_data = pl.scan_parquet(strep_plus1_datapath).collect().to_pandas()
     strep_plus2_data = pl.scan_parquet(strep_plus2_datapath).collect().to_pandas()
-    
+    ml_data = pl.scan_parquet(ml_datapath).collect().to_pandas()
+
+
     ## variable selection used for merging the dataframes
     cfx_df = cfx_data[['original_rfu_cfx', 'combo_key']]
-    auto_baseline_df = auto_baseline_data[auto_baseline_columns[6:] + ['combo_key']]  # Adjust index as necessary
-    #strep_df = strep_data[strep_data.columns[6:]]  
+    auto_baseline_df = auto_baseline_data[auto_baseline_data.columns[6:]]  # Adjust index as necessary
     strep_plus1_df = strep_plus1_data[strep_plus1_data.columns[6:]]  
     strep_plus2_df = strep_plus2_data[strep_plus2_data.columns[6:]]  
-    
+    ml_df = ml_data[['ml_baseline_fit','ml_analysis_absd','combo_key']]
+
+
     ## Merge dataframes
-    
+
     merged_data = (cfx_df
-                   .merge(raw_data, on='combo_key')
-                   .merge(auto_baseline_df, on='combo_key')
-                   .merge(strep_plus1_df, on ='combo_key')
-                   .merge(strep_plus2_df, on = 'combo_key')
+                    .merge(raw_data, on='combo_key')
+                    .merge(auto_baseline_df, on='combo_key')
+                    .merge(strep_plus1_df, on ='combo_key')
+                    .merge(strep_plus2_df, on = 'combo_key')
+                    .merge(ml_df, on = 'combo_key')
                   )
     negative_data = merged_data[merged_data['final_ct'] < 0]
+
     
     
     ## Preprocess 

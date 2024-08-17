@@ -332,34 +332,20 @@ plot_signal_patterns(descending_data,channel_name, temperature_name, mudt = mudt
 #### 단일 신호에 대한 성능 평가
 
 ```{python}
-temp=descending_data[descending_data['strep_plus1_analysis_absd'].apply(lambda x: x[12]>200)]
-pcrd_nm = temp.loc[5272]['name']
-channel_nm =temp.loc[5272]['channel']
-temperature_nm=temp.loc[5272]['temperature']
-well_nm=temp.loc[5272]['well']
-```
+temp = descending_data[descending_data['strep_plus2_analysis_absd'].apply(lambda x: x[42]<(-30))]
+pcrd_nm = temp.tail(1)['name'].iloc[0]
+channel_nm = temp.tail(1)['channel'].iloc[0]
+temperature_nm = temp.tail(1)['temperature'].iloc[0]
+well_nm = temp.tail(1)['well'].iloc[0]
 
-```{python}
-plot_single_well(descending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt=mudt)
-```
-
-```{python}
-temp=descending_data[descending_data['strep_plus2_analysis_absd'].apply(lambda x: x[31]>50)]
-pcrd_nm = temp.loc[18528]['name']
-channel_nm =temp.loc[18528]['channel']
-temperature_nm=temp.loc[18528]['temperature']
-well_nm=temp.loc[18528]['well']
-```
-
-```{python}
-plot_single_well(descending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt=mudt)
+plot_single_well(descending_data, pcrd_nm, channel_nm, temperature_nm, well_nm, mudt=mudt)
 ```
 
 ### 제품 특이적인 신호처리에 대한 성능 평가
 
 ```{python}
 mudt=True
-outlier_naive_metric =1.65
+outlier_naive_metric =1.1
 result_data = main_function(outlier_naive_metric,mudt)
 merged_data = result_data[0]
 filtered_data = result_data[1]
@@ -382,108 +368,79 @@ plot_baseline_subtractions(filtered_data,pcrd_name,channel_name,temperature_name
 ##### 단일 신호에 대한 성능 평가
 
 ```{python}
-temp=filtered_data[filtered_data['strep_plus2_analysis_absd'].apply(lambda x: x[20]>100)]
-temp
+temp=filtered_data[filtered_data['strep_plus2_analysis_absd'].apply(lambda x: x[40]>100)]
 ```
 
 ```{python}
-pcrd_nm = temp.loc[640]['name']
-channel_nm =temp.loc[640]['channel']
-temperature_nm=temp.loc[640]['temperature']
-well_nm=temp.loc[640]['well']
-print(pcrd_nm)
-print(channel_nm)
-print(temperature_nm)
-print(well_nm)
-```
-```{python}
+pcrd_nm = temp.tail(1).iloc[0]['name']
+channel_nm = temp.tail(1).iloc[0]['channel']
+temperature_nm= temp.tail(1).iloc[0]['temperature']
+well_nm= temp.tail(1).iloc[0]['well']
+
 plot_single_well(filtered_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
 ```
 
 #### 증가 신호에 대한 성능 평가 
 
 ```{python}
-# #| echo: false
+ascending_data = merged_data.query("`analysis_dataprocnum` == 13 & `channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` >0")
+plot_signal_patterns(ascending_data,channel_name, temperature_name, mudt = mudt)
+```
 
+##### 단일 신호에 대한 성능 평가
 
-# ascending_data = merged_data.query("`analysis_dataprocnum` == 13 & `channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` >0")
-# ascending_data = ascending_data.iloc[:len(ascending_data) // 2]
-
-
-# ##### 단일 신호에 대한 성능 평가
-
-# plot_signal_patterns(ascending_data,channel_name, temperature_name, mudt = mudt)
-
-# temp=ascending_data[ascending_data['strep_plus1_analysis_absd'].apply(lambda x: x[10]<-200)]
-# pcrd_nm = temp.loc[1528]['name']
-# channel_nm =temp.loc[1528]['channel']
-# temperature_nm=temp.loc[1528]['temperature']
-# well_nm=temp.loc[1528]['well']
-# plot_single_well(ascending_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
-
-# temp=ascending_data[ascending_data['strep_plus2_analysis_absd'].apply(lambda x: x[10]<-300)]
-# pcrd_nm = temp.loc[36200]['name']
-# channel_nm =temp.loc[36200]['channel']
-# temperature_nm=temp.loc[36200]['temperature']
-# well_nm=temp.loc[36200]['well']
-# plot_single_well(ascending_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
+```{python}
+temp=ascending_data[ascending_data['strep_plus2_analysis_absd'].apply(lambda x: x[40]>200)]
+pcrd_name = temp.tail(1).iloc[0]['name']
+channel_name =temp.tail(1).iloc[0]['channel']
+temperature_name=temp.tail(1).iloc[0]['temperature']
+well_name=temp.tail(1).iloc[0]['well']
+plot_single_well(ascending_data,pcrd_name,channel_name, temperature_name, well_name,mudt=mudt)
 ```
 
 #### 감소 신호에 대한 성능 평가
 
 ```{python}
-descending_data = merged_data.query("`channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` <0")
-descending_data = descending_data.iloc[:len(descending_data) // 2]
-plot_signal_patterns(descending_data,channel_name, temperature_name, mudt = True)
-```
-```{python}
-descending_data = merged_data.query("`analysis_dataprocnum` == 13 & `channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` <0")
+descending_data = merged_data.query("`channel` == @channel_name & `temperature` == @temperature_name & `linear_slope`<0 & `final_ct` <0")
+
 plot_signal_patterns(descending_data,channel_name, temperature_name, mudt = True)
 ```
 
 ##### 단일 신호에 대한 성능 평가
 
 ```{python}
-temp=descending_data[descending_data['strep_plus2_analysis_absd'].apply(lambda x: x[35]<-50)]
-pcrd_nm = temp.loc[26112]['name']
-channel_nm =temp.loc[26112]['channel']
-temperature_nm=temp.loc[26112]['temperature']
-well_nm=temp.loc[26112]['well']
-plot_single_well(descending_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
+temp = descending_data[descending_data['strep_plus2_analysis_absd'].apply(lambda x: x[30]<(-20))]
+pcrd_name = temp.tail(1)['name'].iloc[0]
+channel_name = temp.tail(1)['channel'].iloc[0]
+temperature_name = temp.tail(1)['temperature'].iloc[0]
+well_name = temp.tail(1)['well'].iloc[0]
+
+plot_single_well(descending_data, pcrd_name, channel_name, temperature_name, well_name, mudt=mudt)
+
 ```
+
+#### 제품 고유 Risk 신호
+
 ```{python}
 merged_data['mudt_distortion_combo_key']=merged_data[['name', 'channel', 'well']].apply(lambda x: ' '.join(x), axis=1)
 mudt_high_risk_list = merged_data.query("`temperature`=='High' & `final_ct`<40 & `final_ct`>0")['mudt_distortion_combo_key'].unique()
 mudt_risk_data=merged_data.query("`mudt_distortion_combo_key` in @mudt_high_risk_list & `temperature`=='Low' & `final_ct`<0")
+
+pcrd_name = mudt_risk_data.tail(1)['name'].iloc[0]
+channel_name = mudt_risk_data.tail(1)['channel'].iloc[0]
+temperature_name = mudt_risk_data.tail(1)['temperature'].iloc[0]
+
 plot_signal_patterns(mudt_risk_data, channel_name, temperature_name, mudt=mudt)
 ```
 
 ```{python}
-temp=mudt_risk_data[mudt_risk_data['strep_plus2_analysis_absd'].apply(lambda x: x[20]>1000)]
-```
+temp=mudt_risk_data[mudt_risk_data['strep_plus2_analysis_absd'].apply(lambda x: x[40]< -200)]
+pcrd_name = temp.tail(1)['name'].iloc[0]
+channel_name = temp.tail(1)['channel'].iloc[0]
+temperature_name = temp.tail(1)['temperature'].iloc[0]
+well_name = temp.tail(1)['well'].iloc[0]
 
-```{python}
-pcrd_nm = temp.loc[54384]['name']
-channel_nm =temp.loc[54384]['channel']
-temperature_nm=temp.loc[54384]['temperature']
-well_nm=temp.loc[54384]['well']
-plot_single_well(mudt_risk_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
-```
-```{python}
-temp=mudt_risk_data[mudt_risk_data['strep_plus1_analysis_absd'].apply(lambda x: x[20]>1000)]
-pcrd_nm = temp.loc[24912]['name']
-channel_nm =temp.loc[24912]['channel']
-temperature_nm=temp.loc[24912]['temperature']
-well_nm=temp.loc[24912]['well']
-plot_single_well(mudt_risk_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
-```
-```{python}
-temp=mudt_risk_data[mudt_risk_data['strep_plus2_analysis_absd'].apply(lambda x: x[35]<-1800)]
-pcrd_nm = temp.loc[54304]['name']
-channel_nm =temp.loc[54304]['channel']
-temperature_nm=temp.loc[54304]['temperature']
-well_nm=temp.loc[54304]['well']
-plot_single_well(mudt_risk_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
+plot_single_well(mudt_risk_data,pcrd_name,channel_name, temperature_name, well_name,mudt=mudt)
 ```
 
 ## Conclusion

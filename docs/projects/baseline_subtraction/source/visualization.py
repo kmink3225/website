@@ -458,56 +458,55 @@ def plot_single_well(i_data, i_pcrd, i_channel, i_temperature, i_well, mudt = Tr
 
 def plot_signal_patterns(i_data,i_channel,i_temperature, mudt):
 
-    
     '''
     Plot the results, the baseline-subtracted data by the baseline-fitting algorithms to intuitively compare their overall performance.
-    
+
     Args:
         i_data: a dataframe, a result of merging the DSP execution result of raw RFU and the RFU baseline-subtracted by CFX manager, by the auto-baseline module, by the strep assay, and by the newly-developed algorithms.
         i_channel: channel_name
         i_temperature: temperature_name
         colors: customizing colors
-    
+
     Returns:
         Output: 6 Pannels of plt.subplots()
     '''
-    
+
     i_data = i_data.query("`channel` == @i_channel & `temperature`==@i_temperature").copy()
-    
+
     if mudt:
         titles = ['[After BPN] Raw RFU', '[After BPN] Preproc RFU', '[DSP] Original ABSD', 
-                  '[Auto] Baseline-Subtracted RFU', '[Strep+1] Baseline-Subtracted RFU', '[Strep+2] Baseline-Subtracted RFU']
+                '[Auto] Baseline-Subtracted RFU', '[Strep+2] Baseline-Subtracted RFU', '[ML] Baseline-Subtracted RFU']
         data_keys = ['original_rfu_after_bpn','preproc_rfu_after_bpn', 'analysis_absd_orig', 
-                     'basesub_absd_orig', 'strep_plus1_analysis_absd','strep_plus2_analysis_absd']
-        baseline_columns = ['analysis_absd_orig','basesub_absd_orig','strep_plus1_analysis_absd','strep_plus2_analysis_absd']
+                    'basesub_absd_orig', 'strep_plus2_analysis_absd', 'ml_analysis_absd']
+        baseline_columns = ['analysis_absd_orig','basesub_absd_orig','strep_plus2_analysis_absd', 'ml_analysis_absd']
     else:
         titles = ['[After BPN] Raw RFU', '[CFX] Baseline-Subtracted RFU', '[DSP] Original ABSD', 
-                  '[Auto] Baseline-Subtracted RFU', '[Strep+1] Baseline-Subtracted RFU', '[Strep+2] Baseline-Subtracted RFU']
+                '[Auto] Baseline-Subtracted RFU', '[Strep+2] Baseline-Subtracted RFU', '[ML] Baseline-Subtracted RFU']
         data_keys = ['original_rfu_after_bpn', 'original_rfu_cfx', 'analysis_absd_orig', 
-                     'basesub_absd_orig', 'strep_plus1_analysis_absd','strep_plus2_analysis_absd']
-        baseline_columns = ['analysis_absd_orig','basesub_absd_orig', 'original_rfu_cfx','strep_plus1_analysis_absd','strep_plus2_analysis_absd']
-    
+                    'basesub_absd_orig','strep_plus2_analysis_absd','ml_analysis_absd']
+        baseline_columns = ['analysis_absd_orig','basesub_absd_orig', 'original_rfu_cfx','strep_plus2_analysis_absd','ml_analysis_absd']
+
     original_rfu_min_mean=i_data['original_rfu'].apply(lambda x: np.mean(x)).min()
     i_data.loc[:, 'original_rfu_after_bpn'] = i_data['original_rfu'].apply(lambda x: compute_bpn(x, original_rfu_min_mean))
-    
+
     preproc_rfu_min_mean=i_data['preproc_rfu'].apply(lambda x: np.mean(x)).min()
     i_data.loc[:, 'preproc_rfu_after_bpn'] = i_data['preproc_rfu'].apply(lambda x: compute_bpn(x, preproc_rfu_min_mean))
         
     array_columns = [col for col in i_data.columns if i_data[col].apply(lambda x: isinstance(x, np.ndarray)).any()]
     rfu = i_data['original_rfu'].values[0]
     cycle_length = len(rfu)
-       
+        
     for column in array_columns:
         i_data[column] = i_data[column].apply(lambda x: np.zeros(cycle_length) if x is None or x.size == 0 else x)
-    
-    
+
+
     baseline_data = i_data[baseline_columns]
-    
+
     original_rfu_after_bpn_limits = find_global_extremes(i_data['original_rfu_after_bpn'])
     preproc_rfu_after_bpn_limits = find_global_extremes(i_data['preproc_rfu_after_bpn'])
     limits = find_global_extremes(baseline_data)
-    
-    grouping_columns = ['analysis_absd_orig', 'original_rfu_cfx', 'basesub_absd_orig', 'strep_plus1_analysis_absd', 'strep_plus2_analysis_absd']
+
+    grouping_columns = ['analysis_absd_orig', 'original_rfu_cfx', 'basesub_absd_orig', 'strep_plus2_analysis_absd', 'ml_analysis_absd']
     error_metrics_df = (i_data
                         .groupby(['name', 'channel', 'temperature'])
                         #.apply(lambda x: get_comparison_metrics(x, grouping_columns),include_groups=False)
@@ -517,9 +516,9 @@ def plot_signal_patterns(i_data,i_channel,i_temperature, mudt):
             
     metric_min=round(i_data['outlier_naive_metric_original_rfu'].min(),2)
     metric_max=round(i_data['outlier_naive_metric_original_rfu'].max(),2)
-    
+
     fig, axs = plt.subplots(2, 3, figsize=(12, 8)) #(15, 10)
-    
+
     for (i, j), ax, title, key in zip(np.ndindex(axs.shape), axs.flat, titles, data_keys):
         if key:  
             rfu_values = []
@@ -527,7 +526,7 @@ def plot_signal_patterns(i_data,i_channel,i_temperature, mudt):
                 rfu = row[key]
                 rfu_values.extend(rfu)
                 cycle = list(range(len(rfu)))
-               
+                
                 if (i,j) == (0,0):
                     ax.text(0.05, 0.98, f"N: {i_data.shape[0]}\nOutlier Naive Metric: [{metric_min},{metric_max}]\nBPN Reference Value: {round(original_rfu_min_mean)}", 
                             verticalalignment='top', horizontalalignment='left', 
@@ -546,10 +545,10 @@ def plot_signal_patterns(i_data,i_channel,i_temperature, mudt):
                     ax.text(0.05, 0.98, f"n: {round(error_metrics_dict['basesub_absd_orig']['length'],2)}\nMAE: {round(error_metrics_dict['basesub_absd_orig']['mae'],2)}\nMSE: {round(error_metrics_dict['basesub_absd_orig']['mse'],2)}", 
                             verticalalignment='top', horizontalalignment='left', transform=ax.transAxes)
                 elif (i,j) == (1,1):
-                    ax.text(0.05, 0.98, f"n: {round(error_metrics_dict['strep_plus1_analysis_absd']['length'],2)}\nMAE: {round(error_metrics_dict['strep_plus1_analysis_absd']['mae'],2)}\nMSE: {round(error_metrics_dict['strep_plus1_analysis_absd']['mse'],2)}", 
+                    ax.text(0.05, 0.98, f"n: {round(error_metrics_dict['strep_plus2_analysis_absd']['length'],2)}\nMAE: {round(error_metrics_dict['strep_plus2_analysis_absd']['mae'],2)}\nMSE: {round(error_metrics_dict['strep_plus2_analysis_absd']['mse'],2)}", 
                             verticalalignment='top', horizontalalignment='left', transform=ax.transAxes)
                 elif (i, j) == (1, 2):
-                    ax.text(0.05, 0.98, f"n: {round(error_metrics_dict['strep_plus2_analysis_absd']['length'],2)}\nMAE: {round(error_metrics_dict['strep_plus2_analysis_absd']['mae'],2)}\nMSE: {round(error_metrics_dict['strep_plus2_analysis_absd']['mse'],2)}", 
+                    ax.text(0.05, 0.98, f"n: {round(error_metrics_dict['ml_analysis_absd']['length'],2)}\nMAE: {round(error_metrics_dict['ml_analysis_absd']['mae'],2)}\nMSE: {round(error_metrics_dict['ml_analysis_absd']['mse'],2)}", 
                             verticalalignment='top', horizontalalignment='left', transform=ax.transAxes)
                 ax.plot(cycle, rfu, alpha=0.5)
                 ax.axhline(y=0,color='black',linestyle='dotted',linewidth=2)
@@ -570,6 +569,6 @@ def plot_signal_patterns(i_data,i_channel,i_temperature, mudt):
             ax.set_title(title)
     pydsp_version = get_package_details().get('pydsp')
     fig.suptitle(f'pydsp Version: {pydsp_version}, Channel: {i_channel}, Temperature: {i_temperature}, The Number of Signals: {i_data.shape[0]}', 
-                 ha = 'left', x=0.02, fontsize=15)
+                ha = 'left', x=0.02, fontsize=15)
     plt.tight_layout()
     plt.show()

@@ -18,7 +18,7 @@ format:
       body-width: 1200px
       margin-width: 100px
 execute:
-  eval: false
+  eval: True
 ---
 
 <ul class="nav nav-pills" id="language-tab" role="tablist">
@@ -252,11 +252,10 @@ warnings.filterwarnings("ignore")
 
 ```{python}
 mudt=False
-outlier_naive_metric =1.65
+outlier_naive_metric =1.1
 result_data = main_function(outlier_naive_metric,mudt)
 merged_data = result_data[0]
 filtered_data = result_data[1]
-
 ```
 
 ```{python}
@@ -269,485 +268,6 @@ colors = {'Low':'blue','High':'red'}
 pcrd_name = merged_data['name'].unique()[0]
 channel_name = merged_data['channel'].unique()[0]
 temperature_name = merged_data['temperature'].unique()[0]
-```
-
-### Temp0
-
-```{python}
-import numpy as np
-import pandas as pd
-
-def log_normalize(X):
-    X_min_original = np.min(X)
-    # 모든 값을 양수로 만들기 위해 최소값을 더함
-    X_positive = X - X_min_original + 1e-10  # 작은 값을 더해 로그의 0 입력을 방지
-
-    # 로그 변환
-    X_log = np.log(X_positive)
-
-    # 정규화
-    X_min = np.min(X_log)
-    X_max = np.max(X_log)
-    X_normalized = (X_log - X_min) / (X_max - X_min)
-
-    return X_normalized, X_min, X_max, X_min_original
-
-def log_denormalize(X_normalized, X_min, X_max, X_min_original):
-    # 역정규화
-    X_log_restored = X_normalized * (X_max - X_min) + X_min
-
-    # 지수 변환
-    X_restored = np.exp(X_log_restored)
-
-    # 원래 스케일로 복원
-    X_restored = X_restored + X_min_original - 1e-10
-
-    return X_restored
-
-def apply_basis_functions(X):
-    phi1 = lambda x: x**0  # 상수항
-    phi2 = lambda x: x     # 선형항
-    phi3 = lambda x: x**2  # 2차항
-    phi4 = lambda x: x**3  # 3차항
-    phi5 = lambda x: np.exp(x) - 1  # 지수 증가
-    phi6 = lambda x: np.exp(-x)     # 지수 감소
-    phi7 = lambda x: np.log(x + 1)  # 로그 함수 (느린 증가)
-    phi8 = lambda x: 1 / (x + 1)    # 역수 함수 (빠른 감소)
-    phi9 = lambda x: np.maximum(0, x - 0.5)**2  # ReLU의 변형 (비선형성 증가)
-    
-    return np.array([[phi1(x), phi2(x), phi3(x), phi4(x), phi5(x), phi6(x), phi7(x), phi8(x), phi9(x)] for x in X])
-
-def J(w, P, x, y):
-    PHI = apply_basis_functions(x)
-    y_pred = np.dot(w.T, PHI.T)
-    return 0.5*(((y-y_pred)**2).sum(axis=-1))
-
-def grad(w, P, x, y):
-    PHI = apply_basis_functions(x)
-    g = np.dot(w.T, np.dot(PHI.T, PHI)) - np.dot(y.T, PHI)
-    return g.astype(np.float64)
-
-def CGM(f, df, x, args=(), eps=1.0e-7, max_iter=300, verbose=False):
-    c = df(x, *args)
-    if np.linalg.norm(c) < eps:
-        return x
-    d = -c
-    for k in range(max_iter):
-        alpha = line_search(f, df, x, d, args)
-        x_new = x + alpha * d
-        c_new = df(x_new, *args)
-        if np.linalg.norm(c_new) < eps:
-            return x_new
-        beta = np.dot(c_new, c_new) / np.dot(c, c)
-        d = -c_new + beta * d
-        x = x_new
-        c = c_new
-    if verbose:
-        print(f"CGM reached max iterations: {max_iter}")
-    return x
-
-def line_search(f, df, x, d, args):
-    alpha, beta = 0.01, 0.5
-    t = 1.0
-    while f(x + t * d, *args) > f(x, *args) - alpha * t * np.dot(df(x, *args), d):
-        t *= beta
-    return t
-
-def predict_time_series(X):
-    X_norm, X_min, X_max, X_min_original = log_normalize(X)
-    PHI = apply_basis_functions(X_norm)
-    w = np.random.uniform(-1, 1, 9) 
-    optimized_w = CGM(J, grad, w, args=(8, X_norm, X_norm), verbose=False)
-    y_pred = np.dot(optimized_w.T, PHI.T)
-    return log_denormalize(y_pred, X_min, X_max, X_min_original)
-
-def process_dataframe(df, input_column, output_column):
-    def process_row(row):
-        X = row[input_column]
-        if isinstance(X, np.ndarray) and X.size > 0:
-            row[output_column] = predict_time_series(X)
-        else:
-            row[output_column] = np.array([])
-        return row
-    
-    df[output_column] = None
-    return df.apply(process_row, axis=1)
-
-ml_data = process_dataframe(ml_data, 'preproc_rfu', 'ml_baseline_fit')
-ml_data['ml_analysis_absd'] = ml_data['preproc_rfu'] - ml_data['ml_baseline_fit']
-ml_data.to_parquet('no_mudt_ml_data.parquet')
-```
-
-### Temp
-
-```{python}
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-
-def normalize(X):
-    X_min = np.min(X)
-    X_max = np.max(X)
-    X_normalized = (X - X_min) / (X_max - X_min)
-    return X_normalized, X_min, X_max
-
-def denormalize(X_normalized, X_min, X_max):
-    X_restored = X_normalized * (X_max - X_min) + X_min
-    return X_restored
-
-def apply_basis_functions(X):
-    phi1 = lambda x: x**0  # 상수항
-    phi2 = lambda x: x**1  # 1차항
-    phi3 = lambda x: x**2  # 2차항
-    phi4 = lambda x: x**3  # 3차항
-    phi5 = lambda x: x**4  # 4차항
-    phi6 = lambda x: x*np.e**(-x)  # 지수항
-    return np.array([[phi1(x), phi2(x), phi3(x), phi4(x), phi5(x), phi6(x)] for x in X])
-
-def J(w, P, x, y):
-    PHI = np.array([x**i for i in range(P+1)]).T
-    y_pred = np.dot(w.T, PHI.T)
-    return 0.5*(((y-y_pred)**2).sum(axis=-1))
-
-def grad(w, P, x, y):
-    PHI = np.array([x**i for i in range(P+1)]).T
-    g = np.dot(w.T, np.dot(PHI.T, PHI)) - np.dot(y.T, PHI)
-    return g.astype(np.float64)
-
-def CGM(f, df, x, args=(), eps=1.0e-7, max_iter=600, verbose=False):
-    c = df(x, *args)
-    if np.linalg.norm(c) < eps:
-        return x
-    d = -c
-    for k in range(max_iter):
-        alpha = line_search(f, df, x, d, args)
-        x_new = x + alpha * d
-        c_new = df(x_new, *args)
-        if np.linalg.norm(c_new) < eps:
-            return x_new
-        beta = np.dot(c_new, c_new) / np.dot(c, c)
-        d = -c_new + beta * d
-        x = x_new
-        c = c_new
-    if verbose:
-        print(f"CGM reached max iterations: {max_iter}")
-    return x
-
-def line_search(f, df, x, d, args):
-    alpha, beta = 0.01, 0.5
-    t = 1.0
-    while f(x + t * d, *args) > f(x, *args) - alpha * t * np.dot(df(x, *args), d):
-        t *= beta
-    return t
-
-def predict_time_series(X):
-    X_norm, X_min, X_max = normalize(X)
-    PHI = apply_basis_functions(X_norm)
-    w = np.random.uniform(-1, 1, 6)
-    optimized_w = CGM(J, grad, w, args=(5, X_norm, X_norm), verbose=False)
-    y_pred = np.dot(optimized_w.T, PHI.T)
-    return denormalize(y_pred, X_min, X_max)
-
-def process_dataframe(df, input_column, output_column):
-    def process_row(row):
-        X = row[input_column]
-        if isinstance(X, np.ndarray) and X.size > 0:
-            row[output_column] = predict_time_series(X)
-        else:
-            row[output_column] = np.array([])
-        return row
-    
-    df[output_column] = None
-    return df.apply(process_row, axis=1)
-
-def plot_results(df, input_column, output_column, num_samples=9):
-    fig, axes = plt.subplots(3, 3, figsize=(15, 15))
-    axes = axes.flatten()
-
-    for i, (_, row) in enumerate(df.iterrows()):
-        if i >= num_samples:
-            break
-
-        X = row[input_column]
-        y_pred = row[output_column]
-
-        if isinstance(X, np.ndarray) and X.size > 0:
-            axes[i].plot(X, label='Original Data')
-            axes[i].plot(y_pred, label='Predicted Data')
-            axes[i].set_title(f'Sample {i+1}')
-            axes[i].legend()
-
-    plt.tight_layout()
-    plt.show()
-
-n = len(merged_data)
-
-# 3등분할 인덱스 계산
-#first_split = n // 3
-#second_split = 2 * (n // 3)
-#
-## 데이터프레임 3등분
-#df1 = merged_data.iloc[:first_split]
-#df2 = merged_data.iloc[first_split:second_split]
-#df3 = merged_data.iloc[second_split:]
-#
-#temp1 = process_dataframe(df1, 'preproc_rfu', 'ml_fitted')
-#temp2 = process_dataframe(df2, 'preproc_rfu', 'ml_fitted')
-#temp3 = process_dataframe(df3, 'preproc_rfu', 'ml_fitted')
-temp = merged_data[['combo_key','preproc_rfu']]
-temp = process_dataframe(temp, 'preproc_rfu', 'ml_baseline_fit')
-
-#temp=pd.concat([temp1,temp2,temp3],axis=0,ignore_index=True)
-##plot_results(temp, 'preproc_rfu', 'ml_fitted')
-#
-#temp.to_parquet('no_mudt_ml_data.parquet')
-# MSE 계산
-# negative_data['mse'] = negative_data.apply(lambda row: np.mean((row['preproc_rfu'] - row['ml_fitted'])**2) if isinstance(row['preproc_rfu'], np.ndarray) else np.nan, axis=1)
-# print(negative_data['mse'].describe())
-```
-
-```{python}
-mudt=False
-cfx_columns = ['name', 'steps', 'consumable', 'well', 'channel', 'temperature', 'original_rfu']
-auto_baseline_columns = ['name', 'steps', 'consumable', 'well', 'channel', 'temperature', 
-                          'basesub_resultwell', 'basesub_dataprocnum', 'basesub_rd_diff', 
-                          'basesub_ivd_cdd_output', 'basesub_cff', 'basesub_scd_fit', 'basesub_r_p2', 
-                          'basesub_efc', 'basesub_absd_orig', 'basesub_absd']
-strep_columns = ['name', 'steps', 'consumable', 'well', 'channel', 'temperature', 
-                  'analysis_absd','analysis_rd_diff','analysis_scd_fit','analysis_efc']
-strep_plus1_columns = ['name', 'steps', 'consumable', 'well', 'channel', 'temperature', 
-                        'analysis_rd_diff','new_jump_corrected_rfu','new_efc','new_baseline','new_baseline_model','new_absd']
-strep_plus2_columns = ['name', 'steps', 'consumable', 'well', 'channel', 'temperature', 
-                      'preproc_rfu','analysis_absd','analysis_rd_diff','analysis_scd_fit',
-                      'analysis_efc','final_ct','analysis_resultwell','analysis_dataprocnum']
-control_dsp_columns =['name', 'steps', 'consumable', 'well', 'channel', 'temperature', 
-                      'preproc_rfu','analysis_absd','analysis_rd_diff','analysis_scd_fit',
-                      'analysis_efc','final_ct','analysis_resultwell','analysis_dataprocnum']
-combo_key_columns = ['name', 'consumable', 'channel', 'temperature', 'well']
-
-
-rootpath = os.getcwd()
-
-if 'Administrator' in rootpath:       
-    datapath = 'C:/Users/Administrator/Desktop/projects/website/docs/data/baseline_optimization/GI-B-I'
-else:
-    datapath = 'C:/Users/kmkim/Desktop/projects/website/docs/data/baseline_optimization/GI-B-I'
-if mudt:    
-    ### with MuDT (To Be Organized)
-    raw_datapath = datapath + '/raw_data/mudt_raw_data.parquet'
-    auto_datapath = datapath + '/auto_baseline_data/mudt_auto_baseline_data.parquet'
-    cfx_datapath = datapath + '/cfx_data/mudt_cfx_data.parquet'
-    strep_plus1_datapath = datapath + '/strep_plus1_data/mudt_strep_plus1_data.parquet'
-    strep_plus2_datapath = datapath + '/strep_plus2_data/mudt_strep_plus2_data.parquet'
-    ml_datapath = datapath + '/ml_data/mudt_ml_data.parquet'
-else:
-    ### without MuDT (To Be Organized)
-    raw_datapath = datapath + '/raw_data/no_mudt_raw_data.parquet'
-    auto_datapath = datapath + '/auto_baseline_data/no_mudt_auto_baseline_data.parquet'
-    cfx_datapath = datapath + '/cfx_data/no_mudt_cfx_data.parquet'
-    strep_plus1_datapath = datapath + '/strep_plus1_data/no_mudt_strep_plus1_data.parquet'
-    strep_plus2_datapath = datapath + '/strep_plus2_data/no_mudt_strep_plus2_data.parquet'
-    ml_datapath = datapath + '/ml_data/no_mudt_ml_data.parquet'
-
-
-## Read parquets
-
-raw_data = pl.scan_parquet(raw_datapath).collect().to_pandas()
-cfx_data = pl.scan_parquet(cfx_datapath).collect().to_pandas()
-auto_baseline_data = pl.scan_parquet(auto_datapath).collect().to_pandas()
-strep_plus1_data = pl.scan_parquet(strep_plus1_datapath).collect().to_pandas()
-strep_plus2_data = pl.scan_parquet(strep_plus2_datapath).collect().to_pandas()
-ml_data = pl.scan_parquet(ml_datapath).collect().to_pandas()
-
-ml_data['ml_analysis_absd']=ml_data['preproc_rfu'] - ml_data['ml_baseline_fit']
-ml_data.to_parquet('no_mudt_ml_data.parquet')
-## variable selection used for merging the dataframes
-cfx_df = cfx_data[['original_rfu_cfx', 'combo_key']]
-auto_baseline_df = auto_baseline_data[auto_baseline_data.columns[6:]]  # Adjust index as necessary
-strep_plus1_df = strep_plus1_data[strep_plus1_data.columns[6:]]  
-strep_plus2_df = strep_plus2_data[strep_plus2_data.columns[6:]]  
-
-ml_df = ml_data[['ml_baseline_fit','ml_analysis_absd','combo_key']]
-ml_data.rename(columns={'ml_fitted':'ml_baseline_fit'}).to_parquet('no_mudt_ml_data.parquet.parquet')
-
-
-## Merge dataframes
-
-merged_data = (cfx_df
-                .merge(raw_data, on='combo_key')
-                .merge(auto_baseline_df, on='combo_key')
-                .merge(strep_plus1_df, on ='combo_key')
-                .merge(strep_plus2_df, on = 'combo_key')
-                .merge(ml_df, on = 'combo_key')
-              )
-negative_data = merged_data[merged_data['final_ct'] < 0]
-
-```
-
-
-
-### Temp2
-
-
-```{python}
-i_data = merged_data
-i_pcrd = pcrd_name
-i_channel = channel_name
-i_temperature = temperature_name
-i_well = 'H12'
-
-'''
-Plot the results, the baseline-subtracted data by the baseline-fitting algorithms to intuitively compare their overall performance.
-
-Args:
-    i_data: a dataframe filtering merged_data by some conditions:
-        ex) `merged_data.query("`name` == @pcrd_name & `channel` == @channel_name & `temperature` == @temperature_name & `final_ct` < 0 & `outlier_naive_metric_original_rfu` > 2")`
-    i_pcrd: pcrd_name
-    i_channel: channel_name
-    i_temperature: temperature_name
-    colors: customizing colors
-
-Returns:
-    Output: 6 Pannels of plt.subplots()
-'''
-i_data = i_data.query("`name`==@i_pcrd & `channel` == @i_channel & `temperature`==@i_temperature & `well` == @i_well").copy()
-
-if mudt:
-    raw_rfu = 'preproc_rfu'
-else:
-    raw_rfu = 'original_rfu'
-
-columns = [ # (new_column, from, to) 
-('dsp_correction_fit', raw_rfu, 'analysis_absd_orig'), # create DSP Correction + DSP Fit data 
-('basesub_correction_fit', raw_rfu, 'basesub_absd_orig'), # create Auto Correction + Auto Fit data 
-('cfx_correction_fit', raw_rfu, 'original_rfu_cfx'), # create CFX Correction + CFX Fit data
-#('strep_plus1_correction_fit', raw_rfu , 'strep_plus1_analysis_absd'), # create strep+1 Correction + strep+1 Fit data
-('strep_plus2_correction_fit', raw_rfu, 'strep_plus2_analysis_absd'), # create strep+2 Correction + strep+2 Fit data
-('ml_correction_fit', raw_rfu, 'ml_analysis_absd'), # create ml Correction + ml Fit data
-('dsp_corrected_rfu', raw_rfu, 'analysis_rd_diff'), # create DSP Correction data
-('basesub_corrected_rfu', raw_rfu, 'basesub_rd_diff'), # create Auto Correction data  
-# cannot create CFX Correction: it is 'black box'
-#('strep_plus1_corrected_rfu', raw_rfu, 'strep_plus1_analysis_rd_diff'), # create strep_plus1 Correction data  
-('strep_plus2_corrected_rfu',raw_rfu, 'strep_plus2_analysis_rd_diff'), # create strep+2 Correction data
-('ml_corrected_rfu',raw_rfu, 'strep_plus2_analysis_rd_diff') # create ml Correction data
-]
-
-
-raw_scale_columns = [raw_rfu,'dsp_correction_fit', 'basesub_correction_fit','cfx_correction_fit',
-                    #'strep_plus1_correction_fit','strep_plus2_correction_fit']
-                    'strep_plus2_correction_fit','ml_correction_fit']
-correction_scale_columns = [
-    raw_rfu,'dsp_corrected_rfu', 'basesub_corrected_rfu', 'strep_plus2_corrected_rfu', 'ml_corrected_rfu'#,
-    #'analysis_scd_fit', 'basesub_scd_fit', 'strep_plus1_baseline_fit', 'strep_plus2_analysis_scd_fit'
-]
-                        
-subtract_scale_columns = ['basesub_absd_orig','original_rfu_cfx', 'analysis_absd_orig', 
-                          'strep_plus2_analysis_absd','ml_analysis_absd']
-
-titles = ['[DSP] Algorithm Performance', '[Auto] Algorithm Performance', '[CFX] Algorithm Performance', '[Strep+2] Algorithm Performance', '[ML] Algorithm Performance',
-      '[DSP] Fitting Performance', '[Auto] Fitting Performance', '[CFX] Fitting Performance', '[Strep+2] Fitting Performance', '[ML] Fitting Performance',
-      '[DSP] Baseline-Subtracted RFU', '[Auto] Baseline-Subtracted RFU', '[CFX] Baseline-Subtracted RFU', '[Strep+2] Baseline-Subtracted RFU', '[ML] Baseline-Subtracted RFU']
-
-preprocessing_columns = [
-('dsp_correction_fit', raw_rfu),
-('basesub_correction_fit', raw_rfu),
-('cfx_correction_fit', raw_rfu),
-('strep_plus2_correction_fit', raw_rfu),
-('ml_correction_fit', raw_rfu)]
-
-correction_columns = [
-('dsp_corrected_rfu', raw_rfu, 'analysis_scd_fit'), 
-('basesub_corrected_rfu', raw_rfu, 'basesub_scd_fit'),
-(raw_rfu, raw_rfu, 'cfx_correction_fit'),
-('strep_plus2_corrected_rfu', raw_rfu, 'strep_plus2_analysis_scd_fit'),
-('ml_corrected_rfu', raw_rfu, 'ml_baseline_fit')]
-
-subtracted_columns = [    
-('analysis_absd_orig'),
-('basesub_absd_orig'),
-('original_rfu_cfx'),
-('strep_plus2_analysis_absd'),
-('ml_analysis_absd')]
-
-if mudt:
-    columns = [col for col in columns if 'cfx' not in col[0].lower()]
-    raw_scale_columns= [col for col in raw_scale_columns if 'cfx' not in col.lower()]
-    correction_scale_columns = [col for col in correction_scale_columns if 'cfx' not in col[0].lower()]
-    subtract_scale_columns = [col for col in subtract_scale_columns if 'cfx' not in col[0].lower()]
-    titles= [col for col in titles if 'cfx' not in col.lower()]
-    preprocessing_columns= [col for col in preprocessing_columns if not any('cfx' in item.lower() for item in col)]
-    correction_columns=  [col for col in correction_columns if not any('cfx' in item.lower() for item in col)]
-    subtracted_columns = [col for col in subtracted_columns if 'cfx' not in col.lower()]
-    fig, axs = plt.subplots(3, 4, figsize=(18, 12)) #(15, 10)
-else:
-    fig, axs = plt.subplots(3, 5, figsize=(18, 12)) #(15, 10)
-
-
-rfu = i_data[raw_rfu].values[0]
-cycle_length = len(rfu)
-cycle = list(range(cycle_length))       
-
-array_columns = [col for col in i_data.columns if i_data[col].apply(lambda x: isinstance(x, np.ndarray)).any()]
-for column in array_columns:
-    i_data[column] = i_data[column].apply(lambda x: np.zeros(cycle_length) if x is None or x.size == 0 else x)
-
-for new_column, column_a, column_b in columns:
-    i_data[new_column] = list(map(lambda x, y: [a - b for a, b in zip(x, y)], i_data[column_a], i_data[column_b]))
-
-raw_scale_data = i_data[raw_scale_columns]
-correction_scale_data = i_data[correction_scale_columns]
-subtract_scale_data = i_data[subtract_scale_columns]
-
-raw_limits = find_global_extremes(raw_scale_data)
-correction_limits = find_global_extremes(correction_scale_data)
-subtraction_limits = find_global_extremes(subtract_scale_data)
-
-rfu_values = [] 
-correct_alpha = 0.5
-fit_alpha = 0.5
-
-def set_ylim(ax, limits, index):
-    if max(limits) < 0:
-        max_limit_ratio = 0.95
-    else:
-        max_limit_ratio = 1.05
-    if min(limits) < 0: 
-        min_limit_ratio = 1.05
-    else:
-        min_limit_ratio = 0.95
-    
-    min_limit = np.sign(min(limits)) * np.abs(min(limits)) * min_limit_ratio
-    max_limit = np.sign(max(limits)) * np.abs(max(limits)) * max_limit_ratio
-    ax.set_ylim([min_limit, max_limit])
-
-for ((i, j), ax, title) in zip(np.ndindex(axs.shape), axs.flat, titles):
-    if i == 0:
-        ax.plot(cycle, i_data[preprocessing_columns[j][0]].values[0], 'red', alpha=0.5, label = "Correction & Fit")
-        ax.plot(cycle, i_data[preprocessing_columns[j][1]].values[0], 'k-', alpha=0.5, label = "Raw Data")
-
-    elif i == 1:
-        ax.plot(cycle, i_data[correction_columns[j][0]].values[0], 'b--', alpha=1, label = "Correction")
-        ax.plot(cycle, i_data[correction_columns[j][1]].values[0], 'k-', alpha=0.5, label = "Raw Data")
-        ax.plot(cycle, i_data[correction_columns[j][2]].values[0], 'red', alpha=0.5, label = "Fitted Data" )
-    else:
-        ax.plot(cycle, i_data[subtracted_columns[j]].values[0], 'k-', alpha=0.5, label = "Subtracted Data")
-        ax.axhline(y=0,color='black',linestyle='dotted',linewidth=2)
-
-    if i == 0:
-        set_ylim(ax, raw_limits, 0)
-    elif i == 1:
-        set_ylim(ax, correction_limits, 1)
-    else:
-        set_ylim(ax, subtraction_limits, 2)
-
-    ax.set_title(title)
-    ax.legend()
-pydsp_version = get_package_details().get('pydsp')
-fig.suptitle(f'PCRD: {i_pcrd}\npydsp Version: {pydsp_version}, Channel: {i_channel}, Temperature: {i_temperature}, Well: {i_well}', 
-                  ha = 'left', x=0.02, fontsize=15)
-
-plt.tight_layout()
-plt.show()
 ```
 
 
@@ -765,40 +285,37 @@ plot_single_well(filtered_data,pcrd_name,channel_name, temperature_name, 'H12',m
 
 ### 증가 신호에 대한 성능 평가
 
-```{python}
-ascending_data = merged_data.query("`channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` >0") #`analysis_dataprocnum` == 13 & 
-```
+이 Sampled Data엔 증가신호가 없음
 
 ```{python}
-plot_signal_patterns(ascending_data,channel_name, temperature_name, mudt = mudt)
-```
+#| echo: false
 
-```{python}
-temp=ascending_data[ascending_data['original_rfu_cfx'].apply(lambda x: x[30]>1000)]
-```
+# ascending_data = merged_data.query("`channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` >0") #
 
-```{python}
-pcrd_nm = temp.loc[17632]['name']
-channel_nm =temp.loc[17632]['channel']
-temperature_nm=temp.loc[17632]['temperature']
-well_nm=temp.loc[17632]['well']
-```
 
-#### 단일 신호에 대한 성능 평가
+# plot_signal_patterns(ascending_data,channel_name, temperature_name, mudt = mudt)
 
-```{python}
-plot_single_well(ascending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt=mudt)
-```
 
-```{python}
-temp=ascending_data[ascending_data['strep_plus2_analysis_absd'].apply(lambda x: x[41]>200)]
-pcrd_nm = temp.loc[18048]['name']
-channel_nm =temp.loc[18048]['channel']
-temperature_nm=temp.loc[18048]['temperature']
-well_nm=temp.loc[18048]['well']
-```
-```{python}
-plot_single_well(ascending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt=mudt)
+# temp=ascending_data[ascending_data['original_rfu_cfx'].apply(lambda x: x[30]>1000)]
+
+
+# pcrd_nm = temp.loc[17632]['name']
+# channel_nm =temp.loc[17632]['channel']
+# temperature_nm=temp.loc[17632]['temperature']
+# well_nm=temp.loc[17632]['well']
+
+# #### 단일 신호에 대한 성능 평가
+
+
+# plot_single_well(ascending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt=mudt)
+
+# temp=ascending_data[ascending_data['strep_plus2_analysis_absd'].apply(lambda x: x[41]>200)]
+# pcrd_nm = temp.loc[18048]['name']
+# channel_nm =temp.loc[18048]['channel']
+# temperature_nm=temp.loc[18048]['temperature']
+# well_nm=temp.loc[18048]['well']
+
+# plot_single_well(ascending_data,pcrd_nm,channel_nm,temperature_nm,well_nm,mudt=mudt)
 ```
 
 ### 감소 신호에 대한 성능 평가
@@ -886,29 +403,30 @@ plot_single_well(filtered_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=
 #### 증가 신호에 대한 성능 평가 
 
 ```{python}
-ascending_data = merged_data.query("`analysis_dataprocnum` == 13 & `channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` >0")
-ascending_data = ascending_data.iloc[:len(ascending_data) // 2]
-```
+# #| echo: false
 
-##### 단일 신호에 대한 성능 평가
-```{python}
-plot_signal_patterns(ascending_data,channel_name, temperature_name, mudt = mudt)
-```
-```{python}
-temp=ascending_data[ascending_data['strep_plus1_analysis_absd'].apply(lambda x: x[10]<-200)]
-pcrd_nm = temp.loc[1528]['name']
-channel_nm =temp.loc[1528]['channel']
-temperature_nm=temp.loc[1528]['temperature']
-well_nm=temp.loc[1528]['well']
-plot_single_well(ascending_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
-```
-```{python}
-temp=ascending_data[ascending_data['strep_plus2_analysis_absd'].apply(lambda x: x[10]<-300)]
-pcrd_nm = temp.loc[36200]['name']
-channel_nm =temp.loc[36200]['channel']
-temperature_nm=temp.loc[36200]['temperature']
-well_nm=temp.loc[36200]['well']
-plot_single_well(ascending_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
+
+# ascending_data = merged_data.query("`analysis_dataprocnum` == 13 & `channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` >0")
+# ascending_data = ascending_data.iloc[:len(ascending_data) // 2]
+
+
+# ##### 단일 신호에 대한 성능 평가
+
+# plot_signal_patterns(ascending_data,channel_name, temperature_name, mudt = mudt)
+
+# temp=ascending_data[ascending_data['strep_plus1_analysis_absd'].apply(lambda x: x[10]<-200)]
+# pcrd_nm = temp.loc[1528]['name']
+# channel_nm =temp.loc[1528]['channel']
+# temperature_nm=temp.loc[1528]['temperature']
+# well_nm=temp.loc[1528]['well']
+# plot_single_well(ascending_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
+
+# temp=ascending_data[ascending_data['strep_plus2_analysis_absd'].apply(lambda x: x[10]<-300)]
+# pcrd_nm = temp.loc[36200]['name']
+# channel_nm =temp.loc[36200]['channel']
+# temperature_nm=temp.loc[36200]['temperature']
+# well_nm=temp.loc[36200]['well']
+# plot_single_well(ascending_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
 ```
 
 #### 감소 신호에 대한 성능 평가

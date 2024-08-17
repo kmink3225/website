@@ -101,12 +101,12 @@ def main_function(outlier_naive_metric=1.65,mudt=True):
 
     ## Merge dataframes
 
-    merged_data = (cfx_df
+    merged_data = (ml_df
                     .merge(raw_data, on='combo_key')
                     .merge(auto_baseline_df, on='combo_key')
                     .merge(strep_plus1_df, on ='combo_key')
                     .merge(strep_plus2_df, on = 'combo_key')
-                    .merge(ml_df, on = 'combo_key')
+                    .merge(cfx_df, on = 'combo_key')
                   )
     negative_data = merged_data[merged_data['final_ct'] < 0]
 

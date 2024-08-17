@@ -132,47 +132,6 @@ def compute_conjugate_gradient(f, df, x, args=(), eps=1.0e-7, max_iter=2500, ver
 
     return x
 
-def compute_phi(X):
-    phi_functions = [
-        lambda x: x[0] + x[1],
-        lambda x: x[0] * x[1],
-        lambda x: x[0] / x[1],
-        lambda x: x[0] ** x[1],
-    ]
-    PHI = np.array([[phi(x) for phi in phi_functions] for x in X])
-    return PHI
-
-############
-import numpy as np
-
-def compute_phi(X):
-    # Define a center for the RBF, and choose a spread parameter
-    rbf_center = np.mean(X)
-    rbf_spread = np.std(X)
-
-    phi_functions = [
-        lambda x: np.exp(-((x - rbf_center)**2) / (2 * rbf_spread**2)),  # RBF
-        lambda x: np.sin(2 * np.pi * x),  # Fourier basis (sine)
-        lambda x: np.cos(2 * np.pi * x),  # Fourier basis (cosine)
-        lambda x: 1 if x < 0.5 else -1,  # Wavelet Piecewise (simple example)
-    ]
-    
-    # Convert X to a numpy array for easier manipulation
-    X = np.array(X)
-
-    # Calculate PHI for each x in X for all phi_functions
-    PHI = np.array([[phi(x) for phi in phi_functions] for x in X])
-    
-    return PHI
-
-# Example data: 50 data points
-X = list(np.linspace(0, 1, 50))  # Adjust this based on your actual data
-
-PHI = compute_phi(X)
-
-# To print or analyze PHI, uncomment the following line
-# print(PHI)
-
 
 def haar_wavelet(x):
     """
@@ -195,33 +154,6 @@ def piecewise_basis(x):
         return 3 * x + 1
     else:
         return np.sin(2 * np.pi * x)
-
-# Example usage with an array of data points
-X = np.linspace(0, 1, 50)
-
-# Applying the Haar wavelet and piecewise basis function to each point in X
-Y_haar = np.array([haar_wavelet(x) for x in X])
-Y_piecewise = np.array([piecewise_basis(x) for x in X])
-
-# Plotting
-import matplotlib.pyplot as plt
-
-plt.figure(figsize=(12, 6))
-
-plt.subplot(1, 2, 1)
-plt.plot(X, Y_haar, label='Haar Wavelet')
-plt.title('Haar Wavelet')
-plt.legend()
-
-plt.subplot(1, 2, 2)
-plt.plot(X, Y_piecewise, label='Piecewise Basis')
-plt.title('Piecewise Basis Function')
-plt.legend()
-
-plt.tight_layout()
-plt.show()
-
-import numpy as np
 
 # Define the Haar Wavelet function
 def haar_wavelet(x):
@@ -252,64 +184,10 @@ def compute_phi(X):
     PHI = np.array([[phi(x) for phi in phi_functions] for x in X])
     return PHI
 
-# Generate an example input array
-X = np.linspace(0, 1, 50)
-
-# Compute the PHI matrix
-PHI = compute_phi(X)
-
-print(PHI)
-
-###########
-
-def compute_loss(w, P, x, y):
-    """
-    This function computes the objective function. 
-    
-    w: 가중치 행렬, (M,) or (M,K) 여기서 K는 가중치 벡터 개수, 
-       M은 기저함수 개수 또는 데이터 차원
-    P: polynomial degree, scalar
-    x, y : data for error function eval.
-      x: data, (N,M)
-      y: target, (N,)
-    """
-    #PHI = np.array([ x**i for i in range(P+1) ]).T
-    P=P
-    phi = compute_phi(x)
-    PHI = phi.T
-    
-    y_pred = np.dot(w.T, PHI.T) 
-    return 0.5*(((y-y_pred)**2).sum(axis=-1)) 
-
-def get_gradient(w, P, x, y, grad_type = 'float64'):
-    """
-    This function computes the analytic gradient of the objective function.
-
-    w: 가중치 행렬, (M,) or (M,K) 여기서 K는 가중치 벡터 개수, 
-       M은 기저함수 개수 또는 데이터 차원
-    P: polynomial degree, scalar
-    x, y : data for error function eval.
-      x: data, (N,M)
-      y: target, (N,)
-    """
-    #PHI = np.array([ x**i for i in range(P+1) ]).T
-    P=P
-    phi = compute_phi(x)
-    PHI = phi.T
-    # broadcasting
-    g = np.dot(w.T, np.dot(PHI.T, PHI) ) - np.dot(y.T, PHI) 
-    
-    return g.astype(grad_type)
-
-def rmse(w, J, P, x, y) :
-    return np.sqrt( (2*J(w, P, x, y)) / x.shape[0] )
-
-## Regularization
-
 # Regularization
     
-reg_intercept = True
-lamda = 0.01
+#reg_intercept = True
+#lamda = 0.01
 
 def compute_l1_loss(w, P, x, y):
     """
@@ -436,3 +314,122 @@ def plot_result(X_train,y_train):
 
     plt.subplots_adjust(hspace=0.05, wspace=0.05)
     plt.show()
+
+# Characteristic Equation
+
+def log_normalize(X):
+    X_min_original = np.min(X)
+    # 모든 값을 양수로 만들기 위해 최소값을 더함
+    X_positive = X - X_min_original + 1e-10  # 작은 값을 더해 로그의 0 입력을 방지
+
+    # 로그 변환
+    X_log = np.log(X_positive)
+
+    # 정규화
+    X_min = np.min(X_log)
+    X_max = np.max(X_log)
+    X_normalized = (X_log - X_min) / (X_max - X_min)
+
+    return X_normalized, X_min, X_max, X_min_original
+
+def log_denormalize(X_normalized, X_min, X_max, X_min_original):
+    # 역정규화
+    X_log_restored = X_normalized * (X_max - X_min) + X_min
+
+    # 지수 변환
+    X_restored = np.exp(X_log_restored)
+
+    # 원래 스케일로 복원
+    X_restored = X_restored + X_min_original - 1e-10
+
+    return X_restored
+
+def apply_basis_functions(X):
+    
+    #hi1 = lambda x: x**0 
+    #hi2 = lambda x: x    
+    #hi3 = lambda x: x**2 
+    #hi4 = lambda x: x**3 
+    #hi5 = lambda x: x**4 
+    #hi6 = lambda x: x**5 
+    #hi7 = lambda x: x**6 
+    #hi8 = lambda x: x**7 
+    #hi9 = lambda x: x**8 
+    ###################################
+    phi1 = lambda x: x**0 
+    phi2 = lambda x: x    
+    phi3 = lambda x: x**2 
+    phi4 = lambda x: x**3 
+    phi5 = lambda x: np.exp(x) - 1  # 지수 증가
+    phi6 = lambda x: np.exp(-x)     # 지수 감소
+    phi7 = lambda x: np.log(x + 1)  # 로그 함수 (느린 증가)
+    phi8 = lambda x: 1 / (x + 1)    # 역수 함수 (빠른 감소)
+    phi9 = lambda x: np.maximum(0, x - 0.5)**2  # ReLU의 변형 (비선형성 증가)
+    
+    return np.array([[phi1(x), phi2(x), phi3(x), phi4(x), phi5(x), phi6(x), phi7(x), phi8(x), phi9(x)] for x in X])
+
+def J(w, P, x, y):
+    PHI = apply_basis_functions(x)
+    y_pred = np.dot(w.T, PHI.T)
+    return 0.5*(((y-y_pred)**2).sum(axis=-1))
+
+def grad(w, P, x, y):
+    PHI = apply_basis_functions(x)
+    g = np.dot(w.T, np.dot(PHI.T, PHI)) - np.dot(y.T, PHI)
+    return g.astype(np.float64)
+
+def CGM(f, df, x, args=(), eps=1.0e-7, max_iter=300, verbose=False):
+    c = df(x, *args)
+    if np.linalg.norm(c) < eps:
+        return x
+    d = -c
+    for k in range(max_iter):
+        alpha = line_search(f, df, x, d, args)
+        x_new = x + alpha * d
+        c_new = df(x_new, *args)
+        if np.linalg.norm(c_new) < eps:
+            return x_new
+        beta = np.dot(c_new, c_new) / np.dot(c, c)
+        d = -c_new + beta * d
+        x = x_new
+        c = c_new
+    if verbose:
+        print(f"CGM reached max iterations: {max_iter}")
+    return x
+
+def line_search(f, df, x, d, args):
+    alpha, beta = 0.01, 0.5
+    t = 1.0
+    while f(x + t * d, *args) > f(x, *args) - alpha * t * np.dot(df(x, *args), d):
+        t *= beta
+    return t
+
+def predict_time_series(X):
+    X_norm, X_min, X_max, X_min_original = log_normalize(X)
+    PHI = apply_basis_functions(X_norm)
+    w = np.random.uniform(-1, 1, 9) 
+    optimized_w = CGM(J, grad, w, args=(8, X_norm, X_norm), verbose=False)
+    y_pred = np.dot(optimized_w.T, PHI.T)
+    return log_denormalize(y_pred, X_min, X_max, X_min_original)
+
+def process_dataframe(df, input_column, output_column):
+    def process_row(row):
+        X = row[input_column]
+        if isinstance(X, np.ndarray) and X.size > 0:
+            row[output_column] = predict_time_series(X)
+        else:
+            row[output_column] = np.array([])
+        return row
+    
+    df[output_column] = None
+    return df.apply(process_row, axis=1)
+
+#ml_data = merged_data[['combo_key','preproc_rfu']]
+
+#small_names = merged_data['name'].unique()[:2]
+#temp_data = merged_data.query('name in @small_names')
+#
+#
+#ml_data = process_dataframe(temp_data, 'preproc_rfu', 'ml_baseline_fit')
+#ml_data['ml_analysis_absd'] = ml_data['preproc_rfu'] - ml_data['ml_baseline_fit']
+#ml_data.to_parquet('C:/Users/kmkim/Desktop/projects/website/docs/data/baseline_optimization/GI-B-I/ml_data/mudt_ml_data.parquet')

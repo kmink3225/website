@@ -33,7 +33,17 @@ format:
 
 <div class="tab-pane fade  show active" id="Korean" role="tabpanel" aria-labelledby="Korean-tab">
 
-## Background
+## 개요
+
+* 목적: Real-Time PCR 신호의 baseline fitting 알고리즘 최적화
+* 기간: 2024.01 - 2024.07 (6 months)
+* 역할: 프로젝트 매니저 및 데이터 사이언티스트
+* 팀 구성: 3명의 데이터 사이언티스트, 2명의 데이터 엔지니어, 2명의 생물학자
+
+## 배경
+
+* Real-Time PCR 검사의 정확도 향상을 위한 신호 처리 알고리즘 개선 필요성 대두
+* 기존 rule-based 알고리즘의 한계 극복 및 data-driven 접근 방식 도입
 
 ### Real Time PCR의 원리
 
@@ -47,10 +57,10 @@ Real Time PCR 장비는 핵산(Nucleic Acid) 검체의 존재 여부를 확인�
 
 #### 주요 결과 지표
 
-* 양/음성 결과
+* 양/음성 결과 (정성적 지표)
   * 양성: 아래 그림과 같이 Real Time PCR 결과가 명확한 sigmoid curve가 나올 경우 검체가 발견된 **양성** 상태로 판독한다.
   * 음성: 반응이 없는 평평한 curve가 나오거나 명확한 sigmoid curve가 나오지 않을 경우 검체가 발견되지 않은 **음성** 상태로 판독한다.
-* Ct
+* Ct (정량적 지표)
   * Ct (=**Cycle threshold**)의 약자로, 특정한 양의 증폭된 DNA가 처음으로 검출 가능한 수준에 도달했을 때의 PCR 사이클 수를 의미한다
   * 초기 DNA 양: Ct 값은 초기 DNA 양과 반비례한다.
   * 증폭 효율성: Ct 값은 증폭 효율성과 관련 있다. 이상적으로는 각 사이클에서 두 배로 증폭되지만, 실제 실험에서는 다양한 요인에 의해 증폭 효율성이 100% 미만일 수 있다.
@@ -71,29 +81,35 @@ Real Time PCR 장비는 핵산(Nucleic Acid) 검체의 존재 여부를 확인�
 
 를 시그모이드 곡선 적합을 통해 최종 출력한다.
 
-## Rationale
+## 동기
+
+* 회사에 처음 입사했을 때, legacy 진단 알고리즘의 수많은 if문과 설정값, 그리고 낮은 가독성의 코드에 압도되었다. 
+* rule-based 알고리즘이 data-driven 알고리즘에 비해 성능이 떨어진다고는 할 수 없지만, 다양한 PCR 신호를 조건문으로 처리하기에는 한계가 있다고 판단했다. 
+* 따라서, 점진적으로 진단 알고리즘을 data-driven 방식으로 개선할 필요가 있다고 생각했다.  
+
+## 필요성
 
 * sigmoid curve fitting 전의 전처리 단계인 baseline subtraction의 정확도가 매우 중요하다.
   * Baseline 데이터에 노이즈가 많을 경우, 최적화 과정에서 과적합이나 local minima와 같은 문제로 인해 파라미터 추정의 복잡성이 증가한다. 
   * Baseline subtraction의 정확도가 떨어질 경우 위양성/위음성의 위험이 있다. 
 * 사내에 표준화된 baseline fitting 알고리즘이 없어 여러 baseline fitting 알고리즘이 존재한다. 
 
-## Motivation
+## 고려 사항
 
-* 회사에 처음 입사했을 때, legacy 진단 알고리즘의 수많은 if문과 설정값, 그리고 낮은 가독성의 코드에 압도되었다. 
-* rule-based 알고리즘이 data-driven 알고리즘에 비해 성능이 떨어진다고는 할 수 없지만, 다양한 PCR 신호를 조건문으로 처리하기에는 한계가 있다고 판단했다. 
-* 따라서, 점진적으로 진단 알고리즘을 data-driven 방식으로 개선할 필요가 있다고 생각했다.  
+* **제한적 알고리즘 수정**
+  * 정합성의 문제로 전반적인 rule-based 알고리즘의 변경 없이 baseline fitting 알고리즘만 개선
+* **이해도 고려**
+  * 다양한 배경(생물학, 비전문가 임원)의 이해관계자들이 이해할 수 있는 간단한 알고리즘 설계
+* **평가 지표의 명확성**
+  * 알고리즘 평가 metric 선정 및 설명
+* **기술적 제약**
+  * Python에서 C++로의 용이한 포팅을 위한 최소한의 패키지 사용
+  * 저수준(low-level) 코딩 필요
+* **데이터 특성 고려**
+  * 적은 수의 baseline 데이터 포인트에도 적용 가능한 fitting 알고리즘 필요
+  * 다양한 noise 패턴에 대응 가능한 유연한 알고리즘 개발 (기존 1차, 2차 곡선 fitting의 한계 극복)
 
-## Considerations
-
-* 현재의 진단 알고리즘은 수 많은 조건문으로 이루어진 rule-based 알고리즘이기 때문에 전체적인 알고리즘 수정 시 정합성 및 규제 문제가 발생할 수 있다. 따라서, baseline fitting 알고리즘만 개선하여 대체해야 한다.
-* 보수적인 biologists와 전문 지식이 없는 임원진을 이해시킬 수 있는 간단한 알고리즘이어야 한다.
-* 통계를 전공하지 않은 알고리즘 관리자1 (Computer Science 전공), 관리자2 (Physics 전공)가 이해할 수 있도록 알고리즘 평가 metric을 선정 및 설명할 수 있어야한다. 
-* Python으로 작성된 알고리즘을 C++로 porting을 해야만하기 때문에 최소한의 package (numpy, pandas)를 사용하여 알고리즘을 low level로 coding해야한다.
-* Lag Phase에서의 baseline data points (i.e. cycle 수) 수가 적을 수 있으므로, 적은 데이터로도 fitting할 수 있는 알고리즘이 필요하다.
-* baseline의 noise 패턴은 매우 다양하지만 기존의 legacy baseline fitting 알고리즘은 1차 곡선과 2차 곡선으로 fitting 한다. 따라서, 다양한 noise 패턴에 대응할 수 있는 알고리즘이 필요하다.
-
-### Issues
+### 이슈
 
 * 신호 데이터 선정 기준 부재
   * 기존 방식: 1년 동안 기존 담당자가 주먹구구식으로 파일을 열어가며 주관적 느낌으로 타사 SW를 통해 특이한 신호를 육안 및 수동으로 찾음. 
@@ -102,26 +118,39 @@ Real Time PCR 장비는 핵산(Nucleic Acid) 검체의 존재 여부를 확인�
 * 성능 평가 기준과 방법 부재
 * 비전문가가 알고리즘 성능을 쉽게 이해할 수 있도록 직관적인 시각화가 요구됨 (기획자가 부재).
 
-### Solutions to Issues
+## 주요 과제 및 해결 방안
 
-* 신호 선정 메트릭 설정 후 활용하도록 복수 신호를 시각화 제시하여 설득
-* 알고리즘 성능 평가 메트릭 설정
-* 생물학자들, 알고리즘 관리자1(물리학 전공), 알고리즘 관리자2 (컴퓨터 공학 전공), 팀장과의 피드백 소통으로 시각화 개선
+### 데이터 파이프라인 구축
 
-## Required Skills
+* 다양한 PCR 신호 데이터 수집 및 전처리 파이프라인 구축
+* 성능 평가를 위한 데이터 처리 파이프라인 구현
 
-* Statistics
-* Python
+### 알고리즘 개발 및 최적화
 
-## Colaborators
+* 기존 rule-based 알고리즘 분석 및 개선
+* 새로운 ML 기반 data-driven 알고리즘 개발
 
-* 3 data scientists (I am a project manager.)
-* 2 data enineers
-* 2 biologists
+### 성능 평가 체계 수립
+
+* 객관적인 성능 평가 메트릭 설정
+* 다양한 신호 패턴에 대한 알고리즘 성능 비교 분석
+
+### 시각화 및 결과 해석
+
+* 복수 신호 및 단일 신호에 대한 성능 시각화 도구 개발
+* 비전문가도 이해할 수 있는 직관적인 시각화 고안
+
+## 기술 스택
+
+* 프로그래밍 언어: Python
+* 주요 라이브러리: NumPy, Pandas
+* 머신러닝/딥러닝: NumPy, Pandas (low level로 구현)
+* 데이터 시각화: matplotlib
 
 ## Objective
 
-* noise를 보정하는 대표적인 전처리 방식 중 하나인 baseline 차감 알고리즘을 최적화한다. Baseline의 차감은 baseline fitting을 수행하여 fitted value를 raw data에서 차감하여 순수 신호를 분리한다. 
+* noise를 보정하는 대표적인 전처리 방식 중 하나인 baseline 차감 알고리즘을 최적화한다. 
+  * Baseline의 차감은 baseline fitting을 수행하여 fitted value를 raw data에서 차감하여 순수 신호를 분리한다. 
 * 우수한 성능을 보이는 basline fitting 알고리즘을 정하고 사내의 여러 baseline fitting 알고리즘을 단일화를 한다.
 
 $$
@@ -135,14 +164,13 @@ $$
 ### Goals
 
 * Baseline 알고리즘 별 PCR 판독 결과 Data 마련을 위한 Data Engineering
-* Baseline 알고리즘 성능 비교 분석을 위한 data 처리 pipeline 구축
-* Baseline 알고리즘 성능 비교 분석을 위한 비교 metric 고안 및 구현
-* Baseline 알고리즘 성능 비교 분석을 위한 신호 selection metric 고안 및 구현
-* Baseline 알고리즘 성능 비교 분석이 가능한 복수 신호 시각화 기획 및 구현
-* Baseline 알고리즘 성능 비교 분석을 위한 신호 처리 세부 분석 시각화 기획 및 구현
-* 시각화를 이용한 Baseline 알고리즘 개선
-* 기존 및 새로운 baseline fitting 알고리즘들의 성능을 평가 및 비교한다.
-* **음성 신호에 한하여** 위양성 결과를 최소화하기 위해 baseline 차감 알고리즘을 최적화하여 여러 baseline fitting 알고리즘을 단일화한다.
+* data 처리 pipeline 구축
+* 분석을 위한 비교 metric 고안 및 구현
+* 분석을 위한 신호 selection metric 고안 및 구현
+* 분석이 가능한 복수 신호 시각화 기획 및 구현
+* 분석을 위한 신호 처리 세부 분석 시각화 기획 및 구현
+* 기존 및 새로운 baseline fitting 알고리즘들의 성능을 평가 및 비교
+* **음성 신호에 한하여** 위양성 결과를 최소화하기 위해 baseline 차감 알고리즘을 최적화하여 여러 baseline fitting 알고리즘의 단일화
 
 ## Method
 
@@ -158,20 +186,68 @@ $$
 
 * MuDT Off 한 데이터에 대하여,
   * 1st Pannel [After BPN]: normalized **Raw Data**를 보여준다. 
-  * 2nd Pannel [CFX]: 업계 1위 타사의 알고리즘으로 기기전용 SW에 내재된 **Black Box** 알고리즘 (대조군1)
-  * 3rd Pannel [DSP]: 현재 Data Science팀에서 사용되고있는 공식적인 **Legacy Rule-Based** 알고리즘 (대조군2)
-  * 4th Pannel [Auto]: 생물 실험자들이 제품을 최적화하기 위해 현재 사용하고있는 **Bio Legacy Rule-Based** 알고리즘 (대조군3) 
-  * 5th Pannel [Strep+N]: 팀원(물리학자)이 [DSP]를 보완하기 위해 만든 N+1 번째 **Rule-Based** 알고리즘 (실험군1)
-  * 6th Pannel [ML]: 본인이 **data driven ML**알고리즘 (실험군2)
+  * 2nd Pannel [CFX]: (대조군1)업계 1위 타사의 알고리즘으로 기기전용 SW에 내재된 **Black Box** 알고리즘 
+  * 3rd Pannel [DSP]: (대조군2)현재 Data Science팀에서 사용되고있는 공식적인 **Legacy Rule-Based** 알고리즘 
+  * 4th Pannel [Auto]: (대조군3)생물 실험자들이 제품을 최적화하기 위해 현재 사용하고있는 **Bio Legacy Rule-Based** 알고리즘  
+  * 5th Pannel [Strep+N]: (실험군1)팀원(물리학자)이 [DSP]를 보완하기 위해 만든 N+1 번째 **Rule-Based** 알고리즘 
+  * 6th Pannel [ML]: (실험군2)본인이 **data driven ML**알고리즘 
     * Characteristic Equation: Talyer Series에서 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여, 다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 시도했다. 이 접근법은 데이터의 feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링할 수 있게 한다. 적절한 차수 선택과 정규화를 통해 baseline 신호에 적합시킨다.
+    
+      1. 로그 정규화
+      
+          Let $X$ be the input data.  
+          $X_{normalized} = \frac{\log(X - \min(X) + \epsilon) - \min(\log(X - \min(X) + \epsilon))}{\max(\log(X - \min(X) + \epsilon)) - \min(\log(X - \min(X) + \epsilon))}$ 
+      
+      2. 기저 함수
+
+          $\phi_1(x) = 1$   
+          $\phi_2(x) = x$  
+          $\phi_3(x) = x^2$  
+          $\phi_4(x) = x^3$  
+          $\phi_5(x) = e^x - 1$  
+          $\phi_6(x) = e^{-x}$  
+          $\phi_7(x) = \log(x + 1)$  
+          $\phi_8(x) = \frac{1}{x + 1}$  
+          $\phi_9(x) = \max(0, x - 0.5)^2$  
+
+      3. 특성 방정식 (Characteristic Equation)
+        
+          $y(x) = \sum_{i=1}^{9} w_i \phi_i(x)$  
+          where $w_i$ are the weights to be optimized.
+
+      4. 비용 함수 (Cost Function)
+        
+          $J(w) = \frac{1}{2} \sum_{j=1}^{n} (y_j - \sum_{i=1}^{9} w_i \phi_i(x_j))^2$  
+          where $n$ is the number of data points.
+
+      5. 그래디언트
+
+          $\nabla J(w) = \sum_{j=1}^{n} (\sum_{i=1}^{9} w_i \phi_i(x_j) - y_j) \phi_i(x_j)$
+
+      6. 켤레 경사법 (Conjugate Gradient Method)
+
+          $w_{k+1} = w_k + \alpha_k d_k$  
+          $d_{k+1} = -\nabla J(w_{k+1}) + \beta_k d_k$  
+          $\beta_k = \frac{\|\nabla J(w_{k+1})\|^2}{\|\nabla J(w_k)\|^2}$  
+          where $\alpha_k$ is determined by line search.
+
+      7. 예측  
+
+         $y_{pred} = \sum_{i=1}^{9} w_i^* \phi_i(x)$  
+         where $w_i^*$ are the optimized weights.
+
+      8. 역정규화
+
+         $X_{restored} = \exp(X_{normalized} \cdot (\max(\log(X_{original})) - \min(\log(X_{original}))) + \min(\log(X_{original}))) + \min(X_{original}) - \epsilon$
+          
     * Neural Network: Characteristic Equation (특성 방정식)은 기저함수를 분석가가 선정해줘야 하는 위험 부담이 있다. Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기저함수를 설정할 수 있지만 임상신호나 실제 시장에서 만들어지는 신호는 그 패턴이 예상과 다를 수 있기 때문에 Data에 맞게 적합가능한 간단한 신경망을 구현하여 적합시킨다.  
 * MuDT On 한 데이터에 대하여,
   * 1st Pannel [After BPN]: normalized **Raw Data**를 보여준다.
   * 2nd Pannel [After BPN]: normalized raw data를 MuDT에 의해 **Preprocessed Data**를 보여준다.
-  * 3rd Pannel [DSP]: 현재 Data Science팀에서 사용되고있는 공식적인 **Legacy Rule-Based** 알고리즘 (대조군1)
-  * 4th Pannel [Auto]: 생물 실험자들이 제품을 최적화하기 위해 현재 사용하고있는 **Bio Legacy Rule-Based** 알고리즘 (대조군2)
-  * 5th Pannel [Strep+N]: 팀원(물리학자)이 [DSP]를 보완하기 위해 만든 N+1 번째 **Rule-Based** 알고리즘 (실험군1)
-  * 6th Pannel [ML]: 본인이 **data driven ML**알고리즘 (실험군2)
+  * 3rd Pannel [DSP]: (대조군1)현재 Data Science팀에서 사용되고있는 공식적인 **Legacy Rule-Based** 알고리즘 
+  * 4th Pannel [Auto]: (대조군2)생물 실험자들이 제품을 최적화하기 위해 현재 사용하고있는 **Bio Legacy Rule-Based** 알고리즘 
+  * 5th Pannel [Strep+N]: (실험군1)팀원(물리학자)이 [DSP]를 보완하기 위해 만든 N+1 번째 **Rule-Based** 알고리즘 
+  * 6th Pannel [ML]: (실험군2)본인이 **data driven ML**알고리즘 
     * Characteristic Equation
     * Neural Network
 
@@ -183,7 +259,7 @@ baseline data를 관찰 및 기존의 경험으로 알고있는 다양한 신호
 * 단일 신호에 대한 성능 평가: 특이 신호에 대한 알고리즘이 어떤 성능을 보이는지 세부적으로 관찰 및 분석
 * Baseline 증가 신호에 대한 성능 평가: 증가 신호에 대해서 알고리즘들이 어떤 성능을 보이는지 관찰 및 분석
 * Baseline 감소 신호에 대한 성능 평가: 감소 신호에 대해서 알고리즘들이 어떤 성능을 보이는지 관찰 및 분석
-* 제품 특이적인 신호에 대한 성능 평가: 씨젠의 제품과 BT기술에 의한 신호처리 후 신호 패턴에 대하여 어떤 성능을 보이는지 관찰 및 분석 
+* 제품 특이적인 신호에 대한 성능 평가: MuDT(씨젠의 제품과 BT기술)에 의한 신호처리 후 신호 패턴에 대하여 어떤 성능을 보이는지 관찰 및 분석 
 
 ### 평가 Metric
 
@@ -464,6 +540,7 @@ plot_single_well(mudt_risk_data,pcrd_name,channel_name, temperature_name, well_n
 
   * 개선된 rule-based 알고리즘 [strep+2]의 성능 향상 확인
   * Machine Learning 기반 알고리즘 [ML]의 탁월한 성능 입증
+  * [ML]에서 Neural Network는 연산의 복잡도로 인하여 연산시간이 많아 실험군에서 제외
 
 ### 알고리즘 성능 평가
 

@@ -386,14 +386,33 @@ English
 <li>팀 구성: 3명의 데이터 사이언티스트, 2명의 데이터 엔지니어, 2명의 생물학자</li>
 </ul>
 </section>
-<section id="배경" class="level2" data-number="2">
-<h2 data-number="2" class="anchored" data-anchor-id="배경"><span class="header-section-number">2</span> 배경</h2>
+<section id="동기" class="level2" data-number="2">
+<h2 data-number="2" class="anchored" data-anchor-id="동기"><span class="header-section-number">2</span> 동기</h2>
+<ul>
+<li>회사에 처음 입사했을 때, legacy 진단 알고리즘의 수많은 if문과 설정값, 그리고 낮은 가독성의 코드에 압도되었다.</li>
+<li>rule-based 알고리즘이 data-driven 알고리즘에 비해 성능이 떨어진다고는 할 수 없지만, 다양한 PCR 신호를 조건문으로 처리하기에는 한계가 있다고 판단했다.</li>
+<li>따라서, 점진적으로 진단 알고리즘을 data-driven 방식으로 개선할 필요가 있다고 생각했다.</li>
+</ul>
+</section>
+<section id="필요성" class="level2" data-number="3">
+<h2 data-number="3" class="anchored" data-anchor-id="필요성"><span class="header-section-number">3</span> 필요성</h2>
+<ul>
+<li>sigmoid curve fitting 전의 전처리 단계인 baseline subtraction의 정확도가 매우 중요하다.
+<ul>
+<li>Baseline 데이터에 노이즈가 많을 경우, 최적화 과정에서 과적합이나 local minima와 같은 문제로 인해 파라미터 추정의 복잡성이 증가한다.</li>
+<li>Baseline subtraction의 정확도가 떨어질 경우 위양성/위음성의 위험이 있다.</li>
+</ul></li>
+<li>사내에 표준화된 baseline fitting 알고리즘이 없어 여러 baseline fitting 알고리즘이 존재한다.</li>
+</ul>
+</section>
+<section id="배경" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="배경"><span class="header-section-number">4</span> 배경</h2>
 <ul>
 <li>Real-Time PCR 검사의 정확도 향상을 위한 신호 처리 알고리즘 개선 필요성 대두</li>
 <li>기존 rule-based 알고리즘의 한계 극복 및 data-driven 접근 방식 도입</li>
 </ul>
-<section id="real-time-pcr의-원리" class="level3" data-number="2.1">
-<h3 data-number="2.1" class="anchored" data-anchor-id="real-time-pcr의-원리"><span class="header-section-number">2.1</span> Real Time PCR의 원리</h3>
+<section id="real-time-pcr의-원리" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="real-time-pcr의-원리"><span class="header-section-number">4.1</span> Real Time PCR의 원리</h3>
 <p>Real Time PCR 장비는 핵산(Nucleic Acid) 검체의 존재 여부를 확인하기 위해 각 사이클마다 핵산 검체를 2배씩 증폭하면서 신호를 감지한다.</p>
 <ul>
 <li>Lag Phase (지연 단계): 증폭된 검체의 신호가 일정 농도 이하일 경우, PCR 장비는 신호를 감지하지 못하고, 장비 내부 기본값과 시약 및 소모품의 값이 합산된 신호로 반환한다. 이는 일정 시간 동안 지연되는 구간이다.</li>
@@ -424,15 +443,15 @@ English
 </div>
 </section>
 </section>
-<section id="risk" class="level3" data-number="2.2">
-<h3 data-number="2.2" class="anchored" data-anchor-id="risk"><span class="header-section-number">2.2</span> Risk</h3>
+<section id="risk" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="risk"><span class="header-section-number">4.2</span> Risk</h3>
 <ul>
 <li>PCR 신호는 시험관 내에서 일어나는 미시적 화학 반응, 광학 반응 및 기계적 반응의 결과이다. 이 과정에서 인간이 명확히 측정하거나 설명하기 어려운 원인에 의한 노이즈가 섞일 수 있다.</li>
 <li>이로 인해, Ct 값의 편향과 결과적으로 위양성 또는 위음성 결과가 발생할 위험이 증가할 수 있다.</li>
 </ul>
 </section>
-<section id="pcr-신호처리-및-최종-출력물" class="level3" data-number="2.3">
-<h3 data-number="2.3" class="anchored" data-anchor-id="pcr-신호처리-및-최종-출력물"><span class="header-section-number">2.3</span> PCR 신호처리 및 최종 출력물</h3>
+<section id="pcr-신호처리-및-최종-출력물" class="level3" data-number="4.3">
+<h3 data-number="4.3" class="anchored" data-anchor-id="pcr-신호처리-및-최종-출력물"><span class="header-section-number">4.3</span> PCR 신호처리 및 최종 출력물</h3>
 <p>따라서, 이러한 노이즈를 보정하기 위한 전처리 방법이 필요하다. 전처리 후, 진단 알고리즘은</p>
 <ul>
 <li>양/음성 (정성적 지표): 검체의 존재 여부와</li>
@@ -440,25 +459,6 @@ English
 </ul>
 <p>를 시그모이드 곡선 적합을 통해 최종 출력한다.</p>
 </section>
-</section>
-<section id="동기" class="level2" data-number="3">
-<h2 data-number="3" class="anchored" data-anchor-id="동기"><span class="header-section-number">3</span> 동기</h2>
-<ul>
-<li>회사에 처음 입사했을 때, legacy 진단 알고리즘의 수많은 if문과 설정값, 그리고 낮은 가독성의 코드에 압도되었다.</li>
-<li>rule-based 알고리즘이 data-driven 알고리즘에 비해 성능이 떨어진다고는 할 수 없지만, 다양한 PCR 신호를 조건문으로 처리하기에는 한계가 있다고 판단했다.</li>
-<li>따라서, 점진적으로 진단 알고리즘을 data-driven 방식으로 개선할 필요가 있다고 생각했다.</li>
-</ul>
-</section>
-<section id="필요성" class="level2" data-number="4">
-<h2 data-number="4" class="anchored" data-anchor-id="필요성"><span class="header-section-number">4</span> 필요성</h2>
-<ul>
-<li>sigmoid curve fitting 전의 전처리 단계인 baseline subtraction의 정확도가 매우 중요하다.
-<ul>
-<li>Baseline 데이터에 노이즈가 많을 경우, 최적화 과정에서 과적합이나 local minima와 같은 문제로 인해 파라미터 추정의 복잡성이 증가한다.</li>
-<li>Baseline subtraction의 정확도가 떨어질 경우 위양성/위음성의 위험이 있다.</li>
-</ul></li>
-<li>사내에 표준화된 baseline fitting 알고리즘이 없어 여러 baseline fitting 알고리즘이 존재한다.</li>
-</ul>
 </section>
 <section id="고려-사항" class="level2" data-number="5">
 <h2 data-number="5" class="anchored" data-anchor-id="고려-사항"><span class="header-section-number">5</span> 고려 사항</h2>
@@ -674,7 +674,7 @@ where <span class="math inline">\(w_i^*\)</span> are the optimized weights.</p><
 <h2 data-number="10" class="anchored" data-anchor-id="result"><span class="header-section-number">10</span> Result</h2>
 <section id="import-packages" class="level3" data-number="10.1">
 <h3 data-number="10.1" class="anchored" data-anchor-id="import-packages"><span class="header-section-number">10.1</span> Import Packages</h3>
-<div id="b70560a9" class="cell" data-execution_count="1">
+<div id="35e3e372" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># import packages</span></span>
@@ -732,17 +732,17 @@ where <span class="math inline">\(w_i^*\)</span> are the optimized weights.</p><
 </section>
 <section id="data-preparation" class="level3" data-number="10.2">
 <h3 data-number="10.2" class="anchored" data-anchor-id="data-preparation"><span class="header-section-number">10.2</span> Data Preparation</h3>
-<div id="cc513899" class="cell" data-execution_count="2">
+<div id="759dc084" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mudt<span class="op">=</span><span class="va">False</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>outlier_naive_metric <span class="op">=</span><span class="fl">1.1</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>outlier_naive_metric <span class="op">=</span><span class="fl">1.2</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>result_data <span class="op">=</span> main_function(outlier_naive_metric,mudt)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>merged_data <span class="op">=</span> result_data[<span class="dv">0</span>]</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>filtered_data <span class="op">=</span> result_data[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="e02ad9fe" class="cell" data-execution_count="3">
+<div id="08b46465" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>negative_data <span class="op">=</span> merged_data.query(<span class="st">"`final_ct`&lt;0"</span>)</span>
@@ -759,10 +759,18 @@ where <span class="math inline">\(w_i^*\)</span> are the optimized weights.</p><
 </section>
 <section id="복수-신호에-대한-성능-평가" class="level3" data-number="10.3">
 <h3 data-number="10.3" class="anchored" data-anchor-id="복수-신호에-대한-성능-평가"><span class="header-section-number">10.3</span> 복수 신호에 대한 성능 평가</h3>
-<div id="1d24f426" class="cell" data-execution_count="4">
+<div id="5924e649" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plot_baseline_subtractions(merged_data,pcrd_name,channel_name,temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>temp <span class="op">=</span> merged_data</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>temp[<span class="st">'has_non_zero'</span>] <span class="op">=</span> merged_data[<span class="st">'analysis_rd_diff'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: np.<span class="bu">any</span>(x <span class="op">!=</span> <span class="dv">0</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>non_zero_rows <span class="op">=</span> merged_data[merged_data[<span class="st">'has_non_zero'</span>]]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>pcrd_name <span class="op">=</span> non_zero_rows[<span class="st">'name'</span>].unique()[<span class="dv">0</span>]</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>channel_name <span class="op">=</span> non_zero_rows[<span class="st">'channel'</span>].unique()[<span class="dv">0</span>]</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>temperature_name <span class="op">=</span> non_zero_rows[<span class="st">'temperature'</span>].unique()[<span class="dv">0</span>]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>well_name <span class="op">=</span> non_zero_rows[<span class="st">'well'</span>].unique()[<span class="dv">3</span>]</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>plot_baseline_subtractions(merged_data,pcrd_name,channel_name,temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
@@ -774,10 +782,11 @@ where <span class="math inline">\(w_i^*\)</span> are the optimized weights.</p><
 </div>
 <section id="단일-신호에-대한-성능-평가" class="level4">
 <h4 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가">단일 신호에 대한 성능 평가</h4>
-<div id="da280c69" class="cell" data-execution_count="5">
+<div id="0bb40403" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>plot_single_well(filtered_data,pcrd_name,channel_name, temperature_name, <span class="st">'H12'</span>,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>temp2 <span class="op">=</span> merged_data.query(<span class="st">'`name` == @pcrd_name'</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>plot_single_well(temp2,pcrd_name,channel_name, temperature_name, well_name,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
@@ -792,7 +801,7 @@ where <span class="math inline">\(w_i^*\)</span> are the optimized weights.</p><
 <section id="증가-신호에-대한-성능-평가" class="level3" data-number="10.4">
 <h3 data-number="10.4" class="anchored" data-anchor-id="증가-신호에-대한-성능-평가"><span class="header-section-number">10.4</span> 증가 신호에 대한 성능 평가</h3>
 <p>이 Sampled Data엔 증가신호가 없음</p>
-<div id="b0de09f5" class="cell" data-execution_count="6">
+<div id="e910a225" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ascending_data = merged_data.query("`channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &gt;0") #</span></span>
@@ -826,14 +835,14 @@ where <span class="math inline">\(w_i^*\)</span> are the optimized weights.</p><
 </section>
 <section id="감소-신호에-대한-성능-평가" class="level3" data-number="10.5">
 <h3 data-number="10.5" class="anchored" data-anchor-id="감소-신호에-대한-성능-평가"><span class="header-section-number">10.5</span> 감소 신호에 대한 성능 평가</h3>
-<div id="eb710ce9" class="cell" data-execution_count="7">
+<div id="c6999eea" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>descending_data <span class="op">=</span> merged_data.query(<span class="st">"`analysis_dataprocnum` == 13 &amp; `channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &lt;0"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>descending_data<span class="op">=</span>descending_data.iloc[:<span class="bu">len</span>(descending_data) <span class="op">//</span> <span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="6f5f220a" class="cell" data-execution_count="8">
+<div id="df987e5d" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(descending_data,channel_name, temperature_name, mudt <span class="op">=</span> mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -848,7 +857,7 @@ where <span class="math inline">\(w_i^*\)</span> are the optimized weights.</p><
 </div>
 <section id="단일-신호에-대한-성능-평가-1" class="level4">
 <h4 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-1">단일 신호에 대한 성능 평가</h4>
-<div id="39f6df33" class="cell" data-execution_count="9">
+<div id="f3d7ae34" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>temp <span class="op">=</span> descending_data[descending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">42</span>]<span class="op">&lt;</span>(<span class="op">-</span><span class="dv">30</span>))]</span>
@@ -871,7 +880,7 @@ where <span class="math inline">\(w_i^*\)</span> are the optimized weights.</p><
 </section>
 <section id="제품-특이적인-신호처리에-대한-성능-평가" class="level3" data-number="10.6">
 <h3 data-number="10.6" class="anchored" data-anchor-id="제품-특이적인-신호처리에-대한-성능-평가"><span class="header-section-number">10.6</span> 제품 특이적인 신호처리에 대한 성능 평가</h3>
-<div id="5d4fb4d5" class="cell" data-execution_count="10">
+<div id="54bea466" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mudt<span class="op">=</span><span class="va">True</span></span>
@@ -892,7 +901,7 @@ where <span class="math inline">\(w_i^*\)</span> are the optimized weights.</p><
 </div>
 <section id="복수-신호에-대한-성능-평가-1" class="level4">
 <h4 class="anchored" data-anchor-id="복수-신호에-대한-성능-평가-1">복수 신호에 대한 성능 평가</h4>
-<div id="31a44704" class="cell" data-execution_count="11">
+<div id="05c5329e" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>plot_baseline_subtractions(filtered_data,pcrd_name,channel_name,temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -907,13 +916,13 @@ where <span class="math inline">\(w_i^*\)</span> are the optimized weights.</p><
 </div>
 <section id="단일-신호에-대한-성능-평가-2" class="level5">
 <h5 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-2">단일 신호에 대한 성능 평가</h5>
-<div id="f22e50e4" class="cell" data-execution_count="12">
+<div id="15d806bb" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>filtered_data[filtered_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">40</span>]<span class="op">&gt;</span><span class="dv">100</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="f6dc0474" class="cell" data-execution_count="13">
+<div id="a598de1a" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>pcrd_nm <span class="op">=</span> temp.tail(<span class="dv">1</span>).iloc[<span class="dv">0</span>][<span class="st">'name'</span>]</span>
@@ -935,7 +944,7 @@ where <span class="math inline">\(w_i^*\)</span> are the optimized weights.</p><
 </section>
 <section id="증가-신호에-대한-성능-평가-1" class="level4">
 <h4 class="anchored" data-anchor-id="증가-신호에-대한-성능-평가-1">증가 신호에 대한 성능 평가</h4>
-<div id="fb633645" class="cell" data-execution_count="14">
+<div id="28da8594" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>ascending_data <span class="op">=</span> merged_data.query(<span class="st">"`analysis_dataprocnum` == 13 &amp; `channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &gt;0"</span>)</span>
@@ -951,7 +960,7 @@ where <span class="math inline">\(w_i^*\)</span> are the optimized weights.</p><
 </div>
 <section id="단일-신호에-대한-성능-평가-3" class="level5">
 <h5 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-3">단일 신호에 대한 성능 평가</h5>
-<div id="bf882f19" class="cell" data-execution_count="15">
+<div id="61a4cfe2" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>ascending_data[ascending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">40</span>]<span class="op">&gt;</span><span class="dv">200</span>)]</span>
@@ -973,7 +982,7 @@ where <span class="math inline">\(w_i^*\)</span> are the optimized weights.</p><
 </section>
 <section id="감소-신호에-대한-성능-평가-1" class="level4">
 <h4 class="anchored" data-anchor-id="감소-신호에-대한-성능-평가-1">감소 신호에 대한 성능 평가</h4>
-<div id="a712b1a8" class="cell" data-execution_count="16">
+<div id="ece72e5a" class="cell" data-execution_count="16">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>descending_data <span class="op">=</span> merged_data.query(<span class="st">"`channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `linear_slope`&lt;0 &amp; `final_ct` &lt;0"</span>)</span>
@@ -990,7 +999,7 @@ where <span class="math inline">\(w_i^*\)</span> are the optimized weights.</p><
 </div>
 <section id="단일-신호에-대한-성능-평가-4" class="level5">
 <h5 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-4">단일 신호에 대한 성능 평가</h5>
-<div id="dd3df6fc" class="cell" data-execution_count="17">
+<div id="4e720a32" class="cell" data-execution_count="17">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>temp <span class="op">=</span> descending_data[descending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">30</span>]<span class="op">&lt;</span>(<span class="op">-</span><span class="dv">20</span>))]</span>
@@ -1013,7 +1022,7 @@ where <span class="math inline">\(w_i^*\)</span> are the optimized weights.</p><
 </section>
 <section id="제품-고유-risk-신호" class="level4">
 <h4 class="anchored" data-anchor-id="제품-고유-risk-신호">제품 고유 Risk 신호</h4>
-<div id="20fa2e1b" class="cell" data-execution_count="18">
+<div id="10f78bb1" class="cell" data-execution_count="18">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>merged_data[<span class="st">'mudt_distortion_combo_key'</span>]<span class="op">=</span>merged_data[[<span class="st">'name'</span>, <span class="st">'channel'</span>, <span class="st">'well'</span>]].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="st">' '</span>.join(x), axis<span class="op">=</span><span class="dv">1</span>)</span>
@@ -1034,7 +1043,7 @@ where <span class="math inline">\(w_i^*\)</span> are the optimized weights.</p><
 </div>
 </div>
 </div>
-<div id="366043f6" class="cell" data-execution_count="19">
+<div id="141bdd88" class="cell" data-execution_count="19">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>mudt_risk_data[mudt_risk_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">40</span>]<span class="op">&lt;</span> <span class="op">-</span><span class="dv">200</span>)]</span>

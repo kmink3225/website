@@ -38,6 +38,19 @@ format:
 * 역할: 프로젝트 매니저 및 데이터 사이언티스트
 * 팀 구성: 3명의 데이터 사이언티스트, 2명의 데이터 엔지니어, 2명의 생물학자
 
+## 동기
+
+* 회사에 처음 입사했을 때, legacy 진단 알고리즘의 수많은 if문과 설정값, 그리고 낮은 가독성의 코드에 압도되었다. 
+* rule-based 알고리즘이 data-driven 알고리즘에 비해 성능이 떨어진다고는 할 수 없지만, 다양한 PCR 신호를 조건문으로 처리하기에는 한계가 있다고 판단했다. 
+* 따라서, 점진적으로 진단 알고리즘을 data-driven 방식으로 개선할 필요가 있다고 생각했다.  
+
+## 필요성
+
+* sigmoid curve fitting 전의 전처리 단계인 baseline subtraction의 정확도가 매우 중요하다.
+  * Baseline 데이터에 노이즈가 많을 경우, 최적화 과정에서 과적합이나 local minima와 같은 문제로 인해 파라미터 추정의 복잡성이 증가한다. 
+  * Baseline subtraction의 정확도가 떨어질 경우 위양성/위음성의 위험이 있다. 
+* 사내에 표준화된 baseline fitting 알고리즘이 없어 여러 baseline fitting 알고리즘이 존재한다. 
+
 ## 배경
 
 * Real-Time PCR 검사의 정확도 향상을 위한 신호 처리 알고리즘 개선 필요성 대두
@@ -79,19 +92,6 @@ Real Time PCR 장비는 핵산(Nucleic Acid) 검체의 존재 여부를 확인�
 * Ct 값 (정량적 지표): 검체의 농도 
 
 를 시그모이드 곡선 적합을 통해 최종 출력한다.
-
-## 동기
-
-* 회사에 처음 입사했을 때, legacy 진단 알고리즘의 수많은 if문과 설정값, 그리고 낮은 가독성의 코드에 압도되었다. 
-* rule-based 알고리즘이 data-driven 알고리즘에 비해 성능이 떨어진다고는 할 수 없지만, 다양한 PCR 신호를 조건문으로 처리하기에는 한계가 있다고 판단했다. 
-* 따라서, 점진적으로 진단 알고리즘을 data-driven 방식으로 개선할 필요가 있다고 생각했다.  
-
-## 필요성
-
-* sigmoid curve fitting 전의 전처리 단계인 baseline subtraction의 정확도가 매우 중요하다.
-  * Baseline 데이터에 노이즈가 많을 경우, 최적화 과정에서 과적합이나 local minima와 같은 문제로 인해 파라미터 추정의 복잡성이 증가한다. 
-  * Baseline subtraction의 정확도가 떨어질 경우 위양성/위음성의 위험이 있다. 
-* 사내에 표준화된 baseline fitting 알고리즘이 없어 여러 baseline fitting 알고리즘이 존재한다. 
 
 ## 고려 사항
 
@@ -327,7 +327,7 @@ warnings.filterwarnings("ignore")
 
 ```{python}
 mudt=False
-outlier_naive_metric =1.1
+outlier_naive_metric =1.2
 result_data = main_function(outlier_naive_metric,mudt)
 merged_data = result_data[0]
 filtered_data = result_data[1]
@@ -349,13 +349,22 @@ temperature_name = merged_data['temperature'].unique()[0]
 ### 복수 신호에 대한 성능 평가
 
 ```{python}
+temp = merged_data
+temp['has_non_zero'] = merged_data['analysis_rd_diff'].apply(lambda x: np.any(x != 0))
+non_zero_rows = merged_data[merged_data['has_non_zero']]
+pcrd_name = non_zero_rows['name'].unique()[0]
+channel_name = non_zero_rows['channel'].unique()[0]
+temperature_name = non_zero_rows['temperature'].unique()[0]
+well_name = non_zero_rows['well'].unique()[3]
+
 plot_baseline_subtractions(merged_data,pcrd_name,channel_name,temperature_name, mudt=mudt)
 ```
 
 #### 단일 신호에 대한 성능 평가
 
 ```{python}
-plot_single_well(filtered_data,pcrd_name,channel_name, temperature_name, 'H12',mudt=mudt)
+temp2 = merged_data.query('`name` == @pcrd_name')
+plot_single_well(temp2,pcrd_name,channel_name, temperature_name, well_name,mudt=mudt)
 ```
 
 ### 증가 신호에 대한 성능 평가

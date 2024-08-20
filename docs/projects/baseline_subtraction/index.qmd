@@ -53,10 +53,12 @@ format:
 
 Real Time PCR 장비는 핵산(Nucleic Acid) 검체의 존재 여부를 확인하기 위해 각 사이클마다 핵산 검체를 2배씩 증폭하면서 신호를 감지한다.
 
-* Lag Phase (지연 단계): 증폭된 검체의 신호가 일정 농도 이하일 경우, PCR 장비는 신호를 감지하지 못하고, 
-장비 내부 기본값과 시약 및 소모품의 값이 합산된 신호로 반환한다. 이는 일정 시간 동안 지연되는 구간이다.
-* Log Phase (로그 단계): Exponential Phase라고도 불리며 증폭된 검체의 신호가 일정 농도 이상일 때, PCR 장비에서는 신호의 변화가 나타나며, 포화 상태에 이를 때까지 신호가 2의 지수승으로 증가한다.
-* Plateau Phase (플라토 단계): Stationary Phase 효소의 활성도 감소 및 반응물의 고갈 등으로 인해 포화 상태에 도달하면, 신호는 더 이상 증가하지 않고 일정하게 유지된다.
+* Lag Phase (지연 단계): 증폭된 검체의 신호가 일정 농도 이하일 경우, PCR 장비는 신호를 감지하지 못하고,  
+  장비 내부 기본값과 시약 및 소모품의 값이 합산된 신호로 반환한다. 이는 일정 시간 동안 지연되는 구간이다.
+* Log Phase (로그 단계): Exponential Phase라고도 불리며 증폭된 검체의 신호가 일정 농도 이상일 때,  
+  PCR 장비에서는 신호의 변화가 나타나며, 포화 상태에 이를 때까지 신호가 2의 지수승으로 증가한다.
+* Plateau Phase (플라토 단계): Stationary Phase 효소의 활성도 감소 및 반응물의 고갈 등으로 인해 포화 상태에 도달하면,   
+신호는 더 이상 증가하지 않고 일정하게 유지된다.
 
 이러한 방식으로 Real Time PCR 장비의 신호는 이론적으로 **sigmoid curve**의 패턴을 나타낸다.
 
@@ -167,7 +169,7 @@ $$
 
 ### Data Pipeline
 
-![Data Pipeline](../../../images/projects/baseline_subtraction/pipeline.PNG)
+![Data Pipeline](../../../images/projects/baseline_subtraction/pipeline.PNG){width=70%}
 
 ### 알고리즘 종류
 
@@ -182,7 +184,10 @@ $$
   * 4th Pannel [Auto]: (대조군3)생물 실험자들이 제품을 최적화하기 위해 현재 사용하고있는 **Bio Legacy Rule-Based** 알고리즘  
   * 5th Pannel [Strep+N]: (실험군1)팀원(물리학자)이 [DSP]를 보완하기 위해 만든 N+1 번째 **Rule-Based** 알고리즘 
   * 6th Pannel [ML]: (실험군2)본인이 **data driven ML**알고리즘 
-    * Characteristic Equation: Talyer Series에서 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여, 다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 시도했다. 이 접근법은 데이터의 feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링할 수 있게 한다. 적절한 차수 선택과 정규화를 통해 baseline 신호에 적합시킨다.
+    * Characteristic Equation: Talyer Series에서 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여,   
+    다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 시도했다. 이 접근법은 데이터의   
+    feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링할 수 있게 한다.   
+    적절한 차수 선택과 정규화를 통해 baseline 신호에 적합시킨다.
     
       1. 로그 정규화
       
@@ -231,7 +236,10 @@ $$
 
          $X_{restored} = \exp(X_{normalized} \cdot (\max(\log(X_{original})) - \min(\log(X_{original}))) + \min(\log(X_{original}))) + \min(X_{original}) - \epsilon$
           
-    * Neural Network: Characteristic Equation (특성 방정식)은 기저함수를 분석가가 선정해줘야 하는 위험 부담이 있다. Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기저함수를 설정할 수 있지만 임상신호나 실제 시장에서 만들어지는 신호는 그 패턴이 예상과 다를 수 있기 때문에 Data에 맞게 적합가능한 간단한 신경망을 구현하여 적합시킨다.  
+    * Neural Network: Characteristic Equation (특성 방정식)은 기저함수를 분석가가 선정해줘야 하는 위험 부담이 있다.   
+    Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기저함수를 설정할 수 있지만 임상신호나   
+    실제 시장에서 만들어지는 신호는 그 패턴이 예상과 다를 수 있기 때문에 Data에 맞게   
+    적합가능한 간단한 신경망을 구현하여 적합시킨다.  
 * MuDT On 한 데이터에 대하여,
   * 1st Pannel [After BPN]: normalized **Raw Data**를 보여준다.
   * 2nd Pannel [After BPN]: normalized raw data를 MuDT에 의해 **Preprocessed Data**를 보여준다.
@@ -575,12 +583,11 @@ plot_single_well(mudt_risk_data,pcrd_name,channel_name, temperature_name, well_n
 * Data governance 프로젝트와의 연계를 통한 알고리즘 개선 및 검증
 * 알고리즘의 Verification and Validation 프로세스 확립
 
-
 ## Achievements
 
 * 알고리즘 성능 비교 분석 시각화 도구 개발
 * Data-driven 방식의 baseline fitting 알고리즘 구현
-* Rule-based 및 Machine Learning 기반 알고리즘의 성능 개선 입증
+* Rule-based 및 Machine Learning 기반 알고리즘의 성능 개선을 시각화로 입증 
 
 ## Future Work
 

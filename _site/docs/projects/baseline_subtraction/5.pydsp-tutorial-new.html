@@ -2,12 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.56">
+<meta name="generator" content="quarto-1.4.543">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>PyDSP를 이용한 DSP 연산 및 PyDSPTools를 이용한 데이터 시각화 Tutorial – Kwangmin Kim</title>
+<title>Kwangmin Kim - PyDSP를 이용한 DSP 연산 및 PyDSPTools를 이용한 데이터 시각화 Tutorial</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -33,7 +33,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -102,7 +102,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
 
-<link rel="stylesheet" href="../../../styles.css">
 </head>
 
 <body class="nav-fixed">
@@ -120,7 +119,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -155,7 +154,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
-            <div class="quarto-navbar-tools">
+          <div class="quarto-navbar-tools">
 </div>
       </div> <!-- /container-fluid -->
     </nav>
@@ -169,10 +168,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#파이썬-라이브러리-불러오기" id="toc-파이썬-라이브러리-불러오기" class="nav-link active" data-scroll-target="#파이썬-라이브러리-불러오기">파이썬 라이브러리 불러오기</a></li>
-  <li><a href="#pcr-데이터-준비-import" id="toc-pcr-데이터-준비-import" class="nav-link" data-scroll-target="#pcr-데이터-준비-import">1. PCR 데이터 준비 (Import)</a></li>
-  <li><a href="#연산-설정-준비-config" id="toc-연산-설정-준비-config" class="nav-link" data-scroll-target="#연산-설정-준비-config">2. 연산 설정 준비 (Config)</a></li>
-  <li><a href="#dsp-연산" id="toc-dsp-연산" class="nav-link" data-scroll-target="#dsp-연산">3. DSP 연산</a></li>
+  <li><a href="#pydsp를-이용한-dsp-연산-및-pydsptools를-이용한-데이터-시각화-tutorial" id="toc-pydsp를-이용한-dsp-연산-및-pydsptools를-이용한-데이터-시각화-tutorial" class="nav-link active" data-scroll-target="#pydsp를-이용한-dsp-연산-및-pydsptools를-이용한-데이터-시각화-tutorial"><span class="header-section-number">1</span> PyDSP를 이용한 DSP 연산 및 PyDSPTools를 이용한 데이터 시각화 Tutorial</a>
+  <ul class="collapse">
+  <li><a href="#파이썬-라이브러리-불러오기" id="toc-파이썬-라이브러리-불러오기" class="nav-link" data-scroll-target="#파이썬-라이브러리-불러오기"><span class="header-section-number">1.1</span> 파이썬 라이브러리 불러오기</a></li>
+  <li><a href="#pcr-데이터-준비-import" id="toc-pcr-데이터-준비-import" class="nav-link" data-scroll-target="#pcr-데이터-준비-import"><span class="header-section-number">1.2</span> 1. PCR 데이터 준비 (Import)</a></li>
+  <li><a href="#연산-설정-준비-config" id="toc-연산-설정-준비-config" class="nav-link" data-scroll-target="#연산-설정-준비-config"><span class="header-section-number">1.3</span> 2. 연산 설정 준비 (Config)</a></li>
+  <li><a href="#dsp-연산" id="toc-dsp-연산" class="nav-link" data-scroll-target="#dsp-연산"><span class="header-section-number">1.4</span> 3. DSP 연산</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -198,9 +200,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="파이썬-라이브러리-불러오기" class="level3">
-<h3 class="anchored" data-anchor-id="파이썬-라이브러리-불러오기">파이썬 라이브러리 불러오기</h3>
+<section id="pydsp를-이용한-dsp-연산-및-pydsptools를-이용한-데이터-시각화-tutorial" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="pydsp를-이용한-dsp-연산-및-pydsptools를-이용한-데이터-시각화-tutorial"><span class="header-section-number">1</span> PyDSP를 이용한 DSP 연산 및 PyDSPTools를 이용한 데이터 시각화 Tutorial</h2>
+<section id="파이썬-라이브러리-불러오기" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="파이썬-라이브러리-불러오기"><span class="header-section-number">1.1</span> 파이썬 라이브러리 불러오기</h3>
 <div id="9fde3a32-47c0-44e0-81d5-16aa0ee68975" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data Import</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pydsptools.biorad <span class="im">as</span> biorad</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -220,10 +226,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
-<section id="pcr-데이터-준비-import" class="level3">
-<h3 class="anchored" data-anchor-id="pcr-데이터-준비-import">1. PCR 데이터 준비 (Import)</h3>
+<section id="pcr-데이터-준비-import" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="pcr-데이터-준비-import"><span class="header-section-number">1.2</span> 1. PCR 데이터 준비 (Import)</h3>
 <p>DSP 연산을 하고자 하는 PCRD 파일의 Seegene Export 파일을 압축하여 준비한 후, 아래 정보를 입력함</p>
 <ul>
 <li>RAW_ZIP_PATH : PCRD 파일을 Seegene export 파일로 변환하여 압축한 파일의 경로</li>
@@ -235,6 +242,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>PLATE_NAME : 플레이트 디자인 이름</li>
 </ul>
 <div id="f9e9cd7f-0f3a-4013-adb6-2ff8406a3b64" class="cell" data-execution_count="23">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>RAW_ZIP_PATH <span class="op">=</span> <span class="st">"./data/GI-B-I/GI-B-I-100/GI-B-I-100.zip"</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>PCR_SYSTEM <span class="op">=</span> <span class="st">"CFX96"</span></span>
@@ -245,9 +254,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>PLATE_NAME <span class="op">=</span> <span class="st">"PLATE_NUM_001_100"</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>TO_PARQUET_DIR <span class="op">=</span> <span class="st">"./data/GI-B-I/GI-B-I-100/computed/pcr_results"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>위에서 입력한 정보와 함께 아래 명령어를 실행하면 TO_PARQUET_DIR에 PARQUET 파일들이 저장됨</p>
 <div id="520533c0-35ac-4711-92d7-d05a5056f7a5" class="cell" data-execution_count="24">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    biorad.DataParser(RAW_ZIP_PATH, <span class="bu">type</span><span class="op">=</span><span class="st">"cfx-batch-csv"</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    .append_metadata(</span>
@@ -259,11 +271,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    .dump(TO_PARQUET_DIR)</span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <p>PCR 파일들의 형태가 PARQUET으로 변환되어 DSP 연산 준비가 된 상태가 되었다는 것을 의미함 :)</p>
 </section>
-<section id="연산-설정-준비-config" class="level3">
-<h3 class="anchored" data-anchor-id="연산-설정-준비-config">2. 연산 설정 준비 (Config)</h3>
+<section id="연산-설정-준비-config" class="level3" data-number="1.3">
+<h3 data-number="1.3" class="anchored" data-anchor-id="연산-설정-준비-config"><span class="header-section-number">1.3</span> 2. 연산 설정 준비 (Config)</h3>
 <p>DSP 연산을 위한 설정값, 알고리즘을 정의하여 연산을 위한 Config 파일(YAML)을 생성하는 단계. 설정값, 알고리즘에 대한 정보를 아래 변수에 입력함</p>
 <ul>
 <li>CONFIG_NAME : Config 이름<br>
@@ -279,6 +292,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>CONFIG_YML_PATH : 저장한 YAML 파일 경로</li>
 </ul>
 <div id="343997c9-9297-427b-b6fb-b7373a8d9b10" class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>CONFIG_NAME <span class="op">=</span> <span class="st">"tutorial_config"</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>DSP_VERSION <span class="op">=</span> <span class="st">"2.1.1"</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>DSP_PRODUCT <span class="op">=</span> <span class="st">"StrepAssay"</span></span>
@@ -287,8 +302,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>XSLX_PATH_8_STRIP <span class="op">=</span> <span class="st">"data/config-xlsx/dspconfig_template_240305_multiamp.xlsx"</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>CONFIG_YML_PATH <span class="op">=</span> <span class="st">"./config/tutorial_config.yml"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="25c2196d-aa62-4a22-81c9-f67a86b28996" class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    pda.ConfigParser(<span class="st">"multiamp-2402"</span>, <span class="st">"xlsx"</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        .set_dsp_version(DSP_VERSION)</span>
@@ -298,10 +316,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        .add_config(CONSUMABLE, path<span class="op">=</span>XSLX_PATH_8_STRIP)</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>        .dump(CONFIG_YML_PATH)</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 </section>
-<section id="dsp-연산" class="level3">
-<h3 class="anchored" data-anchor-id="dsp-연산">3. DSP 연산</h3>
+<section id="dsp-연산" class="level3" data-number="1.4">
+<h3 data-number="1.4" class="anchored" data-anchor-id="dsp-연산"><span class="header-section-number">1.4</span> 3. DSP 연산</h3>
 <p>Import에서 생성한 PCR Data parquet 파일과 연산 config 파일을 input으로 DSP 연산을 수행함</p>
 <ul>
 <li>INPUT_PARQUET_DIR : PCR 데이터 parquet 파일 디렉토리 경로</li>
@@ -309,11 +328,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>TO_OUTPUT_DIR : DSP 연산 결과 parquet 파일 디렉토리 경로</li>
 </ul>
 <div id="22ab0e99-a309-422f-86ca-acf44e5f2d26" class="cell" data-execution_count="25">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>INPUT_PARQUET_DIR <span class="op">=</span> <span class="st">"./data/GI-B-I/GI-B-I-100/computed/pcr_results/"</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>CONFIG_YML_PATH <span class="op">=</span> <span class="st">"./config/yaml/PRJDS001/GI-B-I/dsp2_generic_research_auto.yml"</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>TO_DSP_RESULT_DIR <span class="op">=</span> <span class="st">"./data/GI-B-I/GI-B-I-100/computed/config__dsp2_generic_research_auto"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 </div>
 <div id="3bb0de07-49cc-4b76-b11c-6b5e9db873b0" class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pydsp.run.worker.multiple_tasks(</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    INPUT_PARQUET_DIR, <span class="co"># Input directory</span></span>
@@ -322,6 +346,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="dv">4</span>,                 <span class="co"># Number of processes</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    is_verbose<span class="op">=</span><span class="va">True</span>    <span class="co"># Verboase mode</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-stderr">
 <pre><code>2024-04-19 00:31:52,559 - 109005 - INFO - Check entry /home/jupyter-kmkim/dsp-research-strep-a/kkm/data/GI-B-I/GI-B-I-100/computed/pcr_results/2. admin_2017-05-22 14-06-05_BR101459 GI9801XY MOM 소량 반제품1 민감도(Vpara, CdB, Vchol).parquet
 2024-04-19 00:31:52,559 - 109005 - INFO - Check entry /home/jupyter-kmkim/dsp-research-strep-a/kkm/data/GI-B-I/GI-B-I-100/computed/pcr_results/2. admin_2017-05-22 14-06-05_BR101459 GI9801XY MOM 소량 반제품1 민감도(Vpara, CdB, Vchol).parquet
@@ -6109,6 +6134,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 </section>
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -6146,7 +6172,18 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const onCopySuccess = function(e) {
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -6178,47 +6215,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
   });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
-    });
-    clipboardModal.on('success', onCopySuccess);
-  }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("kmink3225\.netlify\.app");
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
-      }
-    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -6253,11 +6250,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
+      return note.innerHTML;
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');

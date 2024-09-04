@@ -137,7 +137,7 @@ Real Time PCR 장비는 핵산(Nucleic Acid) 검체의 존재 여부를 확인�
 
 * 프로그래밍 언어: Python
 * 주요 라이브러리: NumPy, Pandas
-* 머신러닝/딥러닝: NumPy, Pandas (low level로 구현)
+* 머신러닝/딥러닝: Characteristic Equations & Neural Networks using NumPy, Pandas (low level로 구현)
 * 데이터 시각화: matplotlib
 
 ## Objective
@@ -184,7 +184,7 @@ $$
   * 4th Pannel [Auto]: (대조군3)생물 실험자들이 제품을 최적화하기 위해 현재 사용하고있는 **Bio Legacy Rule-Based** 알고리즘  
   * 5th Pannel [Strep+N]: (실험군1)팀원(물리학자)이 [DSP]를 보완하기 위해 만든 N+1 번째 **Rule-Based** 알고리즘 
   * 6th Pannel [ML]: (실험군2)본인이 **data driven ML**알고리즘 
-    * Characteristic Equation: Talyer Series에서 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여,   
+    * Characteristic Equation ([코드 링크](https://github.com/kmink3225/website/blob/28864068ed97b7285e8873ecefde95590ea17ebf/docs/projects/baseline_subtraction/source/signal_estimation.py#L415)): Talyer Series에서 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안하여,   
     다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 시도했다. 이 접근법은 데이터의   
     feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링할 수 있게 한다.   
     적절한 차수 선택과 정규화를 통해 baseline 신호에 적합시킨다.
@@ -245,7 +245,7 @@ $$
   * 2nd Pannel [After BPN]: normalized raw data를 MuDT에 의해 **Preprocessed Data**를 보여준다.
   * 3rd Pannel [DSP]: (대조군1)현재 Data Science팀에서 사용되고있는 공식적인 **Legacy Rule-Based** 알고리즘 
   * 4th Pannel [Auto]: (대조군2)생물 실험자들이 제품을 최적화하기 위해 현재 사용하고있는 **Bio Legacy Rule-Based** 알고리즘 
-  * 5th Pannel [Strep+N]: (실험군1)팀원(물리학자)이 [DSP]를 보완하기 위해 만든 N+1 번째 **Rule-Based** 알고리즘 
+  * 5th Pannel [Strep+N]: (실험군1)팀원(물리학자)이 [DSP]를 보완하기 위해 만든 N+1 번째 **Improved Rule-Based** 알고리즘 
   * 6th Pannel [ML]: (실험군2)본인이 **data driven ML**알고리즘 
     * Characteristic Equation
     * Neural Network
@@ -254,11 +254,12 @@ $$
 
 baseline data를 관찰 및 기존의 경험으로 알고있는 다양한 신호 패턴에 각 알고리즘들이 어떤 성능을 보이는지 비교한다. 
 
-* 복수 신호에 대한 성능 평가: 알고리즘의 총체적인 성능평가를 관찰 및 분석
-* 단일 신호에 대한 성능 평가: 특이 신호에 대한 알고리즘이 어떤 성능을 보이는지 세부적으로 관찰 및 분석
-* Baseline 증가 신호에 대한 성능 평가: 증가 신호에 대해서 알고리즘들이 어떤 성능을 보이는지 관찰 및 분석
-* Baseline 감소 신호에 대한 성능 평가: 감소 신호에 대해서 알고리즘들이 어떤 성능을 보이는지 관찰 및 분석
-* 제품 특이적인 신호에 대한 성능 평가: MuDT(씨젠의 제품과 BT기술)에 의한 신호처리 후 신호 패턴에 대하여 어떤 성능을 보이는지 관찰 및 분석 
+* **복수 신호**에 대한 성능 평가: 알고리즘의 총체적인 성능평가를 관찰 및 분석
+* **단일 신호**에 대한 성능 평가: 특이 신호에 대한 알고리즘이 어떤 성능을 보이는지 세부적으로 관찰 및 분석
+* **신호 유형**별 성능 평가
+  * Baseline **증가 신호**에 대한 성능 평가
+  * Baseline **감소 신호**에 대한 성능 평가
+  * **제품 특이적인 신호**에 대한 성능 평가: MuDT(씨젠의 제품과 BT기술)에 의한 신호처리 후 신호 패턴에 대하여 어떤 성능을 보이는지 관찰 및 분석 
 
 ### 평가 Metric
 
@@ -268,7 +269,7 @@ baseline data를 관찰 및 기존의 경험으로 알고있는 다양한 신호
 
 ## Result
 
-### Import Packages
+#### Import Packages
 
 ```{python}
 # import packages
@@ -323,7 +324,7 @@ import warnings
 warnings.filterwarnings("ignore")
 ```
 
-### Data Preparation
+#### Data Preparation
 
 ```{python}
 mudt=False
@@ -332,6 +333,8 @@ result_data = main_function(outlier_naive_metric,mudt)
 merged_data = result_data[0]
 filtered_data = result_data[1]
 ```
+
+* [main_function() 코드 링크](https://github.com/kmink3225/website/blob/28864068ed97b7285e8873ecefde95590ea17ebf/docs/projects/baseline_subtraction/source/preprocess.py#L40)
 
 ```{python}
 negative_data = merged_data.query("`final_ct`<0")
@@ -346,7 +349,9 @@ temperature_name = merged_data['temperature'].unique()[0]
 ```
 
 
-### 복수 신호에 대한 성능 평가
+### MuDT 전처리가 없는 경우
+
+#### 복수 신호에 대한 성능 평가
 
 ```{python}
 temp = merged_data
@@ -360,12 +365,111 @@ well_name = non_zero_rows['well'].unique()[3]
 plot_baseline_subtractions(merged_data,pcrd_name,channel_name,temperature_name, mudt=mudt)
 ```
 
+* [plot_baseline_subtractions() code link](https://github.com/kmink3225/website/blob/28864068ed97b7285e8873ecefde95590ea17ebf/docs/projects/baseline_subtraction/source/visualization.py#L186)
+
+복수 신호에 대하여 알고리즘의 전반적인 fitting 및 차감 성능을 확인한다.
+
+* 1st Pannel [After BPN]: Raw Data를 Normalizing하여 신호를 RFU value 6636 근처로 모은 결과 신호의 양 끝단에서 variance가 높은 경향을 가진것을 볼 수 있다.
+* 2nd Pannel [CFX]: (대조군1) **Black Box** 알고리즘이 신호의 앞쪽 data points를 버리고 선형적으로 fitting하여 차감한 것으로 추측된다. 
+* 3rd Pannel [DSP]: (대조군2) Data Science팀의 **Legacy Rule-Based** 알고리즘의 결과로 음성으로 판단된 신호에 조건적으로 차감결과를 산출하지 않는다. 
+* 4th Pannel [Auto]: (대조군3)생물 실험자들의 **Bio Legacy Rule-Based** 알고리즘의 결과로 전반적으로 [CFX]와 비슷한 신호 차감 성능을 보인다.
+* 5th Pannel [Strep+2]: (실험군1)팀원(물리학자)이 [DSP]를 3번 보완한 **Improved Rule-Based** 알고리즘의 결과로 조건에 따라 특정 그룹은 선형적으로 fitting하여 차감하고 다른 그룹엔 평균을 차감하고 신호를 평균값 0으로 평행이동 시킨것을 볼 수 있다. 
+* 6th Pannel [ML]: (실험군2)본인의 **data driven ML**알고리즘의 결과로 조건문 없이 신호 자체에 정확한 fitting을 하여 차감한 결과 white noise에 가까운 패턴을 보인다.
+
 #### 단일 신호에 대한 성능 평가
 
 ```{python}
 temp2 = merged_data.query('`name` == @pcrd_name')
 plot_single_well(temp2,pcrd_name,channel_name, temperature_name, well_name,mudt=mudt)
 ```
+
+* [plot_single_well()](https://github.com/kmink3225/website/blob/28864068ed97b7285e8873ecefde95590ea17ebf/docs/projects/baseline_subtraction/source/visualization.py#L304)
+
+단일 신호에 대하여 알고리즘별로 신호를 fitting, 차감 및 보정 처리하는 성능을 한눈에 확인한다.
+
+* Plot의 첫 번째 행은 보정 처리 및 fitting 결과 (Red)를 한눈에 확인가능하다
+* Plot의 두 번째 행은 보정 처리 (Blue)와 fitting 결과 (Red)를 분리하여 확인한다. 다시 말해서, 파란색 선에 대한 fitting 결과 (Red) 를 확인할 수 있다.
+* Plot의 세 번째 행은 차감 결과를 확인할 수 있고 white noise에 가까울 수록 보정과 fitting의 성능이 우수한 것으로 평가한다.
+
+성능 비교
+
+* 1st Pannel [DSP]: (대조군2) Data Science팀의 **Legacy Rule-Based** 알고리즘의 조건상 아래로 jumping 신호를 위로 보정하여 신호의 증폭 유무를 판별한다. 음성신호로 판독되어 차감결과를 0으로 반환한다.
+* 2nd Pannel [Auto]: (대조군3) (대조군3)생물 실험자들의 **Bio Legacy Rule-Based** 알고리즘은 jumping 신호를 위로 보정한 후 1차 회귀곡선으로 fitting하여 차감한 결과를 관찰할 수 있다.  
+* 3rd Pannel [CFX]: **Black Box** 알고리즘은 어떠한 보정없이 1차 회귀곡선으로 차감한 것을 관찰할 수 있다.
+* 4th Pannel [Strep+2]: (실험군1) **Improved Rule-Based** 알고리즘은 특정 조건하에 신호를 fitting하지 않고 평균값으로 평행이동한 것을 관찰할 수 있다.
+* 5th Pannel [ML]: (실험군2) **data driven ML**알고리즘은 신호의 jumping을 보정한 결과를 사용하지 않고 raw data에 직접 fitting하여 차감한 것을 관찰할 수있다.
+
+
+## Conclusion
+
+본 프로젝트는 분자진단 시스템의 신호 분석 알고리즘 개선을 목표로 수행되었으며, 다음과 같은 주요 성과와 향후 과제를 도출하였다.
+
+### 기존 문제점 해결
+
+#### 문제 인식
+
+  * 시약 성능 및 환경적 요인으로 인한 'gray zone' 이상 신호에 대한 판독 문제
+  * 위음성/위양성 패턴에 대한 대응 부족
+  * Ct값 산출의 불안정성
+
+#### 접근 방식
+
+  * Rule-based 알고리즘 개선: 추가 조건 반영으로 이상신호 관리 강화
+  * Machine Learning 기반 data-driven 알고리즘 도입
+
+#### 결과
+
+  * 타사 **black box** 알고리즘 성능 확인
+  * 개선된 rule-based 알고리즘 [strep+2]의 성능 향상 확인
+  * Machine Learning 기반 알고리즘 [ML]의 탁월한 성능 입증
+  * [ML]에서 Neural Network는 연산의 복잡도로 인하여 연산시간이 많아 실험군에서 제외
+
+### 알고리즘 성능 평가
+
+#### 평가 제한 사항
+
+* 기존 legacy 알고리즘의 Matlab에서 C++로의 Refactoring 작업으로 인한 정량적 측정의 한계
+
+#### 향후 과제
+
+* System level에서의 전체 알고리즘 성능 비교를 위한 대규모 데이터 기반 정량적 평가 필요
+
+### 시각화 도구 개선 및 표준화
+
+#### 기존 문제
+
+* 다양한 알고리즘의 비표준화된 사용으로 인한 시약 개발 프로세스의 비일관성
+
+#### 개선 사항
+
+* 알고리즘별 성능 시각화 도구 제공
+* 알고리즘 단일화에 대한 설득력 향상 및 개발 프로세스 표준화 촉진
+
+
+### 향후 발전 방향
+
+#### 단기 과제
+
+* 신규 개발 알고리즘에 대한 정밀 검증 및 추가 연구
+
+#### 장기 과제
+
+* 알고리즘의 Verification and Validation 프로세스 확립
+
+## Achievements
+
+* 알고리즘 성능 비교 분석 시각화 도구 개발
+* Data-driven 방식의 baseline fitting 알고리즘 구현
+* Rule-based 및 Machine Learning 기반 알고리즘의 성능 개선을 시각화로 입증 
+
+## Future Work
+
+* 대규모 데이터셋을 활용한 알고리즘 성능의 정량적 평가 실시
+* Data governance 프로젝트와 연계한 알고리즘 고도화
+* 알고리즘의 Verification and Validation 프로세스 수립 및 실행
+* 개선된 알고리즘의 실제 진단 환경 적용 및 성능 모니터링
+
+## Supplement
 
 ### 증가 신호에 대한 성능 평가
 
@@ -526,76 +630,6 @@ well_name = temp.tail(1)['well'].iloc[0]
 
 plot_single_well(mudt_risk_data,pcrd_name,channel_name, temperature_name, well_name,mudt=mudt)
 ```
-
-## Conclusion
-
-본 프로젝트는 분자진단 시스템의 신호 분석 알고리즘 개선을 목표로 수행되었으며, 다음과 같은 주요 성과와 향후 과제를 도출하였다.
-
-### 기존 문제점 해결
-
-#### 문제 인식
-
-  * 시약 성능 및 환경적 요인으로 인한 'gray zone' 이상 신호에 대한 판독 문제
-  * 위음성/위양성 패턴에 대한 대응 부족
-  * Ct값 산출의 불안정성
-
-#### 접근 방식
-
-  * Rule-based 알고리즘 개선: 추가 조건 반영으로 이상신호 관리 강화
-  * Machine Learning 기반 data-driven 알고리즘 도입
-
-#### 결과
-
-  * 개선된 rule-based 알고리즘 [strep+2]의 성능 향상 확인
-  * Machine Learning 기반 알고리즘 [ML]의 탁월한 성능 입증
-  * [ML]에서 Neural Network는 연산의 복잡도로 인하여 연산시간이 많아 실험군에서 제외
-
-### 알고리즘 성능 평가
-
-#### 평가 제한 사항
-
-* 기존 legacy 알고리즘의 Matlab에서 C++로의 Refactoring 작업으로 인한 정량적 측정의 한계
-
-#### 향후 과제
-
-* System level에서의 전체 알고리즘 성능 비교를 위한 대규모 데이터 기반 정량적 평가 필요
-
-### 시각화 도구 개선 및 표준화
-
-#### 기존 문제
-
-* 다양한 알고리즘의 비표준화된 사용으로 인한 시약 개발 프로세스의 비일관성
-
-#### 개선 사항
-
-* 알고리즘별 성능 시각화 도구 제공
-* 알고리즘 단일화에 대한 설득력 향상 및 개발 프로세스 표준화 촉진
-
-
-### 향후 발전 방향
-
-#### 단기 과제
-
-* 신규 개발 알고리즘에 대한 정밀 검증 및 추가 연구
-
-#### 장기 과제
-
-* Data governance 프로젝트와의 연계를 통한 알고리즘 개선 및 검증
-* 알고리즘의 Verification and Validation 프로세스 확립
-
-## Achievements
-
-* 알고리즘 성능 비교 분석 시각화 도구 개발
-* Data-driven 방식의 baseline fitting 알고리즘 구현
-* Rule-based 및 Machine Learning 기반 알고리즘의 성능 개선을 시각화로 입증 
-
-## Future Work
-
-* 대규모 데이터셋을 활용한 알고리즘 성능의 정량적 평가 실시
-* Data governance 프로젝트와 연계한 알고리즘 고도화
-* 알고리즘의 Verification and Validation 프로세스 수립 및 실행
-* 개선된 알고리즘의 실제 진단 환경 적용 및 성능 모니터링
-
 
 
 </div>

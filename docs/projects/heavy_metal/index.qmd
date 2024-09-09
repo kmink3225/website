@@ -116,6 +116,45 @@ where
 * $(t_i,\hat{q}(t_i))$ is the observed values,
 * $q(t,k) =q_e\frac{1-e^{-kt}}{1-q_ee^{-kt}}$
 
+#### Explanation
+
+* 초기 미분방정식 설정
+  $$ \frac{dS}{dt} =\frac{W_0-S(t)}{V}fb\frac{S_e-S(t)}{S_e}p $$
+  
+  * 이 방정식은 시간에 따른 흡착된 중금속 분자 수의 변화율을 나타낸다. 우변의 각 항은 흡착 과정의 다양한 요소를 반영한다
+* 단순화
+
+  $$\frac{dS}{dt} =k_s(W_0-S(t))(S_e-S(t)) \text{ where } k_s=\frac{fbp}{VS_e}$$
+
+  * 수학 연산을 쉽게 하기 위해 여러 상수를 $k_s$ 로 통합하여 방정식을 단순화한다.
+* 변수 변환
+
+  $$\frac{dq}{dt} =\frac{S'(t)}{W_0}$$
+
+  * $q(t)$ 를 도입하여 흡착된 분자의 비율로 문제를 Reformulation 한다. 차원을 없애 문제를 일반화한다.
+* 방정식 변환
+  $$\frac{dq}{dt} =k_q(1-q)(q_e-q) \text{ where } k_q=W_0k_S=\frac{W_0fbp}{VS_e}=\frac{fbp}{Vq_e}$$
+
+  * $q$ 에 대한 미분방정식으로 변환한다. 이 형태는 로지스틱 성장 모델과 유사한 구조를 가진다.
+* 미분방정식 풀이
+  a. 변수 분리(variable separable)
+    $$\frac{dq}{(1-q)(q_e-q)}=k_qdt$$
+  b. 부분 분수 분해 (Partial fraction decompositio)
+    $$\frac{1}{(1-q)(q_e-q)}=\frac{A}{1-q}+\frac{B}{q_e-q}$$
+  c. 상수 A, B 결정
+    $$A=(q_e-1)^{-1}, B=(1-q_e)^{-1}$$
+  d. 적분
+    $$ \int \left \{\frac{(q_e-1)^{-1}}{1-q}+\frac{(1-q_e)^{-1}}{q_e-q}\right\}dq =\int k_qdt \\ $$
+    
+    * 부분 분수 분해를 통해 적분 가능한 형태로 만든다.
+* 해 도출
+  $$q(t)= \frac{q_e-q_ee^{-kt}}{1-q_ee^{-kt}}=q_e\frac{1-e^{-kt}}{1-q_ee^{-kt}} \text{ where } k=(1-q_e)k_q$$
+  * 이는 시간에 따른 흡착 비율을 나타내는 닫힌 형태의 해이다. 이 해는 초기 조건 $q(0)=0$ 을 만족한다.
+* 매개변수 추정
+  $$\arg\min_k\sum_{i=1}^{n}(q(t_i,k)-\hat{q}(t_i))^2$$
+  * 이는 최소제곱법을 사용하여 모델 매개변수 $k$ 를 추정하는 과정이다. 관측된 데이터와 모델 예측 사이의 차이를 최소화한다.
+
+
 ## Required Skills
 
 * Mathematics: differential equation
@@ -141,6 +180,7 @@ where
 
 ## Achievement
 
+* mechanistic modeling 결과 파라미터의 유의성이 높은 것으로 관찰됐다.
 * New York City College of Technology (CUNY) 포스터 발표
 * BMCC (CUNY) 포스터 발표
 * Manhattan College에서 개최되는 2015 연례 모임 기고 논문 및 포스터 세션을 위한 발표회에서 포스터 발표

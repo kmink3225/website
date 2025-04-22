@@ -15,8 +15,15 @@ PCR 신호 데이터 기반 베이스라인 최적화 예측 모듈
 날짜: 2024-07
 """
 
-# simple nueral network
+# 라이브러리 임포트
+import numpy as np
+import matplotlib.pyplot as plt
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from tensorflow.keras.optimizers import Adam
+import pandas as pd
 
+# simple nueral network
 def compute_simple_nn(y):
     """
     신경망 기반 신호 예측 함수
@@ -52,7 +59,6 @@ def compute_simple_nn(y):
     o_result = [item for sublist in y_pred_denorm for item in sublist]
 
     return o_result
-
 
 def f_alpha(alpha, fun, x, s, args=()):
     """
@@ -347,8 +353,6 @@ def compute_l2_loss(w, P, x, y):
   
     return 0.5*(( (y - y_pred)**2 ).sum(axis=-1)) + reg
     
-
-
 def compute_l2_gradent(w, P, x, y):
     """
     This function computes the analytic gradient of the objective function 
@@ -371,6 +375,7 @@ def compute_l2_gradent(w, P, x, y):
     g = g + g_reg.T
     
     return g
+
 def plot_result(X_train, y_train):
     """
     학습 데이터와 예측 결과를 시각화하는 함수

@@ -17,11 +17,10 @@ PCR 신호 데이터 기반 베이스라인 최적화 예측 모듈
 
 # 라이브러리 임포트
 import numpy as np
-import matplotlib.pyplot as plt
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
-import pandas as pd
+
 
 # simple nueral network
 def compute_simple_nn(y):
@@ -47,18 +46,22 @@ def compute_simple_nn(y):
 
     model = Sequential([
         Dense(8, activation='relu', input_dim=1),
-        Dense(8, activation='softplus'), #softplus
+        Dense(8, activation='softplus'),  # softplus
         Dense(2, activation='selu'),
         Dense(1, activation='linear')
     ])
 
-    model.compile(optimizer=Adam(learning_rate=0.01), loss='mean_squared_error')
+    model.compile(
+        optimizer=Adam(learning_rate=0.01), 
+        loss='mean_squared_error'
+    )
     history = model.fit(x_norm, y_norm, epochs=500, verbose=0)
     y_pred = model.predict(x_norm)
     y_pred_denorm = y_pred * (y.max() - y.min()) + y.min()
     o_result = [item for sublist in y_pred_denorm for item in sublist]
 
     return o_result
+
 
 def f_alpha(alpha, fun, x, s, args=()):
     """
@@ -80,7 +83,11 @@ def f_alpha(alpha, fun, x, s, args=()):
     
     return fun(x_new, *args)
 
-def search_golden_section(fun, dfun, x, search_direction, args=(), initial_delta=1.0e-2, tolerance=1e-15):
+
+def search_golden_section(
+    fun, dfun, x, search_direction, args=(), 
+    initial_delta=1.0e-2, tolerance=1e-15
+):
     """
     황금 분할 검색 알고리즘
     
@@ -127,17 +134,19 @@ def search_golden_section(fun, dfun, x, search_direction, args=(), initial_delta
     inner_value = f_alpha(inner_point, fun, x, search_direction, args)
     
     while abs(mid_point - inner_point) > tolerance:
-        if f_alpha(mid_point, fun, x, search_direction, args) < f_alpha(inner_point, fun, x, search_direction, args):
+        mid_value = f_alpha(mid_point, fun, x, search_direction, args)
+        inner_value = f_alpha(inner_point, fun, x, search_direction, args)
+        if mid_value < inner_value:
             right_bound = inner_point
         else:
             left_bound = mid_point
-
         # we recompute both c and d here to avoid loss of precision 
         # which may lead to incorrect results or infinite loop
         mid_point = right_bound - (right_bound - left_bound) / golden_ratio
         inner_point = left_bound + (right_bound - left_bound) / golden_ratio
 
     return ((right_bound + left_bound) / 2,)
+
 
 def compute_conjugate_gradient(
     objective_func, 
@@ -167,9 +176,12 @@ def compute_conjugate_gradient(
 
     if verbose:
         print("#####START OPTIMIZATION#####")
-        print("INIT POINT : {}, dtype : {}".format(initial_point, initial_point.dtype))
+        print("INIT POINT : {}, dtype : {}".format(
+            initial_point, initial_point.dtype
+        ))
 
     current_point = initial_point
+    prev_gradient = None
     
     for iteration in range(max_iterations):
         gradient = gradient_func(current_point, *args)
@@ -184,11 +196,13 @@ def compute_conjugate_gradient(
         if iteration == 0:
             direction = -gradient
         else:
-            beta = (np.linalg.norm(gradient) / np.linalg.norm(prev_gradient))**2
+            beta = (np.dot(gradient, gradient) / 
+                    np.dot(prev_gradient, prev_gradient))
             direction = -gradient + beta * direction
         
         step_size = search_golden_section(
-            objective_func, gradient_func, current_point, direction, args=args)[0]
+            objective_func, gradient_func, 
+            current_point, direction, args=args)[0]
         current_point = current_point + step_size * direction
         prev_gradient = gradient.copy()
 
@@ -222,6 +236,7 @@ def haar_wavelet(x):
     else:
         return 0
 
+
 def piecewise_basis(x):
     """
     Piecewise Basis Function
@@ -244,12 +259,14 @@ def piecewise_basis(x):
     else:
         return np.sin(2 * np.pi * x)
 
+
 def compute_phi(X):
     """
     다양한 기저 함수를 적용하여 특성 변환 행렬 생성
     
     입력 데이터에 대해 사인, 코사인, haar_wavelet, piecewise_basis 등
-    다양한 비선형 변환을 적용하여 특성 공간을 확장
+    다양한 비선형 변환을 적용하여 특성 공간을 확장    
+    여기서 phi(φ)는 입력 데이터를 비선형 특성 공간으로 매핑하는 기저 함수(basis function)를 의미    
     
     매개변수:
         X (array-like): 변환할 입력 데이터
@@ -269,16 +286,16 @@ def compute_phi(X):
     PHI = np.array([[phi(x) for phi in phi_functions] for x in X])
     return PHI
 
+
 # Regularization
-    
-#reg_intercept = True
-#lamda = 0.01
+REG_INTERCEPT = True
+LAMDA = 0.01
 
 def compute_l1_loss(w, P, x, y):
     """
-    L1 정규화를 적용한 손실 함수 계산
+    L1 페널티를 적용한 손실 함수 계산
     
-    목적 함수 J(w)는 오차 제곱합(MSE)과 L1 정규화 항의 합으로 구성
+    목적 함수 J(w)는 오차 제곱합(MSE)과 L1 페널티 항의 합으로 구성
     J(w) = (1/2) * sum_{n=1}^{N} {y(x_n,w) - t_n}^2 + (λ/2) * sum|w_i|
     
     매개변수:
@@ -291,46 +308,64 @@ def compute_l1_loss(w, P, x, y):
     반환값:
         float: 계산된 손실 함수 값
     """
-    PHI = np.array([ x**i for i in range(P+1) ]).T 
-    y_pred = np.dot(w.T, PHI.T) #(N,) or (K,N)
+    PHI = np.array([x**i for i in range(P+1)]).T 
+    y_prediction = np.dot(w.T, PHI.T)  # (N,) or (K,N)
         
-    if not reg_intercept :
-        reg =  (lamda/2.)*(np.abs(w[1:]).sum(axis=0)) 
-    else :
-        reg =  (lamda/2.)*(np.abs(w).sum(axis=0))   
-    
-    # 기존 MSE에 reg를 더해서 리턴
-    return 0.5*(( (y - y_pred)**2 ).sum(axis=-1)) + reg
+    # 전역 변수 사용
+    reg_intercept = REG_INTERCEPT
+    lamda = LAMDA
+        
+    if not reg_intercept:
+        reg = (lamda/2.)*(np.abs(w[1:]).sum(axis=0)) 
+    else:
+        reg = (lamda/2.)*(np.abs(w).sum(axis=0))   
+        
+    return 0.5*((y - y_prediction)**2).sum(axis=-1) + reg
 
-    #################################################
 
 def compute_l1_gradent(w, P, x, y):
     """
-    This function computes the analytic gradient of the objective function 
-    with L2 regularization.
-
-    w: 가중치 행렬, (M,) or (M,K) 여기서 K는 가중치 벡터 개수, 
-       M은 기저함수 개수 또는 데이터 차원
-    P: polynomial degree, scalar
-    x, y : data for error function eval.
-      x: data, (N,M)
-      y: target, (N,)
-    """
-    PHI = np.array([ x**i for i in range(P+1) ]).T
-    g = np.dot(w.T, np.dot(PHI.T, PHI) ) - np.dot(y.T, PHI) # (1,M) or (K,M)
-    g_reg = (lamda/2.) * np.sign(w) 
-
-    if not reg_intercept :
-        g_reg[0] = 0
+    L1 정규화가 적용된 목적 함수의 analytic gradient 계산
+    
+    목적 함수 J(w)의 기울기를 계산하여 최적화 과정에서 사용합니다.
+    L1 정규화는 희소성(sparsity)을 촉진하는 특성이 있습니다.
+    
+    매개변수:
+        w (array): 가중치 행렬, 형태는 (M,) 또는 (M,K)
+                  여기서 K는 가중치 벡터 개수, M은 기저함수 개수
+        P (int): 다항식 차수
+        x (array): 입력 데이터, 형태는 (N,)
+        y (array): 타겟 값, 형태는 (N,)
         
-    g = g + g_reg.T
-    return g
+    반환값:
+        array: 계산된 기울기 값
+    """
+    # 기저 함수 행렬 생성
+    PHI = np.array([x**i for i in range(P+1)]).T
+    
+    # 오차 함수의 기울기 계산
+    gradient = np.dot(w.T, np.dot(PHI.T, PHI)) - np.dot(y.T, PHI)  
+    # (1,M) 또는 (K,M)
+    
+    # L1 정규화 항의 기울기 계산    
+    lamda = LAMDA
+    reg_intercept = REG_INTERCEPT
+    gradient_reg = (lamda/2.) * np.sign(w)
+    
+    # 절편(intercept) 정규화 여부에 따른 처리
+    if not reg_intercept:
+        gradient_reg[0] = 0
+    
+    # 최종 기울기 계산
+    gradient = gradient + gradient_reg.T
+    return gradient
+
 
 def compute_l2_loss(w, P, x, y):
     """
     L2 정규화를 적용한 손실 함수 계산
     
-    목적 함수 J(w)는 오차 제곱합(MSE)과 L2 정규화 항의 합으로 구성됩니다:
+    목적 함수 J(w)는 오차 제곱합(MSE)과 L2 정규화 항의 합으로 구성:
     J(w) = (1/2) * sum_{n=1}^{N} {y(x_n,w) - t_n}^2 + (λ/2) * ||w||^2
     
     매개변수:
@@ -343,81 +378,95 @@ def compute_l2_loss(w, P, x, y):
     반환값:
         float: 계산된 손실 함수 값
     """
-    PHI = np.array([ x**i for i in range(P+1) ]).T 
-    y_pred = np.dot(w.T, PHI.T) 
+    PHI = np.array([x**i for i in range(P+1)]).T 
+    y_prediction = np.dot(w.T, PHI.T) 
  
+    reg_intercept = REG_INTERCEPT
+    lamda = LAMDA
+
     if not reg_intercept:
-      reg = (lamda*0.5)*np.linalg.norm(w[1:],axis=0)**2
+        reg = (lamda * 0.5) * np.linalg.norm(w[1:], axis=0)**2
     else: 
-      reg = (lamda *0.5)*np.linalg.norm(w,axis=0)**2
+        reg = (lamda * 0.5) * np.linalg.norm(w, axis=0)**2
   
-    return 0.5*(( (y - y_pred)**2 ).sum(axis=-1)) + reg
+    return 0.5 * ((y - y_prediction)**2).sum(axis=-1) + reg
     
-def compute_l2_gradent(w, P, x, y):
+
+def compute_l2_gradient(w, P, x, y):
     """
-    This function computes the analytic gradient of the objective function 
-    with L2 regularization.
-
-    w: 가중치 행렬, (M,) or (M,K) 여기서 K는 가중치 벡터 개수, 
-       M은 기저함수 개수 또는 데이터 차원
-    P: polynomial degree, scalar
-    x, y : data for error function eval.
-      x: data, (N,M)
-      y: target, (N,)
-    """
-    PHI = np.array([ x**i for i in range(P+1) ]).T
-    g = np.dot(w.T, np.dot(PHI.T, PHI) ) - np.dot(y.T, PHI)
-    g_reg = lamda*w # (M,K)
-
-    if not reg_intercept :
-        g_reg[0] = 0
-
-    g = g + g_reg.T
-    
-    return g
-
-def plot_result(X_train, y_train):
-    """
-    학습 데이터와 예측 결과를 시각화하는 함수
-    
-    2x2 서브플롯으로 구성된 그래프를 생성하여 다양한 차수의 다항식 피팅 결과를 표시합니다.
-    각 서브플롯은 동일한 x, y 축 범위를 공유하며, 학습 데이터 포인트와 예측 곡선을 함께 표시합니다.
+    L2 정규화를 적용한 목적 함수의 해석적 기울기 계산
     
     매개변수:
-        X_train (array-like): 학습에 사용된 입력 데이터
-        y_train (array-like): 학습에 사용된 타겟 데이터
+        w (array): 가중치 행렬, 형태는 (M,) 또는 (M,K)
+                  여기서 K는 가중치 벡터 개수, M은 기저함수 개수
+        P (int): 다항식 차수
+        x (array): 입력 데이터, 형태는 (N,)
+        y (array): 타겟 값, 형태는 (N,)
         
     반환값:
-        None: 그래프를 화면에 표시만 하고 반환값은 없음
+        array: 계산된 기울기 값
     """
-    fig, ax = plt.subplots(figsize=(15, 10), nrows=2, ncols=2, 
-                          sharex='all', sharey='all')
+    # 기저 함수 행렬 생성
+    PHI = np.array([x**i for i in range(P+1)]).T
+    
+    # 오차 함수의 기울기 계산
+    gradient = np.dot(w.T, np.dot(PHI.T, PHI)) - np.dot(y.T, PHI)
+    
+    # L2 정규화 항의 기울기 계산
+    lamda = LAMDA
+    reg_intercept = REG_INTERCEPT
+    gradient_reg = lamda * w  # (M,K)
+    
+    # 절편(intercept) 정규화 여부에 따른 처리
+    if not reg_intercept:
+        gradient_reg[0] = 0
+    
+    # 최종 기울기 계산
+    gradient = gradient + gradient_reg.T
+    return gradient
 
-    j = 0
+# def plot_result(X_train, y_train):
+#     """
+#     학습 데이터와 예측 결과를 시각화하는 함수
+    
+#     2x2 서브플롯으로 구성된 그래프를 생성하여 다양한 차수의 다항식 피팅 결과를 표시   
+    
+#     매개변수:
+#         X_train (array-like): 학습에 사용된 입력 데이터
+#         y_train (array-like): 학습에 사용된 타겟 데이터
+        
+#     반환값:
+#         None: 그래프를 화면에 표시만 하고 반환값은 없음
+#     """
+#     fig, ax = plt.subplots(figsize=(15, 10), nrows=2, ncols=2, 
+#                           sharex='all', sharey='all')
 
-    for P in Ps:
-        p, q = divmod(j, 2)
-        X = np.array([x_raw**i for i in range(P+1)])  
+#     j = 0
 
-        y = (W[j].reshape(-1, 1) * X).sum(axis=0)
+#     for P in Ps:
+#         p, q = divmod(j, 2)
+#         X = np.array([x_raw**i for i in range(P+1)])  
 
-        ax[p, q].xaxis.set_tick_params(labelsize=18)
-        ax[p, q].yaxis.set_tick_params(labelsize=18)
-        ax[p, q].set_xlabel('$x$', fontsize=20)
-        ax[p, q].set_ylabel('$y$', fontsize=20)
-        ax[p, q].grid(False)
+#         y = (W[j].reshape(-1, 1) * X).sum(axis=0)
 
-        ax[p, q].plot(X_train, y_train, 'o', markersize=8, color='k')
-        ax[p, q].legend(loc='upper right', fontsize=18)
+#         ax[p, q].xaxis.set_tick_params(labelsize=18)
+#         ax[p, q].yaxis.set_tick_params(labelsize=18)
+#         ax[p, q].set_xlabel('$x$', fontsize=20)
+#         ax[p, q].set_ylabel('$y$', fontsize=20)
+#         ax[p, q].grid(False)
 
-        j += 1
+#         ax[p, q].plot(X_train, y_train, 'o', markersize=8, color='k')
+#         ax[p, q].legend(loc='upper right', fontsize=18)
 
-    # Hide x labels and tick labels for top plots and y ticks for right plots.
-    for ax_ in ax.flat:
-        ax_.label_outer()
+#         j += 1
 
-    plt.subplots_adjust(hspace=0.05, wspace=0.05)
-    plt.show()
+#     # Hide x labels and tick labels for top plots 
+#     # and y ticks for right plots.
+#     for ax_ in ax.flat:
+#         ax_.label_outer()
+
+#     plt.subplots_adjust(hspace=0.05, wspace=0.05)
+#     plt.show()
 
 # Characteristic Equation
 
@@ -425,35 +474,35 @@ def log_normalize(X):
     """
     로그 스케일 기반 데이터 정규화
     
-    입력 데이터를 로그 변환 후 [0, 1] 범위로 정규화합니다.
-    음수 값이 있는 경우에도 처리 가능하도록 오프셋을 적용합니다.
+    입력 데이터를 로그 변환 후 [0, 1] 범위로 정규화
+    음수 값이 있는 경우에도 처리 가능하도록 오프셋을 적용
     
     매개변수:
         X (array-like): 정규화할 입력 데이터
         
     반환값:
-        tuple: (정규화된 데이터, 최소값, 최대값, 원본 최소값)
-              역정규화에 필요한 정보를 포함합니다.
+        tuple: (정규화된 데이터, 최소값, 최대값, 원본 최소값) 
+        역정규화에 필요한 정보를 포함
     """
     X_min_original = np.min(X)
-    # 모든 값을 양수로 만들기 위해 최소값을 더함
-    X_positive = X - X_min_original + 1e-10  # 작은 값을 더해 로그의 0 입력을 방지
 
-    # 로그 변환
+    # 모든 값을 양수로 만들기 위해 최소값을 더함
+    X_positive = X - X_min_original + 1e-10  # 로그의 0 입력을 방지
     X_log = np.log(X_positive)
 
-    # 정규화
+    # min-max정규화
     X_min = np.min(X_log)
     X_max = np.max(X_log)
     X_normalized = (X_log - X_min) / (X_max - X_min)
 
     return X_normalized, X_min, X_max, X_min_original
 
+
 def log_denormalize(X_normalized, X_min, X_max, X_min_original):
     """
     로그 정규화된 데이터의 역변환
     
-    log_normalize로 정규화된 데이터를 원래 스케일로 되돌립니다.
+    log_normalize로 정규화된 데이터를 원래 스케일로 되돌림
     
     매개변수:
         X_normalized: 정규화된 데이터
@@ -475,12 +524,13 @@ def log_denormalize(X_normalized, X_min, X_max, X_min_original):
 
     return X_restored
 
+
 def apply_basis_functions(X):
     """
     비선형 기저 함수 변환
     
-    입력 데이터에 다양한 비선형 기저 함수를 적용하여 특성 공간을 확장합니다.
-    다항식, 지수, 로그, 역수, ReLU 변형 등의 함수를 적용합니다.
+    입력 데이터에 다양한 비선형 기저 함수를 적용하여 특성 공간을 확장
+    다항식, 지수, 로그, 역수, ReLU 변형 등의 함수를 적용
     
     매개변수:
         X (array-like): 변환할 입력 데이터
@@ -488,17 +538,50 @@ def apply_basis_functions(X):
     반환값:
         array: 각 기저 함수가 적용된 변환된 데이터 행렬
     """
-    phi1 = lambda x: x**0 
-    phi2 = lambda x: x    
-    phi3 = lambda x: x**2 
-    phi4 = lambda x: x**3 
-    phi5 = lambda x: np.exp(x) - 1  # 지수 증가
-    phi6 = lambda x: np.exp(-x)     # 지수 감소
-    phi7 = lambda x: np.log(x + 1)  # 로그 함수 (느린 증가)
-    phi8 = lambda x: 1 / (x + 1)    # 역수 함수 (빠른 감소)
-    phi9 = lambda x: np.maximum(0, x - 0.5)**2  # ReLU의 변형 (비선형성 증가)
+    def phi1(x):
+        """상수 함수"""
+        return x**0
+        
+    def phi2(x):
+        """선형 함수"""
+        return x
+        
+    def phi3(x):
+        """이차 함수"""
+        return x**2
+        
+    def phi4(x):
+        """삼차 함수"""
+        return x**3
+        
+    def phi5(x):
+        """지수 증가 함수"""
+        return np.exp(x) - 1
+        
+    def phi6(x):
+        """지수 감소 함수"""
+        return np.exp(-x)
+        
+    def phi7(x):
+        """로그 함수 (느린 증가)"""
+        return np.log(x + 1)
+        
+    def phi8(x):
+        """역수 함수 (빠른 감소)"""
+        return 1 / (x + 1)
+        
+    def phi9(x):
+        """ReLU의 변형 (비선형성 증가)"""
+        return np.maximum(0, x - 0.5)**2
     
-    return np.array([[phi1(x), phi2(x), phi3(x), phi4(x), phi5(x), phi6(x), phi7(x), phi8(x), phi9(x)] for x in X])
+    # 각 입력값에 대해 모든 기저 함수를 적용
+    result = []
+    for x in X:
+        row = [phi1(x), phi2(x), phi3(x), phi4(x), phi5(x), 
+               phi6(x), phi7(x), phi8(x), phi9(x)]
+        result.append(row)
+    
+    return np.array(result)
 
 def J(w, P, x, y):
     """
@@ -516,10 +599,10 @@ def J(w, P, x, y):
         float: 계산된 목적 함수 값
     """
     PHI = apply_basis_functions(x)
-    y_pred = np.dot(w.T, PHI.T)
-    return 0.5*(((y-y_pred)**2).sum(axis=-1))
+    y_prediction = np.dot(w.T, PHI.T)
+    return 0.5*(((y-y_prediction)**2).sum(axis=-1))
 
-def grad(w, P, x, y):
+def gradient(w, P, x, y):
     """
     비선형 기저 함수를 사용한 목적 함수의 기울기 계산
     
@@ -535,15 +618,15 @@ def grad(w, P, x, y):
         array: 계산된 기울기 벡터
     """
     PHI = apply_basis_functions(x)
-    g = np.dot(w.T, np.dot(PHI.T, PHI)) - np.dot(y.T, PHI)
-    return g.astype(np.float64)
+    gradient = np.dot(w.T, np.dot(PHI.T, PHI)) - np.dot(y.T, PHI)
+    return gradient
 
 def CGM(f, df, x, args=(), eps=1.0e-7, max_iter=300, verbose=False):
     """
-    공액 경사법(Conjugate Gradient Method) 구현
+    공액 경사법(Conjugate Gradient Method)
     
-    비선형 최적화 문제를 효율적으로 해결하기 위한 공액 경사법 알고리즘입니다.
-    특히 대규모 희소 시스템에 효과적이며, 선형 검색과 결합하여 사용됩니다.
+    비선형 최적화 문제를 해결하기 위한 공액 경사법 알고리즘
+    대규모 희소 시스템에 효과적이며, 선형 검색과 결합하여 사용
     
     매개변수:
         f (callable): 최적화할 목적 함수
@@ -557,31 +640,49 @@ def CGM(f, df, x, args=(), eps=1.0e-7, max_iter=300, verbose=False):
     반환값:
         array: 최적화된 매개변수 벡터
     """
-    c = df(x, *args)
-    if np.linalg.norm(c) < eps:
+    # 초기 그래디언트 계산
+    gradient_current = df(x, *args)
+    
+    # 초기 수렴 확인
+    if np.linalg.norm(gradient_current) < eps:
         return x
-    d = -c
-    for k in range(max_iter):
-        alpha = line_search(f, df, x, d, args)
-        x_new = x + alpha * d
-        c_new = df(x_new, *args)
-        if np.linalg.norm(c_new) < eps:
+    
+    # 초기 방향 설정
+    direction = -gradient_current
+    
+    # 최적화 수행
+    for iteration in range(max_iter):
+        step_size = line_search(f, df, x, direction, args)
+        x_new = x + step_size * direction
+        gradient_new = df(x_new, *args)
+        
+        if np.linalg.norm(gradient_new) < eps:
+            if verbose:
+                print(f"CGM converged after {iteration+1} iterations")
             return x_new
-        beta = np.dot(c_new, c_new) / np.dot(c, c)
-        d = -c_new + beta * d
+        
+        # Fletcher-Reeves 공식을 사용한 베타 계산
+        beta = (np.dot(gradient_new, gradient_new) / 
+                np.dot(gradient_current, gradient_current))
+        # 새로운 방향 계산
+        direction = -gradient_new + beta * direction
+        # 현재 상태 업데이트
         x = x_new
-        c = c_new
+        gradient_current = gradient_new
+    
     if verbose:
-        print(f"CGM reached max iterations: {max_iter}")
+        print(f"CGM reached maximum iterations: {max_iter}")
+    
     return x
 
 def line_search(f, df, x, d, args):
     """
-    Backtracking Line Search 방법을 이용한 스텝 크기 결정
+    Backtracking Line Search 방법을 이용한 스텝 크기 결정 (Armijo 스텝 크기 판단 조건)
     
-    Armijo 조건을 만족시키는 스텝 크기를 찾기 위한 단순 백트래킹 라인 서치 알고리즘입니다.
-    초기 스텝 크기에서 시작하여 목적 함수가 충분히 감소할 때까지 스텝 크기를 줄여나갑니다.
-    
+    f(x + t * d) ≤ f(x) - alpha * t * ∇f(x)ᵀd
+
+    초기 스텝 크기에서 시작하여 목적 함수가 충분히 감소할 때까지 스텝 크기를 줄여나감
+
     매개변수:
         f (callable): 최적화할 목적 함수
         df (callable): 목적 함수의 그래디언트(기울기) 함수
@@ -594,8 +695,12 @@ def line_search(f, df, x, d, args):
     """
     alpha, beta = 0.01, 0.5  # Armijo 조건 파라미터와 백트래킹 비율
     t = 1.0  # 초기 스텝 크기
-    while f(x + t * d, *args) > f(x, *args) - alpha * t * np.dot(df(x, *args), d):
+    
+    # Armijo 조건 검사
+    while (f(x + t * d, *args) > 
+           f(x, *args) - alpha * t * np.dot(df(x, *args), d)):
         t *= beta  # 스텝 크기 감소
+    
     return t
 
 def predict_time_series(X):
@@ -614,11 +719,15 @@ def predict_time_series(X):
     X_norm, X_min, X_max, X_min_original = log_normalize(X)
     PHI = apply_basis_functions(X_norm)
     w = np.random.uniform(-1, 1, 9) 
-    optimized_w = CGM(J, grad, w, args=(8, X_norm, X_norm), verbose=False)
+    optimized_w = CGM(J, gradient, w, args=(8, X_norm, X_norm), verbose=False)
     y_pred = np.dot(optimized_w.T, PHI.T)
+    
+    # 역정규화하여 원래 스케일로 변환
     return log_denormalize(y_pred, X_min, X_max, X_min_original)
 
-def process_dataframe(df, input_column, output_column):
+def process_dataframe(
+    df, input_column, output_column, method='predict_time_series'
+):
     """
     데이터프레임 내 시계열 데이터 일괄 처리
     
@@ -629,27 +738,48 @@ def process_dataframe(df, input_column, output_column):
         df (DataFrame): 처리할 데이터프레임
         input_column (str): 입력 시계열 데이터가 포함된 열 이름
         output_column (str): 처리 결과를 저장할 열 이름
+        method (str, optional): 사용할 처리 방법 
+                               ('predict_time_series' 또는 'compute_simple_nn')
+                               기본값은 'predict_time_series'
         
     반환값:
         DataFrame: 처리된 시계열 데이터가 포함된 데이터프레임
+    
+    예외:
+        ValueError: 유효하지 않은 method 값이 제공된 경우
     """
+    
+    df_copy = df.copy()
+    
     def process_row(row):
         X = row[input_column]
         if isinstance(X, np.ndarray) and X.size > 0:
-            row[output_column] = predict_time_series(X)
+            if method == 'predict_time_series':
+                row[output_column] = predict_time_series(X)
+            elif method == 'compute_simple_nn':
+                row[output_column] = compute_simple_nn(X)
+            else:
+                raise ValueError(
+                    f"지원되지 않는 method: {method}. "
+                    "'predict_time_series' 또는 'compute_simple_nn'을 사용하세요."
+                )
         else:
             row[output_column] = np.array([])
         return row
     
-    df[output_column] = None
-    return df.apply(process_row, axis=1)
+    df_copy[output_column] = None
+    return df_copy.apply(process_row, axis=1)
 
-#ml_data = merged_data[['combo_key','preproc_rfu']]
+# ml_data = merged_data[['combo_key','preproc_rfu']]
 
-#small_names = merged_data['name'].unique()[:2]
-#temp_data = merged_data.query('name in @small_names')
+# small_names = merged_data['name'].unique()[:2]
+# temp_data = merged_data.query('name in @small_names')
 #
 #
-#ml_data = process_dataframe(temp_data, 'preproc_rfu', 'ml_baseline_fit')
-#ml_data['ml_analysis_absd'] = ml_data['preproc_rfu'] - ml_data['ml_baseline_fit']
-#ml_data.to_parquet('C:/Users/kmkim/Desktop/projects/website/docs/data/baseline_optimization/GI-B-I/ml_data/mudt_ml_data.parquet')
+# ml_data = process_dataframe(temp_data, 'preproc_rfu', 'ml_baseline_fit')
+# ml_data['ml_analysis_absd'] = (ml_data['preproc_rfu'] - 
+#                               ml_data['ml_baseline_fit'])
+# ml_data.to_parquet(
+#     'C:/Users/kmkim/Desktop/projects/website/docs/data/baseline_optimization/'
+#     'GI-B-I/ml_data/mudt_ml_data.parquet'
+# )

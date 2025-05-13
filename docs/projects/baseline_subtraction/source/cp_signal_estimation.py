@@ -22,6 +22,11 @@ from tensorflow.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
 
 
+# Regularization Constants
+REG_INTERCEPT = True
+LAMDA = 0.01
+
+
 # simple nueral network
 def compute_simple_nn(y):
     """
@@ -288,8 +293,6 @@ def compute_phi(X):
 
 
 # Regularization
-REG_INTERCEPT = True
-LAMDA = 0.01
 
 def compute_l1_loss(w, P, x, y):
     """

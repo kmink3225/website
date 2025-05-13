@@ -60,7 +60,7 @@ def compute_simple_nn(y):
         optimizer=Adam(learning_rate=0.01), 
         loss='mean_squared_error'
     )
-    history = model.fit(x_norm, y_norm, epochs=500, verbose=0)
+    #history = model.fit(x_norm, y_norm, epochs=500, verbose=0)
     y_pred = model.predict(x_norm)
     y_pred_denorm = y_pred * (y.max() - y.min()) + y.min()
     o_result = [item for sublist in y_pred_denorm for item in sublist]

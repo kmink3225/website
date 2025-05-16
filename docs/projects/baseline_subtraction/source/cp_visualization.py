@@ -176,7 +176,8 @@ def get_comparison_metrics(i_grouped_data, i_columns):
     
     for column in i_columns:
         # 빈 리스트 필터링
-        filtered_data = i_grouped_data[column][i_grouped_data[column].apply(len) > 0]
+        not_empty_list = i_grouped_data[column].apply(len) > 0
+        filtered_data = i_grouped_data[column][not_empty_list]
         
         if not filtered_data.empty:
             length = len(filtered_data)
@@ -437,39 +438,52 @@ def plot_single_baseline_panel(ax, i_data, panel_info, error_metrics_dict,
         cycle = list(range(len(rfu)))
         ax.plot(cycle, rfu, alpha=0.5)
     
-    # 패널별 텍스트 및 레이아웃 설정
-    if (i, j) == (0, 0):
-        ax.text(0.05, 0.98, f"N: {i_data.shape[0]}\n"
-               f"Outlier Naive Metric: [{metric_min},{metric_max}]\n"
-               f"BPN Reference Value: {round(original_rfu_min_mean)}", 
-               verticalalignment='top', horizontalalignment='left', 
-               transform=ax.transAxes)
-        ax.axhline(y=original_rfu_min_mean, color='black', linestyle='dotted', linewidth=2)
-        if rfu_values:
-            ax.set_ylim([min(original_rfu_after_bpn_limits)*0.98, 
-                         max(original_rfu_after_bpn_limits)*1.02])
-    elif (i, j) == (0, 1):
-        ax.text(0.05, 0.98, f"N: {i_data.shape[0]}\n"
-               f"Outlier Naive Metric: [{metric_min},{metric_max}]\n"
-               f"BPN Reference Value: {round(preproc_rfu_min_mean)}", 
-               verticalalignment='top', horizontalalignment='left', 
-               transform=ax.transAxes)
-        ax.axhline(y=preproc_rfu_min_mean, color='black', linestyle='dotted', linewidth=2)
-        if rfu_values:
-            ax.set_ylim([min(preproc_rfu_after_bpn_limits)*0.98, 
-                         max(preproc_rfu_after_bpn_limits)*1.02])
-    elif (i, j) == (1, 0) or (i, j) == (1, 1) or (i, j) == (1, 2) or (i, j) == (0, 2):
+    
+    panel_configs = {
+        (0, 0): {
+            "text": lambda: (f"N: {i_data.shape[0]}\n"
+                            f"Outlier: [{metric_min},{metric_max}]\n"
+                            f"BPN: {round(original_rfu_min_mean)}"),
+            "axhline": original_rfu_min_mean,
+            "ylim": lambda: [
+                min(original_rfu_after_bpn_limits)*0.98, 
+                max(original_rfu_after_bpn_limits)*1.02
+            ]
+        },
+        (0, 1): {
+            "text": lambda: (f"N: {i_data.shape[0]}\n"
+                            f"Outlier: [{metric_min},{metric_max}]\n"
+                            f"BPN: {round(preproc_rfu_min_mean)}"),
+            "axhline": preproc_rfu_min_mean,
+            "ylim": lambda: [
+                min(preproc_rfu_after_bpn_limits)*0.98, 
+                max(preproc_rfu_after_bpn_limits)*1.02
+            ]
+        }
+    }
+
+    for posistion in [(1, 0), (1, 1), (1, 2), (0, 2)]:
         if key in error_metrics_dict:
             metrics = error_metrics_dict[key]
-            ax.text(0.05, 0.98, f"N: {i_data.shape[0]}\n"
-                   f"MAE: {metrics['mae']}\n"
-                   f"MSE: {metrics['mse']}", 
-                   verticalalignment='top', horizontalalignment='left', 
-                   transform=ax.transAxes)
-        if rfu_values:
-            ax.set_ylim([min(limits)*0.98, max(limits)*1.02])
+            panel_configs[posistion] = {
+                "text": lambda: (f"N: {i_data.shape[0]}\n"
+                                f"MAE: {metrics['mae']}\n"
+                                f"MSE: {metrics['mse']}"),
+                "ylim": lambda: [min(limits)*0.98, max(limits)*1.02] if rfu_values else None
+            }            
+
+    if (i, j) in panel_configs:
+        config = panel_configs[(i, j)]
         
-    # 공통 레이아웃 설정
+        if "text" in config:
+            ax.text(0.05, 0.98, config["text"],
+                verticalalignment='top', horizontalalignment='left',
+                transform=ax.transAxes)
+        if "axhline" in config:
+            ax.axhline(y=config["axhline"], color='black', linestyle='dotted', linewidth=2)
+        if "ylim" in config and config["ylim"] is not None:
+            ax.set_ylim(config["ylim"])    
+
     ax.axhline(y=0, color='black', linestyle='dotted', linewidth=2)
     ax.set_title(title)
 

@@ -437,8 +437,7 @@ def plot_single_baseline_panel(ax, i_data, panel_info, error_metrics_dict,
         rfu_values.extend(rfu)
         cycle = list(range(len(rfu)))
         ax.plot(cycle, rfu, alpha=0.5)
-    
-    
+       
     panel_configs = {
         (0, 0): {
             "text": lambda: (f"N: {i_data.shape[0]}\n"
@@ -486,6 +485,7 @@ def plot_single_baseline_panel(ax, i_data, panel_info, error_metrics_dict,
 
     ax.axhline(y=0, color='black', linestyle='dotted', linewidth=2)
     ax.set_title(title)
+
 
 def plot_baseline_subtractions(i_data, i_pcrd, i_channel, i_temperature, 
                               colors=None, mudt=False):
@@ -798,10 +798,10 @@ def draw_single_well_panel(ax, i_data, i, j, title, column_info, cycle_info, lim
     ax.legend()
 
 def set_ylim(ax, limits, index):
-    """y축 제한값을 설정합니다.
+    """y축 제한값을 설정
     
-    데이터의 최대/최소값에 따라 적절한 y축 범위를 설정합니다.
-    음수 값과 양수 값에 대해 다른 비율을 적용합니다.
+    데이터의 최대/최소값에 따라 적절한 y축 범위를 설정
+    음수 값과 양수 값에 대해 다른 비율을 적용
     
     Parameters
     ----------
@@ -815,12 +815,12 @@ def set_ylim(ax, limits, index):
     Returns
     -------
     None
-        matplotlib 축 객체의 ylim 속성을 직접 수정합니다.
+        matplotlib 축 객체의 ylim 속성을 직접 수정
     
     Notes
     -----
-    음수 최대값은 0.95배, 양수 최대값은 1.05배로 확장합니다.
-    음수 최소값은 1.05배, 양수 최소값은 0.95배로 확장합니다.
+    음수 최대값은 0.95배, 양수 최대값은 1.05배로 확장
+    음수 최소값은 1.05배, 양수 최소값은 0.95배로 확장
     """
     if max(limits) < 0:
         max_limit_ratio = 0.95
@@ -835,6 +835,7 @@ def set_ylim(ax, limits, index):
     min_limit = np.sign(min(limits)) * np.abs(min(limits)) * min_limit_ratio
     max_limit = np.sign(max(limits)) * np.abs(max(limits)) * max_limit_ratio
     ax.set_ylim([min_limit, max_limit])
+
 
 def plot_single_well(i_data, i_pcrd, i_channel, i_temperature, i_well, mudt=True, colors=None):
     '''

@@ -33,6 +33,7 @@ from source.signal_filter import detect_noise_naively
 # -------------------------------------------------------------------
 
 
+
 def setup_data_paths(mudt: bool = True) -> Dict[str, str]:
     """
     MuDT 처리 여부에 따른 데이터 파일 경로 설정
@@ -52,30 +53,29 @@ def setup_data_paths(mudt: bool = True) -> Dict[str, str]:
             - 'strep_plus2': Strep+2 데이터 파일 경로
             - 'ml': ML 데이터 파일 경로
     """
-    # 환경 변수에서 데이터 경로를 가져오거나 기본 경로 사용
-    base_path = os.environ.get(
-        "PCR_DATA_PATH", 
-        pathlib.Path(__file__).parent.parent.parent.parent / "data" / 
-        "baseline_optimization" / "GI-B-I"
-    )
-    
-    paths = {}
-    base_suffix = '/mudt_' if mudt else '/no_mudt_'
-    
-    for dataset_type in ["raw", "auto", "cfx", "strep_plus1", "strep_plus2", "ml"]:
-        folder_prefix = dataset_type
-        if dataset_type == "auto":
-            folder_prefix = "auto_baseline"
-        elif dataset_type == "ml":
-            folder_prefix = "ml"
-        else:
-            folder_prefix = f"{dataset_type}"
+    rootpath = os.getcwd()
+    # 공통 경로 부분과 사용자별 경로 부분 분리
         
-        paths[dataset_type] = os.path.join(
-            base_path, 
-            f"{folder_prefix}_data",
-            f"{base_suffix}{folder_prefix}_data.parquet"
-        )
+    if 'Administrator' in rootpath:       
+        user_path = 'C:/Users/Administrator'
+    else:
+        user_path = 'C:/Users/kmkim'
+    
+    common_path = '/Desktop/projects/website/docs/data/baseline_optimization/GI-B-I'
+
+    base_path = os.path.join(user_path, common_path)
+    paths = {}
+    base_suffix = 'mudt_' if mudt else 'no_mudt_'
+    
+    paths['raw'] = os.path.join(base_path, 'raw_data', f'{base_suffix}raw_data.parquet')
+    paths['auto'] = os.path.join(base_path, 'auto_baseline_data', 
+                                f'{base_suffix}auto_baseline_data.parquet')
+    paths['cfx'] = os.path.join(base_path, 'cfx_data', f'{base_suffix}cfx_data.parquet')
+    paths['strep_plus1'] = os.path.join(base_path, 'strep_plus1_data', 
+                                        f'{base_suffix}strep_plus1_data.parquet')
+    paths['strep_plus2'] = os.path.join(base_path, 'strep_plus2_data', 
+                                        f'{base_suffix}strep_plus2_data.parquet')
+    paths['ml'] = os.path.join(base_path, 'ml_data', f'{base_suffix}ml_data.parquet')
     
     return paths
 
@@ -97,6 +97,7 @@ def load_all_datasets(data_paths: Dict[str, str]) -> Dict[str, pl.DataFrame]:
     for dataset_type in ["raw", "cfx", "auto", "strep_plus1", "strep_plus2", "ml"]:
         try:
             datasets[dataset_type] = pl.scan_parquet(data_paths[dataset_type]).collect()
+            print(f"{dataset_type} columns: {datasets[dataset_type].columns}")
         except Exception as e:
             print(f"Error loading {dataset_type} dataset: {e}")
             datasets[dataset_type] = pl.DataFrame()

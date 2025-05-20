@@ -19,6 +19,7 @@ PCR 신호 데이터 전처리 모듈
 
 # Analysis Preparation: 데이터 분석을 위한 기본 라이브러리 
 import polars as pl
+import pandas as pd
 import numpy as np
 import os
 import pathlib
@@ -31,8 +32,6 @@ from source.signal_filter import detect_noise_naively
 # -------------------------------------------------------------------
 # 데이터 로드 및 경로 관련 함수
 # -------------------------------------------------------------------
-
-
 
 def setup_data_paths(mudt: bool = True) -> Dict[str, str]:
     """
@@ -61,9 +60,11 @@ def setup_data_paths(mudt: bool = True) -> Dict[str, str]:
     else:
         user_path = 'C:/Users/kmkim'
     
-    common_path = '/Desktop/projects/website/docs/data/baseline_optimization/GI-B-I'
+    common_path = 'Desktop/projects/website/docs/data/baseline_optimization/GI-B-I'
 
     base_path = os.path.join(user_path, common_path)
+    base_path = base_path.replace('\\', '/')
+
     paths = {}
     base_suffix = 'mudt_' if mudt else 'no_mudt_'
     
@@ -78,7 +79,6 @@ def setup_data_paths(mudt: bool = True) -> Dict[str, str]:
     paths['ml'] = os.path.join(base_path, 'ml_data', f'{base_suffix}ml_data.parquet')
     
     return paths
-
 
 def load_all_datasets(data_paths: Dict[str, str]) -> Dict[str, pl.DataFrame]:
     """
@@ -97,9 +97,7 @@ def load_all_datasets(data_paths: Dict[str, str]) -> Dict[str, pl.DataFrame]:
     for dataset_type in ["raw", "cfx", "auto", "strep_plus1", "strep_plus2", "ml"]:
         try:
             datasets[dataset_type] = pl.scan_parquet(data_paths[dataset_type]).collect()
-            print(f"{dataset_type} columns: {datasets[dataset_type].columns}")
         except Exception as e:
-            print(f"Error loading {dataset_type} dataset: {e}")
             datasets[dataset_type] = pl.DataFrame()
     
     return datasets
@@ -509,7 +507,6 @@ def prepare_baseline_data(
     filtered_data = filter_data_for_analysis(merged_data, outlier_naive_metric)
     
     return merged_data, filtered_data
-
 
 def main():
     """

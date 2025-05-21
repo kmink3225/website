@@ -278,15 +278,6 @@ import polars as pl
 import numpy as np
 
 # PreProcessing
-# from source.preprocess import (main_function,
-#                                 load_and_prepare_parquet,
-#                                 get_column_percentiles,
-#                                 process_column_for_outliers,
-#                                 compute_lm_slope,
-#                                 check_memory_status,
-#                                 get_disk_usage,
-#                                 get_package_details)
-
 from source.cp_preprocess import prepare_baseline_data
 
 
@@ -533,9 +524,13 @@ plot_single_well(descending_data, pcrd_nm, channel_nm, temperature_nm, well_nm, 
 ```{python}
 mudt=True
 outlier_naive_metric =1.1
-result_data = main_function(outlier_naive_metric,mudt)
+result_data = prepare_baseline_data(outlier_naive_metric,mudt)
+
 merged_data = result_data[0]
 filtered_data = result_data[1]
+
+merged_data = merged_data.to_pandas()
+filtered_data = filtered_data.to_pandas()
 
 channels=filtered_data['channel'].unique()
 temperatures=filtered_data['temperature'].unique()

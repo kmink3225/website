@@ -588,55 +588,60 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 <h2 data-number="10" class="anchored" data-anchor-id="result"><span class="header-section-number">10</span> Result</h2>
 <section id="import-packages" class="level4">
 <h4 class="anchored" data-anchor-id="import-packages">Import Packages</h4>
-<div id="9d961b83" class="cell" data-execution_count="1">
+<div id="63d97136" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Analysis Preparation</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># PreProcessing</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> source.preprocess <span class="im">import</span> (main_function,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                                load_and_prepare_parquet,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                                get_column_percentiles,</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                                process_column_for_outliers,</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                                compute_lm_slope,</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                                check_memory_status,</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                                get_disk_usage,</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>                                get_package_details)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> source.signal_filter <span class="im">import</span> (detect_noise_naively,</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>                                    detect_noise_naively_ver2,</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>                                    detect_noise_naively_ywj1,</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                                    detect_noise_naively_pbg,</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>                                    detect_noise_naively_kkm,</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>                                    compute_autocorrelation,</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>                                    test_white_noise)</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualization</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> source.visualization <span class="im">import</span> (find_sub_extremes,</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>                                    find_global_extremes,</span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>                                    get_comparison_metrics,</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>                                    compute_bpn,</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>                                    plot_baseline_subtractions,</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>                                    plot_single_well,</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>                                    plot_signal_patterns)</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">"ignore"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> polars <span class="im">as</span> pl</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># PreProcessing</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># from source.preprocess import (main_function,</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 load_and_prepare_parquet,</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 get_column_percentiles,</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 process_column_for_outliers,</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 compute_lm_slope,</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 check_memory_status,</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 get_disk_usage,</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 get_package_details)</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> source.cp_preprocess <span class="im">import</span> prepare_baseline_data</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> source.signal_filter <span class="im">import</span> (detect_noise_naively,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>                                    detect_noise_naively_ver2,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>                                    detect_noise_naively_ywj1,</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                                    detect_noise_naively_pbg,</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>                                    detect_noise_naively_kkm,</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>                                    compute_autocorrelation,</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>                                    test_white_noise)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualization</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> source.visualization <span class="im">import</span> (find_sub_extremes,</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>                                    find_global_extremes,</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>                                    get_comparison_metrics,</span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>                                    compute_bpn,</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>                                    plot_baseline_subtractions,</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>                                    plot_single_well,</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>                                    plot_signal_patterns)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">"ignore"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
 <section id="data-preparation" class="level4">
 <h4 class="anchored" data-anchor-id="data-preparation">Data Preparation</h4>
-<div id="05b29922" class="cell" data-execution_count="2">
+<div id="55cd21c2" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mudt<span class="op">=</span><span class="va">False</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>outlier_naive_metric <span class="op">=</span><span class="fl">1.2</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>result_data <span class="op">=</span> main_function(outlier_naive_metric,mudt)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>result_data <span class="op">=</span> prepare_baseline_data(outlier_naive_metric,mudt)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>merged_data <span class="op">=</span> result_data[<span class="dv">0</span>]</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>filtered_data <span class="op">=</span> result_data[<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -644,18 +649,26 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 <ul>
 <li><a href="https://github.com/kmink3225/website/blob/28864068ed97b7285e8873ecefde95590ea17ebf/docs/projects/baseline_subtraction/source/preprocess.py#L40">main_function() 코드 링크</a></li>
 </ul>
-<div id="3b380375" class="cell" data-execution_count="3">
+<div id="cef4e5a4" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>negative_data <span class="op">=</span> merged_data.query(<span class="st">"`final_ct`&lt;0"</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>channels<span class="op">=</span>merged_data[<span class="st">'channel'</span>].unique()</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>temperatures<span class="op">=</span>merged_data[<span class="st">'temperature'</span>].unique()</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>plate_names<span class="op">=</span>merged_data[<span class="st">'name'</span>].unique()</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>well_names<span class="op">=</span>merged_data[<span class="st">'well'</span>].unique()</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> {<span class="st">'Low'</span>:<span class="st">'blue'</span>,<span class="st">'High'</span>:<span class="st">'red'</span>}</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>pcrd_name <span class="op">=</span> merged_data[<span class="st">'name'</span>].unique()[<span class="dv">0</span>]</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>channel_name <span class="op">=</span> merged_data[<span class="st">'channel'</span>].unique()[<span class="dv">0</span>]</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>temperature_name <span class="op">=</span> merged_data[<span class="st">'temperature'</span>].unique()[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 양성 데이터 필터링</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>negative_data <span class="op">=</span> merged_data.<span class="bu">filter</span>(pl.col(<span class="st">"final_ct"</span>) <span class="op">&lt;</span> <span class="dv">0</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>negative_data <span class="op">=</span> negative_data.to_pandas()</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>merged_data <span class="op">=</span> merged_data.to_pandas()</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 고유값 얻기</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>channels <span class="op">=</span> merged_data[<span class="st">"channel"</span>].unique().tolist()</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>temperatures <span class="op">=</span> merged_data[<span class="st">"temperature"</span>].unique().tolist()</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>plate_names <span class="op">=</span> merged_data[<span class="st">"name"</span>].unique().tolist()</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>well_names <span class="op">=</span> merged_data[<span class="st">"well"</span>].unique().tolist()</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 색상 딕셔너리는 그대로 유지</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> {<span class="st">'Low'</span>: <span class="st">'blue'</span>, <span class="st">'High'</span>: <span class="st">'red'</span>}</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 첫번째 고유값 얻기</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>pcrd_name <span class="op">=</span> merged_data[<span class="st">"name"</span>].unique()[<span class="dv">0</span>]</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>channel_name <span class="op">=</span> merged_data[<span class="st">"channel"</span>].unique()[<span class="dv">0</span>]</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>temperature_name <span class="op">=</span> merged_data[<span class="st">"temperature"</span>].unique()[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -663,7 +676,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 <h3 data-number="10.1" class="anchored" data-anchor-id="mudt-전처리가-없는-경우"><span class="header-section-number">10.1</span> MuDT 전처리가 없는 경우</h3>
 <section id="복수-신호에-대한-성능-평가" class="level4">
 <h4 class="anchored" data-anchor-id="복수-신호에-대한-성능-평가">복수 신호에 대한 성능 평가</h4>
-<div id="04e1919d" class="cell" data-execution_count="4">
+<div id="82ea51eb" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>temp <span class="op">=</span> merged_data</span>
@@ -699,7 +712,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </section>
 <section id="단일-신호에-대한-성능-평가" class="level4">
 <h4 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가">단일 신호에 대한 성능 평가</h4>
-<div id="efc89591" class="cell" data-execution_count="5">
+<div id="99b3fc6a" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>temp2 <span class="op">=</span> merged_data.query(<span class="st">'`name` == @pcrd_name'</span>)</span>
@@ -833,7 +846,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 <section id="증가-신호에-대한-성능-평가" class="level3" data-number="14.1">
 <h3 data-number="14.1" class="anchored" data-anchor-id="증가-신호에-대한-성능-평가"><span class="header-section-number">14.1</span> 증가 신호에 대한 성능 평가</h3>
 <p>이 Sampled Data엔 증가신호가 없음</p>
-<div id="617cd962" class="cell" data-execution_count="6">
+<div id="f6e31b6f" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ascending_data = merged_data.query("`channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &gt;0") #</span></span>
@@ -867,14 +880,14 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </section>
 <section id="감소-신호에-대한-성능-평가" class="level3" data-number="14.2">
 <h3 data-number="14.2" class="anchored" data-anchor-id="감소-신호에-대한-성능-평가"><span class="header-section-number">14.2</span> 감소 신호에 대한 성능 평가</h3>
-<div id="56dcd64a" class="cell" data-execution_count="7">
+<div id="f126b65a" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>descending_data <span class="op">=</span> merged_data.query(<span class="st">"`analysis_dataprocnum` == 13 &amp; `channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &lt;0"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>descending_data<span class="op">=</span>descending_data.iloc[:<span class="bu">len</span>(descending_data) <span class="op">//</span> <span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="0dcc16fe" class="cell" data-execution_count="8">
+<div id="935e5a4e" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(descending_data,channel_name, temperature_name, mudt <span class="op">=</span> mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -889,7 +902,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </div>
 <section id="단일-신호에-대한-성능-평가-1" class="level4">
 <h4 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-1">단일 신호에 대한 성능 평가</h4>
-<div id="ed49e93f" class="cell" data-execution_count="9">
+<div id="82d8d996" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>temp <span class="op">=</span> descending_data[descending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">42</span>]<span class="op">&lt;</span>(<span class="op">-</span><span class="dv">30</span>))]</span>
@@ -912,28 +925,32 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </section>
 <section id="제품-특이적인-신호처리에-대한-성능-평가" class="level3" data-number="14.3">
 <h3 data-number="14.3" class="anchored" data-anchor-id="제품-특이적인-신호처리에-대한-성능-평가"><span class="header-section-number">14.3</span> 제품 특이적인 신호처리에 대한 성능 평가</h3>
-<div id="ed4f908e" class="cell" data-execution_count="10">
+<div id="057f7302" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mudt<span class="op">=</span><span class="va">True</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>outlier_naive_metric <span class="op">=</span><span class="fl">1.1</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>result_data <span class="op">=</span> main_function(outlier_naive_metric,mudt)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>merged_data <span class="op">=</span> result_data[<span class="dv">0</span>]</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>filtered_data <span class="op">=</span> result_data[<span class="dv">1</span>]</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>channels<span class="op">=</span>filtered_data[<span class="st">'channel'</span>].unique()</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>temperatures<span class="op">=</span>filtered_data[<span class="st">'temperature'</span>].unique()</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>plate_names<span class="op">=</span>filtered_data[<span class="st">'name'</span>].unique()</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>well_names<span class="op">=</span>filtered_data[<span class="st">'well'</span>].unique()</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> {<span class="st">'Low'</span>:<span class="st">'blue'</span>,<span class="st">'High'</span>:<span class="st">'red'</span>}</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>pcrd_name <span class="op">=</span> filtered_data[<span class="st">'name'</span>].unique()[<span class="dv">0</span>]</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>channel_name <span class="op">=</span> filtered_data[<span class="st">'channel'</span>].unique()[<span class="dv">0</span>]</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>temperature_name <span class="op">=</span> filtered_data[<span class="st">'temperature'</span>].unique()[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>result_data <span class="op">=</span> prepare_baseline_data(outlier_naive_metric,mudt)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>merged_data <span class="op">=</span> result_data[<span class="dv">0</span>]</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>filtered_data <span class="op">=</span> result_data[<span class="dv">1</span>]</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>merged_data <span class="op">=</span> merged_data.to_pandas()</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>filtered_data <span class="op">=</span> filtered_data.to_pandas()</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>channels<span class="op">=</span>filtered_data[<span class="st">'channel'</span>].unique()</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>temperatures<span class="op">=</span>filtered_data[<span class="st">'temperature'</span>].unique()</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>plate_names<span class="op">=</span>filtered_data[<span class="st">'name'</span>].unique()</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>well_names<span class="op">=</span>filtered_data[<span class="st">'well'</span>].unique()</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>colors <span class="op">=</span> {<span class="st">'Low'</span>:<span class="st">'blue'</span>,<span class="st">'High'</span>:<span class="st">'red'</span>}</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>pcrd_name <span class="op">=</span> filtered_data[<span class="st">'name'</span>].unique()[<span class="dv">0</span>]</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>channel_name <span class="op">=</span> filtered_data[<span class="st">'channel'</span>].unique()[<span class="dv">0</span>]</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>temperature_name <span class="op">=</span> filtered_data[<span class="st">'temperature'</span>].unique()[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <section id="복수-신호에-대한-성능-평가-1" class="level4">
 <h4 class="anchored" data-anchor-id="복수-신호에-대한-성능-평가-1">복수 신호에 대한 성능 평가</h4>
-<div id="0652a16d" class="cell" data-execution_count="11">
+<div id="e01abbf7" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>plot_baseline_subtractions(filtered_data,pcrd_name,channel_name,temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -948,13 +965,13 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </div>
 <section id="단일-신호에-대한-성능-평가-2" class="level5">
 <h5 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-2">단일 신호에 대한 성능 평가</h5>
-<div id="b8790f68" class="cell" data-execution_count="12">
+<div id="c9bb53ed" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>filtered_data[filtered_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">40</span>]<span class="op">&gt;</span><span class="dv">100</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="a4e91648" class="cell" data-execution_count="13">
+<div id="caa84f5f" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>pcrd_nm <span class="op">=</span> temp.tail(<span class="dv">1</span>).iloc[<span class="dv">0</span>][<span class="st">'name'</span>]</span>
@@ -976,7 +993,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </section>
 <section id="증가-신호에-대한-성능-평가-1" class="level4">
 <h4 class="anchored" data-anchor-id="증가-신호에-대한-성능-평가-1">증가 신호에 대한 성능 평가</h4>
-<div id="41779081" class="cell" data-execution_count="14">
+<div id="0cf3c5a5" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>ascending_data <span class="op">=</span> merged_data.query(<span class="st">"`analysis_dataprocnum` == 13 &amp; `channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &gt;0"</span>)</span>
@@ -992,7 +1009,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </div>
 <section id="단일-신호에-대한-성능-평가-3" class="level5">
 <h5 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-3">단일 신호에 대한 성능 평가</h5>
-<div id="69bc8893" class="cell" data-execution_count="15">
+<div id="55526910" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>ascending_data[ascending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">40</span>]<span class="op">&gt;</span><span class="dv">200</span>)]</span>
@@ -1014,7 +1031,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </section>
 <section id="감소-신호에-대한-성능-평가-1" class="level4">
 <h4 class="anchored" data-anchor-id="감소-신호에-대한-성능-평가-1">감소 신호에 대한 성능 평가</h4>
-<div id="b445be6a" class="cell" data-execution_count="16">
+<div id="b59d9c74" class="cell" data-execution_count="16">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>descending_data <span class="op">=</span> merged_data.query(<span class="st">"`channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `linear_slope`&lt;0 &amp; `final_ct` &lt;0"</span>)</span>
@@ -1031,7 +1048,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </div>
 <section id="단일-신호에-대한-성능-평가-4" class="level5">
 <h5 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-4">단일 신호에 대한 성능 평가</h5>
-<div id="bf87d467" class="cell" data-execution_count="17">
+<div id="e2408217" class="cell" data-execution_count="17">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>temp <span class="op">=</span> descending_data[descending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">30</span>]<span class="op">&lt;</span>(<span class="op">-</span><span class="dv">20</span>))]</span>
@@ -1054,7 +1071,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </section>
 <section id="제품-고유-risk-신호" class="level4">
 <h4 class="anchored" data-anchor-id="제품-고유-risk-신호">제품 고유 Risk 신호</h4>
-<div id="656963f4" class="cell" data-execution_count="18">
+<div id="20e84a27" class="cell" data-execution_count="18">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>merged_data[<span class="st">'mudt_distortion_combo_key'</span>]<span class="op">=</span>merged_data[[<span class="st">'name'</span>, <span class="st">'channel'</span>, <span class="st">'well'</span>]].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="st">' '</span>.join(x), axis<span class="op">=</span><span class="dv">1</span>)</span>
@@ -1075,7 +1092,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </div>
 </div>
 </div>
-<div id="7345245c" class="cell" data-execution_count="19">
+<div id="83376420" class="cell" data-execution_count="19">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>mudt_risk_data[mudt_risk_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">40</span>]<span class="op">&lt;</span> <span class="op">-</span><span class="dv">200</span>)]</span>

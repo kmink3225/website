@@ -588,7 +588,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 <h2 data-number="10" class="anchored" data-anchor-id="result"><span class="header-section-number">10</span> Result</h2>
 <section id="import-packages" class="level4">
 <h4 class="anchored" data-anchor-id="import-packages">Import Packages</h4>
-<div id="63d97136" class="cell" data-execution_count="1">
+<div id="079a366f" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Analysis Preparation</span></span>
@@ -597,46 +597,38 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># PreProcessing</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># from source.preprocess import (main_function,</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 load_and_prepare_parquet,</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 get_column_percentiles,</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 process_column_for_outliers,</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 compute_lm_slope,</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 check_memory_status,</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 get_disk_usage,</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co">#                                 get_package_details)</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> source.cp_preprocess <span class="im">import</span> prepare_baseline_data</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> source.signal_filter <span class="im">import</span> (detect_noise_naively,</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>                                    detect_noise_naively_ver2,</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>                                    detect_noise_naively_ywj1,</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>                                    detect_noise_naively_pbg,</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>                                    detect_noise_naively_kkm,</span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>                                    compute_autocorrelation,</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>                                    test_white_noise)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualization</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> source.visualization <span class="im">import</span> (find_sub_extremes,</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>                                    find_global_extremes,</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>                                    get_comparison_metrics,</span>
-<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>                                    compute_bpn,</span>
-<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>                                    plot_baseline_subtractions,</span>
-<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>                                    plot_single_well,</span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>                                    plot_signal_patterns)</span>
-<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
-<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">"ignore"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> source.cp_preprocess <span class="im">import</span> prepare_baseline_data</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Signal Filter</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> source.cp_signal_filter <span class="im">import</span> (detect_noise_naively,</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                                    detect_noise_naively_ver2,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                                    detect_noise_naively_ywj1)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualization</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> plotly.express <span class="im">as</span> px</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> source.cp_visualization <span class="im">import</span> (find_sub_extremes,</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>                                    find_global_extremes,</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>                                    get_comparison_metrics,</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>                                    compute_bpn,</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>                                    plot_baseline_subtractions,</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>                                    plot_single_well)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">#from source.visualization import (find_sub_extremes,</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co">#                                    find_global_extremes,</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="co">#                                    get_comparison_metrics,</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="co">#                                    compute_bpn,</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="co">#                                    plot_baseline_subtractions,</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a><span class="co">#                                    plot_single_well,</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a><span class="co">#                                    plot_signal_patterns)</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>warnings.filterwarnings(<span class="st">"ignore"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
 <section id="data-preparation" class="level4">
 <h4 class="anchored" data-anchor-id="data-preparation">Data Preparation</h4>
-<div id="55cd21c2" class="cell" data-execution_count="2">
+<div id="1e6f06e5" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mudt<span class="op">=</span><span class="va">False</span></span>
@@ -649,7 +641,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 <ul>
 <li><a href="https://github.com/kmink3225/website/blob/28864068ed97b7285e8873ecefde95590ea17ebf/docs/projects/baseline_subtraction/source/preprocess.py#L40">main_function() 코드 링크</a></li>
 </ul>
-<div id="cef4e5a4" class="cell" data-execution_count="3">
+<div id="4f30df1a" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 양성 데이터 필터링</span></span>
@@ -676,7 +668,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 <h3 data-number="10.1" class="anchored" data-anchor-id="mudt-전처리가-없는-경우"><span class="header-section-number">10.1</span> MuDT 전처리가 없는 경우</h3>
 <section id="복수-신호에-대한-성능-평가" class="level4">
 <h4 class="anchored" data-anchor-id="복수-신호에-대한-성능-평가">복수 신호에 대한 성능 평가</h4>
-<div id="82ea51eb" class="cell" data-execution_count="4">
+<div id="b36bf5ec" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>temp <span class="op">=</span> merged_data</span>
@@ -687,7 +679,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>temperature_name <span class="op">=</span> non_zero_rows[<span class="st">'temperature'</span>].unique()[<span class="dv">0</span>]</span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>well_name <span class="op">=</span> non_zero_rows[<span class="st">'well'</span>].unique()[<span class="dv">3</span>]</span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>plot_baseline_subtractions(merged_data,pcrd_name,channel_name,temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>plot_baseline_subtractions(merged_data,i_pcrd<span class="op">=</span>pcrd_name,i_channel<span class="op">=</span>channel_name,i_temperature<span class="op">=</span>temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
@@ -712,7 +704,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </section>
 <section id="단일-신호에-대한-성능-평가" class="level4">
 <h4 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가">단일 신호에 대한 성능 평가</h4>
-<div id="99b3fc6a" class="cell" data-execution_count="5">
+<div id="378016c7" class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>temp2 <span class="op">=</span> merged_data.query(<span class="st">'`name` == @pcrd_name'</span>)</span>
@@ -846,7 +838,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 <section id="증가-신호에-대한-성능-평가" class="level3" data-number="14.1">
 <h3 data-number="14.1" class="anchored" data-anchor-id="증가-신호에-대한-성능-평가"><span class="header-section-number">14.1</span> 증가 신호에 대한 성능 평가</h3>
 <p>이 Sampled Data엔 증가신호가 없음</p>
-<div id="f6e31b6f" class="cell" data-execution_count="6">
+<div id="f79f27c5" class="cell" data-execution_count="6">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ascending_data = merged_data.query("`channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &gt;0") #</span></span>
@@ -880,17 +872,17 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </section>
 <section id="감소-신호에-대한-성능-평가" class="level3" data-number="14.2">
 <h3 data-number="14.2" class="anchored" data-anchor-id="감소-신호에-대한-성능-평가"><span class="header-section-number">14.2</span> 감소 신호에 대한 성능 평가</h3>
-<div id="f126b65a" class="cell" data-execution_count="7">
+<div id="a4f1c86b" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>descending_data <span class="op">=</span> merged_data.query(<span class="st">"`analysis_dataprocnum` == 13 &amp; `channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &lt;0"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>descending_data<span class="op">=</span>descending_data.iloc[:<span class="bu">len</span>(descending_data) <span class="op">//</span> <span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="935e5a4e" class="cell" data-execution_count="8">
+<div id="7d3a812e" class="cell" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(descending_data,channel_name, temperature_name, mudt <span class="op">=</span> mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>plot_baseline_subtractions(descending_data,i_pcrd<span class="op">=</span>pcrd_name,i_channel<span class="op">=</span>channel_name,i_temperature<span class="op">=</span>temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
@@ -902,16 +894,16 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </div>
 <section id="단일-신호에-대한-성능-평가-1" class="level4">
 <h4 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-1">단일 신호에 대한 성능 평가</h4>
-<div id="82d8d996" class="cell" data-execution_count="9">
+<div id="256dec17" class="cell" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>temp <span class="op">=</span> descending_data[descending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">42</span>]<span class="op">&lt;</span>(<span class="op">-</span><span class="dv">30</span>))]</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>pcrd_nm <span class="op">=</span> temp.tail(<span class="dv">1</span>)[<span class="st">'name'</span>].iloc[<span class="dv">0</span>]</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>channel_nm <span class="op">=</span> temp.tail(<span class="dv">1</span>)[<span class="st">'channel'</span>].iloc[<span class="dv">0</span>]</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>temperature_nm <span class="op">=</span> temp.tail(<span class="dv">1</span>)[<span class="st">'temperature'</span>].iloc[<span class="dv">0</span>]</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>well_nm <span class="op">=</span> temp.tail(<span class="dv">1</span>)[<span class="st">'well'</span>].iloc[<span class="dv">0</span>]</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>pcrd_name <span class="op">=</span> temp.tail(<span class="dv">1</span>)[<span class="st">'name'</span>].iloc[<span class="dv">0</span>]</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>channel_name <span class="op">=</span> temp.tail(<span class="dv">1</span>)[<span class="st">'channel'</span>].iloc[<span class="dv">0</span>]</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>temperature_name <span class="op">=</span> temp.tail(<span class="dv">1</span>)[<span class="st">'temperature'</span>].iloc[<span class="dv">0</span>]</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>well_name <span class="op">=</span> temp.tail(<span class="dv">1</span>)[<span class="st">'well'</span>].iloc[<span class="dv">0</span>]</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>plot_single_well(descending_data, pcrd_nm, channel_nm, temperature_nm, well_nm, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>plot_single_well(descending_data,i_pcrd<span class="op">=</span>pcrd_name,i_channel<span class="op">=</span>channel_name,i_temperature<span class="op">=</span>temperature_name,i_well<span class="op">=</span>well_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
@@ -925,7 +917,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </section>
 <section id="제품-특이적인-신호처리에-대한-성능-평가" class="level3" data-number="14.3">
 <h3 data-number="14.3" class="anchored" data-anchor-id="제품-특이적인-신호처리에-대한-성능-평가"><span class="header-section-number">14.3</span> 제품 특이적인 신호처리에 대한 성능 평가</h3>
-<div id="057f7302" class="cell" data-execution_count="10">
+<div id="1923d36f" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mudt<span class="op">=</span><span class="va">True</span></span>
@@ -950,10 +942,10 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </div>
 <section id="복수-신호에-대한-성능-평가-1" class="level4">
 <h4 class="anchored" data-anchor-id="복수-신호에-대한-성능-평가-1">복수 신호에 대한 성능 평가</h4>
-<div id="e01abbf7" class="cell" data-execution_count="11">
+<div id="094f2b8f" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>plot_baseline_subtractions(filtered_data,pcrd_name,channel_name,temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>plot_baseline_subtractions(filtered_data,i_pcrd<span class="op">=</span>pcrd_name,i_channel<span class="op">=</span>channel_name,i_temperature<span class="op">=</span>temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
@@ -965,21 +957,21 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </div>
 <section id="단일-신호에-대한-성능-평가-2" class="level5">
 <h5 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-2">단일 신호에 대한 성능 평가</h5>
-<div id="c9bb53ed" class="cell" data-execution_count="12">
+<div id="bf4a7b4e" class="cell" data-execution_count="12">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>filtered_data[filtered_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">40</span>]<span class="op">&gt;</span><span class="dv">100</span>)]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<div id="caa84f5f" class="cell" data-execution_count="13">
+<div id="18b9a937" class="cell" data-execution_count="13">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>pcrd_nm <span class="op">=</span> temp.tail(<span class="dv">1</span>).iloc[<span class="dv">0</span>][<span class="st">'name'</span>]</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>channel_nm <span class="op">=</span> temp.tail(<span class="dv">1</span>).iloc[<span class="dv">0</span>][<span class="st">'channel'</span>]</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>temperature_nm<span class="op">=</span> temp.tail(<span class="dv">1</span>).iloc[<span class="dv">0</span>][<span class="st">'temperature'</span>]</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>well_nm<span class="op">=</span> temp.tail(<span class="dv">1</span>).iloc[<span class="dv">0</span>][<span class="st">'well'</span>]</span>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>pcrd_name <span class="op">=</span> temp.tail(<span class="dv">1</span>).iloc[<span class="dv">0</span>][<span class="st">'name'</span>]</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>channel_name <span class="op">=</span> temp.tail(<span class="dv">1</span>).iloc[<span class="dv">0</span>][<span class="st">'channel'</span>]</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>temperature_name<span class="op">=</span> temp.tail(<span class="dv">1</span>).iloc[<span class="dv">0</span>][<span class="st">'temperature'</span>]</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>well_name<span class="op">=</span> temp.tail(<span class="dv">1</span>).iloc[<span class="dv">0</span>][<span class="st">'well'</span>]</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>plot_single_well(filtered_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>plot_single_well(filtered_data,i_pcrd<span class="op">=</span>pcrd_name,i_channel<span class="op">=</span>channel_name,i_temperature<span class="op">=</span>temperature_name,i_well<span class="op">=</span>well_name,mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
@@ -993,11 +985,11 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </section>
 <section id="증가-신호에-대한-성능-평가-1" class="level4">
 <h4 class="anchored" data-anchor-id="증가-신호에-대한-성능-평가-1">증가 신호에 대한 성능 평가</h4>
-<div id="0cf3c5a5" class="cell" data-execution_count="14">
+<div id="ebb33252" class="cell" data-execution_count="14">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>ascending_data <span class="op">=</span> merged_data.query(<span class="st">"`analysis_dataprocnum` == 13 &amp; `channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `final_ct` &lt;0 &amp; `linear_slope` &gt;0"</span>)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(ascending_data,channel_name, temperature_name, mudt <span class="op">=</span> mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>plot_baseline_subtractions(ascending_data, channel_name, temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
@@ -1009,7 +1001,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </div>
 <section id="단일-신호에-대한-성능-평가-3" class="level5">
 <h5 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-3">단일 신호에 대한 성능 평가</h5>
-<div id="55526910" class="cell" data-execution_count="15">
+<div id="350cba7c" class="cell" data-execution_count="15">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>ascending_data[ascending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">40</span>]<span class="op">&gt;</span><span class="dv">200</span>)]</span>
@@ -1031,12 +1023,12 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </section>
 <section id="감소-신호에-대한-성능-평가-1" class="level4">
 <h4 class="anchored" data-anchor-id="감소-신호에-대한-성능-평가-1">감소 신호에 대한 성능 평가</h4>
-<div id="b59d9c74" class="cell" data-execution_count="16">
+<div id="b9ec6d78" class="cell" data-execution_count="16">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>descending_data <span class="op">=</span> merged_data.query(<span class="st">"`channel` == @channel_name &amp; `temperature` == @temperature_name &amp; `linear_slope`&lt;0 &amp; `final_ct` &lt;0"</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(descending_data,channel_name, temperature_name, mudt <span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>plot_baseline_subtractions(descending_data,channel_name, temperature_name, mudt <span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
@@ -1048,7 +1040,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </div>
 <section id="단일-신호에-대한-성능-평가-4" class="level5">
 <h5 class="anchored" data-anchor-id="단일-신호에-대한-성능-평가-4">단일 신호에 대한 성능 평가</h5>
-<div id="e2408217" class="cell" data-execution_count="17">
+<div id="bce45912" class="cell" data-execution_count="17">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>temp <span class="op">=</span> descending_data[descending_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">30</span>]<span class="op">&lt;</span>(<span class="op">-</span><span class="dv">20</span>))]</span>
@@ -1071,7 +1063,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </section>
 <section id="제품-고유-risk-신호" class="level4">
 <h4 class="anchored" data-anchor-id="제품-고유-risk-신호">제품 고유 Risk 신호</h4>
-<div id="20e84a27" class="cell" data-execution_count="18">
+<div id="6951c87f" class="cell" data-execution_count="18">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>merged_data[<span class="st">'mudt_distortion_combo_key'</span>]<span class="op">=</span>merged_data[[<span class="st">'name'</span>, <span class="st">'channel'</span>, <span class="st">'well'</span>]].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="st">' '</span>.join(x), axis<span class="op">=</span><span class="dv">1</span>)</span>
@@ -1082,7 +1074,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>channel_name <span class="op">=</span> mudt_risk_data.tail(<span class="dv">1</span>)[<span class="st">'channel'</span>].iloc[<span class="dv">0</span>]</span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>temperature_name <span class="op">=</span> mudt_risk_data.tail(<span class="dv">1</span>)[<span class="st">'temperature'</span>].iloc[<span class="dv">0</span>]</span>
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>plot_signal_patterns(mudt_risk_data, channel_name, temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>plot_baseline_subtractions(mudt_risk_data, channel_name, temperature_name, mudt<span class="op">=</span>mudt)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
@@ -1092,7 +1084,7 @@ Baseline 신호가 실험 단계에서 흔하게 보이는 패턴에 맞게 기�
 </div>
 </div>
 </div>
-<div id="83376420" class="cell" data-execution_count="19">
+<div id="60aa4313" class="cell" data-execution_count="19">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>temp<span class="op">=</span>mudt_risk_data[mudt_risk_data[<span class="st">'strep_plus2_analysis_absd'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: x[<span class="dv">40</span>]<span class="op">&lt;</span> <span class="op">-</span><span class="dv">200</span>)]</span>

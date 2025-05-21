@@ -287,16 +287,14 @@ from source.cp_signal_filter import (detect_noise_naively,
 # Visualization
 import plotly.express as px
 import matplotlib.pyplot as plt
-from source.visualization import (find_sub_extremes,
+from source.cp_visualization import (find_sub_extremes,
                                     find_global_extremes,
                                     get_comparison_metrics,
                                     compute_bpn,
                                     plot_baseline_subtractions,
-                                    plot_single_well,
-                                    plot_signal_patterns)
+                                    plot_single_well)
 
 import warnings
-
 warnings.filterwarnings("ignore")
 ```
 
@@ -347,7 +345,7 @@ channel_name = non_zero_rows['channel'].unique()[0]
 temperature_name = non_zero_rows['temperature'].unique()[0]
 well_name = non_zero_rows['well'].unique()[3]
 
-plot_baseline_subtractions(merged_data,pcrd_name,channel_name,temperature_name, mudt=mudt)
+plot_baseline_subtractions(merged_data,i_pcrd=pcrd_name,i_channel=channel_name,i_temperature=temperature_name, mudt=mudt)
 ```
 
 * [plot_baseline_subtractions() code link](https://github.com/kmink3225/website/blob/28864068ed97b7285e8873ecefde95590ea17ebf/docs/projects/baseline_subtraction/source/visualization.py#L186)
@@ -499,19 +497,19 @@ descending_data=descending_data.iloc[:len(descending_data) // 2]
 ```
 
 ```{python}
-plot_signal_patterns(descending_data,channel_name, temperature_name, mudt = mudt)
+plot_baseline_subtractions(descending_data,i_pcrd=pcrd_name,i_channel=channel_name,i_temperature=temperature_name, mudt=mudt)
 ```
 
 #### 단일 신호에 대한 성능 평가
 
 ```{python}
 temp = descending_data[descending_data['strep_plus2_analysis_absd'].apply(lambda x: x[42]<(-30))]
-pcrd_nm = temp.tail(1)['name'].iloc[0]
-channel_nm = temp.tail(1)['channel'].iloc[0]
-temperature_nm = temp.tail(1)['temperature'].iloc[0]
-well_nm = temp.tail(1)['well'].iloc[0]
+pcrd_name = temp.tail(1)['name'].iloc[0]
+channel_name = temp.tail(1)['channel'].iloc[0]
+temperature_name = temp.tail(1)['temperature'].iloc[0]
+well_name = temp.tail(1)['well'].iloc[0]
 
-plot_single_well(descending_data, pcrd_nm, channel_nm, temperature_nm, well_nm, mudt=mudt)
+plot_single_well(descending_data,i_pcrd=pcrd_name,i_channel=channel_name,i_temperature=temperature_name,i_well=well_name, mudt=mudt)
 ```
 
 ### 제품 특이적인 신호처리에 대한 성능 평가
@@ -539,7 +537,7 @@ temperature_name = filtered_data['temperature'].unique()[0]
 
 #### 복수 신호에 대한 성능 평가
 ```{python}
-plot_baseline_subtractions(filtered_data,pcrd_name,channel_name,temperature_name, mudt=mudt)
+plot_baseline_subtractions(filtered_data,i_pcrd=pcrd_name,i_channel=channel_name,i_temperature=temperature_name, mudt=mudt)
 ```
 
 ##### 단일 신호에 대한 성능 평가
@@ -549,19 +547,19 @@ temp=filtered_data[filtered_data['strep_plus2_analysis_absd'].apply(lambda x: x[
 ```
 
 ```{python}
-pcrd_nm = temp.tail(1).iloc[0]['name']
-channel_nm = temp.tail(1).iloc[0]['channel']
-temperature_nm= temp.tail(1).iloc[0]['temperature']
-well_nm= temp.tail(1).iloc[0]['well']
+pcrd_name = temp.tail(1).iloc[0]['name']
+channel_name = temp.tail(1).iloc[0]['channel']
+temperature_name= temp.tail(1).iloc[0]['temperature']
+well_name= temp.tail(1).iloc[0]['well']
 
-plot_single_well(filtered_data,pcrd_nm,channel_nm, temperature_nm, well_nm,mudt=mudt)
+plot_single_well(filtered_data,i_pcrd=pcrd_name,i_channel=channel_name,i_temperature=temperature_name,i_well=well_name,mudt=mudt)
 ```
 
 #### 증가 신호에 대한 성능 평가 
 
 ```{python}
 ascending_data = merged_data.query("`analysis_dataprocnum` == 13 & `channel` == @channel_name & `temperature` == @temperature_name & `final_ct` <0 & `linear_slope` >0")
-plot_signal_patterns(ascending_data,channel_name, temperature_name, mudt = mudt)
+plot_baseline_subtractions(ascending_data, channel_name, temperature_name, mudt=mudt)
 ```
 
 ##### 단일 신호에 대한 성능 평가
@@ -573,6 +571,7 @@ channel_name =temp.tail(1).iloc[0]['channel']
 temperature_name=temp.tail(1).iloc[0]['temperature']
 well_name=temp.tail(1).iloc[0]['well']
 plot_single_well(ascending_data,pcrd_name,channel_name, temperature_name, well_name,mudt=mudt)
+
 ```
 
 #### 감소 신호에 대한 성능 평가
@@ -580,7 +579,7 @@ plot_single_well(ascending_data,pcrd_name,channel_name, temperature_name, well_n
 ```{python}
 descending_data = merged_data.query("`channel` == @channel_name & `temperature` == @temperature_name & `linear_slope`<0 & `final_ct` <0")
 
-plot_signal_patterns(descending_data,channel_name, temperature_name, mudt = True)
+plot_baseline_subtractions(descending_data,channel_name, temperature_name, mudt = True)
 ```
 
 ##### 단일 신호에 대한 성능 평가
@@ -607,7 +606,7 @@ pcrd_name = mudt_risk_data.tail(1)['name'].iloc[0]
 channel_name = mudt_risk_data.tail(1)['channel'].iloc[0]
 temperature_name = mudt_risk_data.tail(1)['temperature'].iloc[0]
 
-plot_signal_patterns(mudt_risk_data, channel_name, temperature_name, mudt=mudt)
+plot_baseline_subtractions(mudt_risk_data, channel_name, temperature_name, mudt=mudt)
 ```
 
 ```{python}

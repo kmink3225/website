@@ -261,19 +261,29 @@ def prepare_baseline_data(i_data, i_pcrd, i_channel, i_temperature, mudt=False):
     
     Args:
         i_data: 원본 데이터프레임
-        i_pcrd: PCRD 이름
+        i_pcrd: PCRD 이름 (None인 경우 모든 PCRD 데이터 사용)
         i_channel: 채널 이름
         i_temperature: 온도 값
         mudt: MuDT 데이터 여부
-        
+    
     Returns:
         tuple: (필터링된 데이터, 타이틀 리스트, 데이터 키 리스트, 
         원본 RFU 평균 최소값, 전처리 RFU 평균 최소값)
     """
-    # 필터링된 데이터 준비
-    filtered_data = i_data.query(
-        "`name`==@i_pcrd & `channel` == @i_channel & `temperature`==@i_temperature"
-    ).copy()
+    # 필터링된 데이터 준비 (pcrd가 None이면 해당 조건 생략)
+    if i_pcrd is not None:
+        filtered_data = i_data.query(
+            "`name`==@i_pcrd & `channel` == @i_channel & `temperature`==@i_temperature"
+        ).copy()
+    else:
+        filtered_data = i_data.query(
+            "`channel` == @i_channel & `temperature`==@i_temperature"
+        ).copy()
+    
+    # 필터링된 데이터가 비어 있는지 확인
+    if filtered_data.empty:
+        pcrd_str = f"PCRD={i_pcrd}, " if i_pcrd is not None else ""
+        raise ValueError(f"필터링된 데이터가 비었습니다. 입력 매개변수 확인: {pcrd_str}채널={i_channel}, 온도={i_temperature}")
     
     # MuDT 데이터 여부에 따른 타이틀과 데이터 키 설정
     if mudt:
@@ -455,8 +465,8 @@ def plot_single_baseline_panel(ax, i_data, panel_info, error_metrics_dict,
                             f"BPN: {round(preproc_rfu_min_mean)}"),
             "axhline": preproc_rfu_min_mean,
             "ylim": lambda: [
-                min(preproc_rfu_after_bpn_limits)*0.98, 
-                max(preproc_rfu_after_bpn_limits)*1.02
+                min(preproc_rfu_after_bpn_limits)*0.90, 
+                max(preproc_rfu_after_bpn_limits)*1.1
             ]
         }
     }
@@ -475,20 +485,21 @@ def plot_single_baseline_panel(ax, i_data, panel_info, error_metrics_dict,
         config = panel_configs[(i, j)]
         
         if "text" in config:
-            ax.text(0.05, 0.98, config["text"],
-                verticalalignment='top', horizontalalignment='left',
-                transform=ax.transAxes)
+            ax.text(0.05, 0.98, config["text"]() if callable(config["text"]) else config["text"],
+                            verticalalignment='top', horizontalalignment='left', 
+                            transform=ax.transAxes)
         if "axhline" in config:
             ax.axhline(y=config["axhline"], color='black', linestyle='dotted', linewidth=2)
         if "ylim" in config and config["ylim"] is not None:
-            ax.set_ylim(config["ylim"])    
+            ylim_value = config["ylim"]() if callable(config["ylim"]) else config["ylim"]
+            ax.set_ylim(ylim_value)    
 
     ax.axhline(y=0, color='black', linestyle='dotted', linewidth=2)
     ax.set_title(title)
 
 
-def plot_baseline_subtractions(i_data, i_pcrd, i_channel, i_temperature, 
-                              colors=None, mudt=False):
+def plot_baseline_subtractions(i_data, i_channel, i_temperature, i_pcrd=None, 
+                             colors=None, mudt=False):
     """베이스라인 차감 알고리즘별 결과를 시각화하여 직관적으로 성능을 비교한다.
     
     여러 베이스라인 차감 알고리즘의 결과를 2×3 서브플롯으로 시각화하여 비교한다.
@@ -500,12 +511,12 @@ def plot_baseline_subtractions(i_data, i_pcrd, i_channel, i_temperature,
         필수 열: 'name', 'channel', 'temperature', 'original_rfu', 'preproc_rfu',
         'analysis_absd_orig', 'basesub_absd_orig', 'original_rfu_cfx',
         'strep_plus2_analysis_absd', 'ml_analysis_absd'
-    i_pcrd : str
-        PCRD 이름
     i_channel : str
         채널 이름 (예: 'FAM', 'HEX', 'ROX')
     i_temperature : float
         온도 값 (°C)
+    i_pcrd : str, optional
+        PCRD 이름. None이면 모든 PCRD의 데이터를 사용합니다.
     colors : list, optional
         그래프에 사용할 색상 목록. 기본값은 None
     mudt : bool, optional
@@ -530,9 +541,11 @@ def plot_baseline_subtractions(i_data, i_pcrd, i_channel, i_temperature,
     >>> # 데이터 로드
     >>> data = pd.read_parquet('pcr_results.parquet')
     >>> # 특정 PCR 실험, 채널, 온도에 대한 시각화
-    >>> plot_baseline_subtractions(data, 'Experiment1', 'FAM', 60.0)
+    >>> plot_baseline_subtractions(data, 'FAM', 60.0, 'Experiment1')
+    >>> # 모든 PCRD의 데이터를 시각화
+    >>> plot_baseline_subtractions(data, 'FAM', 60.0)
     >>> # MuDT 데이터 시각화
-    >>> plot_baseline_subtractions(data, 'MuDT_Exp', 'ROX', 63.5, mudt=True)
+    >>> plot_baseline_subtractions(data, 'ROX', 63.5, 'MuDT_Exp', mudt=True)
     
     See Also
     --------
@@ -581,15 +594,11 @@ def plot_baseline_subtractions(i_data, i_pcrd, i_channel, i_temperature,
     
     # 전체 레이아웃 설정
     pydsp_version = get_package_details().get('pydsp')
-    fig.suptitle(
-        f'PCRD: {i_pcrd}\n'
-        f'pydsp Version: {pydsp_version}, '
-        f'Channel: {i_channel}, Temperature: {i_temperature}, '
-        f'The Number of Signals: {filtered_data.shape[0]}', 
-        ha='left', 
-        x=0.02, 
-        fontsize=15
-    )
+    title_text = f'pydsp Version: {pydsp_version}, Channel: {i_channel}, Temperature: {i_temperature}, The Number of Signals: {filtered_data.shape[0]}'
+    if i_pcrd is not None:
+        title_text = f'PCRD: {i_pcrd}\n{title_text}'
+        
+    fig.suptitle(title_text, ha='left', x=0.02, fontsize=15)
     
     plt.tight_layout()
     plt.show()

@@ -1,0 +1,78 @@
+---
+title: "TBD"
+subtitle: "TBD"
+description: "TBD"
+author: Kwangmin Kim
+date: 2020-01-01
+format: 
+  html:
+    toc: true  
+    #page-layout: article
+    code-fold: true
+    code-copy: true
+    code-overflow: wrap
+    number-sections: true
+    number-depth: 3
+    grid:
+      sidebar-width: 200px
+      body-width: 1150px
+      margin-width: 100px
+---
+
+
+Read file: /c:/Users/kmkim/Desktop/SG_Projects/baseline_optimization/home/jupyter-kmkim/dsp-research-strep-a/merge-pda-computed-and-label.ipynb
+`merge-pda-computed-and-label.ipynb` 파일의 내용을 분석한 결과, Airflow를 적용 가능함
+
+이 노트북은 여러 S3 경로에서 Parquet 파일을 읽고, CSV 파일에서 메타데이터를 조회한 후, 데이터를 병합하여 새로운 Parquet 파일을 S3에 저장하는 작업을 수행한다. 이러한 단계는 명확하게 구분되며, 주기적으로 실행하거나, 특정 조건(예: 새로운 `dsp_result_parquet` 파일 등장)에 따라 트리거될 수 있는 파이프라인으로 구성하기에 적합하다.
+
+**Airflow 적용 아키텍처 제안**
+
+다음과 같은 DAG(Directed Acyclic Graph) 구조를 제안한다.
+
+1.  **`list_dsp_results_task`**:
+    *   **설명**: S3에서 처리해야 할 `dsp_result_parquet` 파일 목록을 가져온다. 노트북의 `fsspec.filesystem("s3").glob("playground/computed/SG2173-RV-A/1/result/ALL/PGR09/*.parquet")` 부분에 해당한다.
+    *   **구현**: `PythonOperator` 또는 `S3ListOperator` (커스텀 또는 커뮤니티 제공)를 사용하여 S3 경로를 스캔하고 파일 목록을 XCom으로 다음 태스크에 전달한다.
+
+2.  **`load_metadata_task`**:
+    *   **설명**: S3에서 `pcrd.csv`와 `plate.csv` 파일을 읽어 Pandas DataFrame으로 변환하고, XCom으로 다음 태스크에 전달한다. 노트북의 `pd.read_csv("s3://playground/temporary_csv_db/pcrd.csv")` 및 `pd.read_csv("s3://playground/temporary_csv_db/plate.csv")` 부분에 해당한다.
+    *   **구현**: `PythonOperator`를 사용하여 S3에서 CSV를 읽고 DataFrame으로 만든다.
+
+3.  **`process_and_merge_task` (Dynamic Task Mapping 사용 가능)**:
+    *   **설명**: `list_dsp_results_task`에서 전달받은 각 `dsp_result_parquet` 파일에 대해 다음 작업을 수행한다.
+        *   `pcrd.csv` 및 `plate.csv` DataFrame ( `load_metadata_task` 에서 로드)을 참조하여 해당 Parquet 파일에 대한 `concentration_path`를 찾는다.
+        *   S3에서 원본 `dsp_result_parquet` 파일을 읽는다.
+        *   S3에서 `concentration_path`에 해당하는 label Parquet 파일을 읽는다.
+        *   두 DataFrame을 병합한다.
+        *   병합된 DataFrame을 새로운 Parquet 파일로 로컬 또는 S3 staging 영역에 저장한다. (노트북의 `for` 루프 내부 로직)
+    *   **구현**: `PythonOperator`를 사용한다. `list_dsp_results_task`에서 파일 목록을 받아오므로, Airflow 2.3 이상을 사용한다면 Dynamic Task Mapping을 활용하여 각 파일 처리를 동적으로 병렬화할 수 있다. 각 매핑된 태스크는 XCom을 통해 개별 Parquet 파일 경로와 `load_metadata_task`의 결과를 입력으로 받는다.
+
+4.  **`upload_merged_parquet_task` (Dynamic Task Mapping 사용 시 `process_and_merge_task`에 통합 가능)**:
+    *   **설명**: `process_and_merge_task`에서 생성된 병합된 Parquet 파일들을 최종 S3 위치로 업로드한다. (노트북의 `merged_df.to_parquet(Path(dsp_result_parquet).stem + ".merged.parquet")` 부분)
+    *   **구현**: `PythonOperator` 또는 `S3CopyObjectOperator` 등을 사용한다. Dynamic Task Mapping을 사용했다면 이 단계는 `process_and_merge_task`의 일부로 통합될 수 있다 (즉, 각 동적 태스크가 직접 최종 위치에 저장).
+
+**흐름도:**
+
+```
+[ list_dsp_results_task ] ----> [ process_and_merge_task (dynamic) ]
+                           /
+[  load_metadata_task   ] --
+```
+
+(Dynamic Task Mapping을 사용하지 않는다면 `process_and_merge_task` 내에서 루프를 돌거나, 또는 `upload_merged_parquet_task`가 별도로 존재하여 `process_and_merge_task`가 완료된 후 모든 결과물을 업로드한다.)
+
+**Airflow 적용의 이점:**
+
+*   **스케줄링 및 자동화**: 정기적인 실행 (예: 매일, 매시간) 또는 이벤트 기반 트리거 (예: S3 센서 사용)가 가능하다.
+*   **모니터링 및 로깅**: Airflow UI를 통해 각 태스크의 실행 상태, 로그, 성공/실패 여부를 쉽게 확인할 수 있다.
+*   **재시도 및 알림**: 실패한 태스크에 대한 자동 재시도 정책을 설정하고, 실패 시 알림을 받을 수 있다.
+*   **확장성**: Dynamic Task Mapping을 통해 여러 Parquet 파일을 병렬로 처리하여 실행 시간을 단축할 수 있다.
+*   **의존성 관리**: 태스크 간의 명확한 의존성 관리가 가능하다.
+*   **코드 중앙화 및 버전 관리**: 노트북 코드를 Python 스크립트로 변환하여 DAG 파일로 관리하므로, 버전 관리 및 협업이 용이해진다.
+
+**고려 사항:**
+
+*   노트북의 `os.environ` 설정 부분은 Airflow Connection 또는 Variable을 통해 관리하는 것이 좋다.
+*   에러 핸들링 및 예외 처리 로직을 각 태스크에 추가해야 한다.
+*   Parquet 파일 처리 시 메모리 사용량을 고려하여 적절한 크기의 Worker를 사용하거나, 데이터를 청크 단위로 처리하는 방식을 고려할 수 있다.
+
+요약하자면, `merge-pda-computed-and-label.ipynb`의 작업은 Airflow를 통해 보다 견고하고 자동화된 데이터 파이프라인으로 구축하기에 매우 적합해 보인다.

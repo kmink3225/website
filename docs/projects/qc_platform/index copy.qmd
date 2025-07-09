@@ -34,16 +34,16 @@ format:
 ## 프로젝트 개요
 
 * PCR 진단 시약을 타사 장비 공급업체의 장비에 넣어 검출 결과를 얻는다. 
-* 진단 서비스 결과의 정확도를 위해 2 Phase QC 프로세스를 통해 장비의 성능을 평가한다.
-* 프로젝트의 목적: 1. 부정확한 QC 알고리즘 개선 2. 투입 리소스가 많은 QC프로세스 과정을 간소화시켜 현업의 부담을 경감
+* 진단 서비스 결과의 정확도를 위해 **2 Phase 장비 QC 프로세스를 통해 장비의 성능을 평가**한다.
+* 프로젝트의 목적: 1. 부정확한 **QC 알고리즘 개선** 2. 투입 리소스가 많은 **QC프로세스 과정을 간소화**시켜 현업의 부담을 경감
 * 프로젝트 기간: 9개월
-* Two Step QC Process
-  * Step 1: 자사 시약에 맞게 신호 Scale Calibration (소요 시간: 2시간/장비1대, 담당자 1명)
-  * Step 2: 장비의 성능을 평가하여 합격/불합격 분류 (소요 시간: 4시간 ~ 8시간/장비1대, 담당자 1명)
+* **Two Step QC Process**
+  * Step 1: 자사 시약에 맞게 **신호 Scale Calibration** (소요 시간: 2시간/장비1대, 담당자 1명)
+  * Step 2: 장비의 성능을 평가하여 **합격/불합격 분류** (소요 시간: 4시간 ~ 8시간/장비1대, 담당자 1명)
   * 문제점
-    * 엑셀을 이용한 수동검사, 분산된 데이터 및 비효율적인 장비 추적 관리 
-    * 수동 검사 과정에서 신호의 증폭 크기에 따라 왜곡된 QC 결과 발생
-    * 기계 결함 및 휴먼 에러 구별 불가    
+    * 엑셀을 이용한 **수동검사**, 비효율적인 **데이터 및 장비 추적 관리** 
+    * 수동 검사 과정에서 신호의 증폭 크기에 따라 **왜곡된 QC 결과** 발생
+    * **기계 결함 및 휴먼 에러 구별 불가**    
 
 ```{mermaid}
 flowchart LR
@@ -59,12 +59,11 @@ flowchart LR
 
 ## 전략
 
-* 산재된 Excel 형태의 QC data를 Data Engineering을 통해 통합 및 가공하여 분석 가능한 형태로 변환
-* 장비 성능 평가 지표를 생성하여 장비의 성능을 평가의 정확도를 향상
-* 합격/불합격 뿐만 아니라 장비에 등급을 차등 부여하여 고객사에 차등 공급 
-* 시간에 따른 장비의 성능을 지속적으로 모니터링하여 장비의 성능 분석 및 life cycle 관리  
-* QC Process 간소화
-  * Step 2: 장비 성능 평가지표를 생성하여 장비 성능 측정 고도화
+* Data Engineering을 통해 산재된 Excel 형태의 **QC data를 통합 및 가공하여 분석 가능한 형태로 변환**
+* QC Step2의 **장비 성능 평가 지표를 생성**하여 장비 성능 측정 고도화
+* **합격/불합격 분류** 뿐만 아니라 **장비 등급을 차등 부여**하여 고객사에 차등 공급 
+* 시간에 따른 **장비의 성능을 지속적으로 모니터링**하여 장비의 성능 분석 및 life cycle 관리  
+* **QC Process 간소화**
   * Step 1 데이터를 통해 Step 2 결과를 예측하는 딥러닝 모델 개방
   * 예측 결과로 장비성능이 Fail로 확실시 되는 장비에 한해서 Step 2 검사 진행
   * Web App (R Shiny) 로 분석 결과 및 시각화 Dashboard 제공
@@ -98,94 +97,33 @@ flowchart TD
 
 ## 결과
 
-* ETL 결과: PCR기기 2201대를 2552번의 실험에서 만들어진 61,248개의 신호 얻음
-* 
-
-에서 얻은 data-driven parameters로 장비의 성능을 평가하여 합격/불합격 뿐만 아니라 장비에 등급을 차등 부여하여 시간에 따른 장비의 성능을 지속적으로 분석 가능하게 한다. 
-
-## Objective
-
-* 2020.12.19~2021.03.06에 입고된 
-* 다음의 주요 문제점을 개선한다.
-    * 신호의 증폭 크기에 따라 noise test 결과에 영향을 크게 주어 잘못된 결과를 산출해주는 metric 개선 
-    * 단순한 휴먼 에러 신호에 무조건적으로 장비의 불합격처리가 결정 되는 문제를 보완하여 robust한 평가체계로 현업부서의 부담을 덜어준다.
-    * 장비 고유에서 발생하는 pattern을 찾아 장비 error 신호를 labeling 한다.
-* 20번의 test를 수동으로 계산하는 과정에 30분이 소요되는 것을 웹 기반의 자동화로 약 2~3분내로 단축시킬 수 있다.
-* 씨젠의 full automation을 위한 best practice example로 만들어 IT 부문, 제조 부문 및 BT부문과의 협력체계를 구축 및 활성화 한다.
-* 시각화와 noise test result history를 제공하여 추적 및 VOC 대응 system을 구축한다.
-
-## Strategies
-
-### Strategy A
-
-* 현업 부서와의 긴밀한 소통으로 QC process를 세분화하여 앞 단계 QC에서 발생하는 data를 활용하여 뒷 단계 QC인 noise test의 결과를 예측한다.
-* noise가 적다고 확실시 되는 기기에 한해서 noise test 생략
-
-### Strategy B
-
-* 전체 QC 프로세스를 자동화 또는 반 자동화
-* 기존의 noise 측정 metric 분석 및 새로운 metric 생성하여 검사 결과의 정확도를 향상
-* 시각화와 noise test result history를 제공하여 실무자의 이해도를 높이고 관리가능하게 한다.
-
-## Issues
-
-* 현업 업무 기술서 부재
-* 실무자의 백업 실수
-* 부서마다 산재된 데이터
-* 높은 난이도의 data cleansing
-    * 실무자의 데이터로부터 분석 가능한 데이터 선별
-    * 실무자의 데이터의 오입력
-    * data 및 문서의 DRM 수동해제
-* reverse engineering 필요
-* 잦은 조직 개편으로 관련 인원 및 부서 연락체계 부재 
-
-## Required Skills
-
-* Back-end Engineering for DevOps Pipeline Construction
-* Data Engineering for data cleansing and reverse engineering
-* Data Modeling for a RDB system construction
-* Statistical Analysis for the noise test performance verification
-* Machine Learning for pattern analysis
-* Front-end Engineering for UI/UX construction
-* Biologics, Biophysics, Physics, Mathematics, Computer Science, Statistics Knowledge
-
-## Colaborators
-
-* 1 data scientist (me) - project manager
-* 5 mechanical engineers 
-* 4 biologists
-* 2 patent attorneys
-* 2 data engineers
-* 3 full stack developers
-* 1 advisor (a professor of Computer Science at Seoul National University)
- 
-## Acheivements
-
-|Noise Test| As-Is |To-Be |
-|:---:|:---|:---|
-| QC 알고리즘 개발에 사용된 샘플 크기  | n=100  | Signals from 2552 experiments, n=61,248   |
-| QC 알고리즘 성능 비교에 사용된 샘플 크기 | n=61,248  | n=61,248   |
-| Evaluation Metrics | 2 metrics | 10 metrics ( the exsting 2 metrics + new 8 metrics)   |
-| Input Process | 특정 프로그램에서 추출한 엑셀 파일의 데이터를 수동으로 복사하여 붙여넣기 | 웹 기반 자동화, 다수의 실험 파일 업로드 |
-| Output Process| Batch Evaluation method로서 장비의 신호 중 하나라도 부적합 판정되면 장비 자체가 QC 부적합 판정 (맹점: 휴먼에러 신호가 1개라도 있으면 장비는 무조건 실격 처리)| Differential Evaluation method, 장비의 신호에 점수를 계산 후 평균값을 구하고 장비 등급을 A+, A, B, F로 지정. F인 경우 부적합. 오류 신호를 평가에서 제외하므로 오류 신호에 robust  |
-| Output 1 |  pass: 92.58%, fail: 7.42% (after excluding many human errors) | A+ (pass): 7.01%, A (pass): 12.91%, B (pass): 75.72%, F (fail): 4.36%  |
-| Output 2 |  NA | Visualized Plots and Tables.|
-| Output 3 |  NA | Classfication Results: Normal Signals, Human Errors, Device Errors, Manufacturing Errors |
-| Time Consumed  | About 30 minutes per 20 experiments | About 25 minutes per 2552 experiments  |
-| Data Management| Non-standard management method (작업자마다 다른 방식으로 Excel 파일로 다른 형태로 NAS 디렉토리에 저장) | RDB uploaded by a scheduler (장비 고장 추적 분석이 가능) |
-
-### Remarkable
-
-* 데이터 분석 및 파악 과정에서 실무자의 짐작과 달리 장비의 성능이 전반적인 일관성을 보여주고 있는 것을 확인
-* 큰 노이즈와 같은 치명적인 신호를 발생시키는 장비를 선별하여 걸러내는 알고리즘 추가
-* 1% 유의수준에서 노이즈 테스트 결과가 전체 진단 과정에서 최종 결과의 평균 차이에 유의한 영향을 미치지 않는다는 것을 통계적으로 증명했기 때문에 전체 QC 프로세스에서 **노이즈 테스트를 폐지**.
-  - two sample t test, paired t-test & chi-squared test 사용
-* 데이터 사이언스 부서에서 실험과 장비에서 생성된 데이터에 대한 이해도를 높일 수 있는 기회가 됐음.
-* 전사 DB구축 및 플랫폼 아키텍처 구축의 기반이 됨.
-* Presient’s Award, R&D 부문 우수상
+* ETL 결과: PCR기기 2201대를 2552번의 실험해서 만들어진 61,248개의 신호 데이터 확보
+* QC Process Step 2 장비 성능 평가 메트릭 생성
+  * 신호 증폭 효율성 측정
+  * SNR (Signal to Noise Ratio) 측정
+  * 기준선 안전성 측정
+  * 광학 균일성 측정
+  * 장비 온도 균일성 측정
+  * 음성 신호 추세 측정
+  * 양성 신호 노이즈 측정
+  * 시계열 분해 기반 노이즈 측정
+  * Outlier 및 Anomaly Data 탐지로 labeling (IQR. Z score, PCA, t-SNE, DBSCAN, 3-Sigma Rule, Isolation Forest)
+  * 신호 RSS (Residual Sum of Squares) 측정
+* 평가 메트릭 기반 합격/불합격 장비 분류, 장비 성능 4등급 부여
+  * Pass (A,B,C), Fail (F)
+* BiLSTM을 활용한 Step 1 데이터를 통한 Step 2 결과 예측 모델 개방 
+  * 합격/불합격 분류 정확도: 99.3%
+  * 장비 성능 등급 분류 정확도: 97.3%
+  * 장비별 클러스터링
+  <이미지>
+* 웹 기반 자동화 플랫폼 제공
+  * 실무자가 데이터 업로드 하면 자동으로 분석 결과 제공
+  * 시각화 및 데이터 관리 기능 제공
+* 연간 처리 시간 782배 이상 단축
+* 연간 비용 약 13배 감소
+* 총괄장 R&D 부문 우수상 수상
 * 2개의 특허 발명을 출원
-* QC 프로세스에 소요되는 시간이 153배 이상 감소
-* 연간 6억 원($450,000)에 달하는 QC 비용을 13배 감소
+
 
 </div>
 

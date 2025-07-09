@@ -85,6 +85,20 @@ English
 
 ### 핵심 모듈 구성:
 
+#### 데이터 흐름:
+
+- DataLoader → 데이터 로딩 및 전처리
+- TokenProcessor → 토큰화 및 문자 분석
+- AbbreviationManager → 약어 생성 로직
+- RuleAnalyzer → 명명 규칙 분석 (핵심)
+- ReportGenerator → 분석 결과 보고서 생성
+
+#### 지원 도구들:
+
+- TroubleShooting: 디버깅 및 테스트
+- VocabularyAnalyzer: 단어 빈도 분석
+- TokenAnalysis: 토큰 분석 (단순 클래스)
+
 #### TokenProcessor
 
 - **기능**
@@ -150,6 +164,22 @@ English
 - **구현 도전 과제**:
   - 복잡한 규칙 간 상호작용 처리
   - 위반 사항에 대한 명확한 피드백 제공
+
+```
+## Main Flow
+RuleAnalyzer (메인 분석기)
+├── uses 4개의 RuleChecker들
+├── creates RuleViolation 객체들
+├── creates EntityInfo 객체들
+└── generates 최종 분석 결과 DataFrame
+
+## 상속 구조
+RuleChecker(ABC)
+├── ConsonantRuleChecker
+├── VowelRuleChecker  
+├── LengthRuleChecker
+└── BasicRuleChecker
+```
 
 #### VocabularyAnalyzer
 - **기능**: 용어 사용 패턴 분석

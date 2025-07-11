@@ -1,0 +1,155 @@
+---
+title: "DevOps Project: Diagnostic Device QC Platform Construction"
+subtitle: "Long Term Strategy: Seegene's Full Automation"
+description: "Due to security concerns, it is difficult to display the data used in this project."
+author: Kwangmin Kim
+date: 2023-04-22
+format: 
+  html:
+    toc: true  
+    #page-layout: article
+    code-fold: true
+    code-copy: true
+    code-overflow: wrap
+    number-sections: true
+    number-depth: 3
+    grid:
+      sidebar-width: 200px
+      body-width: 1200px
+      margin-width: 100px
+---
+
+<ul class="nav nav-pills" id="language-tab" role="tablist">
+
+<li class="nav-item" role="presentation">
+
+<button class="nav-link active" id="Korean-tab" data-bs-toggle="tab" data-bs-target="#Korean" type="button" role="tab" aria-controls="Korean" aria-selected="true">
+
+Korean
+
+</button>
+
+</li>
+
+<li class="nav-item" role="presentation">
+
+<button class="nav-link" id="English-tab" data-bs-toggle="tab" data-bs-target="#English" type="button" role="tab" aria-controls="knitr" aria-selected="false">
+
+English
+
+</button>
+
+</li>
+
+<div class="tab-content" id="language-tabcontent">
+
+::: {#Korean .tab-pane .fade .show .active role="tabpanel" aria-labelledby="Korean-tab"}
+## 프로젝트 개요
+
+-   PCR 진단 시약을 타사 장비 공급업체의 장비에 넣어 검출 결과를 얻는다.
+-   진단 서비스 결과의 정확도를 위해 **2 Phase 장비 QC 프로세스를 통해 장비의 성능을 평가**한다.
+-   프로젝트의 목적: 1. 부정확한 **QC 알고리즘 개선** 2. 투입 리소스가 많은 **QC프로세스 과정을 간소화**시켜 현업의 부담을 경감
+-   프로젝트 기간: 9개월
+-   **Two Step QC Process**
+    -   Step 1: 자사 시약에 맞게 **신호 Scale Calibration** (소요 시간: 2시간/장비1대, 담당자 1명)
+    -   Step 2: 장비의 성능을 평가하여 **합격/불합격 분류** (소요 시간: 4시간 \~ 8시간/장비1대, 담당자 1명)
+    -   문제점
+        -   엑셀을 이용한 **수동검사**, 비효율적인 **데이터 및 장비 추적 관리**
+        -   수동 검사 과정에서 신호의 증폭 크기에 따라 **왜곡된 QC 결과** 발생
+        -   **기계 결함 및 휴먼 에러 구별 불가**
+
+```{mermaid}
+flowchart LR
+    A["QC 장비 입고"] --> B["Step 1 <br> 신호 Scale Calibration<br/> 담당자 1명 & 2시간/장비1대<br/>"]
+    B --> C["Step 2 <br> 장비 성능 평가 <br/> 담당자 1명 & 4-8시간/장비1대<br/>"]
+    C --> D["합격/불합격 분류<br/> 및 장비 등급 부여"]
+    
+    linkStyle 0 stroke:#333,stroke-width:2px
+    linkStyle 1 stroke:#333,stroke-width:2px
+    linkStyle 2 stroke:#333,stroke-width:2px
+    
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#f3e5f5
+    style D fill:#e8f5e8
+```
+
+## 전략
+
+-   Data Engineering을 통해 산재된 Excel 형태의 **QC data를 통합 및 가공하여 분석 가능한 형태로 변환**
+-   QC Step2의 **장비 성능 평가 지표를 생성**하여 장비 성능 측정 고도화ㅙ
+-   **합격/불합격 분류** 뿐만 아니라 **장비 등급을 차등 부여**하여 고객사에 차등 공급
+-   시간에 따른 **장비의 성능을 지속적으로 모니터링**하여 장비의 성능 분석 및 life cycle 관리\
+-   **QC Process 간소화**
+    -   Step 1 데이터를 통해 Step 2 결과를 예측하는 딥러닝 모델 개방
+    -   예측 결과로 장비성능이 Fail로 확실시 되는 장비에 한해서 Step 2 검사 진행
+    -   Web App (R Shiny) 로 분석 결과 및 시각화 Dashboard 제공
+    -   실무 담당자가 데이터 업로드 하면 자동으로 분석 결과 제공
+
+```{mermaid}
+flowchart TD
+   A["PCR 진단 시약<br/>타사 장비에 투입"] --> B["Step 1 <br> 신호 Scale Calibration<br/>데이터 수집"]
+   B --> C["딥러닝 모델<br/>Step 2 결과 예측"]
+   
+   C --> D{"예측 결과<br/>Fail 확실?"}
+   D -->|Yes| E["Step 2 검사 진행<br/>장비 성능 평가지표 생성"]
+   D -->|No| F["Step 2 검사 생략"]
+   
+   E --> G["장비 등급 차등 부여<br/>A+, A, B, F"]
+   F --> H["자동 Pass"]
+   
+   G --> I["Web App (R Shiny)<br/>분석 결과 & 시각화 Dashboard"]
+   H --> I
+   
+   linkStyle 0 stroke:#333,stroke-width:2px
+   linkStyle 1 stroke:#333,stroke-width:2px
+   linkStyle 2 stroke:#333,stroke-width:2px
+   linkStyle 3 stroke:#333,stroke-width:2px
+   linkStyle 4 stroke:#333,stroke-width:2px
+   linkStyle 5 stroke:#333,stroke-width:2px
+   linkStyle 6 stroke:#333,stroke-width:2px
+   linkStyle 7 stroke:#333,stroke-width:2px
+   linkStyle 8 stroke:#333,stroke-width:2px
+   
+   style A fill:#e1f5fe
+   style B fill:#f3e5f5
+   style C fill:#fff3e0
+   style D fill:#fff3e0
+   style E fill:#f3e5f5
+   style F fill:#e8f5e8
+   style G fill:#e8f5e8
+   style H fill:#e8f5e8
+   style I fill:#e0f2f1
+```
+
+## 결과
+
+-   ETL 결과: PCR기기 2201대를 2552번의 실험해서 만들어진 61,248개의 신호 데이터 확보
+-   QC Process Step 2 장비 성능 평가 메트릭 생성
+    -   신호 증폭 효율성 측정
+    -   SNR (Signal to Noise Ratio) 측정
+    -   기준선 안전성 측정
+    -   광학 균일성 측정
+    -   장비 온도 균일성 측정
+    -   음성 신호 추세 측정
+    -   양성 신호 노이즈 측정
+    -   시계열 분해 기반 노이즈 측정
+    -   Outlier 및 Anomaly Data 탐지로 labeling (IQR. Z score, PCA, t-SNE, DBSCAN, 3-Sigma Rule, Isolation Forest)
+    -   신호 RSS (Residual Sum of Squares) 측정
+-   평가 메트릭 기반 합격/불합격 장비 분류, 장비 성능 4등급 부여
+    -   Pass (A,B,C), Fail (F)
+-   BiLSTM을 활용한 Step 1 데이터를 통한 Step 2 결과 예측 모델 개방
+    -   합격/불합격 분류 정확도: 99.3%
+    -   장비 성능 등급 분류 정확도: 97.3%
+    -   장비별 클러스터링 <이미지>
+-   웹 기반 자동화 플랫폼 제공
+    -   실무자가 데이터 업로드 하면 자동으로 분석 결과 제공
+    -   시각화 및 데이터 관리 기능 제공
+-   연간 처리 시간 782배 이상 단축
+-   연간 비용 약 13배 감소
+-   총괄장 R&D 부문 우수상 수상
+-   2개의 특허 발명을 출원
+:::
+
+::: {#English .tab-pane .fade role="tabpanel" aria-labelledby="English-tab"}
+:::

@@ -26,7 +26,7 @@ import pathlib
 from typing import Dict, List, Tuple, Optional
 
 # Signal Processing: 신호 처리 및 노이즈 검출을 위한 커스텀 함수들
-from source.signal_filter import detect_noise_naively
+from source.cp_signal_filter import detect_noise_naively
 
 
 # -------------------------------------------------------------------

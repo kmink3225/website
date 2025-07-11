@@ -285,6 +285,12 @@ gtag('config', 'G-741X4C501E', { 'anonymize_ip': true});
 <li>데이터베이스 메타데이터의 용어 추출 및 표준화 자동화</li>
 <li>일관된 약어 생성 규칙 수립 및 적용</li>
 <li>표준 준수율 모니터링 및 품질 평가 시스템 구축</li>
+<li>표준화 규칙을 구현한 커스텀 NLP 스크립트 및 모델 개발</li>
+<li>NLP 응용 문제
+<ul>
+<li>용어별 도메인 그룹 분류 (LSTM &amp; Albert사용)</li>
+<li>유사 용어 분류 (BERT사용)</li>
+</ul></li>
 </ul>
 </section>
 </section>
@@ -292,20 +298,43 @@ gtag('config', 'G-741X4C501E', { 'anonymize_ip': true});
 <h2 data-number="1.2" class="anchored" data-anchor-id="기술-스택"><span class="header-section-number">1.2</span> 2. 기술 스택</h2>
 <ul>
 <li><strong>언어</strong>: Python</li>
-<li><strong>라이브러리</strong>: NLTK, spaCy, Pandas, NumPy, Matplotlib</li>
+<li><strong>라이브러리</strong>: Pytorch, NLTK, spaCy, Pandas, NumPy, Matplotlib</li>
 <li><strong>프레임워크</strong>: Apache Airflow(데이터 파이프라인)</li>
 <li><strong>개발 환경</strong>: Jupyter Notebook, VS Code</li>
 <li><strong>문서화</strong>: Quarto</li>
 </ul>
 </section>
-<section id="nlp-솔루션-아키텍처" class="level2" data-number="1.3">
-<h2 data-number="1.3" class="anchored" data-anchor-id="nlp-솔루션-아키텍처"><span class="header-section-number">1.3</span> 3. NLP 솔루션 아키텍처</h2>
+<section id="커스텀-nlp-솔루션-아키텍처" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="커스텀-nlp-솔루션-아키텍처"><span class="header-section-number">1.3</span> 3. 커스텀 NLP 솔루션 아키텍처</h2>
+<p>커스텀 NLP 솔루션 - 물리명과 논리명 간의 규칙 준수 여부를 분석하고 위반된 규칙을 추적 - 표준화 품질 통계 분석 (텍스트 분석) - Deep Learning 모델을 활용한 용어별 도메인 그룹 분류 - Deep Learning 모델을 활용한 유사 용어 분류</p>
 <section id="핵심-모듈-구성" class="level3" data-number="1.3.1">
 <h3 data-number="1.3.1" class="anchored" data-anchor-id="핵심-모듈-구성"><span class="header-section-number">1.3.1</span> 핵심 모듈 구성:</h3>
+<section id="데이터-흐름" class="level4">
+<h4 class="anchored" data-anchor-id="데이터-흐름">데이터 흐름:</h4>
+<ul>
+<li>DataLoader → 데이터 로딩 및 전처리</li>
+<li>TokenProcessor → 토큰화 및 문자 분석</li>
+<li>AbbreviationManager → 약어 생성 로직</li>
+<li>RuleAnalyzer → 명명 규칙 분석 (핵심)</li>
+<li>ReportGenerator → 분석 결과 보고서 생성</li>
+</ul>
+</section>
+<section id="지원-도구들" class="level4">
+<h4 class="anchored" data-anchor-id="지원-도구들">지원 도구들:</h4>
+<ul>
+<li>TroubleShooting: 디버깅 및 테스트</li>
+<li>VocabularyAnalyzer: 단어 빈도 분석</li>
+<li>TokenAnalysis: 토큰 분석 (단순 클래스)</li>
+</ul>
+</section>
 <section id="tokenprocessor" class="level4">
 <h4 class="anchored" data-anchor-id="tokenprocessor">TokenProcessor</h4>
 <ul>
-<li><strong>기능</strong>: 텍스트 전처리 및 토큰화</li>
+<li><strong>기능</strong>
+<ul>
+<li>논리명을 토큰으로 분리하고 처리하는 기능을 제공하는 클래스.</li>
+<li>불용어 목록과 접두사 패턴을 관리하며 토큰화 및 자음/모음 처리 로직을 구현함.</li>
+</ul></li>
 <li><strong>주요 알고리즘</strong>:
 <ul>
 <li>정규표현식을 이용한 특수문자 처리</li>
@@ -313,11 +342,12 @@ gtag('config', 'G-741X4C501E', { 'anonymize_ip': true});
 <li>이중모음 제거</li>
 <li>불용어 제거
 <ul>
-<li>접속사, 관사, 전치사, 조사, 어미, 부사, 감탄사, 조사, 어미, 부사, 감탄사, 등</li>
+<li>접속사, 관사, 전치사, 조사 등</li>
 </ul></li>
 <li>자음 및 모음 추출 및 분류</li>
 <li>첫 글자 모음 처리</li>
 <li>연속 자음 검사 및 처리</li>
+<li>토큰화 로그 기록 for troubleshooting</li>
 </ul></li>
 <li><strong>구현 도전 과제</strong>:
 <ul>
@@ -329,28 +359,68 @@ gtag('config', 'G-741X4C501E', { 'anonymize_ip': true});
 <section id="abbreviationmanager" class="level4">
 <h4 class="anchored" data-anchor-id="abbreviationmanager">AbbreviationManager</h4>
 <ul>
-<li><strong>기능</strong>: 용어 약어 생성 및 관리</li>
+<li><strong>기능</strong>
+<ul>
+<li>논리명에서 물리명 약어를 생성하고 관리하는 클래스.</li>
+<li>관용어 처리, 약어 중복 방지, 약어 생성 규칙 적용 등의 기능을 제공함.</li>
+</ul></li>
 <li><strong>주요 알고리즘</strong>:
 <ul>
-<li>규칙 기반 약어 생성 알고리즘</li>
-<li>약어 중복 검사 및 해결</li>
-<li>약어-전체 용어 매핑 사전 구축</li>
+<li>규칙 기반 약어 생성 알고리즘
+<ul>
+<li>불용어 처리</li>
+<li>중복 단어 발생시 기존 약어 재사용</li>
+<li>관용어 중복 여부 검사</li>
+<li>4글자 이하 단어 처리</li>
+<li>약어 생성 4단계
+<ul>
+<li>parsing 및 문자 정보 추출</li>
+<li>초기 약어 생성</li>
+<li>중복 처리</li>
+<li>소문자, 대문자 규칙 적용</li>
+</ul></li>
+</ul></li>
+<li>관용어 여부 검사</li>
+<li>첫 4글자 자음 추출</li>
+<li>약어 중복 검사 및 중복시 후처리
+<ul>
+<li>약어에 자음, 모음 및 숫자 추가)</li>
+</ul></li>
+<li>용어 논리명 약어 생성
+<ul>
+<li>관용 접두어 처리</li>
+<li>토큰화</li>
+<li>약어 생성</li>
+<li>토큰화된 약어 결합</li>
+</ul></li>
+<li>약어 생성 로그 기록 for troubleshooting</li>
 </ul></li>
 <li><strong>구현 도전 과제</strong>:
 <ul>
 <li>동일 약어 중복 해결을 위한 컨텍스트 기반 구분</li>
-<li>4글자 이하 약어 생성 시 의미 보존</li>
+<li>4글자 이하 약어 생성 및 후처리</li>
 </ul></li>
 </ul>
 </section>
 <section id="ruleanalyzer" class="level4">
 <h4 class="anchored" data-anchor-id="ruleanalyzer">RuleAnalyzer</h4>
 <ul>
-<li><strong>기능</strong>: 표준화 규칙 준수 여부 분석</li>
+<li><strong>기능</strong>
+<ul>
+<li>표준화 규칙 준수 여부 분석</li>
+<li>데이터베이스 테이블과 컬럼의 명명 규칙 준수 여부를 분석하고 평가하는 기능을 제공함.</li>
+<li>논리명과 물리명 간의 일관성을 검사하고, 토큰별 규칙 위반 사항을 식별하여 보고함.</li>
+</ul></li>
 <li><strong>주요 알고리즘</strong>:
 <ul>
-<li>규칙 위반 탐지 및 분류</li>
+<li>토큰별 명명 규칙 준수율 상세 분석
+<ul>
+<li>원본 물리명 및 생성 물리명 문자열 비교</li>
+<li>entity</li>
+</ul></li>
 <li>토큰별 상세 규칙 검증</li>
+<li>물리명과 논리명 간의 일관성 평가</li>
+<li>규칙 위반 사항 식별 및 보고</li>
 </ul></li>
 <li><strong>구현 도전 과제</strong>:
 <ul>
@@ -358,6 +428,19 @@ gtag('config', 'G-741X4C501E', { 'anonymize_ip': true});
 <li>위반 사항에 대한 명확한 피드백 제공</li>
 </ul></li>
 </ul>
+<pre><code>## Main Flow
+RuleAnalyzer (메인 분석기)
+├── uses 4개의 RuleChecker들
+├── creates RuleViolation 객체들
+├── creates EntityInfo 객체들
+└── generates 최종 분석 결과 DataFrame
+
+## 상속 구조
+RuleChecker(ABC)
+├── ConsonantRuleChecker
+├── VowelRuleChecker  
+├── LengthRuleChecker
+└── BasicRuleChecker</code></pre>
 </section>
 <section id="vocabularyanalyzer" class="level4">
 <h4 class="anchored" data-anchor-id="vocabularyanalyzer">VocabularyAnalyzer</h4>
@@ -399,83 +482,83 @@ gtag('config', 'G-741X4C501E', { 'anonymize_ip': true});
 <h3 data-number="1.4.1" class="anchored" data-anchor-id="사례-1-자동-약어-생성-알고리즘"><span class="header-section-number">1.4.1</span> 사례 1: 자동 약어 생성 알고리즘</h3>
 <p><strong>문제</strong>: 동일 개념에 대해 다양한 약어가 사용되어 일관성 부재</p>
 <p><strong>해결책</strong>:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_abbreviation(word: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""단일 단어 약어 생성"""</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 4글자 이하 단어는 그대로 사용</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(word) <span class="op">&lt;=</span> <span class="dv">4</span>:</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> word</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 자음만 추출 (y, w는 자음으로 간주)</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    vowels <span class="op">=</span> <span class="bu">set</span>(<span class="st">'aeiou'</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    consonants <span class="op">=</span> <span class="st">''</span>.join([c <span class="cf">for</span> c <span class="kw">in</span> word.lower() <span class="cf">if</span> c.isalpha() <span class="kw">and</span> c <span class="kw">not</span> <span class="kw">in</span> vowels])</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 연속 자음 처리 (예: buffer -&gt; bfr, 중복 제거)</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    filtered_consonants <span class="op">=</span> <span class="st">''</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    prev_char <span class="op">=</span> <span class="va">None</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> char <span class="kw">in</span> consonants:</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> char <span class="op">!=</span> prev_char:</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>            filtered_consonants <span class="op">+=</span> char</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>        prev_char <span class="op">=</span> char</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 4글자 약어 생성 규칙</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(filtered_consonants) <span class="op">&gt;=</span> <span class="dv">4</span>:</span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        abbr <span class="op">=</span> filtered_consonants[:<span class="dv">4</span>]</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 자음이 4개 미만이면 모음 추가</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>        abbr <span class="op">=</span> <span class="va">self</span>._add_vowels_to_reach_length(word, filtered_consonants, <span class="dv">4</span>)</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> abbr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> create_abbreviation(word: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""단일 단어 약어 생성"""</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 4글자 이하 단어는 그대로 사용</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(word) <span class="op">&lt;=</span> <span class="dv">4</span>:</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> word</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 자음만 추출 (y, w는 자음으로 간주)</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    vowels <span class="op">=</span> <span class="bu">set</span>(<span class="st">'aeiou'</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    consonants <span class="op">=</span> <span class="st">''</span>.join([c <span class="cf">for</span> c <span class="kw">in</span> word.lower() <span class="cf">if</span> c.isalpha() <span class="kw">and</span> c <span class="kw">not</span> <span class="kw">in</span> vowels])</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 연속 자음 처리 (예: buffer -&gt; bfr, 중복 제거)</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    filtered_consonants <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    prev_char <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> char <span class="kw">in</span> consonants:</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> char <span class="op">!=</span> prev_char:</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>            filtered_consonants <span class="op">+=</span> char</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        prev_char <span class="op">=</span> char</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 4글자 약어 생성 규칙</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(filtered_consonants) <span class="op">&gt;=</span> <span class="dv">4</span>:</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        abbr <span class="op">=</span> filtered_consonants[:<span class="dv">4</span>]</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># 자음이 4개 미만이면 모음 추가</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        abbr <span class="op">=</span> <span class="va">self</span>._add_vowels_to_reach_length(word, filtered_consonants, <span class="dv">4</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> abbr</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>결과</strong>: - 약어 생성 일관성 98% 달성 - 중복 약어 발생률 3% 이하로 감소</p>
 </section>
 <section id="사례-2-용어-표준화-규칙-검증" class="level3" data-number="1.4.2">
 <h3 data-number="1.4.2" class="anchored" data-anchor-id="사례-2-용어-표준화-규칙-검증"><span class="header-section-number">1.4.2</span> 사례 2: 용어 표준화 규칙 검증</h3>
 <p><strong>문제</strong>: 표준화 규칙 준수 여부를 자동으로 검증하는 메커니즘 필요</p>
 <p><strong>해결책</strong>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> analyze_token_rules(<span class="va">self</span>, token: <span class="bu">str</span>, physical_abbr: <span class="bu">str</span>) <span class="op">-&gt;</span> TokenAnalysis:</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""토큰별 규칙 검증"""</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    analysis <span class="op">=</span> TokenAnalysis(token, physical_abbr, expected_abbr)</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 규칙 1: 4글자 이하 단어는 그대로 사용</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(token) <span class="op">&lt;=</span> <span class="dv">4</span> <span class="kw">and</span> token <span class="op">!=</span> physical_abbr:</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        analysis.add_violation(<span class="dv">1</span>, <span class="ss">f"4글자 이하 규칙 위반: '</span><span class="sc">{</span>token<span class="sc">}</span><span class="ss">'는 그대로 사용해야 함"</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 규칙 2: 자음 우선순위</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    expected_consonants <span class="op">=</span> <span class="va">self</span>._get_consonants(token)[:<span class="dv">4</span>]</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    physical_consonants <span class="op">=</span> <span class="va">self</span>._get_consonants(physical_abbr)</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> expected_consonants <span class="op">!=</span> physical_consonants:</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        analysis.add_violation(<span class="dv">2</span>, <span class="ss">f"자음 우선순위 위반: 앞자리부터 자음 우선 적용 필요"</span>)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 추가 규칙 검증...</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> analysis</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> analyze_token_rules(<span class="va">self</span>, token: <span class="bu">str</span>, physical_abbr: <span class="bu">str</span>) <span class="op">-&gt;</span> TokenAnalysis:</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""토큰별 규칙 검증"""</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    analysis <span class="op">=</span> TokenAnalysis(token, physical_abbr, expected_abbr)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 규칙 1: 4글자 이하 단어는 그대로 사용</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">len</span>(token) <span class="op">&lt;=</span> <span class="dv">4</span> <span class="kw">and</span> token <span class="op">!=</span> physical_abbr:</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        analysis.add_violation(<span class="dv">1</span>, <span class="ss">f"4글자 이하 규칙 위반: '</span><span class="sc">{</span>token<span class="sc">}</span><span class="ss">'는 그대로 사용해야 함"</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 규칙 2: 자음 우선순위</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    expected_consonants <span class="op">=</span> <span class="va">self</span>._get_consonants(token)[:<span class="dv">4</span>]</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    physical_consonants <span class="op">=</span> <span class="va">self</span>._get_consonants(physical_abbr)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> expected_consonants <span class="op">!=</span> physical_consonants:</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        analysis.add_violation(<span class="dv">2</span>, <span class="ss">f"자음 우선순위 위반: 앞자리부터 자음 우선 적용 필요"</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 추가 규칙 검증...</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> analysis</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>결과</strong>: - 규칙 위반 자동 감지 정확도 95% - 데이터 품질 평가 시간 80% 단축</p>
 </section>
 <section id="사례-3-다국어-용어-분석" class="level3" data-number="1.4.3">
 <h3 data-number="1.4.3" class="anchored" data-anchor-id="사례-3-다국어-용어-분석"><span class="header-section-number">1.4.3</span> 사례 3: 다국어 용어 분석</h3>
 <p><strong>문제</strong>: 한국어/영어가 혼용된 용어 처리 필요</p>
 <p><strong>해결책</strong>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> analyze_bilingual_terms(<span class="va">self</span>, df: pd.DataFrame) <span class="op">-&gt;</span> Dict:</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""한/영 용어 분석"""</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 한글 토큰화</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    korean_tokens <span class="op">=</span> []</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> text <span class="kw">in</span> df[<span class="st">'용어_국문'</span>].dropna():</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> <span class="va">self</span>.okt.nouns(text)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        korean_tokens.extend(tokens)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 영문 토큰화</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    english_tokens <span class="op">=</span> []</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> text <span class="kw">in</span> df[<span class="st">'용어_영문'</span>].dropna():</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> <span class="va">self</span>._tokenize_english(text)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        english_tokens.extend(tokens)</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 토큰 빈도 분석</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    korean_counts <span class="op">=</span> Counter(korean_tokens)</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    english_counts <span class="op">=</span> Counter(english_tokens)</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">'korean'</span>: <span class="bu">dict</span>(korean_counts.most_common()),</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">'english'</span>: <span class="bu">dict</span>(english_counts.most_common())</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> analyze_bilingual_terms(<span class="va">self</span>, df: pd.DataFrame) <span class="op">-&gt;</span> Dict:</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""한/영 용어 분석"""</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 한글 토큰화</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    korean_tokens <span class="op">=</span> []</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> text <span class="kw">in</span> df[<span class="st">'용어_국문'</span>].dropna():</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> <span class="va">self</span>.okt.nouns(text)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        korean_tokens.extend(tokens)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 영문 토큰화</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    english_tokens <span class="op">=</span> []</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> text <span class="kw">in</span> df[<span class="st">'용어_영문'</span>].dropna():</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        tokens <span class="op">=</span> <span class="va">self</span>._tokenize_english(text)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        english_tokens.extend(tokens)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 토큰 빈도 분석</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    korean_counts <span class="op">=</span> Counter(korean_tokens)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    english_counts <span class="op">=</span> Counter(english_tokens)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">'korean'</span>: <span class="bu">dict</span>(korean_counts.most_common()),</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        <span class="st">'english'</span>: <span class="bu">dict</span>(english_counts.most_common())</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    }</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>결과</strong>: - 한국어/영어 용어 매핑 정확도 92% - 용어 사전 구축 속도 3배 향상</p>
 </section>
 </section>

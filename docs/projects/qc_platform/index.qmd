@@ -60,9 +60,9 @@ English
 
 ```{mermaid}
 flowchart LR
-    A["QC 장비 입고"] --> B["Step 1 <br> 신호 Scale Calibration<br/> 담당자 1명 & 2시간/장비1대<br/>"]
-    B --> C["Step 2 <br> 장비 성능 평가 <br/> 담당자 1명 & 4-8시간/장비1대<br/>"]
-    C --> D["합격/불합격 분류<br/> 및 장비 등급 부여"]
+    A["QC 장비 입고"] --> B["QC Step 1 <br> 신호 Scale Calibration<br/> 담당자 1명 & 25분/1대<br/>"]
+    B --> C["QC Step 2 <br> 장비 성능 평가 <br/> 담당자 1명 & 4-8시간/1대<br/>"]
+    C --> D["합격/불합격 분류"]
     
     linkStyle 0 stroke:#333,stroke-width:2px
     linkStyle 1 stroke:#333,stroke-width:2px
@@ -70,7 +70,7 @@ flowchart LR
     
     style A fill:#e1f5fe
     style B fill:#f3e5f5
-    style C fill:#f3e5f5
+    style C fill:#f3e5f5,stroke:#ff0000,stroke-width:3px
     style D fill:#e8f5e8
 ```
 
@@ -88,17 +88,17 @@ flowchart LR
 
 ```{mermaid}
 flowchart TD
-   A["PCR 진단 시약<br/>타사 장비에 투입"] --> B["Step 1 <br> 신호 Scale Calibration<br/>데이터 수집"]
-   B --> C["딥러닝 모델<br/>Step 2 결과 예측"]
+   A["QC 장비 입고"] --> B["QC Step 1 <br> 신호 Scale Calibration<br/>데이터 수집"]
+   B --> C["딥러닝 모델<br/>QC Step 2 결과 예측"]
    
    C --> D{"예측 결과<br/>Fail 확실?"}
-   D -->|Yes| E["Step 2 검사 진행<br/>장비 성능 평가지표 생성"]
-   D -->|No| F["Step 2 검사 생략"]
+   D -->|Yes| E["QC Step 2 검사 진행<br/>장비 성능 평가지표 생성"]
+   D -->|No| F["QC Step 2 검사 생략"]
    
    E --> G["장비 등급 차등 부여<br/>A+, A, B, F"]
    F --> H["자동 Pass"]
    
-   G --> I["Web App (R Shiny)<br/>분석 결과 & 시각화 Dashboard"]
+   G --> I["Web App <br/>분석 결과 & 시각화 Dashboard"]
    H --> I
    
    linkStyle 0 stroke:#333,stroke-width:2px
@@ -115,7 +115,7 @@ flowchart TD
    style B fill:#f3e5f5
    style C fill:#fff3e0
    style D fill:#fff3e0
-   style E fill:#f3e5f5
+   style E fill:#f3e5f5,stroke:#ff0000,stroke-width:3px
    style F fill:#e8f5e8
    style G fill:#e8f5e8
    style H fill:#e8f5e8

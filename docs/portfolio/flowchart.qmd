@@ -1,0 +1,855 @@
+# 데이터 표준화 토큰 분석기 로직 플로우 다이어그램
+
+## 전체 시스템 아키텍처
+
+### Ver4.0
+
+```{mermaid}
+graph TB
+    subgraph "Data Input Layer"
+        A[최초 표준화 데이터<br/>테이블/컬럼 명세서] --> B[DataLoader]
+        A1[Streamlit UI<br/>사용자 입력 데이터] --> B
+    end
+    
+    subgraph "Processing Layer"
+        B --> C[TokenProcessor<br/>토큰 분석]
+        C --> D[DomainClassifier<br/>도메인 그룹 분류]
+        D --> E[AbbreviationManager<br/>약어 생성]
+        
+        E --> MD1[WordDictionary<br/>표준 단어 사전]
+        D --> MD2[DomainDictionary<br/>도메인 사전]
+        B --> MD3[CodeTable<br/>코드 테이블]
+        
+        subgraph "Metadata Management Layer"
+            MD1[WordDictionary<br/>표준 단어 사전]
+            MD2[DomainDictionary<br/>도메인 사전]
+            MD3[CodeTable<br/>코드 테이블]
+            MD4[TerminologyDictionary<br/>용어 사전]
+            MD1 --> MD4         
+            MD2 --> MD4         
+            MD3 --> MD4         
+        end
+        
+        MD4 --> NLP1
+        MD4 --> NLP2
+
+        
+        subgraph "NLP Domain Model"
+            DG[DomainGenerator<br/>도메인 데이터 생성]
+            DC[Domain Model Training<br/>Bi-LSTM + Attention]
+            DG --> DC
+            DC -.->|학습된 모델| D
+        end
+        
+        subgraph "NLP Terminology Model"
+            NLP1[SBERT Model<br/>문장 임베딩]
+            NLP2[ALBERT Model<br/>문맥 이해]
+            NLP3[Similarity Calculator<br/>코사인 유사도]
+            NLP4[Clustering Engine<br/>K-means/DBSCAN]
+            ST1[SimilarTermClassifier<br/>유사 용어 분류]
+            ST2[TermClusteringAnalyzer<br/>용어 클러스터링]
+            
+            NLP1 --> NLP3
+            NLP2 --> NLP3
+            NLP3 --> NLP4
+            NLP1 -.->|임베딩| ST1
+            NLP2 -.->|문맥 분석| ST1
+            NLP4 -.->|클러스터링| ST2
+
+        end
+        
+    
+        MD4 --> H[DataCompletenessAnalyzer<br/>완전성 검증]
+        MD4 --> F[RuleAnalyzer<br/>일관성 규칙 검증]
+    end
+    
+    subgraph "Analysis Layer"
+        F --> G[ReportGenerator<br/>분석 결과 보고]
+        F --> I[VocabularyAnalyzer<br/>단어 분석]
+        D --> J[DomainGroupAnalyzer<br/>도메인 그룹 통계]
+        F --> K[TroubleShooting<br/>디버깅]
+        H --> G
+        ST1 --> G
+        ST2 --> G
+    end
+    
+    subgraph "Output Layer"
+        G --> L[명명 규칙 분석 내역]
+        I --> N[단어 통계 분석 결과]
+        J --> O[도메인 그룹 분류 결과<br/>표준화 권장사항]
+        K --> P[오류 진단]
+        
+
+    end
+    
+    subgraph "Presentation Layer"
+        L --> STR[Streamlit 실시간 반영]
+        N --> STR[Streamlit 실시간 반영]
+        O --> STR[Streamlit 실시간 반영]
+        P --> STR[Streamlit 실시간 반영]
+    end
+    
+    %% 스타일링
+    style A fill:#e1f5fe
+    style A1 fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    style D fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+    style DG fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style DC fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style J fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style MD1 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style MD2 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style MD3 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style MD4 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style ST1 fill:#e8eaf6,stroke:#5c6bc0,stroke-width:2px
+    style ST2 fill:#e8eaf6,stroke:#5c6bc0,stroke-width:2px
+    style L fill:#e8f5e8
+    style N fill:#e8f5e8
+    style O fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style P fill:#e8f5e8
+
+```
+
+
+
+### Ver3.0
+
+```{mermaid}
+
+graph TB
+    subgraph "Data Input Layer"
+        A[최초 표준화 데이터<br/>테이블/컬럼 명세서] --> B[DataLoader]
+        A1[Streamlit UI<br/>사용자 입력 데이터] --> B
+    end
+    
+    subgraph "Processing Layer"
+        B --> C[TokenProcessor<br/>토큰 분석]
+        C --> D[DomainClassifier<br/>도메인 그룹 분류]
+        D --> E[AbbreviationManager<br/>약어 생성]
+        
+        E -->  MD1[WordDictionary<br/>표준 단어 사전]
+        D --> MD2[DomainDictionary<br/>도메인 사전]
+        B --> MD3[CodeTable<br/>코드 테이블]
+        
+        subgraph "Metadata Management Layer"
+            MD1[WordDictionary<br/>표준 단어 사전]
+            MD2[DomainDictionary<br/>도메인 사전]
+            MD3[CodeTable<br/>코드 테이블]
+            MD4[TerminologyDictionary<br/>용어 사전]
+            MD1 --> MD4         
+            MD2 --> MD4         
+            MD3 --> MD4         
+        end
+        
+        MD4[TerminologyDictionary<br/>용어 사전] --> H[DataCompletenessAnalyzer<br/>완전성 검증]
+        MD4[TerminologyDictionary<br/>용어 사전] --> F[RuleAnalyzer<br/>일관성 규칙 검증]
+        
+        subgraph "NLP Model Lifecycle"
+            DG[DomainGenerator<br/>도메인 데이터 생성]
+            DC[Domain Model Training<br/>Bi-LSTM + Attention]
+            DG --> DC
+            DC -.->|학습된 모델| D
+        end
+    end
+    
+    subgraph "Analysis Layer"
+        F --> G[ReportGenerator<br/>분석 결과 보고]
+        F --> I[VocabularyAnalyzer<br/>단어 분석]
+        D --> J[DomainGroupAnalyzer<br/>도메인 그룹 통계]
+        F --> K[TroubleShooting<br/>디버깅]
+        H --> G[ReportGenerator<br/>분석 결과 보고]
+    end
+    
+    subgraph "Output Layer"
+        G --> L[명명 규칙 분석 내역]
+        
+        I --> N[단어 통계 분석 결과]
+        J --> O[도메인 그룹 분류 결과<br/>표준화 권장사항]
+        K --> P[오류 진단]
+    end
+    
+    %% 스타일링
+    style A fill:#e1f5fe
+    style A1 fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    style D fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+    style DG fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style DC fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style J fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style MD1 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style MD2 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style MD3 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style MD4 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style L fill:#e8f5e8
+    style M fill:#fff3e0
+    style N fill:#e8f5e8
+    style O fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style P fill:#e8f5e8
+```
+
+### Ver2.0
+
+```{mermaid}
+graph TB
+    subgraph "Data Input Layer"
+        A[Excel 파일<br/>테이블/컬럼 명세서] --> B[DataLoader]
+        A1[Streamlit UI<br/>사용자 입력 용어] --> B
+    end
+    
+    subgraph "Processing Layer"
+        B --> C[TokenProcessor<br/>토큰 분석]
+        C --> D[DomainClassifier<br/>도메인 그룹 분류]
+        D --> E[AbbreviationManager<br/>약어 생성]
+        E --> F[RuleAnalyzer<br/>일관성 규칙 검증]
+        
+        subgraph "NLP Model Lifecycle"
+            DG[DomainGenerator<br/>도메인 데이터 생성]
+            DC[Domain Model Training<br/>Bi-LSTM + Attention]
+            DG --> DC
+            DC -.->|학습된 모델| D
+        end
+    end
+    
+    subgraph "Analysis Layer"
+        F --> G[ReportGenerator<br/>분석 결과 보고]
+        B --> H[DataCompletenessAnalyzer<br/>완전성 분석]
+        F --> I[VocabularyAnalyzer<br/>단어 분석]
+        D --> J[DomainGroupAnalyzer<br/>도메인 그룹 통계]
+        F --> K[TroubleShooting<br/>디버깅]
+    end
+    
+    subgraph "Output Layer"
+        G --> L[명명 규칙 분석 내역]
+        H --> M[데이터 품질 완전성 분석 결과]
+        I --> N[단어 통계 분석 결과]
+        J --> O[도메인 그룹 분류 결과<br/>표준화 권장사항]
+        K --> P[오류 진단]
+    end
+    
+    %% 스타일링
+    style A fill:#e1f5fe
+    style A1 fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    style D fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+    style DG fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style DC fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style J fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style L fill:#e8f5e8
+    style M fill:#fff3e0
+    style N fill:#e8f5e8
+    style O fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style P fill:#e8f5e8
+
+```
+
+### Ver1.0
+```{mermaid}
+graph TB
+    subgraph "Data Input Layer"
+        A[Excel 파일<br/>테이블/컬럼 명세서] --> B[DataLoader]
+    end
+    
+    subgraph "Processing Layer"
+        B --> C[TokenProcessor<br/>토큰 분석]
+        C --> D[AbbreviationManager<br/>약어 생성]
+        D --> E[RuleAnalyzer<br/>일관성 규칙 검증]
+    end
+    
+    subgraph "Analysis Layer"
+        E --> F[ReportGenerator<br/>분석 결과 보고]
+        B --> G[DataCompletenessAnalyzer<br/>완전성 분석]
+        E --> H[VocabularyAnalyzer<br/>단어 분석]
+        E --> I[TroubleShooting<br/>디버깅]
+    end
+    
+    subgraph "Output Layer"
+        F --> J[명명 규칙 분석 내역]
+        G --> K[데이터 품질 완전성 분석 결과]
+        H --> L[단어 통계 분석 결과]
+        I --> M[오류 진단]
+    end
+    
+    style A fill:#e1f5fe
+    style J fill:#e8f5e8
+    style K fill:#fff3e0
+    style L fill:#e8f5e8
+    style M fill:#e8f5e8
+```
+
+## DataLoader 클래스 상세 플로우
+
+```{mermaid}
+flowchart TD
+    Start([시작]) --> Init[DataLoader 초기화]
+    Init --> FontSetup{폰트 설정}
+    FontSetup -->|성공| LoadData[Excel 데이터 로딩]
+    FontSetup -->|실패| ContinueLoad[경고 후 계속 진행]
+    ContinueLoad --> LoadData
+    
+    LoadData --> ValidateFile{파일 존재 확인}
+    ValidateFile -->|파일 없음| Error1[오류: 파일 없음]
+    ValidateFile -->|파일 있음| ReadSheets[시트별 데이터 읽기]
+    
+    ReadSheets --> Sheet1[수정 테이블 명세서<br/>Sheet 2]
+    ReadSheets --> Sheet2[수정 컬럼 명세서<br/>Sheet 3]
+    ReadSheets --> Sheet3[원본 테이블 명세서<br/>Sheet 4]
+    ReadSheets --> Sheet4[원본 컬럼 명세서<br/>Sheet 5]
+    
+    Sheet1 --> PrepareData[테이블 데이터 전처리]
+    Sheet2 --> PrepareData
+    Sheet3 --> PrepareData
+    Sheet4 --> PrepareData
+    
+    PrepareData --> ExtractColumns[필요 컬럼 추출]
+    ExtractColumns --> JoinData[테이블-컬럼 데이터 조인]
+    
+    JoinData --> RawJoin[원본 데이터 조인<br/>tabl_phys_name 기준]
+    JoinData --> ModJoin[수정 데이터 조인<br/>tabl_phys_name 기준]
+    
+    RawJoin --> Summary[데이터 요약 출력]
+    ModJoin --> Summary
+    Summary --> Success([완료])
+    
+    Error1 --> End([종료])
+    
+    style Start fill:#c8e6c9
+    style Success fill:#c8e6c9
+    style Error1 fill:#ffcdd2
+    style End fill:#ffcdd2
+```
+
+## 토큰 처리 및 약어 생성 플로우
+
+```{mermaid}
+flowchart TD
+    Input[논리명 입력] --> Tokenize[TokenProcessor<br/>토큰화]
+    
+    Tokenize --> CleanText[특수문자 제거]
+    CleanText --> SplitTokens[공백/밑줄 기준 분리]
+    SplitTokens --> RemoveStopWords[불용어 제거]
+    
+    RemoveStopWords --> ProcessTokens{각 토큰 처리}
+    
+    ProcessTokens --> CheckLength{토큰 길이 확인}
+    CheckLength -->|4글자 이하| KeepOriginal[원본 유지]
+    CheckLength -->|4글자 초과| CheckCommon{통용 약어 확인}
+    
+    CheckCommon -->|통용 약어 있음| UseCommon[통용 약어 사용]
+    CheckCommon -->|통용 약어 없음| GenerateNew[새 약어 생성]
+    
+    GenerateNew --> ExtractConsonants[자음 추출]
+    ExtractConsonants --> FilterConsecutive[연속 자음 제거]
+    FilterConsecutive --> CheckConsonantLength{자음 길이 확인}
+    
+    CheckConsonantLength -->|4글자 이상| TakeFirst4[첫 4개 자음 사용]
+    CheckConsonantLength -->|4글자 미만| AddVowels[모음 추가]
+    
+    TakeFirst4 --> CheckDuplicate{중복 확인}
+    AddVowels --> CheckDuplicate
+    
+    CheckDuplicate -->|중복 없음| RegisterAbbr[약어 등록]
+    CheckDuplicate -->|중복 있음| ResolveDuplicate[중복 해결]
+    
+    ResolveDuplicate --> AddRemainingConsonants[남은 자음 추가]
+    AddRemainingConsonants --> StillDuplicate{여전히 중복?}
+    StillDuplicate -->|예| AddVowelsByPosition[위치별 모음 추가]
+    StillDuplicate -->|아니오| RegisterAbbr
+    
+    AddVowelsByPosition --> FinalCheck{여전히 중복?}
+    FinalCheck -->|예| AddSequentialNumber[순차 번호 추가]
+    FinalCheck -->|아니오| RegisterAbbr
+    
+    AddSequentialNumber --> RegisterAbbr
+    RegisterAbbr --> KeepOriginal
+    UseCommon --> KeepOriginal
+    KeepOriginal --> CombineTokens[토큰 결합]
+    
+    CombineTokens --> FinalAbbr[최종 약어 생성]
+    
+    style Input fill:#e3f2fd
+    style FinalAbbr fill:#e8f5e8
+    style CheckDuplicate fill:#fff3e0
+    style ResolveDuplicate fill:#fff3e0
+```
+
+## 규칙 검증 시스템
+
+```{mermaid}
+flowchart TD
+    Start[분석 시작] --> ValidateInput[입력 데이터 검증]
+    ValidateInput --> ProcessRows[행별 처리]
+    
+    ProcessRows --> ExtractEntity[엔티티 정보 추출]
+    ExtractEntity --> TokenizeLogical[논리명 토큰화]
+    TokenizeLogical --> CheckRules[일관성 규칙 검증]
+    
+    CheckRules --> BasicRules[기본 규칙 검증<br/>- 불용어 사용 금지<br/>- 통용 약어 사용<br/>- 소문자 사용]
+    CheckRules --> LengthRules[길이 규칙 검증<br/>- 4글자 이하 원본 유지<br/>- 4글자 구성 원칙]
+    CheckRules --> ConsonantRules[자음 규칙 검증<br/>- 자음 우선순위<br/>- 연속 자음 처리]
+    CheckRules --> VowelRules[모음 규칙 검증<br/>- 모음 위치 처리<br/>- 4글자 미만 보완]
+    
+    BasicRules --> CollectViolations[위반 사항 수집]
+    LengthRules --> CollectViolations
+    ConsonantRules --> CollectViolations
+    VowelRules --> CollectViolations
+    
+    CollectViolations --> GenerateReport[처리 결과 생성]
+    GenerateReport --> Summary[요약 통계]
+    GenerateReport --> SystemAnalysis[시스템별 분석]
+    GenerateReport --> ViolationDetails[위반 상세 분석]
+    
+    Summary --> Dashboard[결과 출력]
+    SystemAnalysis --> Dashboard
+    ViolationDetails --> Dashboard
+    
+    style Start fill:#c8e6c9
+    style Dashboard fill:#c8e6c9
+    style CollectViolations fill:#ffecb3
+```
+
+```{mermaid}
+flowchart TD
+    A[DataFrame 입력] --> B[입력 데이터 검증]
+    B --> C[행별 순회 시작]
+    C --> D[엔티티 정보 추출]
+    D --> E[논리명 토큰화]
+    E --> F[물리명 토큰화]
+    F --> G[표준 약어 생성]
+    G --> H[토큰별 규칙 검증 시작]
+    
+    H --> I[규칙 검증기 순회]
+    I --> J[1. ConsonantRuleChecker]
+    J --> K[2. VowelRuleChecker]
+    K --> L[3. LengthRuleChecker]
+    L --> M[4. BasicRuleChecker]
+    
+    M --> N[위반 사항 수집]
+    N --> O[위반 규칙 번호 정리]
+    O --> P[결과 딕셔너리 생성]
+    P --> Q{더 많은 토큰?}
+    Q -->|Yes| H
+    Q -->|No| R{더 많은 행?}
+    R -->|Yes| C
+    R -->|No| S[최종 DataFrame 생성]
+    S --> T[통계 정보 생성]
+    T --> U[결과 반환]
+    
+    style A fill:#e3f2fd
+    style J fill:#fff3e0
+    style K fill:#fff3e0
+    style L fill:#fff3e0
+    style M fill:#fff3e0
+    style U fill:#e8f5e8
+```
+
+### 4.1. RuleAnalyzer 규칙 검증기 처리 순서
+
+```{mermaid}
+graph LR
+    A[토큰 입력] --> B[ConsonantRuleChecker]
+    B --> |규칙 3,4,5,6,7,8,9,10,11| C[VowelRuleChecker]
+    C --> |규칙 2| D[LengthRuleChecker]
+    D --> |규칙 13| E[BasicRuleChecker]
+    E --> |규칙 1,12,14| F[위반사항 통합]
+    
+    style B fill:#ffeb3b
+    style C fill:#ff9800
+    style D fill:#2196f3
+    style E fill:#9c27b0
+    style F fill:#4caf50
+```
+
+### 개별 규칙 검증기 상세 로직
+
+```{mermaid}
+flowchart TD
+    subgraph "ConsonantRuleChecker"
+        A1[자음 우선순위 검증] --> A2[연속 자음 검사]
+        A2 --> A3[자음 조합 규칙]
+        A3 --> A4[위반사항 반환]
+    end
+    
+    subgraph "VowelRuleChecker"
+        B1[모음 포함 규칙] --> B2[자음 개수 기반 모음 필요성]
+        B2 --> B3[위반사항 반환]
+    end
+    
+    subgraph "LengthRuleChecker"
+        C1[토큰 길이 검증] --> C2[약어 길이 규칙]
+        C2 --> C3[위반사항 반환]
+    end
+    
+    subgraph "BasicRuleChecker"
+        D1[불용어 검사] --> D2[기본 약어 규칙]
+        D2 --> D3[소문자 사용 규칙]
+        D3 --> D4[위반사항 반환]
+    end
+    
+    style A1 fill:#ffcdd2
+    style B1 fill:#f8bbd9
+    style C1 fill:#c5cae9
+    style D1 fill:#dcedc1
+```
+
+
+
+## 비즈니스 가치 및 ROI
+
+```{mermaid}
+mindmap
+  root((데이터 표준화<br/>토큰 분석기))
+    비즈니스 가치
+      데이터 품질 향상
+        일관된 명명 규칙
+        표준화된 약어 체계
+        오류 감소
+      운영 효율성
+        자동화된 검증
+        빠른 문제 식별
+        개발 생산성 향상
+      규정 준수
+        표준 가이드라인 준수
+        감사 대응 용이
+        문서화 자동화
+    기술적 혜택
+      확장성
+        모듈화된 구조
+        플러그인 방식 규칙 추가
+        다양한 데이터 소스 지원
+      유지보수성
+        명확한 책임 분리
+        테스트 가능한 구조
+        디버깅 도구 제공
+      성능
+        배치 처리 지원
+        메모리 효율적 처리
+        병렬 처리 가능
+```
+
+## 6. 구현 우선순위 및 로드맵
+
+```{mermaid}
+gantt
+    title 데이터 표준화 시스템 구현 로드맵
+    dateFormat  YYYY-MM-DD
+    section Phase 1: 기초 구축
+    DataLoader 구현           :done, phase1a, 2024-01-01, 2024-01-15
+    TokenProcessor 구현       :done, phase1b, 2024-01-16, 2024-01-30
+    AbbreviationManager 구현  :done, phase1c, 2024-01-31, 2024-02-15
+    
+    section Phase 2: 규칙 엔진
+    RuleAnalyzer 구현         :active, phase2a, 2024-02-16, 2024-03-01
+    규칙 검증기 구현          :phase2b, 2024-03-02, 2024-03-15
+    
+    section Phase 3: 분석 및 보고
+    ReportGenerator 구현      :phase3a, 2024-03-16, 2024-03-30
+    VocabularyAnalyzer 구현   :phase3b, 2024-03-31, 2024-04-15
+    
+    section Phase 4: 운영 지원
+    TroubleShooting 구현      :phase4a, 2024-04-16, 2024-04-30
+    성능 최적화              :phase4b, 2024-05-01, 2024-05-15
+    문서화 및 교육           :phase4c, 2024-05-16, 2024-05-30
+```
+
+## 시스템 메트릭 및 KPI
+
+```{mermaid}
+graph LR
+    subgraph "품질 지표"
+        A[규칙 준수율<br/>95% 이상]
+        B[자동 검증률<br/>100%]
+        C[오류 감소율<br/>80% 이상]
+    end
+    
+    subgraph "효율성 지표"
+        D[처리 시간<br/>< 5분/1000건]
+        E[메모리 사용량<br/>< 1GB]
+        F[CPU 사용률<br/>< 50%]
+    end
+    
+    subgraph "비즈니스 지표"
+        G[개발 생산성<br/>30% 향상]
+        H[데이터 품질<br/>점수 향상]
+        I[운영 비용<br/>20% 절감]
+    end
+    
+    A --> G
+    B --> H
+    C --> I
+    D --> G
+    E --> I
+    F --> I
+    
+    style A fill:#e8f5e8
+    style B fill:#e8f5e8
+    style C fill:#e8f5e8
+    style D fill:#e3f2fd
+    style E fill:#e3f2fd
+    style F fill:#e3f2fd
+    style G fill:#fff3e0
+    style H fill:#fff3e0
+    style I fill:#fff3e0
+```
+
+## 리스크 관리 및 대응 방안
+
+```{mermaid}
+flowchart TD
+    subgraph "기술적 리스크"
+        TR1[성능 저하]
+        TR2[메모리 부족]
+        TR3[규칙 충돌]
+    end
+    
+    subgraph "운영적 리스크"
+        OR1[사용자 교육 부족]
+        OR2[데이터 품질 문제]
+        OR3[시스템 장애]
+    end
+    
+    subgraph "대응 방안"
+        TR1 --> M1[배치 처리 최적화]
+        TR2 --> M2[스트리밍 처리 도입]
+        TR3 --> M3[규칙 우선순위 정의]
+        
+        OR1 --> M4[교육 프로그램 개발]
+        OR2 --> M5[데이터 품질 검증 강화]
+        OR3 --> M6[모니터링 시스템 구축]
+    end
+    
+    M1 --> Success[성공적 운영]
+    M2 --> Success
+    M3 --> Success
+    M4 --> Success
+    M5 --> Success
+    M6 --> Success
+    
+    style Success fill:#c8e6c9
+    style TR1 fill:#ffcdd2
+    style TR2 fill:#ffcdd2
+    style TR3 fill:#ffcdd2
+    style OR1 fill:#ffe0b2
+    style OR2 fill:#ffe0b2
+    style OR3 fill:#ffe0b2
+```
+
+---
+
+## 요약
+
+이 데이터 표준화 토큰 분석기는 다음과 같은 핵심 가치를 제공합니다:
+
+1. **자동화된 데이터 품질 관리**: 수동 검증에서 자동화된 시스템으로 전환
+2. **표준화된 명명 규칙**: 일관된 데이터베이스 명명 체계 구축
+3. **운영 효율성 향상**: 개발자 생산성 증대 및 오류 감소
+4. **확장 가능한 아키텍처**: 새로운 규칙 및 요구사항 대응 용이
+5. **포괄적인 분석 기능**: 상세한 보고서 및 트러블슈팅 지원
+
+이 시스템을 통해 조직은 데이터 거버넌스를 강화하고, 개발 프로세스를 개선하며, 장기적으로 유지보수 비용을 절감할 수 있습니다. 
+
+## DataCompletenessAnalyzer 상세 플로우
+
+```{mermaid}
+flowchart TD
+    Start[완전성 분석 시작] --> ValidateInput[입력 데이터 검증]
+    ValidateInput --> ProcessData[데이터 처리]
+    
+    ProcessData --> TableAnalysis[테이블 완전성 분석<br/>- 논리명_국문<br/>- 논리명_영문<br/>- 물리명]
+    ProcessData --> ColumnAnalysis[컬럼 완전성 분석<br/>- 논리명_국문<br/>- 논리명_영문<br/>- 물리명<br/>- 설명]
+    
+    TableAnalysis --> CalculateCompleteness[완전성 비율 계산]
+    ColumnAnalysis --> CalculateCompleteness
+    
+    CalculateCompleteness --> GenerateReport[완전성 보고서 생성]
+    GenerateReport --> TableSummary[테이블 완전성 요약]
+    GenerateReport --> ColumnSummary[컬럼 완전성 요약]
+    GenerateReport --> OverallSummary[전체 요약 통계]
+    
+    TableSummary --> Results[분석 결과 출력]
+    ColumnSummary --> Results
+    OverallSummary --> Results
+    
+    style Start fill:#c8e6c9
+    style Results fill:#c8e6c9
+    style TableAnalysis fill:#e3f2fd
+    style ColumnAnalysis fill:#e8f5e8
+    style CalculateCompleteness fill:#fff3e0
+```
+
+
+## Domain Generator
+
+
+```{mermaid}
+flowchart TD
+    A[시작] --> B["초기화<br/>• 13개 도메인 그룹 정의<br/>• 기존 도메인 로드<br/>• 생성 규칙 설정"]
+    
+    B --> C["각 그룹별 도메인 생성<br/>가중치 기반 개수 할당"]
+    
+    C --> D["도메인 생성 루프<br/>템플릿 + 주제어 + 수식어 조합"]
+    
+    D --> E{중복 검사}
+    E -->|중복| F{최대 시도 초과?}
+    E -->|신규| G[도메인 추가]
+    
+    F -->|Yes| H[다음 그룹]
+    F -->|No| D
+    
+    G --> I{목표 개수 달성?}
+    I -->|No| D
+    I -->|Yes| H
+    
+    H --> J{모든 그룹 완료?}
+    J -->|No| C
+    J -->|Yes| K["품질 분석 및 저장<br/>• 중복/길이/분포 확인<br/>• Excel 파일 저장"]
+    
+    K --> L[완료]
+    
+    %% 스타일링
+    classDef startEnd fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000000
+    classDef process fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000000
+    classDef decision fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000000
+    classDef generation fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000000
+    
+    class A,L startEnd
+    class B,K process
+    class E,F,I,J decision
+    class C,D,G,H generation
+
+```
+
+
+
+
+## Domain Classifier
+
+### English
+
+```{mermaid}
+flowchart TD
+    A[시작] --> B["데이터 준비<br/>• 영어 논리명 24개<br/>• 라벨 인코딩<br/>• NLTK 토큰화<br/>• Train/Test 분할"]
+    
+    B --> C["모델 구축<br/>BiLSTM + Recency-weighted Attention"]
+    
+    C --> D["학습 루프<br/>Forward → Loss → Backward"]
+    
+    D --> E{20 에포크<br/>완료?}
+    E -->|No| D
+    E -->|Yes| F["모델 저장 및 예측 테스트<br/>• OOV 처리<br/>• 어텐션 가중치 출력"]
+    
+    F --> G[완료]
+    
+    %% 스타일링
+    classDef startEnd fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000000
+    classDef process fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000000
+    classDef model fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000000
+    classDef training fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000000
+    classDef decision fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000000
+    
+    class A,G startEnd
+    class B,F process
+    class C model
+    class D training
+    class E decision
+
+```
+
+### Koreans
+```{mermaid}
+flowchart TD
+    A[시작] --> B1
+    
+    subgraph B ["데이터 로드 및 전처리"]
+        B1[Excel 파일 읽기] --> B2[문자 어휘 사전 구축]
+        B2 --> B3[라벨 인코딩]
+        B3 --> B4[Train/Val/Test 분할]
+    end
+    
+    B4 --> C["모델 구축<br/>Embedding → Bi-LSTM → Attention → Dense"]
+    
+    C --> D["학습 루프<br/>Forward Pass → Loss 계산 → Backward Pass"]
+    
+    D --> E{성능 개선?}
+    E -->|Yes| F[모델 저장]
+    E -->|No| G[조기 종료 카운터 증가]
+    
+    F --> H{학습 종료?}
+    G --> H
+    H -->|계속| D
+    H -->|완료| I1
+    
+    subgraph I ["모델 평가"]
+        I1[테스트 정확도] --> I2[혼동 행렬]
+        I2 --> I3[분류 리포트]
+    end
+    
+    I3 --> J[예측 테스트 및 저장]
+    J --> K[완료]
+    
+    classDef startEnd fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000000
+    classDef process fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000000
+    classDef decision fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#000000
+    classDef evaluation fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000000
+    
+    class A,K startEnd
+    class B,C,D process
+    class E,H decision
+    class F,G,I,J evaluation
+
+```
+
+
+
+### Domain Class Integreation
+
+```{mermaid}
+flowchart TB
+    A[시작] --> B[시스템 선택]
+    
+    subgraph DG ["1. Domain Generator"]
+        direction LR
+        C["초기화<br/>• 13개 도메인 그룹 정의<br/>• 기존 도메인 로드<br/>• 생성 규칙 설정"]
+        D["도메인 생성<br/>템플릿 + 주제어 + 수식어"]
+        E{중복 검사}
+        F["품질 분석 및 저장<br/>Excel 파일 출력"]
+        
+        C --> D --> E --> F
+    end
+    
+    subgraph DC ["2. 도메인 분류기"]
+        direction LR
+        G["도메인 데이터 로드<br/>생성된 도메인 사용"]
+        H["전처리<br/>문자/단어 어휘 사전 구축"]
+        I["모델 구축<br/>Bi-LSTM + Attention"]
+        J["학습 및 평가"]
+        K["도메인 분류 모델<br/>(한글/영어 모두 지원)"]
+        
+        G --> H --> I --> J --> K
+    end
+    
+    subgraph APP ["3. 응용 시스템"]
+        direction LR
+        L["사용자 입력<br/>(한글/영어 도메인)"]
+        M["도메인 분류 실행"]
+        N["결과 출력 및<br/>표준화 적용"]
+        
+        L --> M --> N
+    end
+    
+    %% 연결 관계
+    B --> C
+    F -.->|생성된 데이터| G
+    K -.->|학습된 모델| M
+    
+    %% 스타일링
+    classDef startEnd fill:#e3f2fd,stroke:#1976d2,stroke-width:2px,color:#000000
+    classDef generator fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px,color:#000000
+    classDef korean fill:#e8f5e8,stroke:#388e3c,stroke-width:2px,color:#000000
+    classDef rag fill:#e1f5fe,stroke:#0277bd,stroke-width:2px,color:#000000
+    classDef application fill:#ffebee,stroke:#c62828,stroke-width:2px,color:#000000
+    classDef decision fill:#fce4ec,stroke:#ad1457,stroke-width:2px,color:#000000
+    
+    class A,B startEnd
+    class C,D,E,F generator
+    class G,H,I,J,K korean
+    class L,M,N,O,P rag
+    class Q,S,T,U1,U,V application
+    class R decision
+```

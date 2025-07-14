@@ -2,6 +2,314 @@
 
 ## 전체 시스템 아키텍처
 
+### Ver5.1
+
+```{mermaid}
+graph TB
+    subgraph "Data Input Layer"
+        A[최초 표준화 데이터<br/>테이블/컬럼 명세서] --> B[DataLoader]
+        A1[Streamlit UI<br/>사용자 입력 데이터] --> B
+        A2[코드 스니펫<br/>변수명/컬럼명] --> B
+    end
+    
+    subgraph "Processing Layer"
+        B -.-> |논리명| C[TokenProcessor<br/>토큰 분석]
+        B -.-> |공통코드| MD3[CodeTable<br/>코드 테이블]
+        B -.-> |코드 스니펫| LLM    
+        C --> D[DomainClassifier<br/>도메인 그룹 분류]
+        D --> E[AbbreviationManager<br/>약어 생성]
+        E --> MD1[WordDictionary<br/>표준 단어 사전]
+        D --> MD2[DomainDictionary<br/>도메인 사전]
+        
+
+        subgraph "RAG"
+            subgraph "RAG Knowledge Base"
+                KB1[표준화 규칙 문서<br/>PDF/DOCX]
+                KB2[네이밍 컨벤션<br/>가이드라인]
+                KB3[도메인 용어 사전<br/>기존 용어 DB]
+                KB4[코드 패턴 예시<br/>변수명 매핑]
+                
+                KB1 --> EMB[OpenAI Embeddings<br/>text-embedding-3-small]
+                KB2 --> EMB
+                KB3 --> EMB
+                KB4 --> EMB
+                EMB --> FAISS[Vector Store<br/>벡터 검색 엔진]
+            end
+
+            subgraph "RAG Enhancement Module"
+                RAG1[RAG Retriever<br/>관련 규칙 검색]
+                RAG3[Context Matcher<br/>유사 패턴 검색]
+                LLM[GPT-4o<br/>코드 to 논리명 추천]
+            end
+        end
+    
+
+        subgraph "Metadata Management Layer"
+            MD1[WordDictionary<br/>표준 단어 사전]
+            MD2[DomainDictionary<br/>도메인 사전]
+            MD3[CodeTable<br/>코드 테이블]
+            MD4[TerminologyDictionary<br/>용어 사전]
+            MD1 --> MD4         
+            MD2 --> MD4         
+            MD3 --> MD4         
+        end
+        
+        E --> ABR[생성된 약어]
+        MD4 --> H[DataCompletenessAnalyzer<br/>완전성 검증]
+        MD4 --> F[RuleAnalyzer<br/>일관성 규칙 검증]
+        ABR --> F
+        RAG1 --> LLM
+        LLM --> C
+    
+        subgraph "NLP Domain Model"
+            DG[DomainGenerator<br/>도메인 데이터 생성]
+            DC[Domain Model Training<br/>Bi-LSTM + Attention]
+            D[DomainClassifier<br/>도메인 그룹 분류]
+            DG --> DC
+        end
+        
+        subgraph "NLP Terminology Model"
+            NLP1[SBERT Model<br/>문장 임베딩]
+            NLP2[ALBERT Model<br/>문맥 이해]
+            NLP3[Similarity Calculator<br/>코사인 유사도]
+            NLP4[Clustering Engine<br/>K-means/DBSCAN]
+            ST1[SimilarTermClassifier<br/>유사 용어 분류]
+            ST2[TermClusteringAnalyzer<br/>용어 클러스터링]
+            
+            NLP1 --> NLP3
+            NLP2 --> NLP3
+            NLP3 --> NLP4
+            NLP1 -.->|임베딩| ST1
+            NLP2 -.->|문맥 분석| ST1
+            NLP4 -.->|클러스터링| ST2
+        end
+
+        
+    end
+
+    subgraph "Analysis Layer"
+        F --> G[ReportGenerator<br/>분석 결과 보고]
+        F --> I[VocabularyAnalyzer<br/>단어 분석]
+        D --> J[DomainGroupAnalyzer<br/>도메인 그룹 통계]
+        F --> K[TroubleShooting<br/>디버깅]
+        H --> G
+        ST1 --> G
+        ST2 --> G
+        RAG3 --> G
+    end
+    
+    subgraph "Output Layer"
+        G --> L[명명 규칙 분석 내역]
+        I --> N[단어 통계 분석 결과]
+        J --> O[도메인 그룹 분류 결과<br/>표준화 권장사항]
+        K --> P[오류 진단]
+        LLM --> REC[논리명 추천 결과]
+        ABR --> ABR_OUT[약어 생성 결과]
+    end
+    
+    subgraph "Streamlit Interface"
+        STR1[약어 생성 탭<br/>논리명 to 약어]
+        STR2[논리명 추천 탭<br/>코드 to 논리명]
+        STR3[검증 결과 탭<br/>품질 분석]
+        
+        L --> STR3
+        N --> STR3
+        O --> STR3
+        P --> STR3
+        REC --> STR2
+        ABR_OUT --> STR1
+    end
+    
+    %% 모듈 간 연결
+    FAISS --> RAG1
+    FAISS --> RAG3
+    RAG3 --> LLM
+
+    LLM --> E
+    DC -.->|학습된 모델| D
+    MD4 --> NLP1
+    MD4 --> NLP2
+    
+    %% 스타일링
+    style A fill:#e1f5fe
+    style A1 fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    style A2 fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    style KB1 fill:#fff8e1,stroke:#ff8f00,stroke-width:2px
+    style KB2 fill:#fff8e1,stroke:#ff8f00,stroke-width:2px
+    style KB3 fill:#fff8e1,stroke:#ff8f00,stroke-width:2px
+    style KB4 fill:#fff8e1,stroke:#ff8f00,stroke-width:2px
+    style EMB fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style FAISS fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style RAG1 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style RAG2 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style RAG3 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style LLM fill:#ffebee,stroke:#c62828,stroke-width:3px
+    style E fill:#4caf50,stroke:#2e7d32,stroke-width:3px
+    style ABR fill:#4caf50,stroke:#2e7d32,stroke-width:2px
+    style D fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+    style STR1 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style STR2 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style STR3 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style REC fill:#ffebee,stroke:#c62828,stroke-width:2px
+    style ABR_OUT fill:#4caf50,stroke:#2e7d32,stroke-width:2px
+```
+
+### Ver5.0
+
+```{mermaid}
+graph TB
+    subgraph "Data Input Layer"
+        A[최초 표준화 데이터<br/>테이블/컬럼 명세서] --> B[DataLoader]
+        A1[Streamlit UI<br/>사용자 입력 데이터] --> B
+        A2[코드 스니펫<br/>변수명/컬럼명] --> B
+    end
+    
+    subgraph "Processing Layer"
+        
+        subgraph "RAG Knowledge Base"
+            KB1[표준화 규칙 문서<br/>PDF/DOCX]
+            KB2[네이밍 컨벤션<br/>가이드라인]
+            KB3[도메인 용어 사전<br/>기존 용어 DB]
+            KB4[코드 패턴 예시<br/>변수명 매핑]
+            
+            KB1 --> EMB[OpenAI Embeddings<br/>text-embedding-3-small]
+            KB2 --> EMB
+            KB3 --> EMB
+            KB4 --> EMB
+            EMB --> FAISS[Vector Store<br/>벡터 검색 엔진]
+        end
+
+        subgraph "RAG Enhancement Module"
+            RAG1[RAG Retriever<br/>관련 규칙 검색]
+            RAG2[Code Analyzer<br/>코드 to 논리명 추천]
+            RAG3[Context Matcher<br/>유사 패턴 검색]
+            LLM[GPT-4o<br/>논리명 추천 전용]
+            
+            FAISS --> RAG1
+            FAISS --> RAG2
+            FAISS --> RAG3
+            RAG2 --> LLM
+            RAG3 --> LLM
+        end
+        
+        subgraph "Metadata Management Layer"
+            MD1[WordDictionary<br/>표준 단어 사전]
+            MD2[DomainDictionary<br/>도메인 사전]
+            MD3[CodeTable<br/>코드 테이블]
+            MD4[TerminologyDictionary<br/>용어 사전]
+            MD1 --> MD4         
+            MD2 --> MD4         
+            MD3 --> MD4         
+        end
+
+        subgraph "NLP Domain Model"
+            DG[DomainGenerator<br/>도메인 데이터 생성]
+            DC[Domain Model Training<br/>Bi-LSTM + Attention]
+            D[DomainClassifier<br/>도메인 그룹 분류]
+            DG --> DC
+            DC -.->|학습된 모델| D
+        end
+        
+        subgraph "NLP Terminology Model"
+            NLP1[SBERT Model<br/>문장 임베딩]
+            NLP2[ALBERT Model<br/>문맥 이해]
+            NLP3[Similarity Calculator<br/>코사인 유사도]
+            NLP4[Clustering Engine<br/>K-means/DBSCAN]
+            ST1[SimilarTermClassifier<br/>유사 용어 분류]
+            ST2[TermClusteringAnalyzer<br/>용어 클러스터링]
+            
+            NLP1 --> NLP3
+            NLP2 --> NLP3
+            NLP3 --> NLP4
+            NLP1 -.->|임베딩| ST1
+            NLP2 -.->|문맥 분석| ST1
+            NLP4 -.->|클러스터링| ST2
+        end
+
+        B --> |논리명| C[TokenProcessor<br/>토큰 분석]
+        B --> |코드|RAG2
+        C --> D
+        D --> E[AbbreviationManager<br/>약어 생성]
+        RAG1 --> 
+        
+        LLM --> E
+        E --> MD1[WordDictionary<br/>표준 단어 사전]
+        D --> MD2[DomainDictionary<br/>도메인 사전]
+        B --> MD3[CodeTable<br/>코드 테이블]
+        
+        
+        
+        MD4 --> NLP1
+        MD4 --> NLP2
+        
+        E --> ABR[생성된 약어]
+
+        
+        
+        
+        MD4 --> H[DataCompletenessAnalyzer<br/>완전성 검증]
+        MD4 --> F[RuleAnalyzer<br/>일관성 규칙 검증]
+        ABR --> F
+    end
+    
+    subgraph "Analysis Layer"
+        F --> G[ReportGenerator<br/>분석 결과 보고]
+        F --> I[VocabularyAnalyzer<br/>단어 분석]
+        D --> J[DomainGroupAnalyzer<br/>도메인 그룹 통계]
+        F --> K[TroubleShooting<br/>디버깅]
+        H --> G
+        ST1 --> G
+        ST2 --> G
+        RAG3 --> G
+    end
+    
+    subgraph "Output Layer"
+        G --> L[명명 규칙 분석 내역]
+        I --> N[단어 통계 분석 결과]
+        J --> O[도메인 그룹 분류 결과<br/>표준화 권장사항]
+        K --> P[오류 진단]
+        LLM --> REC[논리명 추천 결과]
+        ABR --> ABR_OUT[약어 생성 결과]
+    end
+    
+    subgraph "Streamlit Interface"
+        STR1[약어 생성 탭<br/>논리명 to 약어]
+        STR2[논리명 추천 탭<br/>코드 to 논리명]
+        STR3[검증 결과 탭<br/>품질 분석]
+        
+        L --> STR3
+        N --> STR3
+        O --> STR3
+        P --> STR3
+        REC --> STR2
+        ABR_OUT --> STR1
+        REC --> STR1
+    end
+    
+    %% 스타일링
+    style A fill:#e1f5fe
+    style A1 fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    style A2 fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    style KB1 fill:#fff8e1,stroke:#ff8f00,stroke-width:2px
+    style KB2 fill:#fff8e1,stroke:#ff8f00,stroke-width:2px
+    style KB3 fill:#fff8e1,stroke:#ff8f00,stroke-width:2px
+    style KB4 fill:#fff8e1,stroke:#ff8f00,stroke-width:2px
+    style EMB fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style FAISS fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style RAG1 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style RAG2 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style RAG3 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style LLM fill:#ffebee,stroke:#c62828,stroke-width:3px
+    style E fill:#4caf50,stroke:#2e7d32,stroke-width:3px
+    style ABR fill:#4caf50,stroke:#2e7d32,stroke-width:2px
+    style D fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+    style STR1 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style STR2 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style STR3 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style REC fill:#ffebee,stroke:#c62828,stroke-width:2px
+    style ABR_OUT fill:#4caf50,stroke:#2e7d32,stroke-width:2px
+```
+
 ### Ver4.0
 
 ```{mermaid}
@@ -16,7 +324,7 @@ graph TB
         C --> D[DomainClassifier<br/>도메인 그룹 분류]
         D --> E[AbbreviationManager<br/>약어 생성]
         
-        E --> MD1[WordDictionary<br/>표준 단어 사전]
+        E -->  MD1[WordDictionary<br/>표준 단어 사전]
         D --> MD2[DomainDictionary<br/>도메인 사전]
         B --> MD3[CodeTable<br/>코드 테이블]
         
@@ -852,4 +1160,363 @@ flowchart TB
     class L,M,N,O,P rag
     class Q,S,T,U1,U,V application
     class R decision
+```
+
+## Streamlit Presentation
+
+
+```{mermaid}
+flowchart TD
+    A[사용자 입력] --> B{입력 유형}
+    
+    B -->|논리명| C[약어 생성 탭]
+    B -->|코드| D[논리명 추천 탭]
+    B -->|검증 요청| E[검증 결과 탭]
+    
+    C --> F[RAG 검색 + LLM 처리]
+    D --> F
+    E --> G[규칙 기반 검증]
+    
+    F --> H[약어/논리명 생성]
+    G --> I[품질 점수 계산]
+    
+    H --> J[결과 화면]
+    I --> J
+    
+    J --> K[사용자 피드백]
+    K --> L[학습 데이터 업데이트]
+    
+    style A fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style B fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style C fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style D fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style E fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style J fill:#ffebee,stroke:#c62828,stroke-width:2px
+```
+
+### 핵심 기능별 처리 흐름
+
+```{mermaid}
+flowchart TD
+    START[시작] --> INPUT[사용자 입력]
+    
+    INPUT --> FUNC1[ 논리명 기반 <br>약어 생성 기능]
+    INPUT --> FUNC2[코드 기반 <br>논리명 추천 기능]
+    INPUT --> FUNC3[규칙 기반 <br>검증 기능]
+    
+    FUNC1 --> PROCESS1[논리명 분석<br/>+ RAG 검색]
+    FUNC2 --> PROCESS2[코드 분석<br/>+ 패턴 매칭]
+    FUNC3 --> PROCESS3[규칙 검증<br/>+ 품질 측정]
+    
+    PROCESS1 --> RESULT1[약어 + 설명]
+    PROCESS2 --> RESULT2[논리명 목록]
+    PROCESS3 --> RESULT3[검증 점수]
+    
+    RESULT1 --> OUTPUT[결과 출력]
+    RESULT2 --> OUTPUT
+    RESULT3 --> OUTPUT
+    
+    OUTPUT --> FEEDBACK[사용자 피드백]
+    FEEDBACK --> LEARN[시스템 학습]
+    
+    style START fill:#c8e6c9,stroke:#388e3c,stroke-width:2px
+    style INPUT fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style OUTPUT fill:#ffebee,stroke:#c62828,stroke-width:2px
+    style LEARN fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+```
+
+
+
+### 시스템 구성요소
+
+```{mermaid}
+flowchart LR
+    subgraph "사용자 인터페이스"
+        UI[Streamlit 앱]
+        TAB1[약어 생성]
+        TAB2[논리명 추천]
+        TAB3[검증 결과]
+    end
+    
+    subgraph "AI 처리"
+        RAG[RAG 시스템]
+        LLM[GPT-4o]
+        EMB[임베딩 검색]
+    end
+    
+    subgraph "데이터 처리"
+        TOKEN[토큰 분석]
+        DOMAIN[도메인 분류]
+        RULE[규칙 검증]
+    end
+    
+    UI --> TAB1
+    UI --> TAB2
+    UI --> TAB3
+    
+    TAB1 --> RAG
+    TAB2 --> RAG
+    TAB3 --> RULE
+    
+    RAG --> LLM
+    RAG --> EMB
+    
+    LLM --> TOKEN
+    TOKEN --> DOMAIN
+    DOMAIN --> RULE
+    
+    style UI fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style RAG fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style LLM fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style TOKEN fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+```
+
+### 용어 표준화 RAG 시스템 전체 아키텍처
+
+```{mermaid}
+flowchart TB
+    subgraph "Data Sources"
+        DS1[표준화 규칙 문서<br/>PDF/DOCX]
+        DS2[기존 용어 사전<br/>Excel/CSV]
+        DS3[도메인 분류 데이터<br/>학습 데이터]
+        DS4[코드/변수명<br/>사용자 입력]
+    end
+    
+    subgraph "RAG Knowledge Base"
+        KB1[문서 벡터 저장소<br/>FAISS]
+        KB2[용어 패턴 임베딩<br/>OpenAI Embeddings]
+        KB3[도메인 규칙 인덱스<br/>Semantic Search]
+    end
+    
+    subgraph "LLM Processing"
+        LLM1[규칙 기반 약어 생성<br/>GPT-4o]
+        LLM2[코드 기반 논리명 추천<br/>Context-aware]
+        LLM3[일관성 검증 및 개선<br/>Multi-turn Chat]
+    end
+    
+    subgraph "Streamlit Interface"
+        UI1[약어 생성 탭<br/>논리명 to 물리명]
+        UI2[논리명 추천 탭<br/>코드 to 논리명]
+        UI3[검증 결과 탭<br/>품질 평가]
+        UI4[히스토리 관리<br/>사용자 피드백]
+    end
+    
+    subgraph "Core Processing"
+        CP1[TokenProcessor<br/>토큰 분석]
+        CP2[DomainClassifier<br/>Bi-LSTM 분류]
+        CP3[AbbreviationManager<br/>약어 생성 엔진]
+        CP4[RuleAnalyzer<br/>규칙 검증]
+    end
+    
+    subgraph "Quality Assurance"
+        QA1[RAGAS 평가<br/>답변 품질 측정]
+        QA2[일관성 체크<br/>기존 용어 대비]
+        QA3[피드백 루프<br/>학습 개선]
+    end
+    
+    %% 데이터 흐름
+    DS1 --> KB1
+    DS2 --> KB2
+    DS3 --> KB3
+    DS4 --> UI2
+    
+    %% RAG 검색 흐름
+    KB1 --> LLM1
+    KB2 --> LLM2
+    KB3 --> LLM3
+    
+    %% UI 상호작용
+    UI1 --> CP1
+    UI2 --> CP2
+    UI3 --> CP4
+    UI4 --> QA3
+    
+    %% 처리 흐름
+    CP1 --> CP3
+    CP2 --> CP3
+    CP3 --> CP4
+    CP4 --> QA1
+    
+    %% LLM 통합
+    LLM1 --> CP3
+    LLM2 --> CP1
+    LLM3 --> CP4
+    
+    %% 품질 보증
+    QA1 --> QA2
+    QA2 --> QA3
+    QA3 --> KB1
+    
+    %% 결과 출력
+    CP4 --> UI3
+    QA1 --> UI3
+    QA2 --> UI4
+    
+    %% 스타일링
+    style DS1 fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    style DS2 fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    style DS3 fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    style DS4 fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    
+    style KB1 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style KB2 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style KB3 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    
+    style LLM1 fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style LLM2 fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style LLM3 fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    
+    style UI1 fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style UI2 fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style UI3 fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style UI4 fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    
+    style QA1 fill:#ffebee,stroke:#c62828,stroke-width:2px
+    style QA2 fill:#ffebee,stroke:#c62828,stroke-width:2px
+    style QA3 fill:#ffebee,stroke:#c62828,stroke-width:2px
+```
+
+### 사용자 시나리오별 플로우
+
+#### 시나리오 1: 영어 논리명 → 약어 생성
+
+```{mermaid}
+sequenceDiagram
+    participant U as 사용자
+    participant ST as Streamlit UI
+    participant RAG as RAG 시스템
+    participant LLM as GPT-4o
+    participant DB as 검증 엔진
+    
+    U->>ST: 영어 논리명 입력
+    ST->>RAG: 유사 용어 검색
+    RAG->>LLM: 규칙 문서 + 유사 패턴 제공
+    LLM->>DB: 약어 생성 요청
+    DB->>DB: 규칙 검증 수행
+    DB->>ST: 약어 + 준수율 반환
+    ST->>U: 결과 표시 + 시각화
+    
+    Note over U,DB: 실시간 스트리밍 처리
+    Note over RAG,LLM: 컨텍스트 기반 추천
+```
+
+#### 시나리오 2: 코드 → 논리명 추천
+
+```{mermaid}
+sequenceDiagram
+    participant U as 사용자
+    participant ST as Streamlit UI
+    participant CA as 코드 분석기
+    participant RAG as RAG 시스템
+    participant LLM as GPT-4o
+    
+    U->>ST: 코드 스니펫 입력
+    ST->>CA: 변수명 추출
+    CA->>RAG: 패턴 매칭 검색
+    RAG->>LLM: 컨텍스트 + 규칙 제공
+    LLM->>ST: 논리명 추천 목록
+    ST->>U: 신뢰도별 추천 표시
+    
+    Note over CA,RAG: AST 파싱 + 벡터 검색
+    Note over LLM,ST: 멀티턴 대화 지원
+```
+
+### 핵심 기술 스택 통합 구조
+
+```{mermaid}
+graph LR
+    subgraph "Frontend"
+        A[Streamlit UI]
+        B[실시간 스트리밍]
+        C[채팅 인터페이스]
+    end
+    
+    subgraph "Backend Processing"
+        D[LangChain LCEL]
+        E[RAG 파이프라인]
+        F[멀티턴 대화]
+    end
+    
+    subgraph "AI/ML Models"
+        G[OpenAI GPT-4o]
+        H[FAISS 벡터 DB]
+        I[Bi-LSTM 분류기]
+    end
+    
+    subgraph "Data Layer"
+        J[문서 로더]
+        K[임베딩 처리]
+        L[검증 엔진]
+    end
+    
+    subgraph "Quality Assurance"
+        M[RAGAS 평가]
+        N[피드백 루프]
+        O[성능 모니터링]
+    end
+    
+    %% 연결 관계
+    A --> D
+    B --> E
+    C --> F
+    
+    D --> G
+    E --> H
+    F --> I
+    
+    G --> J
+    H --> K
+    I --> L
+    
+    J --> M
+    K --> N
+    L --> O
+    
+    %% 피드백 루프
+    M --> E
+    N --> D
+    O --> A
+    
+    %% 스타일링
+    style A fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style D fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style G fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style J fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    style M fill:#ffebee,stroke:#c62828,stroke-width:2px
+```
+
+### 기대 효과 및 ROI
+
+```{mermaid}
+pie title 업무 효율성 향상
+    "자동화된 약어 생성" : 40
+    "일관성 검증 자동화" : 25
+    "코드 기반 추천" : 20
+    "품질 관리 시스템" : 15
+```
+
+```{mermaid}
+graph LR
+    subgraph "정량적 효과"
+        A["처리 시간<br/>90% 단축"]
+        B["오류율<br/>80% 감소"]
+        C["일관성<br/>95% 향상"]
+    end
+    
+    subgraph "정성적 효과"
+        D["개발자 만족도<br/>향상"]
+        E["표준화 정착<br/>문화 조성"]
+        F["데이터 품질<br/>체계화"]
+    end
+    
+    A --> D
+    B --> E
+    C --> F
+    
+    style A fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style B fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style C fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style D fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style E fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style F fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
 ```

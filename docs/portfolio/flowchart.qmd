@@ -1,5 +1,64 @@
 # 데이터 표준화 토큰 분석기 로직 플로우 다이어그램
 
+```{mermaid}
+graph TB
+    subgraph "Input Layer"
+        A[표준화 데이터<br/>테이블/컬럼] --> B[DataLoader]
+        A1[사용자 입력<br/>Streamlit UI] --> B
+        A2[코드 스니펫<br/>변수명/컬럼명] --> B
+    end
+    
+    subgraph "Processing Layer"
+        B -->|논리명| C[TokenProcessor<br/>토큰 분석]
+        C --> D[Domain NLP Engine<br/>BiLSTM/DomainClassifier<br/>도메인 분류]
+        D --> E[AbbreviationManager<br/>약어 생성]
+        
+        RAG[RAG System<br/>표준화 규칙 검색<br/>+ GPT-4o 추천]
+        NLP[Terminology NLP Engine<br/>AlBERT/SBERT + 용어 분류<br/>+ 용어 클러스터링]
+        
+        C <--> RAG
+        D <--> NLP
+    end
+
+    B --> |코드 스니펫| RAG
+
+    subgraph "Metadata Management Layer"
+        MD[통합 사전<br/>단어/도메인/코드/용어]
+        E --> MD
+        MD --> F[RuleAnalyzer<br/>일관성 검증]
+        MD --> H[DataCompletenessAnalyzer<br/>완전성 검증]
+    end
+    
+    subgraph "Analysis Layer"
+        F --> G[ReportGenerator<br/>종합 분석 보고]
+        H --> G
+        NLP --> G
+        RAG --> REC[논리명 추천]
+        E --> ABR[약어 생성]
+    end
+    
+    subgraph "Output Layer"
+        G --> UI1[검증 결과 대시보드]
+        REC --> UI2[논리명 추천 탭]
+        ABR --> UI3[약어 생성 탭]
+    end
+    
+    %% 스타일링
+    style A fill:#e1f5fe
+    style A1 fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    style A2 fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    style RAG fill:#fff8e1,stroke:#ff8f00,stroke-width:3px
+    style NLP fill:#e8f5e8,stroke:#388e3c,stroke-width:3px
+    style D fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+    style E fill:#4caf50,stroke:#2e7d32,stroke-width:3px
+    style MD fill:#fce4ec,stroke:#ad1457,stroke-width:2px
+    style G fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style UI1 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style UI2 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style UI3 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+
+```
+
 ## 전체 시스템 아키텍처
 
 ### Ver5.1
@@ -124,6 +183,7 @@ graph TB
     FAISS --> RAG1
     FAISS --> RAG3
     RAG3 --> LLM
+    
 
     LLM --> E
     DC -.->|학습된 모델| D

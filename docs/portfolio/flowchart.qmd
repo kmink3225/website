@@ -3,24 +3,33 @@
 ```{mermaid}
 graph TB
     subgraph "Input Layer"
-        A[표준화 데이터<br/>테이블/컬럼] --> B[DataLoader]
-        A1[사용자 입력<br/>Streamlit UI] --> B
-        A2[코드 스니펫<br/>변수명/컬럼명] --> B
+        A[최초 표준화 데이터<br/>테이블/컬럼] --> B[DataLoader]
+        A1[사용자 논리명 입력<br/>Streamlit UI] --> B
+        A2[코드 스니펫<br/>Streamlit UI] --> B
     end
     
     subgraph "Processing Layer"
         B -->|논리명| C[TokenProcessor<br/>토큰 분석]
         C --> D[Domain NLP Engine<br/>BiLSTM/DomainClassifier<br/>도메인 분류]
-        D --> E[AbbreviationManager<br/>약어 생성]
+        D --> E[AbbreviationManager<br/>규칙 기반 약어 생성]
         
         RAG[RAG System<br/>표준화 규칙 검색<br/>+ GPT-4o 추천]
-        NLP[Terminology NLP Engine<br/>AlBERT/SBERT + 용어 분류<br/>+ 용어 클러스터링]
+        NLP[Terminology NLP Engine<br/>AlBERT/SBERT<br/> 단어/용어 클러스터링]
         
-        C <--> RAG
-        D <--> NLP
+        RAG --> C
+        D --> NLP
     end
 
     B --> |코드 스니펫| RAG
+    B --> |논리명| NLP
+    subgraph "Actors"
+        DBA[DBA]
+        DS[Data Steward]
+        SD[개발자/사용자]
+    end
+
+    NLP --> DS
+    DS --> MD
 
     subgraph "Metadata Management Layer"
         MD[통합 사전<br/>단어/도메인/코드/용어]

@@ -1590,3 +1590,65 @@ graph LR
     style E fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
     style F fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
 ```
+
+
+# LLFS Study
+
+
+```{mermaid}
+
+flowchart TB
+    subgraph DC ["Data Collection"]
+        MCBS[Multi Centered Blood Sampling]
+        MS[Mass Spectrometry]
+        DT[Data Collection <br> & Engineering]
+        
+        MCBS --> MS
+        MS --> DT
+    end
+    
+    subgraph QC ["Quality Control"]
+        IAD[Identify Anomaly Data]
+        IMV[Identify Missing Values]
+
+    end
+    
+    subgraph AN ["Analytics"]
+        EDA[EDA]
+        DM[Data Mining]
+        SA[Statistical Analysis]
+        ML[Machine Learning]
+        DN[Clinical Domain Knowledge]
+        
+        EDA --> DM
+        DM --> SA
+        SA --> ML
+        ML --> DN
+    end
+    
+    subgraph RC ["Reporting and Conclusion"]
+        SWF[Sharing with Coworkers &<br> Writing a Manuscript]
+    end
+    
+    %% 클러스터 간 연결
+    DT --> IAD
+    IMV --> EDA
+    DN --> SWF
+    
+    %% 스타일링
+    style DC fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style QC fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style AN fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style RC fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    
+    style MCBS fill:#e1f5fe
+    style MS fill:#e1f5fe
+    style DT fill:#e1f5fe
+    style IAD fill:#fff8e1
+    style IMV fill:#fff8e1
+    style EDA fill:#e8f5e8
+    style DM fill:#e8f5e8
+    style SA fill:#e8f5e8
+    style ML fill:#e8f5e8
+    style SWF fill:#fce4ec
+```

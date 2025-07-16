@@ -30,7 +30,7 @@ format:
   * Microsoft, Springer Nature, KPMG, 각 국 정부기관 및 기업 등
 * 총괄장 수명 프로젝트
 * 기간
-  * Phase1: 2024.12 ~ 2025.09 (진행중)
+  * Phase1: 2024.10 ~ 2025.09 (진행중)
   * Phase2~3: 2025.10 ~ 2027.09
 * 역할: Technical Lead
   * 표준화 체계 구축, Governance Architecture 설계, 표준화 프로세스 시스템 구축
@@ -400,154 +400,91 @@ format:
   * 연간 비용 약 13배 감소 (QC 시간 및 약 6억원의 비용 감소)
 * Mechanical Engineers의 신기술 개발 지원
 
-# [LLFS 프로젝트]
+# [Alzheimer's Disease Biomarker 규명을 위한 대사체 분석 연구]
 
 ## 개요
 
-* 목적: 2차 세계 대전 이후 Baby Boommer Generation의 대규모 치매 발병에 대비한 치매 인자 규명
-* 기간: 2018.12 - 2020.04 (17 months)
+* 2차 세계 대전 이후 Baby Boomer Generation의 대규모 치매 발병에 대비한 치매 인자 규명
+* 모집단: 장수마을에 거주하는 백인 참여자 (LLFS - Long Life Family Study)
+* 기간: 2018.12 - 2020.04 (17개월)
 * 역할: Research Statistician
-* 참여 인원: 1명의 역학 교수 (mentor), 1명의 생물통계학 교수 (mentor), 2명의 신경외과 의사 (mentor), 2명의 통계학자 (연구원), 1명의 역학자 (연구원), 1명의 생화학자 (연구원)
+* 참여 인원: Epidemiologist 3명, 생물통계학자 3명, 유전통계학자 1명, 신경외과 의사 4명, 생화학자 2명, 임상연구 코디네이터 8명, 데이터 엔지니어 2명
 
-## Background
+## 주요 문제점 및 도전과제
 
-알츠하이머병(Alzheimer's Disease, AD)은 수백만 명의 미국인에게 영향을 미치는 가장 흔한 형태의 치매이다. 알츠하이머병은 기억력, 사고력 및 행동에 영향을 주지만 증상이 나타나기까지 거의 20년에 걸쳐 진행이 된다. 따라서 전 임상 단계 (Pre-clinical Stage)에서 생리학을 이해하는 것이 필수적이다. 유전적 요인이 AD에 거의 50% 기여하는 것으로 추정된다. 유전자가 세포 환경을 변경하여 알츠하이머병 위험에 어떻게 기여하는지 더 잘 이해하기 위해 AD와 연관이 있는 유전자인 APOE를 보유한 사람들의 대사체(Metabolome)를 조사했다. 대사체는 유전체(Genome)과 단백질체(Proteome)에서 생성된 산물을 의미한다. 이러한 생화학 부산물은 유전적 요인과 환경적 요인 모두의 영향을 받는다. 모집단은 장수마을에 사는 Caucasian (백인) 참여자들이다. 
+* 의학적 문제점
+  * 알츠하이머병은 증상 발현까지 20년간 진행되어 전임상 단계 생리학 이해 필요
+  * 유전적 요인이 알츠하이머병에 50% 기여하나 구체적 메커니즘 불명
+  * APOE 유전자 보유자의 대사체 변화 패턴 미규명
+* 데이터 분석적 도전과제
+  * 다중 센터 데이터 수집으로 인한 데이터 품질 불일치
+  * 고차원 데이터 (약 3,000개 변수) 대비 작은 표본 크기 (146개 관측치)
+  * Mass Spectrometry 데이터의 복잡한 결측치 및 이상치 패턴
+  * Multiple testing으로 인한 1종 오류 증가 위험
+* 연구 환경적 제약
+  * 8개월간 연구소에서 파악하지 못한 강력한 교란자 존재
+  * 유전체, 전사체, 단백질체, 대사체 다층 분석 필요성
+  * 다학제 팀 간 소통 및 결과 공유 복잡성
 
-## Objective
+## 솔루션 설계 및 전략
 
-LLFS(Long Life Family Study) 프로젝트의 목적은 유전체, 전사체, 단백질체 및 대사체 단계를 통해 유전체에서 대사체 단계에 이르는 여러 단계에서 통계 및 기계 학습을 사용하여 분석 파이프라인을 구축하고 알츠하이머병에 대한 중요한 바이오마커를 식별하는 것이다.
+* 데이터 수집 및 전처리 파이프라인
+  * 다중 센터 (New York, Boston, Pittsburgh, Denmark) 혈액 샘플링
+  * Mass Spectrometry를 통한 대사체 데이터 디지털화
+  * 체계적 데이터 품질 관리 프로세스 구축
 
-## Analysis Pipeline
+![Data Pipeline](./data/LLFS_overview.PNG){height=30%}
 
-```{dot}
-digraph G {
-  compound=true;
-  rankdir=LR;
-  subgraph cluster0 {
-    rankdir=TB;
-    Multi_Centered_Blood_Sampling [shape=box];
-    Mass_Spectrometry [shape=box];
-    Data_Transfer [shape=box];
-    
-    label= "Data Collection";
+* 데이터 품질 관리 (QC) 전략
+  * 이상치 및 결측치 식별: 생화학자와의 협업을 통한 실험실 기준 적용
+  * Missing Value Analysis: MCAR, MAR, MNAR 분류 및 처리 방안 결정
+  * 데이터 포함/제외 기준: rowwise 및 columnwise 결측치 비율 5% 기준 적용
+  * 데이터 전처리: Log transformation 및 Standardization
+* 3단계 분석 파이프라인
+  * 1단계 - EDA & Data Mining & 임상 지식: 패턴 발견 및 교란자 규명
+  * 2단계 - Statistical Analysis: 다변량 회귀분석 및 생존분석
+  * 3단계 - Machine Learning: 다양한 알고리즘 성능 비교 및 최적 모델 선택
 
-  }
-  subgraph cluster1 {
-    Identify_Anomaly_Data [shape=box];
-    Identify_Missing_Values [shape=box];
-    
-    label= "Quality Control";
-  }
-  subgraph cluster2 {
-    EDA [shape=box];
-    Data_Mining [shape=box];
-    Statistical_Analysis [shape=box];
-    Machine_Learning [shape=box];
-    
-    label= "Analytics";
-  }
-  subgraph cluster3 {
-    Share_with_Faculty [shape=box];
-    label= "Reporting and Conclusion";
-  }
-  Data_Transfer -> Identify_Anomaly_Data [lhead=cluster1];
-  Identify_Missing_Values -> EDA [lhead=cluster2];
-  Machine_Learning -> Share_with_Faculty [lhead=cluster3];
-}
+## 기술 스택 및 요구 역량
+  
+* EDA: Student t-tests, Wilcoxon Mann-Whitney tests, χ² tests, Fisher Exact Tests, ANOVA, Kruskal-Wallis Tests
+* 통계분석: Linear regression, Logistic regression, Cox Proportional Hazards regression, Linear Mixed Effect Model, GWAS
+* 머신러닝: Lasso, Ridge regression, Elastic net, Random forests, AdaBoost, Gradient boosting, SVM, PLS, Sparse PLS
+* 데이터 마이닝: KNN, PCA, K-means clustering, DBSCAN
+* 통계적 검증: Permuted p-values를 통한 multiple correction
+* 도메인 지식: 생리학, 생화학, 신경의학*, 역학, 생물통계학, 유전학
+* 협업 역량: 다학제 팀 (의사, 생물학자, 생물정보학자, 역학자) 소통
 
-```
+## 결과 및 성과
 
+* 연구 성과
+  * 약 3,000개 변수 중 60개 내외의 대사물질이 알츠하이머병과 5% 유의수준에서 유의한 관련성 확인
+  * Partial Least Squares가 최적 성능의 분류기로 선정
+  * EDA 및 Data Mining을 통한 미지의 강력한 교란자 규명
+  * 주 3회 분석결과 공유 Sprint
+  * Metabolic Pathway Map 제시
 
-Data는 장수 마을에 거주하는 백인을 대상으로 New York, Bonston, Pittsburgh 및 Denmark에 있는 여러 medical centers에서 sampled blood를 MS Spectromtetry로 Digitalization을 했다. 여러 과정을 통해 data를 csv형태로 받아 data의 QC(Quality Control)를 진행한뒤 Data 분석 업무를 수행했다. EDA (Exploratory Data Analysis) 와 Data Mining을 통해 data에 대한 이해도를 높였고 이를 토대로 통계 분석과 machine learning을 이용하여 이 data에 적합한 모형을 찾았다. 모든 결과물은 The Taub Institute for Research on Alzheimer's Disease and the Aging Brain 의 biostaticians, medical doctors, biologists, neurologists, bioinformaticians 및 epidemiologists와 공유를 했다.
+![EDA & Data Mining 결과](./data/LLFS_datamining.PNG){width=40%}
 
+![일부 GWAS 결과](./data/LLFS_gwas.PNG){width=30%}
 
-## Data QC (Quality Control)
+* 학술적 성취
+  * Columbia University Mailman School of Public Health 연례 연구 발표회 포스터 발표
+  * 연례 연구 경진대회에서 약 100명의 대학원생 중 상위 3명 선정, 상금 $1,000 수상
+  * 학과장상 수상
+  * Columbia University Irving Medical Center 신경외과 정규직 Job Offer 획득
+* 방법론적 기여
+  * 고차원 대사체 데이터에 대한 체계적 분석 파이프라인 구축
+  * 다중 센터 데이터의 품질 관리 프로토콜 확립
+  * 알츠하이머병 바이오마커 발굴을 위한 통합 분석 방법론 개발
 
-```{dot}
-//| fig-height: 8
+## 기대효과
 
-digraph G {
-  compound=true;
-  rankdir=TB;
-  subgraph cluster0 {
-    identify_anomaly_data [shape=box];
-    identify_missing_values [shape=box];
-    subgraph cluster1 {
-      Missing_Completely_At_Random [shape=box];
-      Missing_At_Random [shape=box];
-      Missing_Not_at_Random [shape=box];
-      label= "Missing Value Analysis";
-      Missing_Completely_At_Random->Missing_At_Random->Missing_Not_at_Random
-    }
-    either_imputation_or_omission [shape=box];
-    communication_with_labs [shape=box];
-    set_data_inclusion_exclusion_criteria [shape=box];
+* 연구 방법론적 영향
+  * 고차원 생체분자 데이터 분석을 위한 통합 파이프라인 방법론 확립
+  * 다중 센터 연구에서의 데이터 품질 관리 표준 제시
+  * 다학제 협업 연구 모델 및 분석 방법론 제안
+* 알츠하이머병 치료제 개발을 위한 타겟 발굴 기여
+* 정밀의학 기반 치매 예방 및 관리 체계 구축 지원
+* 노인성 질환 연구 분야의 데이터 사이언스 방법론 발전 기여
 
-    label= "Data Quality Control";
-    identify_anomaly_data->identify_missing_values
-    identify_missing_values->Missing_Completely_At_Random [lhead=cluster1];
-    Missing_Not_at_Random->either_imputation_or_omission->communication_with_labs->set_data_inclusion_exclusion_criteria;
-
-  }
-  subgraph cluster2 {
-    Data_Transformation [shape=box];
-    Log_Transformation [shape=box];
-    Standardization [shape=box];
-    label= "Data Preprocessing";
-    Data_Transformation->
-    Log_Transformation->
-    Standardization;
-  }
-  set_data_inclusion_exclusion_criteria->Data_Transformation [lhead=cluster2];
-}
-
-```
-
-
-Data의 품질 관리를 위해 data를 생성한 biochemists와 소통하여 실험실 기준에 따라 결측치와 이상치를 구분하여 labeling을 수행했고 missing value analysis를 통해 결과에 따라 medical doctors를 포함한 다른 faculty members와 상의하여 결측치 처리를 했다. data QC criteria는 rowwise 와 columwise sum의 합이 sample size에 대하여 missing values의 비율이 5%가 넘는 환자와 변수는 분석 대상에서 제외 됐다. 모든 metabolites data는 log transoformation 과 standardization을 통해 data의 단위를 표준화 했다. 
-
-## Methods
-```{dot}
-  digraph G {
-    compound=true;
-    rankdir=TB;
-    subgraph cluster2 {
-    Exploratory_Data_Analysis [shape=box];
-    Data_Minig [shape=box];
-    Statistical_Analysis [shape=box];
-    Machine_Learning [shape=box];
-    label= "Data Analytics";
-    }
-    
-    Exploratory_Data_Analysis -> Data_Minig;
-    Data_Minig -> Statistical_Analysis ;
-    Statistical_Analysis -> Machine_Learning;
-  }
-
-```
-
-Data 분석은 크게 EDA (Exploratory Data Analysis), Statistical Analysis 및 Machine Learning과 같이 3 단계로 수행했다. 각 단계에서 나온 결과가 각 각의 단계에서 일관되게 나오는 metabolites를 선별했다.
-
-EDA and Data Mining
-
-student t tests, Wilcoxon Man Whiteney tests, $\chi^2$ tests, Fisher Exact Tests, ANOVAs, Kruskal Wallis Tests 및 regression analysis이 수행됐고 visualization을 통해 검정 결과를 재확인하는 작업을 수행했다. 고차원 데이터를 시각화하여 data의 pattern을 관찰하기 위해 KNN, PCA, K means clustering 및 DB Scan을 이용했다.
-
-Statistical Analysis
-
-multivariable linear regression, logistic regression 및 Cox PH(Proportional Hazards) regression anayses 가 수행됐고 질병과 유의한 metabolites를 선별했다. multiple testing으로 인한 1 종 오류를 범하는 것을 줄이기 위해 permuted p-values를 계산하여 유의성을 한번 더 확인했다.
-
-Machine Learning
-
-Lasso, ridge regression, elastic net, decision tree, random rorests, ada boosting, gradient descent boosting, SVM (support vector machine), partial least square 및 sparse partial least square가 사용됐다. 질병을 가장 잘 예측하는 classifier를 평가하여 최적의 classifier를 선택했다.
-
-## Results & Conclusion
-
-146개의 관측치와 약 3,000여개의 변수로 구성된 data에서 약 60개 내외의 대사물질이 질병과 5% 유의수준으로 유의한 관계가 있는 것으로 관찰됐고 partial least suare 가 가장 성능이 좋은 것으로 관찰됐다. 
-
-## Achivement
-
-* 8개월 동안 연구소에서 파악하지 못한 강력한 교란자를 EDA와 데이터 마이닝을 통해 발견
-* Columbia University의 Mailman School of Public Health 연례 연구 발표회에서 포스터 발표
-* 연례 연구 경진대회에서 약 100명의 대학원생 중 상위 3명으로 선정되어 상금 $1,000 수상
-* 학과장상 수상
-* Columbia University Irving Medical Center 신경외과 Job Offer

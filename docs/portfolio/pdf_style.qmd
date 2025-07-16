@@ -316,14 +316,13 @@ format:
 
 ## 프로젝트 개요
 
-*   PCR 진단 시약을 타사 장비 공급업체의 장비에 넣어 검출 결과를 얻는다.
-*   진단 서비스 결과의 정확도를 위해 **2 Phase 장비 QC 프로세스를 통해 장비의 성능을 평가**한다.
+*   PCR 진단 시약을 타사 장비 공급업체의 장비에 탑재
+*   진단 서비스 결과의 정확도를 위해 **2 Step 장비 QC 프로세스를 통해 장비의 성능 평가**
 *   프로젝트의 목적: 1. 부정확한 **QC 알고리즘 개선** 2. 투입 리소스가 많은 **QC프로세스 과정을 간소화**시켜 현업의 부담을 경감
 *   프로젝트 기간: 9개월
-*   **Two Step QC Process**
+*   **2 Step QC Process**
     *   QC Step 1: 자사 시약에 맞게 장비간 **신호 Scale Calibration** 
-    *   QC Step 2: 장비의 성능을 평가하여 **합격/불합격 분류** - 병목 현상 발생
-    *   문제점
+    *   QC Step 2: 장비의 성능을 평가하여 **합격/불합격 분류** - 문제점 발생
         *   엑셀을 이용한 **수동검사**, 비효율적인 **데이터 및 장비 추적 관리**
         *   수동 검사 과정에서 신호의 증폭 크기에 따라 **왜곡된 QC 결과** 발생
         *   **기계 결함 및 휴먼 에러 구별 불가**
@@ -335,7 +334,7 @@ format:
 *   Data Engineering: 산재된 **Excel QC data** ETL 
 *   QC Step2의 **장비 성능 평가 지표를 생성**하여 장비 성능 측정 고도화
 *   **합격/불합격 분류** 뿐만 아니라 **장비 등급을 차등 부여**하여 고객사에 차등 공급
-*   시간에 따른 **장비의 성능을 지속적으로 모니터링**하여 장비의 성능 분석 및 life cycle 관리
+*   시간에 따른 **장비의 성능을 지속적으로 모니터링**하여 장비의 성능 분석
 *   **QC Process 간소화**
     *   QC Step 1 데이터를 통해 QC Step 2 결과를 예측하는 **딥러닝 모델 개발**
     *   예측 결과로 장비성능이 Fail로 확실시 되는 장비에 한해서 QC Step 2 검사 진행
@@ -348,14 +347,14 @@ format:
 
 * 데이터 엔지니어링: QC Data ETL
 * 머신러닝: Clustering (PCA, t-SNE, DBSCAN), Anomaly Detection (Isolation Forest), Outlier Detection (IQR, Z score, 3-Sigma Rule)
-* 딥러닝: Pytorch (BiLSTM), scikit-learn 
+* 딥러닝: Pytorch (LSTM), scikit-learn 
 * 통계/신호처리: SNR, RSS 계산, 시계열 분해 등 
 * 웹앱 개발: R Shiny (대시보드 및 시각화)
 * 도메인 지식: PCR 기술, 의료기기 QC, 통계적 공정관리, 광학 장비 성능 평가 
 
 ## 결과
 
-* ETL 결과: PCR기기 2201대를 2552번의 실험해서 만들어진 61,248개의 신호 데이터 확보
+* PCR기기 2201대를 2552번의 실험해서 만들어진 61,248개의 신호 데이터 확보
 * QC Process Step 2 장비 성능 평가 메트릭 생성
   * 신호 증폭 효율성 측정
   * SNR (Signal to Noise Ratio) 측정
@@ -367,12 +366,11 @@ format:
   * 시계열 분해 기반 노이즈 측정
   * Outlier 및 Anomaly Data 탐지로 labeling (IQR. Z score, PCA, t-SNE, DBSCAN, 3-Sigma Rule, Isolation Forest)
   * 신호 RSS (Residual Sum of Squares) 측정
-* 평가 메트릭 기반 합격/불합격 장비 분류, 장비 성능 4등급 부여
-  * Pass (A+,A,B), Fail (F)
+* 평가 메트릭 QC 등급 분류: Pass (A+,A,B), Fail (F)
 
 ![장비 성능별 클러스터링](./data/clustering_result.PNG){width=30%}
 
-* BiLSTM을 활용한 Step 1 데이터를 통한 Step 2 결과 예측 모델 개방
+* LSTM을 활용한 Step 1 데이터를 통한 Step 2 결과 예측 모델 개방
   * 합격/불합격 분류 정확도: 99.3%
   * 장비 성능 등급 분류 정확도: 91.7%
 
@@ -380,35 +378,28 @@ format:
 
 ![BiLSTM ROC Curve](./data/qc_roc_curve.png){width=40%}
 
-![BiLSTM Importance](./data/qc_importance.png){width=40%}
-
 * Web App Dashboard Prototype 개발
   * 실무자가 데이터 업로드 하면 자동으로 분석 결과 제공
   * 시각화 및 데이터 관리 기능 제공
-
-![WebApp](./data/qc_as_is_data.PNG){width=50%}
-
-* 총괄장 R&D 부문 우수상 수상
-* 2개의 특허 발명을 출원
+* 총괄장 R&D 부문 우수상 수상 및 2개의 특허 출원
 
 ## 기대효과
 
 * 편의성 증가: QC시간 약 14배 감소
-  * As-Was: 100 대당 약 400시간
-  * As-Is: 100 대당 약 28시간
+  * (As-Was: 약 400시간/100대) vs (As-Is: 약 28시간/100대)
 * 웹 기반 자동화 플랫폼 제공
   * 연간 비용 약 13배 감소 (QC 시간 및 약 6억원의 비용 감소)
 * Mechanical Engineers의 신기술 개발 지원
 
-# [Alzheimer's Disease Biomarker 규명을 위한 대사체 분석 연구]
+# [치매 Biomarker 규명: 대사체 통계 분석 및 머신러닝 방법론 비교 연구]
 
 ## 개요
 
-* 2차 세계 대전 이후 Baby Boomer Generation의 대규모 치매 발병에 대비한 치매 인자 규명
+* 2차 세계 대전 후 Baby Boomer 세대의 대규모 치매 발병에 대비한 치매 인자 규명
 * 모집단: 장수마을에 거주하는 백인 참여자 (LLFS - Long Life Family Study)
 * 기간: 2018.12 - 2020.04 (17개월)
 * 역할: Research Statistician
-* 참여 인원: Epidemiologist 3명, 생물통계학자 3명, 유전통계학자 1명, 신경외과 의사 4명, 생화학자 2명, 임상연구 코디네이터 8명, 데이터 엔지니어 2명
+* 참여 인원: 23명 (Epidemiologists, 생물통계학자, 유전통계학자, 신경외과 의사, 생화학자, 임상연구 코디네이터, 데이터 엔지니어) 
 
 ## 주요 문제점 및 도전과제
 
@@ -446,45 +437,41 @@ format:
   * 3단계 - Machine Learning: 다양한 알고리즘 성능 비교 및 최적 모델 선택
 
 ## 기술 스택 및 요구 역량
-  
+
+* 프로그래밍: R (Tidyverse, ggplot2, mixOmics, survival, glmnet, etc.) 
 * EDA: Student t-tests, Wilcoxon Mann-Whitney tests, χ² tests, Fisher Exact Tests, ANOVA, Kruskal-Wallis Tests
-* 통계분석: Linear regression, Logistic regression, Cox Proportional Hazards regression, Linear Mixed Effect Model, GWAS
+* 통계분석: Linear regression, Logistic regression, Cox Proportional Hazards regression, Linear Mixed Effect Model, GWAS, Multiple Comparison Tests
 * 머신러닝: Lasso, Ridge regression, Elastic net, Random forests, AdaBoost, Gradient boosting, SVM, PLS, Sparse PLS
 * 데이터 마이닝: KNN, PCA, K-means clustering, DBSCAN
 * 통계적 검증: Permuted p-values를 통한 multiple correction
 * 도메인 지식: 생리학, 생화학, 신경의학*, 역학, 생물통계학, 유전학
 * 협업 역량: 다학제 팀 (의사, 생물학자, 생물정보학자, 역학자) 소통
 
-## 결과 및 성과
+## 결과
 
-* 연구 성과
-  * 약 3,000개 변수 중 60개 내외의 대사물질이 알츠하이머병과 5% 유의수준에서 유의한 관련성 확인
-  * Partial Least Squares가 최적 성능의 분류기로 선정
-  * EDA 및 Data Mining을 통한 미지의 강력한 교란자 규명
-  * 주 3회 분석결과 공유 Sprint
-  * Metabolic Pathway Map 제시
+* Metabolic Pathway Map 제시
+* EDA 및 Data Mining을 통한 미지의 강력한 교란자 규명
+* 약 3,000개 대사물질 중 약 60개가 질병과 5% 유의수준에서 유의한 관련성 있음
+* 약 60개 중 13개의 대사물질이 질병과 1% 이하의 유의수준에서 유의한 관련성 있음
+* GWAS를 통해 유의한 대사물질과 유의한 관련이 있는 유전자 규명
+* Sparse Partial Least Squares가 최적 성능의 분류기로 선정
 
-![EDA & Data Mining 결과](./data/LLFS_datamining.PNG){width=40%}
+![EDA: Correlation Plots between Metabolites and Phenotype](./data/LLFS_datamining.PNG){width=40%}
 
 ![일부 GWAS 결과](./data/LLFS_gwas.PNG){width=30%}
 
-* 학술적 성취
-  * Columbia University Mailman School of Public Health 연례 연구 발표회 포스터 발표
-  * 연례 연구 경진대회에서 약 100명의 대학원생 중 상위 3명 선정, 상금 $1,000 수상
-  * 학과장상 수상
-  * Columbia University Irving Medical Center 신경외과 정규직 Job Offer 획득
-* 방법론적 기여
-  * 고차원 대사체 데이터에 대한 체계적 분석 파이프라인 구축
-  * 다중 센터 데이터의 품질 관리 프로토콜 확립
-  * 알츠하이머병 바이오마커 발굴을 위한 통합 분석 방법론 개발
+![ML Classifier Performance](./data/LLFS_classfier_performance.PNG){width=40%}
 
-## 기대효과
+![ML Classifier ROC](./data/LLFS_ROC.PNG){width=40%}
 
-* 연구 방법론적 영향
-  * 고차원 생체분자 데이터 분석을 위한 통합 파이프라인 방법론 확립
-  * 다중 센터 연구에서의 데이터 품질 관리 표준 제시
-  * 다학제 협업 연구 모델 및 분석 방법론 제안
+  
+## 성과 및 기개효과
+
+* Columbia University Mailman School of Public Health 연례 연구 발표회 포스터 발표
+* 연례 연구 경진대회에서 약 100명의 대학원생 중 상위 3명 선정, 상금 $1,000 수상
+* 학과장상 수상
+* Columbia University Irving Medical Center 신경외과 정규직 Job Offer 획득
+* 고차원 대사체 데이터에 대한 체계적 분석 파이프라인 구축
+* 다학제 협업 연구 모델 및 분석 방법론 제안
 * 알츠하이머병 치료제 개발을 위한 타겟 발굴 기여
-* 정밀의학 기반 치매 예방 및 관리 체계 구축 지원
-* 노인성 질환 연구 분야의 데이터 사이언스 방법론 발전 기여
 

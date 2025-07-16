@@ -340,12 +340,14 @@ temperature_name = merged_data["temperature"].unique()[0]
 temp = merged_data
 temp['has_non_zero'] = merged_data['analysis_rd_diff'].apply(lambda x: np.any(x != 0))
 non_zero_rows = merged_data[merged_data['has_non_zero']]
-pcrd_name = non_zero_rows['name'].unique()[0]
-channel_name = non_zero_rows['channel'].unique()[0]
+non_zero_rows = merged_data
+pcrd_name = non_zero_rows['name'].unique()[1]
+channel_name = non_zero_rows['channel'].unique()[3]
 temperature_name = non_zero_rows['temperature'].unique()[0]
-well_name = non_zero_rows['well'].unique()[3]
+well_name = non_zero_rows['well'].unique()[4]
 
 plot_baseline_subtractions(merged_data,i_pcrd=pcrd_name,i_channel=channel_name,i_temperature=temperature_name, mudt=mudt)
+
 ```
 
 * [plot_baseline_subtractions() code link](https://github.com/kmink3225/website/blob/28864068ed97b7285e8873ecefde95590ea17ebf/docs/projects/baseline_subtraction/source/visualization.py#L186)

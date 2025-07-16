@@ -412,22 +412,10 @@ def calculate_error_metrics(filtered_data):
         preproc_rfu_after_bpn_limits, 
         limits
     )
-
-
 def plot_single_baseline_panel(ax, i_data, panel_info, error_metrics_dict, 
                               limits_info, mudt=False):
     """
     베이스라인 시각화의 단일 패널 그리기
-    
-    Args:
-        ax: matplotlib 축 객체
-        i_data: 데이터프레임
-        panel_info: (i, j, title, key) 튜플
-        error_metrics_dict: 오류 메트릭 딕셔너리
-        limits_info: (metric_min, metric_max, 
-                      original_min_mean, preproc_min_mean, 
-                      original_after_bpn_limits, preproc_after_bpn_limits, limits) 튜플
-        mudt: MuDT 데이터 여부
     """
     
     i, j, title, key = panel_info
@@ -447,56 +435,79 @@ def plot_single_baseline_panel(ax, i_data, panel_info, error_metrics_dict,
         rfu_values.extend(rfu)
         cycle = list(range(len(rfu)))
         ax.plot(cycle, rfu, alpha=0.5)
-       
+
+    # CFX 데이터인 경우 개별 범위 계산
+    if key == 'original_rfu_cfx':
+        individual_limits = find_global_extremes(i_data[key])
+        cfx_ylim = [min(individual_limits)*0.98, max(individual_limits)*1.02]
+    
     panel_configs = {
         (0, 0): {
-            "text": lambda: (f"N: {i_data.shape[0]}\n"
-                            f"Outlier: [{metric_min},{metric_max}]\n"
-                            f"BPN: {round(original_rfu_min_mean)}"),
+            "text": (f"N: {i_data.shape[0]}\n"
+                    f"Outlier: [{metric_min},{metric_max}]\n"
+                    f"BPN: {round(original_rfu_min_mean)}"),
             "axhline": original_rfu_min_mean,
-            "ylim": lambda: [
+            "ylim": [
                 min(original_rfu_after_bpn_limits)*0.98, 
                 max(original_rfu_after_bpn_limits)*1.02
             ]
-        },
-        (0, 1): {
-            "text": lambda: (f"N: {i_data.shape[0]}\n"
-                            f"Outlier: [{metric_min},{metric_max}]\n"
-                            f"BPN: {round(preproc_rfu_min_mean)}"),
+        }
+    }
+    
+    # mudt에 따른 (0, 1) 위치 설정
+    if mudt:
+        panel_configs[(0, 1)] = {
+            "text": (f"N: {i_data.shape[0]}\n"
+                    f"Outlier: [{metric_min},{metric_max}]\n"
+                    f"BPN: {round(preproc_rfu_min_mean)}"),
             "axhline": preproc_rfu_min_mean,
-            "ylim": lambda: [
+            "ylim": [
                 min(preproc_rfu_after_bpn_limits)*0.90, 
                 max(preproc_rfu_after_bpn_limits)*1.1
             ]
         }
-    }
+    else:
+        # mudt=False일 때 (0, 1)은 CFX 데이터
+        if key == 'original_rfu_cfx':
+            panel_configs[(0, 1)] = {
+                "text": (f"N: {i_data.shape[0]}\n"
+                        f"MAE: {error_metrics_dict[key]['mae']}\n"
+                        f"MSE: {error_metrics_dict[key]['mse']}"),
+                "ylim": cfx_ylim
+            }
 
-    for posistion in [(1, 0), (1, 1), (1, 2), (0, 2)]:
+    # 나머지 패널들 처리
+    for position in [(1, 0), (1, 1), (1, 2), (0, 2)]:
         if key in error_metrics_dict:
             metrics = error_metrics_dict[key]
-            panel_configs[posistion] = {
-                "text": lambda: (f"N: {i_data.shape[0]}\n"
-                                f"MAE: {metrics['mae']}\n"
-                                f"MSE: {metrics['mse']}"),
-                "ylim": lambda: [min(limits)*0.98, max(limits)*1.02] if rfu_values else None
+
+            # CFX 데이터는 개별 범위 사용
+            if key == 'original_rfu_cfx':
+                ylim_value = cfx_ylim
+            else:
+                ylim_value = [min(limits)*0.98, max(limits)*1.02]
+
+            panel_configs[position] = {
+                "text": (f"N: {i_data.shape[0]}\n"
+                        f"MAE: {metrics['mae']}\n"
+                        f"MSE: {metrics['mse']}"),
+                "ylim": ylim_value
             }            
 
     if (i, j) in panel_configs:
         config = panel_configs[(i, j)]
         
         if "text" in config:
-            ax.text(0.05, 0.98, config["text"]() if callable(config["text"]) else config["text"],
-                            verticalalignment='top', horizontalalignment='left', 
-                            transform=ax.transAxes)
+            ax.text(0.05, 0.98, config["text"],
+                    verticalalignment='top', horizontalalignment='left', 
+                    transform=ax.transAxes)
         if "axhline" in config:
             ax.axhline(y=config["axhline"], color='black', linestyle='dotted', linewidth=2)
         if "ylim" in config and config["ylim"] is not None:
-            ylim_value = config["ylim"]() if callable(config["ylim"]) else config["ylim"]
-            ax.set_ylim(ylim_value)    
+            ax.set_ylim(config["ylim"])
 
     ax.axhline(y=0, color='black', linestyle='dotted', linewidth=2)
     ax.set_title(title)
-
 
 def plot_baseline_subtractions(i_data, i_channel, i_temperature, i_pcrd=None, 
                              colors=None, mudt=False):

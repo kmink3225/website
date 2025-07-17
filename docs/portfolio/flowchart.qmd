@@ -1,5 +1,6 @@
 # 데이터 표준화 토큰 분석기 로직 플로우 다이어그램
 
+
 ```{mermaid}
 graph TB
     subgraph "Input Layer"
@@ -68,6 +69,289 @@ graph TB
     style UI3 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
 
 ```
+
+
+### airflow 플로우 다이어그램
+
+```{mermaid}
+graph TB
+    subgraph "Phase 1: 기본 환경 구축"
+        A1["🐳 Docker Compose로<br/>Airflow 설치"] --> A2["🔗 Connection 설정<br/>PostgreSQL, API endpoints"]
+        A2 --> A3["📝 기본 DAG 작성<br/>BashOperator 테스트"]
+    end
+    
+    subgraph "Phase 2: 핵심 워크플로우 구현"
+        B1["🐍 Python Operator로<br/>NLP 엔진 연동"] --> B2["📡 Xcom으로<br/>데이터 파이프라인 구축"]
+        B2 --> B3["🔀 분기 처리로<br/>다양한 입력 타입 대응"]
+    end
+    
+    subgraph "Phase 3: 고급 기능 적용"
+        C1["👁️ Sensor로<br/>실시간 처리"] --> C2["⚙️ Custom Operator<br/>개발"]
+        C2 --> C3["📊 모니터링 및<br/>알림 설정"]
+    end
+
+    subgraph "메인 파이프라인 DAG 흐름"
+        D1["📥 DataLoader<br/>데이터 수집"] --> D2{"🔄 입력 타입<br/>분기"}
+        
+        D2 -->|테이블/컬럼| D3["🔤 TokenProcessor<br/>토큰 분석"]
+        D2 -->|사용자 입력| D4["🤖 RAG System<br/>규칙 검색"]
+        D2 -->|코드 스니펫| D4
+        
+        D3 --> D5["🧠 Domain NLP Engine<br/>도메인 분류"]
+        D4 --> D6["📚 Terminology NLP<br/>용어 클러스터링"]
+        D5 --> D6
+        
+        D6 --> D7["📖 통합 사전<br/>메타데이터 통합"]
+        D7 --> D8["✅ 검증 시스템<br/>품질 검증"]
+        D8 --> D9["📊 ReportGenerator<br/>결과 보고서"]
+        D9 --> D10["🖥️ 대시보드<br/>업데이트"]
+    end
+
+    subgraph "실시간 처리 DAG"
+        E1["👁️ FileSensor<br/>새 데이터 감지"] --> E2["⚡ 빠른 처리<br/>파이프라인"]
+        E2 --> E3["🔄 즉시 반영<br/>추천 업데이트"]
+    end
+
+    A3 --> B1
+    B3 --> C1
+    C3 --> D1
+    D10 --> E1
+
+    %% 스타일링
+    style A1 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style A2 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    style A3 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    
+    style B1 fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style B2 fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    style B3 fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    
+    style C1 fill:#fff8e1,stroke:#ff8f00,stroke-width:2px
+    style C2 fill:#fff8e1,stroke:#ff8f00,stroke-width:2px
+    style C3 fill:#fff8e1,stroke:#ff8f00,stroke-width:2px
+    
+    style D1 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style D2 fill:#ffebee,stroke:#d32f2f,stroke-width:3px
+    style D3 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style D4 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style D5 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style D6 fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    style D7 fill:#fce4ec,stroke:#ad1457,stroke-width:2px
+    style D8 fill:#e0f2f1,stroke:#00695c,stroke-width:2px
+    style D9 fill:#e0f2f1,stroke:#00695c,stroke-width:2px
+    style D10 fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    
+    style E1 fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    style E2 fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    style E3 fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+
+```
+
+
+## 🎯 **Airflow 도입이 필요한 이유**
+
+1. **복잡한 의존관계**: Processing Layer의 여러 NLP 엔진들과 RAG 시스템 간 의존성
+2. **정기적 배치 처리**: 메타데이터 갱신, 모델 재훈련, 품질 검증
+3. **실시간에 가까운 처리**: 새로운 데이터 입력 시 자동 파이프라인 실행
+4. **모니터링 필요성**: 각 컴포넌트별 성능 및 품질 지표 추적
+
+## 🏗️ **Airflow 아키텍처 설계**
+
+### **1. DAG 구조 설계**
+
+```python
+# 메인 데이터 처리 DAG
+with DAG(
+    dag_id="metadata_standardization_pipeline",
+    schedule="0 2 * * *",  # 매일 새벽 2시 실행
+    start_date=pendulum.datetime(2024, 1, 1, tz="Asia/Seoul"),
+    catchup=False,
+    tags=["metadata", "standardization", "nlp"]
+) as dag:
+```
+
+### **2. 핵심 워크플로우 매핑**
+
+| 시스템 컴포넌트 | Airflow 구현 방식 | 사용할 Operator |
+|:---|:---|:---|
+| **DataLoader** | 데이터 수집 및 전처리 | `PythonOperator`, `PostgresOperator` |
+| **TokenProcessor** | 토큰 분석 배치 작업 | `PythonOperator` |
+| **Domain NLP Engine** | ML 모델 추론 | `PythonOperator`, `KubernetesPodOperator` |
+| **RAG System** | RAG 검색 및 GPT 호출 | `PythonOperator`, `SimpleHttpOperator` |
+| **Terminology NLP** | 용어 클러스터링 | `PythonOperator` |
+| **통합 사전 관리** | 메타데이터 업데이트 | `PostgresOperator`, `PythonOperator` |
+| **검증 시스템** | 품질 검증 배치 | `PythonOperator`, `BranchPythonOperator` |
+| **보고서 생성** | 대시보드 데이터 생성 | `PythonOperator`, `EmailOperator` |
+
+## 🔧 **활용할 Airflow 기능들**
+
+### **1. Sensor 활용 (실시간 처리)**
+```python
+# 새로운 데이터 입력 감지
+new_data_sensor = FileSensor(
+    task_id='detect_new_standardization_data',
+    filepath='/data/input/new_data.flag',
+    fs_conn_id='data_fs',
+    poke_interval=30,  # 30초마다 체크
+    mode='reschedule'
+)
+```
+
+### **2. 분기 처리 (BranchPythonOperator)**
+```python
+def decide_processing_path(**context):
+    # 데이터 유형에 따른 처리 분기
+    data_type = context['ti'].xcom_pull(key='data_type')
+    if data_type == 'table_column':
+        return 'token_processing_task'
+    elif data_type == 'user_input':
+        return 'nlp_processing_task'
+    else:
+        return 'rag_processing_task'
+
+branch_task = BranchPythonOperator(
+    task_id='decide_processing_path',
+    python_callable=decide_processing_path
+)
+```
+
+### **3. Xcom을 통한 데이터 공유**
+```python
+# TokenProcessor 결과를 다음 단계로 전달
+@task
+def token_analysis(**context):
+    tokens = process_tokens(context['ti'].xcom_pull(key='input_data'))
+    return {'tokens': tokens, 'domain_hints': extract_domain_hints(tokens)}
+
+@task  
+def domain_classification(**context):
+    token_data = context['ti'].xcom_pull(task_ids='token_analysis')
+    domains = classify_domains(token_data['tokens'])
+    return domains
+```
+
+### **4. Task Groups으로 모듈화**
+```python
+with TaskGroup("nlp_processing_group") as nlp_group:
+    token_task = PythonOperator(
+        task_id='token_processing',
+        python_callable=process_tokens
+    )
+    
+    domain_task = PythonOperator(
+        task_id='domain_classification', 
+        python_callable=classify_domains
+    )
+    
+    terminology_task = PythonOperator(
+        task_id='terminology_clustering',
+        python_callable=cluster_terminology
+    )
+    
+    token_task >> [domain_task, terminology_task]
+```
+
+### **5. Connection & Hook (외부 시스템 연동)**
+```python
+# PostgreSQL 메타데이터 DB 연동
+postgres_hook = PostgresHook(postgres_conn_id='metadata_db')
+
+# RAG 시스템 API 연동  
+@task
+def call_rag_system(**context):
+    http_hook = SimpleHttpHook(http_conn_id='rag_api')
+    response = http_hook.run(
+        endpoint='/search',
+        data={'query': context['ti'].xcom_pull(key='search_query')},
+        headers={'Content-Type': 'application/json'}
+    )
+    return response.json()
+```
+
+### **6. 모니터링 및 알림 설정**
+```python
+# SLA 설정으로 성능 모니터링
+dag_defaults = {
+    'sla': timedelta(hours=2),  # 2시간 내 완료
+    'email_on_failure': True,
+    'email_on_retry': False,
+    'email': ['data-team@company.com'],
+    'retries': 2,
+    'retry_delay': timedelta(minutes=10)
+}
+
+# 품질 검증 실패 시 알림
+quality_check_task = PythonOperator(
+    task_id='data_quality_check',
+    python_callable=check_data_quality,
+    on_failure_callback=send_quality_alert
+)
+```
+
+## 📅 **DAG 구성 예시**
+
+### **메인 파이프라인 DAG**
+```python
+# 1. 데이터 수집
+data_loader >> 
+
+# 2. 병렬 처리
+[token_processor, rag_processor] >>
+
+# 3. NLP 엔진들
+[domain_nlp, terminology_nlp] >>
+
+# 4. 결과 통합
+metadata_integration >>
+
+# 5. 검증
+[rule_analyzer, completeness_analyzer] >>
+
+# 6. 보고서 생성
+report_generator >>
+
+# 7. 대시보드 업데이트
+dashboard_update
+```
+
+### **실시간 처리 DAG**
+```python
+# Sensor로 새 입력 감지
+new_input_sensor >>
+
+# 빠른 처리 파이프라인
+[quick_token_analysis, rag_recommendation] >>
+
+# 결과 즉시 반영
+update_recommendations
+```
+
+## 🛠️ **구현 순서**
+
+### **Phase 1: 기본 환경 구축**
+1. **Docker Compose로 Airflow 설치** (`02.env_setting.qmd` 참고)
+2. **Connection 설정** - PostgreSQL, API endpoints (`09.connection_hook.qmd`)
+3. **기본 DAG 작성** (`03.operator_basic.qmd`)
+
+### **Phase 2: 핵심 워크플로우 구현**
+1. **Python Operator로 NLP 엔진 연동** (`04.python_operator.qmd`)
+2. **Xcom으로 데이터 파이프라인 구축** (`06.data_share.qmd`)
+3. **분기 처리로 다양한 입력 타입 대응** (`07.task_handling.qmd`)
+
+### **Phase 3: 고급 기능 적용**
+1. **Sensor로 실시간 처리** (`10.sensor.qmd`)
+2. **Custom Operator 개발** (`08.more_operators.qmd`)
+3. **모니터링 및 알림 설정** (`11.airflow_functions.qmd`)
+
+## 🎯 **기대 효과**
+
+1. **자동화**: 수동 개입 없이 전체 파이프라인 실행
+2. **신뢰성**: 실패 시 재시도, 알림으로 안정성 확보
+3. **확장성**: 새로운 NLP 모델이나 검증 로직 쉽게 추가
+4. **모니터링**: 각 단계별 성능 및 품질 지표 실시간 추적
+5. **일관성**: 표준화된 워크플로우로 데이터 품질 보장
+
+이렇게 Airflow를 도입하면 복잡한 메타데이터 표준화 시스템을 효율적으로 관리하고 자동화할 수 있습니다!
 
 ## 전체 시스템 아키텍처
 

@@ -131,6 +131,97 @@ graph TB
     class S,T,U,V,W deploy
 ```
 
+### NLP Engine Terminology Clustering
+
+```{mermaid}
+graph TB
+    subgraph INPUT ["Data Input"]
+        A["Excel 메타데이터<br/>용어 사전 작업용_labIDE.xlsx"]
+        A1["속성명_수정<br/>컬럼 메타데이터"]
+        A2["테이블명_수정<br/>테이블 메타데이터"]
+        
+        A --> A1
+        A --> A2
+    end
+
+    subgraph PREP ["Term Preprocessing"]
+        B["Term Extraction<br/>한글/영문/물리명 분리"]
+        C["Data Cleaning<br/>중복 제거, 빈 값 필터링"]
+        D["Term Standardization<br/>5,000+ 용어 정제"]
+        
+        A1 --> B
+        A2 --> B
+        B --> C
+        C --> D
+    end
+
+    subgraph EMBED ["Embedding Generation"]
+        E["SentenceTransformer<br/>jhgan/ko-sroberta-multitask"]
+        F["Batch Processing<br/>batch_size=32"]
+        G["Vector Generation<br/>768-dim embeddings"]
+        
+        D --> E
+        E --> F
+        F --> G
+    end
+
+    subgraph CLUSTER ["Clustering Pipeline"]
+        H["Similarity Calculation<br/>Cosine Similarity Matrix"]
+        I["HDBSCAN Clustering<br/>min_cluster_size=2"]
+        J["Agglomerative Clustering<br/>Alternative Method"]
+        
+        G --> H
+        H --> I
+        H --> J
+    end
+
+    subgraph ANALYSIS ["Cluster Analysis"]
+        K["Representative Term<br/>Selection Logic"]
+        L["Similarity Scoring<br/>Intra-cluster Coherence"]
+        M["Term Type Analysis<br/>Korean/English/Physical"]
+        N["System Distribution<br/>Cross-system Mapping"]
+        
+        I --> K
+        J --> K
+        K --> L
+        L --> M
+        M --> N
+    end
+
+    subgraph OUTPUT ["Results & Visualization"]
+        O["Excel Export<br/>4개 시트 결과"]
+        P["Cluster Summary<br/>표준화 추천안"]
+        Q["Visualization<br/>분포 차트"]
+        R["Similar Term Search<br/>Query Interface"]
+        
+        N --> O
+        O --> P
+        P --> Q
+        Q --> R
+    end
+
+    %% 연결선
+    G -.->|임베딩 벡터| H
+    I -.->|클러스터 라벨| K
+    K -.->|대표 용어| P
+
+    %% 스타일링
+    classDef inputBox fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    classDef prepBox fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef embedBox fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef clusterBox fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef analysisBox fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef outputBox fill:#e0f2f1,stroke:#00695c,stroke-width:2px
+
+    class A,A1,A2 inputBox
+    class B,C,D prepBox
+    class E,F,G embedBox
+    class H,I,J clusterBox
+    class K,L,M,N analysisBox
+    class O,P,Q,R outputBox
+```
+
+
 
 ### airflow 플로우 다이어그램
 
@@ -208,6 +299,106 @@ graph TB
 
 ```
 
+### **통합 NLP 메타데이터 표준화 플랫폼**
+
+```{mermaid}
+graph TB
+    subgraph INPUT ["Data Sources"]
+        A1["표준화 원칙 PDF<br/>200개 규칙"]
+        A2["표준 단어 사전<br/>14그룹 분류"]
+        A3["Excel 메타데이터<br/>용어 사전 작업용"]
+        A4["기존 도메인 사전<br/>중복 검증용"]
+    end
+
+    subgraph DATAPREP ["Data Preparation"]
+        subgraph TRAIN_DATA ["Training Data Generation"]
+            B1["LLM Data Generator<br/>Claude 4 Sonnet"]
+            B2["Domain Generator<br/>템플릿 기반"]
+            B4["Data Merger<br/>스키마 통합"]
+            
+            A1 --> B1
+            A2 --> B2
+            A4 --> B2
+            B1 --> B4
+            B2 --> B4
+        end
+        
+        subgraph REAL_DATA ["Operational Data Processing"]
+            B3["Term Extractor<br/>한글/영문/물리명"]
+            B5["Data Cleaning<br/>중복 제거, 정제"]
+            
+            A3 --> B3
+            B3 --> B5
+        end
+    end
+
+    subgraph PROCESSING ["Parallel NLP Processing"]
+        subgraph DOMAIN ["Domain Classification Model"]
+            C1["Training Dataset<br/>5,632개 생성 도메인"]
+            C2["KoBERT Classifier<br/>768→14 classes"]
+            C3["Model Training<br/>95.39% 정확도"]
+            C4["New Domain Prediction<br/>신규 도메인 분류"]
+            
+            C1 --> C2 --> C3 --> C4
+        end
+        
+        subgraph CLUSTER ["Operational Term Clustering"]
+            D1["Real Term Dataset<br/>5,000+ 운영 용어"]
+            D2["SentenceTransformer<br/>ko-sroberta-multitask"]
+            D3["HDBSCAN Clustering<br/>유사도 기반"]
+            D4["Duplicate Detection<br/>중복 용어 발견"]
+            
+            D1 --> D2 --> D3 --> D4
+        end
+    end
+
+    subgraph INTEGRATION ["Results Integration"]
+        E1["Domain Classification<br/>신규 용어 그룹 예측"]
+        E2["Duplicate Detection<br/>기존 용어 중복 발견"]
+        E3["Standardization Rules<br/>통합 표준화 가이드"]
+        E4["Quality Dashboard<br/>전체 용어 품질 관리"]
+        
+        C4 --> E1
+        D4 --> E2
+        E1 --> E3
+        E2 --> E3
+        E3 --> E4
+    end
+
+    subgraph DEPLOYMENT ["System Deployment"]
+        F1["Classification Model<br/>kobert_classifier.pth"]
+        F2["Clustering Reports<br/>중복 용어 리스트"]
+        F3["Streamlit Web App<br/>통합 관리 인터페이스"]
+        F4["Excel Export<br/>표준화 권장안"]
+        
+        E1 --> F1
+        E2 --> F2
+        F1 --> F3
+        F2 --> F3
+        F3 --> F4
+    end
+
+    %% 데이터 흐름
+    B4 --> C1
+    B5 --> D1
+    E1 -.->|신규 용어 기준| E3
+    E2 -.->|중복 정리 기준| E3
+
+    %% 스타일링
+    classDef inputStyle fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    classDef prepStyle fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef domainStyle fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef clusterStyle fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef integrationStyle fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef deployStyle fill:#e0f2f1,stroke:#00695c,stroke-width:2px
+
+    class A1,A2,A3,A4 inputStyle
+    class B1,B2,B3,B4,B5 prepStyle
+    class C1,C2,C3,C4 domainStyle
+    class D1,D2,D3,D4 clusterStyle
+    class E1,E2,E3,E4 integrationStyle
+    class F1,F2,F3,F4 deployStyle
+```
 
 ## 🎯 **Airflow 도입이 필요한 이유**
 

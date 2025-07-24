@@ -1,6 +1,5 @@
 # 데이터 표준화 토큰 분석기 로직 플로우 다이어그램
 
-
 ```{mermaid}
 graph TB
     subgraph "Input Layer"
@@ -68,6 +67,68 @@ graph TB
     style UI2 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
     style UI3 fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
 
+```
+
+### NLP Engine Domain Classifier
+
+```{mermaid}
+graph TB
+    subgraph DS ["Data Sources"]
+        A["표준화 원칙 PDF<br/>200개 규칙"] --> B["LLM<br/>Claude 4 Sonnet"]
+        A1["표준 단어 사전<br/>14그룹 분류"] --> C["Domain Generator<br/>템플릿 기반"]
+        A2["기존 도메인 사전<br/>중복 검증용"] --> C
+    end
+
+    subgraph TDG ["Training Data Pipeline"]
+        B -->|2,868개| D["domain_data.parquet<br/>구조화 데이터"]
+        C -->|2,800개| E["generated.parquet<br/>균등 분포"]
+        D --> F["Parquet Merger<br/>스키마 통합"]
+        E --> F
+        F -->|중복 제거| I["training_dataset<br/>5,632개 최종"]
+    end
+
+    subgraph ML ["NLP Model Architecture"]
+        I --> J["KoBERT Tokenizer<br/>vocab_size=8,002<br/>max_length=32"]
+        J --> K["KoBERT Encoder<br/>monologg/kobert<br/>768 hidden_size"]
+        K --> L["Pooler Output<br/>[CLS] token"]
+        L --> M["Dropout Layer<br/>dropout=0.3"]
+        M --> N["Linear Classifier<br/>768 → 14 classes"]
+        N --> Q["AdamW Optimizer<br/>lr=2e-5, batch=64"]
+    end
+
+    subgraph EVAL ["Model Performance"]
+        Q --> R1["Train Acc: 94.18%"]
+        Q --> R2["Test Acc: 95.39%"]
+        Q --> R3["F1-Score: 0.94"]
+    end
+
+    subgraph DEPLOY ["Model Deployment"]
+        R1 --> S["kobert_classifier.pth<br/>모델 저장"]
+        S --> T["Inference Function<br/>단일 도메인 예측"]
+        T --> U["Classification Result<br/>클래스 + 신뢰도"]
+        S -.->|구현 예정| V["Streamlit Web App<br/>실시간 분류 인터페이스"]
+        V -.-> W["웹 기반 분류 서비스<br/>CSV 업로드 + 시각화"]
+    end
+
+    CT["14개 도메인 그룹"]
+
+    %% 연결선 및 데이터 흐름
+    N -.->|분류 대상| CT
+    I -.->|균등 분포 보장| R2
+    C -.->|템플릿 다양성| R3
+
+    %% 스타일링
+    classDef dataSource fill:#e1f5fe
+    classDef pipeline fill:#f3e5f5
+    classDef model fill:#e8f5e8
+    classDef eval fill:#fff3e0
+    classDef deploy fill:#fce4ec
+
+    class A,A1,A2,B,C dataSource
+    class D,E,F,I pipeline
+    class J,K,L,M,N,Q model
+    class R1,R2,R3 eval
+    class S,T,U,V,W deploy
 ```
 
 

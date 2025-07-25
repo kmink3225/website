@@ -422,8 +422,7 @@ format:
 
 * 의학적 문제점
   * 알츠하이머병은 증상 발현까지 20년간 진행되어 전임상 단계 생리학 이해 필요
-  * 유전적 요인이 알츠하이머병에 50% 기여하나 구체적 메커니즘 불명
-  * APOE 유전자 보유자의 대사체 변화 패턴 미규명
+  * 유전적 요인(ex. APOE)이 알츠하이머병에 50% 기여하나 구체적 메커니즘 불명 
 * 데이터 분석적 도전과제
   * 다중 센터 데이터 수집으로 인한 데이터 품질 불일치
   * 고차원 데이터 (약 3,000개 변수) 대비 작은 표본 크기 (146개 관측치)
@@ -436,7 +435,7 @@ format:
 
 ## 솔루션 설계 및 전략
 
-* 데이터 수집 및 전처리 파이프라인
+* 데이터 수집 및 전처리
   * 다중 센터 (New York, Boston, Pittsburgh, Denmark) 혈액 샘플링
   * Mass Spectrometry를 통한 대사체 데이터 디지털화
   * 체계적 데이터 품질 관리 프로세스 구축
@@ -457,32 +456,35 @@ format:
 
 * 프로그래밍: R (Tidyverse, ggplot2, mixOmics, survival, glmnet, etc.) 
 * EDA: Student t-tests, Wilcoxon Mann-Whitney tests, χ² tests, Fisher Exact Tests, ANOVA, Kruskal-Wallis Tests
-* 통계분석: Linear regression, Logistic regression, Cox Proportional Hazards regression, Linear Mixed Effect Model, GWAS, Multiple Comparison Tests
+* 통계분석: Linear/ Logistic regression, Cox Proportional Hazards(PH) regression, Linear Mixed Effect Model, GEE, GWAS, Multiple Comparison Tests
 * 머신러닝: Lasso, Ridge regression, Elastic net, Random forests, AdaBoost, Gradient boosting, SVM, PLS, Sparse PLS
 * 데이터 마이닝: KNN, PCA, K-means clustering, DBSCAN
-* 통계적 검증: Permuted p-values를 통한 multiple correction
-* 도메인 지식: 생리학, 생화학, 신경의학*, 역학, 생물통계학, 유전학
+* 통계적 검증: Permuted p-values를 통한 multiple Testing correction
+* 도메인 지식: 생리학, 생화학, 신경의학, 역학, 생물통계학, 유전학
 * 협업 역량: 다학제 팀 (의사, 생물학자, 생물정보학자, 역학자) 소통
 
 ## 결과
 
-* Metabolic Pathway Map 제시
-* EDA 및 Data Mining을 통한 미지의 강력한 교란자 규명
+* Sparse PLS 선택 (ML): variable extraction & selection, 해석가능성 확보
+* Cox PH Model 선택: 알츠하이머병의 본질적 특성(시간 의존, right censsoring, semi-parametric) 반영
+* GEE (Stat): 가족 구성원 간 유전적 상관관계 존재, 같은 가족 내 구성원들의 Working correlation이 틀려도 일관된 추정값 산출
+* Permutation Test 적용 (Stat): 작은 표본 크기에서 parametric assumption 위반 시 robust한 통계적 추론
+* 기존 8개월간 미지의 강력한 교란자를 EDA 및 Data Mining을 통해 3주 만에 규명 
 * 약 3,000개 대사물질 중 약 60개가 질병과 5% 유의수준에서 유의한 관련성 있음
 * 약 60개 중 13개의 대사물질이 질병과 1% 이하의 유의수준에서 유의한 관련성 있음
 * GWAS를 통해 유의한 대사물질과 유의한 관련이 있는 유전자 규명
-* Sparse Partial Least Squares가 최적 성능의 분류기로 선정
+* Sparse Partial Least Squares가 최적 성능의 분류기로 선정 (분류 정확도 84%)
 
 ![EDA: Correlation Plots between Metabolites and Phenotype](./data/LLFS_datamining.PNG){width=40%}
 
-![일부 GWAS 결과](./data/LLFS_gwas.PNG){width=25%}
+![일부 GWAS 결과](./data/LLFS_gwas.PNG){width=20%}
 
 ![ML Classifier Performance](./data/LLFS_classfier_performance.PNG){width=40%}
 
 ![ML Classifier ROC](./data/LLFS_ROC.PNG){width=40%}
 
   
-## 성과 및 기개효과
+## 성과 및 기대효과
 
 * Columbia University Mailman School of Public Health 연례 연구 발표회 포스터 발표
 * 연례 연구 경진대회에서 약 100명의 대학원생 중 상위 3명 선정, 상금 $1,000 및 학과장상 수상

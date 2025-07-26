@@ -110,11 +110,11 @@ format:
   * 품질 지표 16개 개발 및 자동 산출 체계 구축
   * 자연어 처리를 활용한 용어별 도메인 그룹 분류 및 유사 용어 그룹핑
     * 도메인 그룹 분류: 용어 중복 방지, 도메인 항목 관리 및 도메인 그룹 관리
-      (예시: "USER_ID", "고객번호", "제품코드", "비밀번호", 등)
+      (예시: "USER_ID", "고객번호", "제품코드", "비밀번호" 등)
+    * KoBERT(한글 분류 정확도 95.65%), ALBERT(영어 분류 정확도 99.1%)
     * 유사 용어 Clustering: 금칙어 관리 및 표준안 관리
       (예시: "사용자ID", "UserID", "User", "user_id" 등 금칙어 관리)
-    * KoBERT(한글, 도메인 분류 정확도 95.65%), ALBERT(영어, 도메인 분류 정확도 99.1%)
-    * 훈련 데이터: 총 5,632개 용어, 14개 도메인 그룹, 훈련/테스트 분할 4,505/1,127개
+    * 총 5,632개 훈련 용어, 14개 도메인 그룹, 훈련/테스트 분할 80%/20%
   * 코드 스니펫을 입력받아 RAG(LangChain + OpenAI API)를 활용하여 논리명 추천
     * 데이터 표준화 원칙 (약 200개 Rules) 기반 논리명 추천
     * LLM 논리명을 입력받아 커스텀 약어생성모듈로 물리명 추천
@@ -192,9 +192,9 @@ format:
 * 4th Pannel [Auto]: (대조군3) 생물 실험자들이 사용하는 **Legacy Rule-Based** 알고리즘 
 * 5th Pannel [Strep+N]: (실험군1) N+1 번째 [DSP]를 보완용  **Rule-Based** 알고리즘 
 * 6th Pannel [ML]: (실험군2)본인의 특성방정식을 활용한 **data driven ML** 알고리즘 
-  * Talyer Series에서 초월 함수를 다항식의 조합으로 근사할 수 있다는 점에서 착안
+  * Taylor Series에서 함수를 다항식으로 근사할 수 있다는 점에서 착안
   * 다항식 기저 함수를 사용한 선형 회귀로 데이터를 적합하는 방법을 시도
-  * feature space를 확장하고, 데이터 내 복잡한 비선형 관계를 모델링 가능
+  * 특성 공간 확장을 통해 데이터 내 복잡한 비선형 관계 모델링
   * 적절한 차수 선택과 정규화를 통해 baseline 신호에 적합
   * 로그 정규화 > 기저 함수 > 특성 방정식 > 비용 함수 > 그래디언트 > Momentum > 예측 > 역정규화
 
@@ -206,7 +206,7 @@ format:
 
 ## 기술 스택
 
-* 언어: Python (C++ 포팅 고려), Matlab (Legacy 알고리즘))
+* 언어: Python (C++ 포팅 고려), Matlab (Legacy 알고리즘)
 * 라이브러리: NumPy, Pandas (최소화 정책)
 * 시각화: Matplotlib, Plotly
 * 수학적 구현: 특성방정식, 신경망 (without Pytorch, Tensorflow, Keras)
@@ -217,6 +217,7 @@ format:
   * ML 알고리즘: White noise에 가장 근접한 차감 결과로 최우수 성능 입증
   * 개선된 Rule-based: 기존 대비 특이 신호 처리 능력 향상
   * Black Box 알고리즘: 업계 1위 타사 알고리즘과 성능 비교 완료
+  * 위음성률 개선: 0.47% → 0.04% (91.49% 개선)
 * 프로세스 개선
   * 개발 프로세스 표준화: 시약 개발 시 일관된 알고리즘 적용 체계 구축
   * 검증 체계: 정성적 평가 방법론을 통한 알고리즘 성능 검증 프레임워크
@@ -244,7 +245,7 @@ format:
   * 리스크 관리: 진단 오류로 인한 법적/재정적 리스크 감소
   * 혁신 문화: data-driven 의사결정 문화 확산의 기반 마련
 
-# [알고리즘 안전성 인허가 통계 분석 보고서 작성 반자동화]
+# [북미 진출을 위한 진단 알고리즘 안전성 검증 자동화]
 
 ## 프로젝트 개요
 
@@ -257,8 +258,10 @@ format:
 * 북미 진단 시장 진출을 위한 알고리즘 안전성 검증용 통계 분석 문서 작성 반자동화
 * 기존 Software Engineering Test보다 더 엄격한 **Advanced Testing** 요구
 * 역할: Data Scientist & Project Lead
+  * 전체 검증 시스템 설계 및 구현 주도
+  * 통계 분석 책임자: Switch Model 기반 검증 방법론 개발
   * Junior Data Scientist 1명 멘토링: 통계 분석, 실험설계 및 리포팅 작성 역량 강화
-  * 유관 실무자 15명에 SW FDA 규제 문서 리뷰, 정리 및 지식 전파 
+  * 팀 리더십: 15명 다학제 팀 관리 및 FDA 규제 교육
   * 역할 분배: unit test, integration test, system test, **statistical test**
 
 ## 솔루션 설계 및 전략
@@ -293,7 +296,7 @@ format:
 * 통계 분석: Statistics (2-Way Repeated Measures ANOVA, McNemar, Breslow-Day, Cochran-Mantel-Haenszel), Clinical Study Design
 * 프로그래밍: R (Statistical Testing), Python (Engineering), Matlab (진단 알고리즘)
 * 워크플로우: Apache Airflow
-* 문서 자동화: Quarto
+* 문서 자동화: Quarto (200페이지 FDA 보고서 자동 생성 시스템)
 * 도메인 지식: Biology
 
 ## 결과 및 성과
@@ -306,9 +309,12 @@ format:
 
 * FDA 제출용 verification & validation report 초안 완성
 * 문서화 시스템: 업무 소통 및 RDB 시스템 구축을 위한 자동화 시스템
-* 알고리즘 전용 FDA SW Validation Model 확립
-* 성능 평가 체계: 사내 최초 알고리즘 및 시약 제품 종합 성능 평가 관리 체계
 * 리스크 관리 통계 분석: 시약/장비 고유 효과 및 교란 요인 위험 관리 분석
+* 성능 평가 체계: 사내 최초 알고리즘 및 시약 제품 종합 성능 평가 관리 체계
+* 리포팅 자동화: 수동 6개월 → 자동화 3주 (87.5% 시간 단축)
+* 99.2%의 시약 + 알고리즘 안전성 통계적 입증
+* 혁신성: 사내 고유 Switch Model 기반 모듈별 검증 방법론 개발
+
 
 ## 기대효과
 
@@ -380,15 +386,15 @@ format:
   * 신호 RSS (Residual Sum of Squares) 측정
 * 평가 메트릭 QC 등급 분류: Pass (A+,A,B), Fail (F)
 
-![장비 성능별 클러스터링](./data/clustering_result.PNG){width=30%}
+![장비 성능별 클러스터링](./data/clustering_result.PNG){width=25%}
 
 * LSTM을 활용한 Step 1 데이터를 통한 Step 2 결과 예측 모델 개방
   * 합격/불합격 분류 정확도: 94.5%
   * 장비 성능 등급 분류 정확도: 82.7%
 
-![LSTM Confusion Matrix](./data/qc_confusion_matrix.png){width=50%}
+![LSTM Confusion Matrix](./data/qc_confusion_matrix.png){width=48%}
 
-![LSTM ROC Curve](./data/qc_roc_curve.png){width=35%}
+![LSTM ROC Curve](./data/qc_roc_curve.png){width=30%}
 
 * Web App Dashboard Prototype 개발
   * 실무자가 데이터 업로드 하면 자동으로 분석 결과 제공
@@ -418,8 +424,7 @@ format:
 
 * 의학적 문제점
   * 알츠하이머병은 증상 발현까지 20년간 진행되어 전임상 단계 생리학 이해 필요
-  * 유전적 요인이 알츠하이머병에 50% 기여하나 구체적 메커니즘 불명
-  * APOE 유전자 보유자의 대사체 변화 패턴 미규명
+  * 유전적 요인(ex. APOE)이 알츠하이머병에 50% 기여하나 구체적 메커니즘 불명 
 * 데이터 분석적 도전과제
   * 다중 센터 데이터 수집으로 인한 데이터 품질 불일치
   * 고차원 데이터 (약 3,000개 변수) 대비 작은 표본 크기 (146개 관측치)
@@ -432,7 +437,7 @@ format:
 
 ## 솔루션 설계 및 전략
 
-* 데이터 수집 및 전처리 파이프라인
+* 데이터 수집 및 전처리
   * 다중 센터 (New York, Boston, Pittsburgh, Denmark) 혈액 샘플링
   * Mass Spectrometry를 통한 대사체 데이터 디지털화
   * 체계적 데이터 품질 관리 프로세스 구축
@@ -453,32 +458,35 @@ format:
 
 * 프로그래밍: R (Tidyverse, ggplot2, mixOmics, survival, glmnet, etc.) 
 * EDA: Student t-tests, Wilcoxon Mann-Whitney tests, χ² tests, Fisher Exact Tests, ANOVA, Kruskal-Wallis Tests
-* 통계분석: Linear regression, Logistic regression, Cox Proportional Hazards regression, Linear Mixed Effect Model, GWAS, Multiple Comparison Tests
+* 통계분석: Linear/ Logistic regression, Cox Proportional Hazards(PH) regression, Linear Mixed Effect Model, GEE, GWAS, Multiple Comparison Tests
 * 머신러닝: Lasso, Ridge regression, Elastic net, Random forests, AdaBoost, Gradient boosting, SVM, PLS, Sparse PLS
 * 데이터 마이닝: KNN, PCA, K-means clustering, DBSCAN
-* 통계적 검증: Permuted p-values를 통한 multiple correction
-* 도메인 지식: 생리학, 생화학, 신경의학*, 역학, 생물통계학, 유전학
+* 통계적 검증: Permuted p-values를 통한 multiple Testing correction
+* 도메인 지식: 생리학, 생화학, 신경의학, 역학, 생물통계학, 유전학
 * 협업 역량: 다학제 팀 (의사, 생물학자, 생물정보학자, 역학자) 소통
 
 ## 결과
 
-* Metabolic Pathway Map 제시
-* EDA 및 Data Mining을 통한 미지의 강력한 교란자 규명
+* Sparse PLS 선택 (ML): variable extraction & selection, 해석가능성 확보
+* Cox PH Model 선택: 알츠하이머병의 본질적 특성(시간 의존, right censsoring, semi-parametric) 반영
+* GEE (Stat): 가족 구성원 간 유전적 상관관계 존재, 같은 가족 내 구성원들의 Working correlation이 틀려도 일관된 추정값 산출
+* Permutation Test 적용 (Stat): 작은 표본 크기에서 parametric assumption 위반 시 robust한 통계적 추론
+* 기존 8개월간 미지의 강력한 교란자를 EDA 및 Data Mining을 통해 3주 만에 규명 
 * 약 3,000개 대사물질 중 약 60개가 질병과 5% 유의수준에서 유의한 관련성 있음
 * 약 60개 중 13개의 대사물질이 질병과 1% 이하의 유의수준에서 유의한 관련성 있음
 * GWAS를 통해 유의한 대사물질과 유의한 관련이 있는 유전자 규명
-* Sparse Partial Least Squares가 최적 성능의 분류기로 선정
+* Sparse Partial Least Squares가 최적 성능의 분류기로 선정 (분류 정확도 84%)
 
 ![EDA: Correlation Plots between Metabolites and Phenotype](./data/LLFS_datamining.PNG){width=40%}
 
-![일부 GWAS 결과](./data/LLFS_gwas.PNG){width=25%}
+![일부 GWAS 결과](./data/LLFS_gwas.PNG){width=20%}
 
 ![ML Classifier Performance](./data/LLFS_classfier_performance.PNG){width=40%}
 
 ![ML Classifier ROC](./data/LLFS_ROC.PNG){width=40%}
 
   
-## 성과 및 기개효과
+## 성과 및 기대효과
 
 * Columbia University Mailman School of Public Health 연례 연구 발표회 포스터 발표
 * 연례 연구 경진대회에서 약 100명의 대학원생 중 상위 3명 선정, 상금 $1,000 및 학과장상 수상

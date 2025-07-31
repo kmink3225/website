@@ -25,8 +25,8 @@ format:
 
 * 소속: Seegene
 * 기간
-  * Phase1: 2024.10 ~ 2025.08 (진행중)
-  * Phase2~3: 2025.09 ~ 2027.09
+  * Phase1: 데이터 표준화 시스템 구축 2024.10 ~ 2025.08 (진행중)
+  * Phase2~3: 데이터 거버넌스 시스템 구축 2025.09 ~ 2027.09
 * 참여인원: 20명 (Data Scientist, Data Engineer, SW 개발자, BT 개발자, DBA)
 * 총괄장 수명 프로젝트
 * 대내적 의의: 전사 자동화 시스템 구축의 시발점
@@ -34,7 +34,7 @@ format:
 * 대외적 의의: 글로벌 기술 공유 사업의 시발점
   * Microsoft, Springer Nature, KPMG 등 각 국 정부기관 및 기업 등
 * 역할: Technical Lead
-  * 표준화 체계 및 프로세스 구축, Governance Architecture 설계
+  * 표준화 체계, 아키텍처 및 프로세스 구축
   * 1명의 Junior Data Scientist 멘토링: 문제정의, 데이터 분석 역량 강화
   * 19명의 IT/BT 개발자 멘토링: 데이터 거버넌스 70% 이해도 달성
 
@@ -59,15 +59,15 @@ format:
 
 ## 솔루션 설계 및 전략
 
-![Data Standardization Framework](./data/governance_nlp.PNG){height=45%}
+![Data Standardization Architecture](./data/governance_nlp.PNG){height=45%}
 
-* Phase 1: Proof of Concept
+* Phase 1: 표준화 프레임워크 구축 (Proof of Concept)
   * 표준화 프래임워크 실증 + 현실적 범위 설정 + 단계적 표준화 진행
   * 표준화 프레임워크 구축 (원칙 + 표준 사전 + 품질 평가)
   * 표준화 프로세스 반자동화 시스템 구축: Hybrid Rule Engine
     * Rule Based 표준화 프로세스 구축
     * Data Driven (딥러닝을 활용) 표준화 프로세스 병목 현상 해결
-* Phase 2 ~ 3: 표준화 범위 확장
+* Phase 2 ~ 3: 표준화 범위 확장 및 데이터 거버넌스 시스템 구축
   * DB 확장 시 표준화 프로세스 시스템 확장
   * MS Azure Data Factory & Databricks 연동
   * 거버넌스 체계 구축, 표준화 교육 및 캠페인 진행
@@ -77,9 +77,10 @@ format:
 
 ## 기술 스택 및 요구 역량
 
-* 데이터 처리: Python (pandas, numpy, regex, NLTK, konlpy)
-* 자연어 처리: Pytorch (Hugging Face, Transformer, BiLSTM + Attention, AlBERT)
-* 시각화 & 모니터링: Streamlit, matplotlib/seaborn, plotly
+* 데이터 처리: Python (pandas, numpy, regex, NLTK, konlpy, pyarrow)
+* 자연어 처리: Pytorch (Hugging Face, Transformer, KoBERT, KoSRoBERTa)
+* 머신러닝: scikit-learn (HDBSCAN, PCA, UMAP, silhouette score, 등)
+* 시각화 & 모니터링: Streamlit, matplotlib/seaborn, plotly, NetworkX
 * RAG: Langchain, OpenAI, Hugging Face
 * 워크플로우 자동화: Apache Airflow
 * 기술적 역량
@@ -109,10 +110,10 @@ format:
   * 자연어 처리를 활용한 용어별 도메인 그룹 분류 및 유사 용어 그룹핑
     * 도메인 그룹 분류: 용어 중복 방지, 도메인 항목 관리 및 도메인 그룹 관리
       (예시: "USER_ID", "고객번호", "제품코드", "비밀번호" 등)
-    * KoBERT(한글 분류 정확도 95.65%), ALBERT(영어 분류 정확도 99.1%)
-    * 유사 용어 Clustering: 금칙어 관리 및 표준안 관리
-      (예시: "사용자ID", "UserID", "User", "user_id" 등 금칙어 관리)
     * 총 5,632개 훈련 용어, 14개 도메인 그룹, 훈련/테스트 분할 80%/20%
+    * 유사 용어 Clustering:  금칙어 관리 및 표준안 관리
+      (예시: "사용자ID", "UserID", "User", "user_id" 등 금칙어 관리)
+    * monologg/kobert (한글 분류 정확도 95.65%), jhgan/ko-sroberta-multitask (Clustering Silhouette Score, 0.2752 -> 0.4374)
   * 코드 스니펫을 입력받아 RAG(LangChain + OpenAI API)를 활용하여 논리명 추천
     * 데이터 표준화 원칙 (약 200개 Rules) 기반 논리명 추천
     * LLM 논리명을 입력받아 커스텀 약어생성모듈로 물리명 추천
@@ -131,8 +132,6 @@ format:
 * 장기적 비즈니스 가치
   * 데이터 표준화 체계 구축으로 데이터 활용도 향상
   * 부서 간 데이터 공유 활성화 및 데이터 통합 작업 시간 단축
-  * 규제 대응 및 감사 준비 시간 단축
-  * 실험 자동화 시스템 구축
   * 실험 데이터 모니터링 시스템 구축
   * 글로벌 기술 공유사업 본격화
 

@@ -328,7 +328,294 @@ graph TB
     class F1,F2,F3,F4,F5 deployStyle
 ```
 
+### 표준화 품질 평가 시스템 아키텍쳐
 
+```{mermaid}
+graph TB
+    %% Main Entry Point
+    Main[DataStandardizationAnalyzer<br/>메인 분석기]
+    
+    %% Core Processing Classes
+    DataLoader[DataLoader<br/>데이터 로더]
+    TokenProcessor[TokenProcessor<br/>토큰 처리기]
+    AbbreviationManager[AbbreviationManager<br/>약어 관리자]
+    RuleAnalyzer[RuleAnalyzer<br/>규칙 분석기]
+    
+    %% Rule Checker Classes
+    subgraph RuleCheckers["규칙 검증기들"]
+        
+    end
+    
+    %% Analysis Classes
+    CompletenessAnalyzer[CompletenessAnalyzer<br/>완전성 분석기]
+    VocabularyAnalyzer[VocabularyAnalyzer<br/>어휘 분석기]
+    
+    %% Output Classes
+    ReportGenerator[ReportGenerator<br/>보고서 생성기]
+    TroubleShooting[TroubleShooting<br/>디버깅 도구]
+    
+    %% Data Structures
+    subgraph DataStructures["데이터 구조"]
+        EntityInfo[EntityInfo<br/>엔티티 정보]
+        RuleViolation[RuleViolation<br/>규칙 위반 정보]
+        TokenAnalysis[TokenAnalysis<br/>토큰 분석 결과]
+    end
+    
+    %% Enums
+    subgraph Enums["열거형"]
+        AbbreviationStrategy[AbbreviationStrategy<br/>약어 생성 전략]
+        DuplicateResolutionStrategy[DuplicateResolutionStrategy<br/>중복 해결 전략]
+    end
+    
+    %% External Data
+    ExcelFile[(Excel File<br/>논리명 취합 데이터)]
+    DomainDict[(Domain Dictionary<br/>도메인 사전)]
+    
+    %% Output Files
+    Results[(분석 결과<br/>Excel/Text Files)]
+    GlossaryDict[(용어사전<br/>Glossary Dictionary)]
+    
+    %% Main Flow
+    Main --> DataLoader
+    Main --> RuleAnalyzer
+    Main --> CompletenessAnalyzer
+    Main --> ReportGenerator
+    Main --> TroubleShooting
+    
+    %% Data Loading
+    ExcelFile --> DataLoader
+    DataLoader --> |테이블/컬럼 데이터| RuleAnalyzer
+    
+    %% Token Processing Flow
+    RuleAnalyzer --> TokenProcessor
+    RuleAnalyzer --> AbbreviationManager
+    TokenProcessor --> AbbreviationManager
+    
+    %% Rule Checking
+    RuleAnalyzer --> RuleCheckers
+    RuleCheckers --> EntityInfo
+    RuleCheckers --> RuleViolation
+    
+    %% Abbreviation Management
+    AbbreviationManager --> AbbreviationStrategy
+    AbbreviationManager --> DuplicateResolutionStrategy
+    AbbreviationManager --> TokenAnalysis
+    
+    %% Analysis Flow
+    RuleAnalyzer --> |분석 결과| ReportGenerator
+    DataLoader --> |원본 데이터| CompletenessAnalyzer
+    DataLoader --> |논리명 데이터| VocabularyAnalyzer
+    
+    %% Domain Integration
+    DomainDict --> |도메인 매핑| GlossaryDict
+    RuleAnalyzer --> |엔티티 정보| GlossaryDict
+    
+    %% Output Generation
+    ReportGenerator --> Results
+    CompletenessAnalyzer --> Results
+    VocabularyAnalyzer --> Results
+    
+    %% Debugging
+    TroubleShooting --> AbbreviationManager
+    TroubleShooting --> TokenProcessor
+    
+    %% Styling
+    classDef mainClass fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    classDef coreClass fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef ruleClass fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef dataClass fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef outputClass fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    
+    class Main mainClass
+    class DataLoader,TokenProcessor,AbbreviationManager,RuleAnalyzer coreClass
+    class BasicRuleChecker,ConsonantRuleChecker,VowelRuleChecker,LengthRuleChecker ruleClass
+    class EntityInfo,RuleViolation,TokenAnalysis,AbbreviationStrategy,DuplicateResolutionStrategy dataClass
+    class ReportGenerator,CompletenessAnalyzer,VocabularyAnalyzer,TroubleShooting,Results,GlossaryDict outputClass
+```
+
+
+### NLP Classifier 다이어그램 (0805 최신)
+
+```{mermaid}
+graph TD
+    %% Data Generation
+    subgraph DataGen["훈련 데이터 생성"]
+        RuleGen[규칙기반 생성기<br/>2,800개 도메인]
+        LLMGen[LLM 생성기<br/>2,800개 도메인]
+    end
+    
+    %% Data Processing
+    DataMerger[데이터 통합<br/>중복제거]
+    TrainingData[통합 훈련셋<br/>~5,600개 도메인<br/>14개 그룹]
+    
+    %% Model Training
+    subgraph ModelTrain["KoBERT 분류기"]
+        Tokenizer[KoBERT<br/>Tokenizer]
+        Model[KoBERT Encoder<br/>+ Classifier Head]
+        Training[모델 훈련<br/>3 epochs]
+    end
+    
+    %% Output
+    TrainedModel[훈련된 모델<br/>kobert_domain_classifier.pth]
+    Prediction[도메인 분류 예측<br/>신뢰도 포함]
+    
+    %% Flow
+    RuleGen --> DataMerger
+    LLMGen --> DataMerger
+    DataMerger --> TrainingData
+    
+    TrainingData --> Tokenizer
+    Tokenizer --> Model
+    Model --> Training
+    Training --> TrainedModel
+    
+    TrainedModel --> Prediction
+    
+    %% Domain Groups Box
+    DomainGroups[" 14개 도메인 그룹<br/>날짜, 명, 번호, 식별, 코드, 분류, 값,<br/> 수, 율, 내용, 보안, 단위, 집합, 일반단어"]
+    
+    TrainingData -.-> DomainGroups
+    
+    %% Styling
+    classDef generation fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef processing fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef model fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef output fill:#f1f8e9,stroke:#558b2f,stroke-width:2px
+    classDef info fill:#f5f5f5,stroke:#757575,stroke-width:1px
+    
+    class RuleGen,LLMGen generation
+    class DataMerger,TrainingData processing
+    class Tokenizer,Model,Training model
+    class TrainedModel,Prediction output
+    class DomainGroups info
+```
+
+```{mermaid}
+graph TB
+    %% Data Generation Phase
+    subgraph DataGeneration["📊 훈련 데이터 생성"]
+        %% Rule-based Generation
+        subgraph RuleBased["🔧 규칙기반 생성"]
+            StandardWordDict[(표준 단어 사전<br/>tokenized_word_initial_pool)]
+            DomainDict[(기존 도메인 사전<br/>domain_dictionary)]
+            
+            DomainGenerator[EnhancedDomainGenerator<br/>규칙기반 도메인 생성기]
+            
+            StandardWordDict --> DomainGenerator
+            DomainDict --> DomainGenerator
+            
+            DomainGenerator --> RuleGeneratedData[(규칙생성 데이터<br/>2,800개 도메인<br/>14개 그룹)]
+        end
+        
+        %% LLM Generation  
+        subgraph LLMBased["🤖 LLM 기반 생성"]
+            LLMPrompt[LLM 프롬프트<br/>PCR 실험 특화]
+            LLMModel[Large Language Model]
+            
+            LLMPrompt --> LLMModel
+            LLMModel --> DomainDataMD[(domain_data.md<br/>2,800개 도메인<br/>14개 그룹)]
+        end
+    end
+    
+    %% Data Processing Phase
+    subgraph DataProcessing["🔄 데이터 처리"]
+        %% MD to Parquet Conversion
+        MDParser[MD→Parquet 변환기<br/>parse_md_to_dataframe]
+        DomainDataMD --> MDParser
+        MDParser --> LLMParquet[(domain_data.parquet<br/>구조화된 데이터)]
+        
+        %% Rule-based to Parquet
+        RuleGeneratedData --> RuleParquet[(domain_generated_domains_for_training.parquet<br/>규칙기반 구조화 데이터)]
+        
+        %% Data Merging
+        DataMerger[데이터 병합기<br/>merge_domain_data]
+        LLMParquet --> DataMerger
+        RuleParquet --> DataMerger
+        DataMerger --> MergedData[(통합 훈련 데이터<br/>~5,600개 도메인<br/>중복제거 후)]
+    end
+    
+    %% Model Training Phase
+    subgraph ModelTraining["🧠 KoBERT 분류기 훈련"]
+        %% Data Preparation
+        DataLoader[DomainDataset<br/>데이터 로더]
+        MergedData --> DataLoader
+        
+        %% Tokenization
+        KoBERTTokenizer[KoBERT Tokenizer<br/>monologg/kobert]
+        DataLoader --> KoBERTTokenizer
+        
+        %% Model Architecture
+        subgraph ModelArch["모델 아키텍처"]
+            KoBERTModel[KoBERT Encoder<br/>Pre-trained Model]
+            DropoutLayer[Dropout Layer<br/>0.3]
+            ClassifierHead[Classification Head<br/>Linear Layer]
+            
+            KoBERTModel --> DropoutLayer
+            DropoutLayer --> ClassifierHead
+        end
+        
+        KoBERTTokenizer --> ModelArch
+        
+        %% Training Components
+        Optimizer[AdamW Optimizer<br/>lr=2e-5]
+        LossFunction[CrossEntropyLoss]
+        TrainingLoop[Training Loop<br/>3 epochs, batch=64]
+        
+        ModelArch --> TrainingLoop
+        Optimizer --> TrainingLoop
+        LossFunction --> TrainingLoop
+        
+        %% Model Output
+        TrainingLoop --> TrainedModel[Trained Model<br/>kobert_domain_classifier.pth]
+    end
+    
+    %% Evaluation Phase
+    subgraph ModelEvaluation["📈 모델 평가"]
+        TestDataset[Test Dataset<br/>20% 분할]
+        DetailedEval[상세 평가<br/>detailed_evaluation]
+        
+        DataLoader --> TestDataset
+        TrainedModel --> DetailedEval
+        TestDataset --> DetailedEval
+        
+        DetailedEval --> EvalResults[(평가 결과<br/>정확도, 분류 보고서<br/>혼동 행렬)]
+    end
+    
+    %% Prediction Phase
+    subgraph Prediction["🔮 예측 서비스"]
+        InputDomain[입력 도메인명<br/>예: 실험시작일자]
+        PredictFunction[predict 함수]
+        
+        TrainedModel --> PredictFunction
+        InputDomain --> PredictFunction
+        PredictFunction --> PredResult[(예측 결과<br/>도메인 그룹 + 신뢰도)]
+    end
+    
+    %% Data Flow Labels
+    DataGeneration -.-> DataProcessing
+    DataProcessing -.-> ModelTraining  
+    ModelTraining -.-> ModelEvaluation
+    ModelTraining -.-> Prediction
+    
+    %% Domain Groups
+    subgraph DomainGroups["📋 14개 도메인 그룹"]
+        Groups["날짜, 보안, 코드, 분류, 명, 번호<br/>식별, 내용, 값, 수, 율, 단위<br/>집합, 일반단어"]
+    end
+    
+    %% Key Components Styling
+    classDef dataSource fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef ruleEngine fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef llmEngine fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef processing fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef model fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef output fill:#f1f8e9,stroke:#558b2f,stroke-width:2px
+    
+    class StandardWordDict,DomainDict,DomainDataMD,MergedData dataSource
+    class DomainGenerator,MDParser,DataMerger processing
+    class LLMModel,LLMPrompt llmEngine
+    class KoBERTModel,KoBERTTokenizer,DataLoader,TrainingLoop model
+    class TrainedModel,EvalResults,PredResult output
+```
 
 ### airflow 플로우 다이어그램
 

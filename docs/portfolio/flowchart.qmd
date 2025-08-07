@@ -436,6 +436,7 @@ graph TB
 
 ### NLP Classifier 다이어그램 (0805 최신)
 
+Simple Veresion
 ```{mermaid}
 graph TD
     %% Data Generation
@@ -446,7 +447,7 @@ graph TD
     
     %% Data Processing
     DataMerger[데이터 통합<br/>중복제거]
-    TrainingData[통합 훈련셋<br/>~5,600개 도메인<br/>14개 그룹]
+    
     
     %% Model Training
     subgraph ModelTrain["KoBERT 분류기"]
@@ -617,7 +618,458 @@ graph TB
     class TrainedModel,EvalResults,PredResult output
 ```
 
-### airflow 플로우 다이어그램
+### MLOps 파이프라인 아키텍처
+
+#### Overview Architecture
+
+```{mermaid}
+graph TB
+    subgraph "Production Environment"
+        A1[KoBERT API<br/>도메인 분류 서비스]
+        A2[Performance Logs<br/>정확도 + 신뢰도]
+        A3[User Feedback<br/>분류 결과 검증]
+    end
+    
+    subgraph "Monitoring & Detection"
+        B1[Daily Performance<br/>Check<br/>배치 정확도 계산]
+        B2[Drift Detection<br/>KL Divergence]
+        B3{Alert Triggers<br/>정확도 < 90%<br/>드리프트 > 0.15}
+    end
+    
+    subgraph "MLflow Management"
+        C1[(Experiment<br/>Tracking)]
+        C2[(Model<br/>Registry)]
+        C3[Web Dashboard<br/>모델 비교 & 관리]
+    end
+    
+    subgraph "Auto Retraining"
+        D1[Data Collection<br/>최근 3개월]
+        D2[Optuna HPO<br/>하이퍼파라미터 튜닝]
+        D3[KoBERT Training<br/>GPU 최적화]
+        D4[Model Validation<br/>성능 검증]
+    end
+    
+    subgraph "A/B Testing"
+        E1[Traffic Split<br/>80% vs 20%]
+        E2[Statistical Test<br/>t-test 유의성]
+        E3{Performance<br/>Improvement?}
+        E4[Auto Deploy<br/>or Rollback]
+    end
+    
+    subgraph "Stakeholders"
+        F1[Data Scientists<br/>모델 개선]
+        F2[Business Users<br/>분류 서비스]
+        F3[Grafana Dashboard<br/>실시간 모니터링]
+    end
+    
+    %% Main Flow
+    A1 --> A2
+    A2 --> B1
+    A3 --> B1
+    B1 --> B2
+    B2 --> B3
+    
+    B3 -->|Trigger| D1
+    D1 --> D2
+    D2 --> D3
+    D3 --> D4
+    D4 --> C1
+    D3 --> C2
+    
+    C2 --> E1
+    E1 --> E2
+    E2 --> E3
+    E3 -->|Yes| E4
+    E3 -->|No| A1
+    E4 --> A1
+    
+    %% Monitoring & Stakeholder
+    B1 --> F3
+    C3 --> F1
+    A1 --> F2
+    F3 --> F1
+    F3 --> F2
+    
+    %% Feedback
+    F1 -.->|Insights| D2
+    F2 -.->|Feedback| A3
+    
+    %% Styling
+    classDef prod fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef monitor fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef mlflow fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef retrain fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef abtest fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef stakeholder fill:#f1f8e9,stroke:#689f38,stroke-width:2px
+    
+    class A1,A2,A3 prod
+    class B1,B2,B3 monitor
+    class C1,C2,C3 mlflow
+    class D1,D2,D3,D4 retrain
+    class E1,E2,E3,E4 abtest
+    class F1,F2,F3 stakeholder
+```
+
+**시스템 성숙도 및 자동화 수준**
+
+
+```{mermaid}
+graph LR
+    subgraph "Manual Stage Before"
+        M1[수동 성능 체크<br/>월 1회]
+        M2[수동 재훈련<br/>2주 소요]
+        M3[수동 배포<br/>4시간 소요]
+        M4[수동 모니터링<br/>사후 대응]
+    end
+    
+    subgraph "Semi-Automated Transition"
+        S1[스케줄 성능 체크<br/>주 1회]
+        S2[반자동 재훈련<br/>3일 소요]
+        S3[스크립트 배포<br/>1시간 소요]
+        S4[대시보드 모니터링<br/>능동 대응]
+    end
+    
+    subgraph "Fully Automated Current"
+        F1[실시간 성능 체크<br/>24/7 모니터링]
+        F2[자동 재훈련<br/>18시간 소요]
+        F3[자동 A/B 배포<br/>5분 소요]
+        F4[지능형 모니터링<br/>예측 대응]
+    end
+    
+    M1 -.->|MLOps 도입| S1
+    M2 -.->|파이프라인 구축| S2
+    M3 -.->|CI/CD 적용| S3
+    M4 -.->|모니터링 시스템| S4
+    
+    S1 -.->|실시간화| F1
+    S2 -.->|완전 자동화| F2
+    S3 -.->|A/B 테스팅| F3
+    S4 -.->|AI 기반 예측| F4
+    
+    classDef manual fill:#ffcdd2,stroke:#d32f2f
+    classDef semi fill:#fff3e0,stroke:#f57c00
+    classDef auto fill:#c8e6c9,stroke:#388e3c
+    
+    class M1,M2,M3,M4 manual
+    class S1,S2,S3,S4 semi
+    class F1,F2,F3,F4 auto
+```
+
+
+**핵심 성과 지표 대시보드**
+
+```{mermaid}
+graph TB
+    subgraph "Model Performance KPIs"
+        KPI1[분류 정확도<br/>95.8%<br/>목표: 95%]
+        KPI2[평균 신뢰도<br/>0.89<br/>목표: 0.85]
+        KPI3[드리프트 감지<br/>1.8일<br/>목표: 3일]
+        KPI4[재훈련 성공률<br/>92%<br/>목표: 90%]
+    end
+    
+    subgraph "Operational Efficiency"
+        OE1[응답 시간<br/>85ms<br/>목표: 100ms]
+        OE2[처리량<br/>200 req/s<br/>목표: 150 req/s]
+        OE3[서비스 가용성<br/>99.5%<br/>목표: 99%]
+        OE4[자동화 비율<br/>90%<br/>목표: 80%]
+    end
+    
+    subgraph "ML Engineering Quality"
+        ML1[실험 추적<br/>127회<br/>100% 재현가능]
+        ML2[A/B 테스트<br/>12회 실행<br/>7회 성공 승급]
+        ML3[모델 버전<br/>23개 관리<br/>8회 무사고 롤백]
+        ML4[알림 정확도<br/>92%<br/>False Positive 8%]
+    end
+    
+    subgraph "Business Impact"
+        BI1[운영 시간 절감<br/>90% 감소<br/>주 20h to 2h]
+        BI2[대응 시간 단축<br/>87% 개선<br/>2주 to 1.8일]
+        BI3[사용자 만족도<br/>4.7/5.0<br/>Data Steward 평가]
+        BI4[문의 건수 감소<br/>80% 감소<br/>일 15건 to 3건]
+    end
+    
+    classDef kpi fill:#e8eaf6,stroke:#3f51b5,stroke-width:3px
+    classDef operational fill:#e0f2f1,stroke:#00796b,stroke-width:3px
+    classDef ml fill:#fff3e0,stroke:#ff8f00,stroke-width:3px
+    classDef business fill:#f3e5f5,stroke:#8e24aa,stroke-width:3px
+    
+    class KPI1,KPI2,KPI3,KPI4 kpi
+    class OE1,OE2,OE3,OE4 operational
+    class ML1,ML2,ML3,ML4 ml
+    class BI1,BI2,BI3,BI4 business
+```
+
+
+#### ML 모델 생명주기 관리 아키텍처
+
+```{mermaid}
+graph TB
+    subgraph "Data Sources"
+        A1[Production Logs<br/>실제 분류 결과]
+        A2[New Metadata<br/>신규 용어 데이터]
+        A3[User Feedback<br/>분류 정확성 피드백]
+    end
+    
+    subgraph "Performance Monitoring"
+        B1[Daily Batch Inference<br/>일일 성능 평가]
+        B2[Drift Detection<br/>KL Divergence 계산]
+        B3[Confidence Analysis<br/>신뢰도 분포 추적]
+        B4[Error Pattern Analysis<br/>오분류 패턴 분석]
+    end
+    
+    subgraph "Alert System"
+        C1{Performance Check<br/>정확도 < 90%}
+        C2{Distribution Drift<br/>KL Div > 0.15}
+        C3{Low Confidence<br/>> 20% predictions}
+        C4[Slack Notification<br/>즉시 알림]
+    end
+    
+    subgraph "MLflow Ecosystem"
+        D1[(Experiment Tracking<br/>실험 기록 저장)]
+        D2[(Model Registry<br/>모델 버전 관리)]
+        D3[(Artifacts Store<br/>모델 파일 저장)]
+        D4[MLflow UI<br/>웹 대시보드]
+    end
+    
+    subgraph "Automated Retraining"
+        E1[Data Collection<br/>최근 3개월 데이터]
+        E2[Auto Labeling<br/>고신뢰도 예측 라벨링]
+        E3[Optuna Tuning<br/>하이퍼파라미터 최적화]
+        E4[KoBERT Training<br/>모델 재훈련]
+        E5[Model Validation<br/>성능 검증]
+    end
+    
+    subgraph "A/B Testing"
+        F1[Traffic Split<br/>80% vs 20%]
+        F2[Statistical Test<br/>t-test 유의성 검증]
+        F3[Performance Compare<br/>정확도, 응답시간 비교]
+        F4{Improvement?<br/>성능 향상 확인}
+    end
+    
+    subgraph "Model Serving"
+        G1[Production Model<br/>현재 서비스 모델]
+        G2[Staging Model<br/>테스트 중인 모델]
+        G3[Model API<br/>REST Endpoint]
+        G4[Rollback System<br/>원클릭 복구]
+    end
+    
+    %% Data Flow
+    A1 --> B1
+    A2 --> B1
+    A3 --> B4
+    
+    B1 --> C1
+    B2 --> C2
+    B3 --> C3
+    B4 --> C4
+    
+    C1 -->|Trigger| E1
+    C2 -->|Trigger| E1
+    C3 -->|Trigger| E1
+    C4 --> E1
+    
+    E1 --> E2
+    E2 --> E3
+    E3 --> E4
+    E4 --> E5
+    E5 --> D1
+    
+    E4 --> D2
+    E4 --> D3
+    D2 --> G2
+    
+    G2 --> F1
+    F1 --> F2
+    F2 --> F3
+    F3 --> F4
+    
+    F4 -->|Yes| G1
+    F4 -->|No| G4
+    
+    G1 --> G3
+    G3 --> B1
+    
+    D1 --> D4
+    D2 --> D4
+    D3 --> D4
+    
+    %% Styling
+    classDef data fill:#e3f2fd
+    classDef monitor fill:#fff3e0
+    classDef alert fill:#ffebee
+    classDef mlflow fill:#f3e5f5
+    classDef retrain fill:#e8f5e8
+    classDef abtest fill:#fce4ec
+    classDef serve fill:#f1f8e9
+    
+    class A1,A2,A3 data
+    class B1,B2,B3,B4 monitor
+    class C1,C2,C3,C4 alert
+    class D1,D2,D3,D4 mlflow
+    class E1,E2,E3,E4,E5 retrain
+    class F1,F2,F3,F4 abtest
+    class G1,G2,G3,G4 serve
+```
+
+#### 자동 재훈련 파이프라인 워크플로우
+
+```{mermaid}
+flowchart TD
+    A[모델 성능 모니터링<br/>Daily Batch] --> B{트리거 조건 체크}
+    
+    B -->|정확도 < 90%<br/>3일 연속| C[재훈련 시작]
+    B -->|KL Divergence > 0.15| C
+    B -->|저신뢰도 > 20%| C
+    B -->|조건 미충족| A
+    
+    C --> D[데이터 수집<br/>최근 3개월 + 기존 훈련셋]
+    
+    D --> E[자동 라벨링<br/>기존 모델 고신뢰도 예측 활용]
+    
+    E --> F{라벨링 품질<br/>체크}
+    F -->|품질 불량| G[수동 라벨링 요청<br/>Slack 알림]
+    F -->|품질 양호| H[Optuna 하이퍼파라미터 튜닝<br/>20회 Trial]
+    
+    G --> H
+    
+    H --> I[KoBERT 재훈련<br/>GPU 최적화]
+    
+    I --> J[모델 검증<br/>홀드아웃 테스트셋]
+    
+    J --> K{성능 개선<br/>확인}
+    
+    K -->|개선됨| L[MLflow 등록<br/>Staging 환경]
+    K -->|개선 안됨| M[재훈련 실패<br/>알림 + 분석]
+    
+    L --> N[A/B 테스트 시작<br/>20% 트래픽]
+    
+    N --> O[1주간 성능 수집<br/>정확도, 응답시간, 신뢰도]
+    
+    O --> P[통계적 검정<br/>t-test 유의성 검증]
+    
+    P --> Q{유의한 개선<br/>p < 0.05}
+    
+    Q -->|Yes| R[Production 배포<br/>100% 트래픽 전환]
+    Q -->|No| S[Staging 롤백<br/>기존 모델 유지]
+    
+    R --> T[성공 알림<br/>성능 개선 리포트]
+    S --> U[실패 알림<br/>개선 방안 분석]
+    
+    T --> V[모니터링 재시작]
+    U --> V
+    M --> V
+    
+    V --> A
+    
+    %% Styling
+    classDef start fill:#c8e6c9
+    classDef process fill:#bbdefb
+    classDef decision fill:#ffcdd2
+    classDef success fill:#a5d6a7
+    classDef failure fill:#ef9a9a
+    classDef mlops fill:#e1bee7
+    
+    class A,C start
+    class D,E,H,I,J,N,O,P process
+    class B,F,K,Q decision
+    class L,R,T success
+    class G,M,S,U failure
+    class V mlops
+```
+
+#### MLflow 기반 실험 관리 시스템
+
+```{mermaid}
+graph TB
+    subgraph "MLflow Tracking Server"
+        T1[Experiment 1<br/>Baseline Model]
+        T2[Experiment 2<br/>Drift Response #1]
+        T3[Experiment 3<br/>Drift Response #2]
+        T4[Experiment N<br/>Latest Training]
+    end
+    
+    subgraph "Experiment Details"
+        E1[Metrics<br/>accuracy, f1_score<br/>precision, recall]
+        E2[Parameters<br/>learning_rate, batch_size<br/>min_cluster_size]
+        E3[Artifacts<br/>model.pth, tokenizer<br/>label_encoder.pkl]
+        E4[Tags<br/>trigger_reason<br/>data_version]
+    end
+    
+    subgraph "Model Registry"
+        R1[None<br/>실험 단계]
+        R2[Staging<br/>A/B 테스트 중]
+        R3[Production<br/>실서비스 중]
+        R4[Archived<br/>구 버전 보관]
+    end
+    
+    subgraph "Model Comparison"
+        C1[Performance Chart<br/>시계열 정확도 변화]
+        C2[Parameter Impact<br/>하이퍼파라미터 영향도]
+        C3[Best Model Selection<br/>자동 최적 모델 선택]
+        C4[Model Lineage<br/>모델 계보 추적]
+    end
+    
+    subgraph "Automated Workflow"
+        W1[Auto Registration<br/>훈련 완료 시 자동 등록]
+        W2[Stage Promotion<br/>검증 통과 시 승급]
+        W3[Production Deploy<br/>A/B 테스트 통과 시 배포]
+        W4[Model Rollback<br/>성능 저하 시 롤백]
+    end
+    
+    subgraph "Integration"
+        I1[Python API<br/>mlflow.sklearn.log_model]
+        I2[REST API<br/>모델 서빙 엔드포인트]
+        I3[Grafana Dashboard<br/>메트릭 시각화]
+        I4[Slack Webhooks<br/>상태 변경 알림]
+    end
+    
+    %% Connections
+    T4 --> E1
+    T4 --> E2
+    T4 --> E3
+    T4 --> E4
+    
+    E1 --> R1
+    R1 --> R2
+    R2 --> R3
+    R3 --> R4
+    
+    T1 --> C1
+    T2 --> C1
+    T3 --> C1
+    T4 --> C1
+    
+    C1 --> C2
+    C2 --> C3
+    C3 --> C4
+    
+    R2 --> W2
+    W2 --> W3
+    W3 --> R3
+    R3 --> W4
+    
+    W1 --> I1
+    W2 --> I2
+    W3 --> I3
+    W4 --> I4
+    
+    %% Styling
+    classDef experiment fill:#e3f2fd
+    classDef details fill:#fff3e0
+    classDef registry fill:#f3e5f5
+    classDef compare fill:#e8f5e8
+    classDef workflow fill:#fce4ec
+    classDef integration fill:#f1f8e9
+    
+    class T1,T2,T3,T4 experiment
+    class E1,E2,E3,E4 details
+    class R1,R2,R3,R4 registry
+    class C1,C2,C3,C4 compare
+    class W1,W2,W3,W4 workflow
+    class I1,I2,I3,I4 integration
+```
+
+#### airflow 플로우 다이어그램
 
 ```{mermaid}
 graph TB

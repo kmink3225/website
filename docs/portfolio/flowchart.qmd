@@ -69,6 +69,114 @@ graph TB
 
 ```
 
+
+### 표준화 품질 평가 시스템 아키텍쳐
+
+```{mermaid}
+graph TB
+    %% Main Entry Point
+    Main[DataStandardizationAnalyzer<br/>메인 분석기]
+    
+    %% Core Processing Classes
+    DataLoader[DataLoader<br/>데이터 로더]
+    TokenProcessor[TokenProcessor<br/>토큰 처리기]
+    AbbreviationManager[AbbreviationManager<br/>약어 관리자]
+    RuleAnalyzer[RuleAnalyzer<br/>규칙 분석기]
+    
+    %% Rule Checker Classes
+    subgraph RuleCheckers["규칙 검증기들"]
+        
+    end
+    
+    %% Analysis Classes
+    CompletenessAnalyzer[CompletenessAnalyzer<br/>완전성 분석기]
+    VocabularyAnalyzer[VocabularyAnalyzer<br/>어휘 분석기]
+    
+    %% Output Classes
+    ReportGenerator[ReportGenerator<br/>보고서 생성기]
+    TroubleShooting[TroubleShooting<br/>디버깅 도구]
+    
+    %% Data Structures
+    subgraph DataStructures["데이터 구조"]
+        EntityInfo[EntityInfo<br/>엔티티 정보]
+        RuleViolation[RuleViolation<br/>규칙 위반 정보]
+        TokenAnalysis[TokenAnalysis<br/>토큰 분석 결과]
+    end
+    
+    %% Enums
+    subgraph Enums["열거형"]
+        AbbreviationStrategy[AbbreviationStrategy<br/>약어 생성 전략]
+        DuplicateResolutionStrategy[DuplicateResolutionStrategy<br/>중복 해결 전략]
+    end
+    
+    %% External Data
+    ExcelFile[(Excel File<br/>논리명 취합 데이터)]
+    DomainDict[(Domain Dictionary<br/>도메인 사전)]
+    
+    %% Output Files
+    Results[(분석 결과<br/>Excel/Text Files)]
+    GlossaryDict[(용어사전<br/>Glossary Dictionary)]
+    
+    %% Main Flow
+    Main --> DataLoader
+    Main --> RuleAnalyzer
+    Main --> CompletenessAnalyzer
+    Main --> ReportGenerator
+    Main --> TroubleShooting
+    
+    %% Data Loading
+    ExcelFile --> DataLoader
+    DataLoader --> |테이블/컬럼 데이터| RuleAnalyzer
+    
+    %% Token Processing Flow
+    RuleAnalyzer --> TokenProcessor
+    RuleAnalyzer --> AbbreviationManager
+    TokenProcessor --> AbbreviationManager
+    
+    %% Rule Checking
+    RuleAnalyzer --> RuleCheckers
+    RuleCheckers --> EntityInfo
+    RuleCheckers --> RuleViolation
+    
+    %% Abbreviation Management
+    AbbreviationManager --> AbbreviationStrategy
+    AbbreviationManager --> DuplicateResolutionStrategy
+    AbbreviationManager --> TokenAnalysis
+    
+    %% Analysis Flow
+    RuleAnalyzer --> |분석 결과| ReportGenerator
+    DataLoader --> |원본 데이터| CompletenessAnalyzer
+    DataLoader --> |논리명 데이터| VocabularyAnalyzer
+    
+    %% Domain Integration
+    DomainDict --> |도메인 매핑| GlossaryDict
+    RuleAnalyzer --> |엔티티 정보| GlossaryDict
+    
+    %% Output Generation
+    ReportGenerator --> Results
+    CompletenessAnalyzer --> Results
+    VocabularyAnalyzer --> Results
+    
+    %% Debugging
+    TroubleShooting --> AbbreviationManager
+    TroubleShooting --> TokenProcessor
+    
+    %% Styling
+    classDef mainClass fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
+    classDef coreClass fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef ruleClass fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef dataClass fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef outputClass fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    
+    class Main mainClass
+    class DataLoader,TokenProcessor,AbbreviationManager,RuleAnalyzer coreClass
+    class BasicRuleChecker,ConsonantRuleChecker,VowelRuleChecker,LengthRuleChecker ruleClass
+    class EntityInfo,RuleViolation,TokenAnalysis,AbbreviationStrategy,DuplicateResolutionStrategy dataClass
+    class ReportGenerator,CompletenessAnalyzer,VocabularyAnalyzer,TroubleShooting,Results,GlossaryDict outputClass
+```
+
+
+
 ### NLP Engine Domain Classifier
 
 ```{mermaid}
@@ -222,218 +330,6 @@ graph TB
 ```
 
 
-### 통합 NLP 메타데이터 표준화 플랫폼
-
-```{mermaid}
-graph TB
-    subgraph INPUT ["Data Sources"]
-        A1["표준화 원칙 PDF<br/>200개 규칙"]
-        A2["표준 단어 사전<br/>14그룹 분류"]
-        A3["Excel 메타데이터<br/>용어 사전 작업용"]
-        A4["기존 도메인 사전<br/>중복 검증용"]
-    end
-
-    subgraph DATAPREP ["Data Preparation"]
-        subgraph TRAIN_DATA ["Training Data Generation"]
-            B1["LLM Data Generator<br/>Claude 4 Sonnet"]
-            B2["Domain Generator<br/>템플릿 기반"]
-            B4["Data Merger<br/>스키마 통합"]
-            
-            A1 --> B1
-            A2 --> B2
-            A4 --> B2
-            B1 --> B4
-            B2 --> B4
-        end
-        
-        subgraph REAL_DATA ["Operational Data Processing"]
-            B3["Term Extractor<br/>한글/영문/물리명"]
-            B5["Data Cleaning<br/>중복 제거, 정제"]
-            
-            A3 --> B3
-            B3 --> B5
-        end
-    end
-
-    subgraph PROCESSING ["Parallel NLP Processing"]
-        subgraph DOMAIN ["Domain Classification Model"]
-            C1["Training Dataset<br/>5,632개 생성 도메인"]
-            C2["KoBERT Classifier<br/>768→14 classes"]
-            C3["Model Training<br/>95.39% 정확도"]
-            C4["New Domain Prediction<br/>신규 도메인 분류"]
-            
-            C1 --> C2 --> C3 --> C4
-        end
-        
-        subgraph CLUSTER ["Advanced Term Clustering"]
-            D1["Real Term Dataset<br/>1,000+ 운영 용어"]
-            D2["SentenceTransformer<br/>ko-sroberta-multitask"]
-            D3["Multi-Method Clustering<br/>HDBSCAN + Agglomerative"]
-            D4["Dimensionality Reduction<br/>t-SNE, UMAP, PCA"]
-            D5["Advanced Analytics<br/>네트워크 분석 + 품질 메트릭"]
-            
-            D1 --> D2 --> D3 --> D4 --> D5
-        end
-    end
-
-    subgraph INTEGRATION ["Results Integration"]
-        E1["Domain Classification<br/>신규 용어 그룹 예측"]
-        E2["Interactive Visualization<br/> 대시보드 + 네트워크"]
-        E3["Quality Metrics<br/>실루엣 점수 + 클러스터 품질"]
-        E4["Standardization Engine<br/>통합 표준화 권장안"]
-        
-        C4 --> E1
-        D5 --> E2
-        E2 --> E3
-        E1 --> E4
-        E3 --> E4
-    end
-
-    subgraph DEPLOYMENT ["Advanced Visualization & Export"]
-        F1["ML Model Storage<br/>kobert_classifier.pth"]
-        F2["Interactive Dashboard<br/>Plotly HTML + 워드클라우드"]
-        F3["Network Visualization<br/>유사도 네트워크 그래프"]
-        F4["Streamlit Web Platform<br/>통합 NLP 분석 도구"]
-        F5["Multi-format Export<br/>Excel + HTML + 시각화"]
-        
-        E1 --> F1
-        E2 --> F2
-        E2 --> F3
-        F1 --> F4
-        F2 --> F4
-        F3 --> F4
-        F4 --> F5
-    end
-
-    %% 데이터 흐름
-    B4 --> C1
-    B5 --> D1
-    E1 -.->|분류 모델| E4
-    E2 -.->|시각화 분석| E3
-    E3 -.->|품질 검증| E4
-
-    %% 스타일링
-    classDef inputStyle fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
-    classDef prepStyle fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef domainStyle fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
-    classDef clusterStyle fill:#fff3e0,stroke:#f57c00,stroke-width:2px
-    classDef integrationStyle fill:#fce4ec,stroke:#c2185b,stroke-width:2px
-    classDef deployStyle fill:#e0f2f1,stroke:#00695c,stroke-width:2px
-
-    class A1,A2,A3,A4 inputStyle
-    class B1,B2,B3,B4,B5 prepStyle
-    class C1,C2,C3,C4 domainStyle
-    class D1,D2,D3,D4,D5 clusterStyle
-    class E1,E2,E3,E4 integrationStyle
-    class F1,F2,F3,F4,F5 deployStyle
-```
-
-### 표준화 품질 평가 시스템 아키텍쳐
-
-```{mermaid}
-graph TB
-    %% Main Entry Point
-    Main[DataStandardizationAnalyzer<br/>메인 분석기]
-    
-    %% Core Processing Classes
-    DataLoader[DataLoader<br/>데이터 로더]
-    TokenProcessor[TokenProcessor<br/>토큰 처리기]
-    AbbreviationManager[AbbreviationManager<br/>약어 관리자]
-    RuleAnalyzer[RuleAnalyzer<br/>규칙 분석기]
-    
-    %% Rule Checker Classes
-    subgraph RuleCheckers["규칙 검증기들"]
-        
-    end
-    
-    %% Analysis Classes
-    CompletenessAnalyzer[CompletenessAnalyzer<br/>완전성 분석기]
-    VocabularyAnalyzer[VocabularyAnalyzer<br/>어휘 분석기]
-    
-    %% Output Classes
-    ReportGenerator[ReportGenerator<br/>보고서 생성기]
-    TroubleShooting[TroubleShooting<br/>디버깅 도구]
-    
-    %% Data Structures
-    subgraph DataStructures["데이터 구조"]
-        EntityInfo[EntityInfo<br/>엔티티 정보]
-        RuleViolation[RuleViolation<br/>규칙 위반 정보]
-        TokenAnalysis[TokenAnalysis<br/>토큰 분석 결과]
-    end
-    
-    %% Enums
-    subgraph Enums["열거형"]
-        AbbreviationStrategy[AbbreviationStrategy<br/>약어 생성 전략]
-        DuplicateResolutionStrategy[DuplicateResolutionStrategy<br/>중복 해결 전략]
-    end
-    
-    %% External Data
-    ExcelFile[(Excel File<br/>논리명 취합 데이터)]
-    DomainDict[(Domain Dictionary<br/>도메인 사전)]
-    
-    %% Output Files
-    Results[(분석 결과<br/>Excel/Text Files)]
-    GlossaryDict[(용어사전<br/>Glossary Dictionary)]
-    
-    %% Main Flow
-    Main --> DataLoader
-    Main --> RuleAnalyzer
-    Main --> CompletenessAnalyzer
-    Main --> ReportGenerator
-    Main --> TroubleShooting
-    
-    %% Data Loading
-    ExcelFile --> DataLoader
-    DataLoader --> |테이블/컬럼 데이터| RuleAnalyzer
-    
-    %% Token Processing Flow
-    RuleAnalyzer --> TokenProcessor
-    RuleAnalyzer --> AbbreviationManager
-    TokenProcessor --> AbbreviationManager
-    
-    %% Rule Checking
-    RuleAnalyzer --> RuleCheckers
-    RuleCheckers --> EntityInfo
-    RuleCheckers --> RuleViolation
-    
-    %% Abbreviation Management
-    AbbreviationManager --> AbbreviationStrategy
-    AbbreviationManager --> DuplicateResolutionStrategy
-    AbbreviationManager --> TokenAnalysis
-    
-    %% Analysis Flow
-    RuleAnalyzer --> |분석 결과| ReportGenerator
-    DataLoader --> |원본 데이터| CompletenessAnalyzer
-    DataLoader --> |논리명 데이터| VocabularyAnalyzer
-    
-    %% Domain Integration
-    DomainDict --> |도메인 매핑| GlossaryDict
-    RuleAnalyzer --> |엔티티 정보| GlossaryDict
-    
-    %% Output Generation
-    ReportGenerator --> Results
-    CompletenessAnalyzer --> Results
-    VocabularyAnalyzer --> Results
-    
-    %% Debugging
-    TroubleShooting --> AbbreviationManager
-    TroubleShooting --> TokenProcessor
-    
-    %% Styling
-    classDef mainClass fill:#e1f5fe,stroke:#0277bd,stroke-width:2px
-    classDef coreClass fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
-    classDef ruleClass fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
-    classDef dataClass fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
-    classDef outputClass fill:#fce4ec,stroke:#c2185b,stroke-width:2px
-    
-    class Main mainClass
-    class DataLoader,TokenProcessor,AbbreviationManager,RuleAnalyzer coreClass
-    class BasicRuleChecker,ConsonantRuleChecker,VowelRuleChecker,LengthRuleChecker ruleClass
-    class EntityInfo,RuleViolation,TokenAnalysis,AbbreviationStrategy,DuplicateResolutionStrategy dataClass
-    class ReportGenerator,CompletenessAnalyzer,VocabularyAnalyzer,TroubleShooting,Results,GlossaryDict outputClass
-```
-
-
 ### NLP Classifier 다이어그램 (0805 최신)
 
 Simple Veresion
@@ -473,7 +369,7 @@ graph TD
     TrainedModel --> Prediction
     
     %% Domain Groups Box
-    DomainGroups[" 14개 도메인 그룹<br/>날짜, 명, 번호, 식별, 코드, 분류, 값,<br/> 수, 율, 내용, 보안, 단위, 집합, 일반단어"]
+    DomainGroups[" 14개 도메인 그룹<br/>날짜, 명, 번호,<br/>식별, 코드, 분류, 값,<br/> 수, 율, 내용, 보안,<br/>단위, 집합, 일반단어"]
     
     TrainingData -.-> DomainGroups
     

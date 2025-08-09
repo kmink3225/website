@@ -1,3 +1,116 @@
+# Data Suite & Standardization Framework Integration
+
+```{mermaid}
+graph TB
+  subgraph "Users"
+    DS["Data Steward"]
+    DBA["DBA"]
+    DEV["Developer"]
+  end
+
+  subgraph "Intelligence Plane"
+    DL["DataLoader"]
+    TP["TokenProcessor"]
+    DC["Domain NLP (KoBERT)"]
+    RAG["RAG for Rules"]
+    ABR["AbbreviationManager"]
+    RA["RuleAnalyzer"]
+    CA["CompletenessAnalyzer"]
+    ITR["Feedback Trainer"]
+    OUT1["Predictions"]
+    OUT2["Suggestions"]
+    OUT3["Violations"]
+    DL --> TP --> DC
+    DC --> ABR
+    TP --> RA --> CA
+    RAG --> TP
+    RA --> OUT3
+    DC --> OUT1
+    ABR --> OUT2
+    OUT1 --> ITR
+    OUT2 --> ITR
+  end
+
+  subgraph "Integration Layer"
+    API["API Gateway"]
+    BATCH["Batch Exchange"]
+    EVT["Event Bus"]
+    MAP["ID Mapping"]
+    CONTRACTS["Data Contracts"]
+    API --> MAP
+    BATCH --> MAP
+    EVT --> MAP
+    MAP --> CONTRACTS
+  end
+
+  subgraph "Big2Core Data Suite"
+    STD["Catalog & Standards"]
+    WF["Workflow & Approval"]
+    QLT["Quality Management"]
+    MDM["MDM & Code"]
+    ERD["Modeling/ERD"]
+    LIN["Lineage & Impact"]
+    SEC["Security & De-ID"]
+    BI["BI & Reports"]
+    AUD["Audit & Logs"]
+  end
+
+  DS --> WF
+  DBA --> WF
+  DEV --> WF
+
+  STD -- "rules/standards export" --> API
+  QLT -- "snapshot" --> BATCH
+  ERD -- "model/schema export" --> BATCH
+  LIN -- "refs" --> API
+
+  CONTRACTS -- "outcomes" --> WF
+  WF -- "decisions" --> EVT
+  EVT --> ITR
+
+  STD -. "grounding" .-> RAG
+  WF -. "policy" .-> RAG
+
+  WF --> STD
+  WF --> QLT
+  WF --> MDM
+  WF --> ERD
+  WF --> LIN
+  WF --> BI
+  WF --> SEC
+  WF --> AUD
+
+```
+
+
+### TL
+- 당신 아키텍처의 핵심(표준화 원칙 수립, 규칙 엔진, NLP/클러스터링, 품질평가, Streamlit 워크벤치)을 직접 설계·구현.
+- 비즈니스 요구를 기술 아키텍처로 번역하고, 표준화 결과를 일관된 데이터 계약으로 산출하는 “설계 오너십” 보유.
+
+### TL로서 보완하면 완전해지는 3가지
+- MLOps/서빙: 배포·버전·모니터링 설계(SLO/릴리스/롤백 포함)와 구현 가이드 확립.
+- 보안/컴플라이언스: 접근제어/감사로그/비식별·비밀관리, ISMS 매핑 문서와 운영 절차.
+- KPI 운영 거버넌스: 지표 소유자·수집·대시보드·주기적 리뷰(책임/주기/임계값) 체계.
+
+### TL 체크리스트(간단)
+- 아키텍처/데이터 계약/ADR 문서화 완료
+- 모델·사전·룰 버전 정책 정의
+- 테스트 전략(단위/통합/데이터/회귀)과 코드리뷰 기준
+- 운영 절차(SLO, 알람, 롤백)와 보안 정책(권한/감사)
+- KPI 운영 표준(정의서, 소유자, 수집 경로, 대시보드, 리뷰 회의)
+
+### 추천 직함 표현
+- “Technical Lead, Data Standardization System”
+- “Lead Data Scientist & Solution Architect (Standardization)”
+
+### 3주 보강 플랜(핵심만)
+- 1주차: FastAPI 배치/서빙 최소화, Docker 이미지, 모델/룰 버전 태깅, 간단 모니터링(지연/에러).
+- 2주차: 보안(Secrets/권한/감사로그) 및 ISMS 매핑 체크리스트, 데이터 접근 절차서.
+- 3주차: KPI 운영 체계(채택율/규칙 통과율/리드타임) 이벤트 수집→대시보드→주간 리뷰 의제 정의.
+
+- 요약
+  - 지금도 TL로 충분. 다만 운영·보안·KPI 운영 거버넌스의 “설계·오너십”을 명확히 추가하면 내부/외부 모두가 이견 없이 인정.
+
 # 데이터 표준화 프레임워크 아키텍쳐
 
 ```{mermaid}
